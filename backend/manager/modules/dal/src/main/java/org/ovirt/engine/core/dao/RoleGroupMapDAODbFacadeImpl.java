@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.compat.Guid;
@@ -14,6 +17,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>RoleGroupMapDAODbFacadeImpl</code> provides a concrete implementation of {@link RoleGroupMapDAO} using
  * functionality refactored from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
+@Named
+@Singleton
 public class RoleGroupMapDAODbFacadeImpl extends BaseDAODbFacade implements RoleGroupMapDAO {
     private static class RoleGroupMapRowMapper implements RowMapper<RoleGroupMap> {
         public static final RoleGroupMapRowMapper instance = new RoleGroupMapRowMapper();

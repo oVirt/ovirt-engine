@@ -4,11 +4,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 
+@Named
+@Singleton
 public class VmAndTemplatesGenerationsDbFacadeImpl extends BaseDAODbFacade implements VmAndTemplatesGenerationsDAO {
     private static final String ovfSeparator = "<<<ENDOVF>>>";
 

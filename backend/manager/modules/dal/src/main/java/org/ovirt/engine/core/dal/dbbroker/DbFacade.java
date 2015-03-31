@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
+import java.util.Objects;
+
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -65,13 +67,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ActionGroupDAO;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.dao.AuditLogDAO;
-import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.BookmarkDAO;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.dao.DAO;
-import org.ovirt.engine.core.dao.DaoFactory;
 import org.ovirt.engine.core.dao.DbGroupDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -140,9 +140,9 @@ import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
@@ -231,21 +231,45 @@ public class DbFacade {
         }
     };
 
-    @Inject
-    private DbFacadeLocator dbFacadeLocator;
     private static DbFacade instance;
-    private JdbcTemplate jdbcTemplate;
 
-    private DbEngineDialect dbEngineDialect;
-    private final SimpleJdbcCallsHandler callsHandler = new SimpleJdbcCallsHandler();
+    private final DbFacadeLocator dbFacadeLocator;
+    private final JdbcTemplate jdbcTemplate;
+    private final DbEngineDialect dbEngineDialect;
+    private final SimpleJdbcCallsHandler callsHandler;
+
+    @Inject
+    private Instance<DAO> daos;
+
 
     private int onStartConnectionTimeout;
 
     private int connectionCheckInterval;
 
-    public void setDbEngineDialect(DbEngineDialect dbEngineDialect) {
+    @Inject
+    public DbFacade(JdbcTemplate jdbcTemplate,
+            DbEngineDialect dbEngineDialect,
+            SimpleJdbcCallsHandler callsHandler,
+            DbFacadeLocator dbFacadeLocator) {
+
+        Objects.requireNonNull(jdbcTemplate, "jdbcTemplate cannot be null");
+        Objects.requireNonNull(dbEngineDialect, "dbEngineDialect cannot be null");
+        Objects.requireNonNull(callsHandler, "callsHandler cannot be null");
+        Objects.requireNonNull(dbFacadeLocator, "dbFacadeLocator cannot be null");
+
+        this.dbFacadeLocator = dbFacadeLocator;
+        this.jdbcTemplate = jdbcTemplate;
         this.dbEngineDialect = dbEngineDialect;
-        callsHandler.setDbEngineDialect(dbEngineDialect);
+        this.callsHandler = callsHandler;
+
+        init();
+    }
+
+    private void init() {
+        log.info("Initializing the DbFacade");
+        dbFacadeLocator.configure(this);
+
+        instance = this;
     }
 
     public DbEngineDialect getDbEngineDialect() {
@@ -271,34 +295,19 @@ public class DbFacade {
         return getDao(daoType);
     }
 
-    protected <T extends DAO> T getDao(Class<T> daoType) {
-        T dao = DaoFactory.get(daoType);
-        if (dao instanceof BaseDAODbFacade) {
-            BaseDAODbFacade dbFacadeDAO = (BaseDAODbFacade) dao;
-            dbFacadeDAO.setTemplate(jdbcTemplate);
-            dbFacadeDAO.setDialect(dbEngineDialect);
-            dbFacadeDAO.setDbFacade(this);
+    public JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends DAO> T getDao(Class<T> daoType) {
+        for (DAO dao : daos) {
+            if (daoType.isAssignableFrom(dao.getClass())) {
+                return (T) dao;
+            }
         }
-        return dao;
-    }
-
-    private DbFacade() {
-    }
-
-    /**
-     * A way to keep backward compatibility with static getInstance() usage pattern.
-     * @TODO once the code is cleaned from getInstance we could remove it.
-     */
-    @PostConstruct
-    void init() {
-        log.info("Initializing the DbFacade");
-        dbFacadeLocator.configure(this);
-        instance = this;
-    }
-
-    public void setTemplate(JdbcTemplate template) {
-        this.jdbcTemplate = template;
-        callsHandler.setJdbcTemplate(template);
+        log.error("Can't find dao for " + daoType);
+        return null;
     }
 
     /**
@@ -403,7 +412,7 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link DbuserDAO}.
+     * Returns the singleton instance of {@link DbUserDAO}.
      *
      * @return the dao
      */
@@ -628,7 +637,7 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link EventSubscriberDAO}.
+     * Returns the singleton instance of {@link EventDAO}.
      *
      * @return the dao
      */
@@ -846,7 +855,7 @@ public class DbFacade {
     /**
      * Returns the singleton instance of {@link BusinessEntitySnapshotDAO}.
      *
-     * @return
+     * @return the dao
      */
     public BusinessEntitySnapshotDAO getBusinessEntitySnapshotDao() {
         return getDao(BusinessEntitySnapshotDAO.class);
@@ -907,7 +916,7 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link getJobSubjectEntityDao}.
+     * Returns the singleton instance of {@link JobSubjectEntityDao}.
      *
      * @return the dao
      */
@@ -1135,7 +1144,7 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link DwhHistoryTimekeepingDAO}.
+     * Returns the singleton instance of {@link DwhHistoryTimekeepingDao}.
      *
      * @return the dao instance
      */
@@ -1181,7 +1190,7 @@ public class DbFacade {
         // first clear the table
         new SimpleJdbcCall(jdbcTemplate).withProcedureName("clear_osinfo").execute();
         // batch populate
-        List<MapSqlParameterSource> executions = new ArrayList<MapSqlParameterSource>();
+        List<MapSqlParameterSource> executions = new ArrayList<>();
         for (Map.Entry<Integer, String> e : osIdToName.entrySet()) {
             executions.add(getCustomMapSqlParameterSource()
                     .addValue("os_id", e.getKey())

@@ -4,11 +4,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
+@Singleton
 public class DiskProfileDaoDbFacadeImpl extends ProfileBaseDaoFacadeImpl<DiskProfile> implements DiskProfileDao {
     private static final DiskProfileDaoDbFacadaeImplMapper MAPPER = new DiskProfileDaoDbFacadaeImplMapper();
 

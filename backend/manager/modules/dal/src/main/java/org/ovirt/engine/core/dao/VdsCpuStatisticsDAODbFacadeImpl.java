@@ -5,11 +5,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
+@Singleton
 public class VdsCpuStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements VdsCpuStatisticsDAO {
 
     @Override

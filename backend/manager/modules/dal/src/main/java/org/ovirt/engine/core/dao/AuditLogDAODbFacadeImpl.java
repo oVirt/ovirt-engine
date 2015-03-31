@@ -5,6 +5,11 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -12,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -22,10 +27,21 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
  * <code>AuditLogDAODbFacadeImpl</code> provides a concrete implementation of {@link AuditLogDAO}. It uses code
  * refactored from {@link DbFacade}.
  */
+@Named
+@Singleton
 public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLogDAO {
 
     @SuppressWarnings("synthetic-access")
     private static final AuditLogRowMapper auditLogRowMapper = new AuditLogRowMapper();
+
+    private final DbEngineDialect dbEngineDialect;
+
+    @Inject
+    AuditLogDAODbFacadeImpl(DbEngineDialect dbEngineDialect) {
+        Objects.requireNonNull(dbEngineDialect, "dbEngineDialect cannot be null");
+
+        this.dbEngineDialect = dbEngineDialect;
+    }
 
     @Override
     public AuditLog get(long id) {
@@ -54,7 +70,7 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
 
     @Override
     public List<AuditLog> getAllWithQuery(String query) {
-        return jdbcTemplate.query(query, auditLogRowMapper);
+        return getJdbcTemplate().query(query, auditLogRowMapper);
     }
 
     @Override
@@ -190,10 +206,11 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                 .addValue("wait_for_sec", Config.getValue(ConfigValues.FenceQuietTimeBetweenOperationsInSec));
 
         Map<String, Object> dbResults =
-                new SimpleJdbcCall(jdbcTemplate).withFunctionName("get_seconds_to_wait_before_pm_operation").execute(
+                new SimpleJdbcCall(getJdbcTemplate()).withFunctionName("get_seconds_to_wait_before_pm_operation")
+                        .execute(
                         parameterSource);
 
-        String resultKey = DbFacade.getInstance().getDbEngineDialect().getFunctionReturnKey();
+        String resultKey = dbEngineDialect.getFunctionReturnKey();
         return dbResults.get(resultKey) != null ? ((Integer) dbResults.get(resultKey)).intValue() : 0;
     }
 

@@ -1,14 +1,7 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -40,11 +33,21 @@ import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
+import org.ovirt.engine.core.dal.dbbroker.SimpleJdbcCallsHandler;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.annotation.DirtiesContext;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class DbFacadeDAOTest extends BaseDAOTestCase {
 
@@ -84,28 +87,19 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
      * Ensures that the checkDBConnection method throws an Exception when connection is not valid
      */
     @Test
+    @DirtiesContext
     public void testDBConnectionWithoutConnection() {
-        // setup
-        DataSource result = null;
-        Properties properties = new Properties();
-        Config.setConfigUtils(new DBConfigUtils(false));
 
         InputStream is = null;
         try {
-            // Since DbFacade ctor is private, we need to do some reflections magic
-
-            Class<DbFacade> dbFacadeClass = DbFacade.class;
-            @SuppressWarnings("unchecked")
-            Constructor<DbFacade> privateCtor = (Constructor<DbFacade>) dbFacadeClass.getDeclaredConstructors()[0];
-            privateCtor.setAccessible(true);
-            DbFacade localDbFacade = privateCtor.newInstance();
-
-            is = super.getClass().getResourceAsStream(
-                    "/test-database.properties");
+            // setup
+            Config.setConfigUtils(new DBConfigUtils(false));
+            is = super.getClass().getResourceAsStream("/test-database.properties");
+            Properties properties = new Properties();
             properties.load(is);
             ClassLoader.getSystemClassLoader().loadClass(
                     properties.getProperty("database.driver"));
-            result = new SingleConnectionDataSource(
+            DataSource dataSource = new SingleConnectionDataSource(
                     properties.getProperty("database.url"),
                     // Deliberately puts a none existing user name, so an
                     // exception will be thrown when trying to check the
@@ -114,9 +108,14 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
                     properties.getProperty("database.password"),
                     true
                     );
-            localDbFacade.setDbEngineDialect(DbFacadeLocator.loadDbEngineDialect());
-            localDbFacade.setTemplate(localDbFacade.getDbEngineDialect().createJdbcTemplate(result));
+            final DbEngineDialect dbEngineDialect = DbFacadeLocator.loadDbEngineDialect();
+            final JdbcTemplate jdbcTemplate = dbEngineDialect.createJdbcTemplate(dataSource);
+            final SimpleJdbcCallsHandler callsHandler = new SimpleJdbcCallsHandler(dbEngineDialect, jdbcTemplate);
+            final DbFacadeLocator dbFacadeLocator = new DbFacadeLocator() {};
+            final DbFacade localDbFacade = new DbFacade(jdbcTemplate, dbEngineDialect, callsHandler, dbFacadeLocator);
+
             localDbFacade.checkDBConnection();
+
             fail("Connection should be down since the DataSource has an invalid username");
             // If DataAccessException is thrown - the test has succeeded. Was unable to do
             // with "expected" annotation, presumably since we are using DbUnit

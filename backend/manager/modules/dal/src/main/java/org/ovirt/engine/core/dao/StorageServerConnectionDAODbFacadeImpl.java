@@ -7,15 +7,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
  * <code>StorageServerConnectionDAODbFacadeImpl</code> provides an implementation of {@link StorageServerConnectionDAO}
@@ -23,6 +26,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
  *
  *
  */
+@Named
+@Singleton
 public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade implements
         StorageServerConnectionDAO {
 

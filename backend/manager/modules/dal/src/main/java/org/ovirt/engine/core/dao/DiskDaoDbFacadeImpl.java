@@ -4,9 +4,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAODbFacadeImpl.CinderDiskRowMapper;
@@ -14,6 +17,8 @@ import org.ovirt.engine.core.dao.DiskImageDAODbFacadeImpl.DiskImageRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
+@Singleton
 public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
 
     @Override
@@ -101,7 +106,7 @@ public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
 
     @Override
     public List<Disk> getAllWithQuery(String query) {
-        return jdbcTemplate.query(query, DiskRowMapper.instance);
+        return getJdbcTemplate().query(query, DiskRowMapper.instance);
     }
 
     private static class DiskRowMapper implements RowMapper<Disk> {

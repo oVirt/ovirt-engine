@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -19,6 +22,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>PermissionsDAODbFacadeImpl</code> provides a concrete implementation of {@link PermissionDAO} using code from
  * DbFacade.
  */
+@Named
+@Singleton
 public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements PermissionDAO {
     @Override
     public Permission get(Guid id) {

@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
@@ -16,6 +19,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  *
  *
  */
+@Named
+@Singleton
 public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements BookmarkDAO {
     private static class BookmarkRowMapper implements RowMapper<Bookmark> {
         public static final BookmarkRowMapper instance = new BookmarkRowMapper();
@@ -33,23 +38,23 @@ public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements Bookmark
     private class BookmarkSqlParameterSource extends
             CustomMapSqlParameterSource {
         public BookmarkSqlParameterSource(Bookmark bookmark) {
-            super(dialect);
+            super(getDialect());
             addValue("bookmark_id", bookmark.getbookmark_id());
             addValue("bookmark_name", bookmark.getbookmark_name());
             addValue("bookmark_value", bookmark.getbookmark_value());
         }
 
         public BookmarkSqlParameterSource() {
-            super(dialect);
+            super(getDialect());
         }
 
         public BookmarkSqlParameterSource(Guid id) {
-            super(dialect);
+            super(getDialect());
             addValue("bookmark_id", id);
         }
 
         public BookmarkSqlParameterSource(String name) {
-            super(dialect);
+            super(getDialect());
             addValue("bookmark_name", name);
         }
     }

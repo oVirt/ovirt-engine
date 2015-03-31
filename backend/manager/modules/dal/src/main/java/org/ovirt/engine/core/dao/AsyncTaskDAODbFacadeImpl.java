@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
@@ -25,6 +28,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>AsyncTaskDAODbFacadeImpl</code> provides an implementation of {@link AsyncTaskDAO} using code refactored from
  * {@code DbFacade}.
  */
+@Named
+@Singleton
 public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTaskDAO {
     private static final Logger log = LoggerFactory.getLogger(AsyncTaskDAODbFacadeImpl.class);
 
@@ -125,7 +130,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     private AsyncTaskParameterSource getTaskParameterSource(AsyncTask task) {
-        return new AsyncTaskParameterSource(dialect, task);
+        return new AsyncTaskParameterSource(getDialect(), task);
     }
 
     @Override

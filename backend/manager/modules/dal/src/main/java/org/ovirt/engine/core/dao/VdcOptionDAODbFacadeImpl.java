@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -12,6 +15,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>VdcOptionDAODbFacadeImpl</code> provides a concrete implementation of {@link VdcOptionDAO} using code
  * refactored from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
+@Named
+@Singleton
 public class VdcOptionDAODbFacadeImpl extends BaseDAODbFacade implements VdcOptionDAO {
 
     private static final class VdcOptionRowMapper implements RowMapper<VdcOption> {

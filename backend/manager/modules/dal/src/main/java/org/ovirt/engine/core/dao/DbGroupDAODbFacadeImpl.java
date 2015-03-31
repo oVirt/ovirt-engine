@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,6 +16,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * Provides a concrete implementation of {@link DbGroupDAO} based on code from
  * {@link DbFacade}.
  */
+@Named
+@Singleton
 public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDAO {
 
     @Override
@@ -81,7 +86,7 @@ public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDA
 
     @Override
     public List<DbGroup> getAllWithQuery(String query) {
-        return jdbcTemplate.query(query, DbGroupRowMapper.instance);
+        return getJdbcTemplate().query(query, DbGroupRowMapper.instance);
     }
 
     @Override

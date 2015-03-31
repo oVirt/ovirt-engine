@@ -9,6 +9,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
@@ -31,6 +34,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * found in {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  *
  */
+@Named
+@Singleton
 public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroupDAO {
     private static final Logger log = LoggerFactory.getLogger(VdsGroupDAODbFacadeImpl.class);
 
@@ -105,7 +110,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
 
     @Override
     public List<VDSGroup> getAllWithQuery(String query) {
-        List<VDSGroup> groups = jdbcTemplate.query(query, VdsGroupRowMapper.instance);
+        List<VDSGroup> groups = getJdbcTemplate().query(query, VdsGroupRowMapper.instance);
 
         try {
             // The UI requires the host and vm count
@@ -324,7 +329,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
         for (VDSGroup vdsGroup : vdsGroups) {
             groupsById.put(vdsGroup.getId(), vdsGroup);
         }
-        Connection c = jdbcTemplate.getDataSource().getConnection();
+        Connection c = getJdbcTemplate().getDataSource().getConnection();
         Array groups = c.createArrayOf("uuid", groupsById.keySet().toArray());
         List<VDSGroupHostsAndVMs> dataList = getCallsHandler().executeReadList("GetHostsAndVmsForClusters",
                 VDSGroupHostsAndVMsRowMapper.instance,

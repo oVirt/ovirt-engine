@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
@@ -17,6 +20,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 /**
  * Implementation of the DB Facade for Services.
  */
+@Named
+@Singleton
 @SuppressWarnings("deprecation")
 public class GlusterServerServiceDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterServerService, Guid> implements GlusterServerServiceDao {
 
@@ -29,7 +34,7 @@ public class GlusterServerServiceDaoDbFacadeImpl extends MassOperationsGenericDa
 
     @Override
     public List<GlusterServerService> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, serviceRowMapper);
+        return new SimpleJdbcTemplate(getJdbcTemplate()).query(query, serviceRowMapper);
     }
 
     @Override

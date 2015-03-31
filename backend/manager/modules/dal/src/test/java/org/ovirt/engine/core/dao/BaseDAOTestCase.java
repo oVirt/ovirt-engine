@@ -56,7 +56,6 @@ public abstract class BaseDAOTestCase {
     protected static boolean needInitializationSql = false;
     protected static String initSql;
     protected static DataSource dataSource;
-    private static IDataSet dataset;
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
@@ -67,10 +66,9 @@ public abstract class BaseDAOTestCase {
             dataSource = createDataSource();
             ejbRule.mockResource(ContainerManagedResourceType.DATA_SOURCE, dataSource);
 
-            dataset = initDataSet();
+            final IDataSet dataset = initDataSet();
             // load data from fixtures to DB
             DatabaseOperation.CLEAN_INSERT.execute(getConnection(), dataset);
-
             SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
             builder.bind("java:/ENGINEDataSource", dataSource);
             builder.activate();
@@ -115,7 +113,7 @@ public abstract class BaseDAOTestCase {
                 number = "";
             String schemaNamePostfix = job + number;
             is = BaseDAOTestCase.class.getResourceAsStream(
-            "/test-database.properties");
+                    "/test-database.properties");
             properties.load(is);
 
             ClassLoader.getSystemClassLoader().loadClass(
@@ -136,8 +134,7 @@ public abstract class BaseDAOTestCase {
         } catch (Exception error) {
             error.printStackTrace();
             throw new RuntimeException("Cannot create data source", error);
-        }
-        finally {
+        } finally {
             if (is != null) {
                 try {
                     is.close();

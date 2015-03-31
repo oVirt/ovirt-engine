@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,6 +20,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>EngineSessionDAODbFacadeImpl</code> provides an implementation of {@link org.ovirt.engine.core.dao.EngineSessionDAO} using code refactored from
  * {@code DbFacade}.
  */
+@Named
+@Singleton
 public class EngineSessionDAODbFacadeImpl extends BaseDAODbFacade implements EngineSessionDAO {
 
     private static class EngineSessionRowMapper implements RowMapper<EngineSession> {
@@ -75,7 +80,7 @@ public class EngineSessionDAODbFacadeImpl extends BaseDAODbFacade implements Eng
     }
 
     private EngineSessionParameterSource getEngineSessionParameterSource(EngineSession session) {
-        return new EngineSessionParameterSource(dialect, session);
+        return new EngineSessionParameterSource(getDialect(), session);
     }
 
     @Override
@@ -101,6 +106,6 @@ public class EngineSessionDAODbFacadeImpl extends BaseDAODbFacade implements Eng
 
     @Override
     public List<EngineSession> getAllWithQuery(String query) {
-        return jdbcTemplate.query(query, EngineSessionRowMapper.instance);
+        return getJdbcTemplate().query(query, EngineSessionRowMapper.instance);
     }
 }

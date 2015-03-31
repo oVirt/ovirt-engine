@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
@@ -18,6 +21,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  *
  *
  */
+@Named
+@Singleton
 public class StorageServerConnectionLunMapDAODbFacadeImpl extends BaseDAODbFacade implements
         StorageServerConnectionLunMapDAO {
 

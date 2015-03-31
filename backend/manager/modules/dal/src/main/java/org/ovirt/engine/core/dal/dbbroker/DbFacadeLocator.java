@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import javax.annotation.Resource;
+import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;
 import javax.sql.DataSource;
 
@@ -12,12 +13,11 @@ import org.ovirt.engine.core.utils.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
+import org.springframework.jdbc.support.SQLExceptionTranslator;
 
 /**
  * A locator singleton for looking up (and initializing) DbFacade instance
  */
-
 @Singleton
 public class DbFacadeLocator {
     private static final Logger log = LoggerFactory.getLogger(DbFacadeLocator.class);
@@ -29,47 +29,54 @@ public class DbFacadeLocator {
 
     // Time to wait between checks of the database connection and maximum time
     // to wait for a connection:
-    private static int checkInterval = DEFAULT_CHECK_INTERVAL;
-    private static int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
+    private int checkInterval = DEFAULT_CHECK_INTERVAL;
+    private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 
     @Resource(mappedName = "java:/ENGINEDataSource")
-    private DataSource ds;
+    @Produces
+    private DataSource dataSource;
 
-    private DbFacadeLocator() {
+    @Produces
+    @Singleton
+    public JdbcTemplate produceJdbcTemplate(
+            DataSource dataSource,
+            DbEngineDialect dbEngineDialect,
+            SQLExceptionTranslator sqlExceptionTranslator) {
+        final JdbcTemplate jdbcTemplate = dbEngineDialect.createJdbcTemplate(dataSource);
+        jdbcTemplate.setExceptionTranslator(sqlExceptionTranslator);
+        return jdbcTemplate;
+    }
+
+    @Produces
+    @Singleton
+    public DbEngineDialect produceDbEngineDialect() {
+        return loadDbEngineDialect();
+    }
+
+    public DbFacadeLocator() {
     }
 
     /**
      * configure the dbFacade.
-     *
-     * @return the reference to the dbFacade if it was successfully created or
-     *   <code>null</code> if something failed
      */
     protected void configure(DbFacade dbFacade) {
         // Load the configuration:
         loadDbFacadeConfig();
 
-        // Load the dialect:
-        DbEngineDialect dialect = loadDbEngineDialect();
-
         // configure the dbFacade:
         dbFacade.setOnStartConnectionTimeout(connectionTimeout);
         dbFacade.setConnectionCheckInterval(checkInterval);
-        dbFacade.setDbEngineDialect(dialect);
-        JdbcTemplate template = dialect.createJdbcTemplate(ds);
-        SQLErrorCodeSQLExceptionTranslator tr = new CustomSQLErrorCodeSQLExceptionTranslator(ds);
-        template.setExceptionTranslator(tr);
-        dbFacade.setTemplate(template);
     }
 
     /**
      * Generate and sets the database engine dialect object according to configuration.
      *
-     * @throws Exception
+     * @throws IllegalStateException
      */
     public static DbEngineDialect loadDbEngineDialect() {
         final String ENGINE_DB_ENGINE_PROPERTIES = "engine-db-engine.properties";
         final String DIALECT = "DbEngineDialect";
-        Properties props = null;
+        final Properties props;
         try {
             props = ResourceUtils.loadProperties(DbFacadeLocator.class, ENGINE_DB_ENGINE_PROPERTIES);
         }
@@ -97,8 +104,8 @@ public class DbFacadeLocator {
         }
     }
 
-    public static void loadDbFacadeConfig() {
-        EngineLocalConfig config = EngineLocalConfig.getInstance();
+    private void loadDbFacadeConfig() {
+        final EngineLocalConfig config = EngineLocalConfig.getInstance();
         try {
             connectionTimeout = config.getInteger("ENGINE_DB_CONNECTION_TIMEOUT");
             checkInterval = config.getInteger("ENGINE_DB_CHECK_INTERVAL");

@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,6 +19,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * Implements the CRUD operations for job_subject_entity, a satellite table of Job.
  *
  */
+@Named
+@Singleton
 public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements JobSubjectEntityDao {
 
     private static JobSubjectEntityRowMapper jobSubjectEntityRowMapper = new JobSubjectEntityRowMapper();

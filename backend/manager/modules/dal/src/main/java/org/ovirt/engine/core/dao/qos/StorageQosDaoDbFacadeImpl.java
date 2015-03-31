@@ -3,12 +3,17 @@ package org.ovirt.engine.core.dao.qos;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
+@Singleton
 public class StorageQosDaoDbFacadeImpl extends QosBaseDaoFacadeImpl<StorageQos> implements StorageQosDao {
     public StorageQosDaoDbFacadeImpl() {
         super(QosType.STORAGE);

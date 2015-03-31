@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.SimpleJdbcCallsHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,25 +19,28 @@ import org.springframework.jdbc.core.RowMapper;
 public abstract class BaseDAODbFacade {
     protected static final String SEPARATOR = ",";
 
-    protected JdbcTemplate jdbcTemplate;
-    protected DbEngineDialect dialect;
-    protected DbFacade dbFacade;
+    @Inject
+    private JdbcTemplate jdbcTemplate;
 
-    public void setTemplate(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    @Inject
+    private DbEngineDialect dbEngineDialect;
 
-    public void setDialect(DbEngineDialect dialect) {
-        this.dialect = dialect;
-    }
-
-    public static final String RETURN_VALUE_PARAMETER = "RETURN_VALUE";
+    @Inject
+    private SimpleJdbcCallsHandler callsHandler;
 
     public BaseDAODbFacade() {
     }
 
+    protected JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
+    }
+
+    protected DbEngineDialect getDialect() {
+        return dbEngineDialect;
+    }
+
     protected CustomMapSqlParameterSource getCustomMapSqlParameterSource() {
-        return new CustomMapSqlParameterSource(dialect);
+        return new CustomMapSqlParameterSource(getDialect());
     }
 
     /**
@@ -101,11 +105,7 @@ public abstract class BaseDAODbFacade {
     }
 
     protected SimpleJdbcCallsHandler getCallsHandler() {
-        return dbFacade.getCallsHandler();
-    }
-
-    public void setDbFacade(DbFacade dbFacade) {
-        this.dbFacade = dbFacade;
+        return callsHandler;
     }
 
     /**

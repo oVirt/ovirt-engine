@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
@@ -17,6 +20,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
  * <code>VdsDAODbFacadeImpl</code> provides an implementation of {@link VdsDAO} that uses previously written code from
  * {@code DbFacade}.
  */
+@Named
+@Singleton
 public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStaticDAO {
 
     @Override
@@ -58,7 +63,8 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             id = Guid.newGuid();
             vds.setId(id);
         }
-        new SimpleJdbcCall(jdbcTemplate).withProcedureName("InsertVdsStatic").execute(getInsertOrUpdateParams(vds));
+        new SimpleJdbcCall(getJdbcTemplate()).withProcedureName("InsertVdsStatic")
+                .execute(getInsertOrUpdateParams(vds));
     }
 
     @Override

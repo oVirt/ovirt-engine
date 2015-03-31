@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -20,6 +23,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}. Responsible for managing the repository files meta data via the
  * persistent layer.
  */
+@Named
+@Singleton
 public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements RepoFileMetaDataDAO {
 
     @Override

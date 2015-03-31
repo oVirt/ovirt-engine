@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.compat.Guid;
@@ -12,6 +15,8 @@ import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
+@Singleton
 public class GlusterVolumeSnapshotScheduleDaoDBFacadeImpl extends BaseDAODbFacade implements GlusterVolumeSnapshotScheduleDao {
 
     private static final RowMapper<GlusterVolumeSnapshotSchedule> snapshotScheduleRowMapper =
@@ -40,7 +45,7 @@ public class GlusterVolumeSnapshotScheduleDaoDBFacadeImpl extends BaseDAODbFacad
 
     @Override
     public List<GlusterVolumeSnapshotSchedule> getAllWithQuery(String query) {
-        List<GlusterVolumeSnapshotSchedule> schedules = jdbcTemplate.query(query, snapshotScheduleRowMapper);
+        List<GlusterVolumeSnapshotSchedule> schedules = getJdbcTemplate().query(query, snapshotScheduleRowMapper);
         return schedules;
     }
 

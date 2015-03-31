@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStage;
@@ -20,6 +23,8 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 /**
  * Implementation of the DB Facade for Gluster Hooks.
  */
+@Named
+@Singleton
 public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterHookEntity, Guid> implements
         GlusterHooksDao {
 
@@ -115,7 +120,7 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     @Override
     @SuppressWarnings("deprecation")
     public List<GlusterHookEntity> getAllWithQuery(String query) {
-        List<GlusterHookEntity> glusterHooks = jdbcTemplate.query(query, glusterHookRowMapper);
+        List<GlusterHookEntity> glusterHooks = getJdbcTemplate().query(query, glusterHookRowMapper);
         return glusterHooks;
     }
 

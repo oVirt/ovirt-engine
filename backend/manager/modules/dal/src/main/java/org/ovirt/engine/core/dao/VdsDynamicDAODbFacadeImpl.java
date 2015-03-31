@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
@@ -28,6 +31,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  *
  *
  */
+@Named
+@Singleton
 public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<VdsDynamic, Guid> implements VdsDynamicDAO {
 
     private static final Logger log = LoggerFactory.getLogger(VdsDynamicDAODbFacadeImpl.class);

@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
@@ -19,6 +22,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 /**
  * <code>QuotaDAODbFacadeImpl</code> implements the calling to quota stored procedures (@see QuotaDAO).
  */
+@Named
+@Singleton
 public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
 
     /**
@@ -574,7 +579,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
 
     @Override
     public List<Quota> getAllWithQuery(String query) {
-        return jdbcTemplate.query(query, getQuotaMetaDataFromResultSet());
+        return getJdbcTemplate().query(query, getQuotaMetaDataFromResultSet());
     }
 
     @Override
@@ -584,10 +589,10 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                 .addValue("quota_id", quota.getId());
 
         Map<String, Object> dbResults =
-                new SimpleJdbcCall(jdbcTemplate).withFunctionName("IsQuotaInUse").execute(
+                new SimpleJdbcCall(getJdbcTemplate()).withFunctionName("IsQuotaInUse").execute(
                         parameterSource);
 
-        String resultKey = dialect.getFunctionReturnKey();
+        String resultKey = getDialect().getFunctionReturnKey();
         return dbResults.get(resultKey) != null && (Boolean) dbResults.get(resultKey);
     }
 

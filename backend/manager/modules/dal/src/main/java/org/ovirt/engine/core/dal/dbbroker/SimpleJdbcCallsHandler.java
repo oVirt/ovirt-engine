@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,21 +18,25 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
+@Singleton
 public class SimpleJdbcCallsHandler {
 
-    private ConcurrentMap<String, SimpleJdbcCall> callsMap =
-            new ConcurrentHashMap<String, SimpleJdbcCall>();
+    private static final String RETURN_VALUE_PARAMETER = "RETURN_VALUE";
 
-    private DbEngineDialect dialect;
+    private final ConcurrentMap<String, SimpleJdbcCall> callsMap = new ConcurrentHashMap<>();
 
-    private JdbcTemplate template;
+    private final DbEngineDialect dialect;
+    private final JdbcTemplate jdbcTemplate;
 
-    public void setDbEngineDialect(DbEngineDialect dialect) {
+    @Inject
+    public SimpleJdbcCallsHandler(
+            DbEngineDialect dialect,
+            JdbcTemplate jdbcTemplate) {
+        Objects.requireNonNull(dialect, "DbEngineDialect cannot be null");
+        Objects.requireNonNull(jdbcTemplate, "jdbcTemplate cannot be null");
+
         this.dialect = dialect;
-    }
-
-    public void setJdbcTemplate(JdbcTemplate template) {
-        this.template = template;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     private interface CallCreator {
@@ -39,17 +46,16 @@ public class SimpleJdbcCallsHandler {
     /**
      * Runs a set of stored procedure calls in a batch. Only useful for update procedures that return no value
      *
-     * @param procedureName
+     * @param procName
      *            the procedure name
      * @param executions
      *            a list of parameter maps
-     * @return
      */
     public void executeStoredProcAsBatch(final String procName,
             final List<MapSqlParameterSource> executions)
             throws DataAccessException {
 
-        template.execute(new BatchProcedureExecutionConnectionCallback(this, procName, executions));
+        jdbcTemplate.execute(new BatchProcedureExecutionConnectionCallback(this, procName, executions));
     }
 
     /**
@@ -101,7 +107,7 @@ public class SimpleJdbcCallsHandler {
             final RowMapper<T> mapper,
             final MapSqlParameterSource parameterSource) {
         Map<String, Object> resultsMap = executeImpl(procedureName, parameterSource, createCallForRead(procedureName, mapper, parameterSource), mapper);
-        return (List<T>) (resultsMap.get(BaseDAODbFacade.RETURN_VALUE_PARAMETER));
+        return (List<T>) (resultsMap.get(RETURN_VALUE_PARAMETER));
     }
 
     private CallCreator createCallForRead(final String procedureName,
@@ -111,8 +117,8 @@ public class SimpleJdbcCallsHandler {
             @Override
             public SimpleJdbcCall createCall() {
                 SimpleJdbcCall call =
-                        (SimpleJdbcCall) dialect.createJdbcCallForQuery(template).withProcedureName(procedureName);
-                call.returningResultSet(BaseDAODbFacade.RETURN_VALUE_PARAMETER, mapper);
+                        (SimpleJdbcCall) dialect.createJdbcCallForQuery(jdbcTemplate).withProcedureName(procedureName);
+                call.returningResultSet(RETURN_VALUE_PARAMETER, mapper);
                 // Pass mapper information (only parameter names) in order to supply all the needed
                 // metadata information for compilation.
                 call.getInParameterNames().addAll(
@@ -126,7 +132,7 @@ public class SimpleJdbcCallsHandler {
         return new CallCreator() {
             @Override
             public SimpleJdbcCall createCall() {
-                return new SimpleJdbcCall(template).withProcedureName(procedureName);
+                return new SimpleJdbcCall(jdbcTemplate).withProcedureName(procedureName);
             }
         };
     }
@@ -163,7 +169,7 @@ public class SimpleJdbcCallsHandler {
             call.compile();
             callsMap.putIfAbsent(procedureName, call);
         } else if (mapper != null) {
-            call.returningResultSet(BaseDAODbFacade.RETURN_VALUE_PARAMETER, mapper);
+            call.returningResultSet(RETURN_VALUE_PARAMETER, mapper);
         }
         return call;
     }

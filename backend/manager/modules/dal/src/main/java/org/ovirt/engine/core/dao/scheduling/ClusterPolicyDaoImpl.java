@@ -8,6 +8,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
@@ -18,7 +22,12 @@ import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
+@Singleton
 public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolicy, Guid> implements ClusterPolicyDao {
+
+    @Inject
+    private PolicyUnitDao policyUnitDao;
 
     public ClusterPolicyDaoImpl() {
         super("ClusterPolicy");
@@ -51,7 +60,7 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
     @Override
     public List<ClusterPolicy> getAll() {
         List<ClusterPolicy> clusterPolicies = super.getAll();
-        Map<Guid, ClusterPolicy> map = new HashMap<Guid, ClusterPolicy>();
+        Map<Guid, ClusterPolicy> map = new HashMap<>();
         for (ClusterPolicy clusterPolicy : clusterPolicies) {
             map.put(clusterPolicy.getId(), clusterPolicy);
         }
@@ -81,7 +90,7 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
 
     private void fillClusterPolicy(Map<Guid, ClusterPolicy> map, List<ClusterPolicyUnit> clusterPolicyUnits) {
         Map<Guid, PolicyUnit> policyUnitMap = new HashMap<Guid, PolicyUnit>();
-        for (PolicyUnit policyUnit : dbFacade.getPolicyUnitDao().getAll()) {
+        for (PolicyUnit policyUnit : policyUnitDao.getAll()) {
             policyUnitMap.put(policyUnit.getId(), policyUnit);
         }
         for (ClusterPolicyUnit clusterPolicyUnit : clusterPolicyUnits) {

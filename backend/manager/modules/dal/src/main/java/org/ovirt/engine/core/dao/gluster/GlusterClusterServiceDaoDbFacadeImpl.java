@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
@@ -13,6 +16,8 @@ import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
+@Named
+@Singleton
 public class GlusterClusterServiceDaoDbFacadeImpl extends BaseDAODbFacade implements GlusterClusterServiceDao {
     private static final ParameterizedRowMapper<GlusterClusterService> serviceRowMapper =
             new GlusterClusterServiceRowMapper();

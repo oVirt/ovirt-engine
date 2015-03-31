@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsTemplateMap;
 import org.ovirt.engine.core.common.businessentities.TagsType;
@@ -20,6 +23,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>TagDAODbFacadeImpl</code> provides an implementation of {@link TagDAO} that uses code refactored from the
  * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} class.
  */
+@Named
+@Singleton
 public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     private static class TagRowMapper implements RowMapper<Tags> {
         public static final TagRowMapper instance = new TagRowMapper();

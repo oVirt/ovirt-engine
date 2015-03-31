@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepCrawlStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
@@ -21,6 +24,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 /**
  * Implementation of the DB Facade for Gluster Geo Replication.
  */
+@Named
+@Singleton
 public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterGeoRepSession, Guid> implements
         GlusterGeoRepDao {
 

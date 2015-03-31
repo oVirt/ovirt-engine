@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -18,6 +21,8 @@ import org.springframework.jdbc.core.RowMapper;
  * <code>StorageDomainDAODbFacadeImpl</code> provides an implementation of {@link StorageDomainDAO} based on code from
  * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
+@Named
+@Singleton
 @SuppressWarnings("synthetic-access")
 public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements StorageDomainDAO {
 
@@ -108,7 +113,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
 
     @Override
     public List<StorageDomain> getAllWithQuery(String query) {
-        return jdbcTemplate.query(query, StorageDomainRowMapper.instance);
+        return getJdbcTemplate().query(query, StorageDomainRowMapper.instance);
     }
 
     @Override

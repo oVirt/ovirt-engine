@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -23,6 +26,8 @@ import org.springframework.jdbc.core.RowMapper;
  * <code>VmDAODbFacadeImpl</code> provides a concrete implementation of {@link VmDAO}. The functionality is code
  * refactored out of {@link Dorg.ovirt.engine.core.dal.dbbroker.DbFacad}.
  */
+@Named
+@Singleton
 public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
 
     @Override
@@ -149,7 +154,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
 
     @Override
     public List<VM> getAllUsingQuery(String query) {
-        return jdbcTemplate.query(query, VMRowMapper.instance);
+        return getJdbcTemplate().query(query, VMRowMapper.instance);
     }
 
     @Override

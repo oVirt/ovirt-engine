@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
@@ -14,6 +17,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>EventSubscriberDAODbFacadeImpl</code> provides an implementation of {@link EventSubscriberDAO} that uses the
  * refactored {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} code.
  */
+@Named
+@Singleton
 public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
 
     private static final class EventSubscriberRowMapper implements RowMapper<event_subscriber> {

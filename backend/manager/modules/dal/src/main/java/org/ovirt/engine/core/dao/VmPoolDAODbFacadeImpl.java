@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -19,6 +22,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  *
  */
+
+@Named
+@Singleton
 public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO {
     @Override
     public void removeVmFromVmPool(Guid id) {
@@ -65,7 +71,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
 
     @Override
     public List<VmPool> getAllWithQuery(String query) {
-        return jdbcTemplate.query(query, VmPoolFullRowMapper.instance);
+        return getJdbcTemplate().query(query, VmPoolFullRowMapper.instance);
     }
 
     @Override

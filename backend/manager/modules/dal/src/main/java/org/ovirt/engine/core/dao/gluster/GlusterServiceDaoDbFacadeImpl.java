@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
@@ -13,6 +16,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
+@Named
+@Singleton
 public class GlusterServiceDaoDbFacadeImpl extends DefaultReadDaoDbFacade<GlusterService, Guid> implements GlusterServiceDao {
 
     private static final ParameterizedRowMapper<GlusterService> serviceRowMapper = new GlusterServiceRowMapper();

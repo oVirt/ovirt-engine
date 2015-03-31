@@ -7,6 +7,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -17,6 +20,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
+@Named
+@Singleton
 public class VmDeviceDAODbFacadeImpl extends
         MassOperationsGenericDaoDbFacade<VmDevice, VmDeviceId> implements VmDeviceDAO {
 
@@ -124,10 +129,10 @@ public class VmDeviceDAODbFacadeImpl extends
                 .addValue("vm_id", vmId);
 
         Map<String, Object> dbResults =
-                new SimpleJdbcCall(jdbcTemplate).withFunctionName("isMemBalloonEnabled").execute(
+                new SimpleJdbcCall(getJdbcTemplate()).withFunctionName("isMemBalloonEnabled").execute(
                         parameterSource);
 
-        String resultKey = dialect.getFunctionReturnKey();
+        String resultKey = getDialect().getFunctionReturnKey();
         return dbResults.get(resultKey) != null ? ((Boolean) dbResults.get(resultKey)).booleanValue() : false;
 
     }

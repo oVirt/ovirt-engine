@@ -6,6 +6,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
@@ -31,6 +35,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 /**
  * Implementation of the DB Facade for Gluster Volumes.
  */
+@Named
+@Singleton
 public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterVolumeEntity, Guid> implements
         GlusterVolumeDao {
 
@@ -40,6 +46,13 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     private static final RowMapper<GlusterAsyncTask> glusterAsyncTaskRowMapper = new GlusterAsyncTaskRowMapper();
     private static final RowMapper<GlusterVolumeAdvancedDetails> glusterVolumesAdvancedDetailsRowMapper =
             new GlusterVolumeAdvancedDetailsRowMapper();
+
+    @Inject
+    private GlusterOptionDao glusterOptionDao;
+    @Inject
+    private GlusterBrickDao glusterBrickDao;
+    @Inject
+    private GlusterVolumeSnapshotConfigDao glusterVolumeSnapshotConfigDao;
 
     public GlusterVolumeDaoDbFacadeImpl() {
         super("GlusterVolume");
@@ -139,7 +152,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
 
     @Override
     public List<GlusterVolumeEntity> getAllWithQuery(String query) {
-        List<GlusterVolumeEntity> volumes = jdbcTemplate.query(query, volumeRowMapper);
+        List<GlusterVolumeEntity> volumes = getJdbcTemplate().query(query, volumeRowMapper);
         fetchRelatedEntities(volumes);
         return volumes;
     }
@@ -273,7 +286,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             if (brick.getVolumeId() == null) {
                 brick.setVolumeId(volume.getId());
             }
-            dbFacade.getGlusterBrickDao().save(brick);
+            glusterBrickDao.save(brick);
         }
     }
 
@@ -283,7 +296,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             if (option.getVolumeId() == null) {
                 option.setVolumeId(volume.getId());
             }
-            dbFacade.getGlusterOptionDao().save(option);
+            glusterOptionDao.save(option);
         }
     }
 
@@ -317,9 +330,9 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
      */
     private void fetchRelatedEntities(GlusterVolumeEntity volume) {
         if (volume != null) {
-            volume.setOptions(dbFacade.getGlusterOptionDao().getOptionsOfVolume(volume.getId()));
-            volume.setAccessProtocols(new HashSet<AccessProtocol>(getAccessProtocolsOfVolume(volume.getId())));
-            volume.setTransportTypes(new HashSet<TransportType>(getTransportTypesOfVolume(volume.getId())));
+            volume.setOptions(glusterOptionDao.getOptionsOfVolume(volume.getId()));
+            volume.setAccessProtocols(new HashSet<>(getAccessProtocolsOfVolume(volume.getId())));
+            volume.setTransportTypes(new HashSet<>(getTransportTypesOfVolume(volume.getId())));
             GlusterVolumeAdvancedDetails advancedDetails = fetchAdvancedDatails(volume.getId());
             if (advancedDetails != null) {
                 volume.setAdvancedDetails(advancedDetails);
@@ -328,7 +341,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             if (asyncTask != null) {
                 volume.setAsyncTask(asyncTask);
             }
-            List<GlusterBrickEntity> bricks = dbFacade.getGlusterBrickDao().getBricksOfVolume(volume.getId());
+            List<GlusterBrickEntity> bricks = glusterBrickDao.getBricksOfVolume(volume.getId());
             if (volume.getAsyncTask() != null && volume.getAsyncTask().getTaskId() != null) {
                 for (GlusterBrickEntity brick : bricks) {
                     if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null &&
@@ -338,14 +351,12 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                 }
             }
             volume.setBricks(bricks);
-            GlusterVolumeSnapshotConfig config =
-                    dbFacade.getGlusterVolumeSnapshotConfigDao()
+            GlusterVolumeSnapshotConfig config = glusterVolumeSnapshotConfigDao
                             .getConfigByVolumeIdAndName(volume.getClusterId(),
                                     volume.getId(),
                                     GlusterConstants.VOLUME_SNAPSHOT_MAX_HARD_LIMIT);
             if (config == null || StringUtils.isEmpty(config.getParamValue())) {
-                config =
-                        dbFacade.getGlusterVolumeSnapshotConfigDao()
+                config = glusterVolumeSnapshotConfigDao
                                 .getConfigByClusterIdAndName(volume.getClusterId(),
                                         GlusterConstants.VOLUME_SNAPSHOT_MAX_HARD_LIMIT);
             }

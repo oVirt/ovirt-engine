@@ -7,15 +7,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public class HostNicVfsConfigDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<HostNicVfsConfig, Guid> implements HostNicVfsConfigDao {
+@Named
+@Singleton
+public class HostNicVfsConfigDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<HostNicVfsConfig, Guid>
+        implements HostNicVfsConfigDao {
+
+    private final HostNicVfsConfigRowMapper nicVfsConfigRowMapper = new HostNicVfsConfigRowMapper();
 
     public HostNicVfsConfigDaoDbFacadeImpl() {
         super("HostNicVfsConfig");
@@ -36,12 +43,10 @@ public class HostNicVfsConfigDaoDbFacadeImpl extends MassOperationsGenericDaoDbF
 
     @Override
     protected RowMapper<HostNicVfsConfig> createEntityRowMapper() {
-        return HostNicVfsConfigRowMapper.INSTANCE;
+        return nicVfsConfigRowMapper;
     }
 
-    private static class HostNicVfsConfigRowMapper implements RowMapper<HostNicVfsConfig> {
-
-        public final static HostNicVfsConfigRowMapper INSTANCE = new HostNicVfsConfigRowMapper();
+    private class HostNicVfsConfigRowMapper implements RowMapper<HostNicVfsConfig> {
 
         private HostNicVfsConfigRowMapper() {
         }
@@ -53,7 +58,7 @@ public class HostNicVfsConfigDaoDbFacadeImpl extends MassOperationsGenericDaoDbF
             entity.setNicId(getGuid(rs, "nic_id"));
             entity.setAllNetworksAllowed(rs.getBoolean("is_all_networks_allowed"));
 
-            ((HostNicVfsConfigDaoDbFacadeImpl) DbFacade.getInstance().getHostNicVfsConfigDao()).fillNetworksAndLabelsDataOnConfig(entity);
+            fillNetworksAndLabelsDataOnConfig(entity);
 
             return entity;
         }

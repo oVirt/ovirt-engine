@@ -4,12 +4,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
+@Singleton
 public class GlusterVolumeSnapshotConfigDaoDbFacadeImpl extends BaseDAODbFacade implements GlusterVolumeSnapshotConfigDao {
 
     private static final RowMapper<GlusterVolumeSnapshotConfig> snapshotConfigRowMapper =
@@ -84,7 +89,7 @@ public class GlusterVolumeSnapshotConfigDaoDbFacadeImpl extends BaseDAODbFacade 
 
     @Override
     public List<GlusterVolumeSnapshotConfig> getAllWithQuery(String query) {
-        List<GlusterVolumeSnapshotConfig> configs = jdbcTemplate.query(query, snapshotConfigRowMapper);
+        List<GlusterVolumeSnapshotConfig> configs = getJdbcTemplate().query(query, snapshotConfigRowMapper);
         return configs;
     }
 

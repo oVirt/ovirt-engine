@@ -188,7 +188,7 @@ public class AuditLogDirector {
         }
     }
 
-    public static DbFacade getDbFacadeInstance() {
+    private DbFacade getDbFacadeInstance() {
         return DbFacade.getInstance();
     }
 

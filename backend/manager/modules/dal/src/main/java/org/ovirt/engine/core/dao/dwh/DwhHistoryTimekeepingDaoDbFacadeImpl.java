@@ -3,12 +3,17 @@ package org.ovirt.engine.core.dao.dwh;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeepingVariable;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.springframework.jdbc.core.RowMapper;
 
+@Named
+@Singleton
 public class DwhHistoryTimekeepingDaoDbFacadeImpl extends BaseDAODbFacade implements DwhHistoryTimekeepingDao {
     private static class DwhHistoryTimekeepingMapper implements RowMapper<DwhHistoryTimekeeping> {
         private static final DwhHistoryTimekeepingMapper instance = new DwhHistoryTimekeepingMapper();

@@ -2,11 +2,16 @@ package org.ovirt.engine.core.dao.network;
 
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
+@Singleton
 public class VmNetworkStatisticsDaoDbFacadeImpl extends NetworkStatisticsDaoDbFacadeImpl<VmNetworkStatistics>
         implements VmNetworkStatisticsDao {
 

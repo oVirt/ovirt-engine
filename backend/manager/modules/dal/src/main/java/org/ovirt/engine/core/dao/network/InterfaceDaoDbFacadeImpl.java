@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -20,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistic
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.ovirt.engine.core.dao.network.NetworkStatisticsDaoDbFacadeImpl.NetworkStatisticsParametersMapper;
@@ -29,7 +32,15 @@ import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
+@Singleton
 public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements InterfaceDao {
+
+    @Inject
+    private NetworkQoSDao networkQosDao;
+
+    @Inject
+    private HostNetworkQosDao hostNetworkQosDao;
 
     @Override
     public void saveStatisticsForVds(VdsNetworkStatistics stats) {
@@ -81,9 +92,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     /**
      * Update the {@link VdsNetworkStatistics} in the DB
      *
-     * @param callToUpdate
-     *            The call to use.
-     * @param statistics
+     * @param stats
      *            The host's network statistics data.
      */
     private void update(VdsNetworkStatistics stats) {
@@ -131,20 +140,19 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     }
 
     private void persistQosChanges(VdsNetworkInterface entity) {
-        HostNetworkQosDao qosDao = DbFacade.getInstance().getHostNetworkQosDao();
         Guid id = entity.getId();
-        HostNetworkQos oldQos = qosDao.get(id);
+        HostNetworkQos oldQos = hostNetworkQosDao.get(id);
         HostNetworkQos qos = entity.getQos();
         if (qos == null) {
             if (oldQos != null) {
-                qosDao.remove(id);
+                hostNetworkQosDao.remove(id);
             }
         } else {
             qos.setId(id);
             if (oldQos == null) {
-                qosDao.save(qos);
+                hostNetworkQosDao.save(qos);
             } else if (!qos.equals(oldQos)) {
-                qosDao.update(qos);
+                hostNetworkQosDao.update(qos);
             }
         }
     }
@@ -216,7 +224,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
-        DbFacade.getInstance().getNetworkQosDao().remove(id);
+        networkQosDao.remove(id);
         getCallsHandler().executeModification("Deletevds_interface", parameterSource);
     }
 
@@ -289,7 +297,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 getCustomMapSqlParameterSource().addValue("host_id", hostId).addValue("target_id", storageTargetId));
     }
 
-    private static final RowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =
+    private final RowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =
             new RowMapper<VdsNetworkInterface>() {
                 @SuppressWarnings("unchecked")
                 @Override
@@ -309,7 +317,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                     entity.setBootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));
-                    entity.setQos(DbFacade.getInstance().getHostNetworkQosDao().get(entity.getId()));
+                    entity.setQos(hostNetworkQosDao.get(entity.getId()));
                     entity.setQosOverridden(rs.getBoolean("qos_overridden"));
                     entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
                             HashSet.class));
@@ -366,7 +374,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
 
         @Override
         public Pair<Guid, String> mapRow(ResultSet rs, int arg1) throws SQLException {
-            return new Pair<Guid, String>(getGuid(rs, "vds_id"), rs.getString("network_name"));
+            return new Pair<>(getGuid(rs, "vds_id"), rs.getString("network_name"));
         }
     };
 

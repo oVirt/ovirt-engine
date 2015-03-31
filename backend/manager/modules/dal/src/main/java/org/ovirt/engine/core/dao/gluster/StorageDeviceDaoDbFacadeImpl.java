@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
@@ -13,6 +16,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 /**
  * Implementation of the DB Facade for Storage Device.
  */
+@Named
+@Singleton
 public class StorageDeviceDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<StorageDevice, Guid> implements
         StorageDeviceDao {
 

@@ -3,10 +3,15 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.ExternalVariable;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 
+@Named
+@Singleton
 public class ExternalVariableDaoDbFacadeImpl extends BaseDAODbFacade implements ExternalVariableDao {
 
     private static class ExternalVariableMapper implements RowMapper<ExternalVariable> {

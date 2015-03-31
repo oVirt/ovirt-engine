@@ -1,22 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-    xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
 
-    xsi:schemaLocation="
+       xsi:schemaLocation="
     http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="org.ovirt.engine" />
-    <context:annotation-config />
+    <context:component-scan base-package="org.ovirt.engine"/>
+    <context:annotation-config/>
 
-	<bean class="org.ovirt.engine.core.dal.dbbroker.DbFacade"/>
-	<bean class="org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator"/>
-	
-    <bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <constructor-arg ref="DataSource"/>
+    <bean id="dbFacadeLocator" class="org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator"/>
+
+    <bean id="sqlExceptionTranslator"
+          class="org.ovirt.engine.core.dal.dbbroker.CustomSQLErrorCodeSQLExceptionTranslator"/>
+
+    <bean id="dbEngineDialect" factory-bean="dbFacadeLocator" factory-method="produceDbEngineDialect"/>
+
+    <bean id="jdbcTemplate" factory-bean="dbFacadeLocator"
+          factory-method="produceJdbcTemplate">
+        <constructor-arg ref="engineDataSource"/>
+        <constructor-arg ref="dbEngineDialect"/>
+        <constructor-arg ref="sqlExceptionTranslator"/>
     </bean>
-    <bean id="DataSource" class="org.ovirt.engine.core.dao.BaseDAOTestCase" factory-method="getDataSource" name="java:/ENGINEDataSource"/>
+
+    <bean id="callsHandler" class="org.ovirt.engine.core.dal.dbbroker.SimpleJdbcCallsHandler">
+        <constructor-arg ref="dbEngineDialect"/>
+        <constructor-arg ref="jdbcTemplate"/>
+    </bean>
+
+    <bean id="dbFacade" class="org.ovirt.engine.core.dal.dbbroker.DbFacade" depends-on="daos">
+        <constructor-arg ref="jdbcTemplate"/>
+        <constructor-arg ref="dbEngineDialect"/>
+        <constructor-arg ref="callsHandler"/>
+        <constructor-arg ref="dbFacadeLocator"/>
+    </bean>
+
+    <bean name="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <constructor-arg ref="engineDataSource"/>
+    </bean>
+
+    <bean id="engineDataSource" class="org.ovirt.engine.core.dao.BaseDAOTestCase"
+          factory-method="getDataSource"/>
 </beans>
