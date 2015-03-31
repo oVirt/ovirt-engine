@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.NetworkAttachments;
 import org.ovirt.engine.api.resource.NetworkAttachmentsResource;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,7 +33,15 @@ public abstract class AbstractBackendNetworkAttachmentsResource
 
     @Override
     public NetworkAttachments list() {
+        verifyIfHostExistsToHandle404StatusCode();
         return mapCollection(getNetworkAttachments());
+    }
+
+    protected void verifyIfHostExistsToHandle404StatusCode() {
+        Guid hostId = getHostId();
+
+        //verify if host exists to handle 404 status code.
+        getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new IdQueryParameters(hostId), hostId.toString(), true);
     }
 
     @Override

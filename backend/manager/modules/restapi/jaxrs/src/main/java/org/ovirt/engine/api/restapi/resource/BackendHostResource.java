@@ -98,9 +98,13 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             performAction(VdcActionType.RefreshHost, new VdsActionParameters(guid));
         }
 
-        Host host = performGet(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(guid));
+        Host host = getVdsByVdsId();
         deprecatedAddLinksToAgents(host);
         return host;
+    }
+
+    private Host getVdsByVdsId() {
+        return performGet(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(guid));
     }
 
     @Override
@@ -215,6 +219,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Response setupNetworks(Action action) {
+        //verify if host exists to handle 404 status code.
+        getVdsByVdsId();
+
         HostSetupNetworksParameters parameters = toParameters(action);
         return performAction(VdcActionType.HostSetupNetworks, parameters, action);
     }

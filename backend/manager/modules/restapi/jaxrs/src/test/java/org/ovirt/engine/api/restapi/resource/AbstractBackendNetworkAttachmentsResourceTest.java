@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -17,7 +18,9 @@ import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -40,6 +43,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     @Test
     public void testAddNetworkAttachment() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpVerifyHostExpectations();
         setUpCreationExpectations(VdcActionType.AddNetworkAttachment,
                 NetworkAttachmentParameters.class,
                 new String[] {},
@@ -73,6 +77,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     public void testAddIncompleteParameters() throws Exception {
         org.ovirt.engine.api.model.NetworkAttachment model = createIncompleteNetworkAttachment();
         setUriInfo(setUpBasicUriExpectations());
+        setUpVerifyHostExpectations();
         control.replay();
         try {
             collection.add(model);
@@ -229,6 +234,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     }
 
     private void doTestBadAddNetworkAttachment(boolean canDo, boolean success, String detail) throws Exception {
+        setUpVerifyHostExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.AddNetworkAttachment,
                 NetworkAttachmentParameters.class,
                 new String[] {},
@@ -245,6 +251,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     }
 
     private void setUpNetworkAttachmentsQueryExpectations(Object failure) {
+        setUpVerifyHostExpectations();
         VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
         expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
         List<NetworkAttachment> entities = new ArrayList<>();
@@ -266,5 +273,34 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
         }
         expect(backend.runQuery(eq(listQueryType), anyObject(IdQueryParameters.class))).andReturn(
                 queryResult);
+    }
+
+    /**
+     * Prepares expectations so that any request to get a host by id will return a valid response, including a dummy
+     * host object.
+     */
+    private void setUpVerifyHostExpectations() {
+        VdcQueryReturnValue result = control.createMock(VdcQueryReturnValue.class);
+        VDS host = control.createMock(VDS.class);
+        expect(result.getSucceeded())
+                .andReturn(true)
+                .anyTimes();
+        expect(result.getReturnValue())
+                .andReturn(host)
+                .anyTimes();
+        expect(backend.runQuery(eq(VdcQueryType.GetVdsByVdsId), anyObject(IdQueryParameters.class)))
+                .andReturn(result)
+                .anyTimes();
+
+        VdcQueryReturnValue interfacesByVdsIdResult = control.createMock(VdcQueryReturnValue.class);
+        expect(interfacesByVdsIdResult.getSucceeded()).andReturn(true).anyTimes();
+
+        VdsNetworkInterface hostNic = new VdsNetworkInterface();
+        hostNic.setId(HOST_NIC_ID);
+        List<VdsNetworkInterface> hostNics = Collections.singletonList(hostNic);
+        expect(interfacesByVdsIdResult.getReturnValue()).andReturn(hostNics).anyTimes();
+        expect(backend.runQuery(eq(VdcQueryType.GetVdsInterfacesByVdsId), anyObject(IdQueryParameters.class)))
+                .andReturn(interfacesByVdsIdResult)
+                .anyTimes();
     }
 }

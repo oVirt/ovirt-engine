@@ -23,6 +23,8 @@ public class BackendHostNetworkAttachmentsResource extends AbstractBackendNetwor
 
     @Override
     protected List<org.ovirt.engine.core.common.businessentities.network.NetworkAttachment> getNetworkAttachments() {
+        verifyIfHostExistsToHandle404StatusCode();
+
         return getBackendCollection(VdcQueryType.GetNetworkAttachmentsByHostId, new IdQueryParameters(getHostId()));
     }
 
