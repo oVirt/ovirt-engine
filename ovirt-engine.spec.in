@@ -122,6 +122,7 @@
 %global vdsm_user vdsm
 
 %global openstack_java_version 3.1.1
+%global patternfly patternfly1
 
 # Macro to create an user:
 #
@@ -225,7 +226,7 @@ Requires:	java-openjdk > 1:1.7.0.45-2.4.3.3.el6
 Requires:	jpackage-utils
 Requires:	ovirt-image-uploader >= 3.6.0
 Requires:	ovirt-iso-uploader >= 3.6.0
-Requires:	patternfly1
+Requires:	%{patternfly}
 Requires:	postgresql-server >= 8.4.7
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
