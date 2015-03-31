@@ -178,11 +178,19 @@ public class VmsMonitoring {
                         auditLogDirector);
                 vmAnalyzers.add(vmAnalyzer);
                 vmAnalyzer.analyze();
+
+                if (vmAnalyzer.isExternalVm()) {
+                    externalVms.add(new Pair<>(vmAnalyzer.getDbVm(), vmAnalyzer.getVdsmVm()));
+                }
             } else {
                 log.debug("skipping VM '{}' from this monitoring cycle" +
                         " - the VM is locked by its VmManager ", getVmId(pair));
             }
         }
+
+        processExternallyManagedVms();
+        processVmsWithDevicesChange();
+        saveVmsToDb();
     }
 
     private void afterVMsRefreshTreatment() {
@@ -232,22 +240,13 @@ public class VmsMonitoring {
                 ResourceManager.getInstance().RemoveAsyncRunningVm(vmUpdater.getDbVm().getId());
             }
 
-            if (vmUpdater.isExternalVm()) {
-                externalVms.add(new Pair<>(vmUpdater.getDbVm(), vmUpdater.getVdsmVm()));
-            }
         }
-
-        // process all vms that went down
-        getVdsEventListener().processOnVmStop(movedToDownVms);
 
         // run all vms that crashed that marked with auto startup
         getVdsEventListener().runFailedAutoStartVMs(autoVmsToRun);
 
-        processExternallyManagedVms();
-
-        processVmsWithDevicesChange();
-
-        saveVmsToDb();
+        // process all vms that went down
+        getVdsEventListener().processOnVmStop(movedToDownVms);
     }
 
     private void processVmsWithDevicesChange() {
