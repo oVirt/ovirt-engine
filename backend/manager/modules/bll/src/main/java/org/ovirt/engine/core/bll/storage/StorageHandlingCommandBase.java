@@ -50,6 +50,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class StorageHandlingCommandBase<T extends StoragePoolParametersBase> extends CommandBase<T> {
 
+    private CinderBroker cinderBroker;
+
     protected StorageHandlingCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         init(parameters);
@@ -441,5 +443,12 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     @Override
     public VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) throws VdcBLLException {
         return super.runVdsCommand(commandType, parameters);
+    }
+
+    public CinderBroker getCinderBroker() {
+        if (cinderBroker == null) {
+            cinderBroker = new CinderBroker(getStorageDomainId(), getReturnValue().getExecuteFailedMessages());
+        }
+        return cinderBroker;
     }
 }
