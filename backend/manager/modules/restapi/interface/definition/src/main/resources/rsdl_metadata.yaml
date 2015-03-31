@@ -39,8 +39,6 @@ actions:
         description: deletes the virtual machine in the system for the given virtual machine id with optional arguments where the vm can be forced to be removed and option to just detach the disks associated with the vm.
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: false}
 - name: /vms/{vm:id}|rel=update
   description: update the virtual machine in the system for the given virtual machine id
   request:
@@ -112,8 +110,6 @@ actions:
           vm.migration.compressed: xs:string
         description: update the virtual machine in the system for the given virtual machine id with the values specified in the request
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/applications|rel=get
   description: get all the applications installed on the vm identified by the given id
   request:
@@ -331,7 +327,6 @@ actions:
         description: add a virtual machine to the system from a configuration - requires the configuration type and the configuration data
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/shutdown|rel=shutdown
   description: shutdown a virtual machine in the system identified by the given id
@@ -343,8 +338,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: shutdown a virtual machine in the system identified by the given id
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/stop|rel=stop
   description: stop a virtual machine in the system identified by the given id
   request:
@@ -355,8 +348,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: stop a virtual machine in the system identified by the given id
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/reboot|rel=reboot
   description: reboot a virtual machine in the system identified by the given id
   request:
@@ -364,8 +355,6 @@ actions:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/start|rel=start
   description: start a virtual machine in the system identified by the given id
   request:
@@ -400,7 +389,6 @@ actions:
         description: start a virtual machine in the system identified by the given id with the options specified in the request body
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Filter: {value: true|false, required: false}
 - name: /vms/{vm:id}/suspend|rel=suspend
   description: suspend a virtual machine in the system identified by the given id
@@ -412,8 +400,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: suspend a virtual machine in the system identified by the given id
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/export|rel=export
   description: export a virtual machine in the system identified by the given id to the export domain
   request:
@@ -426,8 +412,6 @@ actions:
           action.grace_period.expiry: 'xs:long'}
         description: export a virtual machine in the system identified by the given id to the export domain with the options specified in the request body
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/preview_snapshot|rel=preview_snapshot
   request:
     body:
@@ -442,24 +426,18 @@ actions:
             disk.image_id: xs:string
             disk.snapshot.id: xs:string
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/commit_snapshot|rel=commit_snapshot
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/undo_snapshot|rel=undo_snapshot
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/clone|rel=clone
   request:
     body:
@@ -467,8 +445,6 @@ actions:
       signatures:
       - mandatoryArguments: {action.vm.name: 'xs:string'}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/detach|rel=detach
   description: detach a virtual machine in the system identified by the given id from the storage domain
   request:
@@ -479,8 +455,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: detach a virtual machine in the system identified by the given id from the storage domain
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/migrate|rel=migrate
   description: migrate a virtual machine in the system identified by the given id to another host
   request:
@@ -492,8 +466,6 @@ actions:
           action.force: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.cluster.id: 'xs:string'}
         description: migrate a virtual machine in the system identified by the given id to another host with options specified in the request body
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/move|rel=move #deprecated, replaced by '/vms/{vm:id}/disks/{disk:id}/move|rel=move'
   description: This action is deprecated. Move a virtual machine's disk
   request:
@@ -504,8 +476,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: This action is deprecated. Move a virtual machine's disk to the target storage domain
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/ticket|rel=ticket
   description: Create a ticket for connecting to the VM using the display protocol.
   request:
@@ -563,8 +533,6 @@ actions:
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       current: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/cdroms|rel=add
   description: add a cdrom to a virtual machine identified by the given id
   request:
@@ -575,7 +543,6 @@ actions:
         description: add a cdrom to a virtual machine identified by the given id and attach a file to the cdrom
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/watchdogs|rel=get
   description: get all the watchdogs for the virtual machine identified by the given id
@@ -611,8 +578,6 @@ actions:
         optionalArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
         description: update the watchdog for the virtual machine identified by the given id with a new action and model as specified in the request data
     urlparams:
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/watchdogs|rel=add
   description: add a watchdog to the virtual machine identified by the given id
   request:
@@ -623,7 +588,6 @@ actions:
         description: add a watchdog to the virtual machine identified by the given id
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/disks|rel=get
   description: get all disks for a given virtual machine
@@ -675,8 +639,6 @@ actions:
           disk.read_only: xs:boolean
           description: update the size, boot flag and other parameters of the disk attached to the virtual machine
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/disks|rel=add
   description: add a new or existing disk to the virtual machine
   request:
@@ -721,7 +683,6 @@ actions:
         description: attach a disk snapshot to the virtual machine
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/disks/{disk:id}/activate|rel=activate
   description: activate a disk attached to a virtual machine
@@ -733,8 +694,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activate a disk attached to a virtual machine
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/disks/{disk:id}/deactivate|rel=deactivate
   description: deactivate a disk attached to a virtual machine
   request:
@@ -745,8 +704,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: deactivate a disk attached to a virtual machine
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/disks/{disk:id}/move|rel=move
   description: move a disk attached to a virtual machine to a different storage domain. If the virtual machine is running this will trigger a live storage migration
   request:
@@ -758,7 +715,6 @@ actions:
         description: move a disk attached to a virtual machine to a different storage domain. If the virtual machine is running this will trigger a live storage migration
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Filter: {value: true|false, required: false}
 - name: /vms/{vm:id}/disks/{disk:id}/export|rel=export
   request:
@@ -769,7 +725,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Filter: {value: true|false, required: false}
 - name: /vms/{vm:id}/nics|rel=get
   description: get all the network interfaces for a given virtual machine
@@ -812,8 +767,6 @@ actions:
         deprecated: true
         description: update the network interface for the given virtual machine with port mirroring options
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/nics/{nic:id}/activate|rel=activate #deprecated, replaced by 'add/edit'
   description: Deprecated, replaced by add/edit
   request:
@@ -821,16 +774,12 @@ actions:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/nics/{nic:id}/deactivate|rel=deactivate #deprecated, replaced by 'add/edit'
   description: Deprecated, replaced by add/edit
   request:
     body:
       parameterType: Action
       signatures: []
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
     urlparams: {}
 - name: /vms/{vm:id}/nics|rel=add
   description: add a new network interface to the given virtual machine
@@ -847,7 +796,6 @@ actions:
         description: add a new network interface to the given virtual machine with port mirroring options
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/permissions|rel=get
   description: get all the permissions for a given virtual machine
@@ -886,7 +834,6 @@ actions:
         description: add a new group level permission for a given virtual machine
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/statistics|rel=get
   description: get the memory and cpu statistics for a given virtual machine
@@ -943,7 +890,6 @@ actions:
         description: create a new snapshot for a given virtual machine
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/restore|rel=restore
   description: restore the virtual machine from a given snapshot
@@ -955,8 +901,6 @@ actions:
         optionalArguments: {action.restore_memory: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.disks.disk--COLLECTION: {disk.id: 'xs:string', disk.image_id: 'xs:string'}}
         description: restore the virtual machine from a given snapshot
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/cdroms|rel=get
   description: get the list of cdroms attached to the virtual machine at the time the snapshot was created
   request:
@@ -1040,7 +984,6 @@ actions:
         description: add a new tag to the virtual machine
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/sessions|rel=get
   description: get the open user-sessions of this VM
@@ -1066,8 +1009,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: enable or disable maintenance mode for this virtual machine
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /disks|rel=get
   description: get a list of disks in the system
   request:
@@ -1105,7 +1046,6 @@ actions:
           action.grace_period.expiry: xs:long
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Filter: {value: true|false, required: false}
 - name: /disks/{disk:id}/move|rel=move
   description: move a disk to a different storage domain
@@ -1121,7 +1061,6 @@ actions:
         description: move a disk to a different storage domain
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Filter: {value: true|false, required: false}
 - name: /disks/{disk:id}/copy|rel=copy
   description: copy a disk to a different storage domain
@@ -1137,7 +1076,6 @@ actions:
         description: copy a disk to a different storage domain
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Filter: {value: true|false, required: false}
 - name: /disks|rel=add
   description: add a new disk to the system
@@ -1175,7 +1113,6 @@ actions:
         description: add a new lun disk to the system, this operation does not require size but requires lun connection details
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /disks/{disk:id}/statistics|rel=get
   description: get the disk statistics for the specified disk in the system
@@ -1253,8 +1190,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {network.display: 'xs:boolean', network.usages.usage--COLLECTION: {usage: 'xs:string'}}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /datacenters/{datacenter:id}/networks|rel=add
   description: add a new network to the datacenter
   request:
@@ -1277,7 +1212,6 @@ actions:
         description: add a new network to the datacenter
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels|rel=get
   description: get the labels of a network
@@ -1296,7 +1230,6 @@ actions:
         description: add a new label to the network
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels/{label:id}|rel=get
   description: get a specific label of a network
@@ -1359,8 +1292,6 @@ actions:
                            qos.outbound_peak: 'xs:int',
                            qos.outbound_burst: 'xs:int'}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /datacenters/{datacenter:id}/qoss|rel=add
   description: add a new QoS to the datacenter
   request:
@@ -1385,7 +1316,6 @@ actions:
         description: add a new QoS to the datacenter
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /storagedomains|rel=get
   description: get storage domains in the system
@@ -1419,8 +1349,6 @@ actions:
         description: delete the specified storage domain in the system with options to format the storage domain
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /storagedomains/{storagedomain:id}/isattached|rel=isattached
   description: Querying if the Storage Domain is already attached to a Data Center by the is_attached boolean field, which is part of the storage server. IMPORTANT, Executing this API will cause the Host to disconnect from the Storage Domain.
   request:
@@ -1432,8 +1360,6 @@ actions:
         description:
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /storagedomains/{storagedomain:id}|rel=update
   description: update the storage domain
   request:
@@ -1451,8 +1377,6 @@ actions:
         description: update the storage domain
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /storagedomains|rel=add
   description: add a new storage domain to the system
   request:
@@ -1491,7 +1415,6 @@ actions:
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /storagedomains/{storagedomain:id}/files|rel=get
   description: get the files stored in the iso storage domain
@@ -1531,8 +1454,6 @@ actions:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.import_as_template: 'xs:boolean', action.cluster.id|name: 'xs:string'}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /storagedomains/{storagedomain:id}/permissions|rel=get
   description: get the list of permissions for the storage domain
   request:
@@ -1570,7 +1491,6 @@ actions:
         description: add a new group level permission on the storage domain
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}|rel=delete
   description: delete the specified template from the export or data domain
@@ -1607,8 +1527,6 @@ actions:
         optionalArguments: {action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.template.name: 'xs:string'}
         description: Register the Template means importing the Template from the data domain, by inserting the configuration of the Template and disks into the DB without the copy process
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/import|rel=import
   description: import the template from the export or data domain
   request:
@@ -1619,8 +1537,6 @@ actions:
         optionalArguments: {action.storage_domain.id|name: 'xs:string', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.template.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}, action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: import the template from the export or data domain identified by storagedomain-identifier into the destination storage domain identified by storage_domain.id|name
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/disks|rel=get
   description: get the list of disks attached to the template in the export or data domain
   request:
@@ -1669,8 +1585,6 @@ actions:
         optionalArguments: {action.clone: 'xs:boolen', action.vm.name: 'xs:string'}
         description: Register the VM means importing the VM from the data domain, by inserting the configuration of the VM and disks into the DB without the copy process
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/import|rel=import
   description: import the specified virtual machine in the storage domain into the system
   request:
@@ -1681,8 +1595,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean',action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.vm.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}, action.grace_period.expiry: 'xs:long'}
         description: import the specified virtual machine from the source storagedomain identified by storagedomain-identifier into the destination storage domain identified by storage_domain.id|name
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /storagedomains/{storagedomain:id}/disksnapshots|rel=get
   description: get the list of disk snapshots in the storage domain
   request:
@@ -1773,7 +1685,6 @@ actions:
         optionalArguments: {}
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}|rel=delete
   description: get the details of the specified cluster in the system
@@ -1800,8 +1711,6 @@ actions:
         cluster.management_network.id|name: 'xs:string'}
         description: update the specified cluster in the system. The capabilities like virt service, cluster service, tarnsparent huge pages etc can be changed.
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters|rel=add
   description: add a new cluster to the system
   request:
@@ -1819,7 +1728,6 @@ actions:
         description: add a new cluster to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/networks|rel=get
   description: get the list of networks in the cluster
@@ -1854,8 +1762,6 @@ actions:
         optionalArguments: {network.display: 'xs:boolean', network.usages.usage--COLLECTION: {usage: 'xs:string'}}
         description: update the specified network in the cluster with network usage. Display is provided here for backwards compatibility.
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/networks|rel=add
   description: add a new network to the cluster
   request:
@@ -1867,7 +1773,6 @@ actions:
         description: add a new network to the cluster
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/permissions|rel=get
   description: get the list of permissions on the cluster
@@ -1906,7 +1811,6 @@ actions:
         description: add a new group level permission on the cluster
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /macpools|rel=get
   description: get a list of mac pools in the system
@@ -1939,7 +1843,6 @@ actions:
         description: add the specified mac pool into the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /macpools/{macpool:id}|rel=delete
   description: delete the specified mac pool from the system
@@ -1968,8 +1871,6 @@ actions:
           macpool.ranges.range--COLLECTION: {range.from: 'xs:string', range.to: 'xs:string'}
         description: update the specified mac pool in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /datacenters/{datacenter:id}|rel=update
   description: update the specified data center in the system
   request:
@@ -1990,8 +1891,6 @@ actions:
           datacenter.mac_pool.id: xs:string
         description: update the specified data center in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /datacenters|rel=get
   description: get a list of data centers in the system
   request:
@@ -2025,8 +1924,6 @@ actions:
         description: delete the specified data center in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /datacenters|rel=add
   description: add a new data center to the system
   request:
@@ -2047,7 +1944,6 @@ actions:
         description: add a new data center to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/permissions|rel=get
   description: get the list of permissions on the data center
@@ -2085,7 +1981,6 @@ actions:
         description: add a new role permission on the data center
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains|rel=get
   description: get the list of storage domains in a data center
@@ -2121,7 +2016,6 @@ actions:
         description: add a new storage domain to the data center
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/activate|rel=activate
   description: activate the specified storage domain in the data center
@@ -2133,8 +2027,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activate the specified storage domain in the data center
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/deactivate|rel=deactivate
   description: deactivate the specified storage domain in the data center
   request:
@@ -2145,8 +2037,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: deactivate the specified storage domain in the data center
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /datacenters/{datacenter:id}/clusters|rel=get
   description: get the list of clusters in the data center
   request:
@@ -2189,8 +2079,6 @@ actions:
         cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string', cluster.ksm.enabled: 'xs:boolean'}
         description: update specified cluster in the data center
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /datacenters/{datacenter:id}/clusters|rel=add
   description: add a new cluster to the data center
   request:
@@ -2208,7 +2096,6 @@ actions:
         description: add a new cluster to the data center
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=get
   description: get the list of networks for a cluster in a data center
@@ -2243,8 +2130,6 @@ actions:
         optionalArguments: {network.display: 'xs:boolean', network.usages.usage--COLLECTION: {usage: 'xs:string'}}
         description: update the specified network in a cluster in the specified data center. Display is provided here for backwards compatibility.
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=add
   description: add a new network to a cluster in the specified data center.
   request:
@@ -2256,7 +2141,6 @@ actions:
         description: add a new network to a cluster in the specified data center.
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=get
   description: get the list of permissions on the cluster in the specified data center.
@@ -2295,7 +2179,6 @@ actions:
         description: add a new group level permission on the cluster in the specified data center.
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /domains|rel=get
   description: get a list of domains in the system
@@ -2367,8 +2250,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: undoes the delete operation performed on the events
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /events/{event:id}|rel=get
   description: get the details of the specified event in the system
   request:
@@ -2406,7 +2287,6 @@ actions:
         description: add a new event to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /groups/{group:id}|rel=get
   description: get the details of the specified group in the system
@@ -2433,8 +2313,6 @@ actions:
         optionalArguments: {group.namespace: 'xs:string', group.principal: 'xs:string'}
         description: add a new group to the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /groups/{group:id}/permissions|rel=get
   description: get list of permissions for the group in the system
   request:
@@ -2487,7 +2365,6 @@ actions:
         description: add a new permission on the template to the group in the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /groups/{group:id}/roles|rel=get
   description: get the list of roles assigned to the specified group
@@ -2537,7 +2414,6 @@ actions:
         optionalArguments: {}
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /groups/{group:id}/tags|rel=get
   description: get the list of tags attached to a given group
@@ -2572,7 +2448,6 @@ actions:
         optionalArguments: {}
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /hosts|rel=get
   description: get the list of hosts in the system
@@ -2615,8 +2490,6 @@ actions:
         description: delete the specified host in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: false}
 - name: /hosts/{host:id}|rel=update
   description: update the specified host in the system
   request:
@@ -2651,8 +2524,6 @@ actions:
         description: update the specified host in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts|rel=add
   description: add a new host to the system
   request:
@@ -2684,7 +2555,6 @@ actions:
         description: add a new host to the system providing the ssh password or fingerprint
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/activate|rel=activate
   description: activate the specified host in the system
@@ -2696,8 +2566,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activate the specified host in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/forceselectspm|rel=forceselectspm
   description: force the specified to be selected as storage pool manager
   request:
@@ -2708,8 +2576,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: force the specified to be selected as storage pool manager
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/approve|rel=approve
   description: approve specified host to be added to the engine
   request:
@@ -2726,8 +2592,6 @@ actions:
           host.ssh.user.user_name: 'xs:string', host.ssh.user.password: 'xs:string'}
         description: approve specified host to be added to the engine by using ssh authentication. this occurs when the host registers itself with the engine
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/commitnetconfig|rel=commitnetconfig
   description: commit the changes made to network configuration of the host
   request:
@@ -2738,8 +2602,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: commit the changes made to network configuration of the host
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/deactivate|rel=deactivate
   description: deactivate the specified host
   request:
@@ -2750,8 +2612,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.reason: 'xs:string'}
         description: deactivate the specified host
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/fence|rel=fence
   description: perform fencing operation (start/stop/status) on the host. 
   request:
@@ -2762,8 +2622,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: perform fencing operation (start/stop/status) on the host.
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/install|rel=install
   description: install vdsm and other packages required to get the host ready to be used in the engine
   request:
@@ -2790,8 +2648,6 @@ actions:
           action.host.override_iptables: xs:boolean
         description: install vdsm and other packages required to get the host ready to be used in the engine providing thre ssh password
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/iscsidiscover|rel=iscsidiscover
   description: initiate the command to discover the iscsi targets and map the targets to the storage server connections
   request:
@@ -2802,8 +2658,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: initiate the command to discover the iscsi targets and map the targets to the storage server connections
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/iscsilogin|rel=iscsilogin
   description: login to the specified iscsi target at the specified address
   request:
@@ -2814,8 +2668,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: login to the specified iscsi target at the specified address
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/unregisteredstoragedomainsdiscover|rel=unregisteredstoragedomainsdiscover
   description: Discover the Storage Domains which are candidiates to be imported to the setup
   request:
@@ -2825,8 +2677,6 @@ actions:
       - optionalArguments: {action.iscsi.address: 'xs:string', action.iscsi_target: 'xs:string'}
         description: Discover the Storage Domains which are candidiates to be imported to the setup
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/refreshcapabilities|rel=refreshcapabilities
   description: refresh the capabilities of the host
   request:
@@ -2837,8 +2687,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: refresh the capabilities of the host
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/katelloerrata|rel=get
   description: get the list of errata available for the host
   request:
@@ -2898,8 +2746,6 @@ actions:
         description: update the specified network interface for the host
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/nics|rel=add
   description: add a new network interface for the host
   request:
@@ -2913,7 +2759,6 @@ actions:
         description: add a new network interface for the host
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/nics/setupnetworks|rel=setupnetworks
   description: initiate the command to setup networks for the network interface card of the specified host
@@ -2935,8 +2780,6 @@ actions:
           action.force: xs:boolean
         description: initiate the command to setup networks for the network interface card of the specified host
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/nics/{nic:id}/attach|rel=attach
   description: attach the network interface card to the specified host
   request:
@@ -2947,8 +2790,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: attach the network interface card to the specified host
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/nics/{nic:id}/detach|rel=detach
   description: detach the network interface card from the specified host
   request:
@@ -2959,8 +2800,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: detach the network interface card from the specified host
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /hosts/{host:id}/nics/{nic:id}/statistics|rel=get
   description: get the statistics for the network interface card attached to the specified host
   request:
@@ -2993,7 +2832,6 @@ actions:
         description: add a new label to the interface
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/nics/{nic:id}/labels/{label:id}|rel=get
   description: get a specific label of an interface
@@ -3047,7 +2885,6 @@ actions:
         description: add a new group level permission for the host
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/statistics|rel=get
   description: get the statistics for the host
@@ -3111,7 +2948,6 @@ actions:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/fenceagents|rel=get
   description: get all fencing agents defined for this host
@@ -3130,7 +2966,6 @@ actions:
         optionalArguments: {agent.port: 'xs:int', agent.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=get
   description: get the fencing agent with the specified ID.  
@@ -3149,7 +2984,6 @@ actions:
         optionalArguments: {agent.address: 'xs:string', agent.order: 'xs:int', agent.type: 'xs:string', agent.username: 'xs:string', agent.password: 'xs:string', agent.port: 'xs:int', agent.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=delete
   description: delete the specified fencing agent
@@ -3196,8 +3030,6 @@ actions:
           network.display: 'xs:boolean', network.stp: 'xs:boolean', network.mtu: 'xs:int'}
         description: update the specified network in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /networks|rel=add
   description: add a new network to the system
   request:
@@ -3223,7 +3055,6 @@ actions:
         description: add a new network to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /networks/{network:id}/permissions|rel=get
   description: get the list of all permissions on a network in the system
@@ -3262,7 +3093,6 @@ actions:
         description: add a new group level permission on a network in the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /networks/{network:id}/vnicprofiles|rel=get
   description: get the list of all virtual network interface card profiles for the network
@@ -3299,7 +3129,6 @@ actions:
         description: add a new virtual network interface card profile for the network
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /networks/{network:id}/labels|rel=get
   description: get the labels of a network
@@ -3318,7 +3147,6 @@ actions:
         description: add a new label to the network
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /networks/{network:id}/labels/{label:id}|rel=get
   description: get a specific label of a network
@@ -3369,8 +3197,6 @@ actions:
         vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
         description: update the specified virtual network interface card profile in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vnicprofiles|rel=add
   description: add a new virtual network interface card profile to the system
   request:
@@ -3383,7 +3209,6 @@ actions:
         description: add a new virtual network interface card profile to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /vnicprofiles/{vnicprofile:id}/permissions|rel=get
   description: get the list of all permissions on the virtual network interface card profile in the system
@@ -3422,7 +3247,6 @@ actions:
         description: add a new group level permission on the virtual network interface card profile in the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /roles|rel=get
   description: get the list of all roles in the system
@@ -3458,7 +3282,6 @@ actions:
         description: add a new role to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /roles/{role:id}|rel=update
   description: update the specified role in the system
@@ -3470,8 +3293,6 @@ actions:
         optionalArguments: {role.permits.permit--COLLECTION: {permit.id: 'xs:string'}, role.description: 'xs:string'}
         description: update the specified role in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /roles/{role:id}/permits|rel=get
   description: get the list of all permits for the specified role in the system
   request:
@@ -3505,7 +3326,6 @@ actions:
         optionalArguments: {}
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /bookmarks|rel=get
   description: get the list of bookmarks in the system
@@ -3537,8 +3357,6 @@ actions:
       - mandatoryArguments: {bookmark.name: 'xs:string', bookmark.value: 'xs:string'}
         description: update the name, value of the specified bookmark in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /bookmarks|rel=add
   description: add a new bookmark to the system
   request:
@@ -3547,8 +3365,6 @@ actions:
       signatures:
       - mandatoryArguments: {bookmark.name: 'xs:string', bookmark.value: 'xs:string'}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /tags|rel=get
   description: get the list of tags in the system
   request:
@@ -3582,8 +3398,6 @@ actions:
         optionalArguments: {tag.name: 'xs:string', tag.description: 'xs:string', tag.parent.tag.id|name: 'xs:string'}
         description: update the name, description or parent tag of the specified tag in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /tags|rel=add
   description: add a new tag to the system
   request:
@@ -3593,8 +3407,6 @@ actions:
       - mandatoryArguments: {tag.name: 'xs:string'}
         optionalArguments: {tag.description: 'xs:string', tag.parent.tag.id|name: 'xs:string'}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /templates|rel=get
   description: get the list of all templates in the system
   request:
@@ -3688,8 +3500,6 @@ actions:
           template.migration.compressed: xs:string
         description: update the specified template in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /templates|rel=add
   description: add a new template to the system
   request:
@@ -3759,7 +3569,6 @@ actions:
         description: add a new template to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /templates/{template:id}/export|rel=export
   description: export the specified template to the export domain
@@ -3772,8 +3581,6 @@ actions:
           action.grace_period.expiry: 'xs:long'}
         description: export the specified template to the export domain
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /templates/{template:id}/cdroms|rel=get
   description: get the list of cdroms attached to the specified template
   request:
@@ -3822,8 +3629,6 @@ actions:
         optionalArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
         description: update the watchdog for the template identified by the given id with a new action and model as specified in the request data
     urlparams:
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /templates/{template:id}/watchdogs|rel=add
   description: add a watchdog to the template identified by the given id
   request:
@@ -3834,7 +3639,6 @@ actions:
         description: add a watchdog to the template identified by the given id
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /templates/{template:id}/disks|rel=get
   description: get the list of disks attached to the template
@@ -3862,8 +3666,6 @@ actions:
         optionalArguments: {action.storage_domain.id: 'xs:string', action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: false}
 - name: /templates/{template:id}/disks/{disk:id}/copy|rel=copy
   description: copy the specified disk attached to the template to a specific storage domain
   request:
@@ -3875,7 +3677,6 @@ actions:
         description: copy the specified disk attached to the template to a specific storage domain
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Filter: {value: true|false, required: false}
 - name:  /templates/{template:id}/disks/{disk:id}/export|rel=export
   request:
@@ -3886,7 +3687,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Filter: {value: true|false, required: false}
 - name: /templates/{template:id}/nics|rel=get
   description: get the list of network interface cards attached to the template
@@ -3911,7 +3711,6 @@ actions:
         description: add a new network interface card to the template using a network with optional port mirroring options. This has been deprecated
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /templates/{template:id}/nics/{nic:id}|rel=get
   description: get the details of the specified network interface card attached to the template
@@ -3940,8 +3739,6 @@ actions:
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
         deprecated: true
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /templates/{template:id}/permissions|rel=get
   description: get the list of all permissions for the specified template
   request:
@@ -3979,7 +3776,6 @@ actions:
         description: add a new role permission on the template
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /templates/{template:id}/tags|rel=get
   description: get the list of tags added to the template
@@ -4014,7 +3810,6 @@ actions:
         description: add a new tag to the virtual machine
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /users|rel=get
   description: get the list of all users registered in the system
@@ -4046,7 +3841,6 @@ actions:
         description: add a new user to the specified domain with the specified user name
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /users/{user:id}|rel=delete
   description: delete the from the domain
@@ -4108,7 +3902,6 @@ actions:
         description: add a new tole permission for the user on the template
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /users/{user:id}/roles|rel=get
   description: get the list of roles assigned to the user
@@ -4159,7 +3952,6 @@ actions:
         description: add a new permit for the role assigned to the user
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /users/{user:id}/tags|rel=get
   description: get the list of tags attached to the user
@@ -4194,7 +3986,6 @@ actions:
         description: add a new tag to the user
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /vmpools|rel=get
   description: get the list of all virtual machine pools in the system
@@ -4237,8 +4028,6 @@ actions:
           vmpool.description: 'xs:string'}
         description: update the specified virtual machine pool in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vmpools/{vmpool:id}/allocatevm|rel=allocatevm
   description: attach the user to a vm from the vmpool and run the vm
   request:
@@ -4248,8 +4037,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vmpools|rel=add
   description: add anew vm pool to the system
   request:
@@ -4263,7 +4050,6 @@ actions:
         description: add a new vm pool to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /vmpools/{vmpool:id}/permissions|rel=get
   description: get the list of permissions for the specified vm pool
@@ -4302,7 +4088,6 @@ actions:
         description: add a new group level permission on the vm pool
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/glustervolumes|rel=get
   description: get the list of gluster volumes attached to the cluster
@@ -4332,7 +4117,6 @@ actions:
     urlparams:
       force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/start|rel=start
   description: start the gluster volume attached to the cluster
@@ -4344,8 +4128,6 @@ actions:
         optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: start the gluster volume attached to the cluster with an optional argument to force the operation
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stop|rel=stop
   description: stop the gluster volume attached to the cluster
   request:
@@ -4356,8 +4138,6 @@ actions:
         optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: stop the gluster volume attached to the cluster with an optional argument to force the operation
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/rebalance|rel=rebalance
   description: invoke the rebalance command on the gluster volume attached to the cluster
   request:
@@ -4368,8 +4148,6 @@ actions:
         optionalArguments: {action.fix_layout: 'xs:boolean', action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: invoke the rebalance command on the gluster volume attached to the cluster with optional arguments to fix the lay and force the operation
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stoprebalance|rel=stoprebalance
   description: invoke the stop rebalance command on the gluster volume attached to the cluster
   request:
@@ -4380,8 +4158,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: invoke the stop rebalance command on the gluster volume attached to the cluster
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/setoption|rel=setoption
   description: set an option for the gluster volume attached to the cluster
   request:
@@ -4391,8 +4167,6 @@ actions:
       - mandatoryArguments: {action.option.name: 'xs:string', action.option.value: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         optionalArguments: {}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetoption|rel=resetoption
   description: reset an option for the gluster volume attached to the cluster
   request:
@@ -4403,8 +4177,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: reset an option for the gluster volume attached to the cluster with mandatory option to force the operation
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetalloptions|rel=resetalloptions
   description: resets all options for the gluster volume attached to the cluster
   request:
@@ -4415,8 +4187,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: resets all options for the gluster volume attached to the cluster
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/startprofile|rel=startprofile
   description: start profile on the gluster volume attached to the cluster
   request:
@@ -4427,8 +4197,6 @@ actions:
         optionalArguments: {}
         description: start profiling on the gluster volume attached to the cluster
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stopprofile|rel=stopprofile
   description: stop the profiling of gluster volume attached to the cluster
   request:
@@ -4439,8 +4207,6 @@ actions:
         optionalArguments: {}
         description: stop profiling on the gluster volume attached to the cluster
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/profilestatistics|rel=get
   description: get the profiling statistics once profiling is turned on for a volume
   request:
@@ -4471,7 +4237,6 @@ actions:
     urlparams:
       force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}|rel=get
   description: get the details of the specified brick in the gluster volume attached to the cluster
@@ -4493,8 +4258,6 @@ actions:
         optionalArguments: {replica_count: 'xs:unsignedShort'}
         description: delete bricks in the gluster volume attached to the cluster
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/migrate|rel=migrate
   description: migrate the data from the brick to others and mark for deletion
   request:
@@ -4506,8 +4269,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: migrate the data from the brick to others and mark for deletion
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/stopmigrate|rel=stopmigrate
   description: stops the bricks migration task started on on volume
   request:
@@ -4519,8 +4280,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: stops the bricks migration task started on on volume
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/activate|rel=activate
   description: activates the bricks post migration of data for reuse
   request:
@@ -4532,8 +4291,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activates the bricks post migration of data for reuse
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/replace|rel=replace #deprecated, replaced by 'migrate/delete'
   description: This is deprecated.Use migrate and delete instead.
   request:
@@ -4545,8 +4302,6 @@ actions:
         description: replace the specified brick with a new brick directory in the gluster volume attached to the cluster
         deprecated: true
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics|rel=get
   description: get the statistics for the specified brick in the gluster volume attached to the cluster
   request:
@@ -4623,7 +4378,6 @@ actions:
     urlparams:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=get
   description: get the list of all disks in the storage domain in the data center
@@ -4645,7 +4399,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk in the storage domain in the data center
@@ -4664,7 +4417,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk from the storage domain in the data center
@@ -4709,7 +4461,6 @@ actions:
     urlparams:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 
 - name: /jobs|rel=get
@@ -4740,7 +4491,6 @@ actions:
         description: add a new external job to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 
 - name: /jobs/{job:id}/end|rel=end
@@ -4753,8 +4503,6 @@ actions:
         optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: end the specified external job in the system with an optional argument to force the operation
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 
 - name: /jobs/{job:id}/clear|rel=clear
   description: clear the specified external job in the system
@@ -4766,8 +4514,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: clear the specified external job in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 
 - name: /jobs/{job:id}/steps|rel=get
   description: get the list of all steps for the external job in the system
@@ -4797,7 +4543,6 @@ actions:
         description: add a new step to the external job
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 
 - name: /jobs/{job:id}/steps/{step:id}/end|rel=end
@@ -4810,8 +4555,6 @@ actions:
         optionalArguments: {action.force: 'xs:boolean', action.status.state: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: invoke the command to end the specified step of an external job with an optional agrument to force the operation
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 
 - name: /jobs/{job:id}/steps/{step:id}/statistics|rel=get
   description: get the detailed step status for monitoring
@@ -4857,8 +4600,6 @@ actions:
         optionalArguments:  {action.host.id|name: 'xs:string'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 
 - name: /storageconnections/{storageconnection:id}|rel=update
   description: update the specified storage connection in the system
@@ -4882,8 +4623,6 @@ actions:
         optionalArguments:  {storage_connection.path: 'xs:string'}
         description: update the specified local storage connection in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 
 - name: /storageconnections|rel=add
   description: add a new storage connection to the system
@@ -4904,7 +4643,6 @@ actions:
         optionalArguments:  {}
         description: add a local storage connection to the system
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 
 - name: /clusters/{cluster:id}/glusterhooks|rel=get
@@ -4934,8 +4672,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}/disable|rel=disable
   request:
     body:
@@ -4944,8 +4680,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}/resolve|rel=resolve
   request:
     body:
@@ -4954,8 +4688,6 @@ actions:
       - mandatoryArguments: {action.resolution_type: 'xs:string'}
         optionalArguments: {action.host.id|name: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 
 - name: /permissions|rel=get
   description: get the list of permissions on the system
@@ -4994,7 +4726,6 @@ actions:
         description: add a new group level permission on the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 
 - name: /instancetypes|rel=get
@@ -5053,7 +4784,6 @@ actions:
         description: add a new instance type to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 
 - name: /clusters/{cluster:id}/affinitygroups|rel=get
@@ -5087,8 +4817,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {affinitygroup.name: 'xs:string', affinitygroup.positive: 'xs:boolean', affinitygroup.enforcing: 'xs:boolean'}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /clusters/{cluster:id}/affinitygroups|rel=add
   description: add a new affinity group to the cluster
   request:
@@ -5100,7 +4828,6 @@ actions:
         description: add a new affinity group to the cluster
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}/vms|rel=get
   description: get the list of vms per affinity group
@@ -5128,7 +4855,6 @@ actions:
         description: add a vm to affinity group
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/numanodes|rel=get
   description: get the list of NUMA nodes for the host
@@ -5198,8 +4924,6 @@ actions:
         description: update the specified virtual NUMA node for the vm
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /vms/{vm:id}/numanodes|rel=add
   description: add a new virtual NUMA node for the vm
   request:
@@ -5212,7 +4936,6 @@ actions:
         description: add a new virtual NUMA node for the vm
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /schedulingpolicyunits|rel=get
   description: get a list of scheduling policy units in the system
@@ -5242,8 +4965,6 @@ actions:
       signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /schedulingpolicies/{schedulingpolicy:id}|rel=update
   description: update the specified user defined scheduling policy in the system
   request:
@@ -5257,8 +4978,6 @@ actions:
           schedulingpolicy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'}
         description: update the specified user defined scheduling policy in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /schedulingpolicies|rel=get
   description: get a list of scheduling policies in the system
   request:
@@ -5290,8 +5009,6 @@ actions:
         description: delete the specified user defined scheduling policy in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /schedulingpolicies|rel=add
   description: add a new scheduling policy to the system
   request:
@@ -5305,7 +5022,6 @@ actions:
         description: add a new scheduling policy to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}/filters|rel=get
   description: get a list of specified scheduling policy filters
@@ -5340,8 +5056,6 @@ actions:
         description: delete the specified scheduling policy in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /schedulingpolicies/{schedulingpolicy:id}/filters|rel=add
   description: add a filter to a specified user defined scheduling policy
   request:
@@ -5354,7 +5068,6 @@ actions:
         description: add a new scheduling policy to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}/weights|rel=get
   description: get a list of specified scheduling policy weights
@@ -5389,8 +5102,6 @@ actions:
         description: delete a weight from specified user defined scheduling policy
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /schedulingpolicies/{schedulingpolicy:id}/weights|rel=add
   description: add a weight to a specified user defined scheduling policy
   request:
@@ -5403,7 +5114,6 @@ actions:
         description: add a weight to a specified user defined scheduling policy
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}/balances|rel=get
   description: get a list of specified scheduling policy balance modules
@@ -5438,8 +5148,6 @@ actions:
         description: delete a balance module from specified user defined scheduling policy
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /schedulingpolicies/{schedulingpolicy:id}/balances|rel=add
   description: add a balance module to a specified user defined scheduling policy
   request:
@@ -5450,7 +5158,6 @@ actions:
         description: add a balance module to a specified user defined scheduling policy
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/iscsibonds|rel=get
   description: get all iSCSI Bonds for the specified datacenter
@@ -5470,7 +5177,6 @@ actions:
         description: add a new iSCSI Bond to the datacenter
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}|rel=update
   description: update the specified iSCSI Bond
@@ -5483,7 +5189,6 @@ actions:
        description: update the specified iSCSI Bond
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}|rel=delete
   description: remove the specified iSCSI Bond from the datacenter
@@ -5569,8 +5274,6 @@ actions:
                            diskprofile.qos.id: 'xs:string'}
         description: update the specified disk profile in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /diskprofiles|rel=add
   description: add a new disk profile to the system
   request:
@@ -5583,7 +5286,6 @@ actions:
         description: add a new disk profile to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /diskprofiles/{diskprofile:id}/permissions|rel=get
   description: get the list of all permissions on the disk profile in the system
@@ -5622,7 +5324,6 @@ actions:
         description: add a new group level permission on the disk profile in the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /storagedomains/{storagedomain:id}/diskprofiles|rel=get
   description: get the list of all disk profiles for the storage domain
@@ -5659,7 +5360,6 @@ actions:
         description: add a new disk profile for the storage domain
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /cpuprofiles|rel=get
   description: get the list of all cpu profiles in the system
@@ -5696,8 +5396,6 @@ actions:
                            cpuprofile.qos.id: 'xs:string'}
         description: update the specified cpu profile in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /cpuprofiles|rel=add
   description: add a new cpu profile to the system
   request:
@@ -5710,7 +5408,6 @@ actions:
         description: add a new cpu profile to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /cpuprofiles/{cpuprofile:id}/permissions|rel=get
   description: get the list of all permissions on the cpu profile in the system
@@ -5749,7 +5446,6 @@ actions:
         description: add a new group level permission on the cpu profile in the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/cpuprofiles|rel=get
   description: get the list of all cpu profiles for the cluster
@@ -5786,7 +5482,6 @@ actions:
         description: add a new cpu profile for the cluster
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 
 - name: /operatingsystems|rel=get
@@ -5843,8 +5538,6 @@ actions:
           external_host_provider.authentication_url: xs:string
         description: update the specified external host provider in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /externalhostproviders|rel=add
   description: add a new external host provider to the system
   request:
@@ -5863,7 +5556,6 @@ actions:
         description: add a new external host provider to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /externalhostproviders/{externalhostprovider:id}/testconnectivity|rel=testconnectivity
   description: test the connectivity to the external external host provider
@@ -5874,8 +5566,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /externalhostproviders/{externalhostprovider:id}/importcertificates|rel=importcertificates
   description: import the SSL certificates of the external host provider
   request:
@@ -5885,8 +5575,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /externalhostproviders/{externalhostprovider:id}/certificates|rel=get
   description: get the list of certificates of the external host provider
   request:
@@ -6004,8 +5692,6 @@ actions:
             property.value: xs:string
         description: update the specified OpenStack image provider in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /openstackimageproviders|rel=add
   description: add a new OpenStack image provider to the system
   request:
@@ -6026,7 +5712,6 @@ actions:
         description: add a new OpenStack image provider to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /openstackimageproviders/{openstackimageprovider:id}/images|rel=get
   description: get the list of images from the OpenStack image provider
@@ -6067,8 +5752,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /openstackimageproviders/{openstackimageprovider:id}/importcertificates|rel=importcertificates
   description: import the SSL certificates of the OpenStack image provider
   request:
@@ -6078,8 +5761,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {}
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /openstackimageproviders/{openstackimageprovider:id}/images/{images:id}/import|rel=import
   description: imports the OpenStack image
   request:
@@ -6096,8 +5777,6 @@ actions:
           action.disk.alias|name: xs:string
           action.template.name: xs:string
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 
 - name: /openstackvolumeproviders|rel=get
   description: get the list of all OpenStack volume providers in the system
@@ -6142,8 +5821,6 @@ actions:
             property.value: xs:string
         description: update the specified OpenStack volume provider in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /openstackvolumeproviders|rel=add
   description: add a new OpenStack volume provider to the system
   request:
@@ -6166,7 +5843,6 @@ actions:
         description: add a new OpenStack volume provider to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}/volumetypes|rel=get
   description: get the list of volume types of the OpenStack volume provider
@@ -6225,8 +5901,6 @@ actions:
             property.value: xs:string
         description: update the specified OpenStack network provider in the system
     urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
 - name: /openstacknetworkproviders|rel=add
   description: add a new OpenStack network provider to the system
   request:
@@ -6247,7 +5921,6 @@ actions:
         description: add a new OpenStack network provider to the system
     urlparams: {}
     headers:
-      Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks|rel=get
   description: get the list of networks from the OpenStack network provider

@@ -473,6 +473,13 @@ public class RsdlBuilder {
         if (!GET.equals(link.getRel())) {
             addCorrelationIdHeader(link);
         }
+
+        // All the operations that potentially send a body (everything except GET) should also specify
+        // the "Content-Type" header, so instead of explicitly adding it in the metadata file it is better to add it
+        // implicity:
+        if (!GET.equals(link.getRel())) {
+            addContentTypeHeader(link);
+        }
     }
 
     /**
@@ -490,6 +497,24 @@ public class RsdlBuilder {
         header.setName("Correlation-Id");
         header.setValue("any string");
         header.setRequired(false);
+        headers.getHeaders().add(header);
+    }
+
+    /**
+     * Adds the description of the {@code Content-Type} header to a link.
+     *
+     * @param link the link where the description of the header will be added
+     */
+    private void addContentTypeHeader(DetailedLink link) {
+        Headers headers = link.getRequest().getHeaders();
+        if (headers == null) {
+            headers = new Headers();
+            link.getRequest().setHeaders(headers);
+        }
+        Header header = new Header();
+        header.setName("Content-Type");
+        header.setValue("application/xml|json");
+        header.setRequired(true);
         headers.getHeaders().add(header);
     }
 
