@@ -12,6 +12,7 @@ public class ConfiguredRangeValidator implements ConstraintValidator<ConfiguredR
 
     private int min;
     private int max;
+    private String rangeMessage;
 
     @Override
     public void initialize(ConfiguredRange constraintAnnotation) {
@@ -22,10 +23,17 @@ public class ConfiguredRangeValidator implements ConstraintValidator<ConfiguredR
         }
 
         max = Config.<Integer> getValue(constraintAnnotation.maxConfigValue(), ConfigCommon.defaultConfigurationVersion);
+        rangeMessage = "$range " + min + "-" + max;
+
     }
 
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        return value == null ? true : value >= min && value <= max;
+        boolean result = value == null ? true : value >= min && value <= max;
+        if (!result) {
+            context.buildConstraintViolationWithTemplate(rangeMessage);
+        }
+        return result;
     }
+
 }
