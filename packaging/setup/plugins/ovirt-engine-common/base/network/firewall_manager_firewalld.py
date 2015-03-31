@@ -121,7 +121,10 @@ class Plugin(plugin.PluginBase):
                     otopicons.NetEnv.FIREWALLD_SERVICE_PREFIX
                 )
             ]:
-                commands.append('firewall-cmd -service %s' % service)
+                commands.append(
+                    'firewall-cmd --permanent --add-service %s' % service
+                )
+            commands.append('firewall-cmd --reload')
             self.plugin.dialog.note(
                 text=_(
                     'In order to configure firewalld, copy the '
