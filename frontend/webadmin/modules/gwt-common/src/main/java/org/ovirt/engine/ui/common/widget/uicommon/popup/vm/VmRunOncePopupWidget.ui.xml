@@ -219,7 +219,8 @@
                     <w:ComboBox ui:field="sysPrepDomainNameComboBox" />
                     <ge:EntityModelCheckBoxEditor ui:field="useAlternateCredentialsEditor" addStyleNames="{style.sysprepOption}" />
                     <ge:StringEntityModelTextBoxEditor ui:field="sysPrepUserNameEditor" addStyleNames="{style.sysprepOption}" />
-                    <ge:StringEntityModelTextBoxEditor ui:field="sysPrepPasswordEditor" addStyleNames="{style.sysprepOption}" />
+                    <ge:StringEntityModelPasswordBoxEditor ui:field="sysPrepPasswordEditor" addStyleNames="{style.sysprepOption}" />
+                    <ge:StringEntityModelPasswordBoxEditor ui:field="sysPrepPasswordVerificationEditor" addStyleNames="{style.sysprepOption}" />
                 </g:VerticalPanel>
 
 			</g:FlowPanel>

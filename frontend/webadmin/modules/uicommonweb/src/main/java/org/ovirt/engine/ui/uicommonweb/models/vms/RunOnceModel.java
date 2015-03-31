@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.MatchFieldsValidator;
 import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -203,16 +204,24 @@ public abstract class RunOnceModel extends Model
         privateSysPrepUserName = value;
     }
 
-    private EntityModel<String> privateSysPrepPassword;
+    private EntityModel<String> sysPrepPassword;
 
-    public EntityModel<String> getSysPrepPassword()
-    {
-        return privateSysPrepPassword;
+    public EntityModel<String> getSysPrepPassword() {
+        return sysPrepPassword;
     }
 
-    private void setSysPrepPassword(EntityModel<String> value)
-    {
-        privateSysPrepPassword = value;
+    private void setSysPrepPassword(EntityModel<String> value) {
+        sysPrepPassword = value;
+    }
+
+    private EntityModel<String> sysPrepPasswordVerification;
+
+    public EntityModel<String> getSysPrepPasswordVerification() {
+        return sysPrepPasswordVerification;
+    }
+
+    private void setSysPrepPasswordVerification(EntityModel<String> value) {
+        sysPrepPasswordVerification = value;
     }
 
     private EntityModel<Boolean> privateUseAlternateCredentials;
@@ -291,16 +300,14 @@ public abstract class RunOnceModel extends Model
         privateIsCloudInitEnabled = value;
     }
 
-    public VmInitModel privateVmInitModel;
+    public VmInitModel vmInitModel;
 
-    public VmInitModel getVmInit()
-    {
-        return privateVmInitModel;
+    public VmInitModel getVmInitModel() {
+        return vmInitModel;
     }
 
-    public void setVmInit(VmInitModel value)
-    {
-        privateVmInitModel = value;
+    public void setVmInitModel(VmInitModel value) {
+        vmInitModel = value;
     }
 
     private EntityModel<Boolean> privateIsCloudInitPossible;
@@ -621,6 +628,7 @@ public abstract class RunOnceModel extends Model
 
         setSysPrepUserName(new EntityModel<String>().setIsChangeable(false));
         setSysPrepPassword(new EntityModel<String>().setIsChangeable(false));
+        setSysPrepPasswordVerification(new EntityModel<String>().setIsChangeable(false));
 
         setIsSysprepEnabled(new EntityModel<Boolean>(false));
         setIsSysprepPossible(new EntityModel<Boolean>());
@@ -633,7 +641,7 @@ public abstract class RunOnceModel extends Model
         // Initial Boot tab - Cloud-Init
         setIsCloudInitPossible(new EntityModel<Boolean>());
 
-        setVmInit(new VmInitModel());
+        setVmInitModel(new VmInitModel());
 
         // Custom Properties tab
         setCustomPropertySheet(new KeyValueModel());
@@ -718,7 +726,7 @@ public abstract class RunOnceModel extends Model
         getIsVmFirstRun().setEntity(!vm.isInitialized());
 
         initVmInitEnabled(vm.getVmInit(), vm.isInitialized());
-        getVmInit().init(vm.getStaticData());
+        getVmInitModel().init(vm.getStaticData());
 
         updateDomainList();
         updateSystemTabLists();
@@ -821,7 +829,7 @@ public abstract class RunOnceModel extends Model
 
         if (getIsCloudInitEnabled() != null && getIsCloudInitEnabled().getEntity() ||
                 getIsSysprepEnabled() != null && getIsSysprepEnabled().getEntity()) {
-            params.setVmInit(getVmInit().buildCloudInitParameters(this));
+            params.setVmInit(getVmInitModel().buildCloudInitParameters(this));
         }
 
         params.getRunOnceGraphics().add(Boolean.TRUE.equals(getDisplayConsole_Vnc_IsSelected().getEntity())
@@ -1173,9 +1181,11 @@ public abstract class RunOnceModel extends Model
 
         getSysPrepUserName().setIsChangeable(getUseAlternateCredentials().getEntity());
         getSysPrepPassword().setIsChangeable(getUseAlternateCredentials().getEntity());
+        getSysPrepPasswordVerification().setIsChangeable(getUseAlternateCredentials().getEntity());
 
         getSysPrepUserName().setEntity(useAlternateCredentials ? "" : null); //$NON-NLS-1$
         getSysPrepPassword().setEntity(useAlternateCredentials ? "" : null); //$NON-NLS-1$
+        getSysPrepPasswordVerification().setEntity(useAlternateCredentials ? "" : null); //$NON-NLS-1$
     }
 
     private void isVmFirstRun_EntityChanged()
@@ -1257,7 +1267,18 @@ public abstract class RunOnceModel extends Model
             getDefaultHost().setIsValid(true);
         }
 
-        boolean cloudInitIsValid = getVmInit().validate();
+        getSysPrepPassword().setIsValid(true);
+        getSysPrepPasswordVerification().setIsValid(true);
+
+        if (getIsWindowsOS() && getIsSysprepEnabled().getEntity()) {
+            getSysPrepPassword().validateEntity(new IValidation[] {
+                    new NotEmptyValidation(),
+                    new MatchFieldsValidator(getSysPrepPassword().getEntity(),
+                                             getSysPrepPasswordVerification().getEntity())
+            });
+        }
+
+        boolean cloudInitIsValid = getVmInitModel().validate();
 
         getEmulatedMachine().validateSelectedItem(new IValidation[] { new I18NExtraNameOrNoneValidation(), new LengthValidation(BusinessEntitiesDefinitions.VM_EMULATED_MACHINE_SIZE) });
         getCustomCpu().validateSelectedItem(new IValidation[] { new I18NExtraNameOrNoneValidation(), new LengthValidation(BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE) });
@@ -1270,6 +1291,7 @@ public abstract class RunOnceModel extends Model
                 && getDefaultHost().getIsValid()
                 && customPropertyValidation
                 && cloudInitIsValid
+                && getSysPrepPassword().getIsValid()
                 && getEmulatedMachine().getIsValid()
                 && getCustomCpu().getIsValid();
     }

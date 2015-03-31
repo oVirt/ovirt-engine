@@ -157,6 +157,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Password")
     String runOncePopupSysPrepPasswordLabel();
 
+    @DefaultStringValue("Verify Password")
+    String runOncePopupSysPrepPasswordVerificationLabel();
+
     @DefaultStringValue("Boot Sequence:")
     String runOncePopupBootSequenceLabel();
 
