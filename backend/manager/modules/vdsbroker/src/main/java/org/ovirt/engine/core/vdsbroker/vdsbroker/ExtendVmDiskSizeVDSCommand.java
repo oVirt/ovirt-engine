@@ -27,6 +27,6 @@ public class ExtendVmDiskSizeVDSCommand <P extends ExtendVmDiskSizeVDSCommandPar
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return result.mStatus;
+        return result.getXmlRpcStatus();
     }
 }

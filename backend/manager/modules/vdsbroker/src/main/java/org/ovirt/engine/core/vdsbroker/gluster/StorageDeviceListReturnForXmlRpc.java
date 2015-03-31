@@ -15,7 +15,7 @@ public class StorageDeviceListReturnForXmlRpc extends StorageDeviceReturnForXmlR
     public StorageDeviceListReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
 
-        if (mStatus.mCode != 0) {
+        if (getXmlRpcStatus().mCode != 0) {
             return;
         }
 

@@ -12,7 +12,7 @@ public class CreateGlusterVolumeSnapshotVDSCommand<P extends CreateGlusterVolume
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return xmlRpcReturnValue.mStatus;
+        return xmlRpcReturnValue.getXmlRpcStatus();
     }
 
     @Override

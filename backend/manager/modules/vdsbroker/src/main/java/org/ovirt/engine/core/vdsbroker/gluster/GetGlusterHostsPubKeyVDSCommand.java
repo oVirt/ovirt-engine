@@ -13,7 +13,7 @@ public class GetGlusterHostsPubKeyVDSCommand<P extends VdsIdVDSCommandParameters
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return result.mStatus;
+        return result.getXmlRpcStatus();
     }
 
     @Override

@@ -37,7 +37,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     @SuppressWarnings("unchecked")

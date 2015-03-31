@@ -21,7 +21,7 @@ public class GetStorageDeviceListVDSCommand<P extends VdsIdVDSCommandParametersB
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return result.mStatus;
+        return result.getXmlRpcStatus();
     }
 
     @Override

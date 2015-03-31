@@ -24,7 +24,7 @@ public class GetGlusterHostUUIDVDSCommand<P extends VdsIdVDSCommandParametersBas
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return glusterHostUUID.mStatus;
+        return glusterHostUUID.getXmlRpcStatus();
     }
 
 }

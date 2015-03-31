@@ -39,7 +39,7 @@ public class GetStorageConnectionsListVDSCommand<P extends GetStorageConnections
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     @Override

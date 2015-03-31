@@ -44,7 +44,7 @@ public class CreateBrickVDSCommand<P extends CreateBrickVDSParameters> extends A
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return storageDeviceReturn.mStatus;
+        return storageDeviceReturn.getXmlRpcStatus();
     }
 
 }

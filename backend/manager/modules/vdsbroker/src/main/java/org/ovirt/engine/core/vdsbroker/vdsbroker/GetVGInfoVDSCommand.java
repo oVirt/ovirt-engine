@@ -32,7 +32,7 @@ public class GetVGInfoVDSCommand<P extends GetVGInfoVDSCommandParameters> extend
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     @Override

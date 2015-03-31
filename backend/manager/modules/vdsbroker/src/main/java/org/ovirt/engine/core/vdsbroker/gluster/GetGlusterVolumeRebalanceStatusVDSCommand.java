@@ -15,7 +15,7 @@ public class GetGlusterVolumeRebalanceStatusVDSCommand <P extends GlusterVolumeV
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return result.mStatus;
+        return result.getXmlRpcStatus();
     }
 
     @Override

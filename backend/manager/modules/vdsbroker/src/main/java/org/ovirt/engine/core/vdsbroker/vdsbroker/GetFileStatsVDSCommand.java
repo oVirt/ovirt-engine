@@ -28,6 +28,6 @@ public class GetFileStatsVDSCommand<P extends GetFileStatsParameters> extends Ir
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return fileStats.mStatus;
+        return fileStats.getXmlRpcStatus();
     }
 }

@@ -30,6 +30,6 @@ public class GetFloppyListVDSCommand<P extends IrsBaseVDSCommandParameters> exte
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return floppyList.mStatus;
+        return floppyList.getXmlRpcStatus();
     }
 }

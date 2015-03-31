@@ -28,7 +28,7 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     protected ArrayList<StorageDomain> parseVGList(Map<String, Object>[] vgList) {

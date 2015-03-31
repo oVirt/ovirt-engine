@@ -10,7 +10,7 @@ public abstract class IrsCreateCommand<P extends StoragePoolDomainAndGroupIdBase
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return uuidReturn.mStatus;
+        return uuidReturn.getXmlRpcStatus();
     }
 
     @Override

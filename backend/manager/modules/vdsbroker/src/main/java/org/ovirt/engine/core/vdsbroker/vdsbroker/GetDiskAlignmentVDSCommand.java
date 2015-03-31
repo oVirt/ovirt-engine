@@ -25,6 +25,6 @@ public class GetDiskAlignmentVDSCommand<P extends GetDiskAlignmentVDSCommandPara
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return diskAlignment.mStatus;
+        return diskAlignment.getXmlRpcStatus();
     }
 }

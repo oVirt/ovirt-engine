@@ -31,6 +31,6 @@ public class ExtendImageSizeVDSCommand<P extends ExtendImageSizeVDSCommandParame
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return result.mStatus;
+        return result.getXmlRpcStatus();
     }
 }

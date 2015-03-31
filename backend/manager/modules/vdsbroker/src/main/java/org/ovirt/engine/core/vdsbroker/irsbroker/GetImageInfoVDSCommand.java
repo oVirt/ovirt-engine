@@ -41,7 +41,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
         DiskImage di = null;
         try {
             proceedProxyReturnValue();
-            di = buildImageEntity(imageInfoReturn.mInfo);
+            di = buildImageEntity(imageInfoReturn.getInfo());
         } catch (Exception e) {
             printReturnValue();
             // nothing to do - logging inside upper functions
@@ -54,7 +54,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return imageInfoReturn.mStatus;
+        return imageInfoReturn.getXmlRpcStatus();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
                             .getStorageName(),
                     getParameters().getStorageDomainId(),
                     returnStatus,
-                    imageInfoReturn.mStatus.mMessage);
+                    imageInfoReturn.getXmlRpcStatus().mMessage);
             throw new IRSErrorException(returnStatus.toString());
         }
     }

@@ -24,7 +24,7 @@ public class StartRebalanceGlusterVolumeVDSCommand<P extends GlusterVolumeRebala
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return glusterTaskReturn.mStatus;
+        return glusterTaskReturn.getXmlRpcStatus();
     }
 
     @Override

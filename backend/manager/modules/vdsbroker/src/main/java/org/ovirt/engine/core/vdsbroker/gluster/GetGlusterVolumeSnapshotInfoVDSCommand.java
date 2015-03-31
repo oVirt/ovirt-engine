@@ -13,7 +13,7 @@ public class GetGlusterVolumeSnapshotInfoVDSCommand<P extends GlusterVolumeSnaps
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return infoReturn.mStatus;
+        return infoReturn.getXmlRpcStatus();
     }
 
     @Override

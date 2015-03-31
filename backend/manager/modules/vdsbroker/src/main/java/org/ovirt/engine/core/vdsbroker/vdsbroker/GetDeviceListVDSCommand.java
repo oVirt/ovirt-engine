@@ -163,7 +163,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     @Override

@@ -204,8 +204,8 @@ public class MarshallingTestCase {
 
         // Then
         ServerConnectionStatusReturnForXmlRpc status = new ServerConnectionStatusReturnForXmlRpc(map);
-        assertEquals("Done", status.mStatus.mMessage);
-        assertEquals(0, status.mStatus.mCode);
+        assertEquals("Done", status.getXmlRpcStatus().mMessage);
+        assertEquals(0, status.getXmlRpcStatus().mCode);
         assertEquals(1, status.mStatusList.length);
         Map<String, Object> result = status.mStatusList[0];
         assertEquals(0, result.get("status"));
@@ -232,8 +232,8 @@ public class MarshallingTestCase {
 
         // Then
         FileStatsReturnForXmlRpc isoList = new FileStatsReturnForXmlRpc(map);
-        assertEquals("Done", isoList.mStatus.mMessage);
-        assertEquals(0, isoList.mStatus.mCode);
+        assertEquals("Done", isoList.getXmlRpcStatus().mMessage);
+        assertEquals(0, isoList.getXmlRpcStatus().mCode);
         assertEquals(0, isoList.getFileStats().size());
     }
 
@@ -258,8 +258,8 @@ public class MarshallingTestCase {
 
         // Then
         FileStatsReturnForXmlRpc isoList = new FileStatsReturnForXmlRpc(map);
-        assertEquals("Done", isoList.mStatus.mMessage);
-        assertEquals(0, isoList.mStatus.mCode);
+        assertEquals("Done", isoList.getXmlRpcStatus().mMessage);
+        assertEquals(0, isoList.getXmlRpcStatus().mCode);
         assertEquals(1, isoList.getFileStats().size());
         assertEquals("Fedora-Live-Desktop-x86_64-19-1.iso", isoList.getFileStats().keySet().iterator().next());
     }
@@ -346,8 +346,8 @@ public class MarshallingTestCase {
 
         // Then
         StoragePoolInfoReturnForXmlRpc storagePoolInfo = new StoragePoolInfoReturnForXmlRpc(map);
-        assertEquals("Done", storagePoolInfo.mStatus.mMessage);
-        assertEquals(0, storagePoolInfo.mStatus.mCode);
+        assertEquals("Done", storagePoolInfo.getXmlRpcStatus().mMessage);
+        assertEquals(0, storagePoolInfo.getXmlRpcStatus().mCode);
         Set<String> keys = storagePoolInfo.mDomainsList.keySet();
         assertEquals(3, keys.size());
         assertTrue(keys.contains("05a0ad59-1259-4353-b40b-34eb80d8590a"));
@@ -378,8 +378,8 @@ public class MarshallingTestCase {
 
         // Then
         StorageStatusReturnForXmlRpc storageStatus = new StorageStatusReturnForXmlRpc(map);
-        assertEquals("Done", storageStatus.mStatus.mMessage);
-        assertEquals(0, storageStatus.mStatus.mCode);
+        assertEquals("Done", storageStatus.getXmlRpcStatus().mMessage);
+        assertEquals(0, storageStatus.getXmlRpcStatus().mCode);
         assertEquals("true", storageStatus.mStorageStatus);
     }
 
@@ -403,8 +403,8 @@ public class MarshallingTestCase {
 
         // Then
         OneUuidReturnForXmlRpc oneuuid = new OneUuidReturnForXmlRpc(map);
-        assertEquals("Done", oneuuid.mStatus.mMessage);
-        assertEquals(0, oneuuid.mStatus.mCode);
+        assertEquals("Done", oneuuid.getXmlRpcStatus().mMessage);
+        assertEquals(0, oneuuid.getXmlRpcStatus().mCode);
         assertEquals("4f84eef5-8f8b-4732-babd-0a860cf0d1b9", UUID.fromString(oneuuid.mUuid).toString());
     }
 
@@ -442,8 +442,8 @@ public class MarshallingTestCase {
         // When
         Map<String, Object> map = new FutureMap(client, request).withResponseKey("fullTargets");
         IQNListReturnForXmlRpc list = new IQNListReturnForXmlRpc(map);
-        assertEquals("Done", list.mStatus.mMessage);
-        assertEquals(0, list.mStatus.mCode);
+        assertEquals("Done", list.getXmlRpcStatus().mMessage);
+        assertEquals(0, list.getXmlRpcStatus().mCode);
         assertEquals(37, parseFullTargets(list.getIqnList()).size());
     }
 

@@ -31,7 +31,7 @@ public class GetVolumesListVDSCommand<P extends StoragePoolDomainAndGroupIdBaseV
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     @Override

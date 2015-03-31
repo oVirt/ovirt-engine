@@ -35,7 +35,7 @@ public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends 
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     @Override

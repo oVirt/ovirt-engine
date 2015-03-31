@@ -17,7 +17,7 @@ public class GetGlusterVolumeRemoveBricksStatusVDSCommand <P extends GlusterVolu
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return result.mStatus;
+        return result.getXmlRpcStatus();
     }
 
     @Override

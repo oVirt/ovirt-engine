@@ -23,7 +23,7 @@ public class GlusterHooksListVDSCommand<P extends VdsIdVDSCommandParametersBase>
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return glusterHooks.mStatus;
+        return glusterHooks.getXmlRpcStatus();
     }
 
 }

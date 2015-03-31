@@ -14,7 +14,7 @@ public final class OneImageInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("info")]
-    public Map<String, Object> mInfo;
+    private Map<String, Object> mInfo;
 
     @Override
     public String toString() {
@@ -32,4 +32,7 @@ public final class OneImageInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
         mInfo = (Map<String, Object>) innerMap.get(INFO);
     }
 
+    public Map<String, Object> getInfo() {
+        return mInfo;
+    }
 }

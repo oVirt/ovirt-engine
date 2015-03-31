@@ -16,7 +16,7 @@ public class ManageGlusterServiceVDSCommand<P extends GlusterHookVDSParameters> 
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return returnValue.mStatus;
+        return returnValue.getXmlRpcStatus();
     }
 
     @Override

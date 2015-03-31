@@ -74,7 +74,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     @Override

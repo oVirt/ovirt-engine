@@ -88,7 +88,7 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     @Override

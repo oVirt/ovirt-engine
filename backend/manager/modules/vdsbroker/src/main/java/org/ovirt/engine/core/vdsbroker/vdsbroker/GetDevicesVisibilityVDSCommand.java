@@ -23,6 +23,6 @@ public class GetDevicesVisibilityVDSCommand<P extends GetDevicesVisibilityVDSCom
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return result.mStatus;
+        return result.getXmlRpcStatus();
     }
 }

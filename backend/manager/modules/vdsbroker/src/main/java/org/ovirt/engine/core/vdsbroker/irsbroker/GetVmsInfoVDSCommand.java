@@ -44,7 +44,7 @@ public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> exte
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _vmsInfo.mStatus;
+        return _vmsInfo.getXmlRpcStatus();
     }
 
     @Override

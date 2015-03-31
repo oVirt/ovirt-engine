@@ -55,8 +55,8 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
 
             FenceOperationResult actionResult = new FenceOperationResult(
                     getParameters().getAction(),
-                    result.mStatus.mCode,
-                    result.mStatus.mMessage,
+                    result.getXmlRpcStatus().mCode,
+                    result.getXmlRpcStatus().mMessage,
                     result.power,
                     result.operationStatus);
             setReturnValue(actionResult);
@@ -109,8 +109,8 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         FenceStatusReturnForXmlRpc result = fenceNode(FenceActionType.STATUS);
         FenceOperationResult actionResult = new FenceOperationResult(
                 FenceActionType.STATUS,
-                result.mStatus.mCode,
-                result.mStatus.mMessage,
+                result.getXmlRpcStatus().mCode,
+                result.getXmlRpcStatus().mMessage,
                 result.power,
                 result.operationStatus);
 

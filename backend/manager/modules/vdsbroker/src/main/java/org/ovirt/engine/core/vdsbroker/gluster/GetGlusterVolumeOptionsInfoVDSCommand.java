@@ -12,7 +12,7 @@ public class GetGlusterVolumeOptionsInfoVDSCommand<P extends VdsIdVDSCommandPara
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return result.mStatus;
+        return result.getXmlRpcStatus();
     }
 
     @Override

@@ -25,7 +25,7 @@ public class GlusterServersListVDSCommand<P extends VdsIdVDSCommandParametersBas
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return glusterServers.mStatus;
+        return glusterServers.getXmlRpcStatus();
     }
 
 }

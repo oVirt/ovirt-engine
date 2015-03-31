@@ -12,7 +12,7 @@ public class GetGlusterVolumeGeoRepSessionListVDSCommand<P extends GlusterVolume
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return result.mStatus;
+        return result.getXmlRpcStatus();
     }
 
     @Override

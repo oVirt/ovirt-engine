@@ -23,6 +23,6 @@ public class GlusterTasksListVDSCommand<P extends VdsIdVDSCommandParametersBase>
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return glusterTasksReturn.mStatus;
+        return glusterTasksReturn.getXmlRpcStatus();
     }
 }

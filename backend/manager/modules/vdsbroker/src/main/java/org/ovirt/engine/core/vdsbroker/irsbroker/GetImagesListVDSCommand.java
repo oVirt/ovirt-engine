@@ -27,7 +27,7 @@ public class GetImagesListVDSCommand<P extends GetImagesListVDSCommandParameters
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return result.mStatus;
+        return result.getXmlRpcStatus();
     }
 
     @Override

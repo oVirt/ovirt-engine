@@ -24,6 +24,6 @@ public class HsmGetIsoListVDSCommand<P extends HSMGetIsoListParameters> extends 
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return isoList.mStatus;
+        return isoList.getXmlRpcStatus();
     }
 }

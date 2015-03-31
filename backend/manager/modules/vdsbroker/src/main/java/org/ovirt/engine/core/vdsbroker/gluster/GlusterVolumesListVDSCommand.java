@@ -12,7 +12,7 @@ public class GlusterVolumesListVDSCommand<P extends GlusterVolumesListVDSParamet
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return result.mStatus;
+        return result.getXmlRpcStatus();
     }
 
     @Override

@@ -29,6 +29,6 @@ public class GlusterServicesListVDSCommand<P extends GlusterServicesListVDSParam
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return glusterServices.mStatus;
+        return glusterServices.getXmlRpcStatus();
     }
 }

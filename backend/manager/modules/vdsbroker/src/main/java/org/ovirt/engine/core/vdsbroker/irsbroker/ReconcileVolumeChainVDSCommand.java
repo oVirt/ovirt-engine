@@ -35,6 +35,6 @@ public class ReconcileVolumeChainVDSCommand<P extends ReconcileVolumeChainVDSCom
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return volumeListReturn.mStatus;
+        return volumeListReturn.getXmlRpcStatus();
     }
 }

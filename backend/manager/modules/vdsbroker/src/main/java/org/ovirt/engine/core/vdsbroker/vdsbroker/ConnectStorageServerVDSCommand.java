@@ -130,7 +130,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     @Override

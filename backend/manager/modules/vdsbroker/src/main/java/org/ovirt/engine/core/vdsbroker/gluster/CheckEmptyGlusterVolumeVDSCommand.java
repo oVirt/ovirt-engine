@@ -14,7 +14,7 @@ public class CheckEmptyGlusterVolumeVDSCommand<P extends GlusterVolumeVDSParamet
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return returnValue.mStatus;
+        return returnValue.getXmlRpcStatus();
     }
 
     @Override

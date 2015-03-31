@@ -21,7 +21,7 @@ public class ActivateStorageDomainVDSCommand<P extends ActivateStorageDomainVDSC
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     @Override

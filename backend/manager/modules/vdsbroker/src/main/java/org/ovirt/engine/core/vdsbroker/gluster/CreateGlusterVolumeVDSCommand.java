@@ -22,7 +22,7 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return uuidReturn.mStatus;
+        return uuidReturn.getXmlRpcStatus();
     }
 
     @Override

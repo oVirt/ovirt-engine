@@ -38,11 +38,11 @@ public class HSMGetTaskStatusVDSCommand<P extends HSMTaskGuidBaseVDSCommandParam
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     @Override
     protected void updateReturnStatus(StatusForXmlRpc newReturnStatus) {
-        _result.mStatus = newReturnStatus;
+        _result.setXmlRpcStatus(newReturnStatus);
     }
 }

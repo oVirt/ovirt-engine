@@ -66,6 +66,6 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 }

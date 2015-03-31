@@ -94,7 +94,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus;
+        return _result.getXmlRpcStatus();
     }
 
     // overrides the value of the status that is being checked in the
@@ -104,7 +104,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
     // verb
     // execution status and an asynchronous task status.
     protected void updateReturnStatus(StatusForXmlRpc newReturnStatus) {
-        _result.mStatus = newReturnStatus;
+        _result.setXmlRpcStatus(newReturnStatus);
     }
 
     @Override
