@@ -48,7 +48,7 @@ public class SystemProviderFinder {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            log.error("Failed to resolve hostname for the ovir-engine server", e);
+            log.error("Failed to resolve hostname for the engine server", e);
             return null;
         }
     }
