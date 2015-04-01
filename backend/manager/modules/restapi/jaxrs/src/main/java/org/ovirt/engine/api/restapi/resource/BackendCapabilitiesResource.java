@@ -602,11 +602,11 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private List<PowerManagement> getPowerManagers(Version version) {
-        return FenceOptionsParser.parse(getFenceConfigurationValue(String.class,
-                ConfigurationValues.VdsFenceOptionMapping,
-                version),
-                getConfigurationValue(String.class, ConfigurationValues.VdsFenceOptionTypes, version),
-                true);
+        return FenceOptionsParser.parse(
+            getFenceConfigurationValue(String.class, ConfigurationValues.VdsFenceOptionMapping, version),
+            getConfigurationValueDefault(String.class, ConfigurationValues.VdsFenceOptionTypes),
+            true
+        );
     }
 
     private List<StorageType> getStorageTypes(Version version) {
