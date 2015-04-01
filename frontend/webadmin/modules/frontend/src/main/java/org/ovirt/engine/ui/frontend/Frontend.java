@@ -506,7 +506,7 @@ public class Frontend implements HasHandlers {
             final ArrayList<VdcActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
-        runMultipleAction(actionType, parameters, false, callback, state, true);
+        runMultipleAction(actionType, parameters, false, callback, state);
     }
 
     /**
@@ -536,16 +536,18 @@ public class Frontend implements HasHandlers {
      * @param parameters The parameters of the action.
      * @param callback The callback to call after the operation happens.
      * @param showErrorDialog Should we show an error dialog?
+     * @param waitForResult a flag to return the result after running the whole action and not just the can do actions.
      */
     public void runMultipleAction(final VdcActionType actionType,
             final List<VdcActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback,
-            final boolean showErrorDialog) {
-        runMultipleAction(actionType, parameters, false, callback, null, showErrorDialog);
+            final boolean showErrorDialog,
+            final boolean waitForResult) {
+        runMultipleAction(actionType, parameters, false, callback, null, showErrorDialog, waitForResult);
     }
 
     /**
-     * Run multiple without passing <code>showErrorDialog</code>
+     * Run multiple without passing <code>showErrorDialog</code> and <code>waitForResult</code>
      * @param actionType The action type.
      * @param parameters The list of parameters.
      * @param isRunOnlyIfAllCanDoPass A flag to only run the actions if all can be completed.
@@ -557,7 +559,7 @@ public class Frontend implements HasHandlers {
             final boolean isRunOnlyIfAllCanDoPass,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
-        runMultipleAction(actionType, parameters, isRunOnlyIfAllCanDoPass, callback, state, true);
+        runMultipleAction(actionType, parameters, isRunOnlyIfAllCanDoPass, callback, state, true, false);
     }
 
     /**
@@ -568,13 +570,15 @@ public class Frontend implements HasHandlers {
      * @param callback The callback to call when the operation completes.
      * @param state The state.
      * @param showErrorDialog Should we show an error dialog?
+     * @param waitForResult a flag to return the result after running the whole action and not just the can do actions.
      */
     public void runMultipleAction(final VdcActionType actionType,
             final List<VdcActionParametersBase> parameters,
             final boolean isRunOnlyIfAllCanDoPass,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state,
-            final boolean showErrorDialog) {
+            final boolean showErrorDialog,
+            final boolean waitForResult) {
         VdcOperationCallbackList<VdcOperation<VdcActionType, VdcActionParametersBase>, List<VdcReturnValueBase>>
         multiCallback = new VdcOperationCallbackList<VdcOperation<VdcActionType, VdcActionParametersBase>,
         List<VdcReturnValueBase>>() {
@@ -622,7 +626,7 @@ public class Frontend implements HasHandlers {
         List<VdcOperation<?, ?>> operationList = new ArrayList<VdcOperation<?, ?>>();
         for (VdcActionParametersBase parameter: parameters) {
             VdcOperation<VdcActionType, VdcActionParametersBase> operation = new VdcOperation<VdcActionType,
-                    VdcActionParametersBase>(actionType, parameter, true, multiCallback);
+                    VdcActionParametersBase>(actionType, parameter, !waitForResult, multiCallback);
             operationList.add(operation);
         }
         if (operationList.isEmpty()) {
