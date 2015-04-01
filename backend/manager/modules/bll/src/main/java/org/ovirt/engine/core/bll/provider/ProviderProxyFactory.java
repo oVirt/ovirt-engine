@@ -28,7 +28,7 @@ public class ProviderProxyFactory {
      * @return The proxy for communicating with the provider
      */
     @SuppressWarnings("unchecked")
-    public <P extends ProviderProxy> P create(Provider<?> provider) {
+    public <P extends ProviderProxy<?>> P create(Provider<?> provider) {
         switch (provider.getType()) {
         case FOREMAN:
             return (P) new ForemanHostProviderProxy(provider);
