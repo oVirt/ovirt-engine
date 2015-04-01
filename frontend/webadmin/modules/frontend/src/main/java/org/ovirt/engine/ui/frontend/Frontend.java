@@ -419,6 +419,20 @@ public class Frontend implements HasHandlers {
      */
     public void runAction(final VdcActionType actionType, final VdcActionParametersBase parameters) {
         runAction(actionType, parameters, Frontend.NULLABLE_ASYNC_CALLBACK);
+     }
+
+    /**
+     * Run an action of the specified action type using the passed in parameters. No object state.
+     * @param actionType The action type of the action to perform.
+     * @param parameters The parameters of the action.
+     * @param callback The callback to call when the action is completed.
+     * @param showErrorDialog Whether to show a pop-up dialog with the error or not.
+     */
+    public void runAction(final VdcActionType actionType,
+            final VdcActionParametersBase parameters,
+            final IFrontendActionAsyncCallback callback,
+            final boolean showErrorDialog) {
+        runAction(actionType, parameters, callback, null, showErrorDialog);
     }
 
     /**
@@ -477,7 +491,7 @@ public class Frontend implements HasHandlers {
             final List<VdcActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
-        runMultipleAction(actionType, parameters, false, callback, state);
+        runMultipleAction(actionType, parameters, false, callback, state, true);
     }
 
     /**
@@ -502,7 +516,21 @@ public class Frontend implements HasHandlers {
     }
 
     /**
-     * Run multiple actions using the same {@code VdcActionType}.
+     * RunMultipleActions without passing state.
+     * @param actionType The type of action to perform.
+     * @param parameters The parameters of the action.
+     * @param callback The callback to call after the operation happens.
+     * @param showErrorDialog Should we show an error dialog?
+     */
+    public void runMultipleAction(final VdcActionType actionType,
+            final List<VdcActionParametersBase> parameters,
+            final IFrontendMultipleActionAsyncCallback callback,
+            final boolean showErrorDialog) {
+        runMultipleAction(actionType, parameters, false, callback, null, showErrorDialog);
+    }
+
+    /**
+     * Run multiple without passing <code>showErrorDialog</code>
      * @param actionType The action type.
      * @param parameters The list of parameters.
      * @param isRunOnlyIfAllCanDoPass A flag to only run the actions if all can be completed.
@@ -514,6 +542,24 @@ public class Frontend implements HasHandlers {
             final boolean isRunOnlyIfAllCanDoPass,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
+        runMultipleAction(actionType, parameters, isRunOnlyIfAllCanDoPass, callback, state, true);
+    }
+
+    /**
+     * Run multiple actions using the same {@code VdcActionType}.
+     * @param actionType The action type.
+     * @param parameters The list of parameters.
+     * @param isRunOnlyIfAllCanDoPass A flag to only run the actions if all can be completed.
+     * @param callback The callback to call when the operation completes.
+     * @param state The state.
+     * @param showErrorDialog Should we show an error dialog?
+     */
+    public void runMultipleAction(final VdcActionType actionType,
+            final List<VdcActionParametersBase> parameters,
+            final boolean isRunOnlyIfAllCanDoPass,
+            final IFrontendMultipleActionAsyncCallback callback,
+            final Object state,
+            final boolean showErrorDialog) {
         VdcOperationCallbackList<VdcOperation<VdcActionType, VdcActionParametersBase>, List<VdcReturnValueBase>>
         multiCallback = new VdcOperationCallbackList<VdcOperation<VdcActionType, VdcActionParametersBase>,
         List<VdcReturnValueBase>>() {
@@ -530,7 +576,7 @@ public class Frontend implements HasHandlers {
                     }
                 }
 
-                if (!failed.isEmpty()) {
+                if (showErrorDialog && !failed.isEmpty()) {
                     translateErrors(failed);
                     getEventsHandler().runMultipleActionFailed(actionType, failed);
                 }
