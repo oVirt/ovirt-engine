@@ -466,26 +466,41 @@ WHERE ( ( type = 'disk'
                 WHERE ( var_name = 'lastSync' ) ) ) );
 CREATE
 OR REPLACE VIEW dwh_vm_disks_history_view AS
-SELECT
-    d.disk_id AS vm_disk_id,
+SELECT  d.disk_id AS vm_disk_id,
     images.image_guid AS image_id,
-    CAST ( images.imageStatus AS SMALLINT ) AS vm_disk_status,
-    CAST ( disk_image_dynamic.actual_size / 1048576 AS INT ) AS vm_disk_actual_size_mb,
+    cast(images.imageStatus AS SMALLINT) AS vm_disk_status,
+    vm_disk_actual_size.vm_disk_actual_size_mb AS vm_disk_actual_size_mb,
     disk_image_dynamic.read_rate AS read_rate_bytes_per_second,
     disk_image_dynamic.read_latency_seconds AS read_latency_seconds,
     disk_image_dynamic.write_rate AS write_rate_bytes_per_second,
     disk_image_dynamic.write_latency_seconds AS write_latency_seconds,
     disk_image_dynamic.flush_latency_seconds AS flush_latency_seconds
-FROM
-    images
-INNER JOIN disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id
-INNER JOIN base_disks AS d ON images.image_group_id = d.disk_id
-LEFT
-OUTER JOIN vm_device ON vm_device.device_id = images.image_group_id
-LEFT
-OUTER JOIN vm_static ON vm_static.vm_guid = vm_device.vm_id
-WHERE
-    images.active = TRUE
+FROM images
+    INNER JOIN
+        disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id
+    INNER JOIN
+        base_disks as d ON images.image_group_id = d.disk_id
+    LEFT OUTER JOIN
+        vm_device ON vm_device.device_id = images.image_group_id
+    LEFT OUTER JOIN
+        vm_static ON vm_static.vm_guid = vm_device.vm_id
+    LEFT JOIN
+        (
+            SELECT e.disk_id AS vm_disk_id,
+                cast(SUM(disk_image_dynamic.actual_size / 1048576) AS INT) AS vm_disk_actual_size_mb
+            FROM images images_b
+                INNER JOIN
+                    disk_image_dynamic ON images_b.image_guid = disk_image_dynamic.image_id
+                INNER JOIN
+                    base_disks e ON images_b.image_group_id = e.disk_id
+                LEFT OUTER JOIN
+                    vm_device ON vm_device.device_id = images_b.image_group_id
+                LEFT OUTER JOIN
+                    vm_static ON vm_static.vm_guid = vm_device.vm_id
+            WHERE vm_static.entity_type = 'VM' OR vm_static.entity_type IS NULL
+            GROUP BY vm_disk_id) AS vm_disk_actual_size
+        ON d.disk_id = vm_disk_actual_size.vm_disk_id
+WHERE images.active = TRUE
     AND ( vm_static.entity_type = 'VM'
         OR vm_static.entity_type IS NULL );
 CREATE
