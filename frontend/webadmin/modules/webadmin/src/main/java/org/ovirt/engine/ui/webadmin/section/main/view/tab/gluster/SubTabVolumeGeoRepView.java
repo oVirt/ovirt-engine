@@ -59,6 +59,13 @@ implements SubTabVolumeGeoRepPresenter.ViewDef {
         getTable().addColumn(new AbstractTextColumn<GlusterGeoRepSession>() {
             @Override
             public String getValue(GlusterGeoRepSession object) {
+                return object.getUserName() != null ? object.getUserName() : "root"; //$NON-NLS-1$
+            }
+        }, constants.volumeSubTabGeoRepSlaveUserColumn(), "150px"); //$NON-NLS-1$
+
+        getTable().addColumn(new AbstractTextColumn<GlusterGeoRepSession>() {
+            @Override
+            public String getValue(GlusterGeoRepSession object) {
                 return object.getStatus().toString();
             }
         }, constants.volumeSubTabGeoRepStatusColumn(), "150px"); //$NON-NLS-1$
