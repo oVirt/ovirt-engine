@@ -14,11 +14,8 @@ public final class EngineSessionTimeoutData extends JavaScriptObject {
         return $wnd.engineSessionTimeout;
     }-*/;
 
-    public native String getSessionTimeout() /*-{
-        return this.sessionTimeout;
+    public native String getValue() /*-{
+        return this.value;
     }-*/;
 
-    public native String getSessionHardLimit() /*-{
-        return this.sessionHardLimit;
-    }-*/;
 }

@@ -78,8 +78,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         // Check for Engine user session timeout configuration
         EngineSessionTimeoutData engineSessionTimeoutData = EngineSessionTimeoutData.instance();
         if (engineSessionTimeoutData != null) {
-            restApiSessionManager.setSessionTimeout(engineSessionTimeoutData.getSessionTimeout());
-            restApiSessionManager.setHardLimit(engineSessionTimeoutData.getSessionHardLimit());
+            restApiSessionManager.setSessionTimeout(engineSessionTimeoutData.getValue());
         }
 
         // Initiate transition to requested application place
@@ -111,7 +110,6 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         });
 
         performLogin(loginModel);
-        restApiSessionManager.recordLoggedInTime();
     }
 
     @Override
