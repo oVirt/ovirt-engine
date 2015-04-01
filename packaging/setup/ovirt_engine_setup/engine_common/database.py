@@ -693,7 +693,7 @@ class OvirtUtils(base.Base):
                 stdout.close()
 
         self.logger.debug('db backup res %s' % res)
-        if {r['rc'] for r in res['result']} != {0}:
+        if set(r['rc'] for r in res['result']) != set((0,)):
             raise RuntimeError(
                 _(
                     'Failed to backup database, please check '
