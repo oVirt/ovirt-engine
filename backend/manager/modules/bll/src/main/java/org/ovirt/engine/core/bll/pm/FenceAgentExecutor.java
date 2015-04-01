@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.pm;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.FenceProxyLocator;
 import org.ovirt.engine.core.bll.VdsArchitectureHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;

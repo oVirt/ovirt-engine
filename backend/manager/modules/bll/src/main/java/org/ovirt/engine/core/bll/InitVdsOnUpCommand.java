@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.pm.FenceProxyLocator;
 import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.pm;
 
 import java.util.Iterator;
 import java.util.List;
@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.config.Config;
@@ -23,19 +22,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FenceProxyLocator {
-
     private static final Logger log = LoggerFactory.getLogger(FenceProxyLocator.class);
 
-    private final VDS _vds;
+    private final VDS fencedHost;
     private FencingPolicy fencingPolicy;
 
-    public FenceProxyLocator(VDS _vds) {
-        super();
-        this._vds = _vds;
+    public FenceProxyLocator(VDS fencedHost) {
+        this(fencedHost, null);
     }
 
-    public FenceProxyLocator(VDS vds, FencingPolicy fencingPolicy) {
-        this(vds);
+    public FenceProxyLocator(VDS fencedHost, FencingPolicy fencingPolicy) {
+        this.fencedHost = fencedHost;
         this.fencingPolicy = fencingPolicy;
     }
 
@@ -76,18 +73,18 @@ public class FenceProxyLocator {
             }
         }
         if (proxyHost == null) {
-            log.error("Can not run Power Management command on Host {}, no suitable proxy Host was found.",
-                    _vds.getName());
+            log.error("Can not run fence action on host '{}', no suitable proxy host was found.",
+                    fencedHost.getName());
             return null;
         }
         return proxyHost;
     }
 
     private List<FenceProxySourceType> getFenceProxySources() {
-        List<FenceProxySourceType> fenceProxySources = _vds.getFenceProxySources();
+        List<FenceProxySourceType> fenceProxySources = fencedHost.getFenceProxySources();
         if (CollectionUtils.isEmpty(fenceProxySources)) {
             fenceProxySources = FenceProxySourceTypeHelper.parseFromString(
-                    Config.<String> getValue(ConfigValues.FenceProxyDefaultPreferences));
+                    Config.<String>getValue(ConfigValues.FenceProxyDefaultPreferences));
         }
         return fenceProxySources;
     }
@@ -101,12 +98,12 @@ public class FenceProxyLocator {
         Iterator<VDS> iterator = hosts.iterator();
         while (iterator.hasNext()) {
             VDS host = iterator.next();
-            if (host.getId().equals(_vds.getId())
+            if (host.getId().equals(fencedHost.getId())
                     || host.getId().equals(excludedHostId)
                     || !matchesOption(host, fenceProxySource)
                     || !areAgentsVersionCompatible(host)
                     || (fencingPolicy != null && !isFencingPolicySupported(host, minSupportedVersion))
-                    || isHostNetworkUnreacable(host)) {
+                    || isHostNetworkUnreachable(host)) {
                 iterator.remove();
             }
         }
@@ -118,45 +115,45 @@ public class FenceProxyLocator {
         return hosts.size() == 0 ? null : hosts.get(0);
     }
 
-    private boolean matchesOption(VDS host, FenceProxySourceType fenceProxySource) {
+    private boolean matchesOption(VDS proxyCandidate, FenceProxySourceType fenceProxySource) {
         boolean matches = false;
         switch (fenceProxySource) {
             case CLUSTER:
-                matches = host.getVdsGroupId().equals(_vds.getVdsGroupId());
+                matches = proxyCandidate.getVdsGroupId().equals(fencedHost.getVdsGroupId());
                 break;
 
             case DC:
-                matches = host.getStoragePoolId().equals(_vds.getStoragePoolId());
+                matches = proxyCandidate.getStoragePoolId().equals(fencedHost.getStoragePoolId());
                 break;
 
             case OTHER_DC:
-                matches = !host.getStoragePoolId().equals(_vds.getStoragePoolId());
+                matches = !proxyCandidate.getStoragePoolId().equals(fencedHost.getStoragePoolId());
+                break;
         }
         return matches;
     }
 
-    private boolean areAgentsVersionCompatible(VDS vds) {
-        VdsFenceOptions options = new VdsFenceOptions(vds.getVdsGroupCompatibilityVersion().getValue());
+    private boolean areAgentsVersionCompatible(VDS proxyCandidate) {
+        VdsFenceOptions options = new VdsFenceOptions(proxyCandidate.getVdsGroupCompatibilityVersion().getValue());
         boolean supported = true;
-        for (FenceAgent agent : vds.getFenceAgents()) {
+        for (FenceAgent agent : proxyCandidate.getFenceAgents()) {
             supported = supported && options.isAgentSupported(agent.getType());
         }
         return supported;
     }
 
-    private boolean isFencingPolicySupported(VDS vds, Version minimalSupportedVersion) {
-        return vds.getSupportedClusterVersionsSet().contains(minimalSupportedVersion);
+    private boolean isFencingPolicySupported(VDS proxyCandidate, Version minimalSupportedVersion) {
+        return proxyCandidate.getSupportedClusterVersionsSet().contains(minimalSupportedVersion);
     }
 
-    private boolean isHostNetworkUnreacable(VDS vds) {
-        VdsDynamic vdsDynamic = vds.getDynamicData();
-        return (vdsDynamic.getStatus() == VDSStatus.Down
-                || vdsDynamic.getStatus() == VDSStatus.Reboot
-                || vdsDynamic.getStatus() == VDSStatus.Kdumping
-                || vdsDynamic.getStatus() == VDSStatus.NonResponsive
-                || vdsDynamic.getStatus() == VDSStatus.PendingApproval
-                || (vdsDynamic.getStatus() == VDSStatus.NonOperational
-        && vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE));
+    private boolean isHostNetworkUnreachable(VDS proxyCandidate) {
+        return proxyCandidate.getStatus() == VDSStatus.Down
+                || proxyCandidate.getStatus() == VDSStatus.Reboot
+                || proxyCandidate.getStatus() == VDSStatus.Kdumping
+                || proxyCandidate.getStatus() == VDSStatus.NonResponsive
+                || proxyCandidate.getStatus() == VDSStatus.PendingApproval
+                || (proxyCandidate.getStatus() == VDSStatus.NonOperational
+                        && proxyCandidate.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE);
     }
 
     public FencingPolicy getFencingPolicy() {

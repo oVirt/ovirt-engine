@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.FenceProxyLocator;
+import org.ovirt.engine.core.bll.pm.FenceProxyLocator;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
