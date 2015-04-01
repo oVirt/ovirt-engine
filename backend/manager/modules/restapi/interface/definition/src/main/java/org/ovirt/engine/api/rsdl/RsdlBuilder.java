@@ -100,13 +100,13 @@ public class RsdlBuilder {
 
         uniteDuplicateLinks(rsdl);
 
-        Collections.sort(rsdl.getLinks().getLinks(), new Comparator<DetailedLink>(){
+        Collections.sort(rsdl.getLinks().getLinks(), new Comparator<DetailedLink>() {
             @Override
             public int compare(DetailedLink dl1, DetailedLink dl2) {
                 int res = dl1.getHref().compareTo(dl2.getHref());
                 return res != 0 ? res : dl1.getRel().compareTo(dl2.getRel());
             }
-          });
+        });
 
         return rsdl;
     }
@@ -480,6 +480,13 @@ public class RsdlBuilder {
         if (!GET.equals(link.getRel())) {
             addContentTypeHeader(link);
         }
+
+        // All the operations that create a new entity (those whose rel is "add") support the "Expect" header with the
+        // "201-created" value, so instead of explicitly adding it in the metadata file it is better to add it
+        // implicitly:
+        if (ADD.equals(link.getRel())) {
+            addExpectHeader(link);
+        }
     }
 
     /**
@@ -515,6 +522,24 @@ public class RsdlBuilder {
         header.setName("Content-Type");
         header.setValue("application/xml|json");
         header.setRequired(true);
+        headers.getHeaders().add(header);
+    }
+
+    /**
+     * Adds the description of the {@code Expect} header to a link.
+     *
+     * @param link the link where the description of the header will be added
+     */
+    private void addExpectHeader(DetailedLink link) {
+        Headers headers = link.getRequest().getHeaders();
+        if (headers == null) {
+            headers = new Headers();
+            link.getRequest().setHeaders(headers);
+        }
+        Header header = new Header();
+        header.setName("Expect");
+        header.setValue("201-created");
+        header.setRequired(false);
         headers.getHeaders().add(header);
     }
 

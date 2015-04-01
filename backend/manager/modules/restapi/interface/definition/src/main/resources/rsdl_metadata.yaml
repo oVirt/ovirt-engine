@@ -326,8 +326,6 @@ actions:
                 vm.migration.compressed: xs:string
         description: add a virtual machine to the system from a configuration - requires the configuration type and the configuration data
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/shutdown|rel=shutdown
   description: shutdown a virtual machine in the system identified by the given id
   request:
@@ -542,8 +540,6 @@ actions:
       - mandatoryArguments: {cdrom.file.id: 'xs:string'}
         description: add a cdrom to a virtual machine identified by the given id and attach a file to the cdrom
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/watchdogs|rel=get
   description: get all the watchdogs for the virtual machine identified by the given id
   request:
@@ -587,8 +583,6 @@ actions:
       - mandatoryArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
         description: add a watchdog to the virtual machine identified by the given id
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/disks|rel=get
   description: get all disks for a given virtual machine
   request:
@@ -682,8 +676,6 @@ actions:
         optionalArguments: {disk.active: 'xs:boolean'}
         description: attach a disk snapshot to the virtual machine
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/disks/{disk:id}/activate|rel=activate
   description: activate a disk attached to a virtual machine
   request:
@@ -795,8 +787,6 @@ actions:
         deprecated: true
         description: add a new network interface to the given virtual machine with port mirroring options
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/permissions|rel=get
   description: get all the permissions for a given virtual machine
   request:
@@ -833,8 +823,6 @@ actions:
         optionalArguments: {}
         description: add a new group level permission for a given virtual machine
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/statistics|rel=get
   description: get the memory and cpu statistics for a given virtual machine
   request:
@@ -889,8 +877,6 @@ actions:
           snapshot.disks.disk--COLLECTION: {disk.id: 'xs:string'}
         description: create a new snapshot for a given virtual machine
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/restore|rel=restore
   description: restore the virtual machine from a given snapshot
   request:
@@ -983,8 +969,6 @@ actions:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
         description: add a new tag to the virtual machine
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /vms/{vm:id}/sessions|rel=get
   description: get the open user-sessions of this VM
   request:
@@ -1112,8 +1096,6 @@ actions:
           disk.lun_storage.host: xs:string
         description: add a new lun disk to the system, this operation does not require size but requires lun connection details
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /disks/{disk:id}/statistics|rel=get
   description: get the disk statistics for the specified disk in the system
   request:
@@ -1211,8 +1193,6 @@ actions:
         }
         description: add a new network to the datacenter
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels|rel=get
   description: get the labels of a network
   request:
@@ -1229,8 +1209,6 @@ actions:
       - mandatoryArguments: {label.id: 'xs:string'}
         description: add a new label to the network
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels/{label:id}|rel=get
   description: get a specific label of a network
   request:
@@ -1315,8 +1293,6 @@ actions:
                            qos.outbound_burst: 'xs:int'}
         description: add a new QoS to the datacenter
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /storagedomains|rel=get
   description: get storage domains in the system
   request:
@@ -1414,8 +1390,6 @@ actions:
         description: add a new storage domain to the system using the gluster or posixfs storage
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /storagedomains/{storagedomain:id}/files|rel=get
   description: get the files stored in the iso storage domain
   request:
@@ -1490,8 +1464,6 @@ actions:
         optionalArguments: {}
         description: add a new group level permission on the storage domain
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}|rel=delete
   description: delete the specified template from the export or data domain
   request:
@@ -1684,8 +1656,6 @@ actions:
       - mandatoryArguments: {storageconnection.id: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}|rel=delete
   description: get the details of the specified cluster in the system
   request:
@@ -1727,8 +1697,6 @@ actions:
         cluster.management_network.id|name: 'xs:string', cluster.maintenance_reason_required: 'xs:boolean'}
         description: add a new cluster to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/networks|rel=get
   description: get the list of networks in the cluster
   request:
@@ -1772,8 +1740,6 @@ actions:
         optionalArguments: {network.usages.usage--COLLECTION: {usage: 'xs:string'}}
         description: add a new network to the cluster
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/permissions|rel=get
   description: get the list of permissions on the cluster
   request:
@@ -1810,8 +1776,6 @@ actions:
         optionalArguments: {}
         description: add a new group level permission on the cluster
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /macpools|rel=get
   description: get a list of mac pools in the system
   request:
@@ -1842,8 +1806,6 @@ actions:
           macpool.default_pool: xs:boolean
         description: add the specified mac pool into the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /macpools/{macpool:id}|rel=delete
   description: delete the specified mac pool from the system
   request:
@@ -1943,8 +1905,6 @@ actions:
           datacenter.mac_pool.id: xs:string
         description: add a new data center to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/permissions|rel=get
   description: get the list of permissions on the data center
   request:
@@ -1980,8 +1940,6 @@ actions:
         optionalArguments: {}
         description: add a new role permission on the data center
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains|rel=get
   description: get the list of storage domains in a data center
   request:
@@ -2015,8 +1973,6 @@ actions:
         optionalArguments: {}
         description: add a new storage domain to the data center
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/activate|rel=activate
   description: activate the specified storage domain in the data center
   request:
@@ -2095,8 +2051,6 @@ actions:
         cluster.management_network.id|name: 'xs:string'}
         description: add a new cluster to the data center
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=get
   description: get the list of networks for a cluster in a data center
   request:
@@ -2140,8 +2094,6 @@ actions:
         optionalArguments: {network.usages.usage--COLLECTION: {usage: 'xs:string'}}
         description: add a new network to a cluster in the specified data center.
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=get
   description: get the list of permissions on the cluster in the specified data center.
   request:
@@ -2178,8 +2130,6 @@ actions:
         optionalArguments: {}
         description: add a new group level permission on the cluster in the specified data center.
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /domains|rel=get
   description: get a list of domains in the system
   request:
@@ -2286,8 +2236,6 @@ actions:
                            event.cluster.id: 'xs:string',event.data_center.id: 'xs:string'}
         description: add a new event to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /groups/{group:id}|rel=get
   description: get the details of the specified group in the system
   request:
@@ -2364,8 +2312,6 @@ actions:
         optionalArguments: {}
         description: add a new permission on the template to the group in the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /groups/{group:id}/roles|rel=get
   description: get the list of roles assigned to the specified group
   request:
@@ -2413,8 +2359,6 @@ actions:
       - mandatoryArguments: {permit.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /groups/{group:id}/tags|rel=get
   description: get the list of tags attached to a given group
   request:
@@ -2447,8 +2391,6 @@ actions:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /hosts|rel=get
   description: get the list of hosts in the system
   request:
@@ -2554,8 +2496,6 @@ actions:
           host.power_management.kdump_detection: 'xs:boolean', host.protocol: 'xs:int'}
         description: add a new host to the system providing the ssh password or fingerprint
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/activate|rel=activate
   description: activate the specified host in the system
   request:
@@ -2758,8 +2698,6 @@ actions:
             type: 'xs:string'}
         description: add a new network interface for the host
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/nics/setupnetworks|rel=setupnetworks
   description: initiate the command to setup networks for the network interface card of the specified host
   request:
@@ -2831,8 +2769,6 @@ actions:
       - mandatoryArguments: {label.id: 'xs:string'}
         description: add a new label to the interface
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/nics/{nic:id}/labels/{label:id}|rel=get
   description: get a specific label of an interface
   request:
@@ -2884,8 +2820,6 @@ actions:
         optionalArguments: {}
         description: add a new group level permission for the host
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/statistics|rel=get
   description: get the statistics for the host
   request:
@@ -2947,8 +2881,6 @@ actions:
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/fenceagents|rel=get
   description: get all fencing agents defined for this host
   request:
@@ -2965,8 +2897,6 @@ actions:
       - mandatoryArguments: {agent.address: 'xs:string', agent.order: 'xs:int', agent.type: 'xs:string', agent.username: 'xs:string', agent.password: 'xs:string'}
         optionalArguments: {agent.port: 'xs:int', agent.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=get
   description: get the fencing agent with the specified ID.  
   request:
@@ -2983,8 +2913,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {agent.address: 'xs:string', agent.order: 'xs:int', agent.type: 'xs:string', agent.username: 'xs:string', agent.password: 'xs:string', agent.port: 'xs:int', agent.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=delete
   description: delete the specified fencing agent
   request:
@@ -3054,8 +2982,6 @@ actions:
         }
         description: add a new network to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /networks/{network:id}/permissions|rel=get
   description: get the list of all permissions on a network in the system
   request:
@@ -3092,8 +3018,6 @@ actions:
         optionalArguments: {}
         description: add a new group level permission on a network in the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /networks/{network:id}/vnicprofiles|rel=get
   description: get the list of all virtual network interface card profiles for the network
   request:
@@ -3128,8 +3052,6 @@ actions:
         vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
         description: add a new virtual network interface card profile for the network
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /networks/{network:id}/labels|rel=get
   description: get the labels of a network
   request:
@@ -3146,8 +3068,6 @@ actions:
       - mandatoryArguments: {label.id: 'xs:string'}
         description: add a new label to the network
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /networks/{network:id}/labels/{label:id}|rel=get
   description: get a specific label of a network
   request:
@@ -3208,8 +3128,6 @@ actions:
         vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
         description: add a new virtual network interface card profile to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /vnicprofiles/{vnicprofile:id}/permissions|rel=get
   description: get the list of all permissions on the virtual network interface card profile in the system
   request:
@@ -3246,8 +3164,6 @@ actions:
         optionalArguments: {}
         description: add a new group level permission on the virtual network interface card profile in the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /roles|rel=get
   description: get the list of all roles in the system
   request:
@@ -3281,8 +3197,6 @@ actions:
         optionalArguments: {role.description: 'xs:string', role.administrative: 'xs:boolean'}
         description: add a new role to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /roles/{role:id}|rel=update
   description: update the specified role in the system
   request:
@@ -3325,8 +3239,6 @@ actions:
       - mandatoryArguments: {permit.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /bookmarks|rel=get
   description: get the list of bookmarks in the system
   request:
@@ -3568,8 +3480,6 @@ actions:
           template.migration.compressed: xs:string
         description: add a new template to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /templates/{template:id}/export|rel=export
   description: export the specified template to the export domain
   request:
@@ -3638,8 +3548,6 @@ actions:
       - mandatoryArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
         description: add a watchdog to the template identified by the given id
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /templates/{template:id}/disks|rel=get
   description: get the list of disks attached to the template
   request:
@@ -3710,8 +3618,6 @@ actions:
         deprecated: true
         description: add a new network interface card to the template using a network with optional port mirroring options. This has been deprecated
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /templates/{template:id}/nics/{nic:id}|rel=get
   description: get the details of the specified network interface card attached to the template
   request:
@@ -3775,8 +3681,6 @@ actions:
         optionalArguments: {}
         description: add a new role permission on the template
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /templates/{template:id}/tags|rel=get
   description: get the list of tags added to the template
   request:
@@ -3809,8 +3713,6 @@ actions:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
         description: add a new tag to the virtual machine
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /users|rel=get
   description: get the list of all users registered in the system
   request:
@@ -3840,8 +3742,6 @@ actions:
         optionalArguments: {user.namespace: 'xs:string', user.principal: 'xs:string'}
         description: add a new user to the specified domain with the specified user name
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /users/{user:id}|rel=delete
   description: delete the from the domain
   request:
@@ -3901,8 +3801,6 @@ actions:
         optionalArguments: {}
         description: add a new tole permission for the user on the template
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /users/{user:id}/roles|rel=get
   description: get the list of roles assigned to the user
   request:
@@ -3951,8 +3849,6 @@ actions:
         optionalArguments: {}
         description: add a new permit for the role assigned to the user
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /users/{user:id}/tags|rel=get
   description: get the list of tags attached to the user
   request:
@@ -3985,8 +3881,6 @@ actions:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
         description: add a new tag to the user
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /vmpools|rel=get
   description: get the list of all virtual machine pools in the system
   request:
@@ -4049,8 +3943,6 @@ actions:
           vmpool.description: 'xs:string', vmpool.soundcard_enabled: 'xs:boolean'}
         description: add a new vm pool to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /vmpools/{vmpool:id}/permissions|rel=get
   description: get the list of permissions for the specified vm pool
   request:
@@ -4087,8 +3979,6 @@ actions:
         optionalArguments: {}
         description: add a new group level permission on the vm pool
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/glustervolumes|rel=get
   description: get the list of gluster volumes attached to the cluster
   request:
@@ -4116,8 +4006,6 @@ actions:
         description: add a new gluster volume to the cluster with bricks
     urlparams:
       force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/start|rel=start
   description: start the gluster volume attached to the cluster
   request:
@@ -4236,8 +4124,6 @@ actions:
         description: add a new brick to the gluster volume attached to the cluster
     urlparams:
       force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}|rel=get
   description: get the details of the specified brick in the gluster volume attached to the cluster
   request:
@@ -4377,8 +4263,6 @@ actions:
         description: add a new lun disk to the storage domain
     urlparams:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=get
   description: get the list of all disks in the storage domain in the data center
   request:
@@ -4460,8 +4344,6 @@ actions:
         description: add a new lun disk to the storage domain in the data center
     urlparams:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Expect: {value: 201-created, required: false}
 
 - name: /jobs|rel=get
   description: get the list of all external jobs in the system
@@ -4490,8 +4372,6 @@ actions:
         optionalArguments: {job.auto_cleared: 'xs:boolean'}
         description: add a new external job to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 
 - name: /jobs/{job:id}/end|rel=end
   description: end the specified external job in the system
@@ -4542,8 +4422,6 @@ actions:
         optionalArguments: {step.job.id: 'xs:string', step.parent_step.id: 'xs:string'}
         description: add a new step to the external job
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 
 - name: /jobs/{job:id}/steps/{step:id}/end|rel=end
   description: invoke the command to end the specified step of an external job
@@ -4642,8 +4520,6 @@ actions:
       - mandatoryArguments: {storage_connection.type: 'xs:string', storage_connection.path: 'xs:string'}
         optionalArguments:  {}
         description: add a local storage connection to the system
-    headers:
-      Expect: {value: 201-created, required: false}
 
 - name: /clusters/{cluster:id}/glusterhooks|rel=get
   request:
@@ -4725,8 +4601,6 @@ actions:
         optionalArguments: {}
         description: add a new group level permission on the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 
 - name: /instancetypes|rel=get
   description: get the list of instance types on the system
@@ -4783,8 +4657,6 @@ actions:
           instance_type.custom_cpu_model: xs:string
         description: add a new instance type to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 
 - name: /clusters/{cluster:id}/affinitygroups|rel=get
   description: get the list of affinity groups in the cluster
@@ -4827,8 +4699,6 @@ actions:
         optionalArguments: {}
         description: add a new affinity group to the cluster
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}/vms|rel=get
   description: get the list of vms per affinity group
   request:
@@ -4854,8 +4724,6 @@ actions:
         optionalArguments: {}
         description: add a vm to affinity group
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /hosts/{host:id}/numanodes|rel=get
   description: get the list of NUMA nodes for the host
   request:
@@ -4935,8 +4803,6 @@ actions:
           vm_numa_node.numa_node_pins.numa_node_pin--COLLECTION: {numa_node_pin.index: 'xs:int'}
         description: add a new virtual NUMA node for the vm
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /schedulingpolicyunits|rel=get
   description: get a list of scheduling policy units in the system
   request:
@@ -5021,8 +4887,6 @@ actions:
           schedulingpolicy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'}
         description: add a new scheduling policy to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}/filters|rel=get
   description: get a list of specified scheduling policy filters
   request:
@@ -5067,8 +4931,6 @@ actions:
           filter.scheduling_policy_unit.position: 'xs:int'
         description: add a new scheduling policy to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}/weights|rel=get
   description: get a list of specified scheduling policy weights
   request:
@@ -5113,8 +4975,6 @@ actions:
           weight.scheduling_policy_unit.factor: 'xs:int'
         description: add a weight to a specified user defined scheduling policy
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}/balances|rel=get
   description: get a list of specified scheduling policy balance modules
   request:
@@ -5157,8 +5017,6 @@ actions:
       - mandatoryArguments: {balance.scheduling_policy_unit.id: 'xs:string'}
         description: add a balance module to a specified user defined scheduling policy
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/iscsibonds|rel=get
   description: get all iSCSI Bonds for the specified datacenter
   request:
@@ -5176,8 +5034,6 @@ actions:
         optionalArguments: {}
         description: add a new iSCSI Bond to the datacenter
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}|rel=update
   description: update the specified iSCSI Bond
   request:
@@ -5188,8 +5044,6 @@ actions:
        optionalArguments: {}
        description: update the specified iSCSI Bond
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}|rel=delete
   description: remove the specified iSCSI Bond from the datacenter
   request:
@@ -5285,8 +5139,6 @@ actions:
                            diskprofile.qos.id: 'xs:string'}
         description: add a new disk profile to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /diskprofiles/{diskprofile:id}/permissions|rel=get
   description: get the list of all permissions on the disk profile in the system
   request:
@@ -5323,8 +5175,6 @@ actions:
         optionalArguments: {}
         description: add a new group level permission on the disk profile in the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /storagedomains/{storagedomain:id}/diskprofiles|rel=get
   description: get the list of all disk profiles for the storage domain
   request:
@@ -5359,8 +5209,6 @@ actions:
                            diskprofile.qos.id: 'xs:string'}
         description: add a new disk profile for the storage domain
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /cpuprofiles|rel=get
   description: get the list of all cpu profiles in the system
   request:
@@ -5407,8 +5255,6 @@ actions:
                            cpuprofile.qos.id: 'xs:string'}
         description: add a new cpu profile to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /cpuprofiles/{cpuprofile:id}/permissions|rel=get
   description: get the list of all permissions on the cpu profile in the system
   request:
@@ -5445,8 +5291,6 @@ actions:
         optionalArguments: {}
         description: add a new group level permission on the cpu profile in the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /clusters/{cluster:id}/cpuprofiles|rel=get
   description: get the list of all cpu profiles for the cluster
   request:
@@ -5481,8 +5325,6 @@ actions:
                            cpuprofile.qos.id: 'xs:string'}
         description: add a new cpu profile for the cluster
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 
 - name: /operatingsystems|rel=get
   description: get the list of all Operating Systems
@@ -5555,8 +5397,6 @@ actions:
           external_host_provider.authentication_url: xs:string
         description: add a new external host provider to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /externalhostproviders/{externalhostprovider:id}/testconnectivity|rel=testconnectivity
   description: test the connectivity to the external external host provider
   request:
@@ -5711,8 +5551,6 @@ actions:
             property.value: xs:string
         description: add a new OpenStack image provider to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /openstackimageproviders/{openstackimageprovider:id}/images|rel=get
   description: get the list of images from the OpenStack image provider
   request:
@@ -5842,8 +5680,6 @@ actions:
             property.value: xs:string
         description: add a new OpenStack volume provider to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}/volumetypes|rel=get
   description: get the list of volume types of the OpenStack volume provider
   request:
@@ -5920,8 +5756,6 @@ actions:
             property.value: xs:string
         description: add a new OpenStack network provider to the system
     urlparams: {}
-    headers:
-      Expect: {value: 201-created, required: false}
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks|rel=get
   description: get the list of networks from the OpenStack network provider
   request:
