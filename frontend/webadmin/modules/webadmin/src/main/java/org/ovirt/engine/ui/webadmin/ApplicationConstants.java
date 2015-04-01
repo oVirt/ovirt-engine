@@ -112,6 +112,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Destination Volume")
     String volumeSubTabGeoRepSlaveVolumeColumn();
 
+    @DefaultStringValue("User Name")
+    String volumeSubTabGeoRepSlaveUserColumn();
+
     @DefaultStringValue("Status")
     String volumeSubTabGeoRepStatusColumn();
 
