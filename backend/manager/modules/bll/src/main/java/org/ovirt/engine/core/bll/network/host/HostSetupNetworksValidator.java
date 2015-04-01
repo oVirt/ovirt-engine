@@ -596,6 +596,7 @@ public class HostSetupNetworksValidator {
             NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
 
             vr = skipValidation(vr) ? vr : validator.networkAttachmentIsSet();
+            vr = skipValidation(vr) ? vr : referencedNetworkAttachmentActuallyExists(attachment.getId());
 
             //TODO MM: complain about unset network id.
             vr = skipValidation(vr) ? vr : validator.networkExists();
@@ -626,6 +627,21 @@ public class HostSetupNetworksValidator {
         }
 
         return vr;
+    }
+
+    private ValidationResult referencedNetworkAttachmentActuallyExists(Guid networkAttachmentId) {
+        boolean doesNotReferenceExistingNetworkAttachment = networkAttachmentId == null;
+        if (doesNotReferenceExistingNetworkAttachment) {
+            return ValidationResult.VALID;
+        }
+
+        for (NetworkAttachment existingAttachment : existingAttachments) {
+            if (existingAttachment.getId().equals(networkAttachmentId)) {
+                return ValidationResult.VALID;
+            }
+        }
+
+        return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS);
     }
 
     private ValidationResult validateCoherentNetworkIdentification(NetworkAttachment attachment) {
