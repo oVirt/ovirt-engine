@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -101,6 +102,7 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
         }
 
         HostDevice pciDevice = getPciDeviceByNic(nic, deviceList);
+
         hostNicVfsConfig.setMaxNumOfVfs(getMaxNumOfVfs(pciDevice));
         hostNicVfsConfig.setNumOfVfs(getNumOfVfs(nic.getName(), pciDevice, deviceList));
     }
@@ -114,12 +116,13 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
             }
         });
 
-        if (netDevice != null) {
-            return hostDeviceDao.getHostDeviceByHostIdAndDeviceName(nic.getVdsId(),
-                    netDevice.getParentDeviceName());
-        }
+        Objects.requireNonNull(netDevice, "nic doesn't have a net device");
 
-        return null;
+        HostDevice pciDevice = hostDeviceDao.getHostDeviceByHostIdAndDeviceName(nic.getVdsId(),
+                netDevice.getParentDeviceName());
+
+        Objects.requireNonNull(pciDevice, "net device doesn't have a parent pci device");
+        return pciDevice;
     }
 
     private int getMaxNumOfVfs(HostDevice pciDevice) {
