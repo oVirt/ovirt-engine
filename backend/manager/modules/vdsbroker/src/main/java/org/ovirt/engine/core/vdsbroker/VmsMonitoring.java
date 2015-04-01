@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -195,6 +194,7 @@ public class VmsMonitoring {
 
     private void afterVMsRefreshTreatment() {
         Collection<Guid> movedToDownVms = new ArrayList<>();
+        List<Guid> succeededToRunVms = new ArrayList<>();
 
         // now loop over the result and act
         for (VmAnalyzer vmUpdater : vmAnalyzers) {
@@ -207,12 +207,7 @@ public class VmsMonitoring {
 
             if (vmUpdater.isSuccededToRun()) {
                 vdsManager.succeededToRunVm(vmUpdater.getDbVm().getId());
-                //TODO change {@IVdsEventListener.updateSlaPolicies}
-                // to varargs version to avoid creating the list
-                // over and over again - updateSlaPolicies(Guid vdsId, Guid... vmIds)
-                getVdsEventListener().updateSlaPolicies(
-                        Arrays.asList(new Guid[] {vmUpdater.getDbVm().getId()}),
-                        vdsManager.getVdsId());
+                succeededToRunVms.add(vmUpdater.getDbVm().getId());
             }
 
             // Refrain from auto-start HA VM during its re-run attempts.
@@ -241,6 +236,8 @@ public class VmsMonitoring {
             }
 
         }
+
+        getVdsEventListener().updateSlaPolicies(succeededToRunVms, vdsManager.getVdsId());
 
         // run all vms that crashed that marked with auto startup
         getVdsEventListener().runFailedAutoStartVMs(autoVmsToRun);
