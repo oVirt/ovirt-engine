@@ -3565,8 +3565,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmGuestAgentInterfacesByVmId,
-                new IdQueryParameters(vmId).withoutRefresh(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(vmId), aQuery);
     }
 
     public static void getVnicProfilesByNetworkId(AsyncQuery aQuery, Guid networkId) {

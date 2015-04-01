@@ -203,9 +203,6 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     }
 
     protected VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
-        //All internal queries should have refresh set to false, since the decision to refresh the session should
-        //be up to the client. All internal queries will not refresh the session.
-        parameters.setRefresh(false);
         return getBackend().runInternalQuery(actionType, parameters, getEngineContext());
     }
 
