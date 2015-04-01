@@ -33,6 +33,7 @@
             color: white;
             padding-left: 5px;
             float: left;
+            line-height: 25px;
         }
 
         .widgetOuterPanel {
