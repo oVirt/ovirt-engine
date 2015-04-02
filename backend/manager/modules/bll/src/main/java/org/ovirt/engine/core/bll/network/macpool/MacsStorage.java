@@ -74,7 +74,12 @@ class MacsStorage {
             final Range rangeWithAvailableMac = getRangeWithAvailableMac();
             Validate.notNull(rangeWithAvailableMac);
 
-            final List<Long> allocatedMacs = rangeWithAvailableMac.allocateMacs(remainingMacs);
+            final int availableMacsCount = rangeWithAvailableMac.getAvailableCount();
+            int allocatingMacsCount = availableMacsCount < remainingMacs
+                    ? availableMacsCount
+                    : remainingMacs;
+
+            final List<Long> allocatedMacs = rangeWithAvailableMac.allocateMacs(allocatingMacsCount);
 
             remainingMacs -= allocatedMacs.size();
             result.addAll(allocatedMacs);
