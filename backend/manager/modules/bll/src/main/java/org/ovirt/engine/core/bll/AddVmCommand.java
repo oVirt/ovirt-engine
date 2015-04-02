@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
@@ -134,6 +135,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     @Override
+    @PostConstruct
     protected void postConstruct() {
         T parameters = getParameters();
         if (parameters.getVmStaticData() != null) {

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections.MapUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -45,7 +46,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
 
-
 /**
  * This class is responsible for creation of a vmpool with vms within it. This class is not transactive,
  * which means that the 'execute' method does not run in transaction. On the other hand, each vm is added to the system
@@ -79,6 +79,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     }
 
     @Override
+    @PostConstruct
     protected void postConstruct() {
         // skipped if participating in compensation flow
         if (getParameters() == null) {
