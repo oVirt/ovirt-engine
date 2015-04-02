@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+    <ui:with field='commonResources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+
+    <ui:style type="org.ovirt.engine.ui.webadmin.widget.host.FenceAgentWidget.Style">
+        .button {
+            padding: 0px 0px;
+            border: none;
+            background: none;
+        }
+
+        .container {
+            width: 96.4%;
+        }
+
+        .editColumn {
+            padding: 0px 0px 0px 5px;
+        }
+
+        .noMargin {
+           margin: 0px;
+        }
+
+        .upDownPadding {
+            padding: 0px;
+        }
+
+        .upDownButton {
+            width: 18px;
+            height: 18px;
+            padding-left: 4px;
+            padding-top: 0px;
+            line-height: 16px;
+        }
+
+        .bold {
+            font-weight: bolder;
+            background-color: transparent !important;
+        }
+
+        .fakeAnchor {
+            color: #0099d3;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .highlightRow {
+            background-color: #eeeeee;
+        }
+
+        .rowPadding {
+            padding-top: 2px;
+        }
+    </ui:style>
+
+    <b:Container addStyleNames="{style.container}">
+      <b:Row ui:field="topRow" addStyleNames="{style.rowPadding}">
+        <b:Column size="LG_1">
+          <b:Row>
+            <b:Column size="LG_6" addStyleNames="{style.editColumn}">
+              <ge:IntegerEntityModelLabel ui:field="orderLabel" addStyleNames="{style.bold}"/>
+            </b:Column>
+            <b:Column size="LG_6" addStyleNames="{style.editColumn}">
+              <g:PushButton ui:field="editFenceAgent" addStyleNames="{style.button}">
+                <g:upFace image="{resources.editHover}"/>
+              </g:PushButton>
+            </b:Column>
+          </b:Row>
+        </b:Column>
+        <b:Column size="LG_6" ui:field="labelColumn">
+          <g:Label ui:field="agentLabel" addStyleNames="{style.fakeAnchor}" />
+          <g:Label ui:field="concurrentGroupLabel" />
+        </b:Column>
+        <b:Column size="LG_4" ui:field="concurrentListColumn">
+          <e:ListModelListBoxEditor ui:field="concurrentList" />
+        </b:Column>
+        <b:Column size="LG_1" addStyleNames="{style.editColumn}">
+          <b:Row addStyleNames="{style.noMargin}">
+            <b:Column size="LG_6" addStyleNames="{style.noMargin} {style.upDownPadding}">
+              <g:PushButton ui:field="up" text="/\" addStyleNames="{style.upDownButton}" />
+            </b:Column>
+            <b:Column size="LG_6" addStyleNames="{style.noMargin} {style.upDownPadding}">
+              <g:PushButton ui:field="down" text="\/" addStyleNames="{style.upDownButton}" />
+            </b:Column>
+          </b:Row>
+        </b:Column>
+      </b:Row>
+      <g:FlowPanel ui:field="concurrentPanel" >
+      </g:FlowPanel>
+    </b:Container>
+</ui:UiBinder>

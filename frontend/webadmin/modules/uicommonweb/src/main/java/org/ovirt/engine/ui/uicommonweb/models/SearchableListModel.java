@@ -637,7 +637,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     @Override
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs<T> e)
     {
         super.itemsCollectionChanged(sender, e);
 

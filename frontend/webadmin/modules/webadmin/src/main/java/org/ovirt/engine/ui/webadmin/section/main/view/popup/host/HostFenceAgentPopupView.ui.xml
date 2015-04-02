@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:style>
+        .container {
+            padding-top: 10px !important;
+        }
+
+        .optionsExplanationLabel {
+            padding: 0px 5px;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="500px" height="500px">
+      <d:content>
+        <g:HTMLPanel styleName="container {style.container}">
+          <b:Row>
+            <b:Column size="SM_12">
+              <ge:StringEntityModelTextBoxEditor ui:field="pmAddressEditor"/>
+            </b:Column>
+          </b:Row>
+          <b:Row>
+            <b:Column size="SM_12">
+              <ge:StringEntityModelTextBoxEditor ui:field="pmUserNameEditor"/>
+            </b:Column>
+          </b:Row>
+          <b:Row>
+            <b:Column size="SM_12">
+              <ge:StringEntityModelPasswordBoxEditor ui:field="pmPasswordEditor"/>
+            </b:Column>
+          </b:Row>
+          <b:Row>
+            <b:Column size="SM_12">
+              <e:ListModelListBoxEditor ui:field="pmTypeEditor"/>
+            </b:Column>
+          </b:Row>
+          <b:Row>
+            <b:Column size="SM_12">
+              <ge:IntegerEntityModelTextBoxEditor ui:field="pmPortEditor"/>
+            </b:Column>
+          </b:Row>
+          <b:Row>
+            <b:Column size="SM_12">
+              <ge:StringEntityModelTextBoxEditor ui:field="pmSlotEditor"/>
+            </b:Column>
+          </b:Row>
+          <b:Row>
+            <b:Column size="SM_12">
+              <ge:StringEntityModelTextBoxEditor ui:field="pmOptionsEditor"/>
+            </b:Column>
+          </b:Row>
+          <b:Row>
+            <b:Column size="SM_12">
+              <g:Label ui:field="pmOptionsExplanationLabel" />
+              <ge:EntityModelCheckBoxEditor ui:field="pmEncryptOptionsEditor"/>
+            </b:Column>
+          </b:Row>
+          <b:Row>
+            <b:Column size="SM_12">
+              <ge:EntityModelCheckBoxEditor ui:field="pmSecureEditor"/>
+            </b:Column>
+          </b:Row>
+          <b:Row>
+            <b:Column size="SM_12">
+              <w:UiCommandButton ui:field="testButton" />
+              <g:Label ui:field="testMessage" />
+            </b:Column>
+          </b:Row>
+          </g:HTMLPanel>
+      </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>

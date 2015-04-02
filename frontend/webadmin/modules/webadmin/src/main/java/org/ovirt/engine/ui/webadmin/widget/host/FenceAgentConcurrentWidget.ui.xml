@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+    <ui:with field='commonResources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+
+    <ui:style type="org.ovirt.engine.ui.webadmin.widget.host.FenceAgentConcurrentWidget.Style">
+        .counterLabel {
+            width: 20px;
+        }
+
+        .button {
+            padding: 0px 0px 0px 26px;
+            border: none;
+            background: none;
+        }
+
+        .agentLabel {
+            line-height: 21px;
+        }
+
+        .detachButton {
+            height: 18px;
+            padding-left: 4px;
+            padding-top: 0px;
+            line-height: 16px;
+        }
+
+        .detachColumn {
+            padding-left: 5px;
+        }
+
+        .fakeAnchor {
+            color: #0099d3;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .separator {
+            border-bottom: lightgray 1px solid;
+        }
+    </ui:style>
+
+    <b:Row addStyleNames="{style.separator}">
+      <b:Column size="LG_1">
+        <g:PushButton ui:field="editFenceAgent" addStyleNames="{style.button}">
+            <g:upFace image="{resources.editHover}"/>
+        </g:PushButton>
+      </b:Column>
+      <b:Column size="LG_9">
+        <g:Label ui:field="agentLabel" addStyleNames="{style.agentLabel} {style.fakeAnchor}" />
+      </b:Column>
+      <b:Column size="LG_1" addStyleNames="{style.detachColumn}">
+        <g:Button ui:field="removeConcurrentGroup" addStyleNames="{style.detachButton}" />
+      </b:Column>
+    </b:Row>
+</ui:UiBinder>

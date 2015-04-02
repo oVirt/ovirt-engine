@@ -581,6 +581,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Power Management")
     String hostPopupPowerManagementTabLabel();
 
+    @DefaultStringValue("Detach")
+    String detachFenceAgentFromGroup();
+
+    @DefaultStringValue("Concurrent Agents Group")
+    String concurrentAgentGroupLabel();
+
+    @DefaultStringValue("Agents by Sequential Order")
+    String agentsBySequentialOrder();
+
+    @DefaultStringValue("Add Fence Agent")
+    String addNewFenceAgent();
+
     @DefaultStringValue("Memory Optimization")
     String hostPopupMemoryOptimizationTabLabel();
 
@@ -695,7 +707,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Fetch")
     String hostPopupFetchButtonLabel();
 
-    @DefaultStringValue("Source")
+    @DefaultStringValue("Power Management Proxy Preference")
     String hostPopupSourceText();
 
     @DefaultStringValue("SPM")

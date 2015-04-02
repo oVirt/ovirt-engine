@@ -13,10 +13,6 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class EditHostModel extends HostModel {
 
-    public EditHostModel() {
-        super();
-    }
-
     @Override
     protected boolean showInstallationProperties() {
         return false;

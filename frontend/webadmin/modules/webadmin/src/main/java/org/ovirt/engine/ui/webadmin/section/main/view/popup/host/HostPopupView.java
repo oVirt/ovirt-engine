@@ -12,17 +12,16 @@ import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.HasLabel;
-import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
-import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -31,7 +30,6 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
@@ -39,11 +37,9 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswor
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -52,11 +48,13 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.uicommon.model.FenceAgentModelProvider;
+import org.ovirt.engine.ui.webadmin.widget.host.FenceAgentsEditor;
+import org.ovirt.engine.ui.webadmin.widget.host.HostProxySourceEditor;
 import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -64,8 +62,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -83,7 +79,6 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -161,7 +156,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @UiField(provided = true)
     @Path(value = "providers.selectedItem")
     @WithElementId("providers")
-    ListModelListBoxEditor<Provider> providersEditor;
+    ListModelListBoxEditor<Provider<OpenstackNetworkProviderProperties>> providersEditor;
 
     @UiField
     Row searchProviderRow;
@@ -219,143 +214,36 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @WithElementId("isPm")
     EntityModelCheckBoxEditor pmEnabledEditor;
 
+    @Path(value = "fenceAgentListModel")
     @UiField(provided = true)
-    @Path(value = "pmVariants.selectedItem")
-    @WithElementId("pmVariants")
-    ListModelListBoxOnlyEditor<String> pmVariantsEditor;
+    final FenceAgentsEditor fenceAgentsEditor;
 
+    @Path(value = "pmProxyPreferencesList")
     @UiField
-    @Path(value = "pmSecondaryConcurrent.entity")
-    @WithElementId("pmSecondaryConcurrent")
-    EntityModelCheckBoxEditor pmSecondaryConcurrentEditor;
-
-    @UiField
-    FlowPanel pmPrimaryPanel;
-
-    @UiField
-    @Path(value = "managementIp.entity")
-    @WithElementId("managementIp")
-    StringEntityModelTextBoxEditor pmAddressEditor;
-
-    @UiField
-    @Path(value = "pmUserName.entity")
-    @WithElementId("pmUserName")
-    StringEntityModelTextBoxEditor pmUserNameEditor;
-
-    @UiField
-    @Path(value = "pmPassword.entity")
-    @WithElementId("pmPassword")
-    StringEntityModelPasswordBoxEditor pmPasswordEditor;
-
-    @UiField(provided = true)
-    @Path(value = "pmType.selectedItem")
-    @WithElementId("pmType")
-    ListModelListBoxEditor<String> pmTypeEditor;
-
-    @UiField
-    @Path(value = "pmPort.entity")
-    @WithElementId("pmPort")
-    StringEntityModelTextBoxEditor pmPortEditor;
-
-    @UiField
-    @Path(value = "pmSlot.entity")
-    @WithElementId("pmSlot")
-    StringEntityModelTextBoxEditor pmSlotEditor;
-
-    @UiField
-    @Path(value = "pmOptions.entity")
-    @WithElementId("pmOptions")
-    StringEntityModelTextBoxEditor pmOptionsEditor;
-
-    @UiField
-    @Path(value = "pmEncryptOptions.entity")
-    @WithElementId("pmEncryptOptions")
-    EntityModelCheckBoxEditor pmEncryptOptionsEditor;
+    HostProxySourceEditor proxySourceEditor;
 
     @UiField
     @Ignore
-    Label pmOptionsExplanationLabel;
+    AdvancedParametersExpander pmExpander;
 
     @UiField
-    @Path(value = "pmSecure.entity")
-    @WithElementId("pmSecure")
-    EntityModelCheckBoxEditor pmSecureEditor;
+    @Ignore
+    FlowPanel pmExpanderContent;
 
     @UiField(provided = true)
     @Path(value = "externalHostProviderEnabled.entity")
     @WithElementId("externalHostProviderEnabled")
     EntityModelCheckBoxEditor externalHostProviderEnabledEditor;
 
-    @UiField
-    FlowPanel pmSecondaryPanel;
-
-    @UiField
-    @Path(value = "pmSecondaryIp.entity")
-    @WithElementId("pmSecondaryIp")
-    StringEntityModelTextBoxEditor pmSecondaryAddressEditor;
-
-    @UiField
-    @Path(value = "pmSecondaryUserName.entity")
-    @WithElementId("pmSecondaryUserName")
-    StringEntityModelTextBoxEditor pmSecondaryUserNameEditor;
-
-    @UiField
-    @Path(value = "pmSecondaryPassword.entity")
-    @WithElementId("pmSecondaryPassword")
-    StringEntityModelPasswordBoxEditor pmSecondaryPasswordEditor;
-
     @UiField(provided = true)
-    @Path(value = "pmSecondaryType.selectedItem")
-    @WithElementId("pmSecondaryType")
-    ListModelListBoxEditor<String> pmSecondaryTypeEditor;
-
-    @UiField
-    @Path(value = "pmSecondaryPort.entity")
-    @WithElementId("pmSecondaryPort")
-    StringEntityModelTextBoxEditor pmSecondaryPortEditor;
-
-    @UiField
-    @Path(value = "pmSecondarySlot.entity")
-    @WithElementId("pmSecondarySlot")
-    StringEntityModelTextBoxEditor pmSecondarySlotEditor;
-
-    @UiField
-    @Path(value = "pmSecondaryOptions.entity")
-    @WithElementId("pmSecondaryOptions")
-    StringEntityModelTextBoxEditor pmSecondaryOptionsEditor;
-
-    @UiField
-    @Path(value = "pmSecondaryEncryptOptions.entity")
-    @WithElementId("pmSecondaryEncryptOptions")
-    EntityModelCheckBoxEditor pmSecondaryEncryptOptionsEditor;
-
-    @UiField
-    @Ignore
-    Label pmSecondaryOptionsExplanationLabel;
-
-    @UiField
-    @Path(value = "pmSecondarySecure.entity")
-    @WithElementId("pmSecondarySecure")
-    EntityModelCheckBoxEditor pmSecondarySecureEditor;
-
-    @UiField
     @Path(value = "disableAutomaticPowerManagement.entity")
     @WithElementId("disableAutomaticPowerManagementEditor")
     EntityModelCheckBoxEditor disableAutomaticPowerManagementEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "pmKdumpDetection.entity")
     @WithElementId("pmKdumpDetection")
     EntityModelCheckBoxEditor pmKdumpDetectionEditor;
-
-    @UiField
-    UiCommandButton testButton;
-
-    @UiField
-    UiCommandButton upButton;
-
-    @UiField
-    UiCommandButton downButton;
 
     @UiField
     @Ignore
@@ -363,17 +251,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @UiField
     Image updateHostsButton;
-
-    @UiField
-    @Ignore
-    Label testMessage;
-
-    @UiField
-    @Ignore
-    Label sourceLabel;
-
-    @UiField
-    ListBox proxyListBox;
 
     @UiField
     @Ignore
@@ -492,12 +369,14 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
     private final static ApplicationResources resources = AssetProvider.getResources();
     private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public HostPopupView(EventBus eventBus) {
+    public HostPopupView(EventBus eventBus, FenceAgentsEditor fenceAgentEditor,
+            FenceAgentModelProvider fenceAgentModelProvider) {
         super(eventBus);
 
+        this.fenceAgentsEditor = fenceAgentEditor;
         initEditors();
         initInfoIcon();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -604,13 +483,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         externalHostNameEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
-        providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider>());
-
-        pmVariantsEditor = new ListModelListBoxOnlyEditor<>(new StringRenderer<String>());
-
-        pmTypeEditor = new ListModelListBoxEditor<>(new StringRenderer<String>());
-
-        pmSecondaryTypeEditor = new ListModelListBoxEditor<>(new StringRenderer<String>());
+        providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
 
         externalDiscoveredHostsEditor = getListModelTypeAheadListBoxEditor();
         externalHostGroupsEditor = getListModelTypeAheadListBoxEditor();
@@ -618,6 +491,11 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        pmEnabledEditor.setUsePatternFly(true);
+        pmKdumpDetectionEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        pmKdumpDetectionEditor.setUsePatternFly(true);
+        disableAutomaticPowerManagementEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        disableAutomaticPowerManagementEditor.setUsePatternFly(true);
         externalHostProviderEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         overrideIpTablesEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         protocolEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -679,35 +557,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         // Power Management tab
         powerManagementTab.setLabel(constants.hostPopupPowerManagementTabLabel());
         pmEnabledEditor.setLabel(constants.hostPopupPmEnabledLabel());
-        pmSecondaryConcurrentEditor.setLabel(constants.hostPopupPmConcurrent());
-        testButton.setLabel(constants.hostPopupTestButtonLabel());
-        upButton.setLabel(constants.hostPopupUpButtonLabel());
-        downButton.setLabel(constants.hostPopupDownButtonLabel());
-        sourceLabel.setText(constants.hostPopupSourceText());
 
-        // Primary
-        pmAddressEditor.setLabel(constants.hostPopupPmAddressLabel());
-        pmUserNameEditor.setLabel(constants.hostPopupPmUserNameLabel());
-        pmPasswordEditor.setLabel(constants.hostPopupPmPasswordLabel());
-        pmTypeEditor.setLabel(constants.hostPopupPmTypeLabel());
-        pmPortEditor.setLabel(constants.hostPopupPmPortLabel());
-        pmSlotEditor.setLabel(constants.hostPopupPmSlotLabel());
-        pmOptionsEditor.setLabel(constants.hostPopupPmOptionsLabel());
-        pmOptionsExplanationLabel.setText(constants.hostPopupPmOptionsExplanationLabel());
-        pmSecureEditor.setLabel(constants.hostPopupPmSecureLabel());
-        pmEncryptOptionsEditor.setLabel(constants.hostPopupPmEncryptOptionsLabel());
-
-        // Secondary
-        pmSecondaryAddressEditor.setLabel(constants.hostPopupPmAddressLabel());
-        pmSecondaryUserNameEditor.setLabel(constants.hostPopupPmUserNameLabel());
-        pmSecondaryPasswordEditor.setLabel(constants.hostPopupPmPasswordLabel());
-        pmSecondaryTypeEditor.setLabel(constants.hostPopupPmTypeLabel());
-        pmSecondaryPortEditor.setLabel(constants.hostPopupPmPortLabel());
-        pmSecondarySlotEditor.setLabel(constants.hostPopupPmSlotLabel());
-        pmSecondaryOptionsEditor.setLabel(constants.hostPopupPmOptionsLabel());
-        pmSecondaryOptionsExplanationLabel.setText(constants.hostPopupPmOptionsExplanationLabel());
-        pmSecondarySecureEditor.setLabel(constants.hostPopupPmSecureLabel());
-        pmSecondaryEncryptOptionsEditor.setLabel(constants.hostPopupPmEncryptOptionsLabel());
         consoleAddress.setLabel(constants.consoleAddress());
         consoleAddressLabel.setText(constants.enableConsoleAddressOverride());
 
@@ -735,11 +585,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             networkProviderTab.setVisible(false);
         }
 
-    }
-
-    @Override
-    public void setMessage(String message) {
-        testMessage.setText(message);
     }
 
     @Override
@@ -859,72 +704,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             }
         });
 
-        testButton.setCommand(object.getTestCommand());
-
-        // Bind proxy commands.
-        upButton.setCommand(object.getProxyUpCommand());
-        upButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                object.getProxyUpCommand().execute();
-            }
-        });
-
-        downButton.setCommand(object.getProxyDownCommand());
-        downButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                object.getProxyDownCommand().execute();
-            }
-        });
-
         updateHostsButton.setResource(resources.searchButtonImage());
-
-        // Bind proxy list.
-        object.getPmProxyPreferencesList().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                proxyListBox.clear();
-
-                for (Object item : object.getPmProxyPreferencesList().getItems()) {
-                    proxyListBox.addItem((String) item);
-                }
-            }
-        });
-
-        object.getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-
-                List items = (List) object.getPmProxyPreferencesList().getItems();
-                int selectedItemIndex = items.indexOf(object.getPmProxyPreferencesList().getSelectedItem());
-
-                proxyListBox.setSelectedIndex(selectedItemIndex);
-            }
-        });
-
-        object.getPmProxyPreferencesList().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName == "IsChangable") { //$NON-NLS-1$
-                    proxyListBox.setEnabled(object.getPmProxyPreferencesList().getIsChangable());
-                }
-            }
-        });
-        proxyListBox.setEnabled(object.getPmProxyPreferencesList().getIsChangable());
-
-        proxyListBox.addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent event) {
-                List<String> items = (List<String>) object.getPmProxyPreferencesList().getItems();
-
-                String selectedItem = proxyListBox.getSelectedIndex() >= 0
-                        ? items.get(proxyListBox.getSelectedIndex())
-                        : null;
-
-                object.getPmProxyPreferencesList().setSelectedItem(selectedItem);
-            }
-        });
 
         // Create SPM related controls.
         IEventListener<EventArgs> spmListener = new IEventListener<EventArgs>() {
@@ -940,20 +720,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         createSpmControls(object);
 
-        // Wire events on power management related controls.
-        object.getPmVariants().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-
-                ListModel model = (ListModel) sender;
-                List items = (List) model.getItems();
-                Object selectedItem = model.getSelectedItem();
-
-                updatePmPanelsVisibility(items.indexOf(selectedItem) == 0);
-            }
-        });
-
-        updatePmPanelsVisibility(true);
         initExternalHostProviderWidgets(object.showExternalProviderPanel());
         // TODO: remove setIsChangeable when configured ssh username is enabled
         userNameEditor.setEnabled(false);
@@ -961,6 +727,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         networkProviderTab.setVisible(object.showNetworkProviderTab());
         networkProviderWidget.edit(object.getNetworkProviderModel());
 
+        this.fenceAgentsEditor.edit(object.getFenceAgentListModel());
+        this.proxySourceEditor.edit(object.getPmProxyPreferencesList());
         addTextAndLinkAlert(fetchPanel, constants.fetchingHostFingerprint(), object.getSSHFingerPrint());
         nameEditor.setFocus(true);
     }
@@ -1009,12 +777,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     private void initExpander() {
         expander.initWithContent(expanderContent.getElement());
-    }
-
-    private void updatePmPanelsVisibility(boolean primary) {
-
-        pmPrimaryPanel.setVisible(primary);
-        pmSecondaryPanel.setVisible(!primary);
+        pmExpander.initWithContent(pmExpanderContent.getElement());
     }
 
     private void showExternalDiscoveredHost(boolean enabled) {
@@ -1070,17 +833,14 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Override
     public HostModel flush() {
         networkProviderWidget.flush();
+        fenceAgentsEditor.flush();
+        proxySourceEditor.flush();
         return driver.flush();
     }
 
     @Override
     public void focusInput() {
         nameEditor.setFocus(true);
-    }
-
-    @Override
-    public HasUiCommandClickHandlers getTestButton() {
-        return testButton;
     }
 
     @Override
@@ -1203,20 +963,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Override
     public void setHostProviderVisibility(boolean visible) {
         searchProviderRow.setVisible(visible);
-    }
-
-    @Override
-    public void updatePrimaryPmSlotLabelText(boolean ciscoUcsSelected) {
-        updatePmSlotLabelText(pmSlotEditor, ciscoUcsSelected);
-    }
-
-    @Override
-    public void updateSecondaryPmSlotLabelText(boolean ciscoUcsSelected) {
-        updatePmSlotLabelText(pmSecondarySlotEditor, ciscoUcsSelected);
-    }
-
-    void updatePmSlotLabelText(HasLabel widget, boolean ciscoUcsSelected) {
-        widget.setLabel(ciscoUcsSelected ? constants.hostPopupPmCiscoUcsSlotLabel() : constants.hostPopupPmSlotLabel());
     }
 
     @Override

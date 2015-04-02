@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -55,7 +53,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -99,10 +96,11 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ReversibleFlow;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.inject.Inject;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("unchecked")
 public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> implements ISupportSystemTreeContext
 {
     private final HostGeneralModel generalModel;
@@ -711,7 +709,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 clusterChanging = true;
-                ListModel clusterModel = hostModel.getCluster();
+                ListModel<VDSGroup> clusterModel = hostModel.getCluster();
 
                 if (clusterModel.getSelectedItem() != null) {
 
@@ -1002,7 +1000,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());
             parameters.setvds(host);
-            parameters.setFenceAgents(getFenceAgents(model));
+            parameters.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
             if (model.getUserPassword().getEntity() != null) {
                 parameters.setPassword(model.getUserPassword().getEntity());
             }
@@ -1052,7 +1050,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             parameters.setInstallHost(false);
             parameters.setRebootAfterInstallation(isVirt);
             parameters.setAuthMethod(model.getAuthenticationMethod());
-            parameters.setFenceAgents(getFenceAgents(model));
+            parameters.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
 
             if (!oldClusterId.equals(newClusterId))
             {
@@ -1087,41 +1085,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
     }
 
-    private List<FenceAgent> getFenceAgents(HostModel model) {
-        List<FenceAgent> agents = new LinkedList<FenceAgent>();
-        if (model.getManagementIp() != null && model.getManagementIp().getEntity() != null) {
-            // Save primary PM parameters.
-            FenceAgent primaryAgent = new FenceAgent();
-            primaryAgent.setIp(model.getManagementIp().getEntity());
-            primaryAgent.setUser(model.getPmUserName().getEntity());
-            primaryAgent.setPassword(model.getPmPassword().getEntity());
-            primaryAgent.setType(model.getPmType().getSelectedItem());
-            primaryAgent.setOptionsMap((model.getPmOptionsMap()));
-            primaryAgent.setEncryptOptions(model.getPmEncryptOptions().getEntity());
-            if (model.getPmPort() != null && model.getPmPort().getEntity() != null) {
-                primaryAgent.setPort(Integer.valueOf(model.getPmPort().getEntity()));
-            }
-            primaryAgent.setOrder(1);
-            agents.add(primaryAgent);
-            if (model.getPmSecondaryIp() != null && model.getPmSecondaryIp().getEntity() != null) {
-                FenceAgent secondaryAgent = new FenceAgent();
-                secondaryAgent.setIp(model.getPmSecondaryIp().getEntity());
-                secondaryAgent.setUser(model.getPmSecondaryUserName().getEntity());
-                secondaryAgent.setPassword(model.getPmSecondaryPassword().getEntity());
-                secondaryAgent.setType(model.getPmSecondaryType().getSelectedItem());
-                secondaryAgent.setOptionsMap(model.getPmSecondaryOptionsMap());
-                secondaryAgent.setEncryptOptions(model.getPmSecondaryEncryptOptions().getEntity());
-                secondaryAgent.setPort(Integer.valueOf(model.getPmSecondaryPort().getEntity()));
-                secondaryAgent.setOrder(model.getPmSecondaryConcurrent().getEntity() ? primaryAgent.getOrder()
-                        : primaryAgent.getOrder() + 1);
-                if (model.getPmSecondaryPort() != null && model.getPmSecondaryPort().getEntity() != null) {
-                    secondaryAgent.setPort(Integer.valueOf(model.getPmSecondaryPort().getEntity()));
-                }
-                agents.add(secondaryAgent);
-            }
-        }
-        return agents;
-    }
     public void postOnSaveInternalChangeCluster(UpdateVdsActionParameters parameters, boolean approveInitiated)
     {
         Frontend.getInstance().runAction(VdcActionType.UpdateVds, parameters,
@@ -1672,8 +1635,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
     private void configureLocalStorage2(ConfigureLocalStorageModel model) {
         String prefix = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
-        if (!StringHelper.isNullOrEmpty(prefix)) {
-            EntityModel pathModel = model.getStorage().getPath();
+        if (!StringUtils.isEmpty(prefix)) {
+            EntityModel<String> pathModel = model.getStorage().getPath();
             pathModel.setEntity(prefix);
             pathModel.setIsChangeable(false);
         }
@@ -1790,29 +1753,24 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(HostGeneralModel.requestEditEventDefinition))
-        {
+        if (ev.matchesDefinition(HostGeneralModel.requestEditEventDefinition)) {
             getEditWithPMemphasisCommand().execute();
         }
-        if (ev.matchesDefinition(HostGeneralModel.requestGOToEventsTabEventDefinition))
-        {
+        if (ev.matchesDefinition(HostGeneralModel.requestGOToEventsTabEventDefinition)) {
             goToEventsTab();
         }
     }
 
     @Override
-    public boolean isSearchStringMatch(String searchString)
-    {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("host"); //$NON-NLS-1$
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VDS,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
@@ -1824,20 +1782,17 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         return true;
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         cancelConfirm();
         setWindow(null);
     }
 
-    public void cancelConfirm()
-    {
+    public void cancelConfirm() {
         setConfirmWindow(null);
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
         updateAlerts();
@@ -1884,15 +1839,13 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
-    {
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs<VDS> e) {
         super.itemsCollectionChanged(sender, e);
 
         // Try to select an item corresponding to the system tree selection.

@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host;
 
 import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresenterWidget;
-import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -18,7 +17,6 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
 
     public interface ViewDef extends AbstractTabbedModelBoundPopupPresenterWidget.ViewDef<HostModel> {
 
-        HasUiCommandClickHandlers getTestButton();
         HasClickHandlers getUpdateHostsButton();
 
         /**
@@ -26,10 +24,6 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
          */
         void showPowerManagement();
         void setHostProviderVisibility(boolean visible);
-
-        void updatePrimaryPmSlotLabelText(boolean ciscoUcsSelected);
-        void updateSecondaryPmSlotLabelText(boolean ciscoUcsSelected);
-
     }
 
     @Inject
@@ -40,15 +34,12 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
     @Override
     public void init(final HostModel model) {
         super.init(model);
-        addTestButtonListener();
         addUpdateHostsListener(model);
         addPowerManagementListener(model);
         addHostProviderListener(model);
-        addCiscoUcsPmTypeListener(model);
         addRadioButtonsListeners(model);
     }
 
-    @SuppressWarnings("unchecked")
     private void addRadioButtonsListeners(final HostModel model) {
         registerHandler(
                 ((HostPopupView)getView()).rbDiscoveredHost.addClickHandler(new ClickHandler() {
@@ -70,7 +61,6 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
                 }));
     }
 
-    @SuppressWarnings("unchecked")
     private void addPowerManagementListener(final HostModel model) {
         model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
@@ -86,31 +76,6 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
         });
     }
 
-    @SuppressWarnings("unchecked")
-    private void addCiscoUcsPmTypeListener(final HostModel model) {
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("IsCiscoUcsPrimaryPmTypeSelected".equals(propName)) { //$NON-NLS-1$
-                    getView().updatePrimaryPmSlotLabelText(model.isCiscoUcsPrimaryPmTypeSelected());
-                } else if ("IsCiscoUcsSecondaryPmTypeSelected".equals(propName)) { //$NON-NLS-1$
-                    getView().updateSecondaryPmSlotLabelText(model.isCiscoUcsSecondaryPmTypeSelected());
-                }
-            }
-        });
-    }
-
-    private void addTestButtonListener() {
-        registerHandler(getView().getTestButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getView().flush();
-                getView().getTestButton().getCommand().execute();
-            }
-        }));
-    }
-
     private void addUpdateHostsListener(final HostModel model) {
         registerHandler(getView().getUpdateHostsButton().addClickHandler(new ClickHandler() {
             @Override
@@ -120,7 +85,6 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
         }));
     }
 
-    @SuppressWarnings("unchecked")
     private void addHostProviderListener(final HostModel model) {
         model.getProviderSearchFilter().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override

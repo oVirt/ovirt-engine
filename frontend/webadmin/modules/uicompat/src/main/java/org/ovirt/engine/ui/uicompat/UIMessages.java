@@ -547,4 +547,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("({0} GB)")
     String bracketsWithGB(int value);
+    @DefaultMessage("Are you sure you wish to delete Fence Agent: {0}")
+    String confirmDeleteFenceAgent(String agentDisplayString);
+
+    @DefaultMessage("Are you sure you wish to delete the concurrent Fence Agent Group containing the following Fence Agents?\n{0}")
+    String confirmDeleteAgentGroup(String agents);
 }

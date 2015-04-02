@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.gwt.user.client.Timer;
@@ -31,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
-import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -81,9 +79,7 @@ import org.ovirt.engine.ui.uicompat.ITaskTarget;
 import org.ovirt.engine.ui.uicompat.Task;
 import org.ovirt.engine.ui.uicompat.TaskContext;
 
-@SuppressWarnings("unused")
-public class DataCenterGuideModel extends GuideModel implements ITaskTarget
-{
+public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
     public final String DataCenterConfigureClustersAction = ConstantsManager.getInstance()
             .getConstants()
@@ -1606,7 +1602,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
         addVdsParams.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         addVdsParams.setRebootAfterInstallation(model.getCluster().getSelectedItem().supportsVirtService());
-        addVdsParams.setFenceAgents(getFenceAgents(model));
+        addVdsParams.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
         model.startProgress(null);
 
         Frontend.getInstance().runAction(VdcActionType.AddVds, addVdsParams,
@@ -1619,37 +1615,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
                     }
                 }, this);
-    }
-
-    private List<FenceAgent> getFenceAgents(HostModel model) {
-        List<FenceAgent> agents = new LinkedList<>();
-        if (model.getManagementIp() != null && model.getManagementIp().getEntity() != null) {
-            // Save primary PM parameters.
-            FenceAgent primaryAgent = new FenceAgent();
-            primaryAgent.setIp(model.getManagementIp().getEntity());
-            primaryAgent.setUser(model.getPmUserName().getEntity());
-            primaryAgent.setPassword(model.getPmPassword().getEntity());
-            primaryAgent.setType(model.getPmType().getSelectedItem());
-            primaryAgent.setOptionsMap((model.getPmOptionsMap()));
-            primaryAgent.setPort(model.getPort().getEntity());
-            primaryAgent.setOrder(1);
-            agents.add(primaryAgent);
-            if (model.getPmSecondaryIp() != null && model.getPmSecondaryIp().getEntity() != null) {
-                FenceAgent secondaryAgent = new FenceAgent();
-                secondaryAgent.setIp(model.getPmSecondaryIp().getEntity());
-                secondaryAgent.setUser(model.getPmSecondaryUserName().getEntity());
-                secondaryAgent.setPassword(model.getPmSecondaryPassword().getEntity());
-                secondaryAgent.setType(model.getPmSecondaryType().getSelectedItem());
-                secondaryAgent.setOptionsMap(model.getPmSecondaryOptionsMap());
-                secondaryAgent.setOrder(model.getPmSecondaryConcurrent().getEntity() ? primaryAgent.getOrder()
-                        : primaryAgent.getOrder() + 1);
-                if (model.getPmSecondaryPort() != null) {
-                    secondaryAgent.setPort(Integer.valueOf(model.getPmSecondaryPort().getEntity()));
-                }
-                agents.add(secondaryAgent);
-            }
-        }
-        return agents;
     }
 
     public void postOnAddHost(VdcReturnValueBase returnValue)

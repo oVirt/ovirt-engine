@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -24,8 +25,8 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 public class NewHostModel extends HostModel {
 
     public static final int NewHostDefaultPort = 54321;
+
     public NewHostModel() {
-        super();
         getExternalHostName().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
@@ -206,11 +207,13 @@ public class NewHostModel extends HostModel {
     private void updateExternalHostModels() {
         AsyncQuery getProvidersQuery = new AsyncQuery();
         getProvidersQuery.asyncCallback = new INewAsyncCallback() {
+            @SuppressWarnings("unchecked")
             @Override
             public void onSuccess(Object model, Object result)
             {
-                ArrayList<Provider> providers = (ArrayList<Provider>) result;
-                ListModel<Provider> providersListModel = getProviders();
+                ArrayList<Provider<OpenstackNetworkProviderProperties>> providers =
+                        (ArrayList<Provider<OpenstackNetworkProviderProperties>>) result;
+                ListModel<Provider<OpenstackNetworkProviderProperties>> providersListModel = getProviders();
                 providersListModel.setItems(providers, Linq.firstOrDefault(providers));
                 providersListModel.setIsChangeable(true);
                 getIsDiscoveredHosts().setEntity(null);

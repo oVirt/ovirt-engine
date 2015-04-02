@@ -46,7 +46,8 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <V>
  *            the type of widget used to display each value.
  */
-public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Widget & HasValueChangeHandlers<T>> extends AbstractModelBoundPopupWidget<M> {
+public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Widget & HasValueChangeHandlers<T>>
+    extends AbstractModelBoundPopupWidget<M> implements HasEnabled {
 
     public interface WidgetStyle extends CssResource {
         String buttonStyle();
@@ -60,12 +61,14 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
     private final static CommonApplicationResources resources = AssetProvider.getResources();
 
-    private final List<Pair<T, V>> items;
+    protected final List<Pair<T, V>> items;
     private final IEventListener<EventArgs> itemsChangedListener;
     private final IEventListener<PropertyChangedEventArgs> propertyChangedListener;
     private M model;
     private Collection<T> modelItems;
     private boolean enabled;
+    protected boolean showGhost = true;
+    protected boolean showAddButton = true;
 
     public AddRemoveRowWidget() {
         items = new LinkedList<Pair<T, V>>();
@@ -81,7 +84,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
-                    enabled = model.getIsChangable();
+                    setEnabled(model.getIsChangable());
                     updateEnabled();
                 }
             }
@@ -107,7 +110,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             return;
         }
 
-        if (modelItems.isEmpty()) {
+        if (modelItems.isEmpty() && showGhost) {
             T ghostValue = addGhostEntry().getFirst();
             modelItems.add(ghostValue);
         } else {
@@ -153,7 +156,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         return model;
     }
 
-    private Pair<T, V> addGhostEntry() {
+    protected Pair<T, V> addGhostEntry() {
         T value = createGhostValue();
         V widget = addEntry(value, true);
         return new Pair<T, V>(value, widget);
@@ -166,8 +169,8 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
         PushButton removeButton = createButton(item, false);
         AddRemoveRowPanel entry =
-                lastItem ? new AddRemoveRowPanel(widget, removeButton, createButton(item, true))
-                        : new AddRemoveRowPanel(widget, removeButton);
+                (lastItem && showAddButton) ? new AddRemoveRowPanel(widget, showAddButton, removeButton, createButton(item, true))
+                        : new AddRemoveRowPanel(widget, showAddButton, removeButton);
         contentPanel.add(entry);
 
         toggleEnabled(value, widget);
@@ -242,6 +245,16 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         return button;
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     protected void doRemoveItem(Pair<T, V> item, T value, V widget) {
         ListIterator<Pair<T, V>> last = items.listIterator(items.size());
         if (!last.hasPrevious()) { // just a precaution; if there's no item, there should be no button
@@ -271,7 +284,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     }
 
     @SuppressWarnings("unchecked")
-    private AddRemoveRowPanel getEntry(V widget) {
+    protected AddRemoveRowPanel getEntry(V widget) {
         return (AddRemoveRowPanel) widget.getParent();
     }
 
@@ -283,16 +296,16 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         getEntry(widget).setButtonsEnabled(enabled);
     }
 
-    private class AddRemoveRowPanel extends FlowPanel {
+    protected class AddRemoveRowPanel extends FlowPanel {
 
         private List<PushButton> buttons = new LinkedList<PushButton>();
         private SimplePanel div = new SimplePanel();
 
-        public AddRemoveRowPanel(Widget widget, PushButton... buttons) {
+        public AddRemoveRowPanel(Widget widget, boolean floatLeft, PushButton... buttons) {
             append(widget);
             this.buttons.clear();
             for (PushButton button : buttons) {
-                append(button);
+                append(button, floatLeft);
                 this.buttons.add(button);
             }
             div.getElement().getStyle().setClear(Clear.BOTH);
@@ -300,13 +313,27 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         }
 
         private void append(Widget widget) {
-            widget.getElement().getStyle().setFloat(Float.LEFT);
+            append(widget, true);
+        }
+
+        private void append(Widget widget, boolean floatLeft) {
+            if (floatLeft) {
+                widget.getElement().getStyle().setFloat(Float.LEFT);
+            } else {
+                widget.getElement().getStyle().setFloat(Float.RIGHT);
+            }
             add(widget);
         }
 
         public void setButtonsEnabled(boolean enabled) {
             for (PushButton button : buttons) {
                 button.setEnabled(enabled);
+            }
+        }
+
+        public void removeAllButtons() {
+            while (!buttons.isEmpty()) {
+                removeLastButton();
             }
         }
 

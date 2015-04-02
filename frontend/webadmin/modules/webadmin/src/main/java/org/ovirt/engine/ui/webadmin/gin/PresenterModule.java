@@ -64,6 +64,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.MoveHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostFenceAgentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementConfirmationPopupPresenterWidget;
@@ -328,6 +329,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.GuidePopupView
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.MoveHostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostBondPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostConfigureLocalStoragePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostFenceAgentPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInstallPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementConfirmationPopupView;
@@ -1349,6 +1351,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(MultipleHostsPopupPresenterWidget.class,
                 MultipleHostsPopupPresenterWidget.ViewDef.class,
                 MultipleHostsPopupView.class);
+        bindPresenterWidget(HostFenceAgentPopupPresenterWidget.class,
+                HostFenceAgentPopupPresenterWidget.ViewDef.class,
+                HostFenceAgentPopupView.class);
 
         // Storage
         bindPresenterWidget(StoragePopupPresenterWidget.class,
