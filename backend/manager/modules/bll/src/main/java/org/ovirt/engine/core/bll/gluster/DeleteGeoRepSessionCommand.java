@@ -40,7 +40,7 @@ public class DeleteGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
                         VDSCommandType.DeleteGlusterVolumeGeoRepSession,
                         new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(),
                                 getGeoRepSession().getMasterVolumeName(), getGeoRepSession().getSlaveHostName(),
-                                getGeoRepSession().getSlaveVolumeName()));
+                                getGeoRepSession().getSlaveVolumeName(), getGeoRepSession().getUserName()));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
             getGlusterGeoRepDao().remove(getGeoRepSession().getId());

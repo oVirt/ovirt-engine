@@ -1190,43 +1190,48 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterGeoRepKeysUpdate(List<String> geoRepPubKeys, String remoteUserName) {
+    public StatusOnlyReturnForXmlRpc glusterGeoRepKeysUpdate(List<String> geoRepPubKeys, String userName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.geoRepKeysUpdate")
                         .withParameter("geoRepPubKeys", geoRepPubKeys)
-                        .withOptionalParameter("userName", remoteUserName).build();
+                        .withOptionalParameter("userName", userName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName, String remoteUserName, String remoteGroupName) {
+    public StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName, String userName, String remoteGroupName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.geoRepMountBrokerSetup").withParameter("remoteVolumeName", remoteVolumeName)
-                        .withOptionalParameter("remoteUserName", remoteUserName)
+                        .withOptionalParameter("remoteUserName", userName)
                         .withOptionalParameter("remoteGroupName", remoteGroupName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionCreate(String volumeName, String remoteHost, String remotVolumeName, String remoteUserName, Boolean force) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionCreate(String volumeName, String remoteHost, String remotVolumeName, String userName, Boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.geoRepSessionCreate").withParameter("volumeName", volumeName)
                 .withParameter("remoteHost", remoteHost)
                 .withParameter("remoteVolumeName", remotVolumeName)
                 .withParameter("force", force)
-                .withOptionalParameter("remoteUserName", remoteUserName).build();
+                .withOptionalParameter("remoteUserName", userName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionResume(String volumeName,
+            String slaveHostName,
+            String slaveVolumeName,
+            String userName,
+            boolean force) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionResume").withParameter("volumeName", volumeName)
-                .withParameter("remoteHost", slaveHostName)
-                .withParameter("remoteVolumeName", slaveVolumeName)
-                .withParameter("force", force).build();
+                        .withParameter("remoteHost", slaveHostName)
+                        .withParameter("remoteVolumeName", slaveVolumeName)
+                        .withOptionalParameter("remoteUserName", userName)
+                        .withParameter("force", force).build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
@@ -1271,24 +1276,33 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionDelete(String volumeName, String remoteHost, String remoteVolumeName) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionDelete(String volumeName,
+            String remoteHost,
+            String remoteVolumeName,
+            String userName) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionDelete")
-                                        .withParameter("volumeName", volumeName)
-                                        .withParameter("remoteHost", remoteHost)
-                                        .withParameter("remoteVolumeName", remoteVolumeName)
-                                        .build();
+                .withParameter("volumeName", volumeName)
+                .withParameter("remoteHost", remoteHost)
+                .withParameter("remoteVolumeName", remoteVolumeName)
+                .withOptionalParameter("remoteUserName", userName)
+                .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStop(String volumeName, String remoteHost, String remoteVolumeName, Boolean force) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStop(String volumeName,
+            String remoteHost,
+            String remoteVolumeName,
+            String userName,
+            Boolean force) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionStop")
-                                        .withParameter("volumeName", volumeName)
-                                        .withParameter("remoteHost", remoteHost)
-                                        .withParameter("remoteVolumeName", remoteVolumeName)
-                                        .withParameter("force", force)
-                                        .build();
+                .withParameter("volumeName", volumeName)
+                .withParameter("remoteHost", remoteHost)
+                .withParameter("remoteVolumeName", remoteVolumeName)
+                .withOptionalParameter("remoteUserName", userName)
+                .withParameter("force", force)
+                .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
@@ -1342,33 +1356,49 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionPause(String masterVolumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String userName,
+            boolean force) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionPause").withParameter("volumeName", masterVolumeName)
-                .withParameter("remoteHost", slaveHost)
-                .withParameter("remoteVolumeName", slaveVolumeName)
-                .withParameter("force", force).build();
+                        .withParameter("remoteHost", slaveHost)
+                        .withParameter("remoteVolumeName", slaveVolumeName)
+                        .withOptionalParameter("remoteUserName", userName)
+                        .withParameter("force", force).build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStart(String volumeName,
+            String remoteHost,
+            String remoteVolumeName,
+            String userName,
+            Boolean force) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionStart").withParameter("volumeName", volumeName)
-                .withParameter("remoteHost", remoteHost)
-                .withParameter("remoteVolumeName", remoteVolumeName)
-                .withParameter("force", force).build();
+                        .withParameter("remoteHost", remoteHost)
+                        .withParameter("remoteVolumeName", remoteVolumeName)
+                        .withOptionalParameter("remoteUserName", userName)
+                        .withParameter("force", force).build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigSet(String volumeName, String slaveHost, String slaveVolumeName, String configKey, String configValue) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigSet(String volumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String configKey,
+            String configValue,
+            String userName) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepConfigSet")
                 .withParameter("volumeName", volumeName)
                 .withParameter("remoteHost", slaveHost)
                 .withParameter("remoteVolumeName", slaveVolumeName)
                 .withParameter("optionName", configKey)
-                .withParameter("optionValue", configValue).build();
+                .withParameter("optionValue", configValue)
+                .withOptionalParameter("remoteUserName", userName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
@@ -1377,24 +1407,30 @@ public class JsonRpcVdsServer implements IVdsServer {
     public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigReset(String volumeName,
             String slaveHost,
             String slaveVolumeName,
-            String configKey) {
+            String configKey,
+            String userName) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepConfigReset")
-        .withParameter("volumeName", volumeName)
-        .withParameter("remoteHost", slaveHost)
-        .withParameter("remoteVolumeName", slaveVolumeName)
-        .withParameter("optionName", configKey)
-        .build();
+                .withParameter("volumeName", volumeName)
+                .withParameter("remoteHost", slaveHost)
+                .withParameter("remoteVolumeName", slaveVolumeName)
+                .withParameter("optionName", configKey)
+                .withOptionalParameter("remoteUserName", userName)
+                .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
     @Override
-    public GlusterVolumeGeoRepConfigListXmlRpc glusterVolumeGeoRepConfigList(String volumeName, String slaveHost, String slaveVolumeName) {
+    public GlusterVolumeGeoRepConfigListXmlRpc glusterVolumeGeoRepConfigList(String volumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String userName) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepConfigList")
-        .withParameter("volumeName", volumeName)
-        .withParameter("remoteHost", slaveHost)
-        .withParameter("remoteVolumeName", slaveVolumeName)
-        .build();
+                .withParameter("volumeName", volumeName)
+                .withParameter("remoteHost", slaveHost)
+                .withParameter("remoteVolumeName", slaveVolumeName)
+                .withOptionalParameter("remoteUserName", userName)
+                .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new GlusterVolumeGeoRepConfigListXmlRpc(response);
     }
@@ -1596,11 +1632,13 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepSessionList(String volumeName,
             String slaveHost,
-            String slaveVolumeName) {
+            String slaveVolumeName,
+            String userName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.geoRepSessionList").withParameter("volumeName", volumeName)
-                .withParameter("remoteHost", slaveHost)
-                        .withParameter("remoteVolumeName", slaveVolumeName).build();
+                        .withParameter("remoteHost", slaveHost)
+                        .withParameter("remoteVolumeName", slaveVolumeName)
+                        .withOptionalParameter("remoteUserName", userName).build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GlusterVolumeGeoRepStatusForXmlRpc(response);
     }
@@ -1608,11 +1646,13 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public GlusterVolumeGeoRepStatusDetailForXmlRpc glusterVolumeGeoRepSessionStatus(String volumeName,
             String slaveHost,
-            String slaveVolumeName) {
+            String slaveVolumeName,
+            String userName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.geoRepSessionStatus").withParameter("volumeName", volumeName)
-                .withParameter("remoteHost", slaveHost)
-                        .withParameter("remoteVolumeName", slaveVolumeName).build();
+                        .withParameter("remoteHost", slaveHost)
+                        .withParameter("remoteVolumeName", slaveVolumeName)
+                        .withOptionalParameter("remoteUserName", userName).build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GlusterVolumeGeoRepStatusDetailForXmlRpc(response);
     }

@@ -21,7 +21,11 @@ public class GetGlusterVolumeGeoRepConfigListVDSCommand<P extends GlusterVolumeG
 
     @Override
     protected void executeVdsBrokerCommand() {
-        result = getBroker().glusterVolumeGeoRepConfigList(getParameters().getVolumeName(), getParameters().getSlaveHost(), getParameters().getSlaveVolume());
+        result =
+                getBroker().glusterVolumeGeoRepConfigList(getParameters().getVolumeName(),
+                        getParameters().getSlaveHost(),
+                        getParameters().getSlaveVolume(),
+                        getParameters().getUserName());
         proceedProxyReturnValue();
         List<GlusterGeoRepSessionConfiguration> sessionConfigs = result.getSessionConfig();
         setReturnValue(sessionConfigs);

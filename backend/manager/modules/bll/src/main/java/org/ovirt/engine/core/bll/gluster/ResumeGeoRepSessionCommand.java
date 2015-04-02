@@ -50,6 +50,7 @@ public class ResumeGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
                                 session.getMasterVolumeName(),
                                 session.getSlaveHostName(),
                                 session.getSlaveVolumeName(),
+                                session.getUserName(),
                                 parameters.isForce()));
         setSucceeded(returnValue.getSucceeded());
         if (!getSucceeded()) {

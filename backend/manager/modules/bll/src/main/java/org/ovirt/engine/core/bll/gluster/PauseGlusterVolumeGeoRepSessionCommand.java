@@ -46,6 +46,7 @@ public class PauseGlusterVolumeGeoRepSessionCommand extends GeoRepSessionCommand
                                 session.getMasterVolumeName(),
                                 session.getSlaveHostName(),
                                 session.getSlaveVolumeName(),
+                                session.getUserName(),
                                 getParameters().isForce()));
         setSucceeded(returnValue.getSucceeded());
         if (!getSucceeded()) {

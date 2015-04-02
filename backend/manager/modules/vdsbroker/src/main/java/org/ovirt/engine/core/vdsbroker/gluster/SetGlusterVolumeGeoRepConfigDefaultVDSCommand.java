@@ -10,7 +10,12 @@ public class SetGlusterVolumeGeoRepConfigDefaultVDSCommand<P extends GlusterVolu
 
     @Override
     protected void executeVdsBrokerCommand() {
-        status = getBroker().glusterVolumeGeoRepConfigReset(getParameters().getVolumeName(), getParameters().getSlaveHost(), getParameters().getSlaveVolume(), getParameters().getConfigKey());
+        status =
+                getBroker().glusterVolumeGeoRepConfigReset(getParameters().getVolumeName(),
+                        getParameters().getSlaveHost(),
+                        getParameters().getSlaveVolume(),
+                        getParameters().getConfigKey(),
+                        getParameters().getUserName());
         proceedProxyReturnValue();
     }
 
