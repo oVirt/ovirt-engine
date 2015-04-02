@@ -16,7 +16,8 @@ public class DeleteGlusterVolumeGeoRepSessionVDSCommand<P extends GlusterVolumeG
     protected void executeVdsBrokerCommand() {
         status = getBroker().glusterVolumeGeoRepSessionDelete(getParameters().getVolumeName(),
                 getParameters().getSlaveHost(),
-                getParameters().getSlaveVolume());
+                getParameters().getSlaveVolume(),
+                getParameters().getUserName());
         // Handle errors if any
         proceedProxyReturnValue();
 

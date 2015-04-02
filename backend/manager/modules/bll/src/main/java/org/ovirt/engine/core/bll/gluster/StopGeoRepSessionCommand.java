@@ -55,8 +55,11 @@ public class StopGeoRepSessionCommand extends GeoRepSessionCommandBase<GlusterVo
                 runVdsCommand(
                         VDSCommandType.StopGlusterVolumeGeoRepSession,
                         new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(),
-                                getGeoRepSession().getMasterVolumeName(), getGeoRepSession().getSlaveHostName(),
-                                getGeoRepSession().getSlaveVolumeName(), getParameters().isForce()));
+                                getGeoRepSession().getMasterVolumeName(),
+                                getGeoRepSession().getSlaveHostName(),
+                                getGeoRepSession().getSlaveVolumeName(),
+                                getGeoRepSession().getUserName(),
+                                getParameters().isForce()));
 
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {

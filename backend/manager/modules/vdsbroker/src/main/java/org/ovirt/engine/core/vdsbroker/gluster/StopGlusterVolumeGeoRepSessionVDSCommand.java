@@ -14,9 +14,10 @@ public class StopGlusterVolumeGeoRepSessionVDSCommand<P extends GlusterVolumeGeo
     @Override
     protected void executeVdsBrokerCommand() {
         status = getBroker().glusterVolumeGeoRepSessionStop(getParameters().getVolumeName(),
-                                                            getParameters().getSlaveHost(),
-                                                            getParameters().getSlaveVolume(),
-                                                            getParameters().getForce());
+                getParameters().getSlaveHost(),
+                getParameters().getSlaveVolume(),
+                getParameters().getUserName(),
+                getParameters().getForce());
         // Handle errors if any
         proceedProxyReturnValue();
 

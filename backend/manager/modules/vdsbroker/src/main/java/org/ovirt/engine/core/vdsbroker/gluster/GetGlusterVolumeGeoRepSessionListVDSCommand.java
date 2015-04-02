@@ -26,7 +26,8 @@ public class GetGlusterVolumeGeoRepSessionListVDSCommand<P extends GlusterVolume
             result =
                     getBroker().glusterVolumeGeoRepSessionList(parameter.getVolumeName(),
                             parameter.getSlaveHost(),
-                            parameter.getSlaveVolume());
+                            parameter.getSlaveVolume(),
+                            parameter.getUserName());
         }
         proceedProxyReturnValue();
         if (getVDSReturnValue().getSucceeded()) {

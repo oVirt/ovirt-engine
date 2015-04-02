@@ -11,7 +11,12 @@ public class PauseGlusterVolumeGeoRepSessionVDSCommand extends AbstractGlusterBr
     @Override
     protected void executeVdsBrokerCommand() {
         GlusterVolumeGeoRepSessionVDSParameters parameters = getParameters();
-        status = getBroker().glusterVolumeGeoRepSessionPause(parameters.getVolumeName(), parameters.getSlaveHost(), parameters.getSlaveVolume(), parameters.getForce());
+        status =
+                getBroker().glusterVolumeGeoRepSessionPause(parameters.getVolumeName(),
+                        parameters.getSlaveHost(),
+                        parameters.getSlaveVolume(),
+                        parameters.getUserName(),
+                        parameters.getForce());
         proceedProxyReturnValue();
     }
 }

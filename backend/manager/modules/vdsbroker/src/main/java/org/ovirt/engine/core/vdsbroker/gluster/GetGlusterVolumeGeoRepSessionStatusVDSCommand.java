@@ -19,8 +19,9 @@ public class GetGlusterVolumeGeoRepSessionStatusVDSCommand<P extends GlusterVolu
     protected void executeVdsBrokerCommand() {
         GlusterVolumeGeoRepSessionVDSParameters parameter = getParameters();
         result = getBroker().glusterVolumeGeoRepSessionStatus(parameter.getVolumeName(),
-                        parameter.getSlaveHost(),
-                        parameter.getSlaveVolume());
+                parameter.getSlaveHost(),
+                parameter.getSlaveVolume(),
+                parameter.getUserName());
         proceedProxyReturnValue();
         if (getVDSReturnValue().getSucceeded()) {
             setReturnValue(result.getGeoRepDetails());

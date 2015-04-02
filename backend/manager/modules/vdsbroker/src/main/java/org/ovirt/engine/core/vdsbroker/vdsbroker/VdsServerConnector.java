@@ -235,16 +235,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeRebalanceStart(String volumeName, Boolean fixLayoutOnly, Boolean force);
 
-    public Map<String, Object> glusterGeoRepKeysGet();
-
-    public Map<String, Object> glusterGeoRepKeysUpdate(String remoteUserName, List<String> geoRepPubKeys);
-
-    public Map<String, Object> glusterGeoRepMountBrokerSetup(String remoteUserName, String remoteGroupName, String remoteVolumeName);
-
-    public Map<String, Object> glusterVolumeGeoRepSessionCreate(String volumeName, String remoteHost, String remoteVolumeName, String remoteUserName, Boolean force);
-
-    public Map<String, Object> glusterVolumeGeoRepSessionResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force);
-
     public Map<String, Object> glusterVolumeRebalanceStop(String volumeName);
 
     public Map<String, Object> replaceGlusterVolumeBrickStart(String volumeName, String existingBrickDir, String newBrickDir);
@@ -259,12 +249,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumesList();
 
-    public Map<String, Object> glusterVolumeGeoRepSessionDelete(String volumeName, String remoteHost, String remoteVolumeName);
-
-    public Map<String, Object> glusterVolumeGeoRepSessionStop(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
-
-    public Map<String, Object> glusterVolumeGeoRepConfigSet(String volumeName, String slaveHost, String slaveVolumeName, String configKey, String configValue);
-
     public Map<String, Object> ping();
 
     @FutureCall(delegeteTo = "ping")
@@ -277,10 +261,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterVolumeProfileStart(String volumeName);
 
     public Map<String, Object> glusterVolumeProfileStop(String volumeName);
-
-    public Map<String, Object> glusterVolumeGeoRepSessionStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
-
-    public Map<String, Object> glusterVolumeGeoRepSessionPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force);
 
     public Map<String, Object> glusterVolumeStatus(String volumeName, String brickName, String volumeStatusOption);
 
@@ -312,17 +292,80 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeRebalanceStatus(String volumeName);
 
+    public Map<String, Object> glusterGeoRepKeysGet();
+
+    public Map<String, Object> glusterGeoRepKeysUpdate(String userName, List<String> geoRepPubKeys);
+
+    public Map<String, Object> glusterGeoRepMountBrokerSetup(String userName,
+            String remoteGroupName,
+            String remoteVolumeName);
+
+    public Map<String, Object> glusterVolumeGeoRepSessionCreate(String volumeName,
+            String remoteHost,
+            String remoteVolumeName,
+            String userName,
+            Boolean force);
+
+    public Map<String, Object> glusterVolumeGeoRepSessionResume(String volumeName,
+            String slaveHostName,
+            String slaveVolumeName,
+            String userName,
+            boolean force);
+
+    public Map<String, Object> glusterVolumeGeoRepSessionStart(String volumeName,
+            String remoteHost,
+            String remoteVolumeName,
+            String userName,
+            Boolean force);
+
+    public Map<String, Object> glusterVolumeGeoRepSessionPause(String masterVolumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String userName,
+            boolean force);
+
     public Map<String, Object> glusterVolumeGeoRepSessionList();
 
     public Map<String, Object> glusterVolumeGeoRepSessionList(String volumeName);
 
     public Map<String, Object> glusterVolumeGeoRepSessionList(String volumeName,
             String slaveHost,
-            String slaveVolumeName);
+            String slaveVolumeName,
+            String userName);
 
     public Map<String, Object> glusterVolumeGeoRepSessionStatus(String volumeName,
             String slaveHost,
-            String slaveVolumeName);
+            String slaveVolumeName,
+            String userName);
+
+    public Map<String, Object> glusterVolumeGeoRepConfigReset(String volumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String configKey,
+            String userName);
+
+    public Map<String, Object> glusterVolumeGeoRepConfigList(String volumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String userName);
+
+    public Map<String, Object> glusterVolumeGeoRepSessionDelete(String volumeName,
+            String remoteHost,
+            String remoteVolumeName,
+            String userName);
+
+    public Map<String, Object> glusterVolumeGeoRepSessionStop(String volumeName,
+            String remoteHost,
+            String remoteVolumeName,
+            String userName,
+            Boolean force);
+
+    public Map<String, Object> glusterVolumeGeoRepConfigSet(String volumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String configKey,
+            String configValue,
+            String userName);
 
     public Map<String, Object> glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList);
 
@@ -331,10 +374,6 @@ public interface VdsServerConnector {
     public Map<String, Object> updateVmPolicy(Map info);
 
     public Map<String, Object> getExternalVMs(String uri, String username, String password);
-
-    public Map<String, Object> glusterVolumeGeoRepConfigReset(String volumeName, String slaveHost, String slaveVolumeName, String configKey);
-
-    public Map<String, Object> glusterVolumeGeoRepConfigList(String volumeName, String slaveHost, String slaveVolumeName);
 
     public Map<String, Object> glusterSnapshotInfo(String snapshotName, String volumeName);
 

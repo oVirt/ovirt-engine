@@ -17,6 +17,18 @@ public class GlusterVolumeGeoRepConfigVdsParameters extends GlusterVolumeGeoRepS
         this.configValue = configValue;
     }
 
+    public GlusterVolumeGeoRepConfigVdsParameters(Guid serverId,
+            String volumeName,
+            String slaveHost,
+            String slaveVolume,
+            String configKey,
+            String configValue,
+            String userName) {
+        super(serverId, volumeName, slaveHost, slaveVolume, userName);
+        this.configKey = configKey;
+        this.configValue = configValue;
+    }
+
     public GlusterVolumeGeoRepConfigVdsParameters(Guid serverId, String volumeName, String slaveHost, String slaveVolume, String configKey) {
         super(serverId, volumeName, slaveHost, slaveVolume);
         this.configKey = configKey;

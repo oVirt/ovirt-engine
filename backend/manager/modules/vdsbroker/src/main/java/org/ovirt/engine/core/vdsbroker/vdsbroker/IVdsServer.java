@@ -278,18 +278,6 @@ public interface IVdsServer {
 
     GlusterServersListReturnForXmlRpc glusterServersList();
 
-    GlusterHostsPubKeyReturnForXmlRpc glusterGeoRepKeysGet();
-
-    StatusOnlyReturnForXmlRpc glusterGeoRepKeysUpdate(List<String> geoRepPubKeys, String remoteUserName);
-
-    StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName, String remoteUserName, String remoteGroupName);
-
-    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionCreate(String volumeName, String remoteHost, String remoteVolumeName, String remoteUserName, Boolean force);
-
-    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionDelete(String volumeName, String remoteHost, String remoteVolumeName);
-
-    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStop(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
-
     StatusOnlyReturnForXmlRpc diskReplicateStart(String vmUUID, Map srcDisk, Map dstDisk);
 
     StatusOnlyReturnForXmlRpc diskReplicateFinish(String vmUUID, Map srcDisk, Map dstDisk);
@@ -297,10 +285,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterVolumeProfileStart(String volumeName);
 
     StatusOnlyReturnForXmlRpc glusterVolumeProfileStop(String volumeName);
-
-    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
-
-    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force);
 
     GlusterVolumeStatusReturnForXmlRpc glusterVolumeStatus(Guid clusterId,
             String volumeName,
@@ -337,23 +321,74 @@ public interface IVdsServer {
 
     GlusterVolumeTaskReturnForXmlRpc glusterVolumeRebalanceStatus(String volumeName);
 
+    GlusterHostsPubKeyReturnForXmlRpc glusterGeoRepKeysGet();
+
+    StatusOnlyReturnForXmlRpc glusterGeoRepKeysUpdate(List<String> geoRepPubKeys, String userName);
+
+    StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName,
+            String userName,
+            String remoteGroupName);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionCreate(String volumeName,
+            String remoteHost,
+            String remoteVolumeName,
+            String userName,
+            Boolean force);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionDelete(String volumeName,
+            String remoteHost,
+            String remoteVolumeName,
+            String userName);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStop(String volumeName,
+            String remoteHost,
+            String remoteVolumeName,
+            String userName,
+            Boolean force);
+
     GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepSessionList();
 
     GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepSessionList(String volumeName);
 
     GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepSessionList(String volumeName,
             String slaveHost,
-            String slaveVolumeName);
+            String slaveVolumeName,
+            String userName);
 
     GlusterVolumeGeoRepStatusDetailForXmlRpc glusterVolumeGeoRepSessionStatus(String volumeName,
             String slaveHost,
-            String slaveVolumeName);
+            String slaveVolumeName,
+            String userName);
 
-    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigSet(String volumeName, String slaveHost, String slaveVolumeName, String configKey, String configValue);
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStart(String volumeName,
+            String remoteHost,
+            String remoteVolumeName,
+            String userName,
+            Boolean force);
 
-    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigReset(String volumeName, String slaveHost, String slaveVolumeName, String configKey);
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionPause(String masterVolumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String userName,
+            boolean force);
 
-    GlusterVolumeGeoRepConfigListXmlRpc glusterVolumeGeoRepConfigList(String volumeName, String slaveHost, String slaveVolumeName);
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigSet(String volumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String configKey,
+            String configValue,
+            String userName);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigReset(String volumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String configKey,
+            String userName);
+
+    GlusterVolumeGeoRepConfigListXmlRpc glusterVolumeGeoRepConfigList(String volumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String userName);
 
     GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList);
 
@@ -363,7 +398,11 @@ public interface IVdsServer {
 
     VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password);
 
-    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force);
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionResume(String volumeName,
+            String slaveHostName,
+            String slaveVolumeName,
+            String userName,
+            boolean force);
 
     GlusterVolumeSnapshotInfoReturnForXmlRpc glusterSnapshotInfo(Guid clusterId, String volumeName);
 

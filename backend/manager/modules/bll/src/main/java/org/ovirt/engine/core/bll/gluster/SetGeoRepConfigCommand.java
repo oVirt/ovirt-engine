@@ -44,7 +44,8 @@ public class SetGeoRepConfigCommand extends GeoRepSessionCommandBase<GlusterVolu
                                 session.getSlaveHostName(),
                                 session.getSlaveVolumeName(),
                                 configKey,
-                                configValue));
+                                configValue,
+                                session.getUserName()));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
             GlusterGeoRepSessionConfiguration geoRepSessionConfig = new GlusterGeoRepSessionConfiguration();
