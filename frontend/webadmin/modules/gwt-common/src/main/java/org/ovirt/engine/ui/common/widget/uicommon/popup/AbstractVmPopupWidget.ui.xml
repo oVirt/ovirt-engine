@@ -436,7 +436,7 @@
                 <e:ListModelTypeAheadListBoxEditor ui:field="baseTemplateEditor"/>
                 <e:ListModelTypeAheadListBoxEditor ui:field="templateWithVersionEditor" />
                 <e:ListModelListBoxEditor ui:field="oSTypeEditor" />
-                <e:ListModelTypeAheadListBoxEditor ui:field="instanceTypesEditor" />
+                <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableInstanceTypesEditor" />
                 <e:ListModelListBoxEditor ui:field="vmTypeEditor" />
             </g:FlowPanel>
         </t:header>

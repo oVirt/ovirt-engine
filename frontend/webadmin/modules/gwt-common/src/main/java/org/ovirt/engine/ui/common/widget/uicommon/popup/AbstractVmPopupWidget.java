@@ -232,10 +232,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("vmType")
     public ListModelListBoxEditor<VmType> vmTypeEditor;
 
-    @UiField(provided = true)
     @Path(value = "instanceTypes.selectedItem")
     @WithElementId("instanceType")
     public ListModelTypeAheadListBoxEditor<InstanceType> instanceTypesEditor;
+
+    @UiField(provided = true)
+    public EntityModelDetachableWidgetWithLabel detachableInstanceTypesEditor;
 
     @UiField(provided = true)
     @Path(value = "isDeleteProtected.entity")
@@ -998,6 +1000,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     private void initDetachableFields() {
+        detachableInstanceTypesEditor = new EntityModelDetachableWidgetWithLabel(instanceTypesEditor);
+
         detachableMemSizeEditor = new EntityModelDetachableWidgetWithLabel(memSizeEditor);
         isHighlyAvailableEditorWithDetachable = new EntityModelDetachableWidget(isHighlyAvailableEditor, Align.RIGHT);
 
@@ -1396,7 +1400,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         baseTemplateEditor.setLabel(constants.basedOnTemplateVmPopup());
         templateWithVersionEditor.setLabel(constants.template());
-        instanceTypesEditor.setLabel(constants.instanceType());
+        detachableInstanceTypesEditor.setLabel(constants.instanceType());
 
         oSTypeEditor.setLabel(constants.osVmPopup());
         vmTypeEditor.setLabel(constants.optimizedFor());
@@ -2078,6 +2082,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 migrationModeEditorWithDetachable,
                 memAllocationLabel,
                 detachableMemSizeEditor,
+                detachableInstanceTypesEditor,
                 overrideMigrationDowntimeEditorWithDetachable
         );
     }
