@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 
 public class UpdateVdsActionParameters extends VdsOperationActionParameters {
     private static final long serialVersionUID = -7467029979089285065L;

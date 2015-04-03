@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 
 public class FenceAgentCommandParameterBase extends VdcActionParametersBase implements Serializable {

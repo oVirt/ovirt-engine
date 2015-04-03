@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.restapi.utils.AgentComparator;
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 
 @Deprecated

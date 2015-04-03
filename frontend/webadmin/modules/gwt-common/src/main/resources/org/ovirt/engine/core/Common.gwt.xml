@@ -123,7 +123,6 @@
         <include name="common/businessentities/VdsProtocol.java" />
         <include name="common/businessentities/VdsSpmStatus.java" />
         <include name="common/businessentities/VdsStatic.java" />
-        <include name="common/businessentities/FenceAgent.java" />
         <include name="common/businessentities/VdsStatistics.java" />
         <include name="common/businessentities/VDSStatus.java" />
         <include name="common/businessentities/VDSType.java" />
@@ -256,6 +255,7 @@
 
         <!-- Required by frontend -->
         <include name="common/interfaces/SearchType.java" />
+        <include name="common/businessentities/pm/FenceAgent.java" />
         <include name="common/businessentities/pm/FenceOperationResult.java" />
         <include name="common/businessentities/pm/PowerStatus.java" />
         <include name="common/businessentities/AsyncTaskStatus.java" />

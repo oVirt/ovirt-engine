@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 
 public class PowerManagementHelper {
 

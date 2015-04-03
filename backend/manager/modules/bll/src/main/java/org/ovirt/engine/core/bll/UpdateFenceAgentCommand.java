@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 

@@ -11,9 +11,9 @@ import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.SSH;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 

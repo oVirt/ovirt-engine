@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {

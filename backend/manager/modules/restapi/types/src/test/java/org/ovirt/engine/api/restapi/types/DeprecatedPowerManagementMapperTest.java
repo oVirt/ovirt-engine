@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.model.PowerManagement;
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DeprecatedPowerManagementMapperTest extends Assert {

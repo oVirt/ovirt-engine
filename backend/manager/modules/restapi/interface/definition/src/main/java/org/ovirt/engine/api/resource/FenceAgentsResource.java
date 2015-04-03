@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Agents;
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 
 public interface FenceAgentsResource {
 

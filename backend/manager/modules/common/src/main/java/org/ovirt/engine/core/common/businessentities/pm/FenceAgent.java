@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.pm;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -8,6 +8,9 @@ import java.util.Map;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;

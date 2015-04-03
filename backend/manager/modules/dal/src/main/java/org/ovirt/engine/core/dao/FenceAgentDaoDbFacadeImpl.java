@@ -7,7 +7,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;

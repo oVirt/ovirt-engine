@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 
 public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase {

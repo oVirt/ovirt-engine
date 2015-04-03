@@ -5,7 +5,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
-import org.ovirt.engine.core.common.businessentities.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 
 public class FenceAgentMapper {
