@@ -80,6 +80,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
+import org.ovirt.engine.ui.uicommonweb.models.PublicKeyModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
@@ -103,6 +104,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
+import org.ovirt.engine.ui.uicompat.ICancelable;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
@@ -112,7 +114,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSystemTreeContext {
+public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSystemTreeContext, ICancelable {
 
     public static final String CMD_CONFIGURE_VMS_TO_IMPORT = "ConfigureVmsToImport"; //$NON-NLS-1$
     public static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
@@ -403,6 +405,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         this.consoleConnectCommand = consoleConnectCommand;
     }
 
+    private UICommand setConsoleKeyCommand;
+
+    public UICommand getSetConsoleKeyCommand() {
+        return setConsoleKeyCommand;
+    }
+
+    public void setSetConsoleKeyCommand(UICommand setConsoleKeyCommand) {
+        this.setConsoleKeyCommand = setConsoleKeyCommand;
+    }
+
     public ObservableCollection<ChangeCDModel> isoImages;
 
     public ObservableCollection<ChangeCDModel> getIsoImages()
@@ -485,6 +497,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
         setEnableGlobalHaMaintenanceCommand(new UICommand("EnableGlobalHaMaintenance", this)); //$NON-NLS-1$
         setDisableGlobalHaMaintenanceCommand(new UICommand("DisableGlobalHaMaintenance", this)); //$NON-NLS-1$
+        setSetConsoleKeyCommand(new UICommand("SetConsoleKey", this)); //$NON-NLS-1$
 
         setIsoImages(new ObservableCollection<ChangeCDModel>());
         ChangeCDModel tempVar = new ChangeCDModel();
@@ -1732,6 +1745,17 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 }, model);
     }
 
+    private void editConsoleKey() {
+        PublicKeyModel model = new PublicKeyModel();
+        setWindow(model);
+        model.editConsoleKey(this);
+    }
+
+    private void onSetConsoleKey() {
+        PublicKeyModel model = (PublicKeyModel) getWindow();
+        model.onSetConsoleKey(this, this);
+    }
+
     private void changeCD()
     {
         final VM vm = getSelectedItem();
@@ -2258,6 +2282,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         {
             assignTags();
         }
+        else if (command == getSetConsoleKeyCommand())
+        {
+            editConsoleKey();
+        }
         else if ("OnAssignTags".equals(command.getName())) //$NON-NLS-1$
         {
             onAssignTags();
@@ -2321,6 +2349,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         else if ("OnChangeCD".equals(command.getName())) //$NON-NLS-1$
         {
             onChangeCD();
+        }
+        else if ("OnSetConsoleKey".equals(command.getName())) { //$NON-NLS-1$
+            onSetConsoleKey();
         }
         else if (command.getName().equals("closeVncInfo") || // $NON-NLS-1$
                 "OnEditConsoleSave".equals(command.getName())) { //$NON-NLS-1$
@@ -2413,6 +2444,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         ImportVmFromExportDomainModel model = importVmsModel.getSpecificImportModel();
         setWindow(null); // remove import-vms window first
         setWindow(model);
+
     }
 
     private void connectToConsoles() {

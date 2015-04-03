@@ -420,6 +420,12 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getDisableGlobalHaMaintenanceCommand();
             }
         });
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.setConsoleKey()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getSetConsoleKeyCommand();
+            }
+        });
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             updateReportsAvailability();

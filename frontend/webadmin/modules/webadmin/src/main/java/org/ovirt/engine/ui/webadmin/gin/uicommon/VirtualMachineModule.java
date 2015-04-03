@@ -53,6 +53,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.PublicKeyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
@@ -91,6 +92,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider,
             final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
             final Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
+            final Provider<PublicKeyPopupPresenterWidget> publicKeyPopupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
             final Provider<VmSnapshotCreatePopupPresenterWidget> createSnapshotPopupProvider,
             final Provider<VmMigratePopupPresenterWidget> migratePopupProvider,
@@ -124,6 +126,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return runOncePopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getChangeCdCommand()) {
                             return changeCDPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getSetConsoleKeyCommand()) {
+                            return publicKeyPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getExportCommand()) {
                             return exportPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getCreateSnapshotCommand()) {

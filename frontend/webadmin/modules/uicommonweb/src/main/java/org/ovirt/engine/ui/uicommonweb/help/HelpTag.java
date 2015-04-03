@@ -82,6 +82,8 @@ public enum HelpTag {
 
     console_disconnected("console_disconnected", HelpTagType.WEBADMIN, "VMs Tab > Console Disconnected"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    edit_public_key("edit_public_key", HelpTagType.WEBADMIN, "VMs Tab > Set Serial Console Key"), //$NON-NLS-1$ //$NON-NLS-2$
+
     copy_disk("copy_disk", HelpTagType.WEBADMIN, "Templates Tab > Virtual Disks Sub-Tab > Copy Template"), //$NON-NLS-1$ //$NON-NLS-2$
 
     copy_disks("copy_disks", HelpTagType.WEBADMIN, "Disks Tab > Copy Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$

@@ -1864,6 +1864,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Disable Global HA Maintenance")
     String disableGlobalHaMaintenanceVm();
 
+    @DefaultStringValue("Set Serial Console Key")
+    String setConsoleKey();
+
     @DefaultStringValue("Show Report")
     String showReportVm();
 

@@ -12,8 +12,10 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
+import org.ovirt.engine.ui.uicompat.ICancelable;
 
-public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<Void, /* VmOrPool */ Object, UserPortalItemModel> {
+
+public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<Void, /* VmOrPool */ Object, UserPortalItemModel> implements ICancelable {
     private UICommand editConsoleCommand;
 
     protected ConsoleModelsCache consoleModelsCache;
@@ -109,7 +111,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
 
     protected abstract ConsoleContext getConsoleContext();
 
-    protected void cancel()
+    public void cancel()
     {
         setWindow(null);
         setConfirmWindow(null);

@@ -184,6 +184,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Snapshots")
     String snapshotsVm();
 
+    @DefaultStringValue("Set Serial Console Key")
+    String setConsoleKey();
+
     // Extended resource
     @DefaultStringValue("Virtual Machines")
     String vmsExtResource();

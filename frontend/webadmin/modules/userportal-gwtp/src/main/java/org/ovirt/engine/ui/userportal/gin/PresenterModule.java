@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.Temp
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateEditPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.PublicKeyPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
@@ -64,6 +65,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateI
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateEditPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.CloneVmPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.SingleSelectionVmDiskAttachPopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.PublicKeyPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmClonePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskAttachPopupView;
@@ -272,6 +274,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmRunOncePopupPresenterWidget.class,
                 VmRunOncePopupPresenterWidget.ViewDef.class,
                 VmRunOncePopupView.class);
+        bindPresenterWidget(PublicKeyPopupPresenterWidget.class,
+                PublicKeyPopupPresenterWidget.ViewDef.class,
+                PublicKeyPopupView.class);
         bindPresenterWidget(VmChangeCDPopupPresenterWidget.class,
                 VmChangeCDPopupPresenterWidget.ViewDef.class,
                 VmChangeCDPopupView.class);

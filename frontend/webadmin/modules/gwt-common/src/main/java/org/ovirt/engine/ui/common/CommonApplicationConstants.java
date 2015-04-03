@@ -637,6 +637,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("VirtIO Console Device Enabled")
     String consoleDeviceEnabled();
 
+    @DefaultStringValue("Public key for SSH serial console proxy access")
+    String consolePublicKey();
+
     @DefaultStringValue("Type")
     String poolVmPopup();
 

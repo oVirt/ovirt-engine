@@ -1970,6 +1970,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Console Options")
     String consoleOptions();
 
+    @DefaultStringValue("Set public key for Serial Console proxy access")
+    String consolePublicKeyTitle();
+
     @DefaultStringValue("Can't save configuration - Management Network must be attached")
     String mgmtNotAttachedToolTip();
 
