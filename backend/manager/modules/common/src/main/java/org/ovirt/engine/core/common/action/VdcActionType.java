@@ -183,6 +183,10 @@ public enum VdcActionType {
     LoginAdminUser(418, ActionGroup.LOGIN, false, QuotaDependency.NONE),
     AddUser(419, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     AddGroup(420, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
+    // UserProfile
+    AddUserProfile(421, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
+    UpdateUserProfile(422, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
+    RemoveUserProfile(423, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
     // Tags
     AddTag(501, false, QuotaDependency.NONE),
     RemoveTag(502, false, QuotaDependency.NONE),

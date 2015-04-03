@@ -72,6 +72,8 @@ public enum ActionGroup {
     MANIPULATE_ROLES(501, RoleType.ADMIN, true),
     MANIPULATE_PERMISSIONS(502, RoleType.USER, true),
     ADD_USERS_AND_GROUPS_FROM_DIRECTORY(503, RoleType.USER, true),
+    EDIT_PROFILE(504, RoleType.USER, true),
+
     // storage domains actions groups
     CREATE_STORAGE_DOMAIN(600, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
     EDIT_STORAGE_DOMAIN_CONFIGURATION(601, RoleType.ADMIN, true, ApplicationMode.VirtOnly),

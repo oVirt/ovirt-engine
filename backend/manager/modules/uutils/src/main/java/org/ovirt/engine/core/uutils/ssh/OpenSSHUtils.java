@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.uutils.ssh;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
@@ -192,4 +196,43 @@ public class OpenSSHUtils {
         return fingerprintString;
     }
 
+    private static boolean verifyByteArray(DataInputStream dataInputStream, byte[] expected) throws IOException {
+        int length = dataInputStream.readInt();
+        byte[] contents = new byte[length];
+        int numBytes = dataInputStream.read(contents, 0, length);
+
+        if (numBytes != length) {
+            return false;
+        }
+
+        if (expected != null) {
+            return Arrays.equals(contents, expected);
+        }
+
+        return true;
+    }
+
+    public static boolean isPublicKeyValid(String publicKey) {
+        String[] words = publicKey.split("\\s+", 3);
+
+        if (!words[0].equals(SSH_RSA)) {
+            return false;
+        }
+
+        try {
+            byte[] decodedBytes = Base64.decodeBase64(words[1]);
+
+            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(decodedBytes);
+                 DataInputStream dataInputStream = new DataInputStream(inputStream)) {
+
+                verifyByteArray(dataInputStream, SSH_RSA.getBytes(Charset.forName("UTF-8")));
+                verifyByteArray(dataInputStream, null);
+                verifyByteArray(dataInputStream, null);
+
+                return true;
+            }
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }

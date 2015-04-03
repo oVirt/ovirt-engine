@@ -73,6 +73,7 @@ public enum PermitType {
     MANIPULATE_ROLES,
     MANIPULATE_PERMISSIONS,
     ADD_USERS_AND_GROUPS_FROM_DIRECTORY,
+    EDIT_PROFILE,
 
     // storage domains actions groups
     CREATE_STORAGE_DOMAIN,

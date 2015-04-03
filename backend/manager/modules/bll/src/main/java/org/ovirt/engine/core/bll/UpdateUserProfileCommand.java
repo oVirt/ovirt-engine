@@ -1,0 +1,52 @@
+package org.ovirt.engine.core.bll;
+
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.UserProfileParameters;
+import org.ovirt.engine.core.common.businessentities.UserProfile;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
+
+
+public class UpdateUserProfileCommand<T extends UserProfileParameters> extends UserProfilesOperationCommandBase<T> {
+
+    public UpdateUserProfileCommand(T parameters) {
+        this(parameters, null);
+    }
+
+    public UpdateUserProfileCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        if (!super.canDoAction()) {
+            return false;
+        }
+
+        if (userProfileDao.getByUserId(getUserId()) == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PROFILE_NOT_EXIST);
+        }
+
+        return true;
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.USER_UPDATE_PROFILE : AuditLogType.USER_UPDATE_PROFILE_FAILED;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__USER_PROFILE);
+    }
+
+    @Override
+    protected void executeCommand() {
+        UserProfile profile = userProfileDao.getByUserId(getUserId());
+        /* we want to update only the SSH key right now, so discard anything else */
+        profile.setSshPublicKey(getParameters().getUserProfile().getSshPublicKey());
+        userProfileDao.update(profile);
+        setSucceeded(true);
+    }
+}
