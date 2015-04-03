@@ -166,22 +166,6 @@ class Hostname(base.Base):
         self.logger.debug('addresses: %s' % iplist)
         return set(iplist)
 
-    def _resolvedByDNS(self, fqdn):
-        args = [
-            self.command.get('dig'),
-            fqdn
-        ]
-        rc, stdout, stderr = self.execute(
-            args=args,
-            raiseOnError=False
-        )
-        resolved = False
-        if rc == 0:
-            for line in stdout:
-                if self._DIG_LOOKUP_RE.search(line):
-                    resolved = True
-        return resolved
-
     def _dig_reverse_lookup(self, addr):
         names = set()
         args = [
@@ -203,15 +187,7 @@ class Hostname(base.Base):
     def _validateFQDNresolvability(self, fqdn):
 
         try:
-            resolvedAddresses = set([
-                address[0] for __, __, __, __, address in
-                socket.getaddrinfo(
-                    fqdn,
-                    None,
-                    # Currently we need an IPv4 address and ignore the rest.
-                    socket.AF_INET,
-                )
-            ])
+            resolvedAddresses = self.getResolvedAddresses(fqdn)
             self.logger.debug(
                 '{fqdn} resolves to: {addresses}'.format(
                     fqdn=fqdn,
@@ -226,7 +202,7 @@ class Hostname(base.Base):
                 )
             )
 
-        resolvedByDNS = self._resolvedByDNS(fqdn)
+        resolvedByDNS = self.isResolvedByDNS(fqdn)
         if not resolvedByDNS:
             self.logger.warning(
                 _(
@@ -306,6 +282,33 @@ class Hostname(base.Base):
                         fqdn=fqdn,
                     )
                 )
+
+    def isResolvedByDNS(self, fqdn):
+        args = [
+            self.command.get('dig'),
+            fqdn
+        ]
+        rc, stdout, stderr = self.execute(
+            args=args,
+            raiseOnError=False
+        )
+        resolved = False
+        if rc == 0:
+            for line in stdout:
+                if self._DIG_LOOKUP_RE.search(line):
+                    resolved = True
+        return resolved
+
+    def getResolvedAddresses(self, fqdn):
+        return set([
+            address[0] for __, __, __, __, address in
+            socket.getaddrinfo(
+                fqdn,
+                None,
+                # Currently we need an IPv4 address and ignore the rest.
+                socket.AF_INET,
+            )
+        ])
 
     def getHostname(self, envkey, whichhost, supply_default, prompttext=None):
         interactive = self.environment[envkey] is None

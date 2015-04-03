@@ -55,6 +55,11 @@
 %global ovirt_provides_jboss 0
 %global jboss jboss-as >= 7.1.1-9.3
 %endif
+%if %{fedora} >= 21
+%global docker docker
+%else
+%global docker docker-io
+%endif
 %endif
 
 %if 0%{?rhel}
@@ -65,6 +70,7 @@
 %global ovirt_require_maven 1
 %global ovirt_provides_jboss 1
 %global jboss ovirt-engine-jboss-as >= 7.1.1
+%global docker docker
 %else
 %global ovirt_install_systemd 0
 %global ovirt_install_systemv 1
@@ -72,6 +78,7 @@
 %global ovirt_require_maven 0
 %global ovirt_provides_jboss 1
 %global jboss ovirt-engine-jboss-as >= 7.1.1
+%global docker docker-io
 
 # emulate fedora java for simplicity
 %undefine add_maven_depmap
@@ -597,6 +604,17 @@ Requires:	vdsm-jsonrpc-java >= 1.1.1
 %description setup-plugin-allinone
 All-in-one plugin for %{ovirt_product_name_short}'s setup
 
+%package setup-plugin-dockerc
+Summary:	Docker container plugin for %{ovirt_product_name_short}'s setup
+Group:		%{ovirt_product_group}
+Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
+Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
+Requires:	%{docker}
+Requires:	python-docker-py
+
+%description setup-plugin-dockerc
+Docker container plugin for %{ovirt_product_name_short}'s setup
+
 %prep
 %setup -c -q
 
@@ -1075,6 +1093,12 @@ fi
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-aio.conf
 %config %{_sysconfdir}/ovirt-host-deploy.conf.d/10-packaging-aio.conf
 %{engine_data}/firewalld/aio/
+
+%files setup-plugin-dockerc
+
+%{engine_data}/firewalld/dockerc/
+%{engine_data}/setup/ovirt_engine_setup/dockerc/
+%{engine_data}/setup/plugins/*/dockerc/
 
 %files dbscripts
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>ovirt-local-cinder</short>
+  <description>oVirt configured local Cinder service</description>
+  <port protocol="tcp" port="@OVIRT_CINDER_PORT@"/>
+</service>

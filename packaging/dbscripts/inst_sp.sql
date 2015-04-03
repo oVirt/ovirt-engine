@@ -53,14 +53,19 @@ CREATE OR REPLACE FUNCTION inst_add_glance_provider(
     v_provider_name VARCHAR(128),
     v_provider_description VARCHAR(4000),
     v_provider_url VARCHAR(512),
-    v_storage_domain_id UUID
+    v_storage_domain_id UUID,
+    v_auth_required boolean DEFAULT false,
+    v_auth_username VARCHAR(64) DEFAULT NULL,
+    v_auth_password text DEFAULT NULL,
+    v_auth_url text DEFAULT NULL,
+    v_tenant_name character varying(128) DEFAULT NULL
 )
 RETURNS VOID
 AS $procedure$
 BEGIN
     -- Adding the Glance provider
-    insert into providers(id, name, description, url, provider_type, auth_required)
-    select v_provider_id, v_provider_name, v_provider_description, v_provider_url, 'OPENSTACK_IMAGE', false
+    insert into providers(id, name, description, url, provider_type, auth_required, auth_username, auth_password, auth_url, tenant_name)
+    select v_provider_id, v_provider_name, v_provider_description, v_provider_url, 'OPENSTACK_IMAGE', v_auth_required, v_auth_username, v_auth_password, v_auth_url, v_tenant_name
     where not exists (select id from providers where id = v_provider_id);
 
     -- Adding a proper storage domain static entry
