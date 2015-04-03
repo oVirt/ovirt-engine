@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,7 +54,9 @@ public class ConcurrentAgentsFenceActionExecutorTest {
     @Before
     public void setup() {
         agent1 = new FenceAgent();
+        agent1.setId(Guid.newGuid());
         agent2 = new FenceAgent();
+        agent2.setId(Guid.newGuid());
 
         List<FenceAgent> fenceAgents = new ArrayList<>();
         fenceAgents.add(agent1);

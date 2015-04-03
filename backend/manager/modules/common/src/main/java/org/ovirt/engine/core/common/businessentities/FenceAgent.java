@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
@@ -234,6 +235,44 @@ public class FenceAgent implements BusinessEntity<Guid> {
                 .append("encryptOptions", getEncryptOptions())
                 .append("options", getOptions())
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof FenceAgent)) {
+            return false;
+        }
+        FenceAgent other = (FenceAgent) obj;
+        return ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(hostId, other.hostId)
+                && order == other.order
+                && ObjectUtils.objectsEqual(type, other.type)
+                && ObjectUtils.objectsEqual(ip, other.ip)
+                && ObjectUtils.objectsEqual(port, other.port)
+                && ObjectUtils.objectsEqual(user, other.user)
+                && ObjectUtils.objectsEqual(password, other.password)
+                && encryptOptions == other.encryptOptions
+                && ObjectUtils.objectsEqual(options, other.options);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        result = prime * result + (hostId == null ? 0 : hostId.hashCode());
+        result = prime * result + order;
+        result = prime * result + (type == null ? 0 : type.hashCode());
+        result = prime * result + (ip == null ? 0 : ip.hashCode());
+        result = prime * result + (port == null ? 0 : port.hashCode());
+        result = prime * result + (user == null ? 0 : user.hashCode());
+        result = prime * result + (password == null ? 0 : password.hashCode());
+        result = prime * result + (encryptOptions ? 1 : 0);
+        result = prime * result + (options == null ? 0 : options.hashCode());
+        return result;
     }
 
     public static class FenceAgentOrderComparator implements Comparator<FenceAgent> {
