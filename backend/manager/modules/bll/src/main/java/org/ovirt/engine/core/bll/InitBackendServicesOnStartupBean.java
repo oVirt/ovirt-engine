@@ -47,6 +47,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     @Inject
     private PmHealthCheckManager pmHealthCheckManager;
 
+    @Inject
+    private EngineBackupAwarenessManager engineBackupAwarenessManager;
+
     /**
      * This method is called upon the bean creation as part
      * of the management Service bean life cycle.
@@ -62,7 +65,8 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             pmHealthCheckManager.initialize();
             // recover from engine failure
             pmHealthCheckManager.recover(hosts);
-
+            // Initialize backup awareness manager
+            engineBackupAwarenessManager.initialize();
             CommandCoordinatorUtil.initAsyncTaskManager();
             Injector.get(ResourceManager.class);
             OvfDataUpdater.getInstance().initOvfDataUpdater();
