@@ -1005,6 +1005,12 @@ public enum AuditLogType {
     FENCE_OPERATION_FAILED(9019, AuditLogSeverity.ERROR),
     FENCE_OPERATION_USING_AGENT_AND_PROXY_STARTED(9020),
     FENCE_OPERATION_USING_AGENT_AND_PROXY_FAILED(9021, AuditLogSeverity.WARNING),
+    // Engine backup
+    ENGINE_NO_BACKUP(9022, AuditLogSeverity.ALERT, AuditLogTimeInterval.DAY.getValue()),
+    ENGINE_NO_WARM_BACKUP(9023, AuditLogSeverity.ALERT, AuditLogTimeInterval.DAY.getValue()),
+    ENGINE_BACKUP_STARTED(9024, AuditLogSeverity.NORMAL),
+    ENGINE_BACKUP_COMPLETED(9025, AuditLogSeverity.NORMAL),
+    ENGINE_BACKUP_FAILED(9026, AuditLogSeverity.ERROR),
 
     TASK_STOPPING_ASYNC_TASK(9500, AuditLogTimeInterval.MINUTE.getValue()),
     TASK_CLEARING_ASYNC_TASK(9501, AuditLogTimeInterval.MINUTE.getValue()),

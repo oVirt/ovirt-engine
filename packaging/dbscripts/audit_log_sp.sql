@@ -235,6 +235,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION DeleteBackupRelatedAlerts()
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE audit_log set deleted = true
+      where origin='oVirt' and log_type in (9022, 9023, 9026); -- (ENGINE_NO_BACKUP, ENGINE_NO_BACKUP, ENGINE_BACKUP_FAILED)
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION DeleteAuditLogAlertsByVdsID(v_vds_id UUID,
     v_delete_config_alerts BOOLEAN=true)
 RETURNS VOID
