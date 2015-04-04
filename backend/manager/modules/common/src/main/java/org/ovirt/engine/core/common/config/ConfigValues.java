@@ -2108,6 +2108,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     NetworkSriovSupported,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("6")
+    BackupCheckPeriodInHours,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1")
+    BackupAlertPeriodInDays,
+
     Invalid
 
 }

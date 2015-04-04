@@ -118,6 +118,9 @@ select fn_db_add_config_value('EnableSwapCheck','true','general');
 select fn_db_add_config_value('EnableUSBAsDefault','true','general');
 --Handling Enables Host Load Balancing system.
 select fn_db_add_config_value('EnableVdsLoadBalancing','true','general');
+--Handling Backup Awareness.
+select fn_db_add_config_value('BackupCheckPeriodInHours','6','general');
+select fn_db_add_config_value('BackupAlertPeriodInDays','1','general');
 --Handling Engine working mode
 select fn_db_add_config_value('EngineMode','Active','general');
 --Handling Use Default Credentials
