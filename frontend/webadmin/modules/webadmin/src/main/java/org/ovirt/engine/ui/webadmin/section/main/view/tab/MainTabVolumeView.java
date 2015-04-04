@@ -141,7 +141,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
             public GlusterVolumeEntity getValue(GlusterVolumeEntity object) {
                 return object;
             }
-        }, constants.volumeCapacity(), "60px");//$NON-NLS-1$
+        }, constants.volumeCapacity(), "100px");//$NON-NLS-1$
 
         getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(new VolumeActivityCompositeCell<GlusterTaskSupport>(compositeList) {
             @Override
