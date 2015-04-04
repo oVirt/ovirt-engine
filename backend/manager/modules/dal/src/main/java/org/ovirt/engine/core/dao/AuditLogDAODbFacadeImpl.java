@@ -219,6 +219,11 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
         getCallsHandler().executeModification("ClearAllDismissedAuditLogs", getCustomMapSqlParameterSource());
     }
 
+    @Override
+    public void deleteBackupRelatedAlerts() {
+        getCallsHandler().executeModification("DeleteBackupRelatedAlerts", getCustomMapSqlParameterSource());
+    }
+
     private static class AuditLogRowMapper implements RowMapper<AuditLog> {
 
         @Override

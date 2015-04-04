@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -33,7 +34,9 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     private static final long EXISTING_ENTRY_ID = 44291;
     private static final long EXTERNAL_ENTRY_ID = 44296;
     private static final int FILTERED_COUNT = 5;
-    private static final int TOTAL_COUNT = 6;
+    private static final int TOTAL_COUNT = 7;
+    private static final String ORIGIN="oVirt";
+    private static final int CUSTOM_BAKUP_EVENT_ID = 9022;
     private AuditLogDAO dao;
 
     /** Note that {@link SimpleDateFormat} is inherently not thread-safe, and should not be static */
@@ -253,7 +256,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
             throws Exception {
         dao.removeAllForVds(VDS_ID, true);
         List<AuditLog> result = dao.getAll(null, false);
-        assertEquals(5, result.size());
+        assertEquals(6, result.size());
     }
 
     @Test
@@ -333,6 +336,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         if (results != null) {
             for (AuditLog al : results) {
                 if (al.getSeverity() == entry.getSeverity()
+                        && al.getVdsId() != null
                         && al.getVdsId().equals(entry.getVdsId())
                         && al.getLogType() == entry.getLogType()) {
                     count++;
@@ -393,5 +397,15 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
 
         // test if 2nd alert was also stored in db
         assertEquals(2, getAlertCount(entry, dao.getAll(null, false)));
+    }
+
+    public void testDeleteBackupRelatedAlerts() {
+        AuditLog entry = dao.getByOriginAndCustomEventId(ORIGIN, CUSTOM_BAKUP_EVENT_ID);
+        assertNotNull(entry);
+        assertFalse(entry.isDeleted());
+        dao.deleteBackupRelatedAlerts();
+        entry = dao.getByOriginAndCustomEventId(ORIGIN, CUSTOM_BAKUP_EVENT_ID);
+        assertNotNull(entry);
+        assertTrue(entry.isDeleted());
     }
 }

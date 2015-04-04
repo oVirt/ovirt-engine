@@ -156,4 +156,9 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
      * delete flag will be set back to false.
      */
     void clearAllDismissed();
+
+    /**
+     * Clears all backup related alerts (no backup alert or old backup alert)
+     */
+    void deleteBackupRelatedAlerts();
 }

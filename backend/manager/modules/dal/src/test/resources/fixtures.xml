@@ -6216,6 +6216,40 @@
             <value></value>
             <value>false</value>
         </row>
+        <row>
+            <value>44297</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>2008-04-02 13:11:29</value>
+            <value>ENGINE_NO_BACKUP</value>
+            <value>9022</value>
+            <value>10</value>
+            <value>There is no backup available, please run engine-backup to prevent data loss in case of corruption.</value>
+            <value>true</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>oVirt</value>
+            <value>9022</value>
+            <value>30</value>
+            <value></value>
+            <value>false</value>
+        </row>
     </table>
 
     <table name="event_notification_hist">
@@ -8503,4 +8537,16 @@
             <value>label3</value>
         </row>
      </table>
+    <table name="engine_backup_log">
+        <column>db_name</column>
+        <column>done_at</column>
+        <column>is_passed</column>
+        <column>output_message</column>
+        <row>
+            <value>engine</value>
+            <value>2015-02-10 16:35:15.362494+05:30</value>
+            <value>true</value>
+            <value>OK</value>
+        </row>
+    </table>
 </dataset>

@@ -93,4 +93,8 @@ public class AuditLogDaoMocker implements AuditLogDAO {
     public void clearAllDismissed() {
     }
 
+    @Override
+    public void deleteBackupRelatedAlerts() {
+    }
+
 }

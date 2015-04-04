@@ -79,6 +79,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
+import org.ovirt.engine.core.dao.EngineBackupLogDao;
 import org.ovirt.engine.core.dao.EngineSessionDAO;
 import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.ExternalVariableDao;
@@ -1280,5 +1281,9 @@ public class DbFacade {
      */
     public HostNicVfsConfigDao getHostNicVfsConfigDao() {
         return getDao(HostNicVfsConfigDao.class);
+    }
+
+    public EngineBackupLogDao getEngineBackupLogDao() {
+        return getDao(EngineBackupLogDao.class);
     }
 }
