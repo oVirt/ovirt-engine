@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
@@ -79,6 +80,7 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
     public VmImportGeneralModel getVmGeneralModel() {
         if (vmImportGeneralModel == null) {
             vmImportGeneralModel = new VmImportGeneralModel();
+            vmImportGeneralModel.setSource(ImportSource.EXPORT_DOMAIN);
         }
         return vmImportGeneralModel;
     }

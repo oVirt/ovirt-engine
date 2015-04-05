@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExternalProviderModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
@@ -419,7 +420,9 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
                 new DetailModelProvider<ImportVmModel, VmImportGeneralModel>() {
                     @Override
                     public VmImportGeneralModel getModel() {
-                        return (VmImportGeneralModel) importModel.getDetailModels().get(0);
+                        VmImportGeneralModel model = (VmImportGeneralModel) importModel.getDetailModels().get(0);
+                        model.setSource(ImportSource.VMWARE);
+                        return model;
                     }
 
                     @Override

@@ -3,15 +3,21 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.TextBoxChanger;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Widget;
 
 public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImportGeneralModel> {
 
@@ -21,6 +27,9 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
     @Path("name.entity")
     TextBoxChanger name = new TextBoxChanger();
     TextBoxLabel description = new TextBoxLabel();
+    @UiField(provided = true)
+    @Path("operatingSystems.selectedItem")
+    ListModelListBox<Integer> operatingSystems;
     @Path("OS")
     TextBoxLabel os = new TextBoxLabel();
     TextBoxLabel template = new TextBoxLabel();
@@ -49,6 +58,13 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
 
     public VmImportGeneralModelForm(ModelProvider<VmImportGeneralModel> modelProvider) {
         super(modelProvider, 3, 7);
+
+        operatingSystems = new ListModelListBox<Integer>(new AbstractRenderer<Integer>() {
+            @Override
+            public String render(Integer object) {
+                return AsyncDataProvider.getInstance().getOsName(object);
+            }
+        });
     }
 
     @Override
@@ -59,13 +75,19 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
         monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
     }
 
+    private Widget getOperatingSystemWidget() {
+        ImportSource source = getModel().getSource();
+        return source == ImportSource.EXPORT_DOMAIN ? os : operatingSystems;
+    }
+
     public void initialize() {
         driver.initialize(this);
 
         name.setWidth("130px"); //$NON-NLS-1$
+        operatingSystems.setWidth("130px"); //$NON-NLS-1$
 
         formBuilder.addFormItem(new FormItem(constants.nameVm(), name, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.osVm(), os, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.osVm(), getOperatingSystemWidget(), 1, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionVm(), description, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.templateVm(), template, 3, 0));
         formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 4, 0));
