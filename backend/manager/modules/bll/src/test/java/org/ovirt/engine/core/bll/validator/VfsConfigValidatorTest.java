@@ -267,6 +267,21 @@ public class VfsConfigValidatorTest {
                         String.format(VfsConfigValidator.NETWORK_NAME_REPLACEMENT, network.getName())));
     }
 
+    @Test
+    public void networkInVfsConfigValid() {
+        networkInVfsConfigCommonTest(true);
+        assertThat(validator.networkInVfsConfig(NETWORK_ID), isValid());
+    }
+
+    @Test
+    public void networkInVfsConfigNotValid() {
+        networkInVfsConfigCommonTest(false);
+        assertThat(validator.networkInVfsConfig(NETWORK_ID),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_IN_VFS_CONFIG,
+                        String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName()),
+                        String.format(VfsConfigValidator.NETWORK_NAME_REPLACEMENT, network.getName())));
+    }
+
     private void networkInVfsConfigCommonTest(boolean inVfsConfig) {
         simulateNicExists();
         simulateNetworkExists();

@@ -116,6 +116,18 @@ public class VfsConfigValidator {
                 .when(oldVfsConfig.getNetworks().contains(networkId));
     }
 
+    /**
+     * @param networkId
+     *
+     * @return An error iff the network is not part of the VFs configuration
+     */
+    public ValidationResult networkInVfsConfig(Guid networkId) {
+        String networkName = getNetwork(networkId).getName();
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_IN_VFS_CONFIG,
+                getNicNameReplacement(), String.format(NETWORK_NAME_REPLACEMENT, networkName))
+                .when(!oldVfsConfig.getNetworks().contains(networkId));
+    }
+
     Network getNetwork(Guid networkId) {
         return getDbFacade().getNetworkDao().get(networkId);
     }

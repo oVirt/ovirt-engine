@@ -1525,6 +1525,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Network ${networkName} already exists in network interface ${nicName} VFs configuration.")
     String ACTION_TYPE_FAILED_NETWORK_ALREADY_IN_VFS_CONFIG();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Network ${networkName} doesn't exist in network interface ${nicName} VFs configuration.")
+    String ACTION_TYPE_FAILED_NETWORK_NOT_IN_VFS_CONFIG();
+
     @DefaultStringValue("Cannot ${action} ${type}. Network with id ${networkId} doesn't exist.")
     String ACTION_TYPE_FAILED_NETWORK_NOT_EXIST();
 
