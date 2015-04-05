@@ -319,6 +319,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/network/nic_icon.png")
     ImageResource nicIcon();
 
+    @Source("images/network/nic_sriov.png")
+    ImageResource nicSriov();
+
     @Source("images/network/bond.png")
     ImageResource bond();
 

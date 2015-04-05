@@ -42,7 +42,7 @@ public class NicPanel extends NetworkItemPanel {
 
         Label titleLabel = new Label(item.getName());
         titleLabel.setHeight("100%"); //$NON-NLS-1$
-        Image nicImage = new Image(resources.nicIcon());
+        Image nicImage = new Image(getNicIcon());
 
         rowPanel.setWidget(0, 0, dragImage);
         ImageResource statusImage = getStatusImage();
@@ -53,6 +53,10 @@ public class NicPanel extends NetworkItemPanel {
         rowPanel.setWidget(0, 3, titleLabel);
         rowPanel.setWidget(0, 4, actionButton);
         return rowPanel;
+    }
+
+    private ImageResource getNicIcon() {
+        return ((NetworkInterfaceModel) item).isSriovEnabled() ? resources.nicSriov() : resources.nicIcon();
     }
 
     private ImageResource getStatusImage() {

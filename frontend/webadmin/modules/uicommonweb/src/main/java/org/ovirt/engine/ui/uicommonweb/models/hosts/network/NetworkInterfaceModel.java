@@ -17,6 +17,7 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
     private BondNetworkInterfaceModel bond;
     private List<NetworkLabelModel> labels;
     private VdsNetworkInterface iface;
+    private boolean sriovEnabled = false;
 
     public NetworkInterfaceModel(HostSetupNetworksModel setupModel) {
         super(setupModel);
@@ -28,8 +29,9 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
     public NetworkInterfaceModel(VdsNetworkInterface nic,
             Collection<LogicalNetworkModel> nicNetworks,
             Collection<NetworkLabelModel> nicLabels,
+            boolean sriovEnabled,
             HostSetupNetworksModel setupModel) {
-        this(nic, setupModel);
+        this(nic, sriovEnabled, setupModel);
         // attach all networks
         for (LogicalNetworkModel network : nicNetworks) {
             network.attach(this, false);
@@ -39,9 +41,10 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
         }
     }
 
-    public NetworkInterfaceModel(VdsNetworkInterface nic, HostSetupNetworksModel setupModel) {
+    public NetworkInterfaceModel(VdsNetworkInterface nic, boolean sriovEnabled, HostSetupNetworksModel setupModel) {
         this(setupModel);
         setIface(nic);
+        this.sriovEnabled = sriovEnabled;
     }
 
     public BondNetworkInterfaceModel getBond() {
@@ -111,5 +114,9 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
 
     public void setCulpritNetwork(String culpritNetwork) {
         this.culpritNetwork = culpritNetwork;
+    }
+
+    public boolean isSriovEnabled() {
+        return sriovEnabled;
     }
 }

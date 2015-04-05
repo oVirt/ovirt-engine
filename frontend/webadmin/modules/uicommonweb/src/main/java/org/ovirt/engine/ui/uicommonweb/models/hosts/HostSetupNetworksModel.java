@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -128,6 +129,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     // The purpose of this map is to keep the network parameters while moving the network from one nic to another
     private final Map<String, NetworkParameters> networkToLastDetachParams;
+
+    private Map<Guid, HostNicVfsConfig> nicToVfsConfig = new HashMap<>();
 
     private NetworkOperationFactory operationFactory;
     private List<Network> allNetworks;
@@ -735,7 +738,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 if (networkModel.hasVlan()) {
                     NetworkInterfaceModel existingEridge = networkModel.getVlanNicModel();
                     assert existingEridge == null : "should have only one bridge, but found " + existingEridge; //$NON-NLS-1$
-                    networkModel.setVlanNicModel(new NetworkInterfaceModel(nic, nicNetworks, null, this));
+                    networkModel.setVlanNicModel(new NetworkInterfaceModel(nic, nicNetworks, null, false, this));
                 }
                 nicToNetwork.get(ifName).add(networkModel);
 
@@ -802,13 +805,13 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             if (bondedNics != null) {
                 List<NetworkInterfaceModel> bondedModels = new ArrayList<NetworkInterfaceModel>();
                 for (VdsNetworkInterface bonded : bondedNics) {
-                    NetworkInterfaceModel bondedModel = new NetworkInterfaceModel(bonded, this);
+                    NetworkInterfaceModel bondedModel = new NetworkInterfaceModel(bonded, nicToVfsConfig.containsKey(bonded.getId()), this);
                     bondedModel.setBonded(true);
                     bondedModels.add(bondedModel);
                 }
                 nicModel = new BondNetworkInterfaceModel(nic, nicNetworks, nicLabels, bondedModels, this);
             } else {
-                nicModel = new NetworkInterfaceModel(nic, nicNetworks, nicLabels, this);
+                nicModel = new NetworkInterfaceModel(nic, nicNetworks, nicLabels, nicToVfsConfig.containsKey(nic.getId()), this);
             }
 
             nicModels.put(nicName, nicModel);
@@ -880,8 +883,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 List<VdsNetworkInterface> allNics = (List<VdsNetworkInterface>) returnValue2;
                 HostSetupNetworksModel.this.allNics = allNics;
 
-                // chain the free bonds query
-                queryFreeBonds();
+                // chain the vfsConfig query
+                queryVfsConfig();
             }
         };
 
@@ -889,6 +892,30 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         IdQueryParameters params = new IdQueryParameters(vds.getId());
         params.setRefresh(false);
         Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, params, asyncQuery);
+    }
+
+    private void queryVfsConfig() {
+        // query for vfsConfigs
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValueObj)
+            {
+                Object returnValue = ((VdcQueryReturnValue) returnValueObj).getReturnValue();
+                List<HostNicVfsConfig> allHostVfs = (List<HostNicVfsConfig>) returnValue;
+
+                for (HostNicVfsConfig vfsConfig : allHostVfs) {
+                    nicToVfsConfig.put(vfsConfig.getNicId(), vfsConfig);
+                }
+
+                // chain the free bonds query
+                queryFreeBonds();
+            }
+        };
+
+        VDS vds = getEntity();
+        IdQueryParameters params = new IdQueryParameters(vds.getId());
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVfsConfigByHostId, params, asyncQuery);
     }
 
     private void queryNetworks() {
