@@ -866,6 +866,9 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Reverting back to last known saved configuration.")
     String SETUP_NETWORKS_ROLLBACK();
 
+    @DefaultStringValue("Failed to change the number of virtual functions.")
+    String UPDATE_NUM_VFS_FAILURE();
+
     @DefaultStringValue("Cannot get list of images in ISO domain. " +
             "Please check that the storage domain status is Active")
     String GetIsoListError();

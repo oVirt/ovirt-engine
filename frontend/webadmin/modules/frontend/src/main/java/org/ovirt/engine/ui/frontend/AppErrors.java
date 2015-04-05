@@ -763,6 +763,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Label")
     String VAR__TYPE__LABEL();
 
+    @DefaultStringValue("$type host NIC VFs configuration")
+    String VAR__TYPE__HOST_NIC_VFS_CONFIG();
+
     @DefaultStringValue("$type VM network interface profile")
     String VAR__TYPE__VNIC_PROFILE();
 
@@ -1500,6 +1503,18 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The label is already defined on other interface ${LabeledNic} on the host.")
     String OTHER_INTERFACE_ALREADY_LABELED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. SR-IOV is not supported on the selected cluster version.")
+    String ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The selected network interface ${nicName} has VFs that are in use.")
+    String ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The selected network interface ${nicName} is not SR-IOV enabled.")
+    String ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The specified number of VFs on network interface ${nicName} is ${numOfVfs}, the valid range is 0 - ${maxNumOfVfs}.")
+    String ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE();
 
     @DefaultStringValue("Cannot recover Data Center with active Data Storage Domain in Data Center.")
     String ERROR_CANNOT_RECOVERY_STORAGE_POOL_THERE_IS_ACTIVE_DATA_DOMAINS();

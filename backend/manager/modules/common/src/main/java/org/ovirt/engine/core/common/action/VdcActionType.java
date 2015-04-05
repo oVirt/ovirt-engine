@@ -116,6 +116,9 @@ public enum VdcActionType {
     UnlabelNic(166, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
     PropagateLabeledNetworksToClusterHosts(167, false, QuotaDependency.NONE),
 
+    // SR-IOV
+    UpdateHostNicVfsConfig(175, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
+
     // NUMA
     AddVmNumaNodes(170, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
     UpdateVmNumaNodes(171, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),

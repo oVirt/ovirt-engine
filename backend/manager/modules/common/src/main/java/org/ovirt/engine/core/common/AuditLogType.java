@@ -118,7 +118,6 @@ public enum AuditLogType {
     KDUMP_FLOW_FINISHED_ON_VDS(616),
     KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS(617, AuditLogSeverity.WARNING),
 
-
     HOST_REFRESHED_CAPABILITIES(606),
     HOST_REFRESH_CAPABILITIES_FAILED(607, AuditLogSeverity.ERROR),
 
@@ -159,7 +158,7 @@ public enum AuditLogType {
     USER_STARTED_VM(153),
     USER_INITIATED_RUN_VM_FAILED(151, AuditLogSeverity.WARNING),
     USER_RUN_VM(32), // User issued runVm command
-    USER_RUN_VM_AS_STATELESS(538),  // User issued runVm command in stateless mode
+    USER_RUN_VM_AS_STATELESS(538), // User issued runVm command in stateless mode
     USER_FAILED_RUN_VM(54, AuditLogSeverity.ERROR), // User issued runVm command
     USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE(70, AuditLogSeverity.ERROR),
     USER_RUN_VM_AS_STATELESS_WITH_DISKS_NOT_ALLOWING_SNAPSHOT(171, AuditLogSeverity.WARNING),
@@ -812,6 +811,10 @@ public enum AuditLogType {
     IMPORTEXPORT_NO_PROXY_HOST_AVAILABLE_IN_DC(1186, AuditLogSeverity.ERROR),
     IMPORTEXPORT_HOST_CANNOT_SERVE_AS_PROXY(1187, AuditLogSeverity.ERROR),
 
+    // SR-IOV
+    UPDATE_HOST_NIC_VFS_CONFIG(1201),
+    UPDATE_HOST_NIC_VFS_CONFIG_FAILED(1202, AuditLogSeverity.ERROR),
+
     // NUMA
     NUMA_ADD_VM_NUMA_NODE_SUCCESS(1300),
     NUMA_ADD_VM_NUMA_NODE_FAILED(1301, AuditLogSeverity.ERROR),
@@ -959,7 +962,6 @@ public enum AuditLogType {
     AUTH_FAILED_INTERNAL_KERBEROS_ERROR(1184, AuditLogSeverity.ERROR),
     USER_ACCOUNT_EXPIRED(1185, AuditLogSeverity.ERROR),
 
-
     // Providers
     PROVIDER_ADDED(205),
     PROVIDER_ADDITION_FAILED(206, AuditLogSeverity.ERROR),
@@ -996,14 +998,14 @@ public enum AuditLogType {
     FENCE_OPERATION_USING_AGENT_AND_PROXY_STARTED(9020),
     FENCE_OPERATION_USING_AGENT_AND_PROXY_FAILED(9021, AuditLogSeverity.WARNING),
 
-
     TASK_STOPPING_ASYNC_TASK(9500, AuditLogTimeInterval.MINUTE.getValue()),
     TASK_CLEARING_ASYNC_TASK(9501, AuditLogTimeInterval.MINUTE.getValue()),
 
     VDS_ACTIVATE_ASYNC(9502, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated by autorecovery
     VDS_ACTIVATE_MANUAL_HA_ASYNC(10455, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated by autorecovery
-    VDS_ACTIVATE_FAILED_ASYNC(9503, AuditLogSeverity.WARNING, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated
+    VDS_ACTIVATE_FAILED_ASYNC(9503, AuditLogSeverity.WARNING, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is
+                                                                                                         // reactivated
     @Deprecated
     STORAGE_ACTIVATE_ASYNC(9504, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated by autorecovery
 
@@ -1024,7 +1026,6 @@ public enum AuditLogType {
 
     MIXING_RHEL_VERSIONS_IN_CLUSTER(9610, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.MINUTE.getValue()),
-
 
     /** Highly available virtual machine went down. */
     HA_VM_FAILED(9602, AuditLogSeverity.ERROR),
@@ -1049,7 +1050,7 @@ public enum AuditLogType {
     EXTERNAL_EVENT_ERROR(9803, AuditLogSeverity.ERROR),
     EXTERNAL_ALERT(9804, AuditLogSeverity.ALERT),
 
-    //watchdog
+    // watchdog
     WATCHDOG_EVENT(9901, AuditLogSeverity.WARNING),
 
     // cluster policy
@@ -1064,7 +1065,7 @@ public enum AuditLogType {
     FAILED_TO_CONNECT_TO_SCHEDULER_PROXY(9920, AuditLogSeverity.ERROR,
             AuditLogTimeInterval.MINUTE.getValue()),
 
-    //trusted service
+    // trusted service
     VDS_UNTRUSTED(10000, AuditLogSeverity.ERROR,
             AuditLogTimeInterval.MINUTE.getValue()),
     USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED(10001, AuditLogSeverity.WARNING),
@@ -1084,7 +1085,7 @@ public enum AuditLogType {
     USER_ADD_EXTERNAL_JOB(11000),
     USER_ADD_EXTERNAL_JOB_FAILED(11001, AuditLogSeverity.ERROR),
 
-    //network Qos
+    // network Qos
     USER_ADDED_NETWORK_QOS(10100),
     USER_FAILED_TO_ADD_NETWORK_QOS(10101, AuditLogSeverity.ERROR),
     USER_REMOVED_NETWORK_QOS(10102),
@@ -1116,11 +1117,11 @@ public enum AuditLogType {
     USER_UPDATED_CPU_PROFILE(10134),
     USER_FAILED_TO_UPDATE_CPU_PROFILE(10135, AuditLogSeverity.ERROR),
 
-    //mom policies
+    // mom policies
     USER_UPDATED_MOM_POLICIES(10200),
     USER_FAILED_TO_UPDATE_MOM_POLICIES(10201, AuditLogSeverity.WARNING),
 
-    //power management policy
+    // power management policy
     PM_POLICY_UP_TO_MAINTENANCE(10250),
     PM_POLICY_MAINTENANCE_TO_DOWN(10251),
     PM_POLICY_TO_UP(10252),
@@ -1131,8 +1132,7 @@ public enum AuditLogType {
 
     CLUSTER_ALERT_HA_RESERVATION_DOWN(10301, AuditLogSeverity.ALERT),
 
-
-    //affinity groups
+    // affinity groups
     USER_ADDED_AFFINITY_GROUP(10350),
     USER_FAILED_TO_ADD_AFFINITY_GROUP(10351, AuditLogSeverity.ERROR),
     USER_UPDATED_AFFINITY_GROUP(10352),
@@ -1167,7 +1167,7 @@ public enum AuditLogType {
     VM_SLA_POLICY(10550),
     FAILED_VM_SLA_POLICY(10551, AuditLogSeverity.ERROR),
 
-    //MacPool Log
+    // MacPool Log
     MAC_POOL_ADD_SUCCESS(10700),
     MAC_POOL_ADD_FAILED(10701, AuditLogSeverity.ERROR),
     MAC_POOL_EDIT_SUCCESS(10702),

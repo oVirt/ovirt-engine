@@ -489,6 +489,9 @@ public enum VdcBllErrors {
     // Cinder errors
     CINDER_ERROR(5400),
 
+    // Update num of vfs
+    UPDATE_NUM_VFS_FAILURE(5400),
+
     // Gluster errors
     NO_UP_SERVER_FOUND(7000),
     // error to indicate backend does not recognize the session
