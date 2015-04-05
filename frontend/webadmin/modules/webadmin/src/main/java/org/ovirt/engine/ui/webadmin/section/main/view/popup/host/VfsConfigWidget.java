@@ -2,9 +2,11 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
+import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel.AllNetworksSelector;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 
@@ -16,6 +18,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ValueLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigModel> {
@@ -56,6 +59,14 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
     @Path(value = "maxNumOfVfs.entity")
     ValueLabel<Integer> maxVfsLabel;
 
+    @UiField
+    @Ignore
+    Label allowedNetworksLabel;
+
+    @UiField
+    @Path(value = "allNetworksAllowed.selectedItem")
+    ListModelRadioGroupEditor<AllNetworksSelector> allNetworksSelectorEditor;
+
     @Inject
     public VfsConfigWidget(ApplicationConstants constants, final ApplicationMessages messages) {
         maxVfsLabel = new ValueLabel<>(new AbstractRenderer<Integer>() {
@@ -82,6 +93,7 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
 
     private void localize(ApplicationConstants constants) {
         numOfVfs.setLabel(constants.numOfVfs());
+        allowedNetworksLabel.setText(constants.allowedNetworks());
     }
 
     protected void addStyles() {

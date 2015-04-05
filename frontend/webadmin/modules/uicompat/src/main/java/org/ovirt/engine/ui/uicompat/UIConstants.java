@@ -2724,4 +2724,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Invalid name")
     String invalidName();
+
+    @DefaultStringValue("All networks")
+    String allNetworksAllowed();
+
+    @DefaultStringValue("Specific networks")
+    String specificNetworksAllowed();
 }

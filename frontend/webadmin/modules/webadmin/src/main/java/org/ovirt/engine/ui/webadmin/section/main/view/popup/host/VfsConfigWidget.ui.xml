@@ -21,17 +21,33 @@
             padding-left: 112px;
         }
 
+         .expander {
+            font-weight: bold;
+        }
+
         .expanderContent {
             margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .allAllowedLabel {
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .allAllowedSelector {
+            float: left;
         }
 	</ui:style>
 
 	<g:FlowPanel>
-		<d:AdvancedParametersExpander ui:field="numVfsExpander"/>
+		<d:AdvancedParametersExpander ui:field="numVfsExpander" addStyleNames="{style.expander}" />
 		<g:FlowPanel ui:field="numVfsExpanderContent" addStyleNames="{style.expanderContent}">
 			<ge:IntegerEntityModelTextBoxEditor ui:field="numOfVfs" addStyleNames="{style.numOfVfs}" />
 			<g:ValueLabel ui:field="maxVfsLabel" addStyleNames="{style.maxVfsLabel}" />
 		</g:FlowPanel>
+		<g:Label ui:field="allowedNetworksLabel" addStyleNames="{style.allAllowedLabel}" />
+		<e:ListModelRadioGroupEditor ui:field="allNetworksSelectorEditor" addStyleNames="{style.allAllowedSelector}" />
 	</g:FlowPanel>
 
 </ui:UiBinder>

@@ -4302,4 +4302,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Number of VFs")
     String numOfVfs();
+
+    @DefaultStringValue("Allowed Networks")
+    String allowedNetworks();
 }

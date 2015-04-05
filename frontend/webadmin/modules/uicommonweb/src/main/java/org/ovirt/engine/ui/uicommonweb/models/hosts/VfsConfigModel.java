@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,11 +13,12 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
     private EntityModel<Integer> maxNumOfVfs = new EntityModel<>();
     private EntityModel<Integer> numOfVfs = new EntityModel<>();
-    private EntityModel<Boolean> allNetworksAllowed = new EntityModel<>();
+    private ListModel<AllNetworksSelector> allNetworksAllowed = new ListModel<>();
     private ListModel<Network> networks = new ListModel<>();
     private ListModel<String> labels = new ListModel<>();
 
@@ -28,7 +30,9 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         setEntity(vfsConfig);
         maxNumOfVfs.setEntity(vfsConfig.getMaxNumOfVfs());
         numOfVfs.setEntity(vfsConfig.getNumOfVfs());
-        allNetworksAllowed.setEntity(vfsConfig.isAllNetworksAllowed());
+        allNetworksAllowed.setItems(Arrays.asList(AllNetworksSelector.values()));
+        allNetworksAllowed.setSelectedItem(vfsConfig.isAllNetworksAllowed() ? AllNetworksSelector.allNetworkAllowed
+                : AllNetworksSelector.specificNetworks);
         initNetworks(allClusterNetworks);
         labels.setItems(vfsConfig.getNetworkLabels());
     }
@@ -41,11 +45,11 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         this.numOfVfs = numOfVfs;
     }
 
-    public EntityModel<Boolean> getAllNetworksAllowed() {
+    public ListModel<AllNetworksSelector> getAllNetworksAllowed() {
         return allNetworksAllowed;
     }
 
-    public void setAllNetworksAllowed(EntityModel<Boolean> allNetworksAllowed) {
+    public void setAllNetworksAllowed(ListModel<AllNetworksSelector> allNetworksAllowed) {
         this.allNetworksAllowed = allNetworksAllowed;
     }
 
@@ -88,5 +92,21 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         }
 
         return clusterNetworksMap;
+    }
+
+    public enum AllNetworksSelector {
+        allNetworkAllowed(ConstantsManager.getInstance().getConstants().allNetworksAllowed()),
+        specificNetworks(ConstantsManager.getInstance().getConstants().specificNetworksAllowed());
+
+        private String description;
+
+        private AllNetworksSelector(String description) {
+            this.description = description;
+        }
+
+        @Override
+        public String toString() {
+            return description;
+        }
     }
 }
