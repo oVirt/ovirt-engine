@@ -1,16 +1,54 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineGeneralView;
+import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
+import org.ovirt.engine.ui.common.widget.uicommon.vm.VmImportGeneralModelForm;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 
-import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Widget;
 
-public class ImportVmGeneralSubTabView extends SubTabVirtualMachineGeneralView implements IsWidget {
+public class ImportVmGeneralSubTabView  extends AbstractSubTabFormView<VM, ImportVmFromExportDomainModel, VmImportGeneralModel> {
 
-    public ImportVmGeneralSubTabView(DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider) {
-        super(modelProvider);
+    interface ViewUiBinder extends UiBinder<Widget, ImportVmGeneralSubTabView> {
+        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<ImportVmGeneralSubTabView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
+    @UiField(provided = true)
+    @WithElementId
+    VmImportGeneralModelForm form;
+
+    @Inject
+    public ImportVmGeneralSubTabView(DetailModelProvider<ImportVmFromExportDomainModel, VmImportGeneralModel> modelProvider) {
+        super(modelProvider);
+        this.form = new VmImportGeneralModelForm(modelProvider);
+
+        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+
+        generateIds();
+
+        form.initialize();
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
+    }
+
+    @Override
+    public void setMainTabSelectedItem(VM selectedItem) {
+        form.update();
+    }
 }

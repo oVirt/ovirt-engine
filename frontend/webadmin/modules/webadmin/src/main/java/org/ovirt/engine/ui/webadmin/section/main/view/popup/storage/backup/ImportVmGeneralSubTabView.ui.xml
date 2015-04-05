@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:e="urn:import:com.google.gwt.editor.ui.client" xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.uicommon.vm">
+
+	<ui:style>
+		.form {
+			padding-top: 10px;
+		}
+	</ui:style>
+
+	<g:FlowPanel>
+		<f:VmImportGeneralModelForm ui:field="form" addStyleNames="{style.form}" />
+	</g:FlowPanel>
+
+</ui:UiBinder>

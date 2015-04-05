@@ -9,8 +9,8 @@ import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmGeneralSubTabView;
@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
 
     private ImportVmGeneralSubTabView generalView;
-    private VmGeneralModel vmGeneralModel;
+    private VmImportGeneralModel vmImportGeneralModel;
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -45,9 +45,10 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
 
     @Override
     public void updateTabsData(ImportEntityData<VM> importEntityData) {
-        VM vm = ((ImportVmData) importEntityData).getVm();
+        ImportVmData importVmData = (ImportVmData) importEntityData;
+        VM vm = importVmData.getVm();
 
-        vmGeneralModel.setEntity(vm);
+        vmImportGeneralModel.setEntity(importVmData);
         generalView.setMainTabSelectedItem(vm);
 
         disksTable.setRowData((List) Arrays.asList(vm.getDiskMap().values().toArray()));
@@ -57,10 +58,10 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
     }
 
     private void initGeneralForm() {
-        DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider =
-            new DetailModelProvider<VmListModel<Void>, VmGeneralModel>() {
+        DetailModelProvider<ImportVmFromExportDomainModel, VmImportGeneralModel> modelProvider =
+            new DetailModelProvider<ImportVmFromExportDomainModel, VmImportGeneralModel>() {
                 @Override
-                public VmGeneralModel getModel() {
+                public VmImportGeneralModel getModel() {
                     return getVmGeneralModel();
                 }
 
@@ -75,10 +76,10 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
         generalView = new ImportVmGeneralSubTabView(modelProvider);
     }
 
-    public VmGeneralModel getVmGeneralModel() {
-        if (vmGeneralModel == null) {
-            vmGeneralModel = new VmGeneralModel();
+    public VmImportGeneralModel getVmGeneralModel() {
+        if (vmImportGeneralModel == null) {
+            vmImportGeneralModel = new VmImportGeneralModel();
         }
-        return vmGeneralModel;
+        return vmImportGeneralModel;
     }
 }

@@ -26,15 +26,16 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
@@ -378,6 +379,7 @@ public class VirtualMachineModule extends AbstractGinModule {
     protected void configure() {
         bind(new TypeLiteral<VmListModel<Void>>() {}).in(Singleton.class);
         bind(VmGeneralModel.class).in(Singleton.class);
+        bind(VmImportGeneralModel.class).in(Singleton.class);
         bind(VmSessionsModel.class).in(Singleton.class);
         bind(VmDiskListModel.class).in(Singleton.class);
         bind(VmInterfaceListModel.class).in(Singleton.class);
@@ -390,6 +392,8 @@ public class VirtualMachineModule extends AbstractGinModule {
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmGeneralModel>>(){})
             .to(new TypeLiteral<DetailTabModelProvider<VmListModel<Void>, VmGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<ImportVmsModel, VmImportGeneralModel>>(){})
+            .to(new TypeLiteral<DetailTabModelProvider<ImportVmsModel, VmImportGeneralModel>>(){}).in(Singleton.class);
         bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmSessionsModel>>(){})
            .to(new TypeLiteral<DetailTabModelProvider<VmListModel<Void>, VmSessionsModel>>(){}).in(Singleton.class);
         // Search-able Detail Models
