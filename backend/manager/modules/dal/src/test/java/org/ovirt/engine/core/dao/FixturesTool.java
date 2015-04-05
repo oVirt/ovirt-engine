@@ -374,6 +374,11 @@ public class FixturesTool {
     protected static final Guid FLOATING_LUN_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a37");
 
     /**
+     * Predefined floating Cinder disk for testing.
+     */
+    protected static final Guid FLOATING_CINDER_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a45");
+
+    /**
      * Predefined disk id based on LUN for testing.<BR/>
      * LUN ID: 1IET_00180002
      */

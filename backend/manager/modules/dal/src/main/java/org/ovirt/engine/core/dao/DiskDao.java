@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface DiskDao extends ReadDao<Disk, Guid>, SearchDAO<Disk> {
@@ -117,4 +118,18 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDAO<Disk> {
      * @return the list of disks
      */
     List<Disk> getAllForVmPartialData(Guid vmId, boolean onlyPluggedDisks, Guid userID, boolean isFiltered);
+
+    /**
+     * Retrieves all disks filtered by a specified disk storage type.
+     *
+     * @param diskStorageType
+     *            the disk storage type
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+
+     * @return the list of disks
+     */
+    public List<Disk> getAllFromDisksByDiskStorageType(DiskStorageType diskStorageType, Guid userID, boolean isFiltered);
 }

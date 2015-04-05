@@ -10,15 +10,26 @@ import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeStatus;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public class CinderBroker extends AuditLogableBase {
+
+    private static final Logger log = LoggerFactory.getLogger(CinderBroker.class);
+    public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
     private OpenStackVolumeProviderProxy proxy;
     private ArrayList<String> executeFailedMessages;
@@ -154,6 +165,36 @@ public class CinderBroker extends AuditLogableBase {
             default:
                 return null;
         }
+    }
+
+    public static List<CinderDisk> volumesToCinderDisks(List<Volume> volumes, Guid storageDomainId) {
+        List<CinderDisk> cinderDisks = new ArrayList<>();
+        for (Volume volume : volumes) {
+            cinderDisks.add(volumeToCinderDisk(volume, storageDomainId));
+        }
+        return cinderDisks;
+    }
+
+    public static CinderDisk volumeToCinderDisk(Volume volume, Guid storageDomainId) {
+        CinderDisk cinderDisk = new CinderDisk();
+        cinderDisk.setId(Guid.createGuidFromString(volume.getId()));
+        cinderDisk.setImageId(Guid.createGuidFromString(volume.getId()));
+        cinderDisk.setDiskAlias(volume.getName());
+        cinderDisk.setDescription(volume.getDescription());
+        cinderDisk.setSizeInGigabytes(volume.getSize());
+        cinderDisk.setCinderVolumeType(volume.getVolumeType());
+        cinderDisk.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
+        cinderDisk.setActive(true);
+        cinderDisk.setImageStatus(ImageStatus.OK);
+        cinderDisk.setvolumeFormat(VolumeFormat.RAW);
+        cinderDisk.setDiskInterface(DiskInterface.VirtIO);
+        try {
+            cinderDisk.setCreationDate(new SimpleDateFormat(DATE_FORMAT).parse(volume.getCreatedAt()));
+        } catch (ParseException e) {
+            cinderDisk.setCreationDate(null);
+            log.error("Invalid disk creation date format, id: '{}' (info: {})", volume.getId(), e.getMessage());
+        }
+        return cinderDisk;
     }
 
     private OpenStackVolumeProviderProxy getVolumeProviderProxy(Guid storageDomainId) {

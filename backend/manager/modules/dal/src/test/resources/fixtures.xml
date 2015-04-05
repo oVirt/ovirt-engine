@@ -4376,6 +4376,18 @@
             <value>POSIX domain, part of 'rhel6.Mixed' storage pool</value>
             <value>true</value>
         </row>
+        <row>
+            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f6</value>
+            <value>85422037-cdf4-4b98-9ae1-39588af0a7b5</value>
+            <value>cinder_domain</value>
+            <value>4</value>
+            <value>9</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>7</value>
+            <value>Cinder domain</value>
+            <value>false</value>
+        </row>
     </table>
 
     <table name="storage_domain_dynamic">
@@ -4796,6 +4808,22 @@
             <value>2010-12-01 14:13:07</value>
             <value>1</value>
         </row>
+        <row>
+            <value>42058975-3d5e-484a-80c1-01c31207f580</value>
+            <value>2010-11-18 11:03:50</value>
+            <value>2147483648</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1</value>
+            <value>2010-11-18 11:03:50</value>
+            <null/>
+            <value>2</value>
+            <value>4</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a45</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-12-01 14:13:07</value>
+            <value>1</value>
+        </row>
     </table>
 
     <table name="base_disks">
@@ -4807,6 +4835,7 @@
         <column>disk_description</column>
         <column>shareable</column>
         <column>boot</column>
+        <column>disk_storage_type</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>VirtIO</value>
@@ -4816,6 +4845,7 @@
             <value>New Description</value>
             <value>false</value>
             <value>false</value>
+            <value>0</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
@@ -4826,6 +4856,7 @@
             <value>New Description</value>
             <value>false</value>
             <value>false</value>
+            <value>0</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
@@ -4836,6 +4867,7 @@
             <value>New Description</value>
             <value>false</value>
             <value>false</value>
+            <value>0</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a37</value>
@@ -4846,6 +4878,7 @@
             <value>New Description</value>
             <value>true</value>
             <value>false</value>
+            <value>0</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a38</value>
@@ -4856,6 +4889,7 @@
             <value>New Description</value>
             <value>true</value>
             <value>false</value>
+            <value>0</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a40</value>
@@ -4866,6 +4900,7 @@
             <value>New Description</value>
             <value>false</value>
             <value>true</value>
+            <value>1</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a41</value>
@@ -4876,6 +4911,18 @@
             <value>New Description</value>
             <value>false</value>
             <value>false</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a45</value>
+            <value>VirtIO</value>
+            <value>4</value>
+            <value>Off</value>
+            <value>false</value>
+            <value>New Description</value>
+            <value>false</value>
+            <value>false</value>
+            <value>2</value>
         </row>
     </table>
 
@@ -5287,6 +5334,14 @@
             <value>9bf7c640-b620-456f-a550-0348f366544b</value>
             <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
             <value>29</value>
+            <value>1425544473</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e99</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f6</value>
+            <value>11</value>
             <value>1425544473</value>
         </row>
     </table>
@@ -5845,6 +5900,12 @@
         <row>
             <value>42058975-3d5e-484a-80c1-01c31207f577</value>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+        </row>
+        <row>
+            <value>42058975-3d5e-484a-80c1-01c31207f580</value>
+            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f6</value>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
             <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
         </row>

@@ -100,5 +100,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
+Create or replace FUNCTION GetAllFromDisksByDiskStorageType(v_disk_storage_type SMALLINT, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF all_disks STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM   all_disks
+    WHERE  disk_storage_type = v_disk_storage_type
+    AND    (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM user_disk_permissions_view
+                                        WHERE user_id = v_user_id AND entity_id = disk_id));
+END; $procedure$
+LANGUAGE plpgsql;
 

@@ -105,6 +105,18 @@ public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
     }
 
     @Override
+    public List<Disk> getAllFromDisksByDiskStorageType(DiskStorageType diskStorageType, Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource()
+                        .addValue("disk_storage_type", diskStorageType.getValue())
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered);
+        return getCallsHandler().executeReadList("GetAllFromDisksByDiskStorageType",
+                DiskRowMapper.instance,
+                parameterSource);
+    }
+
+    @Override
     public List<Disk> getAllWithQuery(String query) {
         return getJdbcTemplate().query(query, DiskRowMapper.instance);
     }

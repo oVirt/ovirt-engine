@@ -12,11 +12,12 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
-    private static final int TOTAL_DISK_IMAGES = 7;
+    private static final int TOTAL_DISK_IMAGES = 8;
 
     @Override
     protected Guid getExistingEntityId() {
@@ -184,6 +185,12 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
         assertNotNull(disks.get(0).getDiskAlias());
     }
 
+    @Test
+    public void testGetAllFromDisksByDiskStorageType() {
+        List<Disk> disks = dao.getAllFromDisksByDiskStorageType(DiskStorageType.CINDER, PRIVILEGED_USER_ID, true);
+        assertEquals("We should have one disk", 1, disks.size());
+    }
+
     /**
      * Asserts the result of {@link DiskImageDAO#getAllForVm(Guid)} contains the correct disks.
      * @param disks
@@ -209,9 +216,10 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      *            The result to check
      */
     private static void assertFullGetAllAttachableDisksByPoolId(List<Disk> disks) {
-        assertEquals("There should be only three attachable disks", 3, disks.size());
+        assertEquals("There should be only four attachable disks", 4, disks.size());
         Set<Guid> expectedFloatingDiskIds =
-                new HashSet<Guid>(Arrays.asList(FixturesTool.FLOATING_DISK_ID, FixturesTool.FLOATING_LUN_ID));
+                new HashSet<Guid>(Arrays.asList(FixturesTool.FLOATING_DISK_ID, FixturesTool.FLOATING_LUN_ID,
+                        FixturesTool.FLOATING_CINDER_DISK_ID));
         Set<Guid> actualFloatingDiskIds = new HashSet<Guid>();
         for (Disk disk : disks) {
             actualFloatingDiskIds.add(disk.getId());
