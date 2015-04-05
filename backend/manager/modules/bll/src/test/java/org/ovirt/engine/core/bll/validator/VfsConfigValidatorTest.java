@@ -7,6 +7,9 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,6 +21,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -27,6 +31,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -34,17 +39,26 @@ public class VfsConfigValidatorTest {
 
     private static final String CLUSTER_VERSION = "7";
 
+    private static final String NETWORK_NAME = "net";
+
+    private static final String NIC_NAME = "nic";
+
     private static final int NUM_OF_VFS = 5;
 
-    private Guid nicId = Guid.newGuid();
+    private static final Guid NIC_ID = Guid.newGuid();
 
-    private Guid hostId = Guid.newGuid();
+    private static final Guid HOST_ID = Guid.newGuid();
+
+    private static final Guid NETWORK_ID = Guid.newGuid();
 
     @Mock
     private VdsNetworkInterface nic;
 
     @Mock
     private VDS host;
+
+    @Mock
+    private Network network;
 
     @Mock
     private HostNicVfsConfig oldVfsConfig;
@@ -67,6 +81,9 @@ public class VfsConfigValidatorTest {
     @Mock
     private HostNicVfsConfigHelper hostNicVfsConfigHelper;
 
+    @Mock
+    private NetworkDao networkDao;
+
     private VfsConfigValidator validator;
 
     @Rule
@@ -79,10 +96,11 @@ public class VfsConfigValidatorTest {
         when(dbFacade.getInterfaceDao()).thenReturn(interfaceDao);
         when(dbFacade.getHostNicVfsConfigDao()).thenReturn(vfsConfigDao);
         when(dbFacade.getVdsDao()).thenReturn(vdsDao);
+        when(dbFacade.getNetworkDao()).thenReturn(networkDao);
     }
 
     private void createValidator() {
-        validator = spy(new VfsConfigValidator(nicId, oldVfsConfig));
+        validator = spy(new VfsConfigValidator(NIC_ID, oldVfsConfig));
         doReturn(dbFacade).when(validator).getDbFacade();
     }
 
@@ -99,8 +117,8 @@ public class VfsConfigValidatorTest {
     private void sriovFeatureSupportTest(Matcher<ValidationResult> matcher,
             boolean isSupported) {
         simulateNicExists();
-        when(nic.getVdsId()).thenReturn(hostId);
-        when(vdsDao.get(hostId)).thenReturn(host);
+        when(nic.getVdsId()).thenReturn(HOST_ID);
+        when(vdsDao.get(HOST_ID)).thenReturn(host);
         when(host.getVdsGroupCompatibilityVersion()).thenReturn(version);
         when(version.getValue()).thenReturn(CLUSTER_VERSION);
 
@@ -125,7 +143,9 @@ public class VfsConfigValidatorTest {
     }
 
     private void simulateNicExists() {
-        when(interfaceDao.get(nicId)).thenReturn(nic);
+        when(interfaceDao.get(NIC_ID)).thenReturn(nic);
+        when(nic.getId()).thenReturn(NIC_ID);
+        when(nic.getName()).thenReturn(NIC_NAME);
     }
 
     @Test
@@ -191,4 +211,71 @@ public class VfsConfigValidatorTest {
 
     }
 
+    @Test
+    public void settingSpecificNetworksAllowed() {
+        settingSpecificNetworksAllowedTest(true);
+        assertThat(validator.settingSpecificNetworksAllowed(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_SET_SPECIFIC_NETWORKS,
+                        String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName())));
+    }
+
+    @Test
+    public void settingSpecificNetworksNotAllowed() {
+        settingSpecificNetworksAllowedTest(false);
+        assertThat(validator.settingSpecificNetworksAllowed(), isValid());
+    }
+
+    private void settingSpecificNetworksAllowedTest(boolean isAllNetworksAllowed) {
+        simulateNicExists();
+        when(oldVfsConfig.isAllNetworksAllowed()).thenReturn(isAllNetworksAllowed);
+    }
+
+    @Test
+    public void networExists() {
+        simulateNicExists();
+        simulateNetworkExists();
+        assertThat(validator.networkExists(NETWORK_ID), isValid());
+    }
+
+    @Test
+    public void networNotExist() {
+        simulateNicExists();
+        assertThat(validator.networkExists(NETWORK_ID),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_EXIST,
+                        String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName()),
+                        String.format(VfsConfigValidator.NETWORK_ID_REPLACEMENT, NETWORK_ID)));
+    }
+
+    private void simulateNetworkExists() {
+        when(networkDao.get(NETWORK_ID)).thenReturn(network);
+        when(network.getId()).thenReturn(NETWORK_ID);
+        when(network.getName()).thenReturn(NETWORK_NAME);
+    }
+
+    @Test
+    public void networkNotInVfsConfigValid() {
+        networkInVfsConfigCommonTest(false);
+        assertThat(validator.networkNotInVfsConfig(NETWORK_ID), isValid());
+    }
+
+    @Test
+    public void networkNotInVfsConfigNotValid() {
+        networkInVfsConfigCommonTest(true);
+        assertThat(validator.networkNotInVfsConfig(NETWORK_ID),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_IN_VFS_CONFIG,
+                        String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName()),
+                        String.format(VfsConfigValidator.NETWORK_NAME_REPLACEMENT, network.getName())));
+    }
+
+    private void networkInVfsConfigCommonTest(boolean inVfsConfig) {
+        simulateNicExists();
+        simulateNetworkExists();
+
+        Set<Guid> networks = new HashSet<>();
+
+        if (inVfsConfig) {
+            networks.add(NETWORK_ID);
+        }
+        when(oldVfsConfig.getNetworks()).thenReturn(networks);
+    }
 }

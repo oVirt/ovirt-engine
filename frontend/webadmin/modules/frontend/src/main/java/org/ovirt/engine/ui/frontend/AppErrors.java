@@ -766,6 +766,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type host NIC VFs configuration")
     String VAR__TYPE__HOST_NIC_VFS_CONFIG();
 
+    @DefaultStringValue("$type host NIC VFs configuration network")
+    String VAR__TYPE__HOST_NIC_VFS_CONFIG_NETWORK();
+
     @DefaultStringValue("$type VM network interface profile")
     String VAR__TYPE__VNIC_PROFILE();
 
@@ -1515,6 +1518,15 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The specified number of VFs on network interface ${nicName} is ${numOfVfs}, the valid range is 0 - ${maxNumOfVfs}.")
     String ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. All networks are allowed, cannot set specific network/label.")
+    String ACTION_TYPE_FAILED_CANNOT_SET_SPECIFIC_NETWORKS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Network ${networkName} already exists in network interface ${nicName} VFs configuration.")
+    String ACTION_TYPE_FAILED_NETWORK_ALREADY_IN_VFS_CONFIG();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Network with id ${networkId} doesn't exist.")
+    String ACTION_TYPE_FAILED_NETWORK_NOT_EXIST();
 
     @DefaultStringValue("Cannot recover Data Center with active Data Storage Domain in Data Center.")
     String ERROR_CANNOT_RECOVERY_STORAGE_POOL_THERE_IS_ACTIVE_DATA_DOMAINS();

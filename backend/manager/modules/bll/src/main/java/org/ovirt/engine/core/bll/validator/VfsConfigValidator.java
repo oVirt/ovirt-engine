@@ -5,6 +5,7 @@ import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,6 +22,7 @@ public class VfsConfigValidator {
     static final String NUM_OF_VFS_REPLACEMENT = "$numOfVfs %d";
     static final String MAX_NUM_OF_VFS_REPLACEMENT = "$maxNumOfVfs %d";
     static final String NETWORK_NAME_REPLACEMENT = "$networkName %s";
+    static final String NETWORK_ID_REPLACEMENT = "$networkId %s";
 
     public VfsConfigValidator(Guid nicId, HostNicVfsConfig oldVfsConfig) {
         this.nicId = nicId;
@@ -80,6 +82,42 @@ public class VfsConfigValidator {
                 String.format(NUM_OF_VFS_REPLACEMENT, numOfVfs),
                 String.format(MAX_NUM_OF_VFS_REPLACEMENT, oldVfsConfig.getMaxNumOfVfs()))
                 .when(numOfVfs > oldVfsConfig.getMaxNumOfVfs() || numOfVfs < 0);
+    }
+
+    /**
+     * @return An error iff <code>allNetworkAllowed</code> is <code>true</code>
+     */
+    public ValidationResult settingSpecificNetworksAllowed() {
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_SET_SPECIFIC_NETWORKS,
+                getNicNameReplacement())
+                .when(oldVfsConfig.isAllNetworksAllowed());
+    }
+
+    /**
+     * @param networkId
+     *
+     * @return An error iff a network with the specified id doesn't exist
+     */
+    public ValidationResult networkExists(Guid networkId) {
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_EXIST,
+                getNicNameReplacement(), String.format(NETWORK_ID_REPLACEMENT, networkId))
+                .when(getNetwork(networkId) == null);
+    }
+
+    /**
+     * @param networkId
+     *
+     * @return An error iff the network is already part of the VFs configuration
+     */
+    public ValidationResult networkNotInVfsConfig(Guid networkId) {
+        String networkName = getNetwork(networkId).getName();
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_IN_VFS_CONFIG,
+                getNicNameReplacement(), String.format(NETWORK_NAME_REPLACEMENT, networkName))
+                .when(oldVfsConfig.getNetworks().contains(networkId));
+    }
+
+    Network getNetwork(Guid networkId) {
+        return getDbFacade().getNetworkDao().get(networkId);
     }
 
     VdsNetworkInterface getNic() {
