@@ -89,6 +89,10 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
         return getClient(getTenantId()).limits().list().execute();
     }
 
+    public List<Volume> getVolumes() {
+        return getClient(getTenantId()).volumes().list(true).execute().getList();
+    }
+
     public List<CinderVolumeType> getVolumeTypes() {
         ArrayList<CinderVolumeType> cinderVolumeTypes = new ArrayList<>();
         OpenStackRequest<VolumeTypes> listRequest = getClient(getTenantId()).volumeTypes().list();
