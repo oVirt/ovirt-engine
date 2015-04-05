@@ -395,4 +395,6 @@ public interface IVdsServer {
             String[] storageDevices);
 
     StorageDeviceListReturnForXmlRpc glusterStorageDeviceList();
+
+    StatusOnlyReturnForXmlRpc hostdevChangeNumvfs(String deviceName, int numOfVfs);
 }

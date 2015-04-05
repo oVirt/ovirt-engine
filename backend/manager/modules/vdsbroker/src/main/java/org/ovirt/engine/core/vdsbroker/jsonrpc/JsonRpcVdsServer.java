@@ -1815,4 +1815,14 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new OneStorageDeviceReturnForXmlRpc(response);
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc hostdevChangeNumvfs(String deviceName, int numOfVfs) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.hostdevChangeNumvfs").withParameter("deviceName", deviceName)
+                        .withParameter("numvfs", numOfVfs)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
 }

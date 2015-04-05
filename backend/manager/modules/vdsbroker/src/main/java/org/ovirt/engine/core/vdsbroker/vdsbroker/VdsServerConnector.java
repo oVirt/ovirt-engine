@@ -363,4 +363,6 @@ public interface VdsServerConnector {
             String[] devices,
             String fsType,
             Map<String, Object> raidParams);
+
+    public Map<String, Object> hostdevChangeNumvfs(String deviceName, int numOfVfs);
 }

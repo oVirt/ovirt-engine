@@ -1741,6 +1741,16 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc hostdevChangeNumvfs(String deviceName, int numOfVfs) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.hostdevChangeNumvfs(deviceName, numOfVfs);
+            return new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc glusterVolumeSnapshotConfigSet(String volumeName, String cfgName, String cfgValue) {
         try {
             return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeSnapshotConfigSet(volumeName, cfgName, cfgValue));
