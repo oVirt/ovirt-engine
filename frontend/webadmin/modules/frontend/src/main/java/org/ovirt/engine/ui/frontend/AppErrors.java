@@ -1057,6 +1057,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action sync")
     String VAR__ACTION__SYNC();
 
+    @DefaultStringValue("$action register")
+    String VAR__ACTION__REGISTER();
+
     @DefaultStringValue("$action start profiling")
     String VAR__ACTION__START_PROFILE();
 
@@ -3768,6 +3771,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Maximum number of volumes allowed (${maxTotalVolumes}) exceeded - could not create Cinder disk ${diskAlias}.")
     String CANNOT_ADD_CINDER_DISK_VOLUME_LIMIT_EXCEEDED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cinder disk is already registered (${diskAlias}).")
+    String CINDER_DISK_ALREADY_REGISTERED();
 
     @DefaultStringValue("The engine server is not associated with any host provider.")
     String NO_HOST_PROVIDER_FOR_SYSTEM();

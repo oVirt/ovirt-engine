@@ -5,6 +5,7 @@ import com.woorea.openstack.cinder.model.Limits;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -55,6 +56,22 @@ public class CinderDisksValidator {
                                 String.format("$diskAlias %s", disk.getDiskAlias()));
                     }
                     diskIndex++;
+                }
+                return ValidationResult.VALID;
+            }
+        });
+    }
+
+    public ValidationResult validateCinderDisksAlreadyRegistered() {
+        return validate(new Callable<ValidationResult>() {
+            @Override
+            public ValidationResult call() {
+                for (CinderDisk disk : cinderDisks) {
+                    Disk diskFromDB = getDiskDao().get(disk.getId());
+                    if (diskFromDB != null) {
+                        return new ValidationResult(VdcBllMessages.CINDER_DISK_ALREADY_REGISTERED,
+                                String.format("$diskAlias %s", diskFromDB.getDiskAlias()));
+                    }
                 }
                 return ValidationResult.VALID;
             }
