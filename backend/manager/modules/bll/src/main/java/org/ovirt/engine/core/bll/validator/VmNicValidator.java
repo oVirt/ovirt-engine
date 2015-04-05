@@ -115,6 +115,13 @@ public class VmNicValidator {
         return SimpleDependecyInjector.getInstance().get(OsRepository.class);
     }
 
+    public ValidationResult typeMatchesProfile() {
+        boolean profilePassthrough = getVnicProfile() != null && getVnicProfile().isPassthrough();
+        boolean typePassthrough = VmInterfaceType.pciPassthrough == VmInterfaceType.forValue(nic.getType());
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE)
+                .when(profilePassthrough ^ typePassthrough);
+    }
+
     protected Network getNetworkByVnicProfile(VnicProfile vnicProfile) {
         return NetworkHelper.getNetworkByVnicProfile(vnicProfile);
     }

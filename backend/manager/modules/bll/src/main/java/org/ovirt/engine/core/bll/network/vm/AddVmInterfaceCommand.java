@@ -134,7 +134,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         if (!validate(nicValidator.linkedCorrectly())
                 || !validate(nicValidator.isCompatibleWithOs())
                 || !validate(nicValidator.emptyNetworkValid())
-                || !validate(nicValidator.profileValid(vm.getVdsGroupId()))) {
+                || !validate(nicValidator.profileValid(vm.getVdsGroupId()))
+                || !validate(nicValidator.typeMatchesProfile())) {
             return false;
         }
 

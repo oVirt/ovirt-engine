@@ -80,7 +80,8 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             if (!validate(nicValidator.linkedCorrectly())
                     || !validate(nicValidator.isCompatibleWithOs())
                     || !validate(nicValidator.emptyNetworkValid())
-                    || !validate(nicValidator.profileValid(getVmTemplate().getVdsGroupId()))) {
+                    || !validate(nicValidator.profileValid(getVmTemplate().getVdsGroupId()))
+                    || !validate(nicValidator.typeMatchesProfile())) {
                 return false;
             }
 

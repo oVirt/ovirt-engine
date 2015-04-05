@@ -39,6 +39,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmNicValidatorTest {
@@ -203,8 +204,8 @@ public class VmNicValidatorTest {
     }
 
     private void vnicProfileValidationTest(Matcher<ValidationResult> matcher,
-                                           boolean profileExists,
-                                           boolean networkExists) {
+            boolean profileExists,
+            boolean networkExists) {
         when(nic.getVnicProfileId()).thenReturn(VNIC_PROFILE_ID);
         doReturn(profileExists ? vnicProfile : null).when(validator).loadVnicProfile(VNIC_PROFILE_ID);
         doReturn(networkExists ? network : null).when(validator).getNetworkByVnicProfile(vnicProfile);
@@ -218,5 +219,66 @@ public class VmNicValidatorTest {
             verify(validator).getNetworkByVnicProfile(vnicProfile);
             verify(validator).isNetworkInCluster(network, OTHER_GUID);
         }
+    }
+
+    @Test
+    public void typeMatchesProfileBothNotPassthrough() {
+        typeMatchesProfileCommon(false, false);
+        assertThat(validator.typeMatchesProfile(), isValid());
+    }
+
+    @Test
+    public void typeMatchesProfilePassthrough() {
+        typeMatchesProfileCommon(true, true);
+        assertThat(validator.typeMatchesProfile(), isValid());
+    }
+
+    @Test
+    public void typeMatchesProfileOnlyTypePassthrough() {
+        typeMatchesProfileCommon(true, false);
+        assertThat(validator.typeMatchesProfile(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE));
+    }
+
+    @Test
+    public void typeMatchesProfileOnlyProfilePassthrough() {
+        typeMatchesProfileCommon(false, true);
+        assertThat(validator.typeMatchesProfile(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE));
+    }
+
+    @Test
+    public void typeMatchesProfileTypePassthroughProfileIsNull() {
+        typeMatchesProfileCommon(true, null);
+        assertThat(validator.typeMatchesProfile(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE));
+    }
+
+    @Test
+    public void typeMatchesProfileTypeNotPassthroughProfileIsNull() {
+        typeMatchesProfileCommon(false, null);
+        assertThat(validator.typeMatchesProfile(), isValid());
+    }
+
+    private void typeMatchesProfileCommon(boolean typePassthorugh, Boolean profilePassthorugh) {
+        when(nic.getVnicProfileId()).thenReturn(VNIC_PROFILE_ID);
+        doReturn(profilePassthorugh == null ? null : vnicProfile).when(validator).loadVnicProfile(VNIC_PROFILE_ID);
+
+        if (profilePassthorugh != null) {
+            when(vnicProfile.isPassthrough()).thenReturn(profilePassthorugh);
+        }
+
+        when(nic.getType()).thenReturn(typePassthorugh ? VmInterfaceType.pciPassthrough.getValue()
+                : ((VmInterfaceType) anyEnumBut(VmInterfaceType.pciPassthrough)).getValue());
+    }
+
+    private <T extends Enum<?>> Enum<?> anyEnumBut(T excludeEnum) {
+        Enum<?> returnEnum = excludeEnum;
+
+        while (returnEnum == excludeEnum) {
+            returnEnum = RandomUtils.instance().nextEnum(excludeEnum.getClass());
+        }
+
+        return returnEnum;
     }
 }

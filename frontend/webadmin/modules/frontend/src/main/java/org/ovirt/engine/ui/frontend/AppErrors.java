@@ -2759,6 +2759,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The network interface type is not compatible with the selected operating system.")
     String ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The network interface type doesn't match the profile. Virtual machine interface of type 'PCI Passthrough' should have 'Passthrough' profile and vice versa.")
+    String ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE();
+
     @DefaultStringValue("Cannot ${action} ${type}. Updating some of the properties is not supported while the interface is plugged into a running virtual machine. Please un-plug the interface, update the properties, and then plug it back.")
     String CANNOT_PERFORM_HOT_UPDATE();
 
