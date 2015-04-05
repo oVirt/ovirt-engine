@@ -303,6 +303,7 @@ public enum VdcQueryType implements Serializable {
     // Cinder
     GetCinderVolumeTypesByStorageDomainId(VdcQueryAuthType.User),
     GetUnregisteredCinderDisksByStorageDomainId,
+    GetUnregisteredCinderDiskByIdAndStorageDomainId,
 
     // Event Notification
     GetEventSubscribersBySubscriberIdGrouped,
