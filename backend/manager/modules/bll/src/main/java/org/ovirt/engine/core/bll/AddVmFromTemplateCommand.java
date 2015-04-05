@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -41,7 +43,11 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     private Map<Guid, Set<Guid>> validDisksDomains;
 
     public AddVmFromTemplateCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public AddVmFromTemplateCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     protected AddVmFromTemplateCommand(Guid commandId) {
@@ -100,7 +106,9 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
             VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
-            for (DiskImage disk : getVmTemplate().getDiskTemplateMap().values()) {
+            Collection<DiskImage> templateDisks = getVmTemplate().getDiskTemplateMap().values();
+            List<DiskImage> diskImages = ImagesHandler.filterImageDisks(templateDisks, true, false, true);
+            for (DiskImage disk : diskImages) {
                 VdcReturnValueBase result = runInternalActionWithTasksContext(
                         VdcActionType.CreateCloneOfTemplate,
                         buildCreateCloneOfTemplateParameters(disk)
@@ -114,6 +122,9 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
                 DiskImage newImage = (DiskImage) result.getActionReturnValue();
                 getSrcDiskIdToTargetDiskIdMapping().put(disk.getId(), newImage.getId());
             }
+
+            // Clone volumes for Cinder disk templates
+            addVmCinderDisks(ImagesHandler.filterDisksBasedOnCinder(templateDisks));
         }
         return true;
     }
@@ -141,7 +152,9 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
             return false;
         }
 
-        for (DiskImage dit : getVmTemplate().getDiskTemplateMap().values()) {
+        List<DiskImage> templateDiskImages = ImagesHandler.filterImageDisks(
+                getVmTemplate().getDiskTemplateMap().values(), true, false, false);
+        for (DiskImage dit : templateDiskImages) {
             if (!ImagesHandler.checkImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getStorageIds().get(0))
                     .getStorageStaticData(),
                     diskInfoDestinationMap.get(dit.getId()),
@@ -184,11 +197,13 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     protected boolean verifySourceDomains() {
         Map<Guid, StorageDomain> poolDomainsMap = Entities.businessEntitiesById(getPoolDomains());
         EnumSet<StorageDomainStatus> validDomainStatuses = EnumSet.of(StorageDomainStatus.Active);
+        List<DiskImage> templateDiskImages = ImagesHandler.filterImageDisks(
+                getImagesToCheckDestinationStorageDomains(), true, false, false);
         validDisksDomains =
-                ImagesHandler.findDomainsInApplicableStatusForDisks(getImagesToCheckDestinationStorageDomains(),
+                ImagesHandler.findDomainsInApplicableStatusForDisks(templateDiskImages,
                         poolDomainsMap,
                         validDomainStatuses);
-        return validate(new DiskImagesValidator(getImagesToCheckDestinationStorageDomains()).diskImagesOnAnyApplicableDomains(
+        return validate(new DiskImagesValidator(templateDiskImages).diskImagesOnAnyApplicableDomains(
                 validDisksDomains, poolDomainsMap,
                 VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS, validDomainStatuses));
 
@@ -197,7 +212,9 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     @Override
     protected void chooseDisksSourceDomains() {
         diskInfoSourceMap = new HashMap<>();
-        for (DiskImage disk : getImagesToCheckDestinationStorageDomains()) {
+        List<DiskImage> templateDiskImages = ImagesHandler.filterImageDisks(
+                getImagesToCheckDestinationStorageDomains(), true, false, false);
+        for (DiskImage disk : templateDiskImages) {
             Guid diskId = disk.getId();
             Set<Guid> validDomainsForDisk = validDisksDomains.get(diskId);
             Guid destinationDomain = retrieveDestinationDomainForDisk(diskId);

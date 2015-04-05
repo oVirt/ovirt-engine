@@ -209,7 +209,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         // Set VM to lock status immediately, for reducing race condition.
         VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
 
-        if (!imageTemplates.isEmpty() || !  cinderDisks.isEmpty()) {
+        if (!imageTemplates.isEmpty() || !cinderDisks.isEmpty()) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override

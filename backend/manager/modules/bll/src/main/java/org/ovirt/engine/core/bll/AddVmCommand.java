@@ -8,6 +8,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.codec.CharEncoding;
@@ -23,15 +26,18 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
+import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
+import org.ovirt.engine.core.common.action.CloneCinderDisksParameters;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -69,6 +75,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -646,13 +653,20 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failCanDoAction(VdcBllMessages.VM_ID_EXISTS);
         }
 
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(diskInfoDestinationMap.values());
+        CinderDisksValidator cinderDisksValidator = new CinderDisksValidator(cinderDisks);
+        if (!validate(cinderDisksValidator.validateCinderDiskLimits())) {
+            return false;
+        }
+
         return true;
     }
 
     protected boolean setAndValidateDiskProfiles() {
         if (diskInfoDestinationMap != null && !diskInfoDestinationMap.isEmpty()) {
             Map<DiskImage, Guid> map = new HashMap<>();
-            for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+            List<DiskImage> diskImages = ImagesHandler.filterImageDisks(diskInfoDestinationMap.values(), true, false, true);
+            for (DiskImage diskImage : diskImages) {
                 map.put(diskImage, diskImage.getStorageIds().get(0));
             }
             return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
@@ -1065,7 +1079,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
             VmHandler.lockVm(getVmId());
-            for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
+            Collection<DiskImage> templateDisks = getImagesToCheckDestinationStorageDomains();
+            List<DiskImage> diskImages = ImagesHandler.filterImageDisks(templateDisks, true, false, true);
+            for (DiskImage image : diskImages) {
                 VdcReturnValueBase result = runInternalActionWithTasksContext(
                         VdcActionType.CreateSnapshotFromTemplate,
                         buildCreateSnapshotFromTemplateParameters(image));
@@ -1081,6 +1097,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                     srcDiskIdToTargetDiskIdMapping.put(image.getId(), newImage.getId());
                 }
             }
+
+            // Clone volumes for Cinder disk templates
+            addVmCinderDisks(ImagesHandler.filterDisksBasedOnCinder(templateDisks));
         }
         return true;
     }
@@ -1100,6 +1119,27 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         return tempVar;
     }
+
+    protected void addVmCinderDisks(List<CinderDisk> templateDisks) {
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(templateDisks);
+        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                VdcActionType.CloneCinderDisks,
+                buildCinderChildCommandParameters(cinderDisks, getVmSnapshotId()),
+                cloneContextAndDetachFromParent());
+        try {
+            Map<Guid, Guid> diskImageMap = future.get().getActionReturnValue();
+            srcDiskIdToTargetDiskIdMapping.putAll(diskImageMap);
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error cloning Cinder disks from template disks.", e);
+        }
+    }
+
+    private CloneCinderDisksParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks, Guid vmSnapshotId) {
+        CloneCinderDisksParameters createParams = new CloneCinderDisksParameters(cinderDisks, vmSnapshotId, diskInfoDestinationMap);
+        createParams.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
+        return withRootCommandInfo(createParams, getActionType());
+    }
+
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
