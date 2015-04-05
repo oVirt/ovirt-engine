@@ -769,6 +769,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type host NIC VFs configuration network")
     String VAR__TYPE__HOST_NIC_VFS_CONFIG_NETWORK();
 
+    @DefaultStringValue("$type host NIC VFs configuration label")
+    String VAR__TYPE__HOST_NIC_VFS_CONFIG_LABEL();
+
     @DefaultStringValue("$type VM network interface profile")
     String VAR__TYPE__VNIC_PROFILE();
 
@@ -1530,6 +1533,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Network with id ${networkId} doesn't exist.")
     String ACTION_TYPE_FAILED_NETWORK_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Label ${label} already exists in network interface ${nicName} VFs configuration.")
+    String ACTION_TYPE_FAILED_LABEL_ALREADY_IN_VFS_CONFIG();
 
     @DefaultStringValue("Cannot recover Data Center with active Data Storage Domain in Data Center.")
     String ERROR_CANNOT_RECOVERY_STORAGE_POOL_THERE_IS_ACTIVE_DATA_DOMAINS();

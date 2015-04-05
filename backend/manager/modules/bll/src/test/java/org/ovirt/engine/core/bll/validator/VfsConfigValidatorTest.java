@@ -51,6 +51,8 @@ public class VfsConfigValidatorTest {
 
     private static final Guid NETWORK_ID = Guid.newGuid();
 
+    private static final String LABEL = "lbl";
+
     @Mock
     private VdsNetworkInterface nic;
 
@@ -293,4 +295,31 @@ public class VfsConfigValidatorTest {
         }
         when(oldVfsConfig.getNetworks()).thenReturn(networks);
     }
+
+    @Test
+    public void labelNotInVfsConfigValid() {
+        labelInVfsConfigCommonTest(false);
+        assertThat(validator.labelNotInVfsConfig(LABEL), isValid());
+    }
+
+    @Test
+    public void labelNotInVfsConfigNotValid() {
+        labelInVfsConfigCommonTest(true);
+        assertThat(validator.labelNotInVfsConfig(LABEL),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_LABEL_ALREADY_IN_VFS_CONFIG,
+                        String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName()),
+                        String.format(VfsConfigValidator.LABEL_REPLACEMENT, LABEL)));
+    }
+
+    private void labelInVfsConfigCommonTest(boolean inVfsConfig) {
+        simulateNicExists();
+
+        Set<String> labels = new HashSet<>();
+
+        if (inVfsConfig) {
+            labels.add(LABEL);
+        }
+        when(oldVfsConfig.getNetworkLabels()).thenReturn(labels);
+    }
+
 }

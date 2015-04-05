@@ -23,6 +23,7 @@ public class VfsConfigValidator {
     static final String MAX_NUM_OF_VFS_REPLACEMENT = "$maxNumOfVfs %d";
     static final String NETWORK_NAME_REPLACEMENT = "$networkName %s";
     static final String NETWORK_ID_REPLACEMENT = "$networkId %s";
+    static final String LABEL_REPLACEMENT = "$label %s";
 
     public VfsConfigValidator(Guid nicId, HostNicVfsConfig oldVfsConfig) {
         this.nicId = nicId;
@@ -126,6 +127,17 @@ public class VfsConfigValidator {
         return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_IN_VFS_CONFIG,
                 getNicNameReplacement(), String.format(NETWORK_NAME_REPLACEMENT, networkName))
                 .when(!oldVfsConfig.getNetworks().contains(networkId));
+    }
+
+    /**
+     * @param label
+     *
+     * @return An error iff the label is already part of the VFs configuration
+     */
+    public ValidationResult labelNotInVfsConfig(String label) {
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_LABEL_ALREADY_IN_VFS_CONFIG,
+                getNicNameReplacement(), String.format(LABEL_REPLACEMENT, label))
+                .when(oldVfsConfig.getNetworkLabels().contains(label));
     }
 
     Network getNetwork(Guid networkId) {
