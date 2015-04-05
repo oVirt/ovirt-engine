@@ -140,6 +140,17 @@ public class VfsConfigValidator {
                 .when(oldVfsConfig.getNetworkLabels().contains(label));
     }
 
+    /**
+     * @param label
+     *
+     * @return An error iff the label is not part of the VFs configuration
+     */
+    public ValidationResult labelInVfsConfig(String label) {
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_LABEL_NOT_IN_VFS_CONFIG,
+                getNicNameReplacement(), String.format(LABEL_REPLACEMENT, label))
+                .unless(oldVfsConfig.getNetworkLabels().contains(label));
+    }
+
     Network getNetwork(Guid networkId) {
         return getDbFacade().getNetworkDao().get(networkId);
     }

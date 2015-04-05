@@ -118,6 +118,10 @@ public enum VdcActionType {
 
     // SR-IOV
     UpdateHostNicVfsConfig(175, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
+    AddVfsConfigNetwork(168, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
+    RemoveVfsConfigNetwork(169, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
+    AddVfsConfigLabel(173, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
+    RemoveVfsConfigLabel(174, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
 
     // NUMA
     AddVmNumaNodes(170, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),

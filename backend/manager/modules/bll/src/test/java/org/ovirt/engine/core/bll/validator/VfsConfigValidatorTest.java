@@ -311,6 +311,15 @@ public class VfsConfigValidatorTest {
                         String.format(VfsConfigValidator.LABEL_REPLACEMENT, LABEL)));
     }
 
+    @Test
+    public void labelInVfsConfigNotValid() {
+        labelInVfsConfigCommonTest(false);
+        assertThat(validator.labelInVfsConfig(LABEL),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_LABEL_NOT_IN_VFS_CONFIG,
+                        String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName()),
+                        String.format(VfsConfigValidator.LABEL_REPLACEMENT, LABEL)));
+    }
+
     private void labelInVfsConfigCommonTest(boolean inVfsConfig) {
         simulateNicExists();
 

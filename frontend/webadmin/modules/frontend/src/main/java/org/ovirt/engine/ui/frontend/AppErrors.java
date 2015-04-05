@@ -1537,6 +1537,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Label ${label} already exists in network interface ${nicName} VFs configuration.")
     String ACTION_TYPE_FAILED_LABEL_ALREADY_IN_VFS_CONFIG();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Label ${label} doesn't exist in network interface ${nicName} VFs configuration.")
+    String ACTION_TYPE_FAILED_LABEL_NOT_IN_VFS_CONFIG();
+
     @DefaultStringValue("Cannot recover Data Center with active Data Storage Domain in Data Center.")
     String ERROR_CANNOT_RECOVERY_STORAGE_POOL_THERE_IS_ACTIVE_DATA_DOMAINS();
 
