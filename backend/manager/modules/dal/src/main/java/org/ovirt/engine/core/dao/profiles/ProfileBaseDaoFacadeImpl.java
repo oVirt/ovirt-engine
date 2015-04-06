@@ -3,17 +3,12 @@ package org.ovirt.engine.core.dao.profiles;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-@Named
-@Singleton
 public abstract class ProfileBaseDaoFacadeImpl<T extends ProfileBase> extends DefaultGenericDaoDbFacade<T, Guid> implements ProfilesDao<T> {
     protected final RowMapper<T> mapper = createEntityRowMapper();
 

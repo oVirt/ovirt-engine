@@ -5,9 +5,6 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.List;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,8 +12,6 @@ import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-@Named
-@Singleton
 public abstract class QosBaseDaoFacadeImpl<T extends QosBase> extends DefaultGenericDaoDbFacade<T, Guid> implements QosDao<T> {
     private static final String QOS = "qos";
     private final QosType qosType;
