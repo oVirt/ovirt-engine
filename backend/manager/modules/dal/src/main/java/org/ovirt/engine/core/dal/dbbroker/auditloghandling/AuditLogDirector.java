@@ -109,6 +109,8 @@ public class AuditLogDirector {
         auditLog.setQuotaId(auditLogable.getQuotaIdForLog());
         auditLog.setQuotaName(auditLogable.getQuotaNameForLog());
         auditLog.setCallStack(auditLogable.getCallStack());
+        auditLog.setBrickId(auditLogable.getBrickId());
+        auditLog.setBrickPath(auditLogable.getBrickPath());
     }
 
     private void logMessage(AuditLogSeverity severity, String logMessage) {

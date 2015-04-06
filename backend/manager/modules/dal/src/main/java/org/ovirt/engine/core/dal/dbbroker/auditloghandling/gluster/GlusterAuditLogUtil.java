@@ -62,4 +62,20 @@ public class GlusterAuditLogUtil {
 
         auditLogDirector.log(logable, logType);
     }
+
+    public void logAuditMessage(final Guid clusterId,
+            final GlusterVolumeEntity volume,
+            final VDS server,
+            final AuditLogType logType,
+            final Guid brickId,
+            final String brickPath) {
+
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.setVds(server);
+        logable.setGlusterVolume(volume);
+        logable.setVdsGroupId(clusterId);
+        logable.setBrickId(brickId);
+        logable.setBrickPath(brickPath);
+        auditLogDirector.log(logable, logType);
+    }
 }

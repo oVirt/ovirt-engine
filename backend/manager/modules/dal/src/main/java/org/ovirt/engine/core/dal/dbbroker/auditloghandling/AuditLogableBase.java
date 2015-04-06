@@ -105,6 +105,8 @@ public class AuditLogableBase extends TimeoutBase {
     private Guid quotaIdForLog;
     private String quotaNameForLog;
     private String callStack;
+    private Guid brickId;
+    private String brickPath;
 
     /**
      * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
@@ -146,6 +148,8 @@ public class AuditLogableBase extends TimeoutBase {
         this.origin = auditLog.getOrigin();
         this.external = auditLog.isExternal();
         this.callStack = auditLog.getCallStack();
+        this.brickId = auditLog.getBrickId();
+        this.brickPath = auditLog.getBrickPath();
     }
 
     public Guid getUserId() {
@@ -873,4 +877,21 @@ public class AuditLogableBase extends TimeoutBase {
     public void setAuditLogDirector(AuditLogDirector auditLogDirector) {
         this.auditLogDirector = auditLogDirector;
     }
+
+    public Guid getBrickId() {
+        return brickId;
+    }
+
+    public void setBrickId(Guid brickId) {
+        this.brickId = brickId;
+    }
+
+    public String getBrickPath() {
+        return brickPath;
+    }
+
+    public void setBrickPath(String brickPath) {
+        this.brickPath = brickPath;
+    }
+
 }

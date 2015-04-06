@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeAdvancedDet
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumesListVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
@@ -1002,6 +1003,12 @@ public class GlusterSyncJob extends GlusterJob {
                         put(GlusterConstants.OPTION_NEW_VALUE, fetchedStatus.toString());
                     }
                 });
+        if(fetchedStatus == GlusterStatus.DOWN){
+            logUtil.logAuditMessage(volume.getClusterId(), volume, null,
+                AuditLogType.GLUSTER_BRICK_STATUS_DOWN, brick.getId(), brick.getQualifiedName());
+        }else if(fetchedStatus == GlusterStatus.UP){
+            AlertDirector.RemoveAlertsByBrickIdLogType(brick.getId(), AuditLogType.GLUSTER_BRICK_STATUS_DOWN);
+        }
     }
 
     private Map<Guid, BrickProperties> getBrickPropertiesMap(GlusterVolumeAdvancedDetails volumeDetails) {
