@@ -102,6 +102,15 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
     List<AuditLog> getAllByVMTemplateId(Guid vmTemplateId, Guid userID, boolean isFiltered);
 
     /**
+     * Retrieves all audit log entries for the given VOLUME ID.
+     * @param brickId
+     *            The ID of the brick
+     * @param logtype
+     *            auditlog alert/event type
+     */
+    void removeAllofTypeForBrick(Guid brickId, int logtype);
+
+    /**
      * Saves the provided audit log
      *
      * @param entry

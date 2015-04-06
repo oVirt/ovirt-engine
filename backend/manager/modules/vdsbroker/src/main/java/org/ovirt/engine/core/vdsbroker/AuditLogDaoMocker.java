@@ -93,6 +93,12 @@ public class AuditLogDaoMocker implements AuditLogDAO {
     }
 
     @Override
+    public void removeAllofTypeForBrick(Guid id, int type) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
     public int getTimeToWaitForNextPmOp(String vdsName, String event) {
         // TODO Auto-generated method stub
         return 0;

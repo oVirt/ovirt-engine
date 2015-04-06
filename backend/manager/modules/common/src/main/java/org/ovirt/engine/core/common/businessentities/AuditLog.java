@@ -46,6 +46,8 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     private String compatibilityVersion;
     private String quotaEnforcementType;
     private String callStack;
+    private Guid brickId;
+    private String brickPath;
 
     public AuditLog() {
         logType = AuditLogType.UNASSIGNED.getValue();
@@ -105,8 +107,45 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         this.eventFloodInSec = eventFloogInSec;
         this.customData = customData;
     }
+
+    public AuditLog(AuditLogType type,
+            AuditLogSeverity severity,
+            String message,
+            Guid userId,
+            String userName,
+            Guid vmId,
+            String vmName,
+            Guid vdsId,
+            String vdsName,
+            Guid vmTemplateId,
+            String vmTemplateName,
+            String origin,
+            int customEventId,
+            int eventFloogInSec,
+            Guid brickId,
+            String brickPath,
+            String customData) {
+        this(type,
+                severity,
+                message,
+                userId,
+                userName,
+                vmId,
+                vmName,
+                vdsId,
+                vdsName,
+                vmTemplateId,
+                vmTemplateName,
+                origin,
+                customEventId,
+                eventFloogInSec,
+                customData);
+        this.brickId = brickId;
+        this.brickPath = brickPath;
+    }
+
     public long getaudit_log_id() {
-        return this.auditLogId;
+        return auditLogId;
     }
 
     public void setaudit_log_id(long value) {
@@ -400,6 +439,22 @@ public class AuditLog extends IVdcQueryable implements Serializable {
 
     public void setQuotaEnforcementType(String quotaEnforcementType) {
         this.quotaEnforcementType = quotaEnforcementType;
+    }
+
+    public Guid getBrickId() {
+        return brickId;
+    }
+
+    public void setBrickId(Guid brickId) {
+        this.brickId = brickId;
+    }
+
+    public String getBrickPath() {
+        return brickPath;
+    }
+
+    public void setBrickPath(String brickPath) {
+        this.brickPath = brickPath;
     }
 
     @Override

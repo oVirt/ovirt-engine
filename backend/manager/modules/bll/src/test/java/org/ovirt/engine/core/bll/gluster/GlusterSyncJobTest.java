@@ -261,7 +261,12 @@ public class GlusterSyncJobTest {
                 any(VDS.class),
                 any(AuditLogType.class),
                 any(HashMap.class));
-
+        doNothing().when(logUtil).logAuditMessage(any(Guid.class),
+                any(GlusterVolumeEntity.class),
+                any(VDS.class),
+                any(AuditLogType.class),
+                any(Guid.class),
+                any(String.class));
         doReturn(getFetchedServersList()).when(glusterManager).fetchServers(any(VDS.class));
         doReturn(getFetchedVolumesList()).when(glusterManager).fetchVolumes(any(VDS.class));
         doReturn(getVolumeAdvancedDetails(existingDistVol)).when(glusterManager)

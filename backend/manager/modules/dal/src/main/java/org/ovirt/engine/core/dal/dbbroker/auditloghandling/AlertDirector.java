@@ -68,4 +68,16 @@ public final class AlertDirector {
     public static void RemoveAllVdsAlerts(Guid vdsId, boolean removeConfigAlerts) {
         DbFacade.getInstance().getAuditLogDao().removeAllForVds(vdsId, removeConfigAlerts);
     }
+
+    /**
+     * Removes the brick down alert.
+     *
+     * @param vdsId
+     *            The VDS id.
+     * @param type
+     *            The type.
+     */
+    public static void RemoveAlertsByBrickIdLogType(Guid brickId, AuditLogType logtype) {
+        DbFacade.getInstance().getAuditLogDao().removeAllofTypeForBrick(brickId, logtype.getValue());
+    }
 }

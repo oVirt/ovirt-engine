@@ -104,6 +104,15 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
     }
 
     @Override
+    public void removeAllofTypeForBrick(Guid brickId, int logType){
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource()
+                        .addValue("brick_id", brickId)
+                        .addValue("audit_log_type", logType);
+        getCallsHandler().executeModification("RemoveAuditLogByBrickIdLogType", parameterSource);
+    }
+
+    @Override
     public void save(AuditLog event) {
         if (event.isExternal()) {
             getCallsHandler().executeModification("InsertExternalAuditLog", getExternalEventSqlMapper(event));
@@ -146,7 +155,9 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                 .addValue("quota_name", event.getQuotaName())
                 .addValue("gluster_volume_id", event.getGlusterVolumeId())
                 .addValue("gluster_volume_name", event.getGlusterVolumeName())
-                .addValue("call_stack", event.getCallStack());
+                .addValue("call_stack", event.getCallStack())
+                .addValue("brick_id", event.getBrickId())
+                .addValue("brick_path", event.getBrickPath());
     }
 
     private MapSqlParameterSource getExternalEventSqlMapper(AuditLog event) {
@@ -259,6 +270,8 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
             entity.setCustomData(rs.getString("custom_data"));
             entity.setDeleted(rs.getBoolean("deleted"));
             entity.setCallStack(rs.getString("call_stack"));
+            entity.setBrickId(getGuid(rs, "brick_id"));
+            entity.setBrickPath(rs.getString("brick_path"));
             return entity;
         }
     }
