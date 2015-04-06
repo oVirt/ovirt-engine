@@ -231,6 +231,7 @@
         <include name="common/businessentities/storage/VolumeType.java" />
         <include name="common/businessentities/storage/CinderDisk.java" />
         <include name="common/businessentities/storage/CinderVolumeType.java" />
+        <include name="common/businessentities/storage/CinderConnectionInfo.java" />
 
         <!-- Misc -->
         <include name="common/AuditLogType.java" />
