@@ -19,7 +19,7 @@ public class HostAddressValidation extends BaseI18NValidation {
         if (acceptEmptyInput && (value == null || (value instanceof String && value.equals("")))) {
             return new ValidationResult();
         }
-        return super.validate(value);
+        return super.validate(value instanceof String ? ((String) value).trim() : value);
     }
 
     @Override
