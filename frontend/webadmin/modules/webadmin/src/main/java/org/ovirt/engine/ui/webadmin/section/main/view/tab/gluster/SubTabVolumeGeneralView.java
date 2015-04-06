@@ -62,6 +62,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
 
     FormItem replicaFormItem;
     FormItem stripeFormItem;
+    FormItem disperseCountFormItem;
+    FormItem redundancyCountFormItem;
 
     @Ignore
     DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Long>>, Long> volumeCapacityDetailsLabel = new DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Long>>, Long>(constants.total(), constants.used(), constants.free());
@@ -97,8 +99,11 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         formBuilder.addFormItem(new FormItem(constants.numberOfBricksVolume(), numOfBricks, 5, 0));
         formBuilder.addFormItem(new FormItem(constants.transportTypesVolume(), transportTypes, 6, 0));
         formBuilder.addFormItem(new FormItem(constants.maxNumberOfSnapshotsVolume(), snapMaxLimit, 7, 0));
-        formBuilder.addFormItem(new FormItem(constants.disperseCount(), disperseCount, 8, 0));
-        formBuilder.addFormItem(new FormItem(constants.redundancyCount(), redundancyCount, 9, 0));
+        disperseCountFormItem = new FormItem(constants.disperseCount(), disperseCount, 8, 0);
+        formBuilder.addFormItem(disperseCountFormItem);
+
+        redundancyCountFormItem = new FormItem(constants.redundancyCount(), redundancyCount, 9, 0);
+        formBuilder.addFormItem(redundancyCountFormItem);
 
         volumeCapacityDetailsLabel.setWidth("275px");//$NON-NLS-1$
         formBuilder.addFormItem(new FormItem(constants.volumeCapacityStatistics(), volumeCapacityDetailsLabel, 10, 0));
@@ -126,8 +131,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
 
         replicaFormItem.setIsAvailable(selectedItem.getVolumeType().isReplicatedType());
         stripeFormItem.setIsAvailable(selectedItem.getVolumeType().isStripedType());
-        disperseCount.setVisible(selectedItem.getVolumeType().isDispersedType());
-        redundancyCount.setVisible(selectedItem.getVolumeType().isDispersedType());
+        disperseCountFormItem.setIsAvailable(selectedItem.getVolumeType().isDispersedType());
+        redundancyCountFormItem.setIsAvailable(selectedItem.getVolumeType().isDispersedType());
 
         ArrayList<TextBoxLabelBase<Long>> volumeCapacityDetails =
                 new ArrayList<TextBoxLabelBase<Long>>(Arrays.asList(volumeTotalCapacity, volumeUsedCapacity, volumeFreeCapacity));
