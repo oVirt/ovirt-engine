@@ -2635,9 +2635,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Storage Devices")
     String storageDevices();
 
-    @DefaultStringValue("Volume will be restored to the state of selected snapshot.\nDo you want to continue?")
-    String confirmVolumeSnapshotRestoreMesage();
-
     @DefaultStringValue("The volume will be brought down and restored to the state of the selected snapshot.\nDo you want to continue?")
     String confirmVolumeSnapshotRestoreWithStopMessage();
 

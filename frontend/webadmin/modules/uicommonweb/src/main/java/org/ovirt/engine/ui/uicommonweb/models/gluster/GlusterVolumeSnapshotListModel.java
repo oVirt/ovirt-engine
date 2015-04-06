@@ -245,19 +245,11 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         }
 
         ConfirmationModel model = new ConfirmationModel();
-        GlusterVolumeSnapshotEntity snapshot = (GlusterVolumeSnapshotEntity) getSelectedItem();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getMessages().confirmRestoreSnapshot(getEntity().getName()));
         model.setHelpTag(HelpTag.volume_restore_snapshot_confirmation);
         model.setHashName("volume_restore_snapshot_confirmation"); //$NON-NLS-1$
-        if (snapshot.getStatus() == GlusterSnapshotStatus.ACTIVATED) {
-            model.setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .confirmVolumeSnapshotRestoreWithStopMessage());
-        } else {
-            model.setMessage(ConstantsManager.getInstance().getConstants().confirmVolumeSnapshotRestoreMesage());
-        }
-
+        model.setMessage(ConstantsManager.getInstance().getConstants().confirmVolumeSnapshotRestoreWithStopMessage());
         UICommand okCommand = UICommand.createDefaultOkUiCommand("onRestoreSnapshot", this); //$NON-NLS-1$
         model.getCommands().add(okCommand);
         UICommand cancelCommand = UICommand.createCancelUiCommand("cancelConfirmation", this); //$NON-NLS-1$
