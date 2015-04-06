@@ -33,6 +33,8 @@ public class BrickProperties implements Serializable {
 
     private String fsName;
 
+    private int rdmaPort;
+
     public Guid getBrickId() {
         return brickId;
     }
@@ -112,4 +114,13 @@ public class BrickProperties implements Serializable {
     public void setFsName(String fsName) {
         this.fsName = fsName;
     }
+
+    public int getRdmaPort() {
+        return rdmaPort;
+    }
+
+    public void setRdmaPort(int rdmaPort) {
+        this.rdmaPort = rdmaPort;
+    }
+
 }

@@ -23,6 +23,7 @@ public class GlusterServerService extends IVdcQueryable implements BusinessEntit
     private Integer pid;
     private GlusterServiceStatus status;
     private String message;
+    private Integer rdmaPort;
 
     public ServiceType getServiceType() {
         return serviceType;
@@ -96,6 +97,14 @@ public class GlusterServerService extends IVdcQueryable implements BusinessEntit
         this.serverId = hostId;
     }
 
+    public Integer getRdmaPort() {
+        return rdmaPort;
+    }
+
+    public void setRdmaPort(Integer rdmaPort) {
+        this.rdmaPort = rdmaPort;
+    }
+
     @Override
     public Guid getId() {
         return id;
@@ -129,7 +138,8 @@ public class GlusterServerService extends IVdcQueryable implements BusinessEntit
                 && ObjectUtils.objectsEqual(pid, other.getPid())
                 && serviceType == other.getServiceType()
                 && ObjectUtils.objectsEqual(hostName, other.getHostName())
-                && ObjectUtils.objectsEqual(port, other.getPort()))) {
+                && ObjectUtils.objectsEqual(port, other.getPort())
+                && ObjectUtils.objectsEqual(rdmaPort, other.getRdmaPort()))) {
             return false;
         }
         return true;
@@ -148,6 +158,7 @@ public class GlusterServerService extends IVdcQueryable implements BusinessEntit
         result = prime * result + ((serviceType == null) ? 0 : serviceType.hashCode());
         result = prime * result + ((hostName == null) ? 0 : hostName.hashCode());
         result = prime * result + ((port == null) ? 0 : port.hashCode());
+        result = prime * result + ((rdmaPort == null) ? 0 : rdmaPort.hashCode());
         return result;
     }
 

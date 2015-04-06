@@ -37,6 +37,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String VOLUME_STATUS_INFO = "volumeStatsInfo";
     private static final String VOLUME_NAME = "name";
     private static final String PORT = "port";
+    private static final String RDMA_PORT = "rdma_port";
     private static final String PID = "pid";
     private static final String ONLINE = "ONLINE";
     private static final String BRICKS = "bricks";
@@ -152,6 +153,10 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
                     serviceInfo.setPort(Integer.parseInt((String) volumeServiceInfo.get(PORT)));
                 }
 
+                if (volumeServiceInfo.containsKey(RDMA_PORT) && StringUtils.isNumeric((String)volumeServiceInfo.get(RDMA_PORT))) {
+                    serviceInfo.setRdmaPort(Integer.parseInt((String) volumeServiceInfo.get(RDMA_PORT)));
+                }
+
                 if (volumeServiceInfo.containsKey(PID) && StringUtils.isNumeric((String)volumeServiceInfo.get(PID))) {
                     serviceInfo.setPid(Integer.parseInt((String) volumeServiceInfo.get(PID)));
                 }
@@ -201,15 +206,20 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
             String brickStatus = (String) brick.get(STATUS);
             if (brickStatus.toUpperCase().equals(ONLINE)) {
                 brickProperties.setStatus(GlusterStatus.UP);
-
-                if (brick.containsKey(PORT)) {
-                    if (StringUtils.isNumeric((String)brick.get(PORT))) {
-                        brickProperties.setPort(Integer.parseInt((String) brick.get(PORT)));
-                    } else {
-                        //if there's no port registered, then the brick status is down.
-                        brickProperties.setStatus(GlusterStatus.DOWN);
-                    }
+                boolean portPresent = false;
+                if (brick.containsKey(PORT) && StringUtils.isNumeric((String)brick.get(PORT))) {
+                    brickProperties.setPort(Integer.parseInt((String) brick.get(PORT)));
+                    portPresent = true;
                 }
+                if (brick.containsKey(RDMA_PORT) && StringUtils.isNumeric((String)brick.get(RDMA_PORT))) {
+                    brickProperties.setRdmaPort(Integer.parseInt((String) brick.get(RDMA_PORT)));
+                    portPresent = true;
+                }
+                if (!portPresent) {
+                    //if there's no port registered, then the brick status is down.
+                    brickProperties.setStatus(GlusterStatus.DOWN);
+                }
+
                 if (brick.containsKey(PID) && StringUtils.isNumeric((String)brick.get(PID))) {
                     brickProperties.setPid(Integer.parseInt((String) brick.get(PID)));
                 }
