@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.provider.storage;
 
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.cinder.Cinder;
+import com.woorea.openstack.cinder.model.ConnectionForInitialize;
+import com.woorea.openstack.cinder.model.ConnectionInfo;
 import com.woorea.openstack.cinder.model.Limits;
 import com.woorea.openstack.cinder.model.Volume;
 import com.woorea.openstack.cinder.model.VolumeForCreate;
@@ -11,6 +13,7 @@ import com.woorea.openstack.cinder.model.VolumeTypes;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -79,6 +82,14 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
 
     public void extendVolume(String volumeId, int newSize) {
         getClient(getTenantId()).volumes().extend(volumeId, newSize).execute();
+    }
+
+    public CinderConnectionInfo initializeConnectionForVolume(String volumeId, ConnectionForInitialize connectionForInitialize) {
+        ConnectionInfo connectionInfo = getClient(getTenantId()).volumes().initializeConnection(volumeId, connectionForInitialize).execute();
+        CinderConnectionInfo cinderConnectionInfo = new CinderConnectionInfo();
+        cinderConnectionInfo.setDriverVolumeType(connectionInfo.getDriverVolumeType());
+        cinderConnectionInfo.setData(connectionInfo.getData());
+        return cinderConnectionInfo;
     }
 
     public Volume getVolumeById(String id) {

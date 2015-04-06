@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll.storage;
 
 import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.cinder.model.ConnectionForInitialize;
 import com.woorea.openstack.cinder.model.Volume;
 import com.woorea.openstack.cinder.model.VolumeForCreate;
 import com.woorea.openstack.cinder.model.VolumeForUpdate;
 import org.apache.commons.httpclient.HttpStatus;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
+import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -81,6 +83,16 @@ public class CinderBroker extends AuditLogableBase {
             public Void call() {
                 proxy.extendVolume(cinderDisk.getId().toString(), newSize);
                 return null;
+            }
+        });
+    }
+
+    public CinderConnectionInfo initializeConnectionForDisk(final CinderDisk cinderDisk) {
+        return execute(new Callable<CinderConnectionInfo>() {
+            @Override
+            public CinderConnectionInfo call() {
+                ConnectionForInitialize connectionForInitialize = new ConnectionForInitialize();
+                return proxy.initializeConnectionForVolume(cinderDisk.getId().toString(), connectionForInitialize);
             }
         });
     }
