@@ -625,7 +625,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // Check if boot sequence in parameters is different from default boot sequence
         if (managedDevices != null) {
             // recalculate boot order from source devices and set it to target devices
-            VmDeviceCommonUtils.updateVmDevicesBootOrder(vm,
+            VmDeviceCommonUtils.updateVmDevicesBootOrder(
+                    vm,
+                    vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence(),
                     managedDevices,
                     VmDeviceCommonUtils.isOldClusterVersion(vm.getVdsGroupCompatibilityVersion()));
             for (VmDevice vmDevice : managedDevices) {

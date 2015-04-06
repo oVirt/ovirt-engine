@@ -675,7 +675,8 @@ public class VmDeviceUtils {
     }
 
     /**
-     * Updates boot order in vm device according to the BootSequence enum value.
+     * Updates boot order in all VM devices according to the default boot sequence.
+     *
      * @param vmBase
      * @return the updated VmDevice list
      */

@@ -88,15 +88,33 @@ public class VmDeviceCommonUtils {
     }
 
     /**
-     * updates given devices boot order
+     * Updates given devices boot order in accordance with default boot sequence.
      *
+     * @param vm
      * @param devices
-     * @param bootSequence
      * @param isOldCluster
      */
-    public static void updateVmDevicesBootOrder(VM vm,
+    public static void updateVmDevicesBootOrder(
+            VM vm,
             List<VmDevice> devices,
             boolean isOldCluster) {
+        updateVmDevicesBootOrder(vm, vm.getDefaultBootSequence(), devices, isOldCluster);
+    }
+
+    /**
+     * Updates given devices boot order in accordance with bootSequence given.
+     *
+     * @param vm
+     * @param bootSequence
+     * @param devices
+     * @param isOldCluster
+     */
+    public static void updateVmDevicesBootOrder(
+            VM vm,
+            BootSequence bootSequence,
+            List<VmDevice> devices,
+            boolean isOldCluster) {
+
         int bootOrder = 0;
 
         // reset current boot order of all relevant devices before recomputing it.
@@ -106,8 +124,7 @@ public class VmDeviceCommonUtils {
                 device.setBootOrder(0);
             }
         }
-        BootSequence bootSequence =
-                (vm.isRunOnce()) ? vm.getBootSequence() : vm.getDefaultBootSequence();
+
         switch (bootSequence) {
         case C:
             bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
@@ -243,9 +260,9 @@ public class VmDeviceCommonUtils {
 
     /**
      * updates disk boot order
-     * snapshot disk devices always will have lower priority than regulary attached disks.
+     * snapshot disk devices always will have lower priority than regular attached disks.
      *
-     * @param vmBase
+     * @param vm
      * @param devices
      * @param bootOrder
      * @param isOldCluster
