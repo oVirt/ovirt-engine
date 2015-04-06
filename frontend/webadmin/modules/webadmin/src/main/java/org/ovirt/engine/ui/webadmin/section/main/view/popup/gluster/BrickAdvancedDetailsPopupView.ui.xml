@@ -47,6 +47,7 @@
 								<ge:StringEntityModelLabelEditor ui:field="brickEditor" />
 								<ge:EntityModelLabelEditor ui:field="statusEditor" />
 								<ge:IntegerEntityModelLabelEditor ui:field="portEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="rdmaPortEditor" />
 								<ge:IntegerEntityModelLabelEditor ui:field="pidEditor" />
 								<ge:DoubleEntityModelLabelEditor ui:field="totalSizeEditor" />
 								<ge:DoubleEntityModelLabelEditor ui:field="freeSizeEditor" />

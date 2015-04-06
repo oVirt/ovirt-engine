@@ -16,6 +16,7 @@ public class BrickPropertiesModel extends Model {
     private EntityModel<Integer> blockSize;
     private EntityModel<String> mountOptions;
     private EntityModel<String> fileSystem;
+    private EntityModel<Integer> rdmaPort;
 
     public BrickPropertiesModel() {
         setStatus(new EntityModel<GlusterStatus>());
@@ -27,6 +28,7 @@ public class BrickPropertiesModel extends Model {
         setBlockSize(new EntityModel<Integer>());
         setMountOptions(new EntityModel<String>());
         setFileSystem(new EntityModel<String>());
+        setRdmaPort(new EntityModel<Integer>());
     }
 
     public void setProperties(BrickProperties brickProperties) {
@@ -39,6 +41,7 @@ public class BrickPropertiesModel extends Model {
         getBlockSize().setEntity(brickProperties.getBlockSize());
         getMountOptions().setEntity(brickProperties.getMntOptions());
         getFileSystem().setEntity(brickProperties.getFsName());
+        getRdmaPort().setEntity(brickProperties.getRdmaPort());
     }
 
     public EntityModel<GlusterStatus> getStatus() {
@@ -111,5 +114,13 @@ public class BrickPropertiesModel extends Model {
 
     public void setFileSystem(EntityModel<String> fileSystem) {
         this.fileSystem = fileSystem;
+    }
+
+    public EntityModel<Integer> getRdmaPort() {
+        return rdmaPort;
+    }
+
+    public void setRdmaPort(EntityModel<Integer> rdmaPort) {
+        this.rdmaPort = rdmaPort;
     }
 }

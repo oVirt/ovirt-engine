@@ -2219,6 +2219,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Port")
     String portService();
 
+    @DefaultStringValue("RDMA Port")
+    String rdmaPortService();
+
     @DefaultStringValue("Process Id")
     String pidService();
 
@@ -3124,6 +3127,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Port")
     String portBrickAdvancedLabel();
+
+    @DefaultStringValue("RDMA Port")
+    String rdmaPortBrickAdvancedLabel();
 
     @DefaultStringValue("Process ID")
     String pidBrickAdvancedLabel();

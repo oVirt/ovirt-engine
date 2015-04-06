@@ -163,6 +163,18 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
         servicesTable.addColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
             @Override
             public String getText(GlusterServerService entity) {
+                if (entity.getRdmaPort() != null && entity.getRdmaPort() > 0) {
+                    return String.valueOf(entity.getRdmaPort());
+                }
+                else {
+                    return constants.notAvailableLabel();
+                }
+            }
+        }, constants.rdmaPortService());
+
+        servicesTable.addColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
+            @Override
+            public String getText(GlusterServerService entity) {
                 return String.valueOf(entity.getPid());
             }
         }, constants.pidService());

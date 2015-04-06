@@ -67,6 +67,11 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     IntegerEntityModelLabelEditor portEditor;
 
     @UiField
+    @Path(value = "brickProperties.rdmaPort.entity")
+    @WithElementId
+    IntegerEntityModelLabelEditor rdmaPortEditor;
+
+    @UiField
     @Path(value = "brickProperties.pid.entity")
     @WithElementId
     IntegerEntityModelLabelEditor pidEditor;
@@ -203,6 +208,7 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         brickEditor.addContentWidgetContainerStyleName(style.generalValue());
         statusEditor.addContentWidgetContainerStyleName(style.generalValue());
         portEditor.addContentWidgetContainerStyleName(style.generalValue());
+        rdmaPortEditor.addContentWidgetContainerStyleName(style.generalValue());
         pidEditor.addContentWidgetContainerStyleName(style.generalValue());
         totalSizeEditor.addContentWidgetContainerStyleName(style.generalValue());
         freeSizeEditor.addContentWidgetContainerStyleName(style.generalValue());
@@ -325,6 +331,7 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         brickEditor.setLabel(constants.brickAdvancedLabel());
         statusEditor.setLabel(constants.statusBrickAdvancedLabel());
         portEditor.setLabel(constants.portBrickAdvancedLabel());
+        rdmaPortEditor.setLabel(constants.rdmaPortBrickAdvancedLabel());
         pidEditor.setLabel(constants.pidBrickAdvancedLabel());
         totalSizeEditor.setLabel(constants.totalSizeBrickAdvancedLabel());
         freeSizeEditor.setLabel(constants.freeSizeBrickAdvancedLabel());
