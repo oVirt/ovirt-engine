@@ -31,6 +31,9 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -352,26 +355,30 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     struct.put(VdsProperties.Index, 0);
                 }
                 addAddress(vmDevice, struct);
-                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    DiskImage diskImage = (DiskImage) disk;
-                    struct.put(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
-                    struct.put(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
-                    struct.put(VdsProperties.ImageId, diskImage.getId().toString());
-                    struct.put(VdsProperties.VolumeId, diskImage.getImageId().toString());
-                    struct.put(VdsProperties.Format, diskImage.getVolumeFormat().toString()
-                            .toLowerCase());
-                    struct.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
-                            .toLowerCase());
+                switch (disk.getDiskStorageType()) {
+                    case IMAGE:
+                        DiskImage diskImage = (DiskImage) disk;
+                        struct.put(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
+                        struct.put(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
+                        struct.put(VdsProperties.ImageId, diskImage.getId().toString());
+                        struct.put(VdsProperties.VolumeId, diskImage.getImageId().toString());
+                        struct.put(VdsProperties.Format, diskImage.getVolumeFormat().toString()
+                                .toLowerCase());
+                        struct.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
+                                .toLowerCase());
 
-                    handleIoTune(vm, vmDevice, diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
-                } else {
-                    LunDisk lunDisk = (LunDisk) disk;
-                    struct.put(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
-                    struct.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
-                    struct.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString()
-                            .toLowerCase());
+                        handleIoTune(vm, vmDevice, diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
+                        break;
+                    case LUN:
+                        LunDisk lunDisk = (LunDisk) disk;
+                        struct.put(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
+                        struct.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
+                        struct.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString().toLowerCase());
+                        break;
+                    case CINDER:
+                        buildCinderDisk((CinderDisk) disk, struct);
+                        break;
                 }
-
                 addBootOrder(vmDevice, struct);
                 struct.put(VdsProperties.Shareable,
                         (vmDevice.getSnapshotId() != null && FeatureSupported.hotPlugDiskSnapshot(vm.getVdsGroupCompatibilityVersion())) ? VdsProperties.Transient
@@ -386,6 +393,40 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
 
         ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllers(devices));
+    }
+
+    public static void buildCinderDisk(CinderDisk cinderDisk, Map<String, Object> struct) {
+        CinderConnectionInfo connectionInfo = cinderDisk.getCinderConnectionInfo();
+        CinderVolumeDriver cinderVolumeDriver = CinderVolumeDriver.forValue(connectionInfo.getDriverVolumeType());
+        if (cinderVolumeDriver == null) {
+            log.error("Unsupported Cinder volume driver: '{}' (disk: '{}')",
+                    connectionInfo.getDriverVolumeType(), cinderDisk.getDiskAlias());
+            return;
+        }
+        switch (cinderVolumeDriver) {
+            case RBD:
+                Map<String, Object> connectionInfoData = cinderDisk.getCinderConnectionInfo().getData();
+                struct.put(VdsProperties.Path, connectionInfoData.get("name"));
+                struct.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
+                struct.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString().toLowerCase());
+                struct.put(VdsProperties.Protocol, cinderDisk.getCinderConnectionInfo().getDriverVolumeType());
+                struct.put(VdsProperties.DiskType, VdsProperties.NETWORK);
+
+                List<String> hostAddresses = (ArrayList<String>) connectionInfoData.get("hosts");
+                List<String> hostPorts = (ArrayList<String>) connectionInfoData.get("ports");
+                List<Map<String, Object>> hosts = new ArrayList<>();
+                // Looping over hosts addresses to create 'hosts' element
+                // (Cinder should ensure that the addresses and ports lists are synced in order).
+                for (int i = 0; i < hostAddresses.size(); i++) {
+                    Map<String, Object> hostMap = new HashMap<>();
+                    hostMap.put(VdsProperties.NetworkDiskName, hostAddresses.get(i));
+                    hostMap.put(VdsProperties.NetworkDiskPort, hostPorts.get(i));
+                    hostMap.put(VdsProperties.NetworkDiskTransport, VdsProperties.Tcp);
+                    hosts.add(hostMap);
+                }
+                struct.put(VdsProperties.NetworkDiskHosts, hosts);
+                break;
+        }
     }
 
     /**

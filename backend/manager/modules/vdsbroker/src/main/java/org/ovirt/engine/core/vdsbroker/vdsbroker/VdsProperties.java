@@ -341,6 +341,13 @@ public final class VdsProperties {
     public static final String Fdc = "fdc";
     public static final String Guid = "GUID";
     public static final String Disk = "disk";
+    public static final String Tcp = "tcp";
+    public static final String DiskType = "diskType";
+    public static final String NetworkDiskName = "name";
+    public static final String NetworkDiskPort = "port";
+    public static final String NetworkDiskTransport = "transport";
+    public static final String NetworkDiskHosts = "hosts";
+
     // iotune
     public static final String Iotune = "ioTune";
     public static final String TotalBytesSec = "total_bytes_sec";
