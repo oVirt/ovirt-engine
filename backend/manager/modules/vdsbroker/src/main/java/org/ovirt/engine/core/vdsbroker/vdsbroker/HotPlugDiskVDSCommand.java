@@ -7,8 +7,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
@@ -58,45 +58,53 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         drive.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
         drive.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
 
-        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-            DiskImage diskImage = (DiskImage) disk;
-            drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
-            drive.put(VdsProperties.Format, diskImage.getVolumeFormat().toString().toLowerCase());
-            drive.put(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
-            drive.put(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
-            drive.put(VdsProperties.VolumeId, diskImage.getImageId().toString());
-            drive.put(VdsProperties.ImageId, diskImage.getId().toString());
-            drive.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
+        switch (disk.getDiskStorageType()) {
+            case IMAGE:
+                DiskImage diskImage = (DiskImage) disk;
+                drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
+                drive.put(VdsProperties.Format, diskImage.getVolumeFormat().toString().toLowerCase());
+                drive.put(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
+                drive.put(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
+                drive.put(VdsProperties.VolumeId, diskImage.getImageId().toString());
+                drive.put(VdsProperties.ImageId, diskImage.getId().toString());
+                drive.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
 
-            VmInfoBuilder.handleIoTune(getParameters().getVm(), vmDevice, diskImage,
-                    new HashMap<Guid, Guid>(), new HashMap<Guid, Map<String, Long>>());
-            if (vmDevice.getSpecParams() != null) {
-                drive.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
-            }
-        } else {
-            LunDisk lunDisk = (LunDisk) disk;
+                VmInfoBuilder.handleIoTune(getParameters().getVm(), vmDevice, diskImage,
+                        new HashMap<Guid, Guid>(), new HashMap<Guid, Map<String, Long>>());
+                if (vmDevice.getSpecParams() != null) {
+                    drive.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
+                }
+                break;
+            case LUN:
+                LunDisk lunDisk = (LunDisk) disk;
 
-            // If SCSI pass-through is enabled (VirtIO-SCSI/DirectLUN disk and SGIO is defined),
-            // set device type as 'lun' (instead of 'disk') and set the specified SGIO
-            boolean isVirtioScsi = getParameters().getDisk().getDiskInterface() == DiskInterface.VirtIO_SCSI;
-            boolean isScsiPassthrough = getParameters().getDisk().isScsiPassthrough();
-            if (isVirtioScsi) {
-                if (isScsiPassthrough) {
-                    drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
-                    drive.put(VdsProperties.Sgio, getParameters().getDisk().getSgio().toString().toLowerCase());
+                // If SCSI pass-through is enabled (VirtIO-SCSI/DirectLUN disk and SGIO is defined),
+                // set device type as 'lun' (instead of 'disk') and set the specified SGIO
+                boolean isVirtioScsi = getParameters().getDisk().getDiskInterface() == DiskInterface.VirtIO_SCSI;
+                boolean isScsiPassthrough = getParameters().getDisk().isScsiPassthrough();
+                if (isVirtioScsi) {
+                    if (isScsiPassthrough) {
+                        drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
+                        drive.put(VdsProperties.Sgio, getParameters().getDisk().getSgio().toString().toLowerCase());
+                    }
+                    else {
+                        drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
+                    }
                 }
                 else {
-                    drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
+                    drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
                 }
-            }
-            else {
-                drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
-            }
 
-            drive.put(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
-            drive.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
-            drive.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString()
-                    .toLowerCase());
+                drive.put(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
+                drive.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
+                drive.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString()
+                        .toLowerCase());
+                break;
+            case CINDER:
+                CinderDisk cinderDisk = (CinderDisk) disk;
+                VmInfoBuilder.buildCinderDisk(cinderDisk, drive);
+                drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
+                break;
         }
 
         return drive;

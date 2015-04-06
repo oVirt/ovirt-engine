@@ -7,8 +7,10 @@ import com.woorea.openstack.cinder.model.VolumeForCreate;
 import com.woorea.openstack.cinder.model.VolumeForUpdate;
 import org.apache.commons.httpclient.HttpStatus;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -120,6 +122,22 @@ public class CinderBroker extends AuditLogableBase {
                 return proxy.initializeConnectionForVolume(cinderDisk.getId().toString(), connectionForInitialize);
             }
         });
+    }
+
+    public void updateConnectionInfoForDisk(CinderDisk cinderDisk) {
+        try {
+            CinderConnectionInfo connectionInfo = initializeConnectionForDisk(cinderDisk);
+            CinderVolumeDriver cinderVolumeDriver = CinderVolumeDriver.forValue(connectionInfo.getDriverVolumeType());
+            if (cinderVolumeDriver == null) {
+                addCustomValue("DiskAlias", cinderDisk.getDiskAlias());
+                auditLogDirector.log(this, AuditLogType.CINDER_DISK_CONNECTION_VOLUME_DRIVER_UNSUPPORTED);
+            }
+            cinderDisk.setCinderConnectionInfo(connectionInfo);
+        } catch (OpenStackResponseException ex) {
+            addCustomValue("DiskAlias", cinderDisk.getDiskAlias());
+            auditLogDirector.log(this, AuditLogType.CINDER_DISK_CONNECTION_FAILURE);
+            throw ex;
+        }
     }
 
     public boolean isDiskExist(final Guid id) {

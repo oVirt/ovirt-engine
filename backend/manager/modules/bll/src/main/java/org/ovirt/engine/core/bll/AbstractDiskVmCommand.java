@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -75,6 +76,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                     }
                 }
             }
+        } else if (disk.getDiskStorageType() == DiskStorageType.CINDER) {
+            CinderDisk cinderDisk = (CinderDisk) disk;
+            setStorageDomainId(cinderDisk.getStorageIds().get(0));
+            getCinderBroker().updateConnectionInfoForDisk(cinderDisk);
         }
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
                 getVm(), disk, vmDevice));
