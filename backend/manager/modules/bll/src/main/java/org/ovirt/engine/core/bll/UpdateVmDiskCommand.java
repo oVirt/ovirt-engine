@@ -539,7 +539,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         CinderDisk newCinderDisk = (CinderDisk) getNewDisk();
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.ExtendCinderDisk,
-                new UpdateVmDiskParameters(getVmId(), newCinderDisk.getId(), newCinderDisk),
+                buildExtendCinderDiskParameters(newCinderDisk),
                 cloneContextAndDetachFromParent());
         addCustomValue("NewSize", String.valueOf(getNewDiskSizeInGB()));
         try {
