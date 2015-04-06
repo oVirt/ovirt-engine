@@ -236,7 +236,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVdsToRunOn()) {
             VMStatus status = null;
             try {
-                if (connectLunDisks(getVdsId())) {
+                if (connectLunDisks(getVdsId()) && updateCinderDisksConnections()) {
                     status = createVm();
                     ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                     markHostDevicesAsUsed();

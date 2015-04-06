@@ -9,21 +9,27 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import com.woorea.openstack.base.client.OpenStackResponseException;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.CinderBroker;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.Config;
@@ -264,6 +270,31 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 return false;
             }
 
+        }
+        return true;
+    }
+
+    protected boolean updateCinderDisksConnections() {
+        if (getVm().getDiskMap().isEmpty()) {
+            VmHandler.updateDisksFromDb(getVm());
+        }
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values(), true);
+        for (CinderDisk cinderDisk : cinderDisks) {
+            try {
+                CinderBroker cinderBroker = new CinderBroker(cinderDisk.getStorageIds().get(0), getReturnValue().getExecuteFailedMessages());
+                CinderConnectionInfo connectionInfo = cinderBroker.initializeConnectionForDisk(cinderDisk);
+                if (CinderVolumeDriver.forValue(connectionInfo.getDriverVolumeType()) == null) {
+                    addCustomValue("DiskAlias", cinderDisk.getDiskAlias());
+                    auditLogDirector.log(this, AuditLogType.CINDER_DISK_CONNECTION_VOLUME_DRIVER_UNSUPPORTED);
+                    return false;
+                }
+                cinderDisk.setCinderConnectionInfo(connectionInfo);
+            }
+            catch (OpenStackResponseException ex) {
+                addCustomValue("DiskAlias", cinderDisk.getDiskAlias());
+                auditLogDirector.log(this, AuditLogType.CINDER_DISK_CONNECTION_FAILURE);
+                return false;
+            }
         }
         return true;
     }

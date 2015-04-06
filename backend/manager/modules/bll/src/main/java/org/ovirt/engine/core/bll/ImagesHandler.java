@@ -587,7 +587,7 @@ public final class ImagesHandler {
         return filterDisksBasedOnCinder(listOfDisks, false);
     }
 
-    private static List<CinderDisk> filterDisksBasedOnCinder(Collection<? extends Disk> listOfDisks,
+    public static List<CinderDisk> filterDisksBasedOnCinder(Collection<? extends Disk> listOfDisks,
             boolean onlyPluggedDisks) {
         List<CinderDisk> cinderDisks = new ArrayList<>();
         for (Disk disk : listOfDisks) {

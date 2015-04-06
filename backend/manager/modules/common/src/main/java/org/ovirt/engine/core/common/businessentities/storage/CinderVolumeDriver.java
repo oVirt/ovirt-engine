@@ -25,4 +25,8 @@ public enum CinderVolumeDriver implements Nameable {
     public String getName() {
         return name;
     }
+
+    public static CinderVolumeDriver forValue(String value) {
+        return mappings.get(value);
+    }
 }

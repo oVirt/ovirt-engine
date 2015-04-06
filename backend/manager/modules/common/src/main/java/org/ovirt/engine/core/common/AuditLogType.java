@@ -1199,6 +1199,8 @@ public enum AuditLogType {
 
     // Cinder
     CINDER_PROVIDER_ERROR(10750, AuditLogSeverity.ERROR),
+    CINDER_DISK_CONNECTION_FAILURE(10751, AuditLogSeverity.ERROR),
+    CINDER_DISK_CONNECTION_VOLUME_DRIVER_UNSUPPORTED(10752, AuditLogSeverity.ERROR),
 
     // Host Devices
     VM_ADD_HOST_DEVICES(10800),
