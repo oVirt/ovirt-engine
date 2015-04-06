@@ -245,23 +245,12 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
         }
 
         ConfirmationModel model = new ConfirmationModel();
-        GlusterVolumeSnapshotEntity snapshot = (GlusterVolumeSnapshotEntity) getSelectedItem();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getMessages().confirmRestoreSnapshot(getEntity().getName()));
         model.setHelpTag(HelpTag.volume_restore_snapshot_confirmation);
         model.setHashName("volume_restore_snapshot_confirmation"); //$NON-NLS-1$
-        if (snapshot.getStatus() == GlusterSnapshotStatus.ACTIVATED) {
-            model.setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .confirmVolumeSnapshotRestoreWithStopMessage());
-        } else {
-            model.setMessage(ConstantsManager.getInstance().getConstants().confirmVolumeSnapshotRestoreMesage());
-        }
-
-        UICommand okCommand = new UICommand("onRestoreSnapshot", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
-        getConfirmWindow().getCommands().add(okCommand);
+        model.setMessage(ConstantsManager.getInstance().getConstants().confirmVolumeSnapshotRestoreWithStopMessage());
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("onRestoreSnapshot", this); //$NON-NLS-1$
         model.getCommands().add(okCommand);
         UICommand cancelCommand = new UICommand("cancelConfirmation", this); //$NON-NLS-1$
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
@@ -282,7 +271,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
         }
 
         ConfirmationModel model = new ConfirmationModel();
-        List<GlusterVolumeSnapshotEntity> snapshots = (List<GlusterVolumeSnapshotEntity>) getSelectedItems();
+        List<GlusterVolumeSnapshotEntity> snapshots = getSelectedItems();
         StringBuilder snapshotNames = new StringBuilder();
         for (GlusterVolumeSnapshotEntity snapshot : snapshots) {
             snapshotNames.append(snapshot.getSnapshotName());
