@@ -43,7 +43,7 @@ public class BackendEventsResource
 
     @Override
     public Response undelete(Action action) {
-        return performAction(VdcActionType.ClearAllDismissedAuditLogs, new VdcActionParametersBase(), action, false);
+        return performAction(VdcActionType.DisplayAllAuditLogAlerts, new VdcActionParametersBase(), action, false);
     }
 
     @Override

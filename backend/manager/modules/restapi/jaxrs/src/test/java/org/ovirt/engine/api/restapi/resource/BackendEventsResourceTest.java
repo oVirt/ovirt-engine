@@ -100,7 +100,7 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
     @Test
     public void testUndelete() throws Exception {
 
-        setUriInfo(setUpActionExpectations(VdcActionType.ClearAllDismissedAuditLogs,
+        setUriInfo(setUpActionExpectations(VdcActionType.DisplayAllAuditLogAlerts,
                 VdcActionParametersBase.class,
                 new String[] {},
                 new Object[] {},

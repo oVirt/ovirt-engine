@@ -2626,6 +2626,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Clear All")
     String clearAllDismissedEvents();
 
+    @DefaultStringValue("Display All")
+    String displayAllDismissedAlerts();
+
+    @DefaultStringValue("Display All")
+    String displayAllDismissedEvents();
+
     @DefaultStringValue("Dismiss Alert")
     String dismissAlert();
 

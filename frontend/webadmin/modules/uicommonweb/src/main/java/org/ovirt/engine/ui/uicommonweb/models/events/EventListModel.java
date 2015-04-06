@@ -59,6 +59,12 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
         return clearAllCommand;
     }
 
+    private UICommand displayAllCommand;
+
+    public UICommand getDisplayAllCommand() {
+        return displayAllCommand;
+    }
+
     private void setDetailsCommand(UICommand value) {
         detailsCommand = value;
     }
@@ -105,7 +111,8 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
         setRefreshCommand(new UICommand("Refresh", this)); //$NON-NLS-1$
         setDetailsCommand(new UICommand("Details", this)); //$NON-NLS-1$
         dismissCommand = new UICommand("Dismiss", this); //$NON-NLS-1$
-        clearAllCommand = new UICommand("ClearAll", this); //$NON-NLS-1$
+        clearAllCommand = new UICommand("Clear All", this); //$NON-NLS-1$
+        displayAllCommand = new UICommand("Display All", this); //$NON-NLS-1$
 
         setDefaultSearchString("Events:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
@@ -154,7 +161,8 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
                 List<AuditLog> currentEvents = (List<AuditLog>) getItems();
 
                 if (!newEvents.isEmpty() &&
-                        currentEvents != null && !currentEvents.get(0).equals(newEvents.get(0))) {
+                        currentEvents != null &&
+                        (currentEvents.isEmpty() || !currentEvents.get(0).equals(newEvents.get(0)))) {
                     //We received some new events, tell the active models to update.
                     RefreshActiveModelEvent.fire(EventListModel.this, false);
                 }
@@ -210,6 +218,8 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
             dismissEvent();
         } else if (command == getClearAllCommand()) {
             clearAllDismissedEvents();
+        } else if (command == getDisplayAllCommand()) {
+            displayAllDismissedEvents();
         }
     }
 
@@ -227,12 +237,21 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
     }
 
     public void clearAllDismissedEvents() {
-        Frontend.getInstance().runAction(VdcActionType.ClearDismissedAuditLogEvents, new VdcActionParametersBase(),
+        Frontend.getInstance().runAction(VdcActionType.ClearAllAuditLogEvents, new VdcActionParametersBase(),
                 new IFrontendActionAsyncCallback() {
             @Override public void executed(FrontendActionAsyncResult result) {
                 EventListModel.this.refresh();
             }
         });
+    }
+
+    public void displayAllDismissedEvents() {
+        Frontend.getInstance().runAction(VdcActionType.DisplayAllAuditLogEvents, new VdcActionParametersBase(),
+                new IFrontendActionAsyncCallback() {
+                    @Override public void executed(FrontendActionAsyncResult result) {
+                        EventListModel.this.refresh();
+                    }
+                });
     }
 
     @Override

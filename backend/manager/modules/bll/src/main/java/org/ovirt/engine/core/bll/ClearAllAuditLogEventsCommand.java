@@ -11,9 +11,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import java.util.Collections;
 import java.util.List;
 
-public class ClearDismissedAuditLogAlertsCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
+public class ClearAllAuditLogEventsCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
 
-    public ClearDismissedAuditLogAlertsCommand(T parameters) {
+    public ClearAllAuditLogEventsCommand(T parameters) {
         super(parameters);
     }
 
@@ -24,7 +24,7 @@ public class ClearDismissedAuditLogAlertsCommand<T extends VdcActionParametersBa
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getAuditLogDao().clearDismissedAlerts();
+        DbFacade.getInstance().getAuditLogDao().clearAllEvents();
         setSucceeded(true);
     }
 
@@ -37,6 +37,6 @@ public class ClearDismissedAuditLogAlertsCommand<T extends VdcActionParametersBa
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_CLEAR_ALL_DISMISSED_AUDIT_LOG : AuditLogType.USER_CLEAR_ALL_DISMISSED_AUDIT_LOG_FAILED;
+        return getSucceeded() ? AuditLogType.USER_CLEAR_ALL_AUDIT_LOG : AuditLogType.USER_CLEAR_ALL_AUDIT_LOG_FAILED;
     }
 }

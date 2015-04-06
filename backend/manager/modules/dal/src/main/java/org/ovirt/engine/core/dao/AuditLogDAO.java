@@ -180,22 +180,28 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
     public int getTimeToWaitForNextPmOp(String vdsName, String event);
 
     /**
-     * Clears all previously dismissed audit log entries. All audit logs
-     * delete flag will be set back to false.
+     * Clears all previously dismissed audit log entries with severity other than {@link AuditLogSeverity#ALERT}.
+     * Audit logs delete flag will be set back to true.
      */
-    void clearAllDismissed();
+    void clearAllEvents();
 
     /**
-     * Clears all previously dismissed audit log entries with severity other than {@link AuditLogSeverity#ALERT}.
+     * Displays all previously dismissed audit log entries with severity other than {@link AuditLogSeverity#ALERT}.
      * Audit logs delete flag will be set back to false.
      */
-    void clearDismissedEvents();
+    void displayAllEvents();
 
     /**
-     * Clears all previously dismissed audit log entries with severity {@link AuditLogSeverity#ALERT}. Audit logs
+     * Clears all audit log entries with severity {@link AuditLogSeverity#ALERT}. Audit logs
+     * delete flag will be set back to true.
+     */
+    void clearAllAlerts();
+
+    /**
+     * Displays all audit log entries with severity {@link AuditLogSeverity#ALERT}. Audit logs
      * delete flag will be set back to false.
      */
-    void clearDismissedAlerts();
+    void displayAllAlerts();
 
     /**
      * Clears all backup related alerts (no backup alert or old backup alert)

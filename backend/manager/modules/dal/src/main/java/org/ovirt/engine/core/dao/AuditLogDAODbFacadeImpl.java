@@ -243,18 +243,28 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
     }
 
     @Override
-    public void clearAllDismissed() {
-        getCallsHandler().executeModification("ClearAllDismissedAuditLogs", getCustomMapSqlParameterSource());
+    public void clearAllEvents() {
+        getCallsHandler().executeModification("ClearAllAuditLogs", getCustomMapSqlParameterSource());
     }
 
-    @Override public void clearDismissedEvents() {
-        getCallsHandler().executeModification("ClearDismissedAuditLogsBySeverityOtherThan", getCustomMapSqlParameterSource()
-                .addValue("severity", AuditLogSeverity.ALERT));
-    }
-
-    @Override public void clearDismissedAlerts() {
-        getCallsHandler().executeModification("ClearDismissedAuditLogsBySeverity",
+    @Override
+    public void displayAllEvents() {
+        getCallsHandler().executeModification("DisplayAllAuditLogEvents",
                 getCustomMapSqlParameterSource().addValue("severity", AuditLogSeverity.ALERT));
+    }
+
+    @Override
+    public void clearAllAlerts() {
+        getCallsHandler().executeModification("SetAllAuditLogAlerts",
+                getCustomMapSqlParameterSource().addValue("severity", AuditLogSeverity.ALERT)
+                        .addValue("value", true));
+    }
+
+    @Override
+    public void displayAllAlerts() {
+        getCallsHandler().executeModification("SetAllAuditLogAlerts",
+                getCustomMapSqlParameterSource().addValue("severity", AuditLogSeverity.ALERT)
+                        .addValue("value", false));
     }
 
     @Override

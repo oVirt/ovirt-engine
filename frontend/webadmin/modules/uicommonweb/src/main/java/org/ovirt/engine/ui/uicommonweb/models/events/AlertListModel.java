@@ -30,6 +30,16 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
         dismissCommand = value;
     }
 
+    private UICommand displayAllCommand;
+
+    public UICommand getDisplayAllCommand() {
+        return displayAllCommand;
+    }
+
+    public void setDisplayAllCommand(UICommand value) {
+        displayAllCommand = value;
+    }
+
     private UICommand clearAllCommand;
 
     public UICommand getClearAllCommand() {
@@ -45,6 +55,7 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
         setTitle(ConstantsManager.getInstance().getConstants().alertsTitle());
         setIsTimerDisabled(false);
         setDismissCommand(new UICommand("Dismiss Alert", this)); //$NON-NLS-1$
+        setDisplayAllCommand(new UICommand("Display All", this)); //$NON-NLS-1$
         setClearAllCommand(new UICommand("Clear All", this)); //$NON-NLS-1$
     }
 
@@ -55,9 +66,13 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
         {
             dismissAlert();
         }
+        else if (command == getDisplayAllCommand())
+        {
+             displayAllAlerts();
+        }
         else if (command == getClearAllCommand())
         {
-             clearAllDismissedAlerts();
+            clearAllAlerts();
         }
     }
 
@@ -71,8 +86,7 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
             public void onSuccess(Object model, Object ReturnValue)
             {
                 AlertListModel alertListModel = (AlertListModel) model;
-                ArrayList<AuditLog> list =
-                        (ArrayList<AuditLog>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<AuditLog> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 alertListModel.setItems(list);
             }
         };
@@ -86,13 +100,17 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
     }
 
     public void dismissAlert() {
-        AuditLog auditLog = (AuditLog) getSelectedItem();
+        AuditLog auditLog = getSelectedItem();
         RemoveAuditLogByIdParameters params = new RemoveAuditLogByIdParameters(auditLog.getAuditLogId());
         Frontend.getInstance().runAction(VdcActionType.RemoveAuditLogById, params);
     }
 
-    public void clearAllDismissedAlerts() {
-        Frontend.getInstance().runAction(VdcActionType.ClearDismissedAuditLogAlerts, new VdcActionParametersBase());
+    public void clearAllAlerts() {
+        Frontend.getInstance().runAction(VdcActionType.ClearAllAuditLogAlerts, new VdcActionParametersBase());
+    }
+
+    public void displayAllAlerts() {
+        Frontend.getInstance().runAction(VdcActionType.DisplayAllAuditLogAlerts, new VdcActionParametersBase());
     }
 
     @Override

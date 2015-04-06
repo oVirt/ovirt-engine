@@ -442,9 +442,10 @@ public enum VdcActionType {
 
     // Audit Log
     RemoveAuditLogById(2100, false, QuotaDependency.NONE),
-    ClearAllDismissedAuditLogs(2101, false, QuotaDependency.NONE),
-    ClearDismissedAuditLogEvents(2102, false, QuotaDependency.NONE),
-    ClearDismissedAuditLogAlerts(2103, false, QuotaDependency.NONE),
+    ClearAllAuditLogEvents(2101, false, QuotaDependency.NONE),
+    DisplayAllAuditLogEvents(2102, false, QuotaDependency.NONE),
+    ClearAllAuditLogAlerts(2103, false, QuotaDependency.NONE),
+    DisplayAllAuditLogAlerts(2104, false, QuotaDependency.NONE),
 
     SetDataOnSession(3000, false, QuotaDependency.NONE),
 

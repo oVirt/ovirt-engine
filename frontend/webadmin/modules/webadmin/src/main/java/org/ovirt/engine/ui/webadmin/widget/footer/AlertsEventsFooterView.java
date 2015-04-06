@@ -431,6 +431,13 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             }
         });
 
+        table.addActionButton(new WebAdminButtonDefinition<AuditLog>(constants.displayAllDismissedEvents(), CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return eventModelProvider.getModel().getDisplayAllCommand();
+            }
+        });
+
         table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
@@ -476,6 +483,13 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             @Override
             protected UICommand resolveCommand() {
                 return alertModelProvider.getModel().getClearAllCommand();
+            }
+        });
+
+        table.addActionButton(new WebAdminButtonDefinition<AuditLog>(constants.displayAllDismissedAlerts(), CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return alertModelProvider.getModel().getDisplayAllCommand();
             }
         });
 
