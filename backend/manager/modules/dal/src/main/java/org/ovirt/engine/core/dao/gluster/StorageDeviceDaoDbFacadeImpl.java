@@ -36,6 +36,7 @@ public class StorageDeviceDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             entity.setMountPoint(rs.getString("mount_point"));
             entity.setSize(rs.getLong("size"));
             entity.setCanCreateBrick(rs.getBoolean("is_free"));
+            entity.setGlusterBrick(rs.getBoolean("is_gluster_brick"));
             return entity;
         }
     }
@@ -73,7 +74,8 @@ public class StorageDeviceDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                 .addValue("filesystem_type", entity.getFsType())
                 .addValue("mount_point", entity.getMountPoint())
                 .addValue("size", entity.getSize())
-                .addValue("is_free", entity.getCanCreateBrick());
+                .addValue("is_free", entity.getCanCreateBrick())
+                .addValue("is_gluster_brick", entity.isGlusterBrick());
     }
 
     @Override

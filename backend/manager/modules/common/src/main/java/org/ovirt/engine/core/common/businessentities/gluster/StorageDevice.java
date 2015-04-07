@@ -24,6 +24,7 @@ public class StorageDevice extends IVdcQueryable implements BusinessEntity<Guid>
     private String mountPoint;
     private long size;
     private boolean canCreateBrick;
+    private boolean isGlusterBrick;
 
     public String getName() {
         return name;
@@ -133,6 +134,7 @@ public class StorageDevice extends IVdcQueryable implements BusinessEntity<Guid>
         final int prime = 31;
         int result = 1;
         result = prime * result + (canCreateBrick ? 0 : 1);
+        result = prime * result + (isGlusterBrick ? 0 : 1);
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((devPath == null) ? 0 : devPath.hashCode());
         result = prime * result + ((devType == null) ? 0 : devType.hashCode());
@@ -153,6 +155,7 @@ public class StorageDevice extends IVdcQueryable implements BusinessEntity<Guid>
             StorageDevice storageDevice = (StorageDevice) obj;
             if (ObjectUtils.objectsEqual(getId(), storageDevice.getId())
                     && canCreateBrick == storageDevice.canCreateBrick
+                    && isGlusterBrick == storageDevice.isGlusterBrick
                     && (ObjectUtils.objectsEqual(getDescription(), storageDevice.getDescription()))
                     && (ObjectUtils.objectsEqual(getDevPath(), storageDevice.getDevPath()))
                     && (ObjectUtils.objectsEqual(getDevType(), storageDevice.getDevType()))
@@ -174,6 +177,14 @@ public class StorageDevice extends IVdcQueryable implements BusinessEntity<Guid>
         return "StorageDevice [id=" + id + ", name=" + name + ", devUuid=" + devUuid + ", fsUuid=" + fsUuid
                 + ", vdsId=" + vdsId + ", description=" + description + ", devType=" + devType + ", devPath=" + devPath
                 + ", fsType=" + fsType + ", mountPoint=" + mountPoint + ", size=" + size + ", canCreateBrick="
-                + canCreateBrick + "]";
+                + canCreateBrick + ", isGlusterBrick=" + isGlusterBrick + "]";
+    }
+
+    public boolean isGlusterBrick() {
+        return isGlusterBrick;
+    }
+
+    public void setGlusterBrick(boolean isGlusterBrick) {
+        this.isGlusterBrick = isGlusterBrick;
     }
 }

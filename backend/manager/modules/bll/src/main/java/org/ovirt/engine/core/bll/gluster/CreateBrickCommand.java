@@ -109,6 +109,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
         if (getSucceeded()) {
             StorageDevice storageDevice = (StorageDevice) returnValue.getReturnValue();
             storageDevice.setMountPoint(getParameters().getMountPoint());
+            storageDevice.setGlusterBrick(true);
             saveStoageDevice(storageDevice);
             // Reset the isFree flag on all the devices which are used for brick creation
             resetIsFreeFlag(getParameters().getDisks());
