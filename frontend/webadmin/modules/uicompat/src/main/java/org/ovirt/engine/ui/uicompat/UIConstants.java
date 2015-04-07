@@ -2530,6 +2530,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Configure")
     String allowToUseMacPoolTooltip();
 
+    @DefaultStringValue("Optimize for Virt Store")
+    String optimiseForVirtStoreTitle();
+
     @DefaultStringValue("The following volumes were found not to be of the suggested replica-3 type : \n")
     String optimiseForVirtStoreWarning();
 
