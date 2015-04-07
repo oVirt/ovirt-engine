@@ -902,15 +902,10 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         } else if (Integer.valueOf(OvfHardware.Network) == resourceType) {
             // handle interfaces with different sub types : we have 0-3 as the VmInterfaceType enum
-            boolean isKnownType = false;
-            for (VmInterfaceType vmInterfaceType : VmInterfaceType.values()) {
-                if (Integer.valueOf(vmInterfaceType.getValue()) == resourceSubType) {
-                    vmDevice.setDevice(VmDeviceType.BRIDGE.getName());
-                    isKnownType = true;
-                    break;
-                }
-            }
-            if (!isKnownType) {
+            VmInterfaceType nicType = VmInterfaceType.forValue(resourceSubType);
+            if (nicType != null) {
+                vmDevice.setDevice(VmDeviceType.BRIDGE.getName());
+            } else {
                 vmDevice.setDevice(VmDeviceType.getoVirtDevice(resourceType).getName());
             }
         }
