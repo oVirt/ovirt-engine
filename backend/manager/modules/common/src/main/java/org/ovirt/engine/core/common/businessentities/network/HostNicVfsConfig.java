@@ -39,6 +39,23 @@ public class HostNicVfsConfig extends IVdcQueryable implements Serializable, Bus
         networkLabels = new HashSet<>();
     }
 
+    public HostNicVfsConfig(HostNicVfsConfig vfsConfig) {
+        setId(vfsConfig.getId());
+        setNicId(vfsConfig.getNicId());
+        setMaxNumOfVfs(vfsConfig.getMaxNumOfVfs());
+        setNumOfVfs(vfsConfig.getNumOfVfs());
+
+        setAllNetworksAllowed(vfsConfig.isAllNetworksAllowed());
+
+        Set<Guid> networks = new HashSet<>();
+        networks.addAll(vfsConfig.getNetworks());
+        setNetworks(networks);
+
+        Set<String> labels = new HashSet<>();
+        labels.addAll(vfsConfig.getNetworkLabels());
+        setNetworkLabels(labels);
+    }
+
     public Guid getNicId() {
         return nicId;
     }

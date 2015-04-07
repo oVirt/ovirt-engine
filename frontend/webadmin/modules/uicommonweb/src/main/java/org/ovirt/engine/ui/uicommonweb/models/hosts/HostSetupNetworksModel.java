@@ -15,7 +15,7 @@ import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
@@ -34,6 +34,9 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.action.SimpleAction;
+import org.ovirt.engine.ui.uicommonweb.action.UiAction;
+import org.ovirt.engine.ui.uicommonweb.action.UiVdcAction;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -55,8 +58,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
 /**
@@ -131,6 +132,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     // The purpose of this map is to keep the network parameters while moving the network from one nic to another
     private final Map<String, NetworkParameters> networkToLastDetachParams;
 
+    private Set<HostNicVfsConfig> originalVfsConfigs = new HashSet<>();
     private Map<Guid, HostNicVfsConfig> nicToVfsConfig = new HashMap<>();
 
     private NetworkOperationFactory operationFactory;
@@ -941,7 +943,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 List<HostNicVfsConfig> allHostVfs = (List<HostNicVfsConfig>) returnValue;
 
                 for (HostNicVfsConfig vfsConfig : allHostVfs) {
-                    nicToVfsConfig.put(vfsConfig.getNicId(), vfsConfig);
+                    originalVfsConfigs.add(vfsConfig);
+                    nicToVfsConfig.put(vfsConfig.getNicId(), new HostNicVfsConfig(vfsConfig));
                 }
 
                 // chain the free bonds query
@@ -1043,41 +1046,45 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     public void postOnSetupNetworks() {
-        final HostSetupNetworksModel model = (HostSetupNetworksModel) sourceListModel.getWindow();
-
         SetupNetworksParameters params = new SetupNetworksParameters();
-        params.setInterfaces(model.getAllNics());
-        params.setCheckConnectivity(model.getCheckConnectivity().getEntity());
-        params.setConectivityTimeout(model.getConnectivityTimeout().getEntity());
+        params.setInterfaces(getAllNics());
+        params.setCheckConnectivity(getCheckConnectivity().getEntity());
+        params.setConectivityTimeout(getConnectivityTimeout().getEntity());
         params.setVdsId(getEntity().getId());
-        params.setNetworksToSync(model.getNetworksToSync());
+        params.setNetworksToSync(getNetworksToSync());
 
-        model.startProgress(null);
-        Frontend.getInstance().runAction(VdcActionType.SetupNetworks, params, new IFrontendActionAsyncCallback() {
+        SimpleAction closeAction = getCloseAction();
+        UiAction setupNetworks = new UiVdcAction(VdcActionType.SetupNetworks, params, this, true);
 
+        setupNetworks.then(getCommitNetworkChangesAction()).then(getVfsConfigAction()).onAllExecutionsFinish(closeAction);
+
+        setupNetworks.runAction();
+    }
+
+    public UiAction getCommitNetworkChangesAction() {
+        return new UiVdcAction(VdcActionType.CommitNetworkChanges,
+                new VdsActionParameters(getEntity().getId()),
+                HostSetupNetworksModel.this, true) {
             @Override
-            public void executed(FrontendActionAsyncResult result) {
-                VdcReturnValueBase returnValueBase = result.getReturnValue();
-                if (returnValueBase != null && returnValueBase.getSucceeded())
-                {
-                    EntityModel<Boolean> commitChanges = model.getCommitChanges();
-                    if (commitChanges.getEntity())
-                    {
-                        new SaveNetworkConfigAction(sourceListModel, model, getEntity()).execute();
-                    }
-                    else
-                    {
-                        model.stopProgress();
-                        sourceListModel.setWindow(null);
-                        sourceListModel.search();
-                    }
-                }
-                else
-                {
-                    model.stopProgress();
-                }
+            protected boolean shouldExecute() {
+                EntityModel<Boolean> commitChanges = HostSetupNetworksModel.this.getCommitChanges();
+                return commitChanges.getEntity();
             }
-        });
+        };
+    }
+
+    public UiAction getVfsConfigAction() {
+        return new VfsConfigAction(this, originalVfsConfigs, nicToVfsConfig);
+    }
+
+    public SimpleAction getCloseAction() {
+        return new SimpleAction() {
+            @Override
+            public void execute() {
+                sourceListModel.setWindow(null);
+                sourceListModel.search();
+            }
+        };
     }
 
     @Override
@@ -1099,5 +1106,4 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         sourceListModel.setWindow(null);
 
     }
-
 }
