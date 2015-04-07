@@ -1107,6 +1107,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId()));
         StorageDomainManagementParameter parameter = new StorageDomainManagementParameter(storageDomain);
         parameter.setVdsId(host.getId());
+        StoragePool dataCenter = model.getDataCenter().getSelectedItem();
+        parameter.setStoragePoolId(dataCenter.getId());
         parameters.add(parameter);
 
         IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
@@ -1293,6 +1295,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
         tempVar2.setVdsId(host.getId());
+        StoragePool dataCenter = model.getDataCenter().getSelectedItem();
+        tempVar2.setStoragePoolId(dataCenter.getId());
         parameters.add(tempVar2);
         parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
 
