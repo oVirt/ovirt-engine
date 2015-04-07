@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.gwtbootstrap3.client.ui.base.HasHover;
 import org.gwtbootstrap3.client.ui.base.HasId;
 import org.gwtbootstrap3.client.ui.constants.Placement;
@@ -57,7 +58,7 @@ public class ElementTooltip implements HasId, HasHover {
     private boolean isHTML = TooltipConfig.IS_HTML;
     private Placement placement = TooltipConfig.PLACEMENT;
     private Trigger trigger = TooltipConfig.TRIGGER;
-    private SafeHtml content = null;
+    private SafeHtml content = SafeHtmlUtils.EMPTY_SAFE_HTML;
     private String container = TooltipConfig.CONTAINER;
     private final String selector = null;
 
@@ -473,7 +474,7 @@ public class ElementTooltip implements HasId, HasHover {
      */
     public void setContent(final SafeHtml content) {
         this.isHTML = true;
-        this.content = content;
+        this.content = content != null ? content : SafeHtmlUtils.EMPTY_SAFE_HTML;
     }
 
     /**
