@@ -919,7 +919,8 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
                 || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
 
         getRecoveryStorageCommand().setIsExecutionAllowed(storagePoolItem != null && items.size() == 1
-                && !storagePoolItem.isLocal() && storagePoolItem.getStatus() != StoragePoolStatus.Uninitialized);
+                && !storagePoolItem.isLocal() && storagePoolItem.getStatus() != StoragePoolStatus.Uninitialized
+                && storagePoolItem.getStatus() != StoragePoolStatus.Up);
 
         // System tree dependent actions.
         boolean isAvailable =
