@@ -44,7 +44,8 @@ Create or replace FUNCTION InsertVdsGroups(
     v_fencing_enabled BOOLEAN,
     v_is_auto_converge BOOLEAN,
     v_is_migrate_compressed BOOLEAN,
-    v_gluster_tuned_profile VARCHAR(50)
+    v_gluster_tuned_profile VARCHAR(50),
+    v_ksm_merge_across_nodes BOOLEAN
 )
 RETURNS VOID
    AS $procedure$
@@ -52,11 +53,11 @@ BEGIN
       INSERT INTO vds_groups(vds_group_id,description, name, free_text_comment, cpu_name, storage_pool_id,  max_vds_memory_over_commit, count_threads_as_cores, compatibility_version,
         transparent_hugepages, migrate_on_error, virt_service, gluster_service, tunnel_migration, emulated_machine, detect_emulated_machine, trusted_service, ha_reservation, optional_reason, maintenance_reason_required, cluster_policy_id,
         cluster_policy_custom_properties, enable_balloon, architecture, optimization_type, spice_proxy, enable_ksm, serial_number_policy, custom_serial_number, required_rng_sources, skip_fencing_if_sd_active, skip_fencing_if_connectivity_broken, hosts_with_broken_connectivity_threshold, fencing_enabled,
-        is_auto_converge, is_migrate_compressed, gluster_tuned_profile)
+        is_auto_converge, is_migrate_compressed, gluster_tuned_profile, ksm_merge_across_nodes)
     VALUES(v_vds_group_id,v_description, v_name, v_free_text_comment, v_cpu_name, v_storage_pool_id,  v_max_vds_memory_over_commit, v_count_threads_as_cores, v_compatibility_version,
     v_transparent_hugepages, v_migrate_on_error, v_virt_service, v_gluster_service, v_tunnel_migration, v_emulated_machine, v_detect_emulated_machine, v_trusted_service, v_ha_reservation, v_optional_reason, v_maintenance_reason_required, v_cluster_policy_id, v_cluster_policy_custom_properties, v_enable_balloon,
     v_architecture, v_optimization_type, v_spice_proxy, v_enable_ksm, v_serial_number_policy, v_custom_serial_number, v_required_rng_sources, v_skip_fencing_if_sd_active, v_skip_fencing_if_connectivity_broken, v_hosts_with_broken_connectivity_threshold, v_fencing_enabled,
-    v_is_auto_converge, v_is_migrate_compressed, v_gluster_tuned_profile);
+    v_is_auto_converge, v_is_migrate_compressed, v_gluster_tuned_profile,  v_ksm_merge_across_nodes);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -100,7 +101,8 @@ Create or replace FUNCTION UpdateVdsGroup(v_description VARCHAR(4000) ,
     v_fencing_enabled BOOLEAN,
     v_is_auto_converge BOOLEAN,
     v_is_migrate_compressed BOOLEAN,
-    v_gluster_tuned_profile VARCHAR(50)
+    v_gluster_tuned_profile VARCHAR(50),
+    v_ksm_merge_across_nodes BOOLEAN
 )
 RETURNS VOID
 
@@ -126,7 +128,8 @@ BEGIN
       fencing_enabled = v_fencing_enabled,
       is_auto_converge = v_is_auto_converge,
       is_migrate_compressed = v_is_migrate_compressed,
-      gluster_tuned_profile = v_gluster_tuned_profile
+      gluster_tuned_profile = v_gluster_tuned_profile,
+      ksm_merge_across_nodes = v_ksm_merge_across_nodes
       WHERE vds_group_id = v_vds_group_id;
 END; $procedure$
 LANGUAGE plpgsql;

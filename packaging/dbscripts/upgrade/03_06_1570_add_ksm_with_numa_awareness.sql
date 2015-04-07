@@ -1,0 +1,1 @@
+select fn_db_add_column('vds_groups', 'ksm_merge_across_nodes', 'boolean default TRUE NULL');

@@ -113,6 +113,8 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
 
     private String glusterTunedProfile;
 
+    private boolean ksmMergeAcrossNumaNodes;
+
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
         name = "";
@@ -121,6 +123,7 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
         requiredRngSources = new HashSet<>();
         fencingPolicy = new FencingPolicy();
         addtionalFeaturesSupported = new HashSet<>();
+        ksmMergeAcrossNumaNodes = true;
     }
 
     @Override
@@ -444,6 +447,14 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
         this.addtionalFeaturesSupported = addtionalFeaturesSupported;
     }
 
+    public boolean isKsmMergeAcrossNumaNodes() {
+        return ksmMergeAcrossNumaNodes;
+    }
+
+    public void setKsmMergeAcrossNumaNodes(boolean ksmMergeAcrossNumaNodes) {
+        this.ksmMergeAcrossNumaNodes = ksmMergeAcrossNumaNodes;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -474,12 +485,14 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
         result = prime * result + (optimizationType == null ? 0 : optimizationType.hashCode());
         result = prime * result + (serialNumberPolicy == null ? 0 : serialNumberPolicy.hashCode());
         result = prime * result + (customSerialNumber == null ? 0 : customSerialNumber.hashCode());
+        result = prime * result + (groupHostsAndVms == null ? 0 : groupHostsAndVms.hashCode());
         result = prime * result + (fencingPolicy == null ? 0 : fencingPolicy.hashCode());
         result = prime * result + (autoConverge == null ? 0 : autoConverge.hashCode());
         result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
         result = prime * result + (glusterTunedProfile == null ? 0 : glusterTunedProfile.hashCode());
         result = prime * result + (addtionalFeaturesSupported == null ? 0 : addtionalFeaturesSupported.hashCode());
         result = prime * result + (maintenanceReasonRequired ? 1231 : 1237);
+        result = prime * result + (ksmMergeAcrossNumaNodes ? 1231 : 1237);
         return result;
     }
 
@@ -521,11 +534,13 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
                 && optimizationType == other.optimizationType)
                 && serialNumberPolicy == other.serialNumberPolicy
                 && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
+                && ObjectUtils.objectsEqual(groupHostsAndVms, other.groupHostsAndVms)
                 && ObjectUtils.objectsEqual(requiredRngSources, other.requiredRngSources)
                 && ObjectUtils.objectsEqual(fencingPolicy, other.fencingPolicy)
                 && ObjectUtils.objectsEqual(autoConverge, other.autoConverge)
                 && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed)
                 && ObjectUtils.objectsEqual(glusterTunedProfile, other.glusterTunedProfile)
+                && ksmMergeAcrossNumaNodes == other.ksmMergeAcrossNumaNodes
                 && ObjectUtils.objectsEqual(maintenanceReasonRequired, other.maintenanceReasonRequired)
                 && ObjectUtils.objectsEqual(addtionalFeaturesSupported, other.addtionalFeaturesSupported);
     }

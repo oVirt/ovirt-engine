@@ -244,7 +244,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("fencing_enabled", group.getFencingPolicy().isFencingEnabled())
                 .addValue("is_auto_converge", group.getAutoConverge())
                 .addValue("is_migrate_compressed", group.getMigrateCompressed())
-                .addValue("gluster_tuned_profile", group.getGlusterTunedProfile());
+                .addValue("gluster_tuned_profile", group.getGlusterTunedProfile())
+                .addValue("ksm_merge_across_nodes", group.isKsmMergeAcrossNumaNodes());
 
         return parameterSource;
     }
@@ -313,6 +314,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setAutoConverge((Boolean) rs.getObject("is_auto_converge"));
             entity.setMigrateCompressed((Boolean) rs.getObject("is_migrate_compressed"));
             entity.setGlusterTunedProfile(rs.getString("gluster_tuned_profile"));
+            entity.setKsmMergeAcrossNumaNodes(rs.getBoolean("ksm_merge_across_nodes"));
 
             return entity;
         }
