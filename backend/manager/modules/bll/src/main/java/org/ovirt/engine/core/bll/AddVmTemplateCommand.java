@@ -926,4 +926,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(),
                 getVdsGroup().getcompatibility_version()));
     }
+
+    @Override
+    protected CommandContext getChildCommandContext() {
+        return cloneContext();
+    }
 }
