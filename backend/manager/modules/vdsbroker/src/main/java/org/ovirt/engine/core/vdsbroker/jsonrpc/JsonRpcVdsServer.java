@@ -443,10 +443,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("bondings", bonding)
                         .withParameter("options", options)
                         .build();
+        final RetryPolicy policy = client.getClientRetryPolicy();
         final FutureCallable callable = new FutureCallable(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                updateHeartbeatPolicy(false);
+                updateHeartbeatPolicy(policy.clone(), false);
                 return new FutureMap(client, request).withResponseKey("status");
             }
         });
@@ -455,7 +456,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                     @Override
                     public boolean isDone() {
                         if (callable.isDone()) {
-                            updateHeartbeatPolicy(true);
+                            updateHeartbeatPolicy(policy, true);
                             return true;
                         }
                         return false;
@@ -465,8 +466,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         return future;
     }
 
-    private void updateHeartbeatPolicy(boolean isHeartbeat) {
-        RetryPolicy policy = client.getClientRetryPolicy();
+    private void updateHeartbeatPolicy(RetryPolicy policy, boolean isHeartbeat) {
         policy.setIncomingHeartbeat(isHeartbeat);
         policy.setOutgoingHeartbeat(isHeartbeat);
         client.setClientRetryPolicy(policy);
