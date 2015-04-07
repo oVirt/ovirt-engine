@@ -490,7 +490,7 @@ public enum VdcBllErrors {
     CINDER_ERROR(5400),
 
     // Update num of vfs
-    UPDATE_NUM_VFS_FAILURE(5400),
+    UPDATE_NUM_VFS_FAILURE(5500),
 
     // Gluster errors
     NO_UP_SERVER_FOUND(7000),
