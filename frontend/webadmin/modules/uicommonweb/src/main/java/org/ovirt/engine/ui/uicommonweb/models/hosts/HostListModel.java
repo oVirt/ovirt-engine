@@ -730,6 +730,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                                     cluster.getCompatibilityVersion().toString());
                     if (jsonSupported) {
                         hostModel.getProtocol().setEntity(true);
+                        hostModel.getProtocol().setIsChangable(true);
                     } else {
                         hostModel.getProtocol().setEntity(false);
                         hostModel.getProtocol().setIsChangable(false);
