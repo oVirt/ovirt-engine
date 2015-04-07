@@ -333,7 +333,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
              * Interface Dialog
              *******************/
             final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getIface();
-            final HostNicModel interfacePopupModel = new HostNicModel(entity, getFreeLabels(), labelToIface);
+            final HostNicModel interfacePopupModel =
+                    new HostNicModel(entity, getFreeLabels(), labelToIface, nicToVfsConfig.get(entity.getId()),
+                            allNetworks);
             editPopup = interfacePopupModel;
 
             // OK Target
