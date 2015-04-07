@@ -1389,6 +1389,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return annotation != null && annotation.forceCompensation();
     }
 
+    protected CommandContext getChildCommandContext() {
+        return context;
+    }
+
     /**
      * This method is called before executeAction to insert the async task
      * placeholders for the child commands.
@@ -1403,7 +1407,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                             CommandBase<?> command =
                                     BackendUtils.getBackendCommandObjectsHandler(log).createAction(entry.getValue().getFirst(),
                                             entry.getValue().getSecond(),
-                                            context);
+                                            getChildCommandContext());
                             log.infoFormat("Command {0} persisting async task placeholder for child command {1}",
                                     getCommandId(),
                                     command.getCommandId());
