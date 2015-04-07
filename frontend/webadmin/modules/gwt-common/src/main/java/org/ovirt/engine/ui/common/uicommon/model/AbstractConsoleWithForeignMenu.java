@@ -49,6 +49,10 @@ public abstract class AbstractConsoleWithForeignMenu extends AbstractConsole imp
     }
 
     protected void writeOVirtSection(StringBuilder configBuilder) {
-        // TODO: implement when [ovirt] section API is defined
+        configBuilder.append("\n[ovirt]") //$NON-NLS-1$
+                .append("\nhost=").append(engineHost) //$NON-NLS-1$
+                .append("\nvm-guid=").append(vmId.toString()) //$NON-NLS-1$
+                .append("\njsessionid=").append(sessionId) //$NON-NLS-1$
+                .append("\nadmin=").append(admin ? 1 : 0); //$NON-NLS-1$
     }
 }
