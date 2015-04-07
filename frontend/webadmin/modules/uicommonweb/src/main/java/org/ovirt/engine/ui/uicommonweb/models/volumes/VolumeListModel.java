@@ -952,7 +952,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             ConfirmationModel cModel = new ConfirmationModel();
 
             cModel.setMessage(discouragedConfigVolumeNamesBuilder.toString());
-
+            cModel.setTitle(ConstantsManager.getInstance().getConstants().optimiseForVirtStoreTitle());
             UICommand cancelOptimiseVirtStoreCommand = new UICommand("CancelOptimizeForVirtStore", this);//$NON-NLS-1$
             cancelOptimiseVirtStoreCommand.setTitle(constants.doNotOptimiseForVirtStore());
             cancelOptimiseVirtStoreCommand.setIsCancel(true);

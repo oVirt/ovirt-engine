@@ -2459,6 +2459,39 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Custom")
     String customMtu();
 
+    @DefaultStringValue("MAC Pools")
+    String macPoolTree();
+
+    @DefaultStringValue("MAC Pool User")
+    String macPoolUser();
+
+    @DefaultStringValue("Create")
+    String allowToCreateMacPoolTooltip();
+
+    @DefaultStringValue("Edit")
+    String allowToEditMacPoolTooltip();
+
+    @DefaultStringValue("Delete")
+    String allowToDeleteMacPoolTooltip();
+
+    @DefaultStringValue("Configure")
+    String allowToUseMacPoolTooltip();
+
+    @DefaultStringValue("Optimize for Virt Store")
+    String optimiseForVirtStoreTitle();
+
+    @DefaultStringValue("The following volumes were found not to be of the suggested replica-3 type : \n")
+    String optimiseForVirtStoreWarning();
+
+    @DefaultStringValue("Are you sure you want to continue?")
+    String optimiseForVirtStoreContinueMessage();
+
+    @DefaultStringValue("Yes")
+    String continueOptimiseForVirtStore();
+
+    @DefaultStringValue("No")
+    String doNotOptimiseForVirtStore();
+
     @DefaultStringValue("Disk Profiles")
     String diskProfilesTitle();
 
@@ -2491,18 +2524,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Remove the Data Center(s) will move the entities residing on the storage domain(s) to an unregistered state. For further information please consult documentation.")
     String removeDataCenterWarnningNote();
-
-    @DefaultStringValue("The following volumes were found not to be of the suggested replica-3 type : \n")
-    String optimiseForVirtStoreWarning();
-
-    @DefaultStringValue("Are you sure you want to continue?")
-    String optimiseForVirtStoreContinueMessage();
-
-    @DefaultStringValue("Yes")
-    String continueOptimiseForVirtStore();
-
-    @DefaultStringValue("No")
-    String doNotOptimiseForVirtStore();
 
     @DefaultStringValue("This field is not a valid Guid (use 0-9,A-F format: 00000000-0000-0000-0000-000000000000)")
     String invalidGuidMsg();
