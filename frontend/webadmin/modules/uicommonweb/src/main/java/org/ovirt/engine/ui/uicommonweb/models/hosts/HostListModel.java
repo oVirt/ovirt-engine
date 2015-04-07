@@ -706,6 +706,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                                     cluster.getcompatibility_version().toString());
                     if (jsonSupported) {
                         hostModel.getProtocol().setEntity(true);
+                        hostModel.getProtocol().setIsChangable(true);
                     } else {
                         hostModel.getProtocol().setEntity(false);
                         hostModel.getProtocol().setIsChangable(false);
