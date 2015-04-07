@@ -358,8 +358,6 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             }
         }
 
-        model.setItems(datacenters);
-
         if (datacenters.isEmpty())
         {
             model.setMessage(ConstantsManager.getInstance()
@@ -374,6 +372,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         }
         else
         {
+            model.setItems(datacenters, datacenters.get(0));
             UICommand tempVar2 = UICommand.createDefaultOkUiCommand("OnAttach", this); //$NON-NLS-1$
             model.getCommands().add(tempVar2);
             UICommand tempVar3 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
