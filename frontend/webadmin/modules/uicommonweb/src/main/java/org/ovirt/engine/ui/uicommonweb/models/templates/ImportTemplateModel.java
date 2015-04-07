@@ -43,7 +43,6 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
         super(vmImportDiskListModel, storageDomain, cluster, clusterQuota, null, vmImportInterfaceListModel,
                 vmImportAppListModel);
         this.templateImportDiskListModel = templateImportDiskListModel;
-        disksToConvert = null;
         setDetailList(templateGeneralModel, templateImportInterfaceListModel);
     }
 

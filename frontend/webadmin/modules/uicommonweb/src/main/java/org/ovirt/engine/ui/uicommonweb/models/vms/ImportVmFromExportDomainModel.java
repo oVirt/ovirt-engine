@@ -120,12 +120,6 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         return clusterQuota;
     }
 
-    protected List<VM> disksToConvert = new ArrayList<>();
-
-    public List<VM> getDisksToConvert() {
-        return disksToConvert;
-    }
-
     private UICommand closeCommand;
 
     public void setCloseCommand(UICommand closeCommand) {
@@ -363,7 +357,8 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                             && getDiskImportData(disk.getId()) != null
                             && (getDiskImportData(disk.getId()).getSelectedStorageDomain()
                                     .getStorageType().isBlockDomain())) {
-                        getDisksToConvert().add(vm);
+                        ((ImportVmData) item).setProblem(ConstantsManager.getInstance().getConstants()
+                                .importSparseDiskToBlockDeviceMustCollapseSnapshots());
                         ((ImportVmData) item).getCollapseSnapshots().setEntity(true);
                         ((ImportVmData) item).getCollapseSnapshots()
                                 .setChangeProhibitionReason(ConstantsManager.getInstance()

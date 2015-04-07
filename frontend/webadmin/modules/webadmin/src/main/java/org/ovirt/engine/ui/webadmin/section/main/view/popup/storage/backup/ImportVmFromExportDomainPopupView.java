@@ -47,7 +47,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
-import org.ovirt.engine.ui.webadmin.widget.table.column.IsProblematicImportVmColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -237,6 +236,20 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     protected void initMainTable() {
         this.table = new ListModelObjectCellTable<>();
+
+        AbstractImageResourceColumn<Object> isProblematicImportVmColumn = new AbstractImageResourceColumn<Object>() {
+            @Override
+            public ImageResource getValue(Object object) {
+                return ((ImportVmData) object).getProblem() != null ? resources.alertImage() : null;
+            }
+
+            @Override
+            public SafeHtml getTooltip(Object object) {
+                String problem = ((ImportVmData) object).getProblem();
+                return problem != null ? SafeHtmlUtils.fromSafeConstant(problem) : null;
+            }
+        };
+        table.addColumn(isProblematicImportVmColumn, constants.empty(), "20px"); //$NON-NLS-1$
 
         AbstractTextColumn<Object> nameColumn = new AbstractTextColumn<Object>() {
             @Override
@@ -651,12 +664,6 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     @Override
     public void edit(final ImportVmFromExportDomainModel object) {
         this.importModel = object;
-        table.asEditor().edit(object);
-
-        if (object.getDisksToConvert() != null) {
-            table.addColumnAt(new IsProblematicImportVmColumn(object.getDisksToConvert()), "", "30px", 0); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-
         table.asEditor().edit(object);
 
         addStorageDomainsColumn();

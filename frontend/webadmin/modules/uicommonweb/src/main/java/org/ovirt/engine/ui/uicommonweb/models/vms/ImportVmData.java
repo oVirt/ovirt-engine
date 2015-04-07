@@ -12,6 +12,7 @@ public class ImportVmData extends ImportEntityData<VM> {
 
     private boolean templateExistsInSetup = true;
     private EntityModel<Boolean> collapseSnapshots;
+    private String problem;
 
     public ImportVmData(VM vm) {
         setCollapseSnapshots(new EntityModel<>(true));
@@ -70,5 +71,13 @@ public class ImportVmData extends ImportEntityData<VM> {
     @Override
     public String getName() {
         return getEntity().getName();
+    }
+
+    public String getProblem() {
+        return problem;
+    }
+
+    public void setProblem(String problem) {
+        this.problem = problem;
     }
 }
