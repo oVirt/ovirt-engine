@@ -65,8 +65,12 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     }
 
     protected DbUser initUser() {
-        return SessionDataContainer.getInstance().getUser(engineContext.getSessionId(),
+        return getSessionDataContainer().getUser(engineContext.getSessionId(),
                 parameters.getRefresh());
+    }
+
+    SessionDataContainer getSessionDataContainer() {
+        return SessionDataContainer.getInstance();
     }
 
     @Override
@@ -193,7 +197,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         if (engineContext.getSessionId() == null) {
             throw new RuntimeException("No sessionId found for query " + getClass().getName());
         }
-        return SessionDataContainer.getInstance().getEngineSessionSeqId(engineContext.getSessionId());
+        return getSessionDataContainer().getEngineSessionSeqId(engineContext.getSessionId());
     }
 
     protected DbFacade getDbFacade() {

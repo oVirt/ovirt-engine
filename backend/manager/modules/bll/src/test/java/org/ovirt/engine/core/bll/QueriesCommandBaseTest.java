@@ -10,6 +10,9 @@ import org.jgroups.util.UUID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -20,8 +23,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** A test case for the {@link QueriesCommandBase} class. */
+@RunWith(MockitoJUnitRunner.class)
 public class QueriesCommandBaseTest {
     private static final Logger log = LoggerFactory.getLogger(QueriesCommandBaseTest.class);
+
+    @Mock
+    private SessionDataContainer mockSessionDataContainer;
+
+    @Mock
+    private DbUser mockDbUser;
 
     /* Getters and Setters tests */
 
@@ -86,10 +96,9 @@ public class QueriesCommandBaseTest {
                         Guid guid = mock(Guid.class);
 
                         // Set up the user id env.
-                        DbUser user = mock(DbUser.class);
-                        when(user.getId()).thenReturn(guid);
-                        when(user.isAdmin()).thenReturn(isUserAdmin);
-                        SessionDataContainer.getInstance().setUser(sessionId, user);
+                        when(mockDbUser.getId()).thenReturn(guid);
+                        when(mockDbUser.isAdmin()).thenReturn(isUserAdmin);
+                        when(mockSessionDataContainer.getUser(sessionId, false)).thenReturn(mockDbUser);
 
                         // Mock-Set the query as admin/user
                         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
@@ -102,8 +111,6 @@ public class QueriesCommandBaseTest {
                                 "Query should succeed is: ",
                                 shouldBeAbleToRunQuery,
                                 query.getQueryReturnValue().getSucceeded());
-
-                        SessionDataContainer.getInstance().removeSessionOnLogout(sessionId);
                     }
                 }
             }
@@ -112,14 +119,12 @@ public class QueriesCommandBaseTest {
 
     @Test
     public void testGetUserID() {
-        DbUser user = mock(DbUser.class);
-        when(user.getId()).thenReturn(Guid.EVERYONE);
+        when(mockDbUser.getId()).thenReturn(Guid.EVERYONE);
         String session = UUID.randomUUID().toString();
-        SessionDataContainer.getInstance().setUser(session, user);
+        when(mockSessionDataContainer.getUser(session, false)).thenReturn(mockDbUser);
         VdcQueryParametersBase params = new VdcQueryParametersBase(session);
         params.setRefresh(false);
         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
-
 
         assertEquals("wrong guid", Guid.EVERYONE, query.getUserID());
     }
@@ -140,7 +145,7 @@ public class QueriesCommandBaseTest {
     }
 
     /** A stub class that will cause the {@link VdcQueryType#Unknown} to be used */
-    private static class ThereIsNoSuchQuery extends QueriesCommandBase<VdcQueryParametersBase> {
+    private class ThereIsNoSuchQuery extends QueriesCommandBase<VdcQueryParametersBase> {
 
         public ThereIsNoSuchQuery(VdcQueryParametersBase parameters) {
             super(parameters);
@@ -149,6 +154,11 @@ public class QueriesCommandBaseTest {
         @Override
         protected void executeQueryCommand() {
             // Stub method, do nothing
+        }
+
+        @Override
+        SessionDataContainer getSessionDataContainer() {
+            return mockSessionDataContainer;
         }
     }
 }
