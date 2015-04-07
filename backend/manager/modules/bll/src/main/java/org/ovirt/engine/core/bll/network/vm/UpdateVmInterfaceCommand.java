@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
@@ -96,6 +97,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
+                    updatePassthoughDeviceIfNeeded();
                     getCompensationContext().snapshotEntity(oldIface);
                     getVmNicDao().update(getInterface());
                     getCompensationContext().stateChanged();
@@ -145,6 +147,15 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     private boolean propertiesRequiringVmUpdateDeviceWereUpdated() {
         return !ObjectUtils.equals(oldIface.getVnicProfileId(), getInterface().getVnicProfileId())
                 || oldIface.isLinked() != getInterface().isLinked();
+    }
+
+    private void updatePassthoughDeviceIfNeeded() {
+        if (mustChangeVmDevice()) {
+            getCompensationContext().snapshotEntity(oldVmDevice);
+            oldVmDevice.setDevice(getInterface().isPassthrough() ? VmDeviceType.HOST_DEVICE.getName()
+                    : VmDeviceType.BRIDGE.getName());
+            getVmDeviceDao().update(oldVmDevice);
+        }
     }
 
     @Override
@@ -283,7 +294,16 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
      */
     private boolean mustChangeAddress (int oldType, int newType) {
         int spaprVlanType = VmInterfaceType.spaprVlan.getValue();
-        return oldType == spaprVlanType ^ newType == spaprVlanType;
+        return wasTypeChangedToOrFromTestedType(oldType, newType, spaprVlanType);
+    }
+
+    private boolean mustChangeVmDevice() {
+        int passthroughType = VmInterfaceType.pciPassthrough.getValue();
+        return wasTypeChangedToOrFromTestedType(oldIface.getType(), getInterface().getType(), passthroughType);
+    }
+
+    private boolean wasTypeChangedToOrFromTestedType(int oldType, int newType, int testedType) {
+        return oldType == testedType ^ newType == testedType;
     }
 
     private boolean isVnicProfileChanged(VmNic oldNic, VmNic newNic) {

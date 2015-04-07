@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -36,6 +37,8 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 getDbFacade().getVmDeviceDao().get(new VmDeviceId(getParameters().getInterface().getId(),
                         getParameters().getVmTemplateId()));
         vmDevice.setIsPlugged(getParameters().getInterface().isPlugged());
+        vmDevice.setDevice(getParameters().getInterface().isPassthrough() ? VmDeviceType.HOST_DEVICE.getName()
+                : VmDeviceType.BRIDGE.getName());
         getDbFacade().getVmDeviceDao().update(vmDevice);
         setSucceeded(true);
     }

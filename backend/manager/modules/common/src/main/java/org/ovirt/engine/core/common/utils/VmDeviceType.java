@@ -29,6 +29,7 @@ public enum VmDeviceType {
     WATCHDOG("watchdog"),
     VIRTIOSCSI("virtio-scsi"),
     VIRTIOSERIAL("virtio-serial"),
+    HOST_DEVICE("hostdev"),
     OTHER("other", "0"),
     UNKNOWN("unknown", "-1");
 

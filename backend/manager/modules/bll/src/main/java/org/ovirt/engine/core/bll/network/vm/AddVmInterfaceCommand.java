@@ -78,7 +78,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     private void addInterfaceDeviceToDb() {
         VmDevice vmDevice = VmDeviceUtils.addNetworkInterfaceDevice(
                 new VmDeviceId(getInterface().getId(), getParameters().getVmId()),
-                getInterface().isPlugged());
+                getInterface().isPlugged(), getInterface().isPassthrough());
         getCompensationContext().snapshotNewEntity(vmDevice);
     }
 

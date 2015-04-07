@@ -66,6 +66,11 @@ public class VmDeviceCommonUtils {
                 && device.getDevice().equals(VmDeviceType.BRIDGE.getName());
     }
 
+    public static boolean isHostDevInterface(VmDevice device) {
+        return device.getType() == VmDeviceGeneralType.INTERFACE
+                && device.getDevice().equals(VmDeviceType.HOST_DEVICE.getName());
+    }
+
     public static VmDevice createVirtioSerialDeviceForVm(Guid vmId) {
         return new VmDevice(new VmDeviceId(Guid.newGuid(), vmId),
                 VmDeviceGeneralType.CONTROLLER,
@@ -188,7 +193,7 @@ public class VmDeviceCommonUtils {
     private static List<VmDevice> getPluggedManagedInterfaces(List<VmDevice> devices) {
         List<VmDevice> result = new ArrayList<VmDevice>();
         for (VmDevice device : devices) {
-            if (isBridge(device) && device.getIsPlugged() && device.getIsManaged()) {
+            if ((isHostDevInterface(device) || isBridge(device)) && device.getIsPlugged() && device.getIsManaged()) {
                 result.add(device);
             }
         }

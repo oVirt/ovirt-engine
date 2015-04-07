@@ -39,7 +39,8 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         getVmNicDao().save(getParameters().getInterface());
         VmDeviceUtils.addNetworkInterfaceDevice(
                 new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmTemplateId()),
-                getParameters().getInterface().isPlugged());
+                getParameters().getInterface().isPlugged(),
+                getParameters().getInterface().isPassthrough());
 
         setSucceeded(true);
     }

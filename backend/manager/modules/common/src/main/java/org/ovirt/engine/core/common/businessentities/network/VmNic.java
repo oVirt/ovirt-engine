@@ -164,4 +164,8 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
         }
         return true;
     }
+
+    public boolean isPassthrough() {
+        return VmInterfaceType.pciPassthrough.equals(VmInterfaceType.forValue(getType()));
+    }
 }

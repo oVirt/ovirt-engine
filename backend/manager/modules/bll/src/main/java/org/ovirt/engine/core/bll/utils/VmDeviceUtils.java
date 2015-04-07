@@ -544,10 +544,10 @@ public class VmDeviceUtils {
      *            Is the NIC plugged to the VM or not.
      * @return The device that was added.
      */
-    public static VmDevice addNetworkInterfaceDevice(VmDeviceId id, boolean plugged) {
+    public static VmDevice addNetworkInterfaceDevice(VmDeviceId id, boolean plugged, boolean hostDev) {
         return addManagedDevice(id,
                 VmDeviceGeneralType.INTERFACE,
-                VmDeviceType.BRIDGE,
+                hostDev ? VmDeviceType.HOST_DEVICE : VmDeviceType.BRIDGE,
                 Collections.<String, Object> emptyMap(),
                 plugged,
                 false,
@@ -841,7 +841,7 @@ public class VmDeviceUtils {
             VmDevice vmDevice =
                     addManagedDevice(new VmDeviceId(deviceId, id),
                             VmDeviceGeneralType.INTERFACE,
-                            VmDeviceType.BRIDGE,
+                            iface.isPassthrough() ? VmDeviceType.HOST_DEVICE : VmDeviceType.BRIDGE,
                             null,
                             true,
                             false,
@@ -1065,7 +1065,7 @@ public class VmDeviceUtils {
     }
 
     private static boolean isDiskOrInterface(VmDevice vmDevice) {
-        return VmDeviceCommonUtils.isDisk(vmDevice) || VmDeviceCommonUtils.isBridge(vmDevice);
+        return VmDeviceCommonUtils.isDisk(vmDevice) || VmDeviceCommonUtils.isNetwork(vmDevice);
     }
 
     private static boolean isBalloonEnabled(VmManagementParametersBase params) {
