@@ -26,7 +26,7 @@ public class GetUnusedGlusterBricksQuery<P extends VdsIdParametersBase> extends 
 
     }
 
-    private List<StorageDevice> getUnUsedBricks(List<StorageDevice> bricksFromServer) {
+    private List<StorageDevice> getUnUsedBricks(List<StorageDevice> storageDevicesInHost) {
         List<GlusterBrickEntity> usedBricks =
                 getDbFacade().getGlusterBrickDao().getGlusterVolumeBricksByServerId(getParameters().getVdsId());
         List<StorageDevice> freeBricks = new ArrayList<StorageDevice>();
@@ -34,12 +34,14 @@ public class GetUnusedGlusterBricksQuery<P extends VdsIdParametersBase> extends 
         for (GlusterBrickEntity brick : usedBricks) {
             bricksDir.add(brick.getBrickDirectory());
         }
-        for (StorageDevice brick : bricksFromServer) {
-            if (brick.getMountPoint() != null && !brick.getMountPoint().isEmpty()
-                    && brick.getMountPoint()
+        for (StorageDevice storageDevice : storageDevicesInHost) {
+            if (storageDevice.getMountPoint() != null
+                    && !storageDevice.getMountPoint().isEmpty()
+                    && (storageDevice.getMountPoint()
                             .startsWith(Config.<String> getValue(ConfigValues.DefaultGlusterBrickMountPoint))
-                    && !bricksDir.contains(brick.getMountPoint())) {
-                freeBricks.add(brick);
+                    || storageDevice.isGlusterBrick())
+                    && !bricksDir.contains(storageDevice.getMountPoint())) {
+                freeBricks.add(storageDevice);
             }
         }
 

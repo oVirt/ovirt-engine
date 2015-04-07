@@ -14,14 +14,15 @@ Create or replace FUNCTION InsertStorageDevice(v_id UUID,
                                                v_filesystem_type VARCHAR(50),
                                                v_mount_point text,
                                                v_size BIGINT,
-                                               v_is_free BOOLEAN)
+                                               v_is_free BOOLEAN,
+                                               v_is_gluster_brick BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
     INSERT INTO storage_device(id, name, device_uuid, filesystem_uuid, vds_id,
-    description, device_type, device_path, filesystem_type, mount_point, size, is_free)
+    description, device_type, device_path, filesystem_type, mount_point, size, is_free, is_gluster_brick)
     VALUES (v_id, v_name, v_device_uuid, v_filesystem_uuid, v_vds_id, v_description, v_device_type,
-    v_device_path, v_filesystem_type, v_mount_point, v_size, v_is_free);
+    v_device_path, v_filesystem_type, v_mount_point, v_size, v_is_free, v_is_gluster_brick);
 END; $procedure$
 LANGUAGE plpgsql;
 
