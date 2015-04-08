@@ -111,4 +111,11 @@ public class PfNicLabelModel extends NicLabelModel {
         dstIface.setLabels(flushedLabels.isEmpty() ? null : flushedLabels);
     }
 
+    /**
+     * @return whether the labels model was changed (new labels were added or old were removed)
+     */
+    public boolean wasChanged() {
+        return !getAddedLabels().isEmpty() || !getRemovedLabels().isEmpty();
+
+    }
 }

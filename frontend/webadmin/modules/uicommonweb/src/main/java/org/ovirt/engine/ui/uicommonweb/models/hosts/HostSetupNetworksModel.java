@@ -249,16 +249,36 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return operationCandidateEvent;
     }
 
-    private Set<LogicalNetworkModel> computeLabelChanges(PfNicLabelModel labelsModel,
+    private boolean computeAndCommitLabelChanges(final VdsNetworkInterface entity,
+            PfNicLabelModel labelsModel) {
+
+        if (!labelsModel.wasChanged()) {
+            return true;
+        }
+
+        Collection<LogicalNetworkModel> potentialNetworks =
+                getPotentialNetworks(labelsModel, nicMap.get(entity.getName())
+                        .getItems());
+        if (validateNetworksCanCoexist(potentialNetworks)) {
+            commitNetworksAndLabelChanges(labelsModel, entity, potentialNetworks);
+            redraw();
+            return true;
+        }
+        return false;
+    }
+
+    private Set<LogicalNetworkModel> getPotentialNetworks(PfNicLabelModel labelsModel,
             Collection<LogicalNetworkModel> originalNetworks) {
 
         Collection<String> removedLabels = labelsModel.getRemovedLabels();
         Collection<String> addedLabels = labelsModel.getAddedLabels();
+
         Set<LogicalNetworkModel> removedNetworks = new HashSet<LogicalNetworkModel>();
         Set<LogicalNetworkModel> addedNetworks = new HashSet<LogicalNetworkModel>();
         for (String label : removedLabels) {
-             NetworkLabelModel networkLabelModel = networkLabelMap.get(label);
-             Collection<LogicalNetworkModel> labelNetworks = networkLabelModel != null ? networkLabelModel.getNetworks() : null;
+            NetworkLabelModel networkLabelModel = networkLabelMap.get(label);
+            Collection<LogicalNetworkModel> labelNetworks =
+                    networkLabelModel != null ? networkLabelModel.getNetworks() : null;
             if (labelNetworks != null) {
                 removedNetworks.addAll(labelNetworks);
             }
@@ -278,7 +298,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     // generate a mock "bonding" operation to check if the networks can be configured together
-    private boolean validateLabelChanges(Collection<LogicalNetworkModel> potentialNetworks) {
+    private boolean validateNetworksCanCoexist(Collection<LogicalNetworkModel> potentialNetworks) {
+        if (potentialNetworks == null || potentialNetworks.isEmpty()) {
+            return true;
+        }
+
         NetworkInterfaceModel mockSrc = new NetworkInterfaceModel(this);
         NetworkInterfaceModel mockDst = new NetworkInterfaceModel(this);
         mockSrc.setIface(new VdsNetworkInterface());
@@ -292,7 +316,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return valid;
     }
 
-    private void commitLabelChanges(PfNicLabelModel labelModel,
+    private void commitNetworksAndLabelChanges(PfNicLabelModel labelModel,
             VdsNetworkInterface iface,
             Collection<LogicalNetworkModel> potentialNetworks) {
 
@@ -343,14 +367,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         return;
                     }
                     sourceListModel.setConfirmWindow(null);
-                    Collection<LogicalNetworkModel> potentialNetworks =
-                            computeLabelChanges(bondDialogModel.getLabelsModel(), nicMap.get(entity.getName())
-                                    .getItems());
-                    if (validateLabelChanges(potentialNetworks)) {
-                        setBondOptions(entity, bondDialogModel);
-                        commitLabelChanges(bondDialogModel.getLabelsModel(), entity, potentialNetworks);
-                        redraw();
-                    }
+                    PfNicLabelModel labelsModel = bondDialogModel.getLabelsModel();
+
+                   if (computeAndCommitLabelChanges(entity, labelsModel)) {
+                       setBondOptions(entity, bondDialogModel);
+                   }
                 }
             };
         } else if (item instanceof NetworkInterfaceModel) {
@@ -379,13 +400,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     sourceListModel.setConfirmWindow(null);
 
                     if (!isBondSalve) {
-                        Collection<LogicalNetworkModel> potentialNetworks =
-                                computeLabelChanges(interfacePopupModel.getLabelsModel(), nicMap.get(entity.getName())
-                                        .getItems());
-                        if (validateLabelChanges(potentialNetworks)) {
-                            commitLabelChanges(interfacePopupModel.getLabelsModel(), entity, potentialNetworks);
-                            redraw();
-                        }
+                        computeAndCommitLabelChanges(entity, interfacePopupModel.getLabelsModel());
                     }
 
                     commitVfsConfigChanges(hostNicVfsConfig, interfacePopupModel.getVfsConfigModel());
@@ -587,9 +602,10 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                             List<LogicalNetworkModel> networks = new ArrayList<LogicalNetworkModel>();
                             networks.addAll(nic1.getItems());
                             networks.addAll(nic2.getItems());
+
                             Collection<LogicalNetworkModel> potentialNetworks =
-                                    computeLabelChanges(bondPopup.getLabelsModel(), networks);
-                            if (!validateLabelChanges(potentialNetworks)) {
+                                    getPotentialNetworks(bondPopup.getLabelsModel(), networks);
+                            if (!validateNetworksCanCoexist(potentialNetworks)) {
                                 return;
                             }
                             VdsNetworkInterface bond = new Bond(bondPopup.getBond().getSelectedItem());
@@ -599,7 +615,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                             redraw();
 
                             // Attach the previous networks
-                            commitLabelChanges(bondPopup.getLabelsModel(), bond, potentialNetworks);
+                            commitNetworksAndLabelChanges(bondPopup.getLabelsModel(), bond, networks);
                             redraw();
                         }
                     }));
