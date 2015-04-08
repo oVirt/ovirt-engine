@@ -6,9 +6,6 @@ actions:
 - name: /vms|rel=get
   description: get all the virtual machines in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -19,9 +16,6 @@ actions:
 - name: /vms/{vm:id}|rel=get
   description: get the virtual machine in the system for the given virtual machine id
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       Filter: {value: true|false, required: false}
       All-Content: {value: true|false, required: false}
@@ -111,17 +105,11 @@ actions:
 - name: /vms/{vm:id}/applications|rel=get
   description: get all the applications installed on the vm identified by the given id
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       Filter: {value: true|false, required: false}
 - name: /vms/{vm:id}/applications/{application:id}|rel=get
   description: get the application installed on the specified vm
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       Filter: {value: true|false, required: false}
 - name: /vms|rel=add
@@ -477,26 +465,17 @@ actions:
 - name: /vms/{vm:id}/cdroms|rel=get
   description: get all the cdroms for a virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
       current: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/cdroms/{cdrom:id}|rel=get
   description: get the cdrom for a virtual machine identified by the given id
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       current: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/cdroms/{cdrom:id}|rel=delete
   description: delete the cdrom for a virtual machine identified by the given id
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/cdroms/{cdrom:id}|rel=update
@@ -522,23 +501,14 @@ actions:
 - name: /vms/{vm:id}/watchdogs|rel=get
   description: get all the watchdogs for the virtual machine identified by the given id
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /vms/{vm:id}/watchdogs/{watchdog:id}|rel=get
   description: get the watchdog identified by the id for a given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/watchdogs/{watchdog:id}|rel=delete
   description: delete the watchdog for the virtual machine identified by the given id
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
@@ -563,17 +533,11 @@ actions:
 - name: /vms/{vm:id}/disks|rel=get
   description: get all disks for a given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /vms/{vm:id}/disks/{disk:id}|rel=get
   description: get the details of a disk for a given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/disks/{disk:id}|rel=delete
   description: delete or detach a disk for a given virtual machine
   request:
@@ -691,9 +655,6 @@ actions:
 - name: /vms/{vm:id}/nics|rel=get
   description: get all the network interfaces for a given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
@@ -701,17 +662,11 @@ actions:
 - name: /vms/{vm:id}/nics/{nic:id}|rel=get
   description: get the details of a network interface for a given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       All-Content: {value: true|false, required: false}
 - name: /vms/{vm:id}/nics/{nic:id}|rel=delete
   description: remove the network interface from the given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/nics/{nic:id}|rel=update
@@ -755,23 +710,13 @@ actions:
 - name: /vms/{vm:id}/permissions|rel=get
   description: get all the permissions for a given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /vms/{vm:id}/permissions/{permission:id}|rel=get
   description: get details of a permission for a given virtual machine
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/permissions/{permission:id}|rel=delete
   description: delete a permission for a given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/permissions|rel=add
@@ -789,23 +734,13 @@ actions:
 - name: /vms/{vm:id}/statistics|rel=get
   description: get the memory and cpu statistics for a given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /vms/{vm:id}/statistics/{statistic:id}|rel=get
   description: get the detail statistics for a given virtual machine
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/snapshots|rel=get
   description: get all snapshots for a given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
@@ -813,17 +748,11 @@ actions:
 - name: /vms/{vm:id}/snapshots/{snapshot:id}|rel=get
   description: get the details of a snapshot for a given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       All-Content: {value: true|false, required: false}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}|rel=delete
   description: delete the snapshot for a given virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/snapshots|rel=add
@@ -848,68 +777,31 @@ actions:
         description: restore the virtual machine from a given snapshot
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/cdroms|rel=get
   description: get the list of cdroms attached to the virtual machine at the time the snapshot was created
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/cdroms/{cdrom:id}|rel=get
   description: get the details of a cdrom attached to the virtual machine at the time the snapshot was created
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/disks|rel=get
   description: get the list of disks attached to the virtual machine at the time the snapshot was created
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/disks/{disk:id}|rel=get
   description: get the details of a disk attached to the virtual machine at the time the snapshot was created
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/disks/{disk:id}|rel=delete
   description: delete a disk from a VM snapshot
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/nics|rel=get
   description: get the list of network interfaces attached to the virtual machine at the time the snapshot was created
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/nics/{nic:id}|rel=get
   description: get the details of a network interface attached to the virtual machine at the time the snapshot was created
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/tags|rel=get
   description: get the list of tags added to the virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /vms/{vm:id}/tags/{tag:id}|rel=get
   description: get the details of the tag added to the virtual machine
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/tags/{tag:id}|rel=delete
   description: delete a tag added to the virtual machine
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/tags|rel=add
@@ -922,16 +814,8 @@ actions:
         description: add a new tag to the virtual machine
 - name: /vms/{vm:id}/sessions|rel=get
   description: get the open user-sessions of this VM
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/sessions/{session:id}|rel=get
   description: get the deails of a VM user session.
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/maintenance|rel=maintenance
   description: enable or disable maintenance mode for this virtual machine
   request:
@@ -944,25 +828,15 @@ actions:
 - name: /disks|rel=get
   description: get a list of disks in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /disks/{disk:id}|rel=get
   description: get the details of a disk in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /disks/{disk:id}|rel=delete
   description: delete the specified disk in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /disks/{disk:id}/export|rel=export
@@ -1042,63 +916,31 @@ actions:
 - name: /disks/{disk:id}/statistics|rel=get
   description: get the disk statistics for the specified disk in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /disks/{disk:id}/statistics/{statistic:id}|rel=get
   description: get the disk statistics for the specified disk in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /disks/{disk:id}/permissions|rel=get
   description: get the list of permissions for the disk in the system. Disk inherits permissions from the VM it is attached to and from the storage domain it resides on (if there is one)
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /disks/{disk:id}/permissions/{permission:id}|rel=get
   description: get the details of the permission for the specified disk in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /capabilities|rel=get
   description: get the capabilities of the system listing the features that are supported for all versions of cluster/data center
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /capabilities/{version:id}|rel=get
   description: get the capabilities of the system for the specified version, lists the features that are supported for the provided version of the cluster/data center
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/networks|rel=get
   description: get networks for the datacenter in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /datacenters/{datacenter:id}/networks/{network:id}|rel=get
   description: get the specified network in the datacenter
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/networks/{network:id}|rel=delete
   description: delete the specified network in the datacenter
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/networks/{network:id}|rel=update
@@ -1131,10 +973,6 @@ actions:
         description: add a new network to the datacenter
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels|rel=get
   description: get the labels of a network
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels|rel=add
   description: add a new label to the network
   request:
@@ -1145,38 +983,21 @@ actions:
         description: add a new label to the network
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels/{label:id}|rel=get
   description: get a specific label of a network
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels/{label:id}|rel=delete
   description: delete the specified label of a network
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/qoss|rel=get
   description: get QoSs for the datacenter in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /datacenters/{datacenter:id}/qoss/{qos:id}|rel=get
   description: get the specified QoS in the datacenter
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/qoss/{qos:id}|rel=delete
   description: delete the specified QoS in the datacenter
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/qoss/{qos:id}|rel=update
@@ -1226,9 +1047,6 @@ actions:
 - name: /storagedomains|rel=get
   description: get storage domains in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -1238,9 +1056,6 @@ actions:
 - name: /storagedomains/{storagedomain:id}|rel=get
   description: get the details of the specified storage domain in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       Filter: {value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}|rel=delete
@@ -1322,31 +1137,17 @@ actions:
 - name: /storagedomains/{storagedomain:id}/files|rel=get
   description: get the files stored in the iso storage domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /storagedomains/{storagedomain:id}/files/{file:id}|rel=get
   description: get the details of the specified file stored in the iso storage domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/images|rel=get
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /storagedomains/{storagedomain:id}/images/{images:id}|rel=get
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/images/{images:id}/import|rel=import
   request:
     body:
@@ -1357,23 +1158,13 @@ actions:
 - name: /storagedomains/{storagedomain:id}/permissions|rel=get
   description: get the list of permissions for the storage domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission for the storage domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the storage domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/permissions|rel=add
@@ -1391,27 +1182,16 @@ actions:
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}|rel=delete
   description: delete the specified template from the export or data domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
 - name: /storagedomains/{storagedomain:id}/templates|rel=get
   description: get the list of templates in the export or data domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}|rel=get
   description: get the details of the specified template in the export or data domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/register|rel=register
   description: Register the Template means importing the Template from the data domain, by inserting the configuration of the Template and disks into the DB without the copy process
   request:
@@ -1432,39 +1212,21 @@ actions:
         description: import the template from the export or data domain identified by storagedomain-identifier into the destination storage domain identified by storage_domain.id|name
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/disks|rel=get
   description: get the list of disks attached to the template in the export or data domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk attached to the template in the export or data domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/vms|rel=get
   description: get the list of virtual machines in the storage domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}|rel=delete
   description: delete the specified virtual machine from the storage domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}|rel=get
   description: get the details of the specified virtual machine in the storage domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/register|rel=register
   description: Register the VM means importing the VM from the data domain, by inserting the configuration of the VM and disks into the DB without the copy process
   request:
@@ -1486,32 +1248,19 @@ actions:
 - name: /storagedomains/{storagedomain:id}/disksnapshots|rel=get
   description: get the list of disk snapshots in the storage domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /storagedomains/{storagedomain:id}/disksnapshots/{disksnapshot:id}|rel=delete
   description: delete the specified disk snapshot from the storage domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
 - name: /storagedomains/{storagedomain:id}/disksnapshots/{disksnapshot:id}|rel=get
   description: get the details of the specified disk snapshot in the storage domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /clusters|rel=get
   description: get the list of clusters in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -1520,43 +1269,22 @@ actions:
       Filter: {value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/disks|rel=get
   description: get the list of disks attached to the virtual machine in the storage domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk attached to the virtual machine in the storage domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /clusters/{cluster:id}|rel=get
   description: get the details of the specified cluster in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       Filter: {value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/storageconnections|rel=get
   description: get the list of storage connections in the storage domain. allow sediting just the connection details without editing the storage domain itself. multiple storage domains could use a single storage connection in the case of iSCSI.
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=get
   description: get the details of the specified storage connection in the storage domain. allow sediting just the connection details without editing the storage domain itself. multiple storage domains could use a single storage connection in the case of iSCSI.
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=delete
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/storageconnections|rel=add
@@ -1569,9 +1297,6 @@ actions:
 - name: /clusters/{cluster:id}|rel=delete
   description: get the details of the specified cluster in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /clusters/{cluster:id}|rel=update
@@ -1608,9 +1333,6 @@ actions:
 - name: /clusters/{cluster:id}/networks|rel=get
   description: get the list of networks in the cluster
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /clusters/{cluster:id}/resetemulatedmachine|rel=resetemulatedmachine
@@ -1624,16 +1346,9 @@ actions:
       Correlation-Id: {value: 'any string', required: false}
 - name: /clusters/{cluster:id}/networks/{network:id}|rel=get
   description: get the details of the specified network in the cluster
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /clusters/{cluster:id}/networks/{network:id}|rel=delete
   description: delete the specified network in the cluster
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /clusters/{cluster:id}/networks/{network:id}|rel=update
@@ -1657,23 +1372,13 @@ actions:
 - name: /clusters/{cluster:id}/permissions|rel=get
   description: get the list of permissions on the cluster
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /clusters/{cluster:id}/permissions/{permission:id}|rel=get
   description: get the details of the permission on the cluster
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /clusters/{cluster:id}/permissions/{permission:id}|rel=delete
   description: delete the permission on the cluster
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /clusters/{cluster:id}/permissions|rel=add
@@ -1691,17 +1396,10 @@ actions:
 - name: /macpools|rel=get
   description: get a list of mac pools in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /macpools/{macpool:id}|rel=get
   description: get the details of the specified mac pool in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /macpools|rel=add
   description: add the specified mac pool into the system
   request:
@@ -1764,9 +1462,6 @@ actions:
 - name: /datacenters|rel=get
   description: get a list of data centers in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -1776,9 +1471,6 @@ actions:
 - name: /datacenters/{datacenter:id}|rel=get
   description: get the details of the specified data center in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}|rel=delete
@@ -1813,22 +1505,11 @@ actions:
         description: add a new data center to the system
 - name: /datacenters/{datacenter:id}/permissions|rel=get
   description: get the list of permissions on the data center
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/permissions/{permission:id}|rel=get
   description: get details of the specified permission on the data center
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the data center
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/permissions|rel=add
@@ -1846,23 +1527,13 @@ actions:
 - name: /datacenters/{datacenter:id}/storagedomains|rel=get
   description: get the list of storage domains in a data center
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=get
   description: get details of the specified storage domain in a data center
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=delete
   description: delete the specified storage domain in a data center
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains|rel=add
@@ -1895,9 +1566,6 @@ actions:
 - name: /datacenters/{datacenter:id}/clusters|rel=get
   description: get the list of clusters in the data center
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
@@ -1905,17 +1573,11 @@ actions:
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}|rel=get
   description: get the details of the specified cluster in the data center
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}|rel=delete
   description: delete specified cluster from the data center
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}|rel=update
@@ -1950,23 +1612,13 @@ actions:
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=get
   description: get the list of networks for a cluster in a data center
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=get
   description: get the details of the specified network in a cluster in the specified data center
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=delete
   description: delete the specified network in a cluster in the specified data center
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=update
@@ -1990,23 +1642,13 @@ actions:
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=get
   description: get the list of permissions on the cluster in the specified data center.
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission on the cluster in the specified data center.
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the cluster in the specified data center.
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=add
@@ -2024,55 +1666,31 @@ actions:
 - name: /domains|rel=get
   description: get a list of domains in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /domains/{domain:id}|rel=get
   description: get the details of the specified domain in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /domains/{domain:id}/groups|rel=get
   description: get the list of groups in the specified domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /domains/{domain:id}/groups/{group:id}|rel=get
   description: get the details of the specified group in the domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /domains/{domain:id}/users|rel=get
   description: get the list of users in the domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /domains/{domain:id}/users/{user:id}|rel=get
   description: get the details of the specified user in the domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /events|rel=get
   description: get the list of events in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -2089,26 +1707,15 @@ actions:
         description: undoes the delete operation performed on the events
 - name: /events/{event:id}|rel=get
   description: get the details of the specified event in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /groups|rel=get
   description: get the list of groups in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /events/{event:id}|rel=delete
   description: delete the specified event from the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /events|rel=add
   description: add a new event to the system
   request:
@@ -2122,16 +1729,9 @@ actions:
         description: add a new event to the system
 - name: /groups/{group:id}|rel=get
   description: get the details of the specified group in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /groups/{group:id}|rel=delete
   description: delete the specified group in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /groups|rel=add
@@ -2146,23 +1746,13 @@ actions:
 - name: /groups/{group:id}/permissions|rel=get
   description: get list of permissions for the group in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /groups/{group:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission for the group in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /groups/{group:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission from the group in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /groups/{group:id}/permissions|rel=add
@@ -2195,37 +1785,21 @@ actions:
 - name: /groups/{group:id}/roles|rel=get
   description: get the list of roles assigned to the specified group
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /groups/{group:id}/roles/{role:id}|rel=get
   description: get the details of the specified role assigned to a group
   request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /groups/{group:id}/roles/{role:id}/permits|rel=get
   description: get the permits for the specified role in a group
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /groups/{group:id}/roles/{role:id}/permits/{permit:id}|rel=get
   description: get details of the specified permit for a role in a group
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /groups/{group:id}/roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for a role in a group
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /groups/{group:id}/roles/{role:id}/permits|rel=add
@@ -2239,23 +1813,13 @@ actions:
 - name: /groups/{group:id}/tags|rel=get
   description: get the list of tags attached to a given group
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /groups/{group:id}/tags/{tag:id}|rel=get
   description: get details of the specified tag attached to a given group
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /groups/{group:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag attached to a given group
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /groups/{group:id}/tags|rel=add
@@ -2269,9 +1833,6 @@ actions:
 - name: /hosts|rel=get
   description: get the list of hosts in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -2282,9 +1843,6 @@ actions:
 - name: /hosts/{host:id}|rel=get
   description: get the details of the specified host in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       force: # This is deprecated, use the "refreshcapabilities" action instead
         context: matrix
@@ -2493,37 +2051,20 @@ actions:
 - name: /hosts/{host:id}/katelloerrata|rel=get
   description: get the list of errata available for the host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /hosts/{host:id}/katelloerrata/{katelloerratum:id}|rel=get
   description: get the details of the specific erratum available for the host
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/nics|rel=get
   description: get the list of network interfaces for the host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /hosts/{host:id}/nics/{nic:id}|rel=get
   description: get the details of the specified network interface for the host
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/nics/{nic:id}|rel=delete
   description: delete the specified network interface for the host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /hosts/{host:id}/nics/{nic:id}|rel=update
@@ -2598,23 +2139,12 @@ actions:
 - name: /hosts/{host:id}/nics/{nic:id}/statistics|rel=get
   description: get the statistics for the network interface card attached to the specified host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /hosts/{host:id}/nics/{nic:id}/statistics/{statistic:id}|rel=get
   description: get the details of the specified statistics for the network interface card attached to the specified host
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/nics/{nic:id}/labels|rel=get
   description: get the labels of an interface
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/nics/{nic:id}/labels|rel=add
   description: add a new label to the interface
   request:
@@ -2625,38 +2155,21 @@ actions:
         description: add a new label to the interface
 - name: /hosts/{host:id}/nics/{nic:id}/labels/{label:id}|rel=get
   description: get a specific label of an interface
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/nics/{nic:id}/labels/{label:id}|rel=delete
   description: delete the specified label of an interface
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /hosts/{host:id}/permissions|rel=get
   description: get the list of permissions for the host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /hosts/{host:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission for the host
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /hosts/{host:id}/permissions|rel=add
@@ -2674,51 +2187,27 @@ actions:
 - name: /hosts/{host:id}/statistics|rel=get
   description: get the statistics for the host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /hosts/{host:id}/statistics/{statistic:id}|rel=get
   description: get the details of the specified statistics for the host
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/storage|rel=get
   description: get the list of all logical units and volume groups for the host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /hosts/{host:id}/storage/{storag:id}|rel=get
   description: get the details of the specified logical unit or volume group for the host
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/tags|rel=get
   description: get the list of all tags added to the host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /hosts/{host:id}/tags/{tag:id}|rel=get
   description: get the details of the specified tag added to the host
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag added to the host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /hosts/{host:id}/tags|rel=add
@@ -2730,10 +2219,6 @@ actions:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
 - name: /hosts/{host:id}/fenceagents|rel=get
   description: get all fencing agents defined for this host
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/fenceagents|rel=add
   description: add a new fencing-agent to the host
   request:
@@ -2744,10 +2229,6 @@ actions:
         optionalArguments: {agent.port: 'xs:int', agent.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=get
   description: get the fencing agent with the specified ID.  
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=update
   description: update a fencing-agent
   request:
@@ -2759,33 +2240,20 @@ actions:
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=delete
   description: delete the specified fencing agent
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /networks|rel=get
   description: get the list of all networks in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /networks/{network:id}|rel=get
   description: get the details of the specified network in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /networks/{network:id}|rel=delete
   description: delete the specified network in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /networks/{network:id}|rel=update
@@ -2825,23 +2293,13 @@ actions:
 - name: /networks/{network:id}/permissions|rel=get
   description: get the list of all permissions on a network in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /networks/{network:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission on a network in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /networks/{network:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on a network in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /networks/{network:id}/permissions|rel=add
@@ -2859,23 +2317,13 @@ actions:
 - name: /networks/{network:id}/vnicprofiles|rel=get
   description: get the list of all virtual network interface card profiles for the network
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=get
   description: get the details of the specified virtual network interface card profile for the network
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=delete
   description: delete the specified virtual network interface card profile for the network
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /networks/{network:id}/vnicprofiles|rel=add
@@ -2890,10 +2338,6 @@ actions:
         description: add a new virtual network interface card profile for the network
 - name: /networks/{network:id}/labels|rel=get
   description: get the labels of a network
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /networks/{network:id}/labels|rel=add
   description: add a new label to the network
   request:
@@ -2904,38 +2348,21 @@ actions:
         description: add a new label to the network
 - name: /networks/{network:id}/labels/{label:id}|rel=get
   description: get a specific label of a network
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /networks/{network:id}/labels/{label:id}|rel=delete
   description: delete the specified label of a network
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vnicprofiles|rel=get
   description: get the list of all virtual network interface card profiles in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /vnicprofiles/{vnicprofile:id}|rel=get
   description: get the details of the specified virtual network interface card profile in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vnicprofiles/{vnicprofile:id}|rel=delete
   description: delete the specified virtual network interface card profile in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vnicprofiles/{vnicprofile:id}|rel=update
@@ -2961,23 +2388,13 @@ actions:
 - name: /vnicprofiles/{vnicprofile:id}/permissions|rel=get
   description: get the list of all permissions on the virtual network interface card profile in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /vnicprofiles/{vnicprofile:id}/permissions/{permission:id}|rel=get
   description: get details of the specified permission on the virtual network interface card profile in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vnicprofiles/{vnicprofile:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the virtual network interface card profile
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vnicprofiles/{vnicprofile:id}/permissions|rel=add
@@ -2995,23 +2412,13 @@ actions:
 - name: /roles|rel=get
   description: get the list of all roles in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /roles/{role:id}|rel=get
   description: get the details of the specified role in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /roles/{role:id}|rel=delete
   description: get the details of the specified role in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /roles|rel=add
@@ -3035,23 +2442,13 @@ actions:
 - name: /roles/{role:id}/permits|rel=get
   description: get the list of all permits for the specified role in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /roles/{role:id}/permits/{permit:id}|rel=get
   description: get the details of the specified permit for the role in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for the role in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /roles/{role:id}/permits|rel=add
@@ -3064,22 +2461,10 @@ actions:
         optionalArguments: {}
 - name: /bookmarks|rel=get
   description: get the list of bookmarks in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /bookmarks/{bookmark:id}|rel=get
   description: get the details of the specified bookmark in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /bookmarks/{tag:id}|rel=delete
   description: delete the specified bookmark from the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /bookmarks/{tag:id}|rel=update
   description: update the specified bookmark in the system
   request:
@@ -3098,23 +2483,13 @@ actions:
 - name: /tags|rel=get
   description: get the list of tags in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /tags/{tag:id}|rel=get
   description: get the details of the specified tag in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /tags/{tag:id}|rel=delete
   description: delete the specified tag in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /tags/{tag:id}|rel=update
@@ -3137,9 +2512,6 @@ actions:
 - name: /templates|rel=get
   description: get the list of all templates in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -3150,18 +2522,12 @@ actions:
 - name: /templates/{template:id}|rel=get
   description: get the details of the specified template in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       Filter: {value: true|false, required: false}
       All-Content: {value: true|false, required: false}
 - name: /templates/{template:id}|rel=delete
   description: delete the specified template in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}|rel=update
@@ -3305,37 +2671,20 @@ actions:
 - name: /templates/{template:id}/cdroms|rel=get
   description: get the list of cdroms attached to the specified template
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /templates/{template:id}/cdroms/{cdrom:id}|rel=get
   description: get the details of the specified cdrom attached to the template
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /templates/{template:id}/watchdogs|rel=get
   description: get all the watchdogs for the template identified by the given id
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /templates/{template:id}/watchdogs/{watchdog:id}|rel=get
   description: get the watchdog identified by the id for a given template
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /templates/{template:id}/watchdogs/{watchdog:id}|rel=delete
   description: delete the watchdog for the template identified by the given id
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}/watchdogs/{watchdog:id}|rel=update
@@ -3359,17 +2708,10 @@ actions:
 - name: /templates/{template:id}/disks|rel=get
   description: get the list of disks attached to the template
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /templates/{template:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk attached to the template
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /templates/{template:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk attached to the template
   request:
@@ -3404,9 +2746,6 @@ actions:
 - name: /templates/{template:id}/nics|rel=get
   description: get the list of network interface cards attached to the template
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /templates/{template:id}/nics|rel=add
@@ -3424,16 +2763,9 @@ actions:
         description: add a new network interface card to the template using a network with optional port mirroring options. This has been deprecated
 - name: /templates/{template:id}/nics/{nic:id}|rel=get
   description: get the details of the specified network interface card attached to the template
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /templates/{template:id}/nics/{nic:id}|rel=delete
   description: delete the specified network interface card attached to the template
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}/nics/{nic:id}|rel=update
@@ -3450,23 +2782,13 @@ actions:
 - name: /templates/{template:id}/permissions|rel=get
   description: get the list of all permissions for the specified template
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /templates/{template:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission on the template
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /templates/{template:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the template
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}/permissions|rel=add
@@ -3484,23 +2806,13 @@ actions:
 - name: /templates/{template:id}/tags|rel=get
   description: get the list of tags added to the template
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /templates/{template:id}/tags/{tag:id}|rel=get
   description: get the details of the tag added to the template
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /templates/{template:id}/tags/{tag:id}|rel=delete
   description: delete a tag added to the template
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}/tags|rel=add
@@ -3514,9 +2826,6 @@ actions:
 - name: /users|rel=get
   description: get the list of all users registered in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -3524,9 +2833,6 @@ actions:
 - name: /users/{user:id}|rel=get
   description: get the details of the specified user registered in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -3542,31 +2848,18 @@ actions:
 - name: /users/{user:id}|rel=delete
   description: delete the from the domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /users/{user:id}/permissions|rel=get
   description: get the list of all permissions for the user
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /users/{user:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission for the user
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /users/{user:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the user
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /users/{user:id}/permissions|rel=add
@@ -3599,37 +2892,20 @@ actions:
 - name: /users/{user:id}/roles|rel=get
   description: get the list of roles assigned to the user
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /users/{user:id}/roles/{role:id}|rel=get
   description: get the details of the specified role assigned to the user
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /users/{user:id}/roles/{role:id}/permits|rel=get
   description: get the list of permits for the role assigned to the user
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /users/{user:id}/roles/{role:id}/permits/{permit:id}|rel=get
   description: get the details of the specified permit for the role assigned to the user
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /users/{user:id}/roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for the role assigned to the user
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /users/{user:id}/roles/{role:id}/permits|rel=add
@@ -3644,23 +2920,13 @@ actions:
 - name: /users/{user:id}/tags|rel=get
   description: get the list of tags attached to the user
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /users/{user:id}/tags/{tag:id}|rel=get
   description: get the details of the specified tag attached to the user
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /users/{user:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag attached to the user
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /users/{user:id}/tags|rel=add
@@ -3674,9 +2940,6 @@ actions:
 - name: /vmpools|rel=get
   description: get the list of all virtual machine pools in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -3686,17 +2949,11 @@ actions:
 - name: /vmpools/{vmpool:id}|rel=get
   description: get the details of the specified virtual machine pool in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       Filter: {value: true|false, required: false}
 - name: /vmpools/{vmpool:id}|rel=delete
   description: delete the specified virtual machine pool in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vmpools/{vmpool:id}|rel=update
@@ -3732,23 +2989,13 @@ actions:
 - name: /vmpools/{vmpool:id}/permissions|rel=get
   description: get the list of permissions for the specified vm pool
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /vmpools/{vmpool:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission on the vm pool
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vmpools/{vmpool:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the vm pool
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vmpools/{vmpool:id}/permissions|rel=add
@@ -3766,9 +3013,6 @@ actions:
 - name: /clusters/{cluster:id}/glustervolumes|rel=get
   description: get the list of gluster volumes attached to the cluster
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -3873,17 +3117,11 @@ actions:
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/profilestatistics|rel=get
   description: get the profiling statistics once profiling is turned on for a volume
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       nfsStatistics: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=get
   description: get the list of all bricks in the gluster volume attached to the cluster
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       All-Content: {value: true|false, required: false}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=add
@@ -3901,9 +3139,6 @@ actions:
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}|rel=get
   description: get the details of the specified brick in the gluster volume attached to the cluster
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       All-Content: {value: true|false, required: false}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=delete
@@ -3959,23 +3194,13 @@ actions:
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics|rel=get
   description: get the statistics for the specified brick in the gluster volume attached to the cluster
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics/{statistic:id}|rel=get
   description: get the details of the specified statistics for the brick in the gluster volume attached to the cluster
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/disks|rel=get
   description: get the list of all disks in the storage domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -3983,16 +3208,9 @@ actions:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk in the storage domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk in the storage domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/disks|rel=add
@@ -4032,9 +3250,6 @@ actions:
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=get
   description: get the list of all disks in the storage domain in the data center
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -4052,9 +3267,6 @@ actions:
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk in the storage domain in the data center
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}/export|rel=export
@@ -4069,9 +3281,6 @@ actions:
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk from the storage domain in the data center
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=add
@@ -4112,18 +3321,11 @@ actions:
 - name: /jobs|rel=get
   description: get the list of all external jobs in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 
 - name: /jobs/{job:id}|rel=get
   description: get the details of the specified external job in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 
 - name: /jobs|rel=add
   description: add a new external job to the system
@@ -4158,18 +3360,11 @@ actions:
 - name: /jobs/{job:id}/steps|rel=get
   description: get the list of all steps for the external job in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 
 - name: /jobs/{job:id}/steps/{step:id}|rel=get
   description: get the details of the specified step in the external job
-  request:
-    body:
-      parameterType: null
-      signatures: []
 
 - name: /jobs/{job:id}/steps|rel=add
   description: add a new step to the external job
@@ -4194,32 +3389,17 @@ actions:
 - name: /jobs/{job:id}/steps/{step:id}/statistics|rel=get
   description: get the detailed step status for monitoring
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 
 - name: /jobs/{job:id}/steps/{step:id}/statistics/{statistic:id}|rel=get
   description: get the detail statistic for a given step
-  request:
-    body:
-      parameterType: null
-      signatures: []
 
 - name: /storageconnections|rel=get
   description: get the list of all storage connections in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 
 - name: /storageconnections/{storageconnection:id}|rel=get
   description: get the details of the specified storage connection in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 
 - name: /storageconnections/{storageconnection:id}|rel=delete
   description: delete the specified storage connection in the system
@@ -4275,20 +3455,9 @@ actions:
         description: add a local storage connection to the system
 
 - name: /clusters/{cluster:id}/glusterhooks|rel=get
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=get
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=delete
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}/enable|rel=enable
@@ -4316,23 +3485,13 @@ actions:
 - name: /permissions|rel=get
   description: get the list of permissions on the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /permissions/{permission:id}|rel=get
   description: get the details of the permission on the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /permissions/{permission:id}|rel=delete
   description: delete the permission on the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /permissions|rel=add
@@ -4351,23 +3510,13 @@ actions:
 - name: /instancetypes|rel=get
   description: get the list of instance types on the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /instancetypes/{instancetype:id}|rel=get
   description: get the details of the instance type on the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /instancetypes/{instancetype:id}|rel=delete
   description: delete the instance type from the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /instancetypes|rel=add
@@ -4405,23 +3554,12 @@ actions:
 - name: /clusters/{cluster:id}/affinitygroups|rel=get
   description: get the list of affinity groups in the cluster
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}|rel=get
   description: get the details of the specified affinity group in the cluster
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}|rel=delete
   description: delete the specified affinity groups in the cluster
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}|rel=update
   description: update the specified affinity group in the cluster
   request:
@@ -4442,17 +3580,10 @@ actions:
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}/vms|rel=get
   description: get the list of vms per affinity group
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}/vms/{vm:id}|rel=delete
   description: remove the specified vm from the affinity groups
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}/vms|rel=add
   description: add a vm to the specified affinity group
   request:
@@ -4465,51 +3596,27 @@ actions:
 - name: /hosts/{host:id}/numanodes|rel=get
   description: get the list of NUMA nodes for the host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /hosts/{host:id}/numanodes/{numanode:id}|rel=get
   description: get the details of the specified NUMA node for the host
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /hosts/{host:id}/numanodes/{numanode:id}/statistics|rel=get
   description: get the statistics for the specified NUMA node of the host
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /hosts/{host:id}/numanodes/{numanode:id}/statistics/{statistic:id}|rel=get
   description: get the details of the specified statistics for the specified NUMA node of the host
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/numanodes|rel=get
   description: get the list of virtual NUMA nodes for the vm
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /vms/{vm:id}/numanodes/{numanode:id}|rel=get
   description: get the details of the specified virtual NUMA node for the vm
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /vms/{vm:id}/numanodes/{numanode:id}|rel=delete
   description: delete the specified virtual NUMA node for the vm
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/numanodes/{numanode:id}|rel=update
@@ -4540,9 +3647,6 @@ actions:
 - name: /schedulingpolicyunits|rel=get
   description: get a list of scheduling policy units in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -4551,17 +3655,11 @@ actions:
 - name: /schedulingpolicyunits/{schedulingpolicyunit:id}|rel=get
   description: get the details of the specified scheduling policy unit in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       Filter: {value: true|false, required: false}
 - name: /schedulingpolicyunits/{schedulingpolicyunit:id}|rel=delete
   description: delete the specified disabled and external scheduling policy unit in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}|rel=update
@@ -4579,9 +3677,6 @@ actions:
 - name: /schedulingpolicies|rel=get
   description: get a list of scheduling policies in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -4590,9 +3685,6 @@ actions:
 - name: /schedulingpolicies/{schedulingpolicy:id}|rel=get
   description: get the details of the specified scheduling policy in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     headers:
       Filter: {value: true|false, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}|rel=delete
@@ -4620,9 +3712,6 @@ actions:
 - name: /schedulingpolicies/{schedulingpolicy:id}/filters|rel=get
   description: get a list of specified scheduling policy filters
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -4631,9 +3720,6 @@ actions:
 - name: /schedulingpolicies/{schedulingpolicy:id}/filters/{filter:id}|rel=get
   description: get a specified scheduling policy filter
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -4663,9 +3749,6 @@ actions:
 - name: /schedulingpolicies/{schedulingpolicy:id}/weights|rel=get
   description: get a list of specified scheduling policy weights
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -4674,9 +3757,6 @@ actions:
 - name: /schedulingpolicies/{schedulingpolicy:id}/weights/{weight:id}|rel=get
   description: get a specified scheduling policy weight
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -4706,9 +3786,6 @@ actions:
 - name: /schedulingpolicies/{schedulingpolicy:id}/balances|rel=get
   description: get a list of specified scheduling policy balance modules
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -4717,9 +3794,6 @@ actions:
 - name: /schedulingpolicies/{schedulingpolicy:id}/balances/{balance:id}|rel=get
   description: get a specified scheduling policy balance module
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -4746,10 +3820,6 @@ actions:
         description: add a balance module to a specified user defined scheduling policy
 - name: /datacenters/{datacenter:id}/iscsibonds|rel=get
   description: get all iSCSI Bonds for the specified datacenter
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/iscsibonds|rel=add
   description: add a new iSCSI Bond to the specified datacenter
   request:
@@ -4770,66 +3840,28 @@ actions:
        description: update the specified iSCSI Bond
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}|rel=delete
   description: remove the specified iSCSI Bond from the datacenter
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/networks|rel=delete
   description: remove the specified network from the iSCSI Bond
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/networks|rel=get
   description: gets the specified iSCSI Bond with the networks
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/networks|rel=add
   description: specify list of networks contained in the iSCSI Bond
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/storagedomains|rel=delete
   description: remove the specified storagedomain from the iSCSI Bond
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/storagedomains|rel=get
   description: gets the specified iSCSI Bond with the storagedomains
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/storagedomains|rel=add
   description: specify list of the storagedomains contained in the iSCSI Bond
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /diskprofiles|rel=get
   description: get the list of all disk profiles in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /diskprofiles/{diskprofile:id}|rel=get
   description: get the details of the specified disk profile in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /diskprofiles/{diskprofile:id}|rel=delete
   description: delete the specified disk profile in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /diskprofiles/{diskprofile:id}|rel=update
@@ -4856,23 +3888,13 @@ actions:
 - name: /diskprofiles/{diskprofile:id}/permissions|rel=get
   description: get the list of all permissions on the disk profile in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /diskprofiles/{diskprofile:id}/permissions/{permission:id}|rel=get
   description: get details of the specified permission on the disk profile in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /diskprofiles/{diskprofile:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the disk profile
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /diskprofiles/{diskprofile:id}/permissions|rel=add
@@ -4890,23 +3912,13 @@ actions:
 - name: /storagedomains/{storagedomain:id}/diskprofiles|rel=get
   description: get the list of all disk profiles for the storage domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /storagedomains/{storagedomain:id}/diskprofiles/{diskprofile:id}|rel=get
   description: get the details of the specified disk profile for the storage domain
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /storagedomains/{storagedomain:id}/diskprofiles/{diskprofile:id}|rel=delete
   description: delete the specified disk profile for the storage domain
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/diskprofiles|rel=add
@@ -4922,23 +3934,13 @@ actions:
 - name: /cpuprofiles|rel=get
   description: get the list of all cpu profiles in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /cpuprofiles/{cpuprofile:id}|rel=get
   description: get the details of the specified cpu profile in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /cpuprofiles/{cpuprofile:id}|rel=delete
   description: delete the specified cpu profile in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /cpuprofiles/{cpuprofile:id}|rel=update
@@ -4965,23 +3967,13 @@ actions:
 - name: /cpuprofiles/{cpuprofile:id}/permissions|rel=get
   description: get the list of all permissions on the cpu profile in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /cpuprofiles/{cpuprofile:id}/permissions/{permission:id}|rel=get
   description: get details of the specified permission on the cpu profile in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /cpuprofiles/{cpuprofile:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the cpu profile
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /cpuprofiles/{cpuprofile:id}/permissions|rel=add
@@ -4999,23 +3991,13 @@ actions:
 - name: /clusters/{cluster:id}/cpuprofiles|rel=get
   description: get the list of all cpu profiles for the cluster
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /clusters/{cluster:id}/cpuprofiles/{cpuprofile:id}|rel=get
   description: get the details of the specified cpu profile for the cluster
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /clusters/{cluster:id}/cpuprofiles/{cpuprofile:id}|rel=delete
   description: delete the specified cpu profile for the cluster
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /clusters/{cluster:id}/cpuprofiles|rel=add
@@ -5031,37 +4013,19 @@ actions:
 
 - name: /operatingsystems|rel=get
   description: get the list of all Operating Systems
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /operatingsystems/{operatingsystem:id}|rel=get
   description: get the details of the specified Operating System
-  request:
-    body:
-      parameterType: null
-      signatures: []
 
 - name: /externalhostproviders|rel=get
   description: get the list of all external host providers in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /externalhostproviders/{externalhostprovider:id}|rel=get
   description: get the details of the specified external host provider in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /externalhostproviders/{externalhostprovider:id}|rel=delete
   description: delete the specified external host provider in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /externalhostproviders/{externalhostprovider:id}|rel=update
@@ -5114,94 +4078,49 @@ actions:
 - name: /externalhostproviders/{externalhostprovider:id}/certificates|rel=get
   description: get the list of certificates of the external host provider
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /externalhostproviders/{externalhostprovider:id}/certificates/{certificate:id}|rel=get
   description: get the details of the specified certificate of the external host provider
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /externalhostproviders/{externalhostprovider:id}/hosts|rel=get
   description: get the list of hosts from the external host provider
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /externalhostproviders/{externalhostprovider:id}/hosts/{host:id}|rel=get
   description: get the details of the specified host from the external host provider
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /externalhostproviders/{externalhostprovider:id}/discoveredhosts|rel=get
   description: get the list of discovered hosts from the external host provider
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /externalhostproviders/{externalhostprovider:id}/discoveredhosts/{discoveredhost:id}|rel=get
   description: get the details of the specified discovered host from the external host provider
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /externalhostproviders/{externalhostprovider:id}/hostgroups|rel=get
   description: get the list of host groups from the external host provider
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /externalhostproviders/{externalhostprovider:id}/hostgroups/{hostgroup:id}|rel=get
   description: get the details of the specified host group from the external host provider
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /externalhostproviders/{externalhostprovider:id}/computeresources|rel=get
   description: get the list of compute resources from the external host provider
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /externalhostproviders/{externalhostprovider:id}/computeresources/{computeresource:id}|rel=get
   description: get the details of the specified compute resource from the external host provider
-  request:
-    body:
-      parameterType: null
-      signatures: []
 
 - name: /openstackimageproviders|rel=get
   description: get the list of all OpenStack image providers in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /openstackimageproviders/{openstackimageprovider:id}|rel=get
   description: get the details of the specified OpenStack image provider in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /openstackimageproviders/{openstackimageprovider:id}|rel=delete
   description: delete the specified OpenStack image provider in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /openstackimageproviders/{openstackimageprovider:id}|rel=update
@@ -5242,31 +4161,17 @@ actions:
 - name: /openstackimageproviders/{openstackimageprovider:id}/images|rel=get
   description: get the list of images from the OpenStack image provider
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /openstackimageproviders/{openstackimageprovider:id}/images/{image:id}|rel=get
   description: get the details of the specified image from the OpenStack image provider
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /openstackimageproviders/{openstackimageprovider:id}/certificates|rel=get
   description: get the list of certificates of the OpenStack image provider
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /openstackimageproviders/{openstackimageprovider:id}/certificates/{certificate:id}|rel=get
   description: get the details of the specified certificate of the OpenStack image provider
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /openstackimageproviders/{openstackimageprovider:id}/testconnectivity|rel=testconnectivity
   description: test the connectivity to the external OpenStack imageprovider
   request:
@@ -5302,23 +4207,13 @@ actions:
 - name: /openstackvolumeproviders|rel=get
   description: get the list of all OpenStack volume providers in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}|rel=get
   description: get the details of the specified OpenStack volume provider in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}|rel=delete
   description: delete the specified OpenStack volume provider in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}|rel=update
@@ -5363,38 +4258,21 @@ actions:
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}/volumetypes|rel=get
   description: get the list of volume types of the OpenStack volume provider
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}/volumetypes/{volumetype:id}|rel=get
   description: get the details of the specified volume type of the OpenStack volume provider
-  request:
-    body:
-      parameterType: null
-      signatures: []
 
 - name: /openstacknetworkproviders|rel=get
   description: get the list of all OpenStack network providers in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}|rel=get
   description: get the details of the specified OpenStack network provider in the system
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}|rel=delete
   description: delete the specified OpenStack network provider in the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}|rel=update
@@ -5435,42 +4313,21 @@ actions:
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks|rel=get
   description: get the list of networks from the OpenStack network provider
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks/{network:id}|rel=get
   description: get the details of the specified network from the OpenStack network provider
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks/{network:id}/subnets|rel=get
   description: get the list of sub-networks from the OpenStack network provider
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks/{network:id}/subnets/{subnet:id}|rel=get
   description: get the details of the specified sub-network from the OpenStack network provider
-  request:
-    body:
-      parameterType: null
-      signatures: []
 - name: /katelloerrata|rel=get
   description: get the list of errata available for the system
   request:
-    body:
-      parameterType: null
-      signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /katelloerrata/{katelloerratum:id}|rel=get
   description: get the details of the specific erratum available for the system
-  request:
-    body:
-      parameterType: null
-      signatures: []

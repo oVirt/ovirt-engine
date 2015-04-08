@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBElement;
@@ -58,6 +60,7 @@ public class RsdlManager {
         System.out.println("The following files have been generated: \n" + outputFileName + "\n"
                 + outputFileNameGluster);
     }
+
 
     private static void validateActionLinksFormat(MetaData metadata) {
         List<String> illegalActionLinks = new ArrayList<>();
@@ -155,6 +158,9 @@ public class RsdlManager {
         MetaData metaData = (MetaData) new Yaml(constructor).load(stream);
         stream.close();
 
+        // Make sure that the loaded metadata contains default values:
+        assignDefaults(metaData);
+
         // Remove leading slashes from all the action names:
         for (Action action : metaData.getActions()) {
             String name = action.getName();
@@ -163,5 +169,60 @@ public class RsdlManager {
         }
 
         return metaData;
+    }
+
+    /**
+     * This methods updates the loaded metadata so that it contains the default values instead of null references. For
+     * example, the metadata file may not contain a list of signatures for a particular action, but we want to make sure
+     * that it contains an empty list instead of a null reference.
+     *
+     * @param metaData the metadata whose default values will be assigned
+     */
+    private static void assignDefaults(MetaData metaData) {
+        for (Action action : metaData.getActions()) {
+            assignDefaults(action);
+        }
+    }
+
+    /**
+     * This methods updates the given action so that it contains the default values.
+     *
+     * @param action the action whose default values will be assigned
+     */
+    private static void assignDefaults(Action action) {
+        // Create the request if needed:
+        Request request = action.getRequest();
+        if (request == null) {
+            request = new Request();
+        }
+        action.setRequest(request);
+
+        // Create the map of headers if needed:
+        Map<String, ParamData> headers = request.getHeaders();
+        if (headers == null) {
+            headers = new HashMap<>();
+            request.setHeaders(headers);
+        }
+
+        // Create the map of URL parameters if needed:
+        Map<String, ParamData> parameters = request.getUrlparams();
+        if (parameters == null) {
+            parameters = new HashMap<>();
+            request.setUrlparams(parameters);
+        }
+
+        // Create the request body if needed:
+        Body body = request.getBody();
+        if (body == null) {
+            body = new Body();
+            request.setBody(body);
+        }
+
+        // Create the list of signatures if needed:
+        List<Signature> signatures = body.getSignatures();
+        if (signatures == null) {
+            signatures = new ArrayList<>();
+        }
+        body.setSignatures(signatures);
     }
 }
