@@ -174,11 +174,11 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
     }
 
     @Override
-    public HostDevice getFreeVf(VdsNetworkInterface nic) {
-        return getVf(nic, true);
+    public HostDevice getFreeVf(VdsNetworkInterface nic, List<String> excludeVfs) {
+        return getVf(nic, true, excludeVfs);
     }
 
-    private HostDevice getVf(VdsNetworkInterface nic, final boolean shouldBeFree) {
+    private HostDevice getVf(VdsNetworkInterface nic, final boolean shouldBeFree, final List<String> excludeVfs) {
         List<HostDevice> deviceList = getDevicesByHostId(nic.getVdsId());
         HostDevice pciDevice = getPciDeviceByNic(nic, deviceList);
 
@@ -196,11 +196,15 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
 
             @Override
             public boolean eval(HostDevice vf) {
-                return isVfFree(vf) == shouldBeFree;
+                return isVfFree(vf) == shouldBeFree && (excludeVfs == null || !excludeVfs.contains(vf.getDeviceName()));
             }
         });
 
-        return vf;
+       return vf;
+    }
+
+    private HostDevice getVf(VdsNetworkInterface nic, final boolean shouldBeFree) {
+        return getVf(nic, shouldBeFree, null);
     }
 
     private boolean isNetworkAttached(VdsNetworkInterface vfNic) {

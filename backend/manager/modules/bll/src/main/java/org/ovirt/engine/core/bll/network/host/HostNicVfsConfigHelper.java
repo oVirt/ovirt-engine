@@ -68,10 +68,12 @@ public interface HostNicVfsConfigHelper {
      *
      * @param nic
      *            physical SR-IOV enabled nic
+     * @param excludeVfs
+     *            vfs that should be considered as non-free
      * @return the first free VF on the nic
      * @throws <code>UnsupportedOperationException</code> in case the nic is not SR-IOV enabled
      */
-    public HostDevice getFreeVf(VdsNetworkInterface nic);
+    public HostDevice getFreeVf(VdsNetworkInterface nic, List<String> excludeVfs);
 
     /**
      * Retrieves the pciDevice name of the specified <code>nic</code>

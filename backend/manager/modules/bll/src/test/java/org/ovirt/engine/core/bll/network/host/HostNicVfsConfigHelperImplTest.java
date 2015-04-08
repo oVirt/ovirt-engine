@@ -305,33 +305,44 @@ public class HostNicVfsConfigHelperImplTest {
     @Test(expected = UnsupportedOperationException.class)
     public void getFreeVfNotSriovNic() {
         commonIsSriovDevice(false);
-        hostNicVfsConfigHelper.getFreeVf(nic);
+        hostNicVfsConfigHelper.getFreeVf(nic, null);
     }
 
     @Test
     public void getFreeVfNoVfs() {
         freeVfCommon(0, 0, 0, 0, 0);
-        assertNull(hostNicVfsConfigHelper.getFreeVf(nic));
+        assertNull(hostNicVfsConfigHelper.getFreeVf(nic, null));
     }
 
     @Test
     public void getFreeVfNoFreeVf() {
         freeVfCommon(0, 1, 2, 3, 4);
-        assertNull(hostNicVfsConfigHelper.getFreeVf(nic));
+        assertNull(hostNicVfsConfigHelper.getFreeVf(nic, null));
     }
 
     @Test
     public void getFreeVfOneFreeVf() {
         List<HostDevice> freeVfs = freeVfCommon(1, 4, 3, 2, 1);
         assertEquals(1, freeVfs.size());
-        assertTrue(freeVfs.contains(hostNicVfsConfigHelper.getFreeVf(nic)));
+        assertTrue(freeVfs.contains(hostNicVfsConfigHelper.getFreeVf(nic, null)));
     }
 
     @Test
     public void getFreeVfMoreThanOneFreeVf() {
         List<HostDevice> freeVfs = freeVfCommon(5, 2, 2, 2, 2);
         assertEquals(5, freeVfs.size());
-        assertTrue(freeVfs.contains(hostNicVfsConfigHelper.getFreeVf(nic)));
+        assertTrue(freeVfs.contains(hostNicVfsConfigHelper.getFreeVf(nic, null)));
+    }
+
+    @Test
+    public void getFreeVfWithExcludedVfs() {
+        List<HostDevice> freeVfs = freeVfCommon(5, 2, 2, 2, 2);
+        assertEquals(5, freeVfs.size());
+        List<String> excludedVfs = new ArrayList<>();
+        excludedVfs.add(freeVfs.get(0).getDeviceName());
+        excludedVfs.add(freeVfs.get(1).getDeviceName());
+        freeVfs.removeAll(excludedVfs);
+        assertTrue(freeVfs.contains(hostNicVfsConfigHelper.getFreeVf(nic, excludedVfs)));
     }
 
     private VdsNetworkInterface mockNicForNetDevice(HostDevice netDeviceParam) {
