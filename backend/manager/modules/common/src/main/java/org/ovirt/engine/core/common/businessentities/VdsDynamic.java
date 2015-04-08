@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import java.util.Set;
+
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -179,6 +179,9 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.supportedEmulatedMachines = supportedEmulatedMachines;
     }
 
+    // Set of additional features supported by the VDSM.
+    private Set<String> additionalFeatures;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirt_version = new RpmVersion();
@@ -202,6 +205,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         supportedRngSources = new HashSet<VmRngDevice.Source>();
         liveSnapshotSupport = true;  // usually supported, exceptional case if it isn't.
         liveMergeSupport = true;
+        additionalFeatures = new HashSet<String>();
     }
 
     public Integer getcpu_cores() {
@@ -667,6 +671,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         return supportedRngSources;
     }
 
+    public Set<String> getAdditionalFeatures() {
+        return additionalFeatures;
+    }
+
+    public void setAdditionalFeatures(Set<String> additionalFeatures) {
+        this.additionalFeatures = additionalFeatures;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -728,6 +740,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + (numaSupport ? 0 : 1);
         result = prime * result + (liveSnapshotSupport ? 0 : 1);
         result = prime * result + (liveMergeSupport ? 0 : 1);
+        result = prime * result + (additionalFeatures == null ? 0 : additionalFeatures.hashCode());
 
         return result;
     }
@@ -803,7 +816,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
                 && ObjectUtils.objectsEqual(supportedRngSources, other.supportedRngSources)
                 && liveSnapshotSupport == other.liveSnapshotSupport
-                && liveMergeSupport == other.liveMergeSupport;
+                && liveMergeSupport == other.liveMergeSupport
+                && ObjectUtils.objectsEqual(additionalFeatures, other.additionalFeatures);
     }
 
 }

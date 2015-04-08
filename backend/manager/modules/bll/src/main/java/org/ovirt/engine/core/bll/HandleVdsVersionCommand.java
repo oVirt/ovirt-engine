@@ -1,18 +1,19 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -77,8 +78,26 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
             reportNonOperationReason(NonOperationalReason.CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER,
                                      cluster.getcompatibility_version().toString(),
                                      vds.getSupportedClusterLevels().toString());
+        } else {
+            checkClusterAdditionalFeaturesSupported(cluster, vds);
         }
         setSucceeded(true);
+    }
+
+    private void checkClusterAdditionalFeaturesSupported(VDSGroup cluster, VDS vds) {
+        Set<SupportedAdditionalClusterFeature> clusterSupportedFeatures =
+                getClusterFeatureDao().getSupportedFeaturesByClusterId(cluster.getId());
+        Set<String> hostSupportedFeatures =
+                getSupportedHostFeatureDao().getSupportedHostFeaturesByHostId(vds.getId());
+        for (SupportedAdditionalClusterFeature feature : clusterSupportedFeatures) {
+            if (feature.isEnabled() && !hostSupportedFeatures.contains(feature.getFeature().getName())) {
+                Map<String, String> customLogValues = new HashMap<>();
+                customLogValues.put("UnSupportedFeature", feature.getFeature().getName());
+                reportNonOperationReason(NonOperationalReason.HOST_FEATURES_INCOMPATIBILE_WITH_CLUSTER, customLogValues);
+                return;
+            }
+        }
+        return;
     }
 
     private void reportNonOperationReason(NonOperationalReason reason, String compatibleVersions,
@@ -86,6 +105,10 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         Map<String, String> customLogValues = new HashMap<>();
         customLogValues.put("CompatibilityVersion", compatibleVersions);
         customLogValues.put("VdsSupportedVersions", vdsSupportedVersions);
+        reportNonOperationReason(reason, customLogValues);
+    }
+
+    private void reportNonOperationReason(NonOperationalReason reason, Map<String, String> customLogValues) {
         SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
                 reason,
                 customLogValues);

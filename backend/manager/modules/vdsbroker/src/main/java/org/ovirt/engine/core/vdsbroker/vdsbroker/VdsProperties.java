@@ -355,6 +355,7 @@ public final class VdsProperties {
     public static final String TUNNELED = "tunneled";
     public static final String DST_QEMU = "dstqemu";
     public static final String MIGRATION_DOWNTIME = "downtime";
+    public static final String ADDITIONAL_FEATURES = "additionalFeatures";
 
     // storage domains
     public static final String code = "code";

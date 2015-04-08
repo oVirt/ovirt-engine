@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -1440,6 +1440,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public boolean getCountThreadsAsCores() {
         return countThreadsAsCores;
+    }
+
+    public Set<String> getAdditionalFeatures() {
+        return this.mVdsDynamic.getAdditionalFeatures();
+    }
+
+    public void setAdditionalFeatures(Set<String> additionalFeatures) {
+        this.mVdsDynamic.setAdditionalFeatures(additionalFeatures);
     }
 
 }

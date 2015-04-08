@@ -82,6 +82,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private String clusterPolicyName;
 
+    private Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported;
+
     @ValidUri(message = "VALIDATION.VDS_GROUP.SPICE_PROXY.HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.SPICE_PROXY_ADDR_SIZE)
@@ -112,6 +114,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         optimizationType = OptimizationType.NONE;
         requiredRngSources = new HashSet<VmRngDevice.Source>();
         fencingPolicy = new FencingPolicy();
+        addtionalFeaturesSupported = new HashSet<SupportedAdditionalClusterFeature>();
     }
 
     @Override
@@ -395,6 +398,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.glusterTunedProfile = glusterTunedProfile;
     }
 
+    public Set<SupportedAdditionalClusterFeature> getAddtionalFeaturesSupported() {
+        return addtionalFeaturesSupported;
+    }
+
+    public void setAddtionalFeaturesSupported(Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported) {
+        this.addtionalFeaturesSupported = addtionalFeaturesSupported;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -428,6 +439,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (groupHostsAndVms == null ? 0 : groupHostsAndVms.hashCode());
         result = prime * result + (fencingPolicy == null ? 0 : fencingPolicy.hashCode());
         result = prime * result + (glusterTunedProfile == null ? 0 : glusterTunedProfile.hashCode());
+        result = prime * result + (addtionalFeaturesSupported == null ? 0 : addtionalFeaturesSupported.hashCode());
         return result;
     }
 
@@ -483,7 +495,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && ObjectUtils.objectsEqual(groupHostsAndVms, other.groupHostsAndVms)
                 && ObjectUtils.objectsEqual(requiredRngSources, other.requiredRngSources)
                 && ObjectUtils.objectsEqual(fencingPolicy, other.fencingPolicy)
-                && ObjectUtils.objectsEqual(glusterTunedProfile, other.glusterTunedProfile);
+                && ObjectUtils.objectsEqual(glusterTunedProfile, other.glusterTunedProfile)
+                && ObjectUtils.objectsEqual(addtionalFeaturesSupported, other.addtionalFeaturesSupported);
     }
 
 }

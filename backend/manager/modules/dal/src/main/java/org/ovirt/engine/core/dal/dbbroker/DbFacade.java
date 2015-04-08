@@ -62,6 +62,8 @@ import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.BookmarkDAO;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
+import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.dao.DAO;
 import org.ovirt.engine.core.dao.DaoFactory;
@@ -1184,5 +1186,13 @@ public class DbFacade {
      */
     public CpuProfileDao getCpuProfileDao() {
         return getDao(CpuProfileDao.class);
+    }
+
+    public ClusterFeatureDao getClusterFeatureDao() {
+        return getDao(ClusterFeatureDao.class);
+    }
+
+    public SupportedHostFeatureDao getSupportedHostFeatureDao() {
+        return getDao(SupportedHostFeatureDao.class);
     }
 }

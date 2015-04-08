@@ -1,9 +1,14 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -18,6 +23,7 @@ import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -105,6 +111,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         }
 
         getVdsGroupDAO().update(getParameters().getVdsGroup());
+        addOrUpdateAddtionalClusterFeatures();
 
         if (oldGroup.getStoragePoolId() == null && getVdsGroup().getStoragePoolId() != null) {
             for (VDS vds : allForVdsGroup) {
@@ -134,6 +141,34 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         alertIfFencingDisabled();
 
         setSucceeded(true);
+    }
+
+    private void addOrUpdateAddtionalClusterFeatures() {
+        Set<SupportedAdditionalClusterFeature> featuresInDb =
+                getClusterFeatureDao().getSupportedFeaturesByClusterId(getVdsGroup().getId());
+        Map<Guid, SupportedAdditionalClusterFeature> featuresEnabled = new HashMap<>();
+
+        for (SupportedAdditionalClusterFeature feature : getVdsGroup().getAddtionalFeaturesSupported()) {
+            featuresEnabled.put(feature.getFeature().getId(), feature);
+        }
+
+        for (SupportedAdditionalClusterFeature featureInDb : featuresInDb) {
+            if (featureInDb.isEnabled() && !featuresEnabled.containsKey(featureInDb.getFeature().getId())) {
+                // Disable the features which are not selected in update cluster
+                featureInDb.setEnabled(false);
+                getClusterFeatureDao().updateSupportedClusterFeature(featureInDb);
+            } else if (!featureInDb.isEnabled() && featuresEnabled.containsKey(featureInDb.getFeature().getId())) {
+                // Enable the features which are selected in update cluster
+                featureInDb.setEnabled(true);
+                getClusterFeatureDao().updateSupportedClusterFeature(featureInDb);
+            }
+            featuresEnabled.remove(featureInDb.getFeature().getId());
+        }
+        // Add the newly add cluster features
+        if (CollectionUtils.isNotEmpty(featuresEnabled.values())) {
+            getClusterFeatureDao().addAllSupportedClusterFeature(featuresEnabled.values());
+        }
+
     }
 
     @Override
@@ -276,6 +311,18 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                     break;
                 }
             }
+
+            if (result) {
+                Set<SupportedAdditionalClusterFeature> additionalClusterFeaturesAdded =
+                        getAdditionalClusterFeaturesAdded();
+                // New Features cannot be enabled if all up hosts are not supporting the selected feature
+                if (CollectionUtils.isNotEmpty(additionalClusterFeaturesAdded)
+                        && !checkClusterFeaturesSupported(vdss, additionalClusterFeaturesAdded)) {
+                    addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS);
+                    result = false;
+                }
+            }
+
             if (result) {
                 boolean notDownVms = false;
                 boolean suspendedVms = false;
@@ -387,6 +434,32 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         return result;
     }
 
+    private Set<SupportedAdditionalClusterFeature> getAdditionalClusterFeaturesAdded() {
+        // Lets not modify the existing collection. Hence creating a new hashset.
+        Set<SupportedAdditionalClusterFeature> featuresSupported =
+                new HashSet<>(getVdsGroup().getAddtionalFeaturesSupported());
+        featuresSupported.removeAll(getClusterFeatureDao().getSupportedFeaturesByClusterId(getVdsGroup().getId()));
+        return featuresSupported;
+    }
+
+    private boolean checkClusterFeaturesSupported(List<VDS> vdss,
+            Set<SupportedAdditionalClusterFeature> newFeaturesEnabled) {
+        Set<String> featuresNamesEnabled = new HashSet<>();
+        for (SupportedAdditionalClusterFeature feature : newFeaturesEnabled) {
+            featuresNamesEnabled.add(feature.getFeature().getName());
+        }
+
+        for (VDS vds : vdss) {
+            Set<String> featuresSupportedByVds =
+                    getSupportedHostFeatureDao().getSupportedHostFeaturesByHostId(vds.getId());
+            if (!featuresSupportedByVds.containsAll(featuresNamesEnabled)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__CLUSTER);
@@ -471,4 +544,5 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     public void setEntityId(AuditLogableBase logable) {
         logable.setVdsGroupId(oldGroup.getId());
     }
+
 }

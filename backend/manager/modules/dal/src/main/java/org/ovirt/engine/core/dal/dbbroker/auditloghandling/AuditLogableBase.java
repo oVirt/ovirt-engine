@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.dao.AuditLogDAO;
+import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.DbGroupDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.PermissionDAO;
@@ -34,6 +36,7 @@ import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -629,6 +632,14 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VdsGroupDAO getVdsGroupDAO() {
         return getDbFacade().getVdsGroupDao();
+    }
+
+    public ClusterFeatureDao getClusterFeatureDao() {
+        return getDbFacade().getClusterFeatureDao();
+    }
+
+    public SupportedHostFeatureDao getSupportedHostFeatureDao() {
+        return getDbFacade().getSupportedHostFeatureDao();
     }
 
     public RoleDAO getRoleDao() {

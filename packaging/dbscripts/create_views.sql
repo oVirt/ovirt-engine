@@ -1814,6 +1814,14 @@ SELECT session_id, georepConfig.config_key, config_value, config_description, co
 FROM  gluster_georep_config georepConfig
 LEFT OUTER JOIN gluster_config_master ON gluster_config_master.config_key = georepConfig.config_key AND gluster_config_master.config_feature='geo_replication';
 
+CREATE OR REPLACE VIEW supported_cluster_features_view
+AS
+SELECT cluster_features.*,
+supported_cluster_features.cluster_id,
+supported_cluster_features.is_enabled
+FROM cluster_features
+INNER JOIN supported_cluster_features ON supported_cluster_features.feature_id = cluster_features.feature_id;
+
 -- Affinity Groups view, including members
 CREATE OR REPLACE VIEW affinity_groups_view
 AS

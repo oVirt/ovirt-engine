@@ -143,6 +143,8 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             return AuditLogType.MIXING_RHEL_VERSIONS_IN_CLUSTER;
         case UNTRUSTED:
             return AuditLogType.VDS_UNTRUSTED;
+        case HOST_FEATURES_INCOMPATIBILE_WITH_CLUSTER:
+            return AuditLogType.HOST_FEATURES_INCOMPATIBILE_WITH_CLUSTER;
         default:
             return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
         }

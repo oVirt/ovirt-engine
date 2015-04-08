@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -12,6 +13,8 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
@@ -38,11 +41,12 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
 
     @Override
     protected void executeCommand() {
-        getVdsGroup().setArchitecture(getArchitecture());
+        VDSGroup cluster = getVdsGroup();
+        cluster.setArchitecture(getArchitecture());
 
         checkMaxMemoryOverCommitValue();
-        getVdsGroup().setDetectEmulatedMachine(true);
-        DbFacade.getInstance().getVdsGroupDao().save(getVdsGroup());
+        cluster.setDetectEmulatedMachine(true);
+        getVdsGroupDAO().save(cluster);
 
         alertIfFencingDisabled();
 
@@ -74,7 +78,14 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                     getParameters().getVdsGroup().getName()));
         }
 
-        setActionReturnValue(getVdsGroup().getId());
+        if (CollectionUtils.isNotEmpty(cluster.getAddtionalFeaturesSupported())) {
+            for (SupportedAdditionalClusterFeature feature : cluster.getAddtionalFeaturesSupported()) {
+                feature.setClusterId(cluster.getId());
+            }
+            getClusterFeatureDao().addAllSupportedClusterFeature(cluster.getAddtionalFeaturesSupported());
+        }
+
+        setActionReturnValue(cluster.getId());
         setSucceeded(true);
     }
 
