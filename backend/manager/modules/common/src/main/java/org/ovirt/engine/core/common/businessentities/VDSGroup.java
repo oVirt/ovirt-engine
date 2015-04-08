@@ -85,6 +85,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private String clusterPolicyName;
 
+    private Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported;
+
     @ValidUri(message = "VALIDATION.VDS_GROUP.SPICE_PROXY.HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.SPICE_PROXY_ADDR_SIZE)
@@ -119,6 +121,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         optimizationType = OptimizationType.NONE;
         requiredRngSources = new HashSet<>();
         fencingPolicy = new FencingPolicy();
+        addtionalFeaturesSupported = new HashSet<>();
     }
 
     @Override
@@ -434,6 +437,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.glusterTunedProfile = glusterTunedProfile;
     }
 
+    public Set<SupportedAdditionalClusterFeature> getAddtionalFeaturesSupported() {
+        return addtionalFeaturesSupported;
+    }
+
+    public void setAddtionalFeaturesSupported(Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported) {
+        this.addtionalFeaturesSupported = addtionalFeaturesSupported;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -468,6 +479,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (autoConverge == null ? 0 : autoConverge.hashCode());
         result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
         result = prime * result + (glusterTunedProfile == null ? 0 : glusterTunedProfile.hashCode());
+        result = prime * result + (addtionalFeaturesSupported == null ? 0 : addtionalFeaturesSupported.hashCode());
         result = prime * result + (maintenanceReasonRequired ? 1231 : 1237);
         return result;
     }
@@ -515,7 +527,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && ObjectUtils.objectsEqual(autoConverge, other.autoConverge)
                 && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed)
                 && ObjectUtils.objectsEqual(glusterTunedProfile, other.glusterTunedProfile)
-                && ObjectUtils.objectsEqual(maintenanceReasonRequired, other.maintenanceReasonRequired);
+                && ObjectUtils.objectsEqual(maintenanceReasonRequired, other.maintenanceReasonRequired)
+                && ObjectUtils.objectsEqual(addtionalFeaturesSupported, other.addtionalFeaturesSupported);
     }
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.network.cluster.AddClusterNetworkClusterValidator;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
@@ -15,12 +16,15 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -42,6 +46,9 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
     @Inject
     private NetworkDao networkDao;
 
+    @Inject
+    private ClusterFeatureDao clusterFeatureDao;
+
     private Network managementNetwork;
 
     public AddVdsGroupCommand(T parameters) {
@@ -52,11 +59,12 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
 
     @Override
     protected void executeCommand() {
-        getVdsGroup().setArchitecture(getArchitecture());
+        VDSGroup cluster = getVdsGroup();
+        cluster.setArchitecture(getArchitecture());
 
         checkMaxMemoryOverCommitValue();
-        getVdsGroup().setDetectEmulatedMachine(true);
-        vdsGroupDao.save(getVdsGroup());
+        cluster.setDetectEmulatedMachine(true);
+        vdsGroupDao.save(cluster);
 
         alertIfFencingDisabled();
 
@@ -71,7 +79,14 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
                     getParameters().getVdsGroup().getName()));
         }
 
-        setActionReturnValue(getVdsGroup().getId());
+        if (CollectionUtils.isNotEmpty(cluster.getAddtionalFeaturesSupported())) {
+            for (SupportedAdditionalClusterFeature feature : cluster.getAddtionalFeaturesSupported()) {
+                feature.setClusterId(cluster.getId());
+            }
+            clusterFeatureDao.addAllSupportedClusterFeature(cluster.getAddtionalFeaturesSupported());
+        }
+
+        setActionReturnValue(cluster.getId());
         setSucceeded(true);
     }
 

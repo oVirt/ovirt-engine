@@ -163,6 +163,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     private String maintenanceReason;
 
     private boolean updateAvailable;
+    // Set of additional features supported by the VDSM.
+    private Set<String> additionalFeatures;
 
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
@@ -187,6 +189,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         supportedRngSources = new HashSet<>();
         liveSnapshotSupport = true;  // usually supported, exceptional case if it isn't.
         liveMergeSupport = true;
+        additionalFeatures = new HashSet<>();
     }
 
     public Integer getCpuCores() {
@@ -706,6 +709,15 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     public void setUpdateAvailable(boolean updateAvailable) {
         this.updateAvailable = updateAvailable;
+
+    }
+
+    public Set<String> getAdditionalFeatures() {
+        return additionalFeatures;
+    }
+
+    public void setAdditionalFeatures(Set<String> additionalFeatures) {
+        this.additionalFeatures = additionalFeatures;
     }
 
     @Override
@@ -771,6 +783,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + (numaSupport ? 0 : 1);
         result = prime * result + (liveSnapshotSupport ? 0 : 1);
         result = prime * result + (liveMergeSupport ? 0 : 1);
+        result = prime * result + (additionalFeatures == null ? 0 : additionalFeatures.hashCode());
         result = prime * result + (maintenanceReason == null ? 0 : maintenanceReason.hashCode());
         result = prime * result + (updateAvailable ? 0 : 1);
 
@@ -848,6 +861,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && liveSnapshotSupport == other.liveSnapshotSupport
                 && liveMergeSupport == other.liveMergeSupport
                 && ObjectUtils.objectsEqual(maintenanceReason, other.maintenanceReason)
-                && updateAvailable == other.updateAvailable;
+                && updateAvailable == other.updateAvailable
+                && ObjectUtils.objectsEqual(additionalFeatures, other.additionalFeatures);
     }
 }

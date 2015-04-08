@@ -1,11 +1,16 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
@@ -22,6 +27,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -41,6 +47,8 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperationParameters> extends
@@ -48,6 +56,12 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
 
     @Inject
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
+
+    @Inject
+    private SupportedHostFeatureDao hostFeatureDao;
+
+    @Inject
+    private ClusterFeatureDao clusterFeatureDao;
 
     private List<VDS> allForVdsGroup;
     private VDSGroup oldGroup;
@@ -117,6 +131,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         }
 
         getVdsGroupDAO().update(getParameters().getVdsGroup());
+        addOrUpdateAddtionalClusterFeatures();
 
         if (isAddedToStoragePool) {
             for (VDS vds : allForVdsGroup) {
@@ -136,6 +151,34 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         alertIfFencingDisabled();
 
         setSucceeded(true);
+    }
+
+    private void addOrUpdateAddtionalClusterFeatures() {
+        Set<SupportedAdditionalClusterFeature> featuresInDb =
+                getClusterFeatureDao().getSupportedFeaturesByClusterId(getVdsGroup().getId());
+        Map<Guid, SupportedAdditionalClusterFeature> featuresEnabled = new HashMap<>();
+
+        for (SupportedAdditionalClusterFeature feature : getVdsGroup().getAddtionalFeaturesSupported()) {
+            featuresEnabled.put(feature.getFeature().getId(), feature);
+        }
+
+        for (SupportedAdditionalClusterFeature featureInDb : featuresInDb) {
+            if (featureInDb.isEnabled() && !featuresEnabled.containsKey(featureInDb.getFeature().getId())) {
+                // Disable the features which are not selected in update cluster
+                featureInDb.setEnabled(false);
+                getClusterFeatureDao().updateSupportedClusterFeature(featureInDb);
+            } else if (!featureInDb.isEnabled() && featuresEnabled.containsKey(featureInDb.getFeature().getId())) {
+                // Enable the features which are selected in update cluster
+                featureInDb.setEnabled(true);
+                getClusterFeatureDao().updateSupportedClusterFeature(featureInDb);
+            }
+            featuresEnabled.remove(featureInDb.getFeature().getId());
+        }
+        // Add the newly add cluster features
+        if (CollectionUtils.isNotEmpty(featuresEnabled.values())) {
+            getClusterFeatureDao().addAllSupportedClusterFeature(featuresEnabled.values());
+        }
+
     }
 
     private NetworkCluster createManagementNetworkCluster(Network managementNetwork) {
@@ -296,6 +339,18 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                     break;
                 }
             }
+
+            if (result) {
+                Set<SupportedAdditionalClusterFeature> additionalClusterFeaturesAdded =
+                        getAdditionalClusterFeaturesAdded();
+                // New Features cannot be enabled if all up hosts are not supporting the selected feature
+                if (CollectionUtils.isNotEmpty(additionalClusterFeaturesAdded)
+                        && !checkClusterFeaturesSupported(vdss, additionalClusterFeaturesAdded)) {
+                    addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS);
+                    result = false;
+                }
+            }
+
             if (result) {
                 boolean notDownVms = false;
                 boolean suspendedVms = false;
@@ -416,6 +471,31 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         return result;
     }
 
+    private Set<SupportedAdditionalClusterFeature> getAdditionalClusterFeaturesAdded() {
+        // Lets not modify the existing collection. Hence creating a new hashset.
+        Set<SupportedAdditionalClusterFeature> featuresSupported =
+                new HashSet<>(getVdsGroup().getAddtionalFeaturesSupported());
+        featuresSupported.removeAll(getClusterFeatureDao().getSupportedFeaturesByClusterId(getVdsGroup().getId()));
+        return featuresSupported;
+    }
+
+    private boolean checkClusterFeaturesSupported(List<VDS> vdss,
+            Set<SupportedAdditionalClusterFeature> newFeaturesEnabled) {
+        Set<String> featuresNamesEnabled = new HashSet<>();
+        for (SupportedAdditionalClusterFeature feature : newFeaturesEnabled) {
+            featuresNamesEnabled.add(feature.getFeature().getName());
+        }
+
+        for (VDS vds : vdss) {
+            Set<String> featuresSupportedByVds = getHostFeatureDao().getSupportedHostFeaturesByHostId(vds.getId());
+            if (!featuresSupportedByVds.containsAll(featuresNamesEnabled)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private boolean validateManagementNetworkAttachement() {
         final Network managementNetwork;
         final Guid managementNetworkId = getParameters().getManagementNetworkId();
@@ -527,5 +607,13 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
     UpdateClusterNetworkClusterValidator createManagementNetworkClusterValidator() {
         return new UpdateClusterNetworkClusterValidator(managementNetworkCluster,
                 getVdsGroup().getCompatibilityVersion());
+    }
+
+    public SupportedHostFeatureDao getHostFeatureDao() {
+        return hostFeatureDao;
+    }
+
+    public ClusterFeatureDao getClusterFeatureDao() {
+        return clusterFeatureDao;
     }
 }

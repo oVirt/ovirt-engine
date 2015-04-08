@@ -8775,4 +8775,78 @@
             <value>/etc/share/ovirt-engine/log/engine-backup.log</value>
         </row>
     </table>
+    <table name="cluster_features">
+        <column>feature_id</column>
+        <column>feature_name</column>
+        <column>version</column>
+        <column>category</column>
+        <column>description</column>
+        <row>
+            <value>00000000-0000-0000-0000-000000000001</value>
+            <value>TEST_FEATURE_1</value>
+            <value>3.5</value>
+            <value>1</value>
+            <value>Test Feature-1 for Virt </value>
+        </row>
+        <row>
+            <value>00000000-0000-0000-0000-000000000002</value>
+            <value>TEST_FEATURE_2</value>
+            <value>3.5</value>
+            <value>2</value>
+            <value>Test Feature-2 for Gluster</value>
+        </row>
+        <row>
+            <value>00000000-0000-0000-0000-000000000003</value>
+            <value>TEST_FEATURE_3</value>
+            <value>3.5</value>
+            <value>255</value>
+            <value>Test Feature-3 for both Virt and Gluster</value>
+        </row>
+        <row>
+            <value>00000000-0000-0000-0000-000000000004</value>
+            <value>TEST_FEATURE_4</value>
+            <value>3.5</value>
+            <value>255</value>
+            <value>Test Feature-4 for both Virt and Gluster</value>
+        </row>
+        <row>
+            <value>00000000-0000-0000-0000-000000000005</value>
+            <value>TEST_FEATURE_5</value>
+            <value>3.5</value>
+            <value>255</value>
+            <value>Test Feature-5 for both Virt and Gluster</value>
+        </row>
+    </table>
+    <table name="supported_cluster_features">
+        <column>cluster_id</column>
+        <column>feature_id</column>
+        <column>is_enabled</column>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>00000000-0000-0000-0000-000000000001</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>00000000-0000-0000-0000-000000000002</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>00000000-0000-0000-0000-000000000003</value>
+            <value>true</value>
+        </row>
+    </table>
+    <table name="supported_host_features">
+        <column>host_id</column>
+        <column>feature_name</column>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>TEST_FEATURE_1</value>
+        </row>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>TEST_FEATURE_2</value>
+        </row>
+    </table>
 </dataset>

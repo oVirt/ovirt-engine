@@ -134,6 +134,8 @@ public enum VdcQueryType implements Serializable {
     GetVdsGroupsByStoragePoolId(VdcQueryAuthType.User),
     GetNumberOfActiveVmsInVdsGroupByVdsGroupId,
     GetNumberOfVmsInVdsGroupByVdsGroupId,
+    GetClusterFeaturesByVersionAndCategory,
+    GetClusterFeaturesByClusterId,
 
     // Certificate
     GetCACertificate(VdcQueryAuthType.User),

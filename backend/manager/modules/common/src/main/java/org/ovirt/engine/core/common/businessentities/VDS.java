@@ -1335,4 +1335,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     public void setUpdateAvailable(boolean updateAvailable) {
         vdsDynamic.setUpdateAvailable(updateAvailable);
     }
+
+    public Set<String> getAdditionalFeatures() {
+        return vdsDynamic.getAdditionalFeatures();
+    }
+
+    public void setAdditionalFeatures(Set<String> additionalFeatures) {
+        vdsDynamic.setAdditionalFeatures(additionalFeatures);
+    }
 }

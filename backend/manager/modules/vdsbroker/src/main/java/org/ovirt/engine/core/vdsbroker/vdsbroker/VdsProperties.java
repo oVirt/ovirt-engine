@@ -376,7 +376,7 @@ public final class VdsProperties {
     public static final String MIGRATION_DOWNTIME = "downtime";
     public static final String AUTO_CONVERGE = "autoConverge";
     public static final String MIGRATE_COMPRESSED = "compressed";
-
+    public static final String ADDITIONAL_FEATURES = "additionalFeatures";
     // storage domains
     public static final String code = "code";
     public static final String lastCheck = "lastCheck";

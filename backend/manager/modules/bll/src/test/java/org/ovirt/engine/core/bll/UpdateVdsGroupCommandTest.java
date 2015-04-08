@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,8 +19,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -28,9 +31,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -57,6 +63,7 @@ public class UpdateVdsGroupCommandTest {
     private static final Guid DC_ID1 = Guid.newGuid();
     private static final Guid DC_ID2 = Guid.newGuid();
     private static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
+    private static final Guid DEFAULT_FEATURE_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA96");
     private static final Guid TEST_MANAGEMENT_NETWORK_ID = Guid.newGuid();
 
     private static final Map<String, String> migrationMap = Collections.unmodifiableMap(
@@ -92,6 +99,10 @@ public class UpdateVdsGroupCommandTest {
     private VmDAO vmDao;
     @Mock
     private NetworkDao networkDao;
+    @Mock
+    private ClusterFeatureDao clusterFeatureDao;
+    @Mock
+    private SupportedHostFeatureDao hostFeatureDao;
     @Mock
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
     @Mock
@@ -415,6 +426,34 @@ public class UpdateVdsGroupCommandTest {
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
     }
 
+    @Test
+    public void enableNewAddtionalFeatureWhenHostDoesnotSupport() {
+        createCommandWithAddtionalFeature();
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        cpuExists();
+        cpuFlagsNotMissing();
+        allQueriesForVms();
+        clusterHasVds();
+        when(clusterFeatureDao.getSupportedFeaturesByClusterId(any(Guid.class))).thenReturn(Collections.EMPTY_SET);
+        when(hostFeatureDao.getSupportedHostFeaturesByHostId(any(Guid.class))).thenReturn(Collections.EMPTY_SET);
+        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS);
+    }
+
+    @Test
+    public void enableNewAddtionalFeatureWhenHostSupports() {
+        createCommandWithAddtionalFeature();
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        cpuExists();
+        cpuFlagsNotMissing();
+        allQueriesForVms();
+        clusterHasVds();
+        when(clusterFeatureDao.getSupportedFeaturesByClusterId(any(Guid.class))).thenReturn(Collections.EMPTY_SET);
+        when(hostFeatureDao.getSupportedHostFeaturesByHostId(any(Guid.class))).thenReturn(new HashSet(Arrays.asList("TEST_FEATURE")));
+        assertTrue(cmd.canDoAction());
+    }
+
     private void createSimpleCommand() {
         createCommand(createNewVdsGroup());
     }
@@ -452,6 +491,10 @@ public class UpdateVdsGroupCommandTest {
         createCommand(createVdsGroupWith(true, false));
     }
 
+    private void createCommandWithAddtionalFeature() {
+        createCommand(createVdsGroupWithAddtionalFeature());
+    }
+
     private void createCommandWithGlusterEnabled() {
         createCommand(createVdsGroupWith(false, true));
     }
@@ -479,6 +522,8 @@ public class UpdateVdsGroupCommandTest {
         doReturn(vmDao).when(cmd).getVmDAO();
         doReturn(networkDao).when(cmd).getNetworkDAO();
         doReturn(defaultManagementNetworkFinder).when(cmd).getDefaultManagementNetworkFinder();
+        doReturn(clusterFeatureDao).when(cmd).getClusterFeatureDao();
+        doReturn(hostFeatureDao).when(cmd).getHostFeatureDao();
         doReturn(networkClusterValidator).when(cmd).createManagementNetworkClusterValidator();
         doReturn(true).when(cmd).validateClusterPolicy();
 
@@ -572,6 +617,21 @@ public class UpdateVdsGroupCommandTest {
         group.setVirtService(virtService);
         group.setGlusterService(glusterService);
         group.setCompatibilityVersion(VERSION_1_1);
+        return group;
+    }
+
+    private static VDSGroup createVdsGroupWithAddtionalFeature() {
+        VDSGroup group = createDefaultVdsGroup();
+        group.setCompatibilityVersion(VERSION_1_1);
+        Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported = new HashSet<>();
+        AdditionalFeature feature =
+                new AdditionalFeature(DEFAULT_FEATURE_ID,
+                        "TEST_FEATURE",
+                        VERSION_1_1,
+                        "Test Feature",
+                        ApplicationMode.AllModes);
+        addtionalFeaturesSupported.add(new SupportedAdditionalClusterFeature(group.getId(), true, feature));
+        group.setAddtionalFeaturesSupported(addtionalFeaturesSupported);
         return group;
     }
 

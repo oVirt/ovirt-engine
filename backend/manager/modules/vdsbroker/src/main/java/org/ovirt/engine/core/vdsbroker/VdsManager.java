@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -40,6 +41,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
@@ -673,6 +675,7 @@ public class VdsManager {
                 // persist to db the host's cpu_flags.
                 // TODO this needs to be revisited - either all the logic is in-memory or based on db
                 DbFacade.getInstance().getVdsDynamicDao().updateCpuFlags(vds.getId(), vds.getCpuFlags());
+                processHostFeaturesReported(vds);
                 monitoringStrategy.processHardwareCapabilities(vds);
             }
             monitoringStrategy.processSoftwareCapabilities(vds);
@@ -691,6 +694,20 @@ public class VdsManager {
         } else {
             log.error("refreshCapabilities:GetCapabilitiesVDSCommand failed with no exception!");
             throw new RuntimeException(caps.getExceptionString());
+        }
+    }
+
+    private void processHostFeaturesReported(VDS host) {
+        SupportedHostFeatureDao hostFeatureDao = DbFacade.getInstance().getSupportedHostFeatureDao();
+        Set<String> supportedHostFeatures = hostFeatureDao.getSupportedHostFeaturesByHostId(host.getId());
+        Set<String> featuresReturendByVdsCaps = new HashSet<String>(host.getAdditionalFeatures());
+        host.getAdditionalFeatures().removeAll(supportedHostFeatures);
+        if (!host.getAdditionalFeatures().isEmpty()) {
+            hostFeatureDao.addAllSupportedHostFeature(host.getId(), host.getAdditionalFeatures());
+        }
+        supportedHostFeatures.removeAll(featuresReturendByVdsCaps);
+        if (!supportedHostFeatures.isEmpty()) {
+            hostFeatureDao.removeAllSupportedHostFeature(host.getId(), supportedHostFeatures);
         }
     }
 

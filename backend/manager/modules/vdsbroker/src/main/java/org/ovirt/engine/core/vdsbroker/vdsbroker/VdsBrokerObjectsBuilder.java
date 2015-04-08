@@ -706,6 +706,18 @@ public class VdsBrokerObjectsBuilder {
         } else {
             vds.setLiveMergeSupport(false);
         }
+
+        updateAdditionalFeatures(vds, xmlRpcStruct);
+    }
+
+    private static void updateAdditionalFeatures(VDS vds, Map<String, Object> xmlRpcStruct) {
+        String[] addtionalFeaturesSupportedByHost =
+                        AssignStringArrayValue(xmlRpcStruct, VdsProperties.ADDITIONAL_FEATURES);
+        if (addtionalFeaturesSupportedByHost != null) {
+            for (String feature : addtionalFeaturesSupportedByHost) {
+                vds.getAdditionalFeatures().add(feature);
+            }
+        }
     }
 
     private static void setRngSupportedSourcesToVds(VDS vds, Map<String, Object> xmlRpcStruct) {
@@ -1284,20 +1296,26 @@ public class VdsBrokerObjectsBuilder {
         return null;
     }
 
-    private static String AssignStringValueFromArray(Map<String, Object> input, String name) {
+    private static String[] AssignStringArrayValue(Map<String, Object> input, String name) {
+        String[] array = null;
         if (input.containsKey(name)) {
-            String[] arr = (String[]) ((input.get(name) instanceof String[]) ? input.get(name) : null);
-            if (arr == null) {
+            array = (String[]) ((input.get(name) instanceof String[]) ? input.get(name) : null);
+            if (array == null) {
                 Object[] arr2 = (Object[]) ((input.get(name) instanceof Object[]) ? input.get(name) : null);
                 if (arr2 != null) {
-                    arr = new String[arr2.length];
+                    array = new String[arr2.length];
                     for (int i = 0; i < arr2.length; i++)
-                        arr[i] = arr2[i].toString();
+                        array[i] = arr2[i].toString();
                 }
             }
-            if (arr != null) {
-                return StringUtils.join(arr, ',');
-            }
+        }
+        return array;
+    }
+
+    private static String AssignStringValueFromArray(Map<String, Object> input, String name) {
+        String[] arr = AssignStringArrayValue(input, name);
+        if (arr != null) {
+            return StringUtils.join(arr, ',');
         }
         return null;
     }
