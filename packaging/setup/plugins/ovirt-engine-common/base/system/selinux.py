@@ -25,7 +25,6 @@ import gettext
 from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import constants as oenginecons
 
 
 def _(m):
@@ -48,6 +47,7 @@ class Plugin(plugin.PluginBase):
     def _init(self):
         self.environment[osetupcons.SystemEnv.SELINUX_CONTEXTS] = []
         self.environment[osetupcons.SystemEnv.SELINUX_RESTORE_PATHS] = []
+        self.environment[osetupcons.SystemEnv.SELINUX_BOOLEANS] = []
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -61,22 +61,12 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self._enabled,
-        priority=plugin.Stages.PRIORITY_HIGH,
-    )
-    def _validation_enable(self):
-        self._enabled = (
-            self.environment[oenginecons.CoreEnv.ENABLE] and
-            not self.environment[
-                osetupcons.CoreEnv.DEVELOPER_MODE
-            ]
-        )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_VALIDATION,
-        condition=lambda self: self._enabled,
     )
     def _validation(self):
-        if self.command.get('selinuxenabled', optional=True) is None:
+        if (
+            self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] or
+            self.command.get('selinuxenabled', optional=True) is None
+        ):
             self._enabled = False
         else:
             rc, stdout, stderr = self.execute(
@@ -90,6 +80,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self._enabled,
+        name=osetupcons.Stages.SETUP_SELINUX,
         priority=plugin.Stages.PRIORITY_LOW,
     )
     def _misc(self):
@@ -123,6 +114,26 @@ class Plugin(plugin.PluginBase):
                 self.logger.error(
                     _('Failed to refresh SELINUX context for {path}').format(
                         path=path
+                    )
+                )
+        for entry in self.environment[osetupcons.SystemEnv.SELINUX_BOOLEANS]:
+            rc, stdout, stderr = self.execute(
+                (
+                    self.command.get('semanage'),
+                    'boolean',
+                    '--modify',
+                    '--{state}'.format(state=entry['state']),
+                    entry['boolean']
+                )
+            )
+            if rc != 0:
+                self.logger.error(
+                    _(
+                        'Failed to modify selinux boolean {boolean}, please '
+                        'make sure it is set to {state}.'
+                    ).format(
+                        boolean=entry['boolean'],
+                        state=entry['state'],
                     )
                 )
 

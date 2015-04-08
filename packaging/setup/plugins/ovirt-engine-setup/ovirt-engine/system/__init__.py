@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ from . import engine
 from . import memcheck
 from . import nfs
 from . import exportfs
-from . import selinux
 from . import image_upload
 
 
@@ -36,7 +35,6 @@ def createPlugins(context):
     memcheck.Plugin(context=context)
     nfs.Plugin(context=context)
     exportfs.Plugin(context=context)
-    selinux.Plugin(context=context)
     image_upload.Plugin(context=context)
 
 

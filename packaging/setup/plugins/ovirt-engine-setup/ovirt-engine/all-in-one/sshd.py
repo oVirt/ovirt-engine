@@ -77,7 +77,6 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.DEVELOPER_MODE
         ]
         self.command.detect('sshd')
-        self.command.detect('restorecon')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -148,15 +147,24 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.SSH_KEY_AVAILABLE,
         ),
+        before=(
+            osetupcons.Stages.SETUP_SELINUX,
+        ),
     )
     def _misc(self):
         authorized_keys_line = self.environment[
             oenginecons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
         ] + ' ovirt-engine'
 
-        authorized_keys_file = os.path.join(
+        sshdir = os.path.join(
             os.path.expanduser('~root'),
-            '.ssh',
+            '.ssh'
+        )
+        self.environment[
+            osetupcons.SystemEnv.SELINUX_RESTORE_PATHS
+        ].append(sshdir)
+        authorized_keys_file = os.path.join(
+            sshdir,
             'authorized_keys'
         )
 
@@ -198,24 +206,6 @@ class Plugin(plugin.PluginBase):
             name='sshd',
             state=True
         )
-
-        if self.command.get('restorecon', optional=True) is not None:
-            rc, stdout, stderr = self.execute(
-                (
-                    self.command.get('restorecon'),
-                    '-r',
-                    os.path.join(
-                        os.path.expanduser('~root'),
-                        '.ssh',
-                    ),
-                ),
-                raiseOnError=False,
-            )
-
-            if rc != 0:
-                self.logger.warning(
-                    _('Cannot set SELinux properties on SSH directory')
-                )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
