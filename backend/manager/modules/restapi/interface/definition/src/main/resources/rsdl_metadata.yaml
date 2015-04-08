@@ -22,7 +22,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
       All-Content: {value: true|false, required: false}
@@ -109,14 +108,12 @@ actions:
           vm.migration.auto_converge: xs:string
           vm.migration.compressed: xs:string
         description: update the virtual machine in the system for the given virtual machine id with the values specified in the request
-    urlparams: {}
 - name: /vms/{vm:id}/applications|rel=get
   description: get all the applications installed on the vm identified by the given id
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /vms/{vm:id}/applications/{application:id}|rel=get
@@ -125,7 +122,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /vms|rel=add
@@ -325,7 +321,6 @@ actions:
                 vm.migration.auto_converge: xs:string
                 vm.migration.compressed: xs:string
         description: add a virtual machine to the system from a configuration - requires the configuration type and the configuration data
-    urlparams: {}
 - name: /vms/{vm:id}/shutdown|rel=shutdown
   description: shutdown a virtual machine in the system identified by the given id
   request:
@@ -335,7 +330,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: shutdown a virtual machine in the system identified by the given id
-    urlparams: {}
 - name: /vms/{vm:id}/stop|rel=stop
   description: stop a virtual machine in the system identified by the given id
   request:
@@ -345,14 +339,12 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: stop a virtual machine in the system identified by the given id
-    urlparams: {}
 - name: /vms/{vm:id}/reboot|rel=reboot
   description: reboot a virtual machine in the system identified by the given id
   request:
     body:
       parameterType: Action
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/start|rel=start
   description: start a virtual machine in the system identified by the given id
   request:
@@ -385,7 +377,6 @@ actions:
           action.vm.initialization.cloud_init.payload_files.payload_file--COLLECTION: {payload_file.name: 'xs:string',
           payload_file.content: 'xs:string',payload_file.type: 'xs:string'}}
         description: start a virtual machine in the system identified by the given id with the options specified in the request body
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /vms/{vm:id}/suspend|rel=suspend
@@ -397,7 +388,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: suspend a virtual machine in the system identified by the given id
-    urlparams: {}
 - name: /vms/{vm:id}/export|rel=export
   description: export a virtual machine in the system identified by the given id to the export domain
   request:
@@ -409,7 +399,6 @@ actions:
           action.discard_snapshots: 'xs:boolean', action.storage_domain.id|name: 'xs:string',
           action.grace_period.expiry: 'xs:long'}
         description: export a virtual machine in the system identified by the given id to the export domain with the options specified in the request body
-    urlparams: {}
 - name: /vms/{vm:id}/preview_snapshot|rel=preview_snapshot
   request:
     body:
@@ -423,26 +412,22 @@ actions:
             disk.id: xs:string
             disk.image_id: xs:string
             disk.snapshot.id: xs:string
-    urlparams: {}
 - name: /vms/{vm:id}/commit_snapshot|rel=commit_snapshot
   request:
     body:
       parameterType: Action
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/undo_snapshot|rel=undo_snapshot
   request:
     body:
       parameterType: Action
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/clone|rel=clone
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.vm.name: 'xs:string'}
-    urlparams: {}
 - name: /vms/{vm:id}/detach|rel=detach
   description: detach a virtual machine in the system identified by the given id from the storage domain
   request:
@@ -452,7 +437,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: detach a virtual machine in the system identified by the given id from the storage domain
-    urlparams: {}
 - name: /vms/{vm:id}/migrate|rel=migrate
   description: migrate a virtual machine in the system identified by the given id to another host
   request:
@@ -463,7 +447,6 @@ actions:
         optionalArguments: {action.host.id|name: 'xs:string', action.async: 'xs:boolean',
           action.force: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.cluster.id: 'xs:string'}
         description: migrate a virtual machine in the system identified by the given id to another host with options specified in the request body
-    urlparams: {}
 - name: /vms/{vm:id}/move|rel=move #deprecated, replaced by '/vms/{vm:id}/disks/{disk:id}/move|rel=move'
   description: This action is deprecated. Move a virtual machine's disk
   request:
@@ -473,7 +456,6 @@ actions:
       - mandatoryArguments: {action.storage_domain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: This action is deprecated. Move a virtual machine's disk to the target storage domain
-    urlparams: {}
 - name: /vms/{vm:id}/ticket|rel=ticket
   description: Create a ticket for connecting to the VM using the display protocol.
   request:
@@ -483,7 +465,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.ticket.value: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: Create a ticket for connecting to the VM using the display protocol.
-    urlparams: {}
 - name: /vms/{vm:id}/logon|rel=logon
   description: Perform automatic logon on the VM using the guest agent.
   request:
@@ -493,7 +474,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {}
         description: Perform automatic logon on the VM using the guest agent.
-    urlparams: {}
 - name: /vms/{vm:id}/cdroms|rel=get
   description: get all the cdroms for a virtual machine
   request:
@@ -539,7 +519,6 @@ actions:
       signatures:
       - mandatoryArguments: {cdrom.file.id: 'xs:string'}
         description: add a cdrom to a virtual machine identified by the given id and attach a file to the cdrom
-    urlparams: {}
 - name: /vms/{vm:id}/watchdogs|rel=get
   description: get all the watchdogs for the virtual machine identified by the given id
   request:
@@ -554,7 +533,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/watchdogs/{watchdog:id}|rel=delete
   description: delete the watchdog for the virtual machine identified by the given id
   request:
@@ -582,7 +560,6 @@ actions:
       signatures:
       - mandatoryArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
         description: add a watchdog to the virtual machine identified by the given id
-    urlparams: {}
 - name: /vms/{vm:id}/disks|rel=get
   description: get all disks for a given virtual machine
   request:
@@ -597,7 +574,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/disks/{disk:id}|rel=delete
   description: delete or detach a disk for a given virtual machine
   request:
@@ -632,7 +608,6 @@ actions:
           disk.sgio: xs:string
           disk.read_only: xs:boolean
           description: update the size, boot flag and other parameters of the disk attached to the virtual machine
-    urlparams: {}
 - name: /vms/{vm:id}/disks|rel=add
   description: add a new or existing disk to the virtual machine
   request:
@@ -675,7 +650,6 @@ actions:
       - mandatoryArguments: {disk.id: 'xs:string', disk.snapshot.id: 'xs:string'}
         optionalArguments: {disk.active: 'xs:boolean'}
         description: attach a disk snapshot to the virtual machine
-    urlparams: {}
 - name: /vms/{vm:id}/disks/{disk:id}/activate|rel=activate
   description: activate a disk attached to a virtual machine
   request:
@@ -685,7 +659,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activate a disk attached to a virtual machine
-    urlparams: {}
 - name: /vms/{vm:id}/disks/{disk:id}/deactivate|rel=deactivate
   description: deactivate a disk attached to a virtual machine
   request:
@@ -695,7 +668,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: deactivate a disk attached to a virtual machine
-    urlparams: {}
 - name: /vms/{vm:id}/disks/{disk:id}/move|rel=move
   description: move a disk attached to a virtual machine to a different storage domain. If the virtual machine is running this will trigger a live storage migration
   request:
@@ -705,7 +677,6 @@ actions:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: move a disk attached to a virtual machine to a different storage domain. If the virtual machine is running this will trigger a live storage migration
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /vms/{vm:id}/disks/{disk:id}/export|rel=export
@@ -715,7 +686,6 @@ actions:
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /vms/{vm:id}/nics|rel=get
@@ -734,7 +704,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       All-Content: {value: true|false, required: false}
 - name: /vms/{vm:id}/nics/{nic:id}|rel=delete
@@ -758,21 +727,18 @@ actions:
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}, nic.plugged: 'xs:boolean'}
         deprecated: true
         description: update the network interface for the given virtual machine with port mirroring options
-    urlparams: {}
 - name: /vms/{vm:id}/nics/{nic:id}/activate|rel=activate #deprecated, replaced by 'add/edit'
   description: Deprecated, replaced by add/edit
   request:
     body:
       parameterType: Action
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/nics/{nic:id}/deactivate|rel=deactivate #deprecated, replaced by 'add/edit'
   description: Deprecated, replaced by add/edit
   request:
     body:
       parameterType: Action
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/nics|rel=add
   description: add a new network interface to the given virtual machine
   request:
@@ -786,7 +752,6 @@ actions:
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}, nic.plugged: 'xs:boolean'}
         deprecated: true
         description: add a new network interface to the given virtual machine with port mirroring options
-    urlparams: {}
 - name: /vms/{vm:id}/permissions|rel=get
   description: get all the permissions for a given virtual machine
   request:
@@ -801,7 +766,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/permissions/{permission:id}|rel=delete
   description: delete a permission for a given virtual machine
   request:
@@ -822,7 +786,6 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
         description: add a new group level permission for a given virtual machine
-    urlparams: {}
 - name: /vms/{vm:id}/statistics|rel=get
   description: get the memory and cpu statistics for a given virtual machine
   request:
@@ -837,7 +800,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/snapshots|rel=get
   description: get all snapshots for a given virtual machine
   request:
@@ -854,7 +816,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       All-Content: {value: true|false, required: false}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}|rel=delete
@@ -876,7 +837,6 @@ actions:
           snapshot.persist_memorystate: xs:boolean
           snapshot.disks.disk--COLLECTION: {disk.id: 'xs:string'}
         description: create a new snapshot for a given virtual machine
-    urlparams: {}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/restore|rel=restore
   description: restore the virtual machine from a given snapshot
   request:
@@ -886,35 +846,30 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.restore_memory: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.disks.disk--COLLECTION: {disk.id: 'xs:string', disk.image_id: 'xs:string'}}
         description: restore the virtual machine from a given snapshot
-    urlparams: {}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/cdroms|rel=get
   description: get the list of cdroms attached to the virtual machine at the time the snapshot was created
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/cdroms/{cdrom:id}|rel=get
   description: get the details of a cdrom attached to the virtual machine at the time the snapshot was created
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/disks|rel=get
   description: get the list of disks attached to the virtual machine at the time the snapshot was created
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/disks/{disk:id}|rel=get
   description: get the details of a disk attached to the virtual machine at the time the snapshot was created
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/disks/{disk:id}|rel=delete
   description: delete a disk from a VM snapshot
   request:
@@ -929,14 +884,12 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/nics/{nic:id}|rel=get
   description: get the details of a network interface attached to the virtual machine at the time the snapshot was created
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/tags|rel=get
   description: get the list of tags added to the virtual machine
   request:
@@ -951,7 +904,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/tags/{tag:id}|rel=delete
   description: delete a tag added to the virtual machine
   request:
@@ -968,21 +920,18 @@ actions:
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
         description: add a new tag to the virtual machine
-    urlparams: {}
 - name: /vms/{vm:id}/sessions|rel=get
   description: get the open user-sessions of this VM
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/sessions/{session:id}|rel=get
   description: get the deails of a VM user session.
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/maintenance|rel=maintenance
   description: enable or disable maintenance mode for this virtual machine
   request:
@@ -992,7 +941,6 @@ actions:
       - mandatoryArguments: {action.maintenance_enabled: 'xs:boolean'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: enable or disable maintenance mode for this virtual machine
-    urlparams: {}
 - name: /disks|rel=get
   description: get a list of disks in the system
   request:
@@ -1009,7 +957,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /disks/{disk:id}|rel=delete
   description: delete the specified disk in the system
   request:
@@ -1028,7 +975,6 @@ actions:
         optionalArguments:
           action.async: xs:boolean
           action.grace_period.expiry: xs:long
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /disks/{disk:id}/move|rel=move
@@ -1043,7 +989,6 @@ actions:
           action.async: xs:boolean
           action.grace_period.expiry: xs:long
         description: move a disk to a different storage domain
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /disks/{disk:id}/copy|rel=copy
@@ -1058,7 +1003,6 @@ actions:
           action.async: xs:boolean
           action.grace_period.expiry: xs:long
         description: copy a disk to a different storage domain
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /disks|rel=add
@@ -1095,7 +1039,6 @@ actions:
           disk.sgio: xs:string
           disk.lun_storage.host: xs:string
         description: add a new lun disk to the system, this operation does not require size but requires lun connection details
-    urlparams: {}
 - name: /disks/{disk:id}/statistics|rel=get
   description: get the disk statistics for the specified disk in the system
   request:
@@ -1110,7 +1053,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /disks/{disk:id}/permissions|rel=get
   description: get the list of permissions for the disk in the system. Disk inherits permissions from the VM it is attached to and from the storage domain it resides on (if there is one)
   request:
@@ -1125,21 +1067,18 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /capabilities|rel=get
   description: get the capabilities of the system listing the features that are supported for all versions of cluster/data center
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /capabilities/{version:id}|rel=get
   description: get the capabilities of the system for the specified version, lists the features that are supported for the provided version of the cluster/data center
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/networks|rel=get
   description: get networks for the datacenter in the system
   request:
@@ -1154,7 +1093,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/networks/{network:id}|rel=delete
   description: delete the specified network in the datacenter
   request:
@@ -1171,7 +1109,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {network.display: 'xs:boolean', network.usages.usage--COLLECTION: {usage: 'xs:string'}}
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/networks|rel=add
   description: add a new network to the datacenter
   request:
@@ -1192,14 +1129,12 @@ actions:
             network.usages.usage--COLLECTION: {usage: 'xs:string'}
         }
         description: add a new network to the datacenter
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels|rel=get
   description: get the labels of a network
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels|rel=add
   description: add a new label to the network
   request:
@@ -1208,14 +1143,12 @@ actions:
       signatures:
       - mandatoryArguments: {label.id: 'xs:string'}
         description: add a new label to the network
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels/{label:id}|rel=get
   description: get a specific label of a network
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels/{label:id}|rel=delete
   description: delete the specified label of a network
   request:
@@ -1238,7 +1171,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/qoss/{qos:id}|rel=delete
   description: delete the specified QoS in the datacenter
   request:
@@ -1269,7 +1201,6 @@ actions:
                            qos.outbound_average: 'xs:int',
                            qos.outbound_peak: 'xs:int',
                            qos.outbound_burst: 'xs:int'}
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/qoss|rel=add
   description: add a new QoS to the datacenter
   request:
@@ -1292,7 +1223,6 @@ actions:
                            qos.outbound_peak: 'xs:int',
                            qos.outbound_burst: 'xs:int'}
         description: add a new QoS to the datacenter
-    urlparams: {}
 - name: /storagedomains|rel=get
   description: get storage domains in the system
   request:
@@ -1311,7 +1241,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}|rel=delete
@@ -1406,7 +1335,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/images|rel=get
   request:
     body:
@@ -1419,7 +1347,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/images/{images:id}/import|rel=import
   request:
     body:
@@ -1427,7 +1354,6 @@ actions:
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.import_as_template: 'xs:boolean', action.cluster.id|name: 'xs:string'}
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/permissions|rel=get
   description: get the list of permissions for the storage domain
   request:
@@ -1442,7 +1368,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the storage domain
   request:
@@ -1463,7 +1388,6 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
         description: add a new group level permission on the storage domain
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}|rel=delete
   description: delete the specified template from the export or data domain
   request:
@@ -1488,7 +1412,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/register|rel=register
   description: Register the Template means importing the Template from the data domain, by inserting the configuration of the Template and disks into the DB without the copy process
   request:
@@ -1498,7 +1421,6 @@ actions:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
         optionalArguments: {action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.template.name: 'xs:string'}
         description: Register the Template means importing the Template from the data domain, by inserting the configuration of the Template and disks into the DB without the copy process
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/import|rel=import
   description: import the template from the export or data domain
   request:
@@ -1508,21 +1430,18 @@ actions:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
         optionalArguments: {action.storage_domain.id|name: 'xs:string', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.template.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}, action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: import the template from the export or data domain identified by storagedomain-identifier into the destination storage domain identified by storage_domain.id|name
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/disks|rel=get
   description: get the list of disks attached to the template in the export or data domain
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk attached to the template in the export or data domain
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/vms|rel=get
   description: get the list of virtual machines in the storage domain
   request:
@@ -1546,7 +1465,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/register|rel=register
   description: Register the VM means importing the VM from the data domain, by inserting the configuration of the VM and disks into the DB without the copy process
   request:
@@ -1556,7 +1474,6 @@ actions:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
         optionalArguments: {action.clone: 'xs:boolen', action.vm.name: 'xs:string'}
         description: Register the VM means importing the VM from the data domain, by inserting the configuration of the VM and disks into the DB without the copy process
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/import|rel=import
   description: import the specified virtual machine in the storage domain into the system
   request:
@@ -1566,7 +1483,6 @@ actions:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean',action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.vm.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}, action.grace_period.expiry: 'xs:long'}
         description: import the specified virtual machine from the source storagedomain identified by storagedomain-identifier into the destination storage domain identified by storage_domain.id|name
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/disksnapshots|rel=get
   description: get the list of disk snapshots in the storage domain
   request:
@@ -1590,7 +1506,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /clusters|rel=get
   description: get the list of clusters in the system
   request:
@@ -1609,21 +1524,18 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk attached to the virtual machine in the storage domain
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /clusters/{cluster:id}|rel=get
   description: get the details of the specified cluster in the system
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/storageconnections|rel=get
@@ -1640,7 +1552,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=delete
   request:
     body:
@@ -1655,7 +1566,6 @@ actions:
       signatures:
       - mandatoryArguments: {storageconnection.id: 'xs:string'}
         optionalArguments: {}
-    urlparams: {}
 - name: /clusters/{cluster:id}|rel=delete
   description: get the details of the specified cluster in the system
   request:
@@ -1680,7 +1590,6 @@ actions:
         cluster.fencing_policy.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_sd_active.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_connectivity_broken.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_connectivity_broken.threshold: 'xs:int', cluster.maintenance_reason_required: 'xs:boolean',
         cluster.management_network.id|name: 'xs:string'}
         description: update the specified cluster in the system. The capabilities like virt service, cluster service, tarnsparent huge pages etc can be changed.
-    urlparams: {}
 - name: /clusters|rel=add
   description: add a new cluster to the system
   request:
@@ -1696,7 +1605,6 @@ actions:
         cluster.fencing_policy.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_sd_active.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_connectivity_broken.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_connectivity_broken.threshold: 'xs:int',
         cluster.management_network.id|name: 'xs:string', cluster.maintenance_reason_required: 'xs:boolean'}
         description: add a new cluster to the system
-    urlparams: {}
 - name: /clusters/{cluster:id}/networks|rel=get
   description: get the list of networks in the cluster
   request:
@@ -1711,7 +1619,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /clusters/{cluster:id}/networks/{network:id}|rel=delete
   description: delete the specified network in the cluster
   request:
@@ -1729,7 +1636,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {network.display: 'xs:boolean', network.usages.usage--COLLECTION: {usage: 'xs:string'}}
         description: update the specified network in the cluster with network usage. Display is provided here for backwards compatibility.
-    urlparams: {}
 - name: /clusters/{cluster:id}/networks|rel=add
   description: add a new network to the cluster
   request:
@@ -1739,7 +1645,6 @@ actions:
       - mandatoryArguments: {network.id|name: 'xs:string'}
         optionalArguments: {network.usages.usage--COLLECTION: {usage: 'xs:string'}}
         description: add a new network to the cluster
-    urlparams: {}
 - name: /clusters/{cluster:id}/permissions|rel=get
   description: get the list of permissions on the cluster
   request:
@@ -1754,7 +1659,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /clusters/{cluster:id}/permissions/{permission:id}|rel=delete
   description: delete the permission on the cluster
   request:
@@ -1775,7 +1679,6 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
         description: add a new group level permission on the cluster
-    urlparams: {}
 - name: /macpools|rel=get
   description: get a list of mac pools in the system
   request:
@@ -1790,7 +1693,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /macpools|rel=add
   description: add the specified mac pool into the system
   request:
@@ -1805,7 +1707,6 @@ actions:
           macpool.allow_duplicates: xs:boolean
           macpool.default_pool: xs:boolean
         description: add the specified mac pool into the system
-    urlparams: {}
 - name: /macpools/{macpool:id}|rel=delete
   description: delete the specified mac pool from the system
   request:
@@ -1832,7 +1733,6 @@ actions:
           macpool.default_pool: xs:boolean
           macpool.ranges.range--COLLECTION: {range.from: 'xs:string', range.to: 'xs:string'}
         description: update the specified mac pool in the system
-    urlparams: {}
 - name: /datacenters/{datacenter:id}|rel=update
   description: update the specified data center in the system
   request:
@@ -1852,7 +1752,6 @@ actions:
           datacenter.storage_format: xs:string
           datacenter.mac_pool.id: xs:string
         description: update the specified data center in the system
-    urlparams: {}
 - name: /datacenters|rel=get
   description: get a list of data centers in the system
   request:
@@ -1871,7 +1770,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}|rel=delete
@@ -1904,21 +1802,18 @@ actions:
           datacenter.version.minor: xs:int
           datacenter.mac_pool.id: xs:string
         description: add a new data center to the system
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/permissions|rel=get
   description: get the list of permissions on the data center
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/permissions/{permission:id}|rel=get
   description: get details of the specified permission on the data center
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the data center
   request:
@@ -1939,7 +1834,6 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
         description: add a new role permission on the data center
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/storagedomains|rel=get
   description: get the list of storage domains in a data center
   request:
@@ -1954,7 +1848,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=delete
   description: delete the specified storage domain in a data center
   request:
@@ -1972,7 +1865,6 @@ actions:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {}
         description: add a new storage domain to the data center
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/activate|rel=activate
   description: activate the specified storage domain in the data center
   request:
@@ -1982,7 +1874,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activate the specified storage domain in the data center
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/deactivate|rel=deactivate
   description: deactivate the specified storage domain in the data center
   request:
@@ -1992,7 +1883,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: deactivate the specified storage domain in the data center
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/clusters|rel=get
   description: get the list of clusters in the data center
   request:
@@ -2009,7 +1899,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}|rel=delete
@@ -2034,7 +1923,6 @@ actions:
         cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean', cluster.ha_reservation: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean',
         cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string', cluster.ksm.enabled: 'xs:boolean'}
         description: update specified cluster in the data center
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/clusters|rel=add
   description: add a new cluster to the data center
   request:
@@ -2050,7 +1938,6 @@ actions:
         cluster.tunnel_migration: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean', cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string', cluster.ksm.enabled: 'xs:boolean',
         cluster.management_network.id|name: 'xs:string'}
         description: add a new cluster to the data center
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=get
   description: get the list of networks for a cluster in a data center
   request:
@@ -2065,7 +1952,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=delete
   description: delete the specified network in a cluster in the specified data center
   request:
@@ -2083,7 +1969,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {network.display: 'xs:boolean', network.usages.usage--COLLECTION: {usage: 'xs:string'}}
         description: update the specified network in a cluster in the specified data center. Display is provided here for backwards compatibility.
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=add
   description: add a new network to a cluster in the specified data center.
   request:
@@ -2093,7 +1978,6 @@ actions:
       - mandatoryArguments: {network.id|name: 'xs:string'}
         optionalArguments: {network.usages.usage--COLLECTION: {usage: 'xs:string'}}
         description: add a new network to a cluster in the specified data center.
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=get
   description: get the list of permissions on the cluster in the specified data center.
   request:
@@ -2108,7 +1992,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the cluster in the specified data center.
   request:
@@ -2129,7 +2012,6 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
         description: add a new group level permission on the cluster in the specified data center.
-    urlparams: {}
 - name: /domains|rel=get
   description: get a list of domains in the system
   request:
@@ -2144,7 +2026,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /domains/{domain:id}/groups|rel=get
   description: get the list of groups in the specified domain
   request:
@@ -2161,7 +2042,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /domains/{domain:id}/users|rel=get
   description: get the list of users in the domain
   request:
@@ -2178,7 +2058,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /events|rel=get
   description: get the list of events in the system
   request:
@@ -2199,14 +2078,12 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: undoes the delete operation performed on the events
-    urlparams: {}
 - name: /events/{event:id}|rel=get
   description: get the details of the specified event in the system
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /groups|rel=get
   description: get the list of groups in the system
   request:
@@ -2223,7 +2100,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /events|rel=add
   description: add a new event to the system
   request:
@@ -2235,14 +2111,12 @@ actions:
                            event.vm.id: 'xs:string',event.storage_domain.id: 'xs:string',event.template.id: 'xs:string',
                            event.cluster.id: 'xs:string',event.data_center.id: 'xs:string'}
         description: add a new event to the system
-    urlparams: {}
 - name: /groups/{group:id}|rel=get
   description: get the details of the specified group in the system
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /groups/{group:id}|rel=delete
   description: delete the specified group in the system
   request:
@@ -2260,7 +2134,6 @@ actions:
       - mandatoryArguments: {group.name: 'xs:string'}
         optionalArguments: {group.namespace: 'xs:string', group.principal: 'xs:string'}
         description: add a new group to the system
-    urlparams: {}
 - name: /groups/{group:id}/permissions|rel=get
   description: get list of permissions for the group in the system
   request:
@@ -2275,7 +2148,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /groups/{group:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission from the group in the system
   request:
@@ -2311,7 +2183,6 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.template.id: 'xs:string'}
         optionalArguments: {}
         description: add a new permission on the template to the group in the system
-    urlparams: {}
 - name: /groups/{group:id}/roles|rel=get
   description: get the list of roles assigned to the specified group
   request:
@@ -2326,7 +2197,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /groups/{group:id}/roles/{role:id}/permits|rel=get
   description: get the permits for the specified role in a group
   request:
@@ -2341,7 +2211,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /groups/{group:id}/roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for a role in a group
   request:
@@ -2358,7 +2227,6 @@ actions:
       signatures:
       - mandatoryArguments: {permit.id|name: 'xs:string'}
         optionalArguments: {}
-    urlparams: {}
 - name: /groups/{group:id}/tags|rel=get
   description: get the list of tags attached to a given group
   request:
@@ -2373,7 +2241,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /groups/{group:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag attached to a given group
   request:
@@ -2390,7 +2257,6 @@ actions:
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
         optionalArguments: {}
-    urlparams: {}
 - name: /hosts|rel=get
   description: get the list of hosts in the system
   request:
@@ -2495,7 +2361,6 @@ actions:
           username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}, host.reboot_after_installation: 'xs:boolean', host.override_iptables: 'xs:boolean',
           host.power_management.kdump_detection: 'xs:boolean', host.protocol: 'xs:int'}
         description: add a new host to the system providing the ssh password or fingerprint
-    urlparams: {}
 - name: /hosts/{host:id}/activate|rel=activate
   description: activate the specified host in the system
   request:
@@ -2505,7 +2370,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activate the specified host in the system
-    urlparams: {}
 - name: /hosts/{host:id}/forceselectspm|rel=forceselectspm
   description: force the specified to be selected as storage pool manager
   request:
@@ -2515,7 +2379,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: force the specified to be selected as storage pool manager
-    urlparams: {}
 - name: /hosts/{host:id}/approve|rel=approve
   description: approve specified host to be added to the engine
   request:
@@ -2531,7 +2394,6 @@ actions:
           action.grace_period.expiry: 'xs:long', host.ssh.authentication_method: 'xs:string',
           host.ssh.user.user_name: 'xs:string', host.ssh.user.password: 'xs:string'}
         description: approve specified host to be added to the engine by using ssh authentication. this occurs when the host registers itself with the engine
-    urlparams: {}
 - name: /hosts/{host:id}/commitnetconfig|rel=commitnetconfig
   description: commit the changes made to network configuration of the host
   request:
@@ -2541,7 +2403,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: commit the changes made to network configuration of the host
-    urlparams: {}
 - name: /hosts/{host:id}/deactivate|rel=deactivate
   description: deactivate the specified host
   request:
@@ -2551,7 +2412,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.reason: 'xs:string'}
         description: deactivate the specified host
-    urlparams: {}
 - name: /hosts/{host:id}/fence|rel=fence
   description: perform fencing operation (start/stop/status) on the host. 
   request:
@@ -2561,7 +2421,6 @@ actions:
       - mandatoryArguments: {action.fence_type: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: perform fencing operation (start/stop/status) on the host.
-    urlparams: {}
 - name: /hosts/{host:id}/install|rel=install
   description: install vdsm and other packages required to get the host ready to be used in the engine
   request:
@@ -2587,7 +2446,6 @@ actions:
           action.grace_period.expiry: xs:long
           action.host.override_iptables: xs:boolean
         description: install vdsm and other packages required to get the host ready to be used in the engine providing thre ssh password
-    urlparams: {}
 - name: /hosts/{host:id}/iscsidiscover|rel=iscsidiscover
   description: initiate the command to discover the iscsi targets and map the targets to the storage server connections
   request:
@@ -2597,7 +2455,6 @@ actions:
       - mandatoryArguments: {action.iscsi.address: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: initiate the command to discover the iscsi targets and map the targets to the storage server connections
-    urlparams: {}
 - name: /hosts/{host:id}/iscsilogin|rel=iscsilogin
   description: login to the specified iscsi target at the specified address
   request:
@@ -2607,7 +2464,6 @@ actions:
       - mandatoryArguments: {action.iscsi.address: 'xs:string', action.iscsi.target: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: login to the specified iscsi target at the specified address
-    urlparams: {}
 - name: /hosts/{host:id}/unregisteredstoragedomainsdiscover|rel=unregisteredstoragedomainsdiscover
   description: Discover the Storage Domains which are candidiates to be imported to the setup
   request:
@@ -2616,7 +2472,6 @@ actions:
       signatures:
       - optionalArguments: {action.iscsi.address: 'xs:string', action.iscsi_target: 'xs:string'}
         description: Discover the Storage Domains which are candidiates to be imported to the setup
-    urlparams: {}
 - name: /hosts/{host:id}/refreshcapabilities|rel=refreshcapabilities
   description: refresh the capabilities of the host
   request:
@@ -2626,7 +2481,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: refresh the capabilities of the host
-    urlparams: {}
 - name: /hosts/{host:id}/katelloerrata|rel=get
   description: get the list of errata available for the host
   request:
@@ -2641,7 +2495,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/nics|rel=get
   description: get the list of network interfaces for the host
   request:
@@ -2656,7 +2509,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/nics/{nic:id}|rel=delete
   description: delete the specified network interface for the host
   request:
@@ -2697,7 +2549,6 @@ actions:
           hostnic.bonding.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string',
             type: 'xs:string'}
         description: add a new network interface for the host
-    urlparams: {}
 - name: /hosts/{host:id}/nics/setupnetworks|rel=setupnetworks
   description: initiate the command to setup networks for the network interface card of the specified host
   request:
@@ -2717,7 +2568,6 @@ actions:
           action.connectivityTimeout: xs:int
           action.force: xs:boolean
         description: initiate the command to setup networks for the network interface card of the specified host
-    urlparams: {}
 - name: /hosts/{host:id}/nics/{nic:id}/attach|rel=attach
   description: attach the network interface card to the specified host
   request:
@@ -2727,7 +2577,6 @@ actions:
       - mandatoryArguments: {action.network.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: attach the network interface card to the specified host
-    urlparams: {}
 - name: /hosts/{host:id}/nics/{nic:id}/detach|rel=detach
   description: detach the network interface card from the specified host
   request:
@@ -2737,7 +2586,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: detach the network interface card from the specified host
-    urlparams: {}
 - name: /hosts/{host:id}/nics/{nic:id}/statistics|rel=get
   description: get the statistics for the network interface card attached to the specified host
   request:
@@ -2752,14 +2600,12 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/nics/{nic:id}/labels|rel=get
   description: get the labels of an interface
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/nics/{nic:id}/labels|rel=add
   description: add a new label to the interface
   request:
@@ -2768,14 +2614,12 @@ actions:
       signatures:
       - mandatoryArguments: {label.id: 'xs:string'}
         description: add a new label to the interface
-    urlparams: {}
 - name: /hosts/{host:id}/nics/{nic:id}/labels/{label:id}|rel=get
   description: get a specific label of an interface
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/nics/{nic:id}/labels/{label:id}|rel=delete
   description: delete the specified label of an interface
   request:
@@ -2798,7 +2642,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the host
   request:
@@ -2819,7 +2662,6 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
         description: add a new group level permission for the host
-    urlparams: {}
 - name: /hosts/{host:id}/statistics|rel=get
   description: get the statistics for the host
   request:
@@ -2834,7 +2676,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/storage|rel=get
   description: get the list of all logical units and volume groups for the host
   request:
@@ -2849,7 +2690,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/tags|rel=get
   description: get the list of all tags added to the host
   request:
@@ -2864,7 +2704,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag added to the host
   request:
@@ -2880,14 +2719,12 @@ actions:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
-    urlparams: {}
 - name: /hosts/{host:id}/fenceagents|rel=get
   description: get all fencing agents defined for this host
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/fenceagents|rel=add
   description: add a new fencing-agent to the host
   request:
@@ -2896,14 +2733,12 @@ actions:
       signatures:
       - mandatoryArguments: {agent.address: 'xs:string', agent.order: 'xs:int', agent.type: 'xs:string', agent.username: 'xs:string', agent.password: 'xs:string'}
         optionalArguments: {agent.port: 'xs:int', agent.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}
-    urlparams: {}
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=get
   description: get the fencing agent with the specified ID.  
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=update
   description: update a fencing-agent
   request:
@@ -2912,7 +2747,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {agent.address: 'xs:string', agent.order: 'xs:int', agent.type: 'xs:string', agent.username: 'xs:string', agent.password: 'xs:string', agent.port: 'xs:int', agent.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}
-    urlparams: {}
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=delete
   description: delete the specified fencing agent
   request:
@@ -2937,7 +2771,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /networks/{network:id}|rel=delete
   description: delete the specified network in the system
   request:
@@ -2957,7 +2790,6 @@ actions:
           network.ip.address: 'xs:string', network.ip.gateway: 'xs:string', network.ip.netmask: 'xs:string',
           network.display: 'xs:boolean', network.stp: 'xs:boolean', network.mtu: 'xs:int'}
         description: update the specified network in the system
-    urlparams: {}
 - name: /networks|rel=add
   description: add a new network to the system
   request:
@@ -2981,7 +2813,6 @@ actions:
             network.usages.usage--COLLECTION: {usage: 'xs:string'}
         }
         description: add a new network to the system
-    urlparams: {}
 - name: /networks/{network:id}/permissions|rel=get
   description: get the list of all permissions on a network in the system
   request:
@@ -2996,7 +2827,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /networks/{network:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on a network in the system
   request:
@@ -3017,7 +2847,6 @@ actions:
       - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
         description: add a new group level permission on a network in the system
-    urlparams: {}
 - name: /networks/{network:id}/vnicprofiles|rel=get
   description: get the list of all virtual network interface card profiles for the network
   request:
@@ -3032,7 +2861,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=delete
   description: delete the specified virtual network interface card profile for the network
   request:
@@ -3051,14 +2879,12 @@ actions:
         optionalArguments: {vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
         vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
         description: add a new virtual network interface card profile for the network
-    urlparams: {}
 - name: /networks/{network:id}/labels|rel=get
   description: get the labels of a network
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /networks/{network:id}/labels|rel=add
   description: add a new label to the network
   request:
@@ -3067,14 +2893,12 @@ actions:
       signatures:
       - mandatoryArguments: {label.id: 'xs:string'}
         description: add a new label to the network
-    urlparams: {}
 - name: /networks/{network:id}/labels/{label:id}|rel=get
   description: get a specific label of a network
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /networks/{network:id}/labels/{label:id}|rel=delete
   description: delete the specified label of a network
   request:
@@ -3097,7 +2921,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vnicprofiles/{vnicprofile:id}|rel=delete
   description: delete the specified virtual network interface card profile in the system
   request:
@@ -3116,7 +2939,6 @@ actions:
         optionalArguments: {vnicprofile.name: 'xs:string', vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
         vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
         description: update the specified virtual network interface card profile in the system
-    urlparams: {}
 - name: /vnicprofiles|rel=add
   description: add a new virtual network interface card profile to the system
   request:
@@ -3127,7 +2949,6 @@ actions:
         optionalArguments: {vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
         vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
         description: add a new virtual network interface card profile to the system
-    urlparams: {}
 - name: /vnicprofiles/{vnicprofile:id}/permissions|rel=get
   description: get the list of all permissions on the virtual network interface card profile in the system
   request:
@@ -3142,7 +2963,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vnicprofiles/{vnicprofile:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the virtual network interface card profile
   request:
@@ -3163,7 +2983,6 @@ actions:
       - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
         description: add a new group level permission on the virtual network interface card profile in the system
-    urlparams: {}
 - name: /roles|rel=get
   description: get the list of all roles in the system
   request:
@@ -3178,7 +2997,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /roles/{role:id}|rel=delete
   description: get the details of the specified role in the system
   request:
@@ -3196,7 +3014,6 @@ actions:
       - mandatoryArguments: {role.name: 'xs:string', role.permits.permit--COLLECTION: {permit.id: 'xs:string'}}
         optionalArguments: {role.description: 'xs:string', role.administrative: 'xs:boolean'}
         description: add a new role to the system
-    urlparams: {}
 - name: /roles/{role:id}|rel=update
   description: update the specified role in the system
   request:
@@ -3206,7 +3023,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {role.permits.permit--COLLECTION: {permit.id: 'xs:string'}, role.description: 'xs:string'}
         description: update the specified role in the system
-    urlparams: {}
 - name: /roles/{role:id}/permits|rel=get
   description: get the list of all permits for the specified role in the system
   request:
@@ -3221,7 +3037,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for the role in the system
   request:
@@ -3238,28 +3053,24 @@ actions:
       signatures:
       - mandatoryArguments: {permit.id|name: 'xs:string'}
         optionalArguments: {}
-    urlparams: {}
 - name: /bookmarks|rel=get
   description: get the list of bookmarks in the system
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /bookmarks/{bookmark:id}|rel=get
   description: get the details of the specified bookmark in the system
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /bookmarks/{tag:id}|rel=delete
   description: delete the specified bookmark from the system
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /bookmarks/{tag:id}|rel=update
   description: update the specified bookmark in the system
   request:
@@ -3268,7 +3079,6 @@ actions:
       signatures:
       - mandatoryArguments: {bookmark.name: 'xs:string', bookmark.value: 'xs:string'}
         description: update the name, value of the specified bookmark in the system
-    urlparams: {}
 - name: /bookmarks|rel=add
   description: add a new bookmark to the system
   request:
@@ -3276,7 +3086,6 @@ actions:
       parameterType: Bookmark
       signatures:
       - mandatoryArguments: {bookmark.name: 'xs:string', bookmark.value: 'xs:string'}
-    urlparams: {}
 - name: /tags|rel=get
   description: get the list of tags in the system
   request:
@@ -3291,7 +3100,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /tags/{tag:id}|rel=delete
   description: delete the specified tag in the system
   request:
@@ -3309,7 +3117,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {tag.name: 'xs:string', tag.description: 'xs:string', tag.parent.tag.id|name: 'xs:string'}
         description: update the name, description or parent tag of the specified tag in the system
-    urlparams: {}
 - name: /tags|rel=add
   description: add a new tag to the system
   request:
@@ -3318,7 +3125,6 @@ actions:
       signatures:
       - mandatoryArguments: {tag.name: 'xs:string'}
         optionalArguments: {tag.description: 'xs:string', tag.parent.tag.id|name: 'xs:string'}
-    urlparams: {}
 - name: /templates|rel=get
   description: get the list of all templates in the system
   request:
@@ -3338,7 +3144,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
       All-Content: {value: true|false, required: false}
@@ -3411,7 +3216,6 @@ actions:
           template.migration.auto_converge: xs:string
           template.migration.compressed: xs:string
         description: update the specified template in the system
-    urlparams: {}
 - name: /templates|rel=add
   description: add a new template to the system
   request:
@@ -3479,7 +3283,6 @@ actions:
           template.migration.auto_converge: xs:string
           template.migration.compressed: xs:string
         description: add a new template to the system
-    urlparams: {}
 - name: /templates/{template:id}/export|rel=export
   description: export the specified template to the export domain
   request:
@@ -3490,7 +3293,6 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.exclusive: 'xs:boolean',
           action.grace_period.expiry: 'xs:long'}
         description: export the specified template to the export domain
-    urlparams: {}
 - name: /templates/{template:id}/cdroms|rel=get
   description: get the list of cdroms attached to the specified template
   request:
@@ -3505,7 +3307,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /templates/{template:id}/watchdogs|rel=get
   description: get all the watchdogs for the template identified by the given id
   request:
@@ -3520,7 +3321,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /templates/{template:id}/watchdogs/{watchdog:id}|rel=delete
   description: delete the watchdog for the template identified by the given id
   request:
@@ -3547,7 +3347,6 @@ actions:
       signatures:
       - mandatoryArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
         description: add a watchdog to the template identified by the given id
-    urlparams: {}
 - name: /templates/{template:id}/disks|rel=get
   description: get the list of disks attached to the template
   request:
@@ -3562,7 +3361,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /templates/{template:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk attached to the template
   request:
@@ -3583,7 +3381,6 @@ actions:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: copy the specified disk attached to the template to a specific storage domain
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name:  /templates/{template:id}/disks/{disk:id}/export|rel=export
@@ -3593,7 +3390,6 @@ actions:
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /templates/{template:id}/nics|rel=get
@@ -3617,14 +3413,12 @@ actions:
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
         deprecated: true
         description: add a new network interface card to the template using a network with optional port mirroring options. This has been deprecated
-    urlparams: {}
 - name: /templates/{template:id}/nics/{nic:id}|rel=get
   description: get the details of the specified network interface card attached to the template
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /templates/{template:id}/nics/{nic:id}|rel=delete
   description: delete the specified network interface card attached to the template
   request:
@@ -3644,7 +3438,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
         deprecated: true
-    urlparams: {}
 - name: /templates/{template:id}/permissions|rel=get
   description: get the list of all permissions for the specified template
   request:
@@ -3659,7 +3452,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /templates/{template:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the template
   request:
@@ -3680,7 +3472,6 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
         description: add a new role permission on the template
-    urlparams: {}
 - name: /templates/{template:id}/tags|rel=get
   description: get the list of tags added to the template
   request:
@@ -3695,7 +3486,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /templates/{template:id}/tags/{tag:id}|rel=delete
   description: delete a tag added to the template
   request:
@@ -3712,7 +3502,6 @@ actions:
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
         description: add a new tag to the virtual machine
-    urlparams: {}
 - name: /users|rel=get
   description: get the list of all users registered in the system
   request:
@@ -3741,7 +3530,6 @@ actions:
       - mandatoryArguments: {user.user_name: 'xs:string', user.domain.id|name: 'xs:string'}
         optionalArguments: {user.namespace: 'xs:string', user.principal: 'xs:string'}
         description: add a new user to the specified domain with the specified user name
-    urlparams: {}
 - name: /users/{user:id}|rel=delete
   description: delete the from the domain
   request:
@@ -3764,7 +3552,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /users/{user:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the user
   request:
@@ -3800,7 +3587,6 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.template.id: 'xs:string'}
         optionalArguments: {}
         description: add a new tole permission for the user on the template
-    urlparams: {}
 - name: /users/{user:id}/roles|rel=get
   description: get the list of roles assigned to the user
   request:
@@ -3815,7 +3601,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /users/{user:id}/roles/{role:id}/permits|rel=get
   description: get the list of permits for the role assigned to the user
   request:
@@ -3830,7 +3615,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /users/{user:id}/roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for the role assigned to the user
   request:
@@ -3848,7 +3632,6 @@ actions:
       - mandatoryArguments: {permit.id|name: 'xs:string'}
         optionalArguments: {}
         description: add a new permit for the role assigned to the user
-    urlparams: {}
 - name: /users/{user:id}/tags|rel=get
   description: get the list of tags attached to the user
   request:
@@ -3863,7 +3646,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /users/{user:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag attached to the user
   request:
@@ -3880,7 +3662,6 @@ actions:
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
         description: add a new tag to the user
-    urlparams: {}
 - name: /vmpools|rel=get
   description: get the list of all virtual machine pools in the system
   request:
@@ -3899,7 +3680,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /vmpools/{vmpool:id}|rel=delete
@@ -3921,7 +3701,6 @@ actions:
           vmpool.name: 'xs:string', vmpool.comment: 'xs:string', vmpool.size: 'xs:int', vmpool.max_user_vms: 'xs:int', vmpool.display.proxy: 'xs:string',
           vmpool.description: 'xs:string'}
         description: update the specified virtual machine pool in the system
-    urlparams: {}
 - name: /vmpools/{vmpool:id}/allocatevm|rel=allocatevm
   description: attach the user to a vm from the vmpool and run the vm
   request:
@@ -3930,7 +3709,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
-    urlparams: {}
 - name: /vmpools|rel=add
   description: add anew vm pool to the system
   request:
@@ -3942,7 +3720,6 @@ actions:
         optionalArguments: {vmpool.comment: 'xs:string', vmpool.size: 'xs:int', vmpool.max_user_vms: 'xs:int', vmpool.display.proxy: 'xs:string',
           vmpool.description: 'xs:string', vmpool.soundcard_enabled: 'xs:boolean'}
         description: add a new vm pool to the system
-    urlparams: {}
 - name: /vmpools/{vmpool:id}/permissions|rel=get
   description: get the list of permissions for the specified vm pool
   request:
@@ -3957,7 +3734,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vmpools/{vmpool:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the vm pool
   request:
@@ -3978,7 +3754,6 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
         description: add a new group level permission on the vm pool
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes|rel=get
   description: get the list of gluster volumes attached to the cluster
   request:
@@ -4015,7 +3790,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: start the gluster volume attached to the cluster with an optional argument to force the operation
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stop|rel=stop
   description: stop the gluster volume attached to the cluster
   request:
@@ -4025,7 +3799,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: stop the gluster volume attached to the cluster with an optional argument to force the operation
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/rebalance|rel=rebalance
   description: invoke the rebalance command on the gluster volume attached to the cluster
   request:
@@ -4035,7 +3808,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.fix_layout: 'xs:boolean', action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: invoke the rebalance command on the gluster volume attached to the cluster with optional arguments to fix the lay and force the operation
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stoprebalance|rel=stoprebalance
   description: invoke the stop rebalance command on the gluster volume attached to the cluster
   request:
@@ -4045,7 +3817,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: invoke the stop rebalance command on the gluster volume attached to the cluster
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/setoption|rel=setoption
   description: set an option for the gluster volume attached to the cluster
   request:
@@ -4054,7 +3825,6 @@ actions:
       signatures:
       - mandatoryArguments: {action.option.name: 'xs:string', action.option.value: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         optionalArguments: {}
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetoption|rel=resetoption
   description: reset an option for the gluster volume attached to the cluster
   request:
@@ -4064,7 +3834,6 @@ actions:
       - mandatoryArguments: {action.option.name: 'xs:string', action.force: 'xs:boolean'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: reset an option for the gluster volume attached to the cluster with mandatory option to force the operation
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetalloptions|rel=resetalloptions
   description: resets all options for the gluster volume attached to the cluster
   request:
@@ -4074,7 +3843,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: resets all options for the gluster volume attached to the cluster
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/startprofile|rel=startprofile
   description: start profile on the gluster volume attached to the cluster
   request:
@@ -4084,7 +3852,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {}
         description: start profiling on the gluster volume attached to the cluster
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stopprofile|rel=stopprofile
   description: stop the profiling of gluster volume attached to the cluster
   request:
@@ -4094,7 +3861,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {}
         description: stop profiling on the gluster volume attached to the cluster
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/profilestatistics|rel=get
   description: get the profiling statistics once profiling is turned on for a volume
   request:
@@ -4109,7 +3875,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       All-Content: {value: true|false, required: false}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=add
@@ -4130,7 +3895,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       All-Content: {value: true|false, required: false}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=delete
@@ -4143,7 +3907,6 @@ actions:
           bricks--COLLECTION: {brick.id: 'xs:string'}
         optionalArguments: {replica_count: 'xs:unsignedShort'}
         description: delete bricks in the gluster volume attached to the cluster
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/migrate|rel=migrate
   description: migrate the data from the brick to others and mark for deletion
   request:
@@ -4154,7 +3917,6 @@ actions:
           action.bricks--COLLECTION: {brick.name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: migrate the data from the brick to others and mark for deletion
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/stopmigrate|rel=stopmigrate
   description: stops the bricks migration task started on on volume
   request:
@@ -4165,7 +3927,6 @@ actions:
           action.bricks--COLLECTION: {brick.name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: stops the bricks migration task started on on volume
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/activate|rel=activate
   description: activates the bricks post migration of data for reuse
   request:
@@ -4176,7 +3937,6 @@ actions:
           action.bricks--COLLECTION: {brick.name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activates the bricks post migration of data for reuse
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/replace|rel=replace #deprecated, replaced by 'migrate/delete'
   description: This is deprecated.Use migrate and delete instead.
   request:
@@ -4187,7 +3947,6 @@ actions:
         optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: replace the specified brick with a new brick directory in the gluster volume attached to the cluster
         deprecated: true
-    urlparams: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics|rel=get
   description: get the statistics for the specified brick in the gluster volume attached to the cluster
   request:
@@ -4202,7 +3961,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/disks|rel=get
   description: get the list of all disks in the storage domain
   request:
@@ -4220,7 +3978,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk in the storage domain
   request:
@@ -4281,7 +4038,6 @@ actions:
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
@@ -4299,7 +4055,6 @@ actions:
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
@@ -4360,7 +4115,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 
 - name: /jobs|rel=add
   description: add a new external job to the system
@@ -4371,7 +4125,6 @@ actions:
       - mandatoryArguments: {job.description: 'xs:string'}
         optionalArguments: {job.auto_cleared: 'xs:boolean'}
         description: add a new external job to the system
-    urlparams: {}
 
 - name: /jobs/{job:id}/end|rel=end
   description: end the specified external job in the system
@@ -4382,7 +4135,6 @@ actions:
       - mandatoryArguments: {action.status.state: 'xs:string'}
         optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: end the specified external job in the system with an optional argument to force the operation
-    urlparams: {}
 
 - name: /jobs/{job:id}/clear|rel=clear
   description: clear the specified external job in the system
@@ -4393,7 +4145,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: clear the specified external job in the system
-    urlparams: {}
 
 - name: /jobs/{job:id}/steps|rel=get
   description: get the list of all steps for the external job in the system
@@ -4410,7 +4161,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 
 - name: /jobs/{job:id}/steps|rel=add
   description: add a new step to the external job
@@ -4421,7 +4171,6 @@ actions:
       - mandatoryArguments: {step.type: 'xs:string' , step.description: 'xs:string'}
         optionalArguments: {step.job.id: 'xs:string', step.parent_step.id: 'xs:string'}
         description: add a new step to the external job
-    urlparams: {}
 
 - name: /jobs/{job:id}/steps/{step:id}/end|rel=end
   description: invoke the command to end the specified step of an external job
@@ -4432,7 +4181,6 @@ actions:
       - mandatoryArguments: {action.succeeded: 'xs:boolean'}
         optionalArguments: {action.force: 'xs:boolean', action.status.state: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: invoke the command to end the specified step of an external job with an optional agrument to force the operation
-    urlparams: {}
 
 - name: /jobs/{job:id}/steps/{step:id}/statistics|rel=get
   description: get the detailed step status for monitoring
@@ -4449,7 +4197,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 
 - name: /storageconnections|rel=get
   description: get the list of all storage connections in the system
@@ -4457,7 +4204,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 
 - name: /storageconnections/{storageconnection:id}|rel=get
   description: get the details of the specified storage connection in the system
@@ -4465,7 +4211,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 
 - name: /storageconnections/{storageconnection:id}|rel=delete
   description: delete the specified storage connection in the system
@@ -4500,7 +4245,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments:  {storage_connection.path: 'xs:string'}
         description: update the specified local storage connection in the system
-    urlparams: {}
 
 - name: /storageconnections|rel=add
   description: add a new storage connection to the system
@@ -4526,13 +4270,11 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=delete
   request:
     body:
@@ -4547,7 +4289,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
-    urlparams: {}
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}/disable|rel=disable
   request:
     body:
@@ -4555,7 +4296,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
-    urlparams: {}
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}/resolve|rel=resolve
   request:
     body:
@@ -4563,7 +4303,6 @@ actions:
       signatures:
       - mandatoryArguments: {action.resolution_type: 'xs:string'}
         optionalArguments: {action.host.id|name: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
-    urlparams: {}
 
 - name: /permissions|rel=get
   description: get the list of permissions on the system
@@ -4579,7 +4318,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /permissions/{permission:id}|rel=delete
   description: delete the permission on the system
   request:
@@ -4600,7 +4338,6 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
         description: add a new group level permission on the system
-    urlparams: {}
 
 - name: /instancetypes|rel=get
   description: get the list of instance types on the system
@@ -4616,7 +4353,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /instancetypes/{instancetype:id}|rel=delete
   description: delete the instance type from the system
   request:
@@ -4656,7 +4392,6 @@ actions:
           instance_type.custom_emulated_machine: xs:string
           instance_type.custom_cpu_model: xs:string
         description: add a new instance type to the system
-    urlparams: {}
 
 - name: /clusters/{cluster:id}/affinitygroups|rel=get
   description: get the list of affinity groups in the cluster
@@ -4672,14 +4407,12 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}|rel=delete
   description: delete the specified affinity groups in the cluster
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}|rel=update
   description: update the specified affinity group in the cluster
   request:
@@ -4688,7 +4421,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {affinitygroup.name: 'xs:string', affinitygroup.positive: 'xs:boolean', affinitygroup.enforcing: 'xs:boolean'}
-    urlparams: {}
 - name: /clusters/{cluster:id}/affinitygroups|rel=add
   description: add a new affinity group to the cluster
   request:
@@ -4698,7 +4430,6 @@ actions:
       - mandatoryArguments: {affinitygroup.name: 'xs:string', affinitygroup.positive: 'xs:boolean', affinitygroup.enforcing: 'xs:boolean'}
         optionalArguments: {}
         description: add a new affinity group to the cluster
-    urlparams: {}
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}/vms|rel=get
   description: get the list of vms per affinity group
   request:
@@ -4713,7 +4444,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}/vms|rel=add
   description: add a vm to the specified affinity group
   request:
@@ -4723,7 +4453,6 @@ actions:
       - mandatoryArguments: {vm.id|name: 'xs:string'}
         optionalArguments: {}
         description: add a vm to affinity group
-    urlparams: {}
 - name: /hosts/{host:id}/numanodes|rel=get
   description: get the list of NUMA nodes for the host
   request:
@@ -4738,7 +4467,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /hosts/{host:id}/numanodes/{numanode:id}/statistics|rel=get
   description: get the statistics for the specified NUMA node of the host
   request:
@@ -4753,7 +4481,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/numanodes|rel=get
   description: get the list of virtual NUMA nodes for the vm
   request:
@@ -4768,7 +4495,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /vms/{vm:id}/numanodes/{numanode:id}|rel=delete
   description: delete the specified virtual NUMA node for the vm
   request:
@@ -4802,7 +4528,6 @@ actions:
         optionalArguments:
           vm_numa_node.numa_node_pins.numa_node_pin--COLLECTION: {numa_node_pin.index: 'xs:int'}
         description: add a new virtual NUMA node for the vm
-    urlparams: {}
 - name: /schedulingpolicyunits|rel=get
   description: get a list of scheduling policy units in the system
   request:
@@ -4820,7 +4545,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /schedulingpolicyunits/{schedulingpolicyunit:id}|rel=delete
@@ -4843,7 +4567,6 @@ actions:
           schedulingpolicy.description: xs:string
           schedulingpolicy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'}
         description: update the specified user defined scheduling policy in the system
-    urlparams: {}
 - name: /schedulingpolicies|rel=get
   description: get a list of scheduling policies in the system
   request:
@@ -4861,7 +4584,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}|rel=delete
@@ -4886,7 +4608,6 @@ actions:
           schedulingpolicy.description: xs:string
           schedulingpolicy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'}
         description: add a new scheduling policy to the system
-    urlparams: {}
 - name: /schedulingpolicies/{schedulingpolicy:id}/filters|rel=get
   description: get a list of specified scheduling policy filters
   request:
@@ -4930,7 +4651,6 @@ actions:
         optionalArguments:
           filter.scheduling_policy_unit.position: 'xs:int'
         description: add a new scheduling policy to the system
-    urlparams: {}
 - name: /schedulingpolicies/{schedulingpolicy:id}/weights|rel=get
   description: get a list of specified scheduling policy weights
   request:
@@ -4974,7 +4694,6 @@ actions:
         optionalArguments:
           weight.scheduling_policy_unit.factor: 'xs:int'
         description: add a weight to a specified user defined scheduling policy
-    urlparams: {}
 - name: /schedulingpolicies/{schedulingpolicy:id}/balances|rel=get
   description: get a list of specified scheduling policy balance modules
   request:
@@ -5016,14 +4735,12 @@ actions:
       signatures:
       - mandatoryArguments: {balance.scheduling_policy_unit.id: 'xs:string'}
         description: add a balance module to a specified user defined scheduling policy
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/iscsibonds|rel=get
   description: get all iSCSI Bonds for the specified datacenter
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/iscsibonds|rel=add
   description: add a new iSCSI Bond to the specified datacenter
   request:
@@ -5033,7 +4750,6 @@ actions:
       - mandatoryArguments: {iscsibond.name: 'xs:string'}
         optionalArguments: {}
         description: add a new iSCSI Bond to the datacenter
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}|rel=update
   description: update the specified iSCSI Bond
   request:
@@ -5043,56 +4759,48 @@ actions:
      - mandatoryArguments: {}
        optionalArguments: {}
        description: update the specified iSCSI Bond
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}|rel=delete
   description: remove the specified iSCSI Bond from the datacenter
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/networks|rel=delete
   description: remove the specified network from the iSCSI Bond
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/networks|rel=get
   description: gets the specified iSCSI Bond with the networks
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/networks|rel=add
   description: specify list of networks contained in the iSCSI Bond
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/storagedomains|rel=delete
   description: remove the specified storagedomain from the iSCSI Bond
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/storagedomains|rel=get
   description: gets the specified iSCSI Bond with the storagedomains
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/storagedomains|rel=add
   description: specify list of the storagedomains contained in the iSCSI Bond
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /diskprofiles|rel=get
   description: get the list of all disk profiles in the system
   request:
@@ -5107,7 +4815,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /diskprofiles/{diskprofile:id}|rel=delete
   description: delete the specified disk profile in the system
   request:
@@ -5127,7 +4834,6 @@ actions:
                            diskprofile.description: 'xs:string',
                            diskprofile.qos.id: 'xs:string'}
         description: update the specified disk profile in the system
-    urlparams: {}
 - name: /diskprofiles|rel=add
   description: add a new disk profile to the system
   request:
@@ -5138,7 +4844,6 @@ actions:
         optionalArguments: {diskprofile.description: 'xs:string',
                            diskprofile.qos.id: 'xs:string'}
         description: add a new disk profile to the system
-    urlparams: {}
 - name: /diskprofiles/{diskprofile:id}/permissions|rel=get
   description: get the list of all permissions on the disk profile in the system
   request:
@@ -5153,7 +4858,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /diskprofiles/{diskprofile:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the disk profile
   request:
@@ -5174,7 +4878,6 @@ actions:
       - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
         description: add a new group level permission on the disk profile in the system
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/diskprofiles|rel=get
   description: get the list of all disk profiles for the storage domain
   request:
@@ -5189,7 +4892,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /storagedomains/{storagedomain:id}/diskprofiles/{diskprofile:id}|rel=delete
   description: delete the specified disk profile for the storage domain
   request:
@@ -5208,7 +4910,6 @@ actions:
         optionalArguments: {diskprofile.description: 'xs:string',
                            diskprofile.qos.id: 'xs:string'}
         description: add a new disk profile for the storage domain
-    urlparams: {}
 - name: /cpuprofiles|rel=get
   description: get the list of all cpu profiles in the system
   request:
@@ -5223,7 +4924,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /cpuprofiles/{cpuprofile:id}|rel=delete
   description: delete the specified cpu profile in the system
   request:
@@ -5243,7 +4943,6 @@ actions:
                            cpuprofile.description: 'xs:string',
                            cpuprofile.qos.id: 'xs:string'}
         description: update the specified cpu profile in the system
-    urlparams: {}
 - name: /cpuprofiles|rel=add
   description: add a new cpu profile to the system
   request:
@@ -5254,7 +4953,6 @@ actions:
         optionalArguments: {cpuprofile.description: 'xs:string',
                            cpuprofile.qos.id: 'xs:string'}
         description: add a new cpu profile to the system
-    urlparams: {}
 - name: /cpuprofiles/{cpuprofile:id}/permissions|rel=get
   description: get the list of all permissions on the cpu profile in the system
   request:
@@ -5269,7 +4967,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /cpuprofiles/{cpuprofile:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the cpu profile
   request:
@@ -5290,7 +4987,6 @@ actions:
       - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
         description: add a new group level permission on the cpu profile in the system
-    urlparams: {}
 - name: /clusters/{cluster:id}/cpuprofiles|rel=get
   description: get the list of all cpu profiles for the cluster
   request:
@@ -5305,7 +5001,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /clusters/{cluster:id}/cpuprofiles/{cpuprofile:id}|rel=delete
   description: delete the specified cpu profile for the cluster
   request:
@@ -5324,7 +5019,6 @@ actions:
         optionalArguments: {cpuprofile.description: 'xs:string',
                            cpuprofile.qos.id: 'xs:string'}
         description: add a new cpu profile for the cluster
-    urlparams: {}
 
 - name: /operatingsystems|rel=get
   description: get the list of all Operating Systems
@@ -5332,14 +5026,12 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /operatingsystems/{operatingsystem:id}|rel=get
   description: get the details of the specified Operating System
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 
 - name: /externalhostproviders|rel=get
   description: get the list of all external host providers in the system
@@ -5355,7 +5047,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /externalhostproviders/{externalhostprovider:id}|rel=delete
   description: delete the specified external host provider in the system
   request:
@@ -5379,7 +5070,6 @@ actions:
           external_host_provider.password: xs:string
           external_host_provider.authentication_url: xs:string
         description: update the specified external host provider in the system
-    urlparams: {}
 - name: /externalhostproviders|rel=add
   description: add a new external host provider to the system
   request:
@@ -5396,7 +5086,6 @@ actions:
           external_host_provider.password: xs:string
           external_host_provider.authentication_url: xs:string
         description: add a new external host provider to the system
-    urlparams: {}
 - name: /externalhostproviders/{externalhostprovider:id}/testconnectivity|rel=testconnectivity
   description: test the connectivity to the external external host provider
   request:
@@ -5405,7 +5094,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {}
-    urlparams: {}
 - name: /externalhostproviders/{externalhostprovider:id}/importcertificates|rel=importcertificates
   description: import the SSL certificates of the external host provider
   request:
@@ -5414,7 +5102,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {}
-    urlparams: {}
 - name: /externalhostproviders/{externalhostprovider:id}/certificates|rel=get
   description: get the list of certificates of the external host provider
   request:
@@ -5429,7 +5116,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /externalhostproviders/{externalhostprovider:id}/hosts|rel=get
   description: get the list of hosts from the external host provider
   request:
@@ -5444,7 +5130,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /externalhostproviders/{externalhostprovider:id}/discoveredhosts|rel=get
   description: get the list of discovered hosts from the external host provider
   request:
@@ -5459,7 +5144,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /externalhostproviders/{externalhostprovider:id}/hostgroups|rel=get
   description: get the list of host groups from the external host provider
   request:
@@ -5474,7 +5158,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /externalhostproviders/{externalhostprovider:id}/computeresources|rel=get
   description: get the list of compute resources from the external host provider
   request:
@@ -5489,7 +5172,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 
 - name: /openstackimageproviders|rel=get
   description: get the list of all OpenStack image providers in the system
@@ -5505,7 +5187,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /openstackimageproviders/{openstackimageprovider:id}|rel=delete
   description: delete the specified OpenStack image provider in the system
   request:
@@ -5531,7 +5212,6 @@ actions:
             property.name: xs:string
             property.value: xs:string
         description: update the specified OpenStack image provider in the system
-    urlparams: {}
 - name: /openstackimageproviders|rel=add
   description: add a new OpenStack image provider to the system
   request:
@@ -5550,7 +5230,6 @@ actions:
             property.name: xs:string
             property.value: xs:string
         description: add a new OpenStack image provider to the system
-    urlparams: {}
 - name: /openstackimageproviders/{openstackimageprovider:id}/images|rel=get
   description: get the list of images from the OpenStack image provider
   request:
@@ -5565,7 +5244,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /openstackimageproviders/{openstackimageprovider:id}/certificates|rel=get
   description: get the list of certificates of the OpenStack image provider
   request:
@@ -5580,7 +5258,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /openstackimageproviders/{openstackimageprovider:id}/testconnectivity|rel=testconnectivity
   description: test the connectivity to the external OpenStack imageprovider
   request:
@@ -5589,7 +5266,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {}
-    urlparams: {}
 - name: /openstackimageproviders/{openstackimageprovider:id}/importcertificates|rel=importcertificates
   description: import the SSL certificates of the OpenStack image provider
   request:
@@ -5598,7 +5274,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {}
-    urlparams: {}
 - name: /openstackimageproviders/{openstackimageprovider:id}/images/{images:id}/import|rel=import
   description: imports the OpenStack image
   request:
@@ -5614,7 +5289,6 @@ actions:
           action.cluster.id|name: xs:string
           action.disk.alias|name: xs:string
           action.template.name: xs:string
-    urlparams: {}
 
 - name: /openstackvolumeproviders|rel=get
   description: get the list of all OpenStack volume providers in the system
@@ -5630,7 +5304,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}|rel=delete
   description: delete the specified OpenStack volume provider in the system
   request:
@@ -5658,7 +5331,6 @@ actions:
             property.name: xs:string
             property.value: xs:string
         description: update the specified OpenStack volume provider in the system
-    urlparams: {}
 - name: /openstackvolumeproviders|rel=add
   description: add a new OpenStack volume provider to the system
   request:
@@ -5679,7 +5351,6 @@ actions:
             property.name: xs:string
             property.value: xs:string
         description: add a new OpenStack volume provider to the system
-    urlparams: {}
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}/volumetypes|rel=get
   description: get the list of volume types of the OpenStack volume provider
   request:
@@ -5694,7 +5365,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 
 - name: /openstacknetworkproviders|rel=get
   description: get the list of all OpenStack network providers in the system
@@ -5710,7 +5380,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}|rel=delete
   description: delete the specified OpenStack network provider in the system
   request:
@@ -5736,7 +5405,6 @@ actions:
             property.name: xs:string
             property.value: xs:string
         description: update the specified OpenStack network provider in the system
-    urlparams: {}
 - name: /openstacknetworkproviders|rel=add
   description: add a new OpenStack network provider to the system
   request:
@@ -5755,7 +5423,6 @@ actions:
             property.name: xs:string
             property.value: xs:string
         description: add a new OpenStack network provider to the system
-    urlparams: {}
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks|rel=get
   description: get the list of networks from the OpenStack network provider
   request:
@@ -5770,7 +5437,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks/{network:id}/subnets|rel=get
   description: get the list of sub-networks from the OpenStack network provider
   request:
@@ -5785,7 +5451,6 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
 - name: /katelloerrata|rel=get
   description: get the list of errata available for the system
   request:
@@ -5800,4 +5465,3 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
