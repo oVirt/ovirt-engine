@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.architecture.CreateAdditionalControllers;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
@@ -515,8 +516,14 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                                 VmDeviceGeneralType.INTERFACE,
                                 VmDeviceType.BRIDGE.getName()));
 
+        devicesByDeviceId.putAll(Entities.businessEntitiesById(DbFacade.getInstance()
+                .getVmDeviceDao()
+                .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                        VmDeviceGeneralType.INTERFACE,
+                        VmDeviceType.HOST_DEVICE.getName())));
+
         for (VmNic vmInterface : vm.getInterfaces()) {
-            // get vm device for this disk from DB
+            // get vm device for this nic from DB
             VmDevice vmDevice =
                     devicesByDeviceId.get(new VmDeviceId(vmInterface.getId(), vmInterface.getVmId()));
 
@@ -529,11 +536,17 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     ifaceType = VmInterfaceType.forValue(vmInterface.getType());
                 }
 
-                addNetworkInterfaceProperties(struct,
-                        vmInterface,
-                        vmDevice,
-                        VmInfoBuilder.evaluateInterfaceType(ifaceType, vm.getHasAgent()),
-                        vm.getVdsGroupCompatibilityVersion());
+                if (vmInterface.isPassthrough()) {
+                    String vfDeviceName = vm.getPassthroughVnicToVfMap().get(vmInterface.getId());
+                    addNetworkVirtualFunctionProperties(struct, vmInterface, vmDevice, vfDeviceName);
+                } else {
+                    addNetworkInterfaceProperties(struct,
+                            vmInterface,
+                            vmDevice,
+                            VmInfoBuilder.evaluateInterfaceType(ifaceType, vm.getHasAgent()),
+                            vm.getVdsGroupCompatibilityVersion());
+                }
+
                 devices.add(struct);
                 addToManagedDevices(vmDevice);
             }
@@ -723,6 +736,26 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
         addProfileDataToNic(struct, vm, vmDevice, vmInterface);
         addNetworkFiltersToNic(struct, clusterVersion);
+    }
+
+    private void addNetworkVirtualFunctionProperties(Map<String, Object> struct,
+            VmNic vmInterface,
+            VmDevice vmDevice,
+            String vfName) {
+
+        struct.put(VdsProperties.Type, VmDeviceType.HOST_DEVICE.getName());
+        struct.put(VdsProperties.Device, vfName);
+        struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
+
+        Map<String, Object> specParams = new HashMap<>();
+        specParams.put(VdsProperties.MAC_ADDR, vmInterface.getMacAddress());
+
+        VnicProfile vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(vmInterface.getVnicProfileId());
+        Network network = DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
+        if (NetworkUtils.isVlan(network)) {
+            specParams.put(VdsProperties.VLAN_ID, network.getVlanId());
+        }
+        struct.put(VdsProperties.SpecParams, specParams);
     }
 
     public static void addProfileDataToNic(Map<String, Object> struct,
