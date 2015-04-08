@@ -115,7 +115,7 @@ class FileLocations(object):
         'taskcleaner.sh'
     )
     OVIRT_ENGINE_UNLOCK_ENTITY = os.path.join(
-        OVIRT_ENGINE_DB_DIR,
+        OVIRT_ENGINE_DB_UTILS_DIR,
         'unlock_entity.sh'
     )
 

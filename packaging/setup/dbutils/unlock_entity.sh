@@ -1,7 +1,6 @@
 #!/bin/sh
 
-DBFUNC_COMMON_DBSCRIPTS_DIR="$(dirname "$0")"
-. "${DBFUNC_COMMON_DBSCRIPTS_DIR}/dbfunc-custom.sh"
+. "$(dirname "$0")/dbfunc-base.sh"
 
 cleanup() {
 	dbfunc_cleanup
