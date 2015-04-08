@@ -90,7 +90,7 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
     @SuppressWarnings("unchecked")
     protected void populateSessions(Map<String, Object> geoRepVolSessions) {
         for (Entry<String, Object> entry : geoRepVolSessions.entrySet()) {
-            log.debug("received session information for volume '{}'", entry.getKey());
+            log.debugFormat("received session information for volume '%1'", entry.getKey());
             String masterVolName = entry.getKey();
 
             Map<String, Object> sessionsMap = (Map<String, Object>) entry.getValue();
