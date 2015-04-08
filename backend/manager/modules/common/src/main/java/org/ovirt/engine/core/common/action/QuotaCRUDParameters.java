@@ -2,13 +2,17 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 
+import javax.validation.Valid;
+
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.Guid;
 
 public class QuotaCRUDParameters extends StoragePoolParametersBase implements Serializable {
     private static final long serialVersionUID = -3821623510049174551L;
 
+    @Valid
     private Guid quotaId;
+    @Valid
     private Quota quota;
     private boolean copyPermissions;
 

@@ -2613,7 +2613,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The quota associated with VM ${VmName} is no longer available. This may be a result of an import or snapshot restoring actions. Please reassign a quota to this VM.")
     String ACTION_TYPE_FAILED_QUOTA_IS_NO_LONGER_AVAILABLE_IN_SYSTEM();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Limitation can not be configured as specific and general in the same Quota. Please choose whether the limitation should be enforced on the Data Center or on specific storage.")
+    @DefaultStringValue("Cannot ${action} ${type}. Limitation can not be configured as specific and general for the same Quota. Please choose whether the limitation should be enforced on the Data Center (global) or for specific storage domain or cluster.")
     String ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL();
 
     @DefaultStringValue("Cannot ${action} ${type}. Quota limitation must be configured specific or general.")

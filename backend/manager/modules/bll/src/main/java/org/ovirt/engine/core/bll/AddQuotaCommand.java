@@ -12,7 +12,10 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -60,6 +63,7 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
             copyQuotaPermissions();
         }
         getReturnValue().setSucceeded(true);
+        setActionReturnValue(getQuota().getId());
         return null;
     }
 
@@ -105,7 +109,24 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
                 quotaVdsGroup.setQuotaVdsGroupId(Guid.newGuid());
             }
         }
+        setQuotaThresholdDefaults(quotaParameter);
         setQuota(quotaParameter);
+    }
+
+    // Setting defaults for hard and soft limits, for REST
+    private void setQuotaThresholdDefaults(Quota quotaParameter) {
+        if (quotaParameter.getGraceStoragePercentage() == 0) {
+            quotaParameter.setGraceStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceStorage));
+        }
+        if (quotaParameter.getGraceVdsGroupPercentage() == 0) {
+            quotaParameter.setGraceVdsGroupPercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceVdsGroup));
+        }
+        if (quotaParameter.getThresholdStoragePercentage() == 0) {
+            quotaParameter.setThresholdStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdStorage));
+        }
+        if (quotaParameter.getThresholdVdsGroupPercentage() == 0) {
+            quotaParameter.setThresholdVdsGroupPercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdVdsGroup));
+        }
     }
 
     @Override
@@ -127,5 +148,11 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
             List<Permission> permissionsList = permissionsToAdd.asPermissionList();
             MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permission[permissionsList.size()]));
         }
+    }
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        addValidationGroup(CreateEntity.class);
+        return super.getValidationGroups();
     }
 }

@@ -335,7 +335,7 @@ public enum VdcQueryType implements Serializable {
 
     // Quota
     GetQuotaByStoragePoolId,
-    GetQuotaByQuotaId,
+    GetQuotaByQuotaId(VdcQueryAuthType.User),
     GetQuotaVdsGroupByQuotaId,
     GetQuotaStorageByQuotaId,
     GetVmsRelatedToQuotaId,

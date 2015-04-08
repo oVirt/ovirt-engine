@@ -78,7 +78,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 } else {
                     for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {
                         if (!QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())) {
-                            allocated += quotaVdsGroup.getMemSizeMB();
+                            allocated += quotaVdsGroup.getMemSizeMB() != null ? quotaVdsGroup.getMemSizeMB() : 0;
                             used += quotaVdsGroup.getMemSizeMBUsage();
                         } else {
                             allocated = QuotaVdsGroup.UNLIMITED_MEM;
@@ -107,7 +107,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 } else {
                     for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {
                         if (!QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())) {
-                            allocated += quotaVdsGroup.getMemSizeMB();
+                            allocated += quotaVdsGroup.getMemSizeMB() != null ? quotaVdsGroup.getMemSizeMB() : 0;
                             used += quotaVdsGroup.getMemSizeMBUsage();
                         } else {
                             allocated = QuotaVdsGroup.UNLIMITED_MEM;
@@ -137,7 +137,9 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 int allocated = 0;
                 int used = 0;
                 if (object.getGlobalQuotaVdsGroup() != null) {
-                    allocated = object.getGlobalQuotaVdsGroup().getVirtualCpu();
+                    allocated =
+                            object.getGlobalQuotaVdsGroup().getVirtualCpu() != null ? object.getGlobalQuotaVdsGroup()
+                                    .getVirtualCpu() : 0;
                     used = object.getGlobalQuotaVdsGroup().getVirtualCpuUsage();
                 } else {
                     for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {
@@ -166,7 +168,9 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 int allocated = 0;
                 int used = 0;
                 if (object.getGlobalQuotaVdsGroup() != null) {
-                    allocated = object.getGlobalQuotaVdsGroup().getVirtualCpu();
+                    allocated =
+                            object.getGlobalQuotaVdsGroup().getVirtualCpu() != null ? object.getGlobalQuotaVdsGroup()
+                                    .getVirtualCpu() : 0;
                     used = object.getGlobalQuotaVdsGroup().getVirtualCpuUsage();
                 } else {
                     for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {

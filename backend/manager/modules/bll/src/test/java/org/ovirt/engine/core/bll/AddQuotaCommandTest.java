@@ -4,8 +4,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -14,8 +16,10 @@ import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddQuotaCommandTest {
@@ -26,6 +30,14 @@ public class AddQuotaCommandTest {
      * The command under test.
      */
     private AddQuotaCommand command;
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.QuotaGraceStorage, 20),
+            mockConfig(ConfigValues.QuotaGraceVdsGroup, 20),
+            mockConfig(ConfigValues.QuotaThresholdStorage, 80),
+            mockConfig(ConfigValues.QuotaThresholdVdsGroup, 80)
+            );
 
     @Before
     public void testSetup() {
