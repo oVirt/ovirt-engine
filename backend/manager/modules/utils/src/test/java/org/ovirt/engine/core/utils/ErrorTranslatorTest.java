@@ -28,9 +28,15 @@ public class ErrorTranslatorTest {
     }
 
     private static void doTestNoStringSubstitution(String name) {
-        ErrorTranslator et = new ErrorTranslatorImpl(name);
-        String error = et.TranslateErrorTextSingle(TEST_KEY_NO_REPLACEMENT);
-        assertEquals("String should equal", "VM not found", error);
+        Locale locale = Locale.ENGLISH;
+        try {
+            Locale.setDefault(Locale.ENGLISH);
+            ErrorTranslator et = new ErrorTranslatorImpl(name);
+            String error = et.TranslateErrorTextSingle(TEST_KEY_NO_REPLACEMENT);
+            assertEquals("String should equal", "VM not found", error);
+        } finally {
+            Locale.setDefault(locale);
+        }
     }
 
     @Test
