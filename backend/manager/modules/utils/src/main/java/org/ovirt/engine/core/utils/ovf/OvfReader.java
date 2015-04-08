@@ -901,7 +901,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 vmDevice.setDevice(VmDeviceType.getoVirtDevice(resourceType).getName());
             }
         } else if (Integer.valueOf(OvfHardware.Network) == resourceType) {
-            // handle interfaces with different sub types : we have 0-3 as the VmInterfaceType enum
+            // handle interfaces with different sub types : we have 0-5 as the VmInterfaceType enum
             VmInterfaceType nicType = VmInterfaceType.forValue(resourceSubType);
             if (nicType != null) {
                 if (nicType == VmInterfaceType.pciPassthrough) {
