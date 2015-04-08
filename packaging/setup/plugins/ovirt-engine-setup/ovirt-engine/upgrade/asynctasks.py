@@ -226,7 +226,7 @@ class Plugin(plugin.PluginBase):
     def _getRunningCommands(self, dbstatement):
 
         if not self._getCommandEntitiesTableExists(dbstatement):
-            return None
+            return []
 
         commands = dbstatement.execute(
             statement="""
