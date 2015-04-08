@@ -967,7 +967,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         }
         rbPublicKey.setVisible(!isDiscovered);
         rbPassword.setVisible(!isDiscovered);
-        expanderContent.setVisible(!isDiscovered);
         publicKeyEditor.setVisible(!isDiscovered);
         authSshPortEditor.setVisible(!isDiscovered);
         userNameEditor.setVisible(!isDiscovered);
