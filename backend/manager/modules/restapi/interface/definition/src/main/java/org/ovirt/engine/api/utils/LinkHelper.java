@@ -40,6 +40,7 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.QuotaClusterLimit;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DetailedLink;
@@ -101,6 +102,7 @@ import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.api.model.QuotaStorageLimit;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Url;
@@ -128,6 +130,8 @@ import org.ovirt.engine.api.resource.BookmarkResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
+import org.ovirt.engine.api.resource.QuotaClusterLimitResource;
+import org.ovirt.engine.api.resource.QuotaClusterLimitsResource;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.CpuProfileResource;
@@ -198,6 +202,8 @@ import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.api.resource.StorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainsResource;
+import org.ovirt.engine.api.resource.QuotaStorageLimitResource;
+import org.ovirt.engine.api.resource.QuotaStorageLimitsResource;
 import org.ovirt.engine.api.resource.StorageResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
@@ -462,6 +468,11 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(QuotaResource.class, QuotasResource.class, DataCenter.class);
         TYPES.put(Quota.class, map);
+
+        map = new ParentToCollectionMap(QuotaStorageLimitResource.class, QuotaStorageLimitsResource.class, Quota.class);
+        TYPES.put(QuotaStorageLimit.class, map);
+        map = new ParentToCollectionMap(QuotaClusterLimitResource.class, QuotaClusterLimitsResource.class, Quota.class);
+        TYPES.put(QuotaClusterLimit.class, map);
 
         map = new ParentToCollectionMap(GlusterVolumeResource.class, GlusterVolumesResource.class, Cluster.class);
         TYPES.put(GlusterVolume.class, map);

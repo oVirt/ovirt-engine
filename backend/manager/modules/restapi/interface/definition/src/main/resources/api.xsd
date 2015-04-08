@@ -4201,6 +4201,10 @@
           <xs:element ref="vms" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="disks" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="users" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="cluster_soft_limit_pct" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="cluster_hard_limit_pct" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="storage_soft_limit_pct" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="storage_hard_limit_pct" type="xs:int" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -4218,6 +4222,84 @@
             </xs:appinfo>
           </xs:annotation>
           <xs:element ref="quota" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="storage_quota_limit" type="QuotaStorageLimit" />
+
+  <xs:complexType name="QuotaStorageLimit">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="quota" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element ref="storage_domain" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="limit" type="xs:long" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="usage" type="xs:double" minOccurs="0"
+            maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="storage_quota_limits" type="QuotaStorageLimits" />
+
+  <xs:complexType name="QuotaStorageLimits">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="storage_quota_limit" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="QuotaStorageLimits" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="cluster_quota_limit" type="QuotaClusterLimit" />
+
+  <xs:complexType name="QuotaClusterLimit">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="quota" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element ref="cluster" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="vcpu_limit" type="xs:int" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="vcpu_usage" type="xs:int" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="memory_limit" type="xs:double" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="memory_usage" type="xs:double" minOccurs="0"
+            maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="cluster_quota_limits" type="QuotaClusterLimits" />
+
+  <xs:complexType name="QuotaClusterLimits">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="cluster_quota_limit" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="QuotaClusterLimits" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

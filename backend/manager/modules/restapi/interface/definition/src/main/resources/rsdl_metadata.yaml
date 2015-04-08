@@ -3961,3 +3961,64 @@ actions:
   description: get the list of errata available for the system
 - name: /katelloerrata/{katelloerratum:id}|rel=get
   description: get the details of the specific erratum available for the system
+- name: /datacenters/{datacenter:id}/quotas|rel=get
+  description: get a list of Quotas for specified Data Center
+- name: /datacenters/{datacenter:id}/quotas/{quota:id}|rel=get
+  description: get the details of the specified Quota
+- name: /datacenters/{datacenter:id}/quotas/{quota:id}|rel=delete
+  description: delete the specified quota in the system
+- name: /datacenters/{datacenter:id}/quotas|rel=add
+  request:
+    body:
+      parameterType: Quota
+      signatures:
+      - mandatoryArguments:
+          quota.name: xs:string
+        optionalArguments:
+          quota.description: xs:string
+          quota.cluster_soft_limit_pct: xs:int
+          quota.cluster_hard_limit_pct: xs:int
+          quota.storage_soft_limit_pct: xs:int
+          quota.storage_hard_limit_pct: xs:int
+        description: add a new Quota to a Data Center
+- name: /datacenters/{datacenter:id}/quotas/{quota:id}|rel=update
+  request:
+    body:
+      parameterType: Quota
+      signatures:
+      - optionalArguments:
+          quota.name: xs:string
+          quota.description: xs:string
+          quota.cluster_soft_limit_pct: xs:int
+          quota.cluster_hard_limit_pct: xs:int
+          quota.storage_soft_limit_pct: xs:int
+          quota.storage_hard_limit_pct: xs:int
+        description: update the specified Quota
+- name: /datacenters/{datacenter:id}/quotas/{quota:id}/storagequotalimits|rel=get
+  description: get a list of storage limits of a Quota
+- name: /datacenters/{datacenter:id}/quotas/{quota:id}/storagequotalimits/{storagequotalimit:id}|rel=get
+  description: get a specified storage limit of a Quota
+- name: /datacenters/{datacenter:id}/quotas/{quota:id}/storagequotalimits/{storagequotalimit:id}|rel=delete
+  description: delete a storage limit from a Quota
+- name: /datacenters/{datacenter:id}/quotas/{quota:id}/storagequotalimits|rel=add
+  request:
+    body:
+      parameterType: StorageQuotaLimit
+      signatures:
+      - optionalArguments:
+          storage_domain.id: xs:string
+          limit: xs:long
+        description: add a storage limit to a specified Quota
+- name: /datacenters/{datacenter:id}/quotas/{quota:id}/clusterquotalimits/{clusterquotalimit:id}|rel=get
+  description: get a specified cluster limit of a Quota
+- name: /datacenters/{datacenter:id}/quotas/{quota:id}/clusterquotalimits/{clusterquotalimit:id}|rel=delete
+  description: delete a cluster limit from a Quota
+- name: /datacenters/{datacenter:id}/quotas/{quota:id}/clusterquotalimits|rel=add
+  request:
+    body:
+      parameterType: ClusterQuotaLimit
+      signatures:
+      - optionalArguments:
+          cluster_domain.id: xs:string
+          limit: xs:long
+        description: add a cluster limit to a specified Quota
