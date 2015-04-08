@@ -17,7 +17,7 @@ import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.No
 @RunWith(MockitoJUnitRunner.class)
 public class MaskConstraintTest {
 
-    private final String TEST_MASK = "TEST_MASK";
+    private static final String TEST_MASK = "TEST_MASK";
 
     @Spy
     private MaskConstraint underTest;
