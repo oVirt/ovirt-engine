@@ -79,7 +79,7 @@ enroll() {
 			-selfsign \
 			-subj "${subject}" \
 			-days 3650 \
-			-startdate "$(date --utc --date "now -1 days" +"%y%m%d%H%M%S%z")"
+			-startdate "$(date --utc --date "now -1 days" +"%y%m%d%H%M%SZ")"
 	) || die "Cannot enroll CA certificate"
 
 	openssl x509 -in "${PKIDIR}/ca.pem" -out "${PKIDIR}/certs/ca.der" || die "Cannot read CA certificate"
