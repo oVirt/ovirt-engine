@@ -54,7 +54,11 @@ public class MemoryStorageHandler {
         return null;
     }
 
-    private void updateDisksStorage(StorageDomain storageDomain, List<DiskImage> disksList) {
+    protected StorageDomainValidator getStorageDomainValidator(StorageDomain storageDomain) {
+        return new StorageDomainValidator(storageDomain);
+    }
+
+    protected void updateDisksStorage(StorageDomain storageDomain, List<DiskImage> disksList) {
         for (DiskImage disk : disksList) {
             disk.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomain.getId())));
         }
@@ -71,7 +75,7 @@ public class MemoryStorageHandler {
     }
 
     private boolean validateSpaceRequirements(StorageDomain storageDomain, List<DiskImage> disksList) {
-        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
+        StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
         return (storageDomainValidator.isDomainWithinThresholds().isValid() &&
                 storageDomainValidator.hasSpaceForClonedDisks(disksList).isValid());
     }

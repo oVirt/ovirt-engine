@@ -1,69 +1,113 @@
 package org.ovirt.engine.core.bll.memory;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
+@RunWith(MockitoJUnitRunner.class)
 public class MemoryStorageHandlerTest {
 
-    public static final long META_DATA_SIZE_IN_GB = 1;
-    public static final Integer LOW_SPACE_IN_GB = 3;
-    public static final Integer ENOUGH_SPACE_IN_GB = 4;
-    public static final Integer THRESHOLD_IN_GB = 4;
-    public static final Integer THRESHOLD_HIGH_GB = 10;
-    public static final int VM_SPACE_IN_MB = 2000;
+    private StorageDomain validStorageDomain;
+    private StorageDomain invalidStorageDomain1;
+    private StorageDomain invalidStorageDomain2;
+    private List<DiskImage> disksList;
+
+    @Mock
+    private StorageDomainValidator validStorageDomainValidator;
+
+    @Mock
+    private StorageDomainValidator invalidStorageDomainValidator1;
+
+    @Mock
+    private StorageDomainValidator invalidStorageDomainValidator2;
+
+    @Spy
+    private MemoryStorageHandler memoryStorageHandler = MemoryStorageHandler.getInstance();
+
+    @Before
+    public void setUp() {
+        disksList = new LinkedList<>();
+        doNothing().when(memoryStorageHandler).updateDisksStorage(any(StorageDomain.class), anyListOf(DiskImage.class));
+
+        validStorageDomain = initStorageDomain();
+        initStorageDomainValidator(validStorageDomainValidator, ValidationResult.VALID);
+        doReturn(validStorageDomainValidator)
+                .when(memoryStorageHandler).getStorageDomainValidator(validStorageDomain);
+
+        invalidStorageDomain1 = initStorageDomain();
+        initInvalidValidator(invalidStorageDomainValidator1);
+        doReturn(invalidStorageDomainValidator1)
+                .when(memoryStorageHandler).getStorageDomainValidator(invalidStorageDomain1);
+
+        invalidStorageDomain2 = initStorageDomain();
+        initInvalidValidator(invalidStorageDomainValidator2);
+        doReturn(invalidStorageDomainValidator2)
+                .when(memoryStorageHandler).getStorageDomainValidator(invalidStorageDomain2);
+    }
 
     @Test
-    public void verifyDomainForMemory() {
-        Guid sdId = Guid.newGuid();
-        List<StorageDomain> storageDomains = createStorageDomains(sdId);
-        long vmSpaceInBytes = SizeConverter.convert(VM_SPACE_IN_MB,
-                SizeConverter.SizeUnit.MiB,
-                SizeConverter.SizeUnit.BYTES).intValue();
-        List<DiskImage> disksList =  MemoryUtils.createDiskDummies(vmSpaceInBytes, META_DATA_SIZE_IN_GB);
-
-        StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
-                storageDomains, disksList);
-        assertThat(storageDomain, notNullValue());
-        if (storageDomain != null) {
-            Guid selectedId = storageDomain.getId();
-            assertThat(selectedId.equals(sdId), is(true));
-        }
-        storageDomain.setCriticalSpaceActionBlocker(THRESHOLD_HIGH_GB);
-
-        storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(storageDomains, disksList);
-        assertThat(storageDomain, nullValue());
+    public void verifyLastDomainForMemory() {
+        verifyDomainForMemory(Arrays.asList(invalidStorageDomain1, invalidStorageDomain2, validStorageDomain));
     }
 
-    private static List<StorageDomain> createStorageDomains(Guid sdIdToBeSelected) {
-        StorageDomain sd1 = createStorageDomain(Guid.newGuid(), StorageType.NFS, LOW_SPACE_IN_GB);
-        StorageDomain sd2 = createStorageDomain(Guid.newGuid(), StorageType.NFS, LOW_SPACE_IN_GB);
-        StorageDomain sd3 = createStorageDomain(sdIdToBeSelected, StorageType.NFS, ENOUGH_SPACE_IN_GB);
-        List<StorageDomain> storageDomains = Arrays.asList(sd1, sd2, sd3);
-        return storageDomains;
+    @Test
+    public void verifyNoDomainForMemoryWhenDomainHasLowSpace() {
+        when(validStorageDomainValidator.isDomainWithinThresholds())
+                .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+        verifyNoDomainForMemory(Collections.singletonList(validStorageDomain));
     }
 
-    private static StorageDomain createStorageDomain(Guid guid, StorageType storageType, Integer size) {
+    private StorageDomain initStorageDomain() {
         StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setId(guid);
+        storageDomain.setId(Guid.newGuid());
         storageDomain.setStorageDomainType(StorageDomainType.Data);
-        storageDomain.setStorageType(storageType);
         storageDomain.setStatus(StorageDomainStatus.Active);
-        storageDomain.setAvailableDiskSize(size);
-        storageDomain.setCriticalSpaceActionBlocker(THRESHOLD_IN_GB);
         return storageDomain;
+    }
+
+    private void initInvalidValidator(StorageDomainValidator invalidStorageDomainValidator) {
+        initStorageDomainValidator(invalidStorageDomainValidator,
+                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+    }
+
+    private void initStorageDomainValidator(StorageDomainValidator storageDomainValidator,
+            ValidationResult validationResult) {
+        when(storageDomainValidator.isDomainWithinThresholds()).thenReturn(validationResult);
+        when(storageDomainValidator.hasSpaceForClonedDisks(disksList))
+                .thenReturn(validationResult);
+    }
+
+    private void verifyDomainForMemory(List<StorageDomain> storageDomains) {
+        StorageDomain storageDomain = memoryStorageHandler.findStorageDomainForMemory(storageDomains, disksList);
+        assertEquals(storageDomain, validStorageDomain);
+    }
+
+    private void verifyNoDomainForMemory(List<StorageDomain> storageDomains) {
+        StorageDomain storageDomain = memoryStorageHandler.findStorageDomainForMemory(storageDomains, disksList);
+        assertNull(storageDomain);
     }
 }
