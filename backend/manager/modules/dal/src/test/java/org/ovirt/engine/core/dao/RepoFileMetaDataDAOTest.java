@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -111,7 +110,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
 
         // Should get only 4 files, 3 file types from one shared storage domain.
         // plus one empty file of the storage pool with no Iso at all.
-        assertSame(listOfAllIsoFiles.size(), 4);
+        assertEquals(4, listOfAllIsoFiles.size());
     }
 
     /**
@@ -145,13 +144,13 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
 
         // Start the check
         // the shared storage domain, should have three types of files.
-        assertEquals(SharedStorageDomainFileType.size(), 3);
+        assertEquals(3, SharedStorageDomainFileType.size());
         assertTrue(SharedStorageDomainFileType.contains(ImageFileType.Unknown));
         assertTrue(SharedStorageDomainFileType.contains(ImageFileType.ISO));
         assertTrue(SharedStorageDomainFileType.contains(ImageFileType.Floppy));
 
         // The empty storage domain, should not have files, but should be fetched, since we want to refresh it.
-        assertEquals(EmptyStorageDomainFileType.size(), 1);
+        assertEquals(1, EmptyStorageDomainFileType.size());
         assertTrue(EmptyStorageDomainFileType.contains(ImageFileType.Unknown));
     }
 
@@ -206,17 +205,10 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
 
         assertNotNull(listOfRepoFiles);
         assertFalse(listOfRepoFiles.isEmpty());
-        assertEquals(listOfRepoFiles.get(0).getRepoImageId(),
-                newRepoFileMap.getRepoImageId());
-        assertSame(true,
-                listOfRepoFiles.get(0).getLastRefreshed() == newRepoFileMap
-                        .getLastRefreshed());
-        assertSame(true,
-                listOfRepoFiles.get(0).getSize() == newRepoFileMap.getSize());
-        assertSame(
-                true,
-                listOfRepoFiles.get(0).getRepoDomainId()
-                        .equals(newRepoFileMap.getRepoDomainId()));
+        assertEquals(listOfRepoFiles.get(0).getRepoImageId(), newRepoFileMap.getRepoImageId());
+        assertEquals(listOfRepoFiles.get(0).getLastRefreshed(), newRepoFileMap.getLastRefreshed());
+        assertEquals(listOfRepoFiles.get(0).getSize(), newRepoFileMap.getSize());
+        assertEquals(listOfRepoFiles.get(0).getRepoDomainId(), newRepoFileMap.getRepoDomainId());
     }
 
     /**
