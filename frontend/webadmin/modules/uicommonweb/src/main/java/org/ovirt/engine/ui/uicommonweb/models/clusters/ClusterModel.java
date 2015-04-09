@@ -3,17 +3,21 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -308,6 +312,16 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
     public void setEnableGlusterService(EntityModel<Boolean> value) {
         this.privateEnableGlusterService = value;
+    }
+
+    private ListModel<List<AdditionalFeature>> additionalClusterFeatures;
+
+    public ListModel<List<AdditionalFeature>> getAdditionalClusterFeatures() {
+        return additionalClusterFeatures;
+    }
+
+    public void setAdditionalClusterFeatures(ListModel<List<AdditionalFeature>> additionalClusterFeatures) {
+        this.additionalClusterFeatures = additionalClusterFeatures;
     }
 
     private EntityModel<Boolean> isImportGlusterConfiguration;
@@ -862,7 +876,10 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
         setEnableOvirtService(new EntityModel<Boolean>());
         setEnableGlusterService(new EntityModel<Boolean>());
-
+        setAdditionalClusterFeatures(new ListModel<List<AdditionalFeature>>());
+        List<List<AdditionalFeature>> additionalFeatures = new ArrayList<List<AdditionalFeature>>();
+        additionalFeatures.add(Collections.<AdditionalFeature> emptyList());
+        getAdditionalClusterFeatures().setItems(additionalFeatures, null);
         setSpiceProxyEnabled(new EntityModel<Boolean>());
         getSpiceProxyEnabled().setEntity(false);
         getSpiceProxyEnabled().getEntityChangedEvent().addListener(this);
@@ -893,6 +910,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         getEnableOvirtService().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                refreshAdditionalClusterFeaturesList();
                 if (!getAllowClusterWithVirtGlusterEnabled() && getEnableOvirtService().getEntity()) {
                     getEnableGlusterService().setEntity(Boolean.FALSE);
                 }
@@ -937,6 +955,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                refreshAdditionalClusterFeaturesList();
                 if (!getAllowClusterWithVirtGlusterEnabled() && getEnableGlusterService().getEntity()) {
                     getEnableOvirtService().setEntity(Boolean.FALSE);
                 }
@@ -946,7 +965,6 @@ public class ClusterModel extends EntityModel<VDSGroup>
                         && getEnableGlusterService().getEntity())
                 {
                     getIsImportGlusterConfiguration().setIsAvailable(true);
-
                     getGlusterHostAddress().setIsAvailable(true);
                     getGlusterHostFingerprint().setIsAvailable(true);
                     getGlusterHostPassword().setIsAvailable(true);
@@ -1509,6 +1527,77 @@ public class ClusterModel extends EntityModel<VDSGroup>
         }
 
         updateMigrateOnError();
+        refreshAdditionalClusterFeaturesList();
+    }
+
+    private void refreshAdditionalClusterFeaturesList() {
+        if (getVersion() == null || getVersion().getSelectedItem() == null) {
+            return;
+        }
+        Version version = getVersion().getSelectedItem();
+
+        ApplicationMode category = null;
+        if (getEnableGlusterService().getEntity() && getEnableOvirtService().getEntity()) {
+            category = ApplicationMode.AllModes;
+        } else if (getEnableGlusterService().getEntity()) {
+            category = ApplicationMode.GlusterOnly;
+        } else if (getEnableOvirtService().getEntity()) {
+            category = ApplicationMode.VirtOnly;
+        }
+
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.setModel(this);
+        // Get all the addtional features avaivalble for the cluster
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                ClusterModel.this.stopProgress();
+                final Set<AdditionalFeature> features = (Set<AdditionalFeature>) result;
+                // Get the additional features which are already enabled for cluster. Applicable only in case of edit
+                // cluster
+                if (getIsEdit() && !features.isEmpty()) {
+                    AsyncQuery asyncQuery = new AsyncQuery();
+                    asyncQuery.setModel(this);
+                    asyncQuery.asyncCallback = new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            ClusterModel.this.stopProgress();
+                            Set<SupportedAdditionalClusterFeature> clusterFeatures =
+                                    (Set<SupportedAdditionalClusterFeature>) returnValue;
+                            Set<AdditionalFeature> featuresEnabled = new HashSet<AdditionalFeature>();
+                            for (SupportedAdditionalClusterFeature feature : clusterFeatures) {
+                                if (feature.isEnabled()) {
+                                    featuresEnabled.add(feature.getFeature());
+                                }
+                            }
+                            updateAddtionClusterFeatureList(features, featuresEnabled);
+                        }
+                    };
+                    ClusterModel.this.startProgress(null);
+                    AsyncDataProvider.getClusterFeaturesByClusterId(asyncQuery, getEntity().getId());
+                } else {
+                    updateAddtionClusterFeatureList(features,
+                            Collections.<AdditionalFeature> emptySet());
+                }
+            }
+        };
+        this.startProgress(null);
+        AsyncDataProvider.getClusterFeaturesByVersionAndCategory(asyncQuery, version, category);
+    }
+
+    private void updateAddtionClusterFeatureList(Set<AdditionalFeature> featuresAvailable,
+            Set<AdditionalFeature> featuresEnabled) {
+        List<AdditionalFeature> features = new ArrayList<AdditionalFeature>();
+        List<AdditionalFeature> selectedFeatures = new ArrayList<AdditionalFeature>();
+        for (AdditionalFeature feature : featuresAvailable) {
+            features.add(feature);
+            if (featuresEnabled.contains(feature)) {
+                selectedFeatures.add(feature);
+            }
+        }
+        List<List<AdditionalFeature>> clusterFeatureList = new ArrayList<List<AdditionalFeature>>();
+        clusterFeatureList.add(features);
+        getAdditionalClusterFeatures().setItems(clusterFeatureList, selectedFeatures);
     }
 
     private void updateMigrateOnError() {

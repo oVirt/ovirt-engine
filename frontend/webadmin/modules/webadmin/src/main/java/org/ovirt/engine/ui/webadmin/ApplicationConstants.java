@@ -4163,4 +4163,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Volume snapshots are scheduled.")
     String glusterVolumeSnapshotsScheduledToolTip();
+
+    @DefaultStringValue("Additional features supported in the Cluster")
+    String addtionalClusterFeaturesTitle();
+
 }

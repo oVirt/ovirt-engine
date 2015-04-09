@@ -9,8 +9,10 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
+import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -61,7 +63,6 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 @SuppressWarnings("unused")
 public class ClusterListModel extends ListWithDetailsAndReportsModel implements ISupportSystemTreeContext
 {
-
     private UICommand privateNewCommand;
 
 
@@ -731,6 +732,11 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());
+        for (AdditionalFeature feature : model.getAdditionalClusterFeatures().getSelectedItem()) {
+            cluster.getAddtionalFeaturesSupported().add(new SupportedAdditionalClusterFeature(cluster.getId(),
+                    true,
+                    feature));
+        }
         cluster.setTrustedService(model.getEnableTrustedService().getEntity());
         cluster.setHaReservation(model.getEnableHaReservation().getEntity());
         cluster.setOptionalReasonRequired(model.getEnableOptionalReason().getEntity());

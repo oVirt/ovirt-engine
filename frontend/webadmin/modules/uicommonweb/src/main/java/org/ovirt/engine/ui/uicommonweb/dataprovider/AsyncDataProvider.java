@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -53,6 +54,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -99,6 +101,7 @@ import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
+import org.ovirt.engine.core.common.queries.GetClusterFeaturesByVersionAndCategoryParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetConnectionsByDataCenterAndStorageTypeParameters;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
@@ -4008,6 +4011,36 @@ public final class AsyncDataProvider {
         };
         VdsIdParametersBase parameters = new VdsIdParametersBase(hostId);
         Frontend.getInstance().runQuery(VdcQueryType.GetUnusedGlusterBricks, parameters, asyncQuery);
+    }
+
+    public static void getClusterFeaturesByVersionAndCategory(AsyncQuery aQuery,
+            Version version,
+            ApplicationMode category) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (Set<AdditionalFeature>) source
+                        : new HashSet<AdditionalFeature>();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetClusterFeaturesByVersionAndCategory,
+                new GetClusterFeaturesByVersionAndCategoryParameters(version, category),
+                aQuery);
+    }
+
+    public static void getClusterFeaturesByClusterId(AsyncQuery aQuery, Guid clusterId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (Set<SupportedAdditionalClusterFeature>) source
+                        : new HashSet<SupportedAdditionalClusterFeature>();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetClusterFeaturesByClusterId,
+                new IdQueryParameters(clusterId),
+                aQuery);
     }
 
 }
