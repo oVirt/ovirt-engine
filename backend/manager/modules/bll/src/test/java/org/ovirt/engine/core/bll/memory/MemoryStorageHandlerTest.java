@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.memory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -70,13 +71,65 @@ public class MemoryStorageHandlerTest {
     }
 
     @Test
+    public void verifyFirstDomainForMemory() {
+        verifyDomainForMemory(Arrays.asList(validStorageDomain, invalidStorageDomain1, invalidStorageDomain2));
+    }
+
+    @Test
+    public void verifyMiddleDomainForMemory() {
+        verifyDomainForMemory(Arrays.asList(invalidStorageDomain1, validStorageDomain, invalidStorageDomain2));
+    }
+
+    @Test
     public void verifyLastDomainForMemory() {
         verifyDomainForMemory(Arrays.asList(invalidStorageDomain1, invalidStorageDomain2, validStorageDomain));
     }
 
     @Test
+    public void testFindStorageDomainForMemoryWithSingleDomain() {
+        verifyDomainForMemory(Collections.singletonList(validStorageDomain));
+    }
+
+    @Test
+    public void testFindStorageDomainForMemoryWithEmptyDomainsList() {
+        verifyNoDomainForMemory(Collections.<StorageDomain>emptyList());
+    }
+
+    @Test
+    public void testFindStorageDomainForMemoryWithSingleInvalidDomain() {
+        verifyNoDomainForMemory(Collections.singletonList(invalidStorageDomain1));
+    }
+
+    @Test
+    public void verifyNoDomainForMemoryWhenDomainIsNotDataDomain() {
+        for (StorageDomainType storageDomainType : StorageDomainType.values()) {
+            if (!storageDomainType.isDataDomain()) {
+                validStorageDomain.setStorageDomainType(storageDomainType);
+                verifyNoDomainForMemory(Collections.singletonList(validStorageDomain));
+            }
+        }
+    }
+
+    @Test
+    public void verifyNoDomainForMemoryWhenDomainIsNotActive() {
+        for (StorageDomainStatus storageDomainStatus : StorageDomainStatus.values()) {
+            if (storageDomainStatus != StorageDomainStatus.Active) {
+                validStorageDomain.setStatus(storageDomainStatus);
+                verifyNoDomainForMemory(Collections.singletonList(validStorageDomain));
+            }
+        }
+    }
+
+    @Test
     public void verifyNoDomainForMemoryWhenDomainHasLowSpace() {
         when(validStorageDomainValidator.isDomainWithinThresholds())
+                .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+        verifyNoDomainForMemory(Collections.singletonList(validStorageDomain));
+    }
+
+    @Test
+    public void verifyNoDomainForMemoryWhenDomainHasNoSpaceForClonedDisks() {
+        when(validStorageDomainValidator.hasSpaceForClonedDisks(anyCollectionOf(DiskImage.class)))
                 .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         verifyNoDomainForMemory(Collections.singletonList(validStorageDomain));
     }
