@@ -166,10 +166,11 @@ public class VolumeModule extends AbstractGinModule {
         };
     }
 
+
+    @Provides
+    @Singleton
     public SearchableDetailModelProvider<GlusterVolumeSnapshotEntity, VolumeListModel, GlusterVolumeSnapshotListModel> getVolumeSnapshotListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<VolumeListModel> mainModelProvider,
-            final Provider<GlusterVolumeSnapshotListModel> modelProvider) {
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<GlusterVolumeSnapshotEntity, VolumeListModel, GlusterVolumeSnapshotListModel>(eventBus,
                 defaultConfirmPopupProvider,
                 VolumeListModel.class,
@@ -187,6 +188,7 @@ public class VolumeModule extends AbstractGinModule {
                         return super.getConfirmModelPopup(source, lastExecutedCommand);
                     }
                 };
+
     }
 
     @Provides
@@ -270,7 +272,6 @@ public class VolumeModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(GlusterVolumeSnapshotListModel.class).in(Singleton.class);
     }
 
 }
