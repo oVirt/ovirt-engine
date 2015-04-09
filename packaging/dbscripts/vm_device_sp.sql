@@ -186,14 +186,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetVmDeviceByVmId(v_vm_id UUID)
+Create or replace FUNCTION GetVmDeviceByVmId(v_vm_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
 RETURNS SETOF vm_device_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
     FROM   vm_device_view
-    WHERE  vm_id = v_vm_id order by device_id;
+    WHERE  vm_id = v_vm_id
+    AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                      FROM   user_vm_permissions_view
+                                      WHERE  user_id = v_user_id AND entity_id = v_vm_id))
+    order by device_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

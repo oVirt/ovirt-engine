@@ -31,8 +31,9 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     private static final Guid EXISTING_DEVICE_ID = new Guid("e14ed6f0-3b12-11e1-b614-63d00126418d");
     private static final Guid NON_EXISTING_VM_ID = Guid.newGuid();
     private static final int TOTAL_DEVICES = 15;
-    private static final int TOTAL_DEVICES_FOR_EXISTING_VM = 5;
+    private static final int TOTAL_DISK_DEVICES_FOR_EXISTING_VM = 5;
     private static final int TOTAL_HOST_DEVICES = 3;
+    private static final int TOTAL_DEVICES_FOR_EXISTING_VM = 8;
 
     @Override
     protected VmDeviceId generateNonExistingId() {
@@ -82,7 +83,7 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     }
 
     @Test
-    public void testGetVmDeviceByVmIdTypeAndDeviceFilteringSetToFlase() {
+    public void testGetVmDeviceByVmIdTypeAndDeviceFilteringSetToFalse() {
         List<VmDevice> devices =
                 dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, VmDeviceGeneralType.DISK, "disk", null, false);
         assertGetVMDeviceByIdTypeAndDeviceFullResult(devices);
@@ -111,11 +112,21 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     }
 
     /**
-     * Asserts all the devices are present in a result of {@link VmDeviceDAO#getVmDeviceByVmIdTypeAndDevice(Guid, String, String)
+     * Asserts all the disk devices are present in a result of {@link VmDeviceDAO#getVmDeviceByVmIdTypeAndDevice(Guid, String, String)
      * @param devices The result to check
      */
     private static void assertGetVMDeviceByIdTypeAndDeviceFullResult(List<VmDevice> devices) {
-        assertEquals("there should only be " + TOTAL_DEVICES_FOR_EXISTING_VM + " disks", TOTAL_DEVICES_FOR_EXISTING_VM, devices.size());
+        assertEquals("there should only be " + TOTAL_DISK_DEVICES_FOR_EXISTING_VM + " disks",
+                TOTAL_DISK_DEVICES_FOR_EXISTING_VM, devices.size());
+    }
+
+    /**
+     * Asserts all the devices are present in a result of {@link VmDeviceDAO#getVmDeviceByVmId(Guid, String, String)
+     * @param devices The result to check
+     */
+    private static void assertGetVMDeviceByIdResult(List<VmDevice> devices) {
+        assertEquals("there should only be " + TOTAL_DEVICES_FOR_EXISTING_VM + " devices",
+                TOTAL_DEVICES_FOR_EXISTING_VM, devices.size());
     }
 
     @Test
@@ -252,5 +263,30 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                 2,
                 new HashMap<String, Object>(),
                 true, false, false, "alias", Collections.singletonMap("prop1", "value1"), null, null);
+    }
+
+    @Test
+    public void testGetVmDeviceByVmIdFilteringSetToFalse() {
+        List<VmDevice> devices =
+                dao.getVmDeviceByVmId(EXISTING_VM_ID);
+        assertGetVMDeviceByIdResult(devices);
+    }
+
+    @Test
+    public void testGetVmDeviceByVmIdFilteringWithPermissions() {
+        List<VmDevice> devices =
+                dao.getVmDeviceByVmId(EXISTING_VM_ID,
+                        PRIVILEGED_USER_ID,
+                        true);
+        assertGetVMDeviceByIdResult(devices);
+    }
+
+    @Test
+    public void testGetVmDeviceByVmIdFilteringWithoutPermissions() {
+        List<VmDevice> devices =
+                dao.getVmDeviceByVmId(EXISTING_VM_ID,
+                        UNPRIVILEGED_USER_ID,
+                        true);
+        assertTrue("A user without any permissions should not see any devices", devices.isEmpty());
     }
 }
