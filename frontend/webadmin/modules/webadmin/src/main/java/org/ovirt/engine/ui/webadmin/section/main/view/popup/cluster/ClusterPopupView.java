@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -13,10 +16,12 @@ import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
+import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
+import org.ovirt.engine.ui.common.widget.editor.ListModelCheckBoxGroup;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
@@ -51,6 +56,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -209,6 +215,19 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path(value = "glusterTunedProfile.selectedItem")
     @WithElementId
     ListModelListBoxEditor<String> glusterTunedProfileEditor;
+
+    @UiField(provided = true)
+    @Path(value = "additionalClusterFeatures.selectedItem")
+    @WithElementId
+    ListModelCheckBoxGroup<AdditionalFeature> additionalFeaturesEditor;
+
+    @UiField
+    @Ignore
+    AdvancedParametersExpander additionalFeaturesExpander;
+
+    @UiField
+    @Ignore
+    FlowPanel additionalFeaturesExpanderContent;
 
     @UiField
     @WithElementId
@@ -425,9 +444,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         initRadioButtonEditors();
         initCheckBoxEditors();
         initInfoIcons();
-
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        initAdditionalFeaturesExpander();
 
         serialNumberPolicyEditor.setRenderer(new VisibilityRenderer.SimpleVisibilityRenderer());
 
@@ -436,6 +455,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         driver.initialize(this);
         applyModeCustomizations();
         setVisibilities();
+
+        additionalFeaturesEditor.clearAllSelections();
     }
 
     private void setVisibilities() {
@@ -462,6 +483,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         enableHaReservationEditor.setContentWidgetContainerStyleName(style.fullWidth());
         enableOptionalReasonEditor.setContentWidgetContainerStyleName(style.fullWidth());
         enableHostMaintenanceReasonEditor.setContentWidgetContainerStyleName(style.fullWidth());
+        additionalFeaturesExpanderContent.setStyleName(style.additionalFeaturesExpanderContent());
     }
 
     private void localize() {
@@ -480,12 +502,13 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         enableOvirtServiceOptionEditor.setLabel(constants.clusterEnableOvirtServiceLabel());
         enableGlusterServiceOptionEditor.setLabel(constants.clusterEnableGlusterServiceLabel());
         glusterTunedProfileEditor.setLabel(constants.glusterTunedProfileLabel());
-
         importGlusterConfigurationEditor.setLabel(constants.clusterImportGlusterConfigurationLabel());
         importGlusterExplanationLabel.setText(constants.clusterImportGlusterConfigurationExplanationLabel());
         glusterHostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
         glusterHostFingerprintEditor.setLabel(constants.hostPopupHostFingerprintLabel());
         glusterHostPasswordEditor.setLabel(constants.hostPopupPasswordLabel());
+        additionalFeaturesExpander.setTitleWhenCollapsed(constants.addtionalClusterFeaturesTitle());
+        additionalFeaturesExpander.setTitleWhenExpanded(constants.addtionalClusterFeaturesTitle());
 
         rngLabel.setText(constants.requiredRngSources());
         rngRandomSourceRequired.setLabel(constants.rngSourceRandom());
@@ -632,6 +655,13 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         skipFencingIfConnectivityBrokenCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
         skipFencingIfConnectivityBrokenCheckBox.getContentWidgetContainer().setWidth("420px"); //$NON-NLS-1$
+
+        additionalFeaturesEditor = new ListModelCheckBoxGroup<>(new AbstractRenderer<AdditionalFeature>() {
+            @Override
+            public String render(AdditionalFeature feature) {
+                return feature.getDescription();
+            }
+        });
     }
 
     private void initInfoIcons() {
@@ -760,6 +790,17 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                 }
             }
         });
+
+        object.getAdditionalClusterFeatures().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
+
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                List<List<AdditionalFeature>> items = (List<List<AdditionalFeature>>) object.getAdditionalClusterFeatures().getItems();
+                // Hide the fields if there is no feature to show
+                additionalFeaturesExpander.setVisible(!items.get(0).isEmpty());
+                additionalFeaturesExpanderContent.setVisible(!items.get(0).isEmpty());
+            }
+        });
     }
 
     private void optimizationForServerFormatter(ClusterModel object) {
@@ -817,10 +858,16 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         String timeTextBoxEditorWidget();
 
         String optimizationTabPanel();
+
+        String additionalFeaturesExpanderContent();
     }
 
     @Override
     public DialogTabPanel getTabPanel() {
         return tabPanel;
+    }
+
+    private void initAdditionalFeaturesExpander() {
+        additionalFeaturesExpander.initWithContent(additionalFeaturesExpanderContent.getElement());
     }
 }

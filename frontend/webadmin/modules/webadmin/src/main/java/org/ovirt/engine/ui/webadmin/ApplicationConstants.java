@@ -4374,4 +4374,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Attached to VMs")
     String attachedToVms();
+
+    @DefaultStringValue("Additional features supported in the Cluster")
+    String addtionalClusterFeaturesTitle();
 }

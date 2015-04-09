@@ -156,6 +156,11 @@
             margin-bottom: 20px;
         }
 
+        .additionalFeaturesExpanderContent {
+            margin-left: 15px;
+            display: none;
+        }
+
     </ui:style>
 
     <d:SimpleDialogPanel width="800px" height="560px">
@@ -197,6 +202,10 @@
                                     <ge:EntityModelCheckBoxEditor ui:field="rngHwrngSourceRequired" />
                                 </g:FlowPanel>
                                 <e:ListModelListBoxEditor ui:field="glusterTunedProfileEditor" />
+                                <d:AdvancedParametersExpander ui:field="additionalFeaturesExpander"/>
+                                <g:FlowPanel ui:field="additionalFeaturesExpanderContent">
+                                     <e:ListModelCheckBoxGroup	ui:field="additionalFeaturesEditor" />
+                                </g:FlowPanel>
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>

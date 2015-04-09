@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.inject.Inject;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -61,6 +62,8 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import com.google.inject.Inject;
 
 public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGroup> implements ISupportSystemTreeContext {
 
@@ -525,7 +528,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
 
         ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
         for (VDSGroup vdsGroup : getSelectedItems()) {
-            ManagementNetworkOnClusterOperationParameters currentParam = new ManagementNetworkOnClusterOperationParameters(((VDSGroup) vdsGroup));
+            ManagementNetworkOnClusterOperationParameters currentParam = new ManagementNetworkOnClusterOperationParameters((vdsGroup));
             currentParam.setForceResetEmulatedMachine(true);
             prms.add(currentParam);
         }
@@ -752,6 +755,11 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());
+        for (AdditionalFeature feature : model.getAdditionalClusterFeatures().getSelectedItem()) {
+            cluster.getAddtionalFeaturesSupported().add(new SupportedAdditionalClusterFeature(cluster.getId(),
+                    true,
+                    feature));
+        }
         cluster.setTrustedService(model.getEnableTrustedService().getEntity());
         cluster.setHaReservation(model.getEnableHaReservation().getEntity());
         cluster.setOptionalReasonRequired(model.getEnableOptionalReason().getEntity());
