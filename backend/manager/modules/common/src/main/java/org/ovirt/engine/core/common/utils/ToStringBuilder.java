@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.utils;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Eases implementation of {@code toString()} methods.
@@ -300,6 +302,34 @@ public class ToStringBuilder {
      */
     public ToStringBuilder append(final String name, final short[] value) {
         appendAttribute(name, Arrays.toString(value));
+        return this;
+    }
+
+    /**
+     * Appends {@code Collection} attribute with specified {@code name} and {@code value}
+     *
+     * @param name
+     *            attribute name
+     * @param value
+     *            attribute value
+     * @return this
+     */
+    public <T> ToStringBuilder append(final String name, final Collection<T> value) {
+        appendAttribute(name, value == null ? null : Arrays.toString(value.toArray()));
+        return this;
+    }
+
+    /**
+     * Appends {@code Map} attribute with specified {@code name} and {@code value}
+     *
+     * @param name
+     *            attribute name
+     * @param value
+     *            attribute value
+     * @return this
+     */
+    public <K, V> ToStringBuilder append(final String name, final Map<K, V> value) {
+        append(name, value == null ? null : value.entrySet());
         return this;
     }
 

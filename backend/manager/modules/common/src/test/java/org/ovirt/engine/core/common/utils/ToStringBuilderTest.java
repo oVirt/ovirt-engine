@@ -4,7 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -127,6 +131,20 @@ public class ToStringBuilderTest {
         final String nullValue = null;
         final String nullArrayName = "nullArray";
         final Object[] nullArrayValue = null;
+        final String nullCollectionName = "nullCollection";
+        final Collection<Object> nullCollectionValue = null;
+        final String emptyCollectionName = "emptyCollection";
+        final Collection<Object> emptyCollectionValue = Collections.emptyList();
+        final String collectionName = "collection";
+        final Collection<String> collectionValue = Arrays.asList("item1", "item2");
+        final String nullMapName = "nullMap";
+        final Map<Object, Object> nullMapValue = null;
+        final String emptyMapName = "emptyMap";
+        final Map<Object, Object> emptyMapValue = Collections.emptyMap();
+        final String mapName = "map";
+        final Map<String, String> mapValue = new HashMap<>();
+        mapValue.put("key1", "value1");
+        mapValue.put("key2", "value2");
 
         String expected = ToStringBuilder.ATTRIBUTES_LIST_PREFIX
                 + createFirstAttributeOutput(booleanName, String.valueOf(booleanValue))
@@ -150,7 +168,13 @@ public class ToStringBuilderTest {
                 + createAttributeOutput(nullName, String.valueOf(nullValue))
                 + createAttributeOutput(nullArrayName, Arrays.toString(nullArrayValue))
                 + createAttributeOutput(passwordName, ToStringBuilder.FILTERED_CONTENT)
-                + createAttributeOutput(nullPasswordName, null)
+                + createAttributeOutput(nullPasswordName, nullPasswordValue)
+                + createAttributeOutput(nullCollectionName, null)
+                + createAttributeOutput(emptyCollectionName, Arrays.toString(emptyCollectionValue.toArray()))
+                + createAttributeOutput(collectionName, Arrays.toString(collectionValue.toArray()))
+                + createAttributeOutput(nullMapName, null)
+                + createAttributeOutput(emptyMapName, Arrays.toString(emptyMapValue.entrySet().toArray()))
+                + createAttributeOutput(mapName, Arrays.toString(mapValue.entrySet().toArray()))
                 + ToStringBuilder.ATTRIBUTES_LIST_SUFFIX;
 
         System.out.println("ToString: " + expected);
@@ -179,6 +203,12 @@ public class ToStringBuilderTest {
                         .append(nullArrayName, nullArrayValue)
                         .appendFiltered(passwordName, passwordValue)
                         .appendFiltered(nullPasswordName, nullPasswordValue)
+                        .append(nullCollectionName, nullCollectionValue)
+                        .append(emptyCollectionName, emptyCollectionValue)
+                        .append(collectionName, collectionValue)
+                        .append(nullMapName, nullMapValue)
+                        .append(emptyMapName, emptyMapValue)
+                        .append(mapName, mapValue)
                         .build());
     }
 
