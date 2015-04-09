@@ -83,6 +83,7 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._enabled = False
+        self._ca_was_renewed = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_BOOT,
@@ -154,6 +155,9 @@ class Plugin(plugin.PluginBase):
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
             )
         ),
+        before=(
+            oenginecons.Stages.CA_AVAILABLE,
+        ),
     )
     def _miscUpgrade(self):
         self.logger.info(_('Upgrading CA'))
@@ -211,6 +215,34 @@ class Plugin(plugin.PluginBase):
                             modifiedList=uninstall_files,
                         ),
                     )
+
+        #
+        # LEGACY NOTE
+        # Since 3.0 and maybe before the CA certificate's
+        # notBefore attribute was set using timezone offset
+        # instead of Z
+        # in this case we need to reissue CA certificate.
+        #
+        x509 = X509.load_cert(
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+        )
+        if x509.get_not_before().get_datetime().tzname() is None:
+            self._ca_was_renewed = True
+            self.logger.info(_('Renewing CA'))
+            self.execute(
+                args=(
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_CREATE,
+                    '--renew',
+                    '--keystore-password=%s' % (
+                        self.environment[oenginecons.PKIEnv.STORE_PASS],
+                    ),
+                ),
+                envAppend={
+                    'JAVA_HOME': self.environment[
+                        oengcommcons.ConfigEnv.JAVA_HOME
+                    ],
+                },
+            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
@@ -483,6 +515,13 @@ class Plugin(plugin.PluginBase):
                 )[1:],
             )
         )
+        if self._ca_was_renewed:
+            self.logger.warning(
+                _(
+                    'Internal CA was renewed, please refresh manually '
+                    'distributed copies'
+                ),
+            )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
