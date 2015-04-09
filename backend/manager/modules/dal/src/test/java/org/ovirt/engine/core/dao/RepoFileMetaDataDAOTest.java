@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.dao.DuplicateKeyException;
 
 public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
 
@@ -262,17 +263,14 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
     /**
      * Test primary key validity.
      */
-    @Test
+    @Test (expected = DuplicateKeyException.class)
     public void testPrimaryKeyValidation() {
         RepoImage newRepoFileMap = getNewIsoRepoFile();
-        getNewIsoRepoFile();
         repoFileMetaDataDao.addRepoFileMap(newRepoFileMap);
-        try {
-            repoFileMetaDataDao.addRepoFileMap(newRepoFileMap);
-        } catch (Exception e) {
-            // Should enter here since its a violation of primary key
-            assertTrue(true);
-        }
+        assertTrue("Able to insert new file once", true);
+
+        // Should enter here since its a violation of primary key
+        repoFileMetaDataDao.addRepoFileMap(newRepoFileMap);
     }
 
     /**
