@@ -82,10 +82,18 @@ enroll() {
 			-startdate "$(date --utc --date "now -1 days" +"%y%m%d%H%M%SZ")"
 	) || die "Cannot enroll CA certificate"
 
-	openssl x509 -in "${PKIDIR}/ca.pem" -out "${PKIDIR}/certs/ca.der" || die "Cannot read CA certificate"
+	return 0
+}
 
-	chown --reference="${PKIDIR}/private" "${PKIDIR}/private/ca.pem" || die "Cannot set CA private key permissions"
-	chmod a+r "${PKIDIR}/ca.pem" "${PKIDIR}/certs/ca.der" || die "Cannot set CA certificate permissions"
+renew() {
+	openssl x509 \
+		-signkey "${PKIDIR}/private/ca.pem" \
+		-in "${PKIDIR}/ca.pem" \
+		-out "${PKIDIR}/ca.pem.new" \
+		|| die "Cannot renew CA certificate"
+
+	common_backup "${PKIDIR}/ca.pem" || die "Cannot backup CA certificate"
+	mv "${PKIDIR}/ca.pem.new" "${PKIDIR}/ca.pem" || die "Cannot install renewed CA certificate"
 
 	return 0
 }
@@ -106,13 +114,20 @@ keystore() {
 		-trustcacerts \
 		-alias cacert \
 		-keypass "${password}" \
-		-file "${PKIDIR}/certs/ca.der" \
+		-file "${PKIDIR}/ca.pem" \
 		-keystore "${PKIDIR}/.truststore" \
 		-storepass "${password}" \
 		|| die "Keystore import failed"
 	chmod a+r "${PKIDIR}/.truststore"
 
 	return 0
+}
+
+cleanups() {
+	openssl x509 -in "${PKIDIR}/ca.pem" -out "${PKIDIR}/certs/ca.der" || die "Cannot read CA certificate"
+	chown --reference="${PKIDIR}/private" "${PKIDIR}/private/ca.pem" || die "Cannot set CA private key permissions"
+	chmod a+r "${PKIDIR}/ca.pem" "${PKIDIR}/certs/ca.der" || die "Cannot set CA certificate permissions"
+	chmod a+r "${PKIDIR}/.truststore"
 }
 
 usage() {
@@ -122,6 +137,7 @@ Create certificate authority.
 
     --subject=subject              X.500 subject name.
     --keystore-password=password   Password for keystore.
+    --renew                        Renew CA certificate.
 __EOF__
 }
 
@@ -132,6 +148,7 @@ cleanup() {
 }
 
 trap cleanup 0
+RENEW=
 while [ -n "$1" ]; do
 	x="$1"
 	v="${x#*=}"
@@ -142,6 +159,9 @@ while [ -n "$1" ]; do
 		;;
 		--keystore-password=*)
 			KEYSTORE_PASSWORD="${v}"
+		;;
+		--renew)
+			RENEW=1
 		;;
 		--help)
 			usage
@@ -154,10 +174,15 @@ while [ -n "$1" ]; do
 	esac
 done
 
-[ -n "${SUBJECT}" ] || die "Please specify subject"
+[ -z "${RENEW}" -a -z "${SUBJECT}" ] && die "Please specify subject"
 [ -n "${KEYSTORE_PASSWORD}" ] || die "Please specify keystore password"
 
-clean_pki_dir
-config
-enroll "${SUBJECT}"
+if [ -z "${RENEW}" ]; then
+	clean_pki_dir
+	config
+	enroll "${SUBJECT}"
+else
+	renew
+fi
 keystore "${KEYSTORE_PASSWORD}"
+cleanups
