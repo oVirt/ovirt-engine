@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.memory.LiveSnapshotMemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
+import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.memory.NullableMemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.StatelessSnapshotMemoryImageBuilder;
@@ -212,7 +213,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     public Guid getStorageDomainIdForVmMemory(List<DiskImage> memoryDisksList) {
         if (cachedStorageDomainId.equals(Guid.Empty) && getVm() != null) {
-            StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(getVm().getStoragePoolId(), memoryDisksList);
+            StorageDomain storageDomain = MemoryStorageHandler.findStorageDomainForMemory(getVm().getStoragePoolId(),
+                    memoryDisksList);
             if (storageDomain != null) {
                 cachedStorageDomainId = storageDomain.getId();
             }

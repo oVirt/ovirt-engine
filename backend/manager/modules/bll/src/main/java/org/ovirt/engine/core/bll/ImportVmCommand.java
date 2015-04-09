@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -565,7 +566,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private StorageDomain updateStorageDomainInMemoryVolumes(List<DiskImage> disksList) {
         List<DiskImage> memoryDisksList = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.META_DATA_SIZE_IN_BYTES);
-        StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(getParameters().getStoragePoolId(), memoryDisksList);
+        StorageDomain storageDomain = MemoryStorageHandler.findStorageDomainForMemory(getParameters().getStoragePoolId(),
+                memoryDisksList);
         disksList.addAll(memoryDisksList);
         return storageDomain;
     }

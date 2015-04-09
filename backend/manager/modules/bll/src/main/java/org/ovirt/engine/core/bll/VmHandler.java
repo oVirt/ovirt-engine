@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,6 @@ import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -39,8 +37,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -59,8 +55,6 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -723,54 +717,6 @@ public class VmHandler {
         if (osRepository.isLinux(vmBase.getOsId()) && vmBase.getUsbPolicy().equals(UsbPolicy.ENABLED_LEGACY)) {
             vmBase.setUsbPolicy(UsbPolicy.DISABLED);
         }
-    }
-
-    /**
-     * Returns a <code>StorageDomain</code> in the given <code>StoragePool</code> that has
-     * at least as much as requested free space and can be used to store memory images
-     *
-     * @param storagePoolId
-     *           The storage pool where the search for a domain will be made
-     * @param disksList
-     *           Disks for which space is needed
-     * @return storage domain in the given pool with at least the required amount of free space,
-     *         or null if no such storage domain exists in the pool
-     */
-    public static StorageDomain findStorageDomainForMemory(Guid storagePoolId, List<DiskImage> disksList) {
-        List<StorageDomain> domainsInPool = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(storagePoolId);
-        return findStorageDomainForMemory(domainsInPool, disksList);
-    }
-
-    protected static StorageDomain findStorageDomainForMemory(List<StorageDomain> domainsInPool, List<DiskImage> disksList) {
-        for (StorageDomain currDomain : domainsInPool) {
-
-            updateDisksStorage(currDomain, disksList);
-            if (currDomain.getStorageDomainType().isDataDomain()
-                    && currDomain.getStatus() == StorageDomainStatus.Active
-                    && validateSpaceRequirements(currDomain, disksList)) {
-                return currDomain;
-            }
-        }
-        return null;
-    }
-
-    private static void updateDisksStorage(StorageDomain storageDomain, List<DiskImage> disksList) {
-        for (DiskImage disk : disksList) {
-            disk.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomain.getId())));
-        }
-        //There should be two disks in the disksList, first of which is memory disk. Only its volume type should be modified.
-        updateDiskVolumeType(storageDomain.getStorageType(), disksList.get(0));
-    }
-
-    private static void updateDiskVolumeType(StorageType storageType, DiskImage disk) {
-        VolumeType volumeType = storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
-        disk.setVolumeType(volumeType);
-    }
-
-    private static boolean validateSpaceRequirements(StorageDomain storageDomain, List<DiskImage> disksList) {
-        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
-        return (storageDomainValidator.isDomainWithinThresholds().isValid() &&
-                storageDomainValidator.hasSpaceForClonedDisks(disksList).isValid());
     }
 
     public static ValidationResult canRunActionOnNonManagedVm(VM vm, VdcActionType actionType) {

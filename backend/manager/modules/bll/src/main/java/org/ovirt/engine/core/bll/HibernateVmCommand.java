@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
@@ -81,7 +82,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             List<DiskImage> diskDummiesForMemSize = MemoryUtils.createDiskDummies(
                     getVm().getTotalMemorySizeInBytes(),
                     MemoryUtils.META_DATA_SIZE_IN_BYTES);
-            StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(getStoragePoolId(), diskDummiesForMemSize);
+            StorageDomain storageDomain = MemoryStorageHandler.findStorageDomainForMemory(getStoragePoolId(),
+                    diskDummiesForMemSize);
             if (storageDomain != null) {
                 cachedStorageDomainId = storageDomain.getId();
             }
