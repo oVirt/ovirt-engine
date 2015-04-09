@@ -130,8 +130,8 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
                         StorageDomainStatus.Active,
                         VDSStatus.Up);
 
-        List<ImageFileType> SharedStorageDomainFileType = new ArrayList<ImageFileType>();
-        List<ImageFileType> EmptyStorageDomainFileType = new ArrayList<ImageFileType>();
+        List<ImageFileType> SharedStorageDomainFileType = new ArrayList<>();
+        List<ImageFileType> EmptyStorageDomainFileType = new ArrayList<>();
         for (RepoImage fileMD : listOfAllIsoFiles) {
             Guid repoDomainId = fileMD.getRepoDomainId();
             if (repoDomainId.equals(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3)) {
