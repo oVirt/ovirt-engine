@@ -15,6 +15,15 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class MemoryStorageHandler {
 
+    private static final MemoryStorageHandler instance = new MemoryStorageHandler();
+
+    private MemoryStorageHandler() {
+    }
+
+    public static MemoryStorageHandler getInstance() {
+        return instance;
+    }
+
     /**
      * Returns a <code>StorageDomain</code> in the given <code>StoragePool</code> that has
      * at least as much as requested free space and can be used to store memory images
@@ -26,14 +35,13 @@ public class MemoryStorageHandler {
      * @return storage domain in the given pool with at least the required amount of free space,
      *         or null if no such storage domain exists in the pool
      */
-    public static StorageDomain findStorageDomainForMemory(Guid storagePoolId, List<DiskImage> disksList) {
+    public StorageDomain findStorageDomainForMemory(Guid storagePoolId, List<DiskImage> disksList) {
         List<StorageDomain> domainsInPool =
                 DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(storagePoolId);
         return findStorageDomainForMemory(domainsInPool, disksList);
     }
 
-    protected static StorageDomain findStorageDomainForMemory(List<StorageDomain> domainsInPool,
-            List<DiskImage> disksList) {
+    protected StorageDomain findStorageDomainForMemory(List<StorageDomain> domainsInPool, List<DiskImage> disksList) {
         for (StorageDomain currDomain : domainsInPool) {
 
             updateDisksStorage(currDomain, disksList);
@@ -46,7 +54,7 @@ public class MemoryStorageHandler {
         return null;
     }
 
-    private static void updateDisksStorage(StorageDomain storageDomain, List<DiskImage> disksList) {
+    private void updateDisksStorage(StorageDomain storageDomain, List<DiskImage> disksList) {
         for (DiskImage disk : disksList) {
             disk.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomain.getId())));
         }
@@ -57,12 +65,12 @@ public class MemoryStorageHandler {
         updateDiskVolumeType(storageDomain.getStorageType(), disksList.get(0));
     }
 
-    private static void updateDiskVolumeType(StorageType storageType, DiskImage disk) {
+    private void updateDiskVolumeType(StorageType storageType, DiskImage disk) {
         VolumeType volumeType = storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
         disk.setVolumeType(volumeType);
     }
 
-    private static boolean validateSpaceRequirements(StorageDomain storageDomain, List<DiskImage> disksList) {
+    private boolean validateSpaceRequirements(StorageDomain storageDomain, List<DiskImage> disksList) {
         StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
         return (storageDomainValidator.isDomainWithinThresholds().isValid() &&
                 storageDomainValidator.hasSpaceForClonedDisks(disksList).isValid());

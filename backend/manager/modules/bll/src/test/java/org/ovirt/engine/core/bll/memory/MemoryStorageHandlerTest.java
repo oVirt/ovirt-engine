@@ -35,7 +35,8 @@ public class MemoryStorageHandlerTest {
                 SizeConverter.SizeUnit.BYTES).intValue();
         List<DiskImage> disksList =  MemoryUtils.createDiskDummies(vmSpaceInBytes, META_DATA_SIZE_IN_GB);
 
-        StorageDomain storageDomain = MemoryStorageHandler.findStorageDomainForMemory(storageDomains, disksList);
+        StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
+                storageDomains, disksList);
         assertThat(storageDomain, notNullValue());
         if (storageDomain != null) {
             Guid selectedId = storageDomain.getId();
@@ -43,7 +44,7 @@ public class MemoryStorageHandlerTest {
         }
         storageDomain.setCriticalSpaceActionBlocker(THRESHOLD_HIGH_GB);
 
-        storageDomain = MemoryStorageHandler.findStorageDomainForMemory(storageDomains, disksList);
+        storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(storageDomains, disksList);
         assertThat(storageDomain, nullValue());
     }
 

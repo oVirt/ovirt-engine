@@ -213,8 +213,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     public Guid getStorageDomainIdForVmMemory(List<DiskImage> memoryDisksList) {
         if (cachedStorageDomainId.equals(Guid.Empty) && getVm() != null) {
-            StorageDomain storageDomain = MemoryStorageHandler.findStorageDomainForMemory(getVm().getStoragePoolId(),
-                    memoryDisksList);
+            StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
+                    getVm().getStoragePoolId(), memoryDisksList);
             if (storageDomain != null) {
                 cachedStorageDomainId = storageDomain.getId();
             }
