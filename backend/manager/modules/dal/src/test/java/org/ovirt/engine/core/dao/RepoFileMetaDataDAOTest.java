@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
@@ -38,7 +39,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
                 .getRepoListForStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS_ISO,
                         ImageFileType.ISO);
         assertNotNull(listOfRepoFiles);
-        assertSame(listOfRepoFiles.isEmpty(), true);
+        assertTrue(listOfRepoFiles.isEmpty());
 
         RepoImage newRepoFileMap = getNewIsoRepoFile();
         repoFileMetaDataDao.addRepoFileMap(newRepoFileMap);
@@ -46,7 +47,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         listOfRepoFiles = repoFileMetaDataDao
                 .getRepoListForStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS_ISO,
                         ImageFileType.ISO);
-        assertSame(listOfRepoFiles.isEmpty(), false);
+        assertFalse(listOfRepoFiles.isEmpty());
     }
 
     /**
@@ -60,7 +61,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
                         ImageFileType.ISO);
 
         assertNotNull(listOfRepoFiles);
-        assertNotSame(true, listOfRepoFiles.isEmpty());
+        assertFalse(listOfRepoFiles.isEmpty());
 
         // Remove the file from cache table
         repoFileMetaDataDao.removeRepoDomainFileList(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
@@ -68,7 +69,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         listOfRepoFiles = getActiveIsoDomain();
 
         assertNotNull(listOfRepoFiles);
-        assertSame(true, listOfRepoFiles.isEmpty());
+        assertTrue(listOfRepoFiles.isEmpty());
     }
 
     /**
@@ -82,7 +83,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
                         ImageFileType.ISO);
 
         assertNotNull(listOfRepoFiles);
-        assertNotSame(true, listOfRepoFiles.isEmpty());
+        assertFalse(listOfRepoFiles.isEmpty());
 
         // Test remove Iso
         StorageDomainDAO storageDomainDao = dbFacade.getStorageDomainDao();
@@ -90,7 +91,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         listOfRepoFiles = getActiveIsoDomain();
 
         assertNotNull(listOfRepoFiles);
-        assertSame(true, listOfRepoFiles.isEmpty());
+        assertTrue(listOfRepoFiles.isEmpty());
     }
 
     /**
@@ -145,13 +146,13 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         // Start the check
         // the shared storage domain, should have three types of files.
         assertEquals(SharedStorageDomainFileType.size(), 3);
-        assertEquals(SharedStorageDomainFileType.contains(ImageFileType.Unknown), true);
-        assertEquals(SharedStorageDomainFileType.contains(ImageFileType.ISO), true);
-        assertEquals(SharedStorageDomainFileType.contains(ImageFileType.Floppy), true);
+        assertTrue(SharedStorageDomainFileType.contains(ImageFileType.Unknown));
+        assertTrue(SharedStorageDomainFileType.contains(ImageFileType.ISO));
+        assertTrue(SharedStorageDomainFileType.contains(ImageFileType.Floppy));
 
         // The empty storage domain, should not have files, but should be fetched, since we want to refresh it.
         assertEquals(EmptyStorageDomainFileType.size(), 1);
-        assertEquals(EmptyStorageDomainFileType.contains(ImageFileType.Unknown), true);
+        assertTrue(EmptyStorageDomainFileType.contains(ImageFileType.Unknown));
     }
 
     /**
@@ -188,7 +189,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
                 }
             }
         }
-        assertEquals(isValid, true);
+        assertTrue(isValid);
     }
 
     /**
@@ -204,7 +205,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
                         ImageFileType.ISO);
 
         assertNotNull(listOfRepoFiles);
-        assertSame(true, !listOfRepoFiles.isEmpty());
+        assertFalse(listOfRepoFiles.isEmpty());
         assertEquals(listOfRepoFiles.get(0).getRepoImageId(),
                 newRepoFileMap.getRepoImageId());
         assertSame(true,
@@ -232,7 +233,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
 
         // Get first file and update its String
         assertNotNull(listOfRepoFiles);
-        assertNotSame(true, listOfRepoFiles.isEmpty());
+        assertFalse(listOfRepoFiles.isEmpty());
         RepoImage repoFile = listOfRepoFiles.get(0);
         assertNotNull(repoFile);
         String oldRepoImageId = repoFile.getRepoImageId();
@@ -249,7 +250,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         listOfRepoFiles = getActiveIsoDomain();
 
         assertNotNull(listOfRepoFiles);
-        assertNotSame(true, listOfRepoFiles.isEmpty());
+        assertFalse(listOfRepoFiles.isEmpty());
         RepoImage newRepoFile = listOfRepoFiles.get(0);
         assertNotNull(repoFile);
 
@@ -293,7 +294,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
                         ImageFileType.ISO);
 
         assertNotNull(listOfRepoFiles);
-        assertSame(true, listOfRepoFiles.isEmpty());
+        assertTrue(listOfRepoFiles.isEmpty());
     }
 
     private static RepoImage getNewIsoRepoFile() {
