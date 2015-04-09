@@ -1,0 +1,3 @@
+id,vdsName,cpuThreads,cpuCores,vmCount,physicalMemMb,reservedMem,maxVdsMemoryOverCommit,memCommited,pendingVmemSize,usageCpuPercent,cpuOverCommitTimestamp,spmStatus
+087fc690-de02-11e4-8830-0800200c9a66,Host A,1,1,1,1024,0,100,520,0,50,,None,
+087fc691-de02-11e4-8830-0800200c9a66,Host B,1,1,1,1024,0,100,312,0,25,,None,

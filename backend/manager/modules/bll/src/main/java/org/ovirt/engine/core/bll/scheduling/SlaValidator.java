@@ -1,9 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,11 +52,6 @@ public class SlaValidator {
     private double getVdsCurrentMemoryInUse(VDS curVds) {
         return curVds.getMemCommited() + curVds.getPendingVmemSize() + curVds.getGuestOverhead()
                         + curVds.getReservedMem();
-    }
-
-    public static Integer getEffectiveCpuCores(VDS vds) {
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vds.getVdsGroupId());
-        return getEffectiveCpuCores(vds, vdsGroup != null ? vdsGroup.getCountThreadsAsCores() : false);
     }
 
     public static Integer getEffectiveCpuCores(VDS vds, boolean countThreadsAsCores) {

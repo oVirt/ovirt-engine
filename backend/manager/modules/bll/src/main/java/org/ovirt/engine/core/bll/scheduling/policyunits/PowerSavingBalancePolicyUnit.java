@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -45,7 +44,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             ArrayList<String> messages) {
         final Pair<List<Guid>, Guid> migrationRule =  super.balance(cluster, hosts, parameters, messages);
 
-        List<VDS> allHosts = DbFacade.getInstance().getVdsDao().getAllForVdsGroup(cluster.getId());
+        List<VDS> allHosts = getVdsDao().getAllForVdsGroup(cluster.getId());
 
         List<VDS> emptyHosts = new ArrayList<>();
         List<VDS> maintenanceHosts = new ArrayList<>();

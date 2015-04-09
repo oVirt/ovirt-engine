@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -231,12 +232,19 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             public boolean eval(VDS p) {
                 return (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) >= highUtilization
                         && p.getCpuOverCommitTimestamp() != null
-                        && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime())
+                        && (getTime().getTime() - p.getCpuOverCommitTimestamp().getTime())
                         >= TimeUnit.MINUTES.toMillis(cpuOverCommitDurationMinutes)
                         && p.getVmCount() > 0;
             }
         });
-        Collections.sort(overUtilizedHosts, new ReverseComparator(VdsCpuUsageComparator.INSTANCE));
+
+        if (overUtilizedHosts.size() > 1) {
+            // Assume all hosts belong to the same cluster
+            VDSGroup cluster = getVdsGroupDao().get(overUtilizedHosts.get(0).getVdsGroupId());
+            Collections.sort(overUtilizedHosts, new ReverseComparator(new VdsCpuUsageComparator(
+                    cluster != null && cluster.getCountThreadsAsCores())));
+        }
+
         return overUtilizedHosts;
     }
 
@@ -267,11 +275,18 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                 return (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) < lowUtilization
                         && p.getVmCount() >= minVmCount
                         && (p.getCpuOverCommitTimestamp() == null
-                            || (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime()) <
+                            || (getTime().getTime() - p.getCpuOverCommitTimestamp().getTime()) <
                                 TimeUnit.MINUTES.toMillis(cpuOverCommitDurationMinutes));
             }
         });
-        Collections.sort(underUtilizedHosts, VdsCpuUsageComparator.INSTANCE);
+
+        if (underUtilizedHosts.size() > 1) {
+            // Assume all hosts belong to the same cluster
+            VDSGroup cluster = getVdsGroupDao().get(underUtilizedHosts.get(0).getVdsGroupId());
+            Collections.sort(underUtilizedHosts, new VdsCpuUsageComparator(
+                    cluster != null && cluster.getCountThreadsAsCores()));
+        }
+
         return underUtilizedHosts;
     }
 
@@ -287,6 +302,14 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
 
     protected VmDAO getVmDao() {
         return DbFacade.getInstance().getVmDao();
+    }
+
+    protected VdsGroupDAO getVdsGroupDao() {
+        return DbFacade.getInstance().getVdsGroupDao();
+    }
+
+    protected Date getTime() {
+        return new Date();
     }
 
     protected int tryParseWithDefault(String candidate, int defaultValue) {
