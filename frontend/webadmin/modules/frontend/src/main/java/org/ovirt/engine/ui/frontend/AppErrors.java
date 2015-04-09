@@ -373,10 +373,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is locked or still running, try again once VM is in the Down state.")
     String VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Removing Default Template is not allowed.")
+    @DefaultStringValue("Cannot ${action} ${type}. Removing Blank Template is not allowed.")
     String VMT_CANNOT_REMOVE_BLANK_TEMPLATE();
 
-    @DefaultStringValue("Cannot export Default Template.")
+    @DefaultStringValue("Cannot export Blank Template.")
     String VMT_CANNOT_EXPORT_BLANK_TEMPLATE();
 
     @DefaultStringValue("Failed updating the properties of the VM template.")
@@ -559,7 +559,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Number of Prestarted VMs cannot exceed the number of VMs in the Pool.")
     String ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT();
 
-    @DefaultStringValue("Cannot ${action} ${type}: VM was created from the Default Template and does not contain an operating system. Please run the VM using 'Boot from CD' or 'Boot from Network' options from the 'Run Once' menu.")
+    @DefaultStringValue("Cannot ${action} ${type}: VM was created from the Blank Template and does not contain an operating system. Please run the VM using 'Boot from CD' or 'Boot from Network' options from the 'Run Once' menu.")
     String ACTION_TYPE_FAILED_VM_WITH_BLANK_TEMPLATE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Low disk space on relevant Storage Domain.")
@@ -1258,7 +1258,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Legacy USB support is not available on Linux VMs.")
     String USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS();
 
-    @DefaultStringValue("VM-Pool must be based on  non-default Template.")
+    @DefaultStringValue("VM-Pool must be based on  non-blank Template.")
     String VM_POOL_CANNOT_CREATE_FROM_BLANK_TEMPLATE();
 
     @DefaultStringValue("Cannot edit VM-Pool properties - VM-Pool not found.")
