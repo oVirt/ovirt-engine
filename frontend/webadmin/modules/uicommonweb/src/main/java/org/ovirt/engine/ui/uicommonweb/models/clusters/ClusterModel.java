@@ -825,6 +825,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         setEnableTrustedService(new EntityModel<Boolean>(false));
         setEnableHaReservation(new EntityModel<Boolean>(false));
         setEnableOptionalReason(new EntityModel<Boolean>(false));
+        getEnableOptionalReason().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         setAllowClusterWithVirtGlusterEnabled(true);
         AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -896,7 +897,9 @@ public class ClusterModel extends EntityModel<VDSGroup>
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
         setRngRandomSourceRequired(new EntityModel<Boolean>());
+        getRngRandomSourceRequired().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         setRngHwrngSourceRequired(new EntityModel<Boolean>());
+        getRngHwrngSourceRequired().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
         initImportCluster(isEdit);
 
