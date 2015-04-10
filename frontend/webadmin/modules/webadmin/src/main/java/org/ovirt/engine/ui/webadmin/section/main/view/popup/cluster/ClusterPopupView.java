@@ -430,6 +430,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         localize();
         driver.initialize(this);
         applyModeCustomizations();
+        setVisibilities();
+    }
+
+    private void setVisibilities() {
+        rngLabel.setVisible(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
     }
 
     @Override
