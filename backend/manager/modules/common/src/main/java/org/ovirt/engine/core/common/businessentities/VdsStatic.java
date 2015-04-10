@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
 import org.ovirt.engine.core.common.validation.annotation.ValidNameWithDot;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -278,16 +277,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public void setPmKdumpDetection(boolean pmKdumpDetection) {
         this.pmKdumpDetection = pmKdumpDetection;
-    }
-
-    // TODO: Remove method when all callers use List<FenceProxySourceType>
-    public String getPmProxyPreferences() {
-        return FenceProxySourceTypeHelper.saveAsString(getFenceProxySources());
-    }
-
-    // TODO: Remove method when all callers use List<FenceProxySourceType>
-    public void setPmProxyPreferences(String pmProxyPreferences) {
-        setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(pmProxyPreferences));
     }
 
     public List<FenceProxySourceType> getFenceProxySources() {

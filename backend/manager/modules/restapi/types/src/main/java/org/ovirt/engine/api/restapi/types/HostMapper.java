@@ -2,9 +2,10 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AutoNumaStatus;
@@ -51,6 +52,7 @@ import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
+import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -140,14 +142,11 @@ public class HostMapper {
             entity.setDisablePowerManagementPolicy(!model.isAutomaticPmEnabled());
         }
         if (model.isSetPmProxies()) {
-            String delim = "";
-            StringBuilder builder = new StringBuilder();
+            List<FenceProxySourceType> fenceProxySources = new LinkedList<>();
             for (PmProxy pmProxy : model.getPmProxies().getPmProxy()) {
-                builder.append(delim);
-                builder.append(pmProxy.getType());
-                delim = ",";
+                fenceProxySources.add(FenceProxySourceType.forValue(pmProxy.getType()));
             }
-            entity.setPmProxyPreferences(builder.toString());
+            entity.setFenceProxySources(fenceProxySources);
         }
         if (model.isSetKdumpDetection()) {
             entity.setPmKdumpDetection(model.isKdumpDetection());
@@ -378,14 +377,13 @@ public class HostMapper {
     @Mapping(from = VDS.class, to = PowerManagement.class)
     public static PowerManagement map(VDS entity, PowerManagement template) {
         PowerManagement model = template != null ? template : new PowerManagement();
-        if (entity.getPmProxyPreferences() != null) {
+        if (entity.getFenceProxySources() != null) {
             PmProxies pmProxies = new PmProxies();
-                String[] proxies = StringUtils.split(entity.getPmProxyPreferences(), ",");
-                for (String proxy : proxies) {
-                        PmProxy pmProxy = new PmProxy();
-                pmProxy.setType(proxy);
-                        pmProxies.getPmProxy().add(pmProxy);
-                }
+            for (FenceProxySourceType fenceProxySource : entity.getFenceProxySources()) {
+                PmProxy pmProxy = new PmProxy();
+                pmProxy.setType(fenceProxySource.getValue());
+                pmProxies.getPmProxy().add(pmProxy);
+            }
             model.setPmProxies(pmProxies);
         }
         model.setKdumpDetection(entity.isPmKdumpDetection());

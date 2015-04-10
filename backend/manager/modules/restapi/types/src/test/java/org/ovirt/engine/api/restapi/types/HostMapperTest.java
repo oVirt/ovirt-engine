@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Agent;
@@ -15,6 +16,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 
@@ -158,7 +160,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     public void testPmProxyPreferences() {
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
-        vds.setPmProxyPreferences("cluster,dc");
+        vds.setFenceProxySources(Arrays.asList(FenceProxySourceType.CLUSTER, FenceProxySourceType.DC));
         Host host = HostMapper.map(vds, (Host) null);
         assertEquals(host.getPowerManagement().getPmProxies().getPmProxy().size(), 2);
         assertTrue(host.getPowerManagement().getPmProxies().getPmProxy().get(0).getType().equalsIgnoreCase("cluster"));
