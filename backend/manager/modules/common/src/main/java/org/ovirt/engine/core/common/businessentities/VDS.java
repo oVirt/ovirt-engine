@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
@@ -930,11 +929,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setPmEnabled(boolean value) {
         vdsStatic.setPmEnabled(value);
-    }
-
-    // TODO: Remove method when all callers use List<FenceProxySourceType>
-    public String getPmProxyPreferences() {
-        return FenceProxySourceTypeHelper.saveAsString(getFenceProxySources());
     }
 
     public List<FenceProxySourceType> getFenceProxySources() {

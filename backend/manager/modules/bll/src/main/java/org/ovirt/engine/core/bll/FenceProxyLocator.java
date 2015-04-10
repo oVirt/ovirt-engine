@@ -3,22 +3,24 @@ package org.ovirt.engine.core.bll;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.FencingPolicyHelper;
+import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 
 public class FenceProxyLocator {
 
@@ -56,8 +58,8 @@ public class FenceProxyLocator {
         int delayInMs = 1000 * Config.<Integer> getValue(ConfigValues.FindFenceProxyDelayBetweenRetriesInSec);
         VDS proxyHost = null;
         // get PM Proxy preferences or use defaults if not defined
-        for (PMProxyOptions proxyOption : getPmProxyPreferences()) {
-            proxyHost = chooseBestProxy(proxyOption, excludedHostId);
+        for (FenceProxySourceType fenceProxySource : getFenceProxySources()) {
+            proxyHost = chooseBestProxy(fenceProxySource, excludedHostId);
             int count = 0;
             // If can not find a proxy host retry and delay between retries as configured.
             while (proxyHost == null && withRetries && count < retries) {
@@ -67,7 +69,7 @@ public class FenceProxyLocator {
                 } catch (Exception e) {
                     log.error(e.getMessage());
                 }
-                proxyHost = chooseBestProxy(proxyOption, excludedHostId);
+                proxyHost = chooseBestProxy(fenceProxySource, excludedHostId);
             }
             if (proxyHost != null) {
                 break;
@@ -81,21 +83,16 @@ public class FenceProxyLocator {
         return proxyHost;
     }
 
-
-    private PMProxyOptions[] getPmProxyPreferences() {
-        String pmProxyPreferences = (StringUtils.isEmpty(_vds.getPmProxyPreferences()))
-                ?
-                Config.<String> getValue(ConfigValues.FenceProxyDefaultPreferences)
-                : _vds.getPmProxyPreferences();
-        String[] pmProxyOptions = pmProxyPreferences.split(",");
-        PMProxyOptions[] proxyOptions = new PMProxyOptions[pmProxyOptions.length];
-        for (int i = 0; i < pmProxyOptions.length; i++) {
-            proxyOptions[i] = getProxyOption(pmProxyOptions[i]);
+    private List<FenceProxySourceType> getFenceProxySources() {
+        List<FenceProxySourceType> fenceProxySources = _vds.getFenceProxySources();
+        if (CollectionUtils.isEmpty(fenceProxySources)) {
+            fenceProxySources = FenceProxySourceTypeHelper.parseFromString(
+                    Config.<String> getValue(ConfigValues.FenceProxyDefaultPreferences));
         }
-        return proxyOptions;
+        return fenceProxySources;
     }
 
-    private VDS chooseBestProxy(PMProxyOptions proxyOption, Guid excludedHostId) {
+    private VDS chooseBestProxy(FenceProxySourceType fenceProxySource, Guid excludedHostId) {
         List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
         Version minSupportedVersion = null;
         if (fencingPolicy != null) {
@@ -106,7 +103,7 @@ public class FenceProxyLocator {
             VDS host = iterator.next();
             if (host.getId().equals(_vds.getId())
                     || host.getId().equals(excludedHostId)
-                    || !matchesOption(host, proxyOption)
+                    || !matchesOption(host, fenceProxySource)
                     || !areAgentsVersionCompatible(host)
                     || (fencingPolicy != null && !isFencingPolicySupported(host, minSupportedVersion))
                     || isHostNetworkUnreacable(host)) {
@@ -121,17 +118,21 @@ public class FenceProxyLocator {
         return hosts.size() == 0 ? null : hosts.get(0);
     }
 
-    private boolean matchesOption(VDS host, PMProxyOptions proxyOption) {
-        if (proxyOption == PMProxyOptions.CLUSTER) {
-            return host.getVdsGroupId().equals(_vds.getVdsGroupId());
+    private boolean matchesOption(VDS host, FenceProxySourceType fenceProxySource) {
+        boolean matches = false;
+        switch (fenceProxySource) {
+            case CLUSTER:
+                matches = host.getVdsGroupId().equals(_vds.getVdsGroupId());
+                break;
+
+            case DC:
+                matches = host.getStoragePoolId().equals(_vds.getStoragePoolId());
+                break;
+
+            case OTHER_DC:
+                matches = !host.getStoragePoolId().equals(_vds.getStoragePoolId());
         }
-        if (proxyOption == PMProxyOptions.DC) {
-            return host.getStoragePoolId().equals(_vds.getStoragePoolId());
-        }
-        if (proxyOption == PMProxyOptions.OTHER_DC) {
-            return !host.getStoragePoolId().equals(_vds.getStoragePoolId());
-        }
-        return false;
+        return matches;
     }
 
     private boolean areAgentsVersionCompatible(VDS vds) {
@@ -157,27 +158,6 @@ public class FenceProxyLocator {
                 || (vdsDynamic.getStatus() == VDSStatus.NonOperational
         && vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE));
     }
-
-    private PMProxyOptions getProxyOption(String pmProxyOption) {
-        if (pmProxyOption.equalsIgnoreCase(PMProxyOptions.CLUSTER.name())) {
-            return PMProxyOptions.CLUSTER;
-        }
-        else if (pmProxyOption.equalsIgnoreCase(PMProxyOptions.DC.name())) {
-            return PMProxyOptions.DC;
-        }
-        else if (pmProxyOption.equalsIgnoreCase(PMProxyOptions.OTHER_DC.name())) {
-            return PMProxyOptions.OTHER_DC;
-        } else {
-            log.error("Illegal value in PM Proxy Preferences string {}, skipped.", pmProxyOption);
-            return null;
-        }
-    }
-
-    private enum PMProxyOptions {
-        CLUSTER,
-        DC,
-        OTHER_DC;
-    };
 
     public FencingPolicy getFencingPolicy() {
         return fencingPolicy;
