@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetFenceAgentStatusParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -1622,7 +1623,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         agent.setOptionsMap(isPrimary ? getPmOptionsMap() : getPmSecondaryOptionsMap());
         param.setAgent(agent);
         param.setStoragePoolId(cluster.getStoragePoolId() != null ? cluster.getStoragePoolId() : Guid.Empty);
-        param.setPmProxyPreferences(getPmProxyPreferences());
+        param.setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(getPmProxyPreferences()));
         param.setVdsName(getName().getEntity());
         param.setHostName(getHost().getEntity());
         param.setVdsGroupId(cluster.getId());

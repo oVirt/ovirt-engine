@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.queries;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {
@@ -10,7 +13,7 @@ public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {
     private String vdsName;
     private String hostName;
     private FenceAgent agent;
-    private String pmProxyPreferences;
+    private List<FenceProxySourceType> fenceProxySources;
     private Guid storagePoolId;
     private Guid vdsGroupId;
 
@@ -66,12 +69,11 @@ public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {
         this.vdsGroupId = vdsGroupId;
     }
 
-    public String getPmProxyPreferences() {
-        return pmProxyPreferences;
+    public List<FenceProxySourceType> getFenceProxySources() {
+        return fenceProxySources;
     }
 
-    public void setPmProxyPreferences(String pmProxyPreferences) {
-        this.pmProxyPreferences = pmProxyPreferences;
+    public void setFenceProxySources(List<FenceProxySourceType> fenceProxySources) {
+        this.fenceProxySources = fenceProxySources;
     }
-
 }

@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.RpmVersionUtils;
+import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -841,8 +842,9 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 hostModel.setHelpTag(HelpTag.edit_host);
                 hostModel.setHashName("edit_host"); //$NON-NLS-1$
 
-                if (host.getPmProxyPreferences() != null) {
-                    hostModel.setPmProxyPreferences(host.getPmProxyPreferences());
+                if (host.getFenceProxySources() != null && !host.getFenceProxySources().isEmpty()) {
+                    hostModel.setPmProxyPreferences(
+                            FenceProxySourceTypeHelper.saveAsString(host.getFenceProxySources()));
                 } else {
                     AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
                         @Override
@@ -971,7 +973,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         Guid newClusterId = model.getCluster().getSelectedItem().getId();
         host.setVdsGroupId(newClusterId);
         host.setVdsSpmPriority(model.getSpmPriorityValue());
-        host.setPmProxyPreferences(model.getPmProxyPreferences());
+        host.setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(model.getPmProxyPreferences()));
 
 
         // Save other PM parameters.

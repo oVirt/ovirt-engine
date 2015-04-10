@@ -28,7 +28,7 @@ public class GetFenceAgentStatusQuery<P extends GetFenceAgentStatusParameters> e
         vds.setHostName(getParameters().getHostName());
         vds.setVdsGroupId(getParameters().getVdsGroupId());
         vds.setStoragePoolId(getParameters().getStoragePoolId());
-        vds.setPmProxyPreferences(getParameters().getPmProxyPreferences());
+        vds.setFenceProxySources(getParameters().getFenceProxySources());
         return vds;
     }
 }

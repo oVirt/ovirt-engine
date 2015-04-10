@@ -937,11 +937,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         return FenceProxySourceTypeHelper.saveAsString(getFenceProxySources());
     }
 
-    // TODO: Remove method when all callers use List<FenceProxySourceType>
-    public void setPmProxyPreferences(String pmProxyPreferences) {
-        setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(pmProxyPreferences));
-    }
-
     public List<FenceProxySourceType> getFenceProxySources() {
         return vdsStatic.getFenceProxySources();
     }
