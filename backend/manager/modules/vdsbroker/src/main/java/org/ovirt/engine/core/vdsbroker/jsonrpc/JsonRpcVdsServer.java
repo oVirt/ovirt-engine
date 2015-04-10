@@ -1099,9 +1099,11 @@ public class JsonRpcVdsServer implements IVdsServer {
             String[] brickList,
             int replicaCount,
             Boolean forceRemove) {
-        // forceRemove not used in gluster API
-        JsonRpcRequest request =
-                new RequestBuilder("GlusterVolume.removeBrickStart").withParameter("volumeName", volumeName)
+        String command = "GlusterVolume.removeBrickStart";
+        if(forceRemove) {
+            command = "GlusterVolume.removeBrickForce";
+        }
+        JsonRpcRequest request = new RequestBuilder(command).withParameter("volumeName", volumeName)
                         .withParameter("brickList", new ArrayList<String>(Arrays.asList(brickList)))
                         .withParameter("replicaCount", replicaCount)
                         .build();
