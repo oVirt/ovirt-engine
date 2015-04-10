@@ -253,10 +253,14 @@
         <include name="common/businessentities/Entities.java"/>
         <include name="common/utils/ToStringBuilder.java"/>
 
+        <!-- TODO: Remove when UI will be refactored to use FenceProxySourceType -->
+        <include name="common/utils/pm/FenceProxySourceTypeHelper.java"/>
+
         <!-- Required by frontend -->
         <include name="common/interfaces/SearchType.java" />
         <include name="common/businessentities/pm/FenceAgent.java" />
         <include name="common/businessentities/pm/FenceOperationResult.java" />
+        <include name="common/businessentities/pm/FenceProxySourceType.java" />
         <include name="common/businessentities/pm/PowerStatus.java" />
         <include name="common/businessentities/AsyncTaskStatus.java" />
         <include name="common/businessentities/AsyncTaskStatusEnum.java" />
