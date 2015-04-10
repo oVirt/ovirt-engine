@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
+import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
@@ -320,7 +321,8 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setNetConfigDirty((Boolean) rs
                     .getObject("net_config_dirty"));
             entity.setPmEnabled(rs.getBoolean("pm_enabled"));
-            entity.setPmProxyPreferences(rs.getString("pm_proxy_preferences"));
+            entity.setFenceProxySources(
+                    FenceProxySourceTypeHelper.parseFromString(rs.getString("pm_proxy_preferences")));
             entity.setPmKdumpDetection(rs.getBoolean("pm_detect_kdump"));
             entity.setSpmStatus(VdsSpmStatus.forValue(rs
                     .getInt("spm_status")));

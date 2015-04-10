@@ -12,7 +12,9 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
@@ -930,12 +932,22 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vdsStatic.setPmEnabled(value);
     }
 
+    // TODO: Remove method when all callers use List<FenceProxySourceType>
     public String getPmProxyPreferences() {
-        return vdsStatic.getPmProxyPreferences();
+        return FenceProxySourceTypeHelper.saveAsString(getFenceProxySources());
     }
 
+    // TODO: Remove method when all callers use List<FenceProxySourceType>
     public void setPmProxyPreferences(String pmProxyPreferences) {
-        vdsStatic.setPmProxyPreferences(pmProxyPreferences);
+        setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(pmProxyPreferences));
+    }
+
+    public List<FenceProxySourceType> getFenceProxySources() {
+        return vdsStatic.getFenceProxySources();
+    }
+
+    public void setFenceProxySources(List<FenceProxySourceType> fenceProxySources) {
+        vdsStatic.setFenceProxySources(fenceProxySources);
     }
 
     public String getHostOs() {

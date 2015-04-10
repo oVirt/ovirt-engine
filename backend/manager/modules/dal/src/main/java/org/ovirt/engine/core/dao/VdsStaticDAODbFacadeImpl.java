@@ -11,6 +11,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -86,7 +87,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("vds_type", vds.getVdsType())
                 .addValue("vds_strength", vds.getVdsStrength())
                 .addValue("pm_enabled", vds.isPmEnabled())
-                .addValue("pm_proxy_preferences", vds.getPmProxyPreferences())
+                .addValue("pm_proxy_preferences", FenceProxySourceTypeHelper.saveAsString(vds.getFenceProxySources()))
                 .addValue("pm_detect_kdump", vds.isPmKdumpDetection())
                 .addValue("otp_validity", vds.getOtpValidity())
                 .addValue("vds_spm_priority", vds.getVdsSpmPriority())
@@ -137,7 +138,8 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
             entity.setVdsStrength(rs.getInt("vds_strength"));
             entity.setPmEnabled(rs.getBoolean("pm_enabled"));
-            entity.setPmProxyPreferences(rs.getString("pm_proxy_preferences"));
+            entity.setFenceProxySources(
+                    FenceProxySourceTypeHelper.parseFromString(rs.getString("pm_proxy_preferences")));
             entity.setPmKdumpDetection(rs.getBoolean("pm_detect_kdump"));
             entity.setOtpValidity(rs.getLong("otp_validity"));
             entity.setSshKeyFingerprint(rs.getString("sshKeyFingerprint"));

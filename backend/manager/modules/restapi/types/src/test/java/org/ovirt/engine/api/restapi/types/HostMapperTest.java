@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.HostedEngine;
+import org.ovirt.engine.api.model.PmProxies;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.SSH;
 import org.ovirt.engine.api.model.User;
@@ -30,6 +31,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         }
         from.setProtocol(MappingTestHelper.shuffle(HostProtocol.class).value());
         from.getSpm().setPriority(3);
+        from.getPowerManagement().setPmProxies(new PmProxies());
         return from;
     }
 
