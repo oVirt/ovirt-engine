@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.pm;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
@@ -17,10 +18,14 @@ import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * It manages selection of fence proxy for specified host and fencing policy
+ */
 public class FenceProxyLocator {
     private static final Logger log = LoggerFactory.getLogger(FenceProxyLocator.class);
 
@@ -49,24 +54,20 @@ public class FenceProxyLocator {
     }
 
     public VDS findProxyHost(boolean withRetries, Guid excludedHostId) {
-        // make sure that loop is executed at least once , no matter what is the
-        // value in config
-        int retries = Math.max(Config.<Integer> getValue(ConfigValues.FindFenceProxyRetries), 1);
-        int delayInMs = 1000 * Config.<Integer> getValue(ConfigValues.FindFenceProxyDelayBetweenRetriesInSec);
+        int retries = getFindFenceProxyRetries();
+        long delayInMs = getDelayBetweenRetries();
         VDS proxyHost = null;
         // get PM Proxy preferences or use defaults if not defined
         for (FenceProxySourceType fenceProxySource : getFenceProxySources()) {
-            proxyHost = chooseBestProxy(fenceProxySource, excludedHostId);
+            proxyHost = selectBestProxy(fenceProxySource, excludedHostId);
             int count = 0;
             // If can not find a proxy host retry and delay between retries as configured.
             while (proxyHost == null && withRetries && count < retries) {
-                log.warn("Attempt {} to find fence proxy host failed...", ++count);
-                try {
-                    Thread.sleep(delayInMs);
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
-                proxyHost = chooseBestProxy(fenceProxySource, excludedHostId);
+                log.warn("Attempt {} to find fence proxy for host '{}' failed...",
+                        ++count,
+                        fencedHost.getHostName());
+                ThreadUtils.sleep((int) delayInMs);
+                proxyHost = selectBestProxy(fenceProxySource, excludedHostId);
             }
             if (proxyHost != null) {
                 break;
@@ -80,87 +81,138 @@ public class FenceProxyLocator {
         return proxyHost;
     }
 
-    private List<FenceProxySourceType> getFenceProxySources() {
+    protected List<FenceProxySourceType> getFenceProxySources() {
         List<FenceProxySourceType> fenceProxySources = fencedHost.getFenceProxySources();
         if (CollectionUtils.isEmpty(fenceProxySources)) {
-            fenceProxySources = FenceProxySourceTypeHelper.parseFromString(
-                    Config.<String>getValue(ConfigValues.FenceProxyDefaultPreferences));
+            fenceProxySources = getDefaultFenceProxySources();
         }
         return fenceProxySources;
     }
 
-    private VDS chooseBestProxy(FenceProxySourceType fenceProxySource, Guid excludedHostId) {
-        List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
-        Version minSupportedVersion = null;
-        if (fencingPolicy != null) {
-            minSupportedVersion = FencingPolicyHelper.getMinimalSupportedVersion(fencingPolicy);
-        }
-        Iterator<VDS> iterator = hosts.iterator();
+    protected VDS selectBestProxy(FenceProxySourceType fenceProxySource, Guid excludedHostId) {
+        Version minSupportedVersion = getMinSupportedVersionForFencingPolicy();
+        List<VDS> proxyCandidates = getDbFacade().getVdsDao().getAll();
+        Iterator<VDS> iterator = proxyCandidates.iterator();
         while (iterator.hasNext()) {
-            VDS host = iterator.next();
-            if (host.getId().equals(fencedHost.getId())
-                    || host.getId().equals(excludedHostId)
-                    || !matchesOption(host, fenceProxySource)
-                    || !areAgentsVersionCompatible(host)
-                    || (fencingPolicy != null && !isFencingPolicySupported(host, minSupportedVersion))
-                    || isHostNetworkUnreachable(host)) {
+            VDS proxyCandidate = iterator.next();
+            log.debug("Evaluating host '{}'", proxyCandidate.getHostName());
+            if (proxyCandidate.getId().equals(fencedHost.getId())
+                    || isHostExcluded(proxyCandidate, excludedHostId)
+                    || !isHostFromSelectedSource(proxyCandidate, fenceProxySource)
+                    || !areAgentsVersionCompatible(proxyCandidate)
+                    || !isFencingPolicySupported(proxyCandidate, minSupportedVersion)
+                    || isHostNetworkUnreachable(proxyCandidate)) {
                 iterator.remove();
             }
         }
-        for (VDS host : hosts) {
-            if (host.getStatus() == VDSStatus.Up) {
-                return host;
+        for (VDS proxyCandidate : proxyCandidates) {
+            if (proxyCandidate.getStatus() == VDSStatus.Up) {
+                return proxyCandidate;
             }
         }
-        return hosts.size() == 0 ? null : hosts.get(0);
+        return proxyCandidates.size() == 0 ? null : proxyCandidates.get(0);
     }
 
-    private boolean matchesOption(VDS proxyCandidate, FenceProxySourceType fenceProxySource) {
-        boolean matches = false;
+    protected boolean isHostExcluded(VDS proxyCandidate, Guid excludedHostId) {
+        boolean excluded = proxyCandidate.getId().equals(excludedHostId);
+
+        log.debug("Proxy candidate '{}' was excluded intentionally: {}",
+                proxyCandidate.getHostName(),
+                excluded);
+        return excluded;
+    }
+
+    private boolean isHostFromSelectedSource(VDS proxyCandidate, FenceProxySourceType fenceProxySource) {
+        boolean fromSelectedSource = false;
         switch (fenceProxySource) {
             case CLUSTER:
-                matches = proxyCandidate.getVdsGroupId().equals(fencedHost.getVdsGroupId());
+                fromSelectedSource = proxyCandidate.getVdsGroupId().equals(fencedHost.getVdsGroupId());
                 break;
 
             case DC:
-                matches = proxyCandidate.getStoragePoolId().equals(fencedHost.getStoragePoolId());
+                fromSelectedSource = proxyCandidate.getStoragePoolId().equals(fencedHost.getStoragePoolId());
                 break;
 
             case OTHER_DC:
-                matches = !proxyCandidate.getStoragePoolId().equals(fencedHost.getStoragePoolId());
+                fromSelectedSource = !proxyCandidate.getStoragePoolId().equals(fencedHost.getStoragePoolId());
                 break;
         }
-        return matches;
+
+        log.debug("Proxy candidate '{}' matches proxy source '{}': {}",
+                proxyCandidate.getHostName(),
+                fenceProxySource,
+                fromSelectedSource);
+        return fromSelectedSource;
     }
 
-    private boolean areAgentsVersionCompatible(VDS proxyCandidate) {
-        VdsFenceOptions options = new VdsFenceOptions(proxyCandidate.getVdsGroupCompatibilityVersion().getValue());
-        boolean supported = true;
-        for (FenceAgent agent : proxyCandidate.getFenceAgents()) {
-            supported = supported && options.isAgentSupported(agent.getType());
+    protected boolean areAgentsVersionCompatible(VDS proxyCandidate) {
+        VdsFenceOptions options = createVdsFenceOptions(proxyCandidate.getVdsGroupCompatibilityVersion().getValue());
+        boolean compatible = true;
+        for (FenceAgent agent : fencedHost.getFenceAgents()) {
+            if (!options.isAgentSupported(agent.getType())) {
+                compatible = false;
+                break;
+            }
         }
+
+        log.debug("Proxy candidate '{}' has compatible fence agents: {}",
+                proxyCandidate.getHostName(),
+                compatible);
+        return compatible;
+    }
+
+    protected boolean isFencingPolicySupported(VDS proxyCandidate, Version minimalSupportedVersion) {
+        boolean supported = fencingPolicy == null
+                || proxyCandidate.getSupportedClusterVersionsSet().contains(minimalSupportedVersion);
+
+        log.debug("Proxy candidate '{}' supports fencing policy '{}': {}",
+                proxyCandidate.getHostName(),
+                fencingPolicy,
+                supported);
         return supported;
     }
 
-    private boolean isFencingPolicySupported(VDS proxyCandidate, Version minimalSupportedVersion) {
-        return proxyCandidate.getSupportedClusterVersionsSet().contains(minimalSupportedVersion);
-    }
-
-    private boolean isHostNetworkUnreachable(VDS proxyCandidate) {
-        return proxyCandidate.getStatus() == VDSStatus.Down
+    protected boolean isHostNetworkUnreachable(VDS proxyCandidate) {
+        boolean unreachable = proxyCandidate.getStatus() == VDSStatus.Down
                 || proxyCandidate.getStatus() == VDSStatus.Reboot
                 || proxyCandidate.getStatus() == VDSStatus.Kdumping
                 || proxyCandidate.getStatus() == VDSStatus.NonResponsive
                 || proxyCandidate.getStatus() == VDSStatus.PendingApproval
                 || (proxyCandidate.getStatus() == VDSStatus.NonOperational
                         && proxyCandidate.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE);
+
+        log.debug("Proxy candidate '{}' with status '{}' is unreachable: {}",
+                proxyCandidate.getHostName(),
+                proxyCandidate.getStatus(),
+                unreachable);
+        return unreachable;
     }
 
-    public FencingPolicy getFencingPolicy() {
-        return fencingPolicy;
+    protected List<FenceProxySourceType> getDefaultFenceProxySources() {
+        return FenceProxySourceTypeHelper.parseFromString(
+                Config.<String>getValue(ConfigValues.FenceProxyDefaultPreferences));
     }
 
-    public void setFencingPolicy(FencingPolicy fencingPolicy) {
-        this.fencingPolicy = fencingPolicy;
+    protected int getFindFenceProxyRetries() {
+        // make sure that loop is executed at least once , no matter what is the value in config
+        return Math.max(Config.<Integer>getValue(ConfigValues.FindFenceProxyRetries), 1);
+    }
+
+    protected long getDelayBetweenRetries() {
+        return TimeUnit.SECONDS.toMillis(
+                Config.<Integer>getValue(ConfigValues.FindFenceProxyDelayBetweenRetriesInSec));
+    }
+
+    protected Version getMinSupportedVersionForFencingPolicy() {
+        return fencingPolicy == null ? null : FencingPolicyHelper.getMinimalSupportedVersion(fencingPolicy);
+    }
+
+    protected VdsFenceOptions createVdsFenceOptions(String version) {
+        return new VdsFenceOptions(version);
+    }
+
+    // TODO Investigate if injection is possible
+    protected DbFacade getDbFacade() {
+        return DbFacade.getInstance();
     }
 }
