@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -36,7 +37,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -245,9 +245,7 @@ public class VdsEventListener implements IVdsEventListener {
                         vds.getId(),
                         vds.getHostName());
 
-                FenceVdsActionParameters params = new FenceVdsActionParameters(
-                        vds.getId(),
-                        FenceActionType.RESTART);
+                FenceVdsActionParameters params = new FenceVdsActionParameters(vds.getId());
                 Backend.getInstance().runInternalAction(VdcActionType.VdsNotRespondingTreatment,
                         params,
                         ExecutionHandler.createInternalJobContext());

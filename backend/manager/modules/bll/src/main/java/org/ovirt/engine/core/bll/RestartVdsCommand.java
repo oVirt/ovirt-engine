@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
@@ -126,7 +125,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         }
         else {
             // execute StopVds action
-            returnValue = executeVdsFenceAction(vdsId, sessionId, FenceActionType.STOP, VdcActionType.StopVds);
+            returnValue = executeVdsFenceAction(vdsId, sessionId, VdcActionType.StopVds);
         }
         if (wasSkippedDueToPolicy(returnValue)) {
             // fence execution was skipped due to fencing policy, host should be alive
@@ -139,7 +138,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
             executeFenceVdsManuallyAction(vdsId, sessionId);
 
             // execute StartVds action
-            returnValue = executeVdsFenceAction(vdsId, sessionId, FenceActionType.START, VdcActionType.StartVds);
+            returnValue = executeVdsFenceAction(vdsId, sessionId, VdcActionType.StartVds);
             setSucceeded(returnValue.getSucceeded());
         } else {
             handleError();
@@ -167,9 +166,8 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
 
     private VdcReturnValueBase executeVdsFenceAction(final Guid vdsId,
                         String sessionId,
-                        FenceActionType fenceAction,
                         VdcActionType action) {
-        FenceVdsActionParameters params = new FenceVdsActionParameters(vdsId, fenceAction);
+        FenceVdsActionParameters params = new FenceVdsActionParameters(vdsId);
         params.setParentCommand(VdcActionType.RestartVds);
         params.setSessionId(sessionId);
         params.setFencingPolicy(getParameters().getFencingPolicy());

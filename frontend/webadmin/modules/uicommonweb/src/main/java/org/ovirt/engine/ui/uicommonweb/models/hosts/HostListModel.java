@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
@@ -45,7 +46,6 @@ import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -100,8 +100,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ReversibleFlow;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-
-import com.google.inject.Inject;
 
 @SuppressWarnings("unused")
 public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> implements ISupportSystemTreeContext
@@ -1668,7 +1666,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.RESTART));
+            list.add(new FenceVdsActionParameters(vds.getId()));
         }
 
         model.startProgress(null);
@@ -1692,7 +1690,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.START));
+            list.add(new FenceVdsActionParameters(vds.getId()));
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.StartVds, list,
@@ -1740,7 +1738,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.STOP));
+            list.add(new FenceVdsActionParameters(vds.getId()));
         }
 
         model.startProgress(null);

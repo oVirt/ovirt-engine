@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.config.Config;
@@ -261,7 +260,7 @@ public class PmHealthCheckManager {
         for (VDS host : hostWithPMInStatusReboot) {
             RestartVdsCommand<FenceVdsActionParameters> restartVdsCommand =
                     new RestartVdsCommand<FenceVdsActionParameters>(new
-                    FenceVdsActionParameters(host.getId(), FenceActionType.STATUS));
+                    FenceVdsActionParameters(host.getId()));
             if (new HostFenceActionExecutor(host).isHostPoweredOff()) {
                 VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(VdcActionType.RestartVds, restartVdsCommand.getParameters());
                 if (retValue!= null && retValue.getSucceeded()) {
@@ -295,10 +294,7 @@ public class PmHealthCheckManager {
 
     private void executeNotRespondingTreatment(List<VDS> hosts) {
         for (VDS host : hosts) {
-            final FenceVdsActionParameters params = new FenceVdsActionParameters(
-                    host.getId(),
-                    FenceActionType.RESTART
-            );
+            final FenceVdsActionParameters params = new FenceVdsActionParameters(host.getId());
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {

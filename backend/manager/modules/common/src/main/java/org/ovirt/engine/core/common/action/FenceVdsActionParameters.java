@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -16,26 +15,19 @@ public class FenceVdsActionParameters extends VdsActionParameters {
      */
     private boolean keepPolicyPMEnabled;
 
-    private FenceActionType action;
-
     private FencingPolicy fencingPolicy;
 
     public FenceVdsActionParameters() {
-        this(null, FenceActionType.RESTART);
+        this(null);
     }
 
-    public FenceVdsActionParameters(Guid vdsId, FenceActionType action) {
-        this(vdsId, action, false);
+    public FenceVdsActionParameters(Guid vdsId) {
+        this(vdsId, false);
     }
 
-    public FenceVdsActionParameters(Guid vdsId, FenceActionType action, boolean keepPolicyPMEnabled) {
+    public FenceVdsActionParameters(Guid vdsId, boolean keepPolicyPMEnabled) {
         super(vdsId);
-        this.action = action;
         this.keepPolicyPMEnabled = keepPolicyPMEnabled;
-    }
-
-    public FenceActionType getAction() {
-        return action;
     }
 
     public boolean getKeepPolicyPMEnabled() {

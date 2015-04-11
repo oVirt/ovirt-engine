@@ -101,7 +101,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             result = createHostFenceActionExecutor(
                     getVds(),
                     getParameters().getFencingPolicy()
-            ).fence(getParameters().getAction());
+            ).fence(getAction());
             handleResult(result);
             if (getSucceeded()) {
                 log.info("Power-Management: {} host '{}' succeeded.", getAction(), getVdsName());

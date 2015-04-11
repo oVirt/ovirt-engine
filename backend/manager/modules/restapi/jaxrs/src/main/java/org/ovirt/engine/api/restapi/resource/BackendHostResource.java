@@ -56,7 +56,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
@@ -400,11 +399,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         case MANUAL:
             return fenceManually(action);
         case RESTART:
-            return fence(action, VdcActionType.RestartVds, FenceActionType.RESTART);
+            return fence(action, VdcActionType.RestartVds);
         case START:
-            return fence(action, VdcActionType.StartVds, FenceActionType.START);
+            return fence(action, VdcActionType.StartVds);
         case STOP:
-            return fence(action, VdcActionType.StopVds, FenceActionType.STOP);
+            return fence(action, VdcActionType.StopVds);
         case STATUS:
             return getFenceStatus(action);
         default:
@@ -449,8 +448,8 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return Response.ok().entity(action).build();
     }
 
-    private Response fence(Action action, VdcActionType vdcAction, FenceActionType fenceType) {
-        return doAction(vdcAction, new FenceVdsActionParameters(guid, fenceType), action);
+    private Response fence(Action action, VdcActionType vdcAction) {
+        return doAction(vdcAction, new FenceVdsActionParameters(guid), action);
     }
 
     private Response fenceManually(Action action) {

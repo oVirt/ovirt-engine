@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -499,31 +498,27 @@ public class BackendHostResourceTest
     @Test
     public void testRestartFence() throws Exception {
         doTestFence(FenceType.RESTART,
-                    VdcActionType.RestartVds,
-                    FenceActionType.RESTART);
+                    VdcActionType.RestartVds);
     }
 
     @Test
     public void testStartFence() throws Exception {
         doTestFence(FenceType.START,
-                    VdcActionType.StartVds,
-                    FenceActionType.START);
+                    VdcActionType.StartVds);
     }
 
     @Test
     public void testStopFence() throws Exception {
         doTestFence(FenceType.STOP,
-                    VdcActionType.StopVds,
-                    FenceActionType.STOP);
+                    VdcActionType.StopVds);
     }
 
     public void doTestFence(FenceType fenceType,
-                            VdcActionType actionType,
-                            FenceActionType fenceActionType) throws Exception {
+                            VdcActionType actionType) throws Exception {
         setUriInfo(setUpActionExpectations(actionType,
                                            FenceVdsActionParameters.class,
-                                           new String[] { "VdsId", "Action" },
-                                           new Object[] { GUIDS[0], fenceActionType }));
+                                           new String[] { "VdsId" },
+                                           new Object[] { GUIDS[0] }));
 
         Action action = new Action();
         action.setFenceType(fenceType.value());
