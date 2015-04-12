@@ -1464,6 +1464,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GlusterVolumeSnapshotSupported,
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    GlusterTunedProfile,
+
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     GlusterBrickProvisioningEnabled,

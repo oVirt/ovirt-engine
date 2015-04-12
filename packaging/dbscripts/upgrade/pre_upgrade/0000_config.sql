@@ -201,6 +201,7 @@ select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.4');
 select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.5');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscoveryInSecs', '3600', 'general');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepStatusInSecs', '300', 'general');
+select fn_db_add_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-virtualization', 'general');
 
 
 -- Gluster Disk Provisioning --

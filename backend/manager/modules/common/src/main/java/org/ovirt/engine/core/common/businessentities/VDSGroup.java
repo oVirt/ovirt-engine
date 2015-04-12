@@ -103,6 +103,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private FencingPolicy fencingPolicy;
 
+    private String glusterTunedProfile;
 
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
@@ -386,6 +387,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.fencingPolicy = fencingPolicy;
     }
 
+    public String getGlusterTunedProfile() {
+        return glusterTunedProfile;
+    }
+
+    public void setGlusterTunedProfile(String glusterTunedProfile) {
+        this.glusterTunedProfile = glusterTunedProfile;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -418,6 +427,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (customSerialNumber == null ? 0 : customSerialNumber.hashCode());
         result = prime * result + (groupHostsAndVms == null ? 0 : groupHostsAndVms.hashCode());
         result = prime * result + (fencingPolicy == null ? 0 : fencingPolicy.hashCode());
+        result = prime * result + (glusterTunedProfile == null ? 0 : glusterTunedProfile.hashCode());
         return result;
     }
 
@@ -472,7 +482,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
                 && ObjectUtils.objectsEqual(groupHostsAndVms, other.groupHostsAndVms)
                 && ObjectUtils.objectsEqual(requiredRngSources, other.requiredRngSources)
-                && ObjectUtils.objectsEqual(fencingPolicy, other.fencingPolicy);
+                && ObjectUtils.objectsEqual(fencingPolicy, other.fencingPolicy)
+                && ObjectUtils.objectsEqual(glusterTunedProfile, other.glusterTunedProfile);
     }
 
 }
