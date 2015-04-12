@@ -153,7 +153,7 @@ public class AuditLogableBaseTest {
         u.setDomain(DOMAIN);
         b.setCurrentUser(u);
         final String un = b.getUserName();
-        assertEquals(String.format("%s[%s]", NAME, DOMAIN), un);
+        assertEquals(String.format("%s@%s", NAME, DOMAIN), un);
     }
 
     @Test
