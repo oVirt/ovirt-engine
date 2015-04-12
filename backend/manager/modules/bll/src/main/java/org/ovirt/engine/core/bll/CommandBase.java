@@ -166,7 +166,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (user != null) {
             setCurrentUser(user);
         }
-        setUserName(SessionDataContainer.getInstance().getUserName(cmdContext.getEngineContext().getSessionId()));
+        if (SessionDataContainer.getInstance().getPrincipalName(cmdContext.getEngineContext().getSessionId()) == null) {
+            // command was most probably executed from Quartz job, so session doesn't contain any user info
+            // we need to set username to fake internal user so audit logs will not contain "null@N/A" as username
+            setUserName("SYSTEM");
+        } else {
+            setUserName(SessionDataContainer.getInstance().getUserName(cmdContext.getEngineContext().getSessionId()));
+        }
         ExecutionContext executionContext = cmdContext.getExecutionContext();
         if (executionContext.getJob() != null) {
             setJobId(executionContext.getJob().getId());
