@@ -96,7 +96,8 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
                         new SetUpGlusterGeoRepMountBrokerVDSParameters(getParameters().getId(),
                                 parameters.getRemoteUserName(),
                                 parameters.getRemoteUserGroup(),
-                                parameters.getRemoteVolumeName()));
+                                parameters.getRemoteVolumeName(),
+                                parameters.isPartial()));
         if (mountBrokerReturnValue.getSucceeded()) {
             VDSReturnValue restartGlusterdReturnValue = restartGlusterd(getParameters().getId());
             if (!restartGlusterdReturnValue.getSucceeded()) {

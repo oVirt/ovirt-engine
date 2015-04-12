@@ -1144,9 +1144,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName, String userName, String remoteGroupName) {
+    public StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName, String userName, String remoteGroupName, Boolean partial) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterGeoRepMountBrokerSetup(userName, remoteGroupName, remoteVolumeName);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterGeoRepMountBrokerSetup(userName, remoteGroupName, remoteVolumeName, partial);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {

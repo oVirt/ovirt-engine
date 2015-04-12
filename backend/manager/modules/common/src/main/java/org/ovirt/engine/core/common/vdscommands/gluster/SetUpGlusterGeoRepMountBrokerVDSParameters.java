@@ -7,16 +7,26 @@ public class SetUpGlusterGeoRepMountBrokerVDSParameters extends VdsIdVDSCommandP
     private String remoteUserName;
     private String remoteGroupName;
     private String remoteVolumeName;
+    private boolean partial;
 
     public SetUpGlusterGeoRepMountBrokerVDSParameters() {
 
     }
 
     public SetUpGlusterGeoRepMountBrokerVDSParameters(Guid vdsId, String userName, String userGroup, String remoteVolumeName) {
+        this(vdsId, userName, userGroup, remoteVolumeName, false);
+    }
+
+    public SetUpGlusterGeoRepMountBrokerVDSParameters(Guid vdsId,
+            String remoteUserName,
+            String remoteGroupName,
+            String remoteVolumeName,
+            boolean partial) {
         super(vdsId);
-        this.remoteUserName = userName;
-        this.remoteGroupName = userGroup;
+        this.remoteUserName = remoteUserName;
+        this.remoteGroupName = remoteGroupName;
         this.remoteVolumeName = remoteVolumeName;
+        this.partial = partial;
     }
 
     public String getRemoteUserName() {
@@ -41,5 +51,13 @@ public class SetUpGlusterGeoRepMountBrokerVDSParameters extends VdsIdVDSCommandP
 
     public void setRemoteVolumeName(String remoteVolumeName) {
         this.remoteVolumeName = remoteVolumeName;
+    }
+
+    public boolean isPartial() {
+        return partial;
+    }
+
+    public void setPartial(boolean partial) {
+        this.partial = partial;
     }
 }
