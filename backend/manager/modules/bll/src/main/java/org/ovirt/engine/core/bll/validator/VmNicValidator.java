@@ -48,10 +48,18 @@ public class VmNicValidator {
     /**
      * @return An error if unlinking is not supported and the interface is unlinked, otherwise it's OK.
      */
-    public ValidationResult linkedCorrectly() {
+    public ValidationResult linkedOnlyIfSupported() {
         return !FeatureSupported.networkLinking(version) && !nic.isLinked()
                 ? new ValidationResult(VdcBllMessages.UNLINKING_IS_NOT_SUPPORTED, clusterVersion())
                 : ValidationResult.VALID;
+    }
+
+    /**
+     * @return An error if the interface is passthrough and unlinked, otherwise it's OK.
+     */
+    public ValidationResult passthroughIsLinked() {
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_UNLINKING_OF_PASSTHROUGH_VNIC_IS_NOT_SUPPORTED)
+                .when(nic.isPassthrough() && !nic.isLinked());
     }
 
     /**

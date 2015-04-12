@@ -157,7 +157,7 @@ public class VmNicValidatorTest {
         mockConfigRule.mockConfigValue(ConfigValues.NetworkLinkingSupported, version, networkLinkingSupported);
         when(nic.isLinked()).thenReturn(nicLinked);
 
-        assertThat(validator.linkedCorrectly(), matcher);
+        assertThat(validator.linkedOnlyIfSupported(), matcher);
     }
 
     private void vnicProfileLinkingTest(Matcher<ValidationResult> matcher,
@@ -280,5 +280,34 @@ public class VmNicValidatorTest {
         }
 
         return returnEnum;
+    }
+
+    @Test
+    public void passthroughVnicLinked() {
+        passthroughIsLinkedCommon(true, true, isValid());
+    }
+
+    @Test
+    public void passthroughVnicUnlinked() {
+        passthroughIsLinkedCommon(true,
+                false,
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_UNLINKING_OF_PASSTHROUGH_VNIC_IS_NOT_SUPPORTED));
+    }
+
+    @Test
+    public void nonPassthroughVnicLinked() {
+        passthroughIsLinkedCommon(false, true, isValid());
+    }
+
+    @Test
+    public void nonPassthroughVnicUnLinked() {
+        passthroughIsLinkedCommon(false, false, isValid());
+    }
+
+    private void passthroughIsLinkedCommon(boolean isPassthrough, boolean isLinked, Matcher<ValidationResult> matcher) {
+        when(nic.isPassthrough()).thenReturn(isPassthrough);
+        when(nic.isLinked()).thenReturn(isLinked);
+
+        assertThat(validator.passthroughIsLinked(), matcher);
     }
 }

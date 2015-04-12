@@ -80,11 +80,12 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
         if (getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
             Version clusterCompatibilityVersion = getVdsGroup().getCompatibilityVersion();
             VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion, getVmTemplate().getOsId());
-            if (!validate(nicValidator.linkedCorrectly())
+            if (!validate(nicValidator.linkedOnlyIfSupported())
                     || !validate(nicValidator.isCompatibleWithOs())
                     || !validate(nicValidator.emptyNetworkValid())
                     || !validate(nicValidator.profileValid(getVmTemplate().getVdsGroupId()))
-                    || !validate(nicValidator.typeMatchesProfile())) {
+                    || !validate(nicValidator.typeMatchesProfile())
+                    || !validate(nicValidator.passthroughIsLinked())) {
                 return false;
             }
 

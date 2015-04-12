@@ -2741,6 +2741,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Link state is set to 'Down' on the virtual machine's interface, this is not supported for clusters of version ${clusterVersion}.")
     String UNLINKING_IS_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Unlinking of 'passthrough' vm network interface is not supported.")
+    String ACTION_TYPE_FAILED_UNLINKING_OF_PASSTHROUGH_VNIC_IS_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. There is no network on the virtual machine's interface, this is not supported for clusters of version ${clusterVersion}.")
     String NULL_NETWORK_IS_NOT_SUPPORTED();
 

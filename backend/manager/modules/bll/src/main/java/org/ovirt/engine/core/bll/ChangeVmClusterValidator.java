@@ -153,7 +153,8 @@ public class ChangeVmClusterValidator {
                                  Version clusterCompatibilityVersion) {
         for (VmNic iface : interfaces) {
             VmNicValidator nicValidator = new VmNicValidator(iface, clusterCompatibilityVersion);
-            if (!parentCommand.validate(nicValidator.emptyNetworkValid()) || !parentCommand.validate(nicValidator.linkedCorrectly())) {
+            if (!parentCommand.validate(nicValidator.emptyNetworkValid())
+                    || !parentCommand.validate(nicValidator.linkedOnlyIfSupported())) {
                 return false;
             }
         }
