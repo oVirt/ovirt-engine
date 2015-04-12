@@ -62,6 +62,16 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
     private Map<Guid, Network> defaultManagementNetworkCache = new HashMap<>();
     private Boolean detached;
 
+    private ListModel<String> glusterTunedProfile;
+
+    public ListModel<String> getGlusterTunedProfile() {
+        return glusterTunedProfile;
+    }
+
+    public void setGlusterTunedProfile(ListModel<String> glusterTunedProfile) {
+        this.glusterTunedProfile = glusterTunedProfile;
+    }
+
     public ListModel<ClusterPolicy> getClusterPolicy() {
         return clusterPolicy;
     }
@@ -864,6 +874,22 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         super();
     }
 
+    public void initTunedProfiles() {
+        this.startProgress(null);
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterTunedProfiles, new VdcQueryParametersBase(), new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                ClusterModel.this.stopProgress();
+                List<String> glusterTunedProfiles = new ArrayList<>();
+                if (((VdcQueryReturnValue) returnValue).getSucceeded()) {
+                    glusterTunedProfiles.addAll((List<String>)(((VdcQueryReturnValue) returnValue).getReturnValue()));
+                }
+                glusterTunedProfile.setItems(glusterTunedProfiles, glusterTunedProfile.getSelectedItem());
+                glusterTunedProfile.setIsAvailable(glusterTunedProfile.getItems().size() > 0);
+            }
+        }));
+    }
+
     public void init(final boolean isEdit) {
         setIsEdit(isEdit);
         setName(new EntityModel<String>());
@@ -875,6 +901,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         getEnableOptionalReason().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         setEnableHostMaintenanceReason(new EntityModel<Boolean>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
+        setGlusterTunedProfile(new ListModel<String>());
         AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -1002,6 +1029,10 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                     }
                 }
 
+                getGlusterTunedProfile().setIsAvailable(getEnableGlusterService().getEntity());
+                if (getEnableGlusterService().getEntity()) {
+                    initTunedProfiles();
+                }
             }
        });
 
@@ -1024,6 +1055,8 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         getEnableGlusterService().setEntity(ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly);
         getEnableGlusterService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly));
+
+        getGlusterTunedProfile().setIsAvailable(getEnableGlusterService().getEntity());
 
         setOptimizationNone(new EntityModel<Integer>());
         setOptimizationForServer(new EntityModel<Integer>());

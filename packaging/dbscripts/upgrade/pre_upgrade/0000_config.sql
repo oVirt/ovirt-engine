@@ -169,6 +169,7 @@ select fn_db_add_config_value('GlusterTaskMinWaitForCleanupInMins', '10', 'gener
 select fn_db_add_config_value_for_versions_up_to('GlusterGeoReplicationEnabled', 'false', '3.5');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscoveryInSecs', '3600', 'general');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepStatusInSecs', '300', 'general');
+select fn_db_add_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-virtualization', 'general');
 
 -- Gluster Volume Snapshots --
 select fn_db_add_config_value_for_versions_up_to('GlusterVolumeSnapshotSupported', 'false', '3.5');

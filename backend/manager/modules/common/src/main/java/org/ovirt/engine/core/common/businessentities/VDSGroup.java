@@ -110,6 +110,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private Boolean migrateCompressed;
 
+    private String glusterTunedProfile;
+
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
         name = "";
@@ -424,6 +426,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.groupHostsAndVms = groupHostsAndVms;
     }
 
+    public String getGlusterTunedProfile() {
+        return glusterTunedProfile;
+    }
+
+    public void setGlusterTunedProfile(String glusterTunedProfile) {
+        this.glusterTunedProfile = glusterTunedProfile;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -458,6 +468,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (fencingPolicy == null ? 0 : fencingPolicy.hashCode());
         result = prime * result + (autoConverge == null ? 0 : autoConverge.hashCode());
         result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
+        result = prime * result + (glusterTunedProfile == null ? 0 : glusterTunedProfile.hashCode());
         result = prime * result + (maintenanceReasonRequired ? 1231 : 1237);
         return result;
     }
@@ -505,6 +516,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && ObjectUtils.objectsEqual(fencingPolicy, other.fencingPolicy)
                 && ObjectUtils.objectsEqual(autoConverge, other.autoConverge)
                 && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed)
+                && ObjectUtils.objectsEqual(glusterTunedProfile, other.glusterTunedProfile)
                 && ObjectUtils.objectsEqual(maintenanceReasonRequired, other.maintenanceReasonRequired);
     }
 

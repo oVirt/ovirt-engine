@@ -206,6 +206,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     EntityModelCheckBoxEditor rngHwrngSourceRequired;
 
     @UiField
+    @Path(value = "glusterTunedProfile.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<String> glusterTunedProfileEditor;
+
+    @UiField
     @WithElementId
     DialogTab optimizationTab;
 
@@ -474,6 +479,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         enableGlusterServiceEditor.setLabel(constants.clusterEnableGlusterServiceLabel());
         enableOvirtServiceOptionEditor.setLabel(constants.clusterEnableOvirtServiceLabel());
         enableGlusterServiceOptionEditor.setLabel(constants.clusterEnableGlusterServiceLabel());
+        glusterTunedProfileEditor.setLabel(constants.glusterTunedProfileLabel());
 
         importGlusterConfigurationEditor.setLabel(constants.clusterImportGlusterConfigurationLabel());
         importGlusterExplanationLabel.setText(constants.clusterImportGlusterConfigurationExplanationLabel());

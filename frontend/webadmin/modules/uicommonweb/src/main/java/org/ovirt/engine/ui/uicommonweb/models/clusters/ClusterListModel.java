@@ -400,6 +400,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         clusterModel.getSerialNumberPolicy().getCustomSerialNumber().setEntity(cluster.getCustomSerialNumber());
         clusterModel.getAutoConverge().setSelectedItem(cluster.getAutoConverge());
         clusterModel.getMigrateCompressed().setSelectedItem(cluster.getMigrateCompressed());
+        clusterModel.getGlusterTunedProfile().setSelectedItem(cluster.getGlusterTunedProfile());
+        clusterModel.getGlusterTunedProfile().setIsChangable(cluster.getGroupHostsAndVms().getHosts() == 0);
 
         if (cluster.supportsTrustedService())
         {
@@ -784,6 +786,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
 
         cluster.setAutoConverge(model.getAutoConverge().getSelectedItem());
         cluster.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
+        cluster.setGlusterTunedProfile(model.getGlusterTunedProfile().getSelectedItem());
 
         cluster.getRequiredRngSources().clear();
         if (Boolean.TRUE.equals(model.getRngRandomSourceRequired().getEntity())) {

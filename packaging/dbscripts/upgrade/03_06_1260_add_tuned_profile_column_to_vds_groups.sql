@@ -1,0 +1,1 @@
+select fn_db_add_column('vds_groups', 'gluster_tuned_profile', 'VARCHAR(50)');

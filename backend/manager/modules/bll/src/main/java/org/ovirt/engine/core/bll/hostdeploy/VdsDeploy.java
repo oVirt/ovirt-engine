@@ -62,6 +62,7 @@ import org.ovirt.otopi.dialog.SoftError;
 import org.ovirt.ovirt_host_deploy.constants.Const;
 import org.ovirt.ovirt_host_deploy.constants.Displays;
 import org.ovirt.ovirt_host_deploy.constants.GlusterEnv;
+import org.ovirt.ovirt_host_deploy.constants.TuneEnv;
 import org.ovirt.ovirt_host_deploy.constants.KdumpEnv;
 import org.ovirt.ovirt_host_deploy.constants.OpenStackEnv;
 import org.ovirt.ovirt_host_deploy.constants.VdsmEnv;
@@ -473,6 +474,18 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 GlusterEnv.ENABLE,
                 vdsGroup.supportsGlusterService()
             );
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
+                _vds.getVdsGroupId()
+            );
+            String tunedProfile = vdsGroup.supportsGlusterService() ? vdsGroup.getGlusterTunedProfile() : null;
+            if (tunedProfile == null || tunedProfile.isEmpty()) {
+                _parser.cliNoop();
+            } else {
+                _parser.cliEnvironmentSet(TuneEnv.TUNED_PROFILE, tunedProfile);
+            }
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {

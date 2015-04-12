@@ -1457,6 +1457,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GlusterGeoReplicationEnabled,
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    GlusterTunedProfile,
+
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     GlusterBrickProvisioningEnabled,

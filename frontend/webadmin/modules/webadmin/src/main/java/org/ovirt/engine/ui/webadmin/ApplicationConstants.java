@@ -827,6 +827,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("General")
     String clusterPopupGeneralTabLabel();
 
+    @DefaultStringValue("Gluster Tuned Profile")
+    String glusterTunedProfileLabel();
+
     @DefaultStringValue("Data Center")
     String clusterPopupDataCenterLabel();
 

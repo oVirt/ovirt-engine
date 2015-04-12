@@ -196,6 +196,7 @@
                                     <ge:EntityModelCheckBoxEditor ui:field="rngRandomSourceRequired" />
                                     <ge:EntityModelCheckBoxEditor ui:field="rngHwrngSourceRequired" />
                                 </g:FlowPanel>
+                                <e:ListModelListBoxEditor ui:field="glusterTunedProfileEditor" />
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>
