@@ -58,7 +58,11 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         assertEquals(model.isTunnelMigration(), transform.isTunnelMigration());
         assertEquals(model.isTrustedService(), transform.isTrustedService());
         assertEquals(model.isBallooningEnabled(), transform.isBallooningEnabled());
+
         assertEquals(model.getKsm().isEnabled(), transform.getKsm().isEnabled());
+        assertEquals(model.getKsm().isMergeAcrossNodes(), transform.getKsm()
+                .isMergeAcrossNodes());
+
         assertEquals(model.getDisplay().getProxy(), transform.getDisplay().getProxy());
         assertEquals(model.getSerialNumber().getPolicy(), transform.getSerialNumber().getPolicy());
         assertEquals(model.getSerialNumber().getValue(), transform.getSerialNumber().getValue());

@@ -102,8 +102,13 @@ public class ClusterMapper {
         if (model.isSetBallooningEnabled()) {
             entity.setEnableBallooning(model.isBallooningEnabled());
         }
-        if (model.isSetKsm() && model.getKsm().isSetEnabled()) {
-            entity.setEnableKsm(model.getKsm().isEnabled());
+        if (model.isSetKsm()) {
+            if (model.getKsm().isSetEnabled()) {
+                entity.setEnableKsm(model.getKsm().isEnabled());
+            }
+            if (model.getKsm().isSetMergeAcrossNodes()) {
+                entity.setKsmMergeAcrossNumaNodes(model.getKsm().isMergeAcrossNodes());
+            }
         }
         if (model.isSetDisplay() && model.getDisplay().isSetProxy()) {
             entity.setSpiceProxy("".equals(model.getDisplay().getProxy()) ? null : model.getDisplay().getProxy());
