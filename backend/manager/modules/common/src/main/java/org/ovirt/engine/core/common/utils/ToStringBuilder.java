@@ -31,7 +31,7 @@ public class ToStringBuilder {
         this(null);
     }
 
-    private ToStringBuilder(Class clazz) {
+    private ToStringBuilder(Class<?> clazz) {
         buffer = new StringBuilder();
         noAttributes = true;
         appendClassName(clazz);
@@ -40,7 +40,7 @@ public class ToStringBuilder {
     /**
      * Creates builder instance for specified class
      */
-    public static ToStringBuilder forClass(Class clazz) {
+    public static ToStringBuilder forClass(Class<?> clazz) {
         return new ToStringBuilder(clazz);
     }
 
@@ -368,7 +368,7 @@ public class ToStringBuilder {
     /**
      * Appends name of specified class to buffer
      */
-    private void appendClassName(Class clazz) {
+    private void appendClassName(Class<?> clazz) {
         if (clazz != null) {
             buffer.append(clazz.getSimpleName());
             buffer.append(CLASS_NAME_SUFFIX);
