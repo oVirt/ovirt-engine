@@ -399,7 +399,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         VmValidator vmValidator = new VmValidator(vm);
 
-        if (!validate(vmValidator.vmNotHavingPluggedDiskSnapshots(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_PLUGGED_DISK_SNAPSHOT))) {
+        if (!validate(vmValidator.vmNotHavingPluggedDiskSnapshots(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_PLUGGED_DISK_SNAPSHOT))
+                || !validate(vmValidator.vmNotHavingPassthroughVnics())) {
             return false;
         }
 

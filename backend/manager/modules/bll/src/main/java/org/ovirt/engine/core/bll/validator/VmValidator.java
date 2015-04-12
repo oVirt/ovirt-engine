@@ -21,9 +21,12 @@ import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 /** A Validator for various VM canDoAction needs */
 public class VmValidator {
@@ -220,5 +223,30 @@ public class VmValidator {
 
     public DbFacade getDbFacade() {
         return DbFacade.getInstance();
+    }
+
+    /**
+     * @return ValidationResult indicating whether a vm contains passthrough vnics
+     */
+    public ValidationResult vmNotHavingPassthroughVnics() {
+        for (VM vm : vms) {
+            List<VmNetworkInterface> vnics =
+                    getDbFacade().getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+            List<VmNetworkInterface> passthroughVnics =
+                    LinqUtils.filter(vnics, new org.ovirt.engine.core.utils.linq.Predicate<VmNetworkInterface>() {
+                        public boolean eval(VmNetworkInterface vnic) {
+                            return vnic.isPassthrough();
+                        }
+                    });
+
+            Collection<String> replacements = ReplacementUtils.replaceWithNameable("interfaces", passthroughVnics);
+            replacements.add(String.format("$vmName %s", vm.getName()));
+
+            if (!passthroughVnics.isEmpty()) {
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED,
+                        replacements);
+            }
+        }
+        return ValidationResult.VALID;
     }
 }

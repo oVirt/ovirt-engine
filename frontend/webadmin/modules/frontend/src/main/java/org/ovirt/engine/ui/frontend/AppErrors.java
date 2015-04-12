@@ -526,6 +526,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM with the given Id already exists in the system.")
     String VM_ID_EXISTS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Migration is not supported for VMs containing 'passthrough' VM Network Interfaces (VM: ${vmName}, passthrough interfaces: ${interfaces}).")
+    String ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED();
+
     @DefaultStringValue("CPU pinning format invalid.")
     String VM_PINNING_FORMAT_INVALID();
 
