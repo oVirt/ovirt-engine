@@ -37,8 +37,10 @@ def _(m):
 def editConfigContent(
     content,
     params,
+    keep_existing=False,
     changed_lines=None,
     comment_re='[#]*\s*',
+    param_re='\w+',
     new_comment_tpl='{spaces}# {original}',
     separator_re='\s*=\s*',
     new_line_tpl='{spaces}{param} = {value}',
@@ -50,11 +52,14 @@ def editConfigContent(
     content         - a list of strings, the content prior to calling us
     params          - a dict of params/values that should be in the output
                     If the value for a param is None, param is deleted
+    keep_existing   - if True, existing params are not changed, only missing
+                    ones are added.
     changed_lines   - an output parameter, a list of dictionaries with
                     added and removed lines.
     comment_re      - a regular expression that a comment marker prefixed
                     to param should match. If a commented param line is found,
                     a new line will be added after it.
+    param_re        - a regular expression that should match params
     new_comment_tpl - a template for a comment. {original} will be replaced
                     with this template, {spaces} will be replaced with
                     original whitespace prefix.
@@ -78,13 +83,14 @@ def editConfigContent(
         (?P<spaces>\s*)
         (?P<comment>{comment_re})
         (?P<original>
-            (?P<param>\w+)
+            (?P<param>{param_re})
             (?P<separator>{separator_re})
             (?P<value>.*)
         )
         $
     """.format(
         comment_re=comment_re,
+        param_re=param_re,
         separator_re=separator_re,
     )
     re_obj = re.compile(flags=re.VERBOSE, pattern=pattern)
@@ -121,9 +127,12 @@ def editConfigContent(
         ):
             if (
                 not f.group('comment') and
-                str(f.group('value')) == str(params[f.group('param')])
+                (
+                    str(f.group('value')) == str(params[f.group('param')]) or
+                    keep_existing
+                )
             ):
-                # value is not changed, do nothing
+                # value is not changed, or we do not care. do nothing
                 processed.add(f.group('param'))
             else:
                 if (
