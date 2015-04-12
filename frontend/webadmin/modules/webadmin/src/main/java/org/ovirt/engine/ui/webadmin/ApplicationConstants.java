@@ -4377,4 +4377,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Additional features supported in the Cluster")
     String addtionalClusterFeaturesTitle();
+
+    @DefaultStringValue("Vm Devices")
+    String virtualMachineVmDevicesSubTabLabel();
 }

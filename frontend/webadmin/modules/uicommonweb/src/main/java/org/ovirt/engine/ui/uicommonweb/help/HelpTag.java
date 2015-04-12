@@ -34,6 +34,8 @@ public enum HelpTag {
 
     applications("applications", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
+    vm_devices("vm_devices", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
     assign_network("assign_network", HelpTagType.WEBADMIN, "Networks main tab -> Clusters sub-tab -> Manage Network"), //$NON-NLS-1$ //$NON-NLS-2$
 
     assign_networks("assign_networks", HelpTagType.WEBADMIN, "Cluster Tab > Logical Network Sub-Tab > Manage Networks"), //$NON-NLS-1$ //$NON-NLS-2$

@@ -39,7 +39,7 @@ public class SubTabVirtualMachineAffinityGroupPresenter extends AbstractSubTabPr
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> modelProvider) {
-        return new ModelBoundTabData(constants.affinityGroupSubTabLabel(), 6, modelProvider);
+        return new ModelBoundTabData(constants.affinityGroupSubTabLabel(), 7, modelProvider);
     }
 
     @Inject

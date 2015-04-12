@@ -41,7 +41,7 @@ public class SubTabVirtualMachinePermissionPresenter extends AbstractSubTabPrese
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<Permission, VmListModel<Void>, PermissionListModel<VM>> modelProvider) {
-        return new ModelBoundTabData(constants.virtualMachinePermissionSubTabLabel(), 7, modelProvider);
+        return new ModelBoundTabData(constants.virtualMachinePermissionSubTabLabel(), 8, modelProvider);
     }
 
     @Inject

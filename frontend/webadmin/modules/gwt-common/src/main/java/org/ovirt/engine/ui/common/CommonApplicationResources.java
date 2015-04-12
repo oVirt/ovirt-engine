@@ -351,4 +351,48 @@ public interface CommonApplicationResources extends ClientBundle {
 
     @Source("images/numa/vnuma_dark_icon.png")
     ImageResource darkVNumaIcon();
+
+    // vm device general type
+
+    @Source("images/disk.png")
+    ImageResource diskDeviceGeneralTypeIcon();
+
+    @Source("images/nic.png")
+    ImageResource interfaceDeviceGeneralTypeIcon();
+
+    @Source("images/device_video.png")
+    ImageResource videoDeviceGeneralTypeIcon();
+
+    @Source("images/device_graphics.png")
+    ImageResource graphicsDeviceGeneralTypeIcon();
+
+    @Source("images/device_sound.png")
+    ImageResource soundDeviceGeneralTypeIcon();
+
+    @Source("images/device_controller.png")
+    ImageResource controllerDeviceGeneralTypeIcon();
+
+    @Source("images/device_cpu_ballooning.png")
+    ImageResource balloonDeviceGeneralTypeIcon();
+
+    @Source("images/device_channel.png")
+    ImageResource channelDeviceGeneralTypeIcon();
+
+    @Source("images/device_usb.png")
+    ImageResource redirDeviceGeneralTypeIcon();
+
+    @Source("images/device_console.png")
+    ImageResource consoleDeviceGeneralTypeIcon();
+
+    @Source("images/device_rng.png")
+    ImageResource rngDeviceGeneralTypeIcon();
+
+    @Source("images/device_smartcard.png")
+    ImageResource smartcardDeviceGeneralTypeIcon();
+
+    @Source("images/device_watchdog.png")
+    ImageResource watchdogDeviceGeneralTypeIcon();
+
+    @Source("images/device_hostdev.png")
+    ImageResource hostdevDeviceGeneralTypeIcon();
 }

@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
@@ -35,7 +36,8 @@ public class ClusterVmListModel extends VmListModel<VDSGroup> {
             VmAffinityGroupListModel vmAffinityGroupListModel,
             VmSessionsModel vmSessionsModel,
             Provider<ImportVmsModel> importVmsModelProvider,
-            VmHostDeviceListModel vmHostDeviceListModel) {
+            VmHostDeviceListModel vmHostDeviceListModel,
+            VmDevicesListModel vmDevicesListModel) {
         super(vmGeneralModel,
                 vmInterfaceListModel,
                 vmDiskListModel,
@@ -46,7 +48,8 @@ public class ClusterVmListModel extends VmListModel<VDSGroup> {
                 vmAffinityGroupListModel,
                 vmSessionsModel,
                 importVmsModelProvider,
-                vmHostDeviceListModel);
+                vmHostDeviceListModel,
+                vmDevicesListModel);
     }
 
     @Override

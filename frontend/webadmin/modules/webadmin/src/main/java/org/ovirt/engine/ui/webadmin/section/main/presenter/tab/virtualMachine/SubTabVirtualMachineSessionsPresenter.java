@@ -40,7 +40,7 @@ public class SubTabVirtualMachineSessionsPresenter
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
             DetailModelProvider<VmListModel<Void>, VmSessionsModel> modelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineSessionsSubTabLabel(), 7, modelProvider);
+        return new ModelBoundTabData(constants.virtualMachineSessionsSubTabLabel(), 9, modelProvider);
     }
 
     @Inject

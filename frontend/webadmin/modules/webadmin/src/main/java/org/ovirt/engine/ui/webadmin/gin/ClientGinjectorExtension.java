@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
@@ -153,6 +154,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
@@ -307,6 +309,8 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
     SearchableDetailModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> getSubTabVirtualMachineSnapshotModelProvider();
 
     SearchableDetailModelProvider<String, VmListModel<Void>, VmAppListModel<VM>> getSubTabVirtualMachineApplicationModelProvider();
+
+    SearchableDetailModelProvider<VmDevice, VmListModel<Void>, VmDevicesListModel<VM>> getSubTabVirtualMachineVmDeviceModelProvider();
 
     SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> getSubTabVirtualMachineAffinityGroupModelProvider();
 

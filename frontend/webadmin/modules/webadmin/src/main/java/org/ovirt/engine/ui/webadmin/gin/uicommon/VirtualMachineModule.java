@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
@@ -32,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
@@ -426,6 +428,7 @@ public class VirtualMachineModule extends AbstractGinModule {
         bind(new TypeLiteral<VmAppListModel<VM>>() {}).in(Singleton.class);
         bind(VmHostDeviceListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VM>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<VmDevicesListModel<VM>>() {}).in(Singleton.class);
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmGeneralModel>>(){})
@@ -441,6 +444,9 @@ public class VirtualMachineModule extends AbstractGinModule {
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VmListModel<Void>, PermissionListModel<VM>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<VM, VmListModel<Void>>>() {}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<VmDevice, VmListModel<Void>, VmDevicesListModel<VM>>>(){})
+                .to(new TypeLiteral<SearchableDetailTabModelProvider<VmDevice, VmListModel<Void>, VmDevicesListModel<VM>>>(){})
+                .in(Singleton.class);
     }
 
 }

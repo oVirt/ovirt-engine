@@ -2152,4 +2152,72 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("<No-Watchdog>")
     String noWatchdogLabel();
+
+    @DefaultStringValue("Device Type")
+    String deviceType();
+
+    @DefaultStringValue("Address")
+    String deviceAddress();
+
+    @DefaultStringValue("Read Only")
+    String deviceReadOnlyAlias();
+
+    @DefaultStringValue("Plugged")
+    String devicePluggedAlias();
+
+    @DefaultStringValue("Boot Order")
+    String deviceBootOrderAlias();
+
+    @DefaultStringValue("Managed")
+    String deviceManagedAlias();
+
+    @DefaultStringValue("Spec Params")
+    String deviceSpecParamsAlias();
+
+    // vm device general type
+
+    @DefaultStringValue("Disk")
+    String diskDeviceGeneralType();
+
+    @DefaultStringValue("Interface")
+    String interfaceDeviceGeneralType();
+
+    @DefaultStringValue("Video")
+    String videoDeviceGeneralType();
+
+    @DefaultStringValue("Graphics")
+    String graphicsDeviceGeneralType();
+
+    @DefaultStringValue("Sound")
+    String soundDeviceGeneralType();
+
+    @DefaultStringValue("Controller")
+    String controllerDeviceGeneralType();
+
+    @DefaultStringValue("Balloon")
+    String balloonDeviceGeneralType();
+
+    @DefaultStringValue("Channel")
+    String channelDeviceGeneralType();
+
+    @DefaultStringValue("USB Redirection")
+    String redirDeviceGeneralType();
+
+    @DefaultStringValue("Console")
+    String consoleDeviceGeneralType();
+
+    @DefaultStringValue("RNG")
+    String rngDeviceGeneralType();
+
+    @DefaultStringValue("Smartcard")
+    String smartcardDeviceGeneralType();
+
+    @DefaultStringValue("Watchdog")
+    String watchdogDeviceGeneralType();
+
+    @DefaultStringValue("Host Device")
+    String hostdevDeviceGeneralType();
+
+    @DefaultStringValue("Unknown")
+    String unknownDeviceGeneralType();
 }

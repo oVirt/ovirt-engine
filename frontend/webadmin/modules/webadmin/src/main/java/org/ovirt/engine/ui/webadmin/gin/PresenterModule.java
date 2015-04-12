@@ -266,6 +266,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.Su
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineSessionsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineVirtualDiskPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineVmDevicePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.VirtualMachineSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AboutPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.HeaderView;
@@ -530,6 +531,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabV
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineSessionsView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineSnapshotView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineVirtualDiskView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineVmDevicesView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.VirtualMachineSubTabPanelView;
 
 /**
@@ -921,6 +923,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVirtualMachineApplicationPresenter.ViewDef.class,
                 SubTabVirtualMachineApplicationView.class,
                 SubTabVirtualMachineApplicationPresenter.ProxyDef.class);
+        bindPresenter(SubTabVirtualMachineVmDevicePresenter.class,
+                SubTabVirtualMachineVmDevicePresenter.ViewDef.class,
+                SubTabVirtualMachineVmDevicesView.class,
+                SubTabVirtualMachineVmDevicePresenter.ProxyDef.class);
         bindPresenter(SubTabVirtualMachineAffinityGroupPresenter.class,
                 SubTabVirtualMachineAffinityGroupPresenter.ViewDef.class,
                 SubTabVirtualMachineAffinityGroupView.class,

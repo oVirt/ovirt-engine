@@ -2775,4 +2775,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Some non-default base template has to exist first.")
     String someNonDefaultTemplateHasToExistFirst();
+
+    @DefaultStringValue("VM Devices")
+    String vmDevicesTitle();
 }

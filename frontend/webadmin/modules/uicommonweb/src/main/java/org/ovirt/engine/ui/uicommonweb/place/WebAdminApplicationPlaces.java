@@ -188,6 +188,9 @@ public class WebAdminApplicationPlaces {
     public static final String virtualMachineApplicationSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "applications"; //$NON-NLS-1$
 
+    public static final String virtualMachineVmDeviceSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "vm_devices"; //$NON-NLS-1$
+
     public static final String virtualMachineAffinityGroupsSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "affinity_groups"; //$NON-NLS-1$
 

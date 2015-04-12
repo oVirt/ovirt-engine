@@ -447,9 +447,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
             final PermissionListModel<VM> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
             final VmSessionsModel vmSessionsModel, final Provider<ImportVmsModel> importVmsModelProvider,
-            final VmHostDeviceListModel vmHostDeviceListModel) {
+            final VmHostDeviceListModel vmHostDeviceListModel, final VmDevicesListModel vmDevicesListModel) {
         setDetailList(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
-                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel, vmHostDeviceListModel);
+                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel, vmHostDeviceListModel,
+                vmDevicesListModel);
         this.importVmsModelProvider = importVmsModelProvider;
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
@@ -513,7 +514,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
             final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
             final PermissionListModel<VM> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
-            final VmSessionsModel vmSessionsModel, final VmHostDeviceListModel vmHostDeviceListModel) {
+            final VmSessionsModel vmSessionsModel, final VmHostDeviceListModel vmHostDeviceListModel,
+            final VmDevicesListModel vmDevicesListModel) {
         List<HasEntity<VM>> list = new ArrayList<>();
         list.add(vmGeneralModel);
         list.add(vmInterfaceListModel);
@@ -522,6 +524,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         list.add(vmSnapshotListModel);
         list.add(vmEventListModel);
         list.add(vmAppListModel);
+        list.add(vmDevicesListModel);
         list.add(permissionListModel);
         list.add(vmAffinityGroupListModel);
         list.add(vmSessionsModel);
