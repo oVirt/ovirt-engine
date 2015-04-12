@@ -1226,9 +1226,10 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName, String userName, String remoteGroupName) {
+    public StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName, String userName, String remoteGroupName, Boolean partial) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.geoRepMountBrokerSetup").withParameter("remoteVolumeName", remoteVolumeName)
+                        .withParameter("partial", partial)
                         .withOptionalParameter("remoteUserName", userName)
                         .withOptionalParameter("remoteGroupName", remoteGroupName).build();
         Map<String, Object> response = new FutureMap(this.client, request);

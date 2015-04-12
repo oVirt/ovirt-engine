@@ -10,16 +10,25 @@ public class SetUpMountBrokerParameters extends IdParameters {
     private String remoteVolumeName;
     private String remoteUserName;
     private String remoteUserGroup;
+    private boolean partial;
 
     public SetUpMountBrokerParameters() {
         super();
     }
 
     public SetUpMountBrokerParameters(Guid remoteHostId, String remoteVolumeName, String remoteUserName, String remoteUserGroup) {
+        this(remoteHostId, remoteVolumeName, remoteUserName, remoteUserGroup, false);
+    }
+
+    public SetUpMountBrokerParameters(Guid remoteHostId, String remoteVolumeName,
+            String remoteUserName,
+            String remoteUserGroup,
+            boolean partial) {
         super(remoteHostId);
+        this.remoteVolumeName = remoteVolumeName;
         this.remoteUserName = remoteUserName;
         this.remoteUserGroup = remoteUserGroup;
-        this.setRemoteVolumeName(remoteVolumeName);
+        this.partial = partial;
     }
 
     public String getRemoteUserName() {
@@ -44,5 +53,13 @@ public class SetUpMountBrokerParameters extends IdParameters {
 
     public void setRemoteVolumeName(String remoteVolumeName) {
         this.remoteVolumeName = remoteVolumeName;
+    }
+
+    public boolean isPartial() {
+        return partial;
+    }
+
+    public void setPartial(boolean partial) {
+        this.partial = partial;
     }
 }

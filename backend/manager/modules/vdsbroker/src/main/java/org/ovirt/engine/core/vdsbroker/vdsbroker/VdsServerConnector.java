@@ -300,7 +300,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterGeoRepMountBrokerSetup(String userName,
             String remoteGroupName,
-            String remoteVolumeName);
+            String remoteVolumeName,
+            Boolean partial);
 
     public Map<String, Object> glusterVolumeGeoRepSessionCreate(String volumeName,
             String remoteHost,

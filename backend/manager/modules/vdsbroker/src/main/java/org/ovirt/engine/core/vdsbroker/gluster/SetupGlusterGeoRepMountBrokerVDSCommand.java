@@ -14,7 +14,7 @@ public class SetupGlusterGeoRepMountBrokerVDSCommand<P extends SetUpGlusterGeoRe
         status =
                 getBroker().glusterGeoRepMountBrokerSetup(parameters.getRemoteVolumeName(),
                         parameters.getRemoteUserName(),
-                        parameters.getRemoteGroupName());
+                        parameters.getRemoteGroupName(), parameters.isPartial());
         proceedProxyReturnValue();
     }
 

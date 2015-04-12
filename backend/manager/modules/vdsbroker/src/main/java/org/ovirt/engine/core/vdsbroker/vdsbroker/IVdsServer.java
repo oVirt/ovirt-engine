@@ -329,7 +329,7 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName,
             String userName,
-            String remoteGroupName);
+            String remoteGroupName, Boolean partial);
 
     StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionCreate(String volumeName,
             String remoteHost,
