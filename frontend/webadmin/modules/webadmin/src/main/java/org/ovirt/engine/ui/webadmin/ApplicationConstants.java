@@ -4129,13 +4129,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Recurrence")
     String recurrenceLabel();
 
-    @DefaultStringValue("Interval (mins)")
+    @DefaultStringValue("Interval (every n-mins)")
     String intervalLabel();
 
     @DefaultStringValue("End By")
     String endByLabel();
 
-    @DefaultStringValue("End By Date")
+    @DefaultStringValue("End Schedule by")
     String endByDateLabel();
 
     @DefaultStringValue("Time Zone")
@@ -4147,10 +4147,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Days Of Week")
     String daysOfWeekLabel();
 
-    @DefaultStringValue("Start At")
+    @DefaultStringValue("Start Schedule by")
     String startAtLabel();
 
-    @DefaultStringValue("Execution Time")
+    @DefaultStringValue("Execute At")
     String executionTimeLabel();
 
     @DefaultStringValue("No End Date")
