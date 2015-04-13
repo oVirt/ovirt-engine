@@ -526,14 +526,14 @@ public class ExecutionHandler {
      * @return an execution context as a Job
      */
     public static CommandContext createInternalJobContext(EngineLock lock) {
-        return modifyContextForIntenralJob(new CommandContext(new EngineContext()), lock);
+        return modifyContextForInternalJob(new CommandContext(new EngineContext()), lock);
     }
 
     public static CommandContext createInternalJobContext(CommandContext commandContext, EngineLock lock) {
-        return modifyContextForIntenralJob(commandContext.clone(), lock);
+        return modifyContextForInternalJob(commandContext.clone(), lock);
     }
 
-    private static CommandContext modifyContextForIntenralJob(CommandContext returnedContext, EngineLock lock) {
+    private static CommandContext modifyContextForInternalJob(CommandContext returnedContext, EngineLock lock) {
         return returnedContext
                 .withExecutionContext(createMonitoredExecutionContext())
                 .withLock(lock)
