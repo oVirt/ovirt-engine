@@ -1,12 +1,15 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.pm;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -193,6 +196,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     protected List<VM> getVmList() {
         return getVmDAO().getAllRunningForVds(getVdsId());
+    }
+
+    // Method needs to be overridden to allow mocking in bll.pm subpackage
+    @Override
+    protected BackendInternal getBackend() {
+        return super.getBackend();
     }
 
     /**

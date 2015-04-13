@@ -1,10 +1,12 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.pm;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.VdsCommand;
+import org.ovirt.engine.core.bll.VdsValidator;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;

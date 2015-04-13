@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.pm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -21,8 +21,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -202,8 +202,8 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     public void onSuccessReturnValueOk() {
         mockExecutor(true);
         command.executeCommand();
-        assertTrue(command.getSucceeded());
-        Object commandReturnValue = command.getActionReturnValue();
+        assertTrue(command.getReturnValue().getSucceeded());
+        Object commandReturnValue = command.getReturnValue().getActionReturnValue();
         assertNotNull(commandReturnValue);
         assertTrue(commandReturnValue instanceof FenceOperationResult);
         FenceOperationResult commandReturnValueCasted = (FenceOperationResult) commandReturnValue;

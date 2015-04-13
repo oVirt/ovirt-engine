@@ -43,6 +43,7 @@ public final class CommandsFactory {
         "org.ovirt.engine.core.bll.network.template",
         "org.ovirt.engine.core.bll.numa.host",
         "org.ovirt.engine.core.bll.numa.vm",
+        "org.ovirt.engine.core.bll.pm",
         "org.ovirt.engine.core.bll.provider",
         "org.ovirt.engine.core.bll.provider.network",
         "org.ovirt.engine.core.bll.qos",

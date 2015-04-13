@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.FenceVdsBaseCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.pm.FenceVdsBaseCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -37,7 +37,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
  * This command should be run mutually exclusive from other fence actions to prevent same action or other fence actions
  * to clear the VMs and start them.
  *
- * @see org.ovirt.engine.core.bll.RestartVdsCommand
+ * @see RestartVdsCommand
  */
 public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends StorageHandlingCommandBase<T> {
     private final VDS _problematicVds;
