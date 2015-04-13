@@ -120,6 +120,13 @@ for p in /var/lib/ovirt-engine/*; do
 ${p}"
 done
 
+ENGINE_TABLES_TO_CLEAN_ON_RESTORE="async_tasks
+async_tasks_entities
+business_entity_snapshot
+command_entities
+job
+step"
+
 MYPGPASS=""
 TEMP_FOLDER=""
 FILE=""
@@ -149,6 +156,7 @@ USAGE:
     reportsdb                       reports database only
  --file=FILE                        file to use during backup or restore
  --log=FILE                         log file to use
+ --keep-temporary-data              Do not cleanup temporary data on restore
  --change-db-credentials            activate the following options, to restore
                                     the Engine database to a different location
 				    etc. If used, existing credentials are ignored.
@@ -232,6 +240,7 @@ SCOPE_FILES=
 SCOPE_ENGINE_DB=
 SCOPE_DWH_DB=
 SCOPE_REPORTS_DB=
+KEEP_TEMPORARY_DATA=
 CHANGE_DB_CREDENTIALS=
 MY_DB_HOST=
 MY_DB_PORT=5432
@@ -290,6 +299,9 @@ parseArgs() {
 			;;
 			--log=*)
 				LOG="${v}"
+			;;
+			--keep-temporary-data)
+				KEEP_TEMPORARY_DATA=1
 			;;
 			--change-db-credentials)
 				CHANGE_DB_CREDENTIALS=1
@@ -613,6 +625,10 @@ dorestore() {
 		output "- Engine database '"${ENGINE_DB_DATABASE}"'"
 		log "Restoring engine database backup at ${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}"
 		restoreDB "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ORIG_DB_USER}"
+		if [ -z "${KEEP_TEMPORARY_DATA}" ]; then
+			output "Cleaning up temporary tables in engine database '${ENGINE_DB_DATABASE}':"
+			cleanDbTempData "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_TABLES_TO_CLEAN_ON_RESTORE}"
+		fi
 	fi
 	if [ -n "${SCOPE_DWH_DB}" -a -n "${DWH_DB_USER}" ]; then
 		output "- DWH database '"${DWH_DB_DATABASE}"'"
@@ -739,6 +755,30 @@ __EOF
 )
 	local numerrors=$(grep 'ERROR: ' "${psqllog}" | grep -Ev "${IGNORED_ERRORS}" | wc -l)
 	[ ${numerrors} -ne 0 ] && logdie "Errors while restoring database ${database}"
+}
+
+cleanDbTempData() {
+	local user="$1"
+	local host="$2"
+	local port="$3"
+	local database="$4"
+	local tables_to_clean="$5"
+	local psqllog="${TEMP_FOLDER}/psql-cleanup-log"
+	echo "${tables_to_clean}" | while read -r table; do
+		output "- ${table}"
+		PGPASSFILE="${MYPGPASS}" psql \
+			-w \
+			-t \
+			-U "${user}" \
+			-h "${host}" \
+			-p "${port}" \
+			-d "${database}" \
+			-c "TRUNCATE TABLE ${table} cascade" \
+			> "${psqllog}"  2>&1 \
+			|| logdie "Failed cleaning up ${table}"
+			cat "${psqllog}" >> "${LOG}"  2>&1 \
+				|| logdie "Failed to append psql log to restore log"
+	done
 }
 
 restoreFiles() {
