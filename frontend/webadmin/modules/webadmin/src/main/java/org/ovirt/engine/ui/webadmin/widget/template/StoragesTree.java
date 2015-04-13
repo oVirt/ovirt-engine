@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -68,12 +69,13 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
 
         DiskImage disk = (DiskImage) diskModel.getDisk();
 
-        addItemToPanel(panel, new Image(resources.diskImage()), "25px"); //$NON-NLS-1$
+        addItemToPanel(panel, new Image(resources.diskImage()), "30px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getImageStatus(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getVolumeType(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskInterface(), "110px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<DiskStorageType>(), disk.getDiskStorageType(), "110px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DateLabel(), disk.getCreationDate(), "90px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
@@ -84,12 +86,13 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
     @Override
     protected TreeItem getNodeHeader() {
         EntityModelCellTable<ListModel> table = new EntityModelCellTable<ListModel>(false, true);
-        table.addColumn(new EmptyColumn(), constants.empty(), "25px"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.nameStorageTree(), ""); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.aliasDisk(), ""); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.sizeStorageTree(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.statusStorageTree(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.allocationStorageTree(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.interfaceStorageTree(), "110px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.typeDisk(), "110px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.creationDateStorageTree(), "100px"); //$NON-NLS-1$
         table.setRowData(new ArrayList());
         table.setWidth("100%", true); //$NON-NLS-1$
