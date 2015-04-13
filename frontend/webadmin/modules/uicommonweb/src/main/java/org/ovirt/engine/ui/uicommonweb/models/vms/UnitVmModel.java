@@ -2734,7 +2734,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     public boolean validateHwPart() {
         resetTabsValidity();
 
-        getName().validateEntity(new IValidation[] {new NotEmptyValidation()});
+        getName().validateEntity(new IValidation[] {new NotEmptyValidation(), new I18NNameValidation()});
         getMigrationDowntime().validateEntity(new IValidation[] { new NotNullIntegerValidation(0, Integer.MAX_VALUE) });
 
         getTotalCPUCores().validateEntity(new IValidation[] {
