@@ -36,7 +36,7 @@ class CdiIntegration implements BeanDefinitionRegistryPostProcessor {
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
     }
 
-    private class InstanceImpl implements Instance<DAO> {
+    private static class InstanceImpl implements Instance<DAO> {
         private Iterable<DAO> daos;
 
         public InstanceImpl(Iterable<DAO> daos) {
