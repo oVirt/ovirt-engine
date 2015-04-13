@@ -1619,4 +1619,14 @@ public final class Linq
             }
         });
     }
+
+    public final static Collection<StorageDomain> filterStorageDomainById(
+            Collection<StorageDomain> source, final Guid id) {
+        return where(source, new IPredicate<StorageDomain>() {
+            @Override
+            public boolean match(StorageDomain source) {
+                return source.getId().equals(id);
+            }
+        });
+    }
 }
