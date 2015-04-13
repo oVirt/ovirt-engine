@@ -4,7 +4,6 @@ package org.ovirt.engine.core.common.businessentities.pm;
  * Action available in all fence agents
  */
 public enum FenceActionType {
-    RESTART("reboot"),
     START("on"),
     STOP("off"),
     STATUS("status");
@@ -37,9 +36,7 @@ public enum FenceActionType {
     public static FenceActionType forValue(String value) {
         if (value != null && value.length() > 0) {
             String lowerCase = value.toLowerCase();
-            if ("reboot".equals(lowerCase)) {
-                return RESTART;
-            } else if ("on".equals(lowerCase)) {
+            if ("on".equals(lowerCase)) {
                 return START;
             } else if ("off".equals(lowerCase)) {
                 return STOP;
