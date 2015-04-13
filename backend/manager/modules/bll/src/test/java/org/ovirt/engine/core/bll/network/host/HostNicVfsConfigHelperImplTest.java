@@ -204,14 +204,10 @@ public class HostNicVfsConfigHelperImplTest {
         when(hostDeviceDao.getHostDevicesByHostId(HOST_ID)).thenReturn(devices);
     }
 
-    @Test
+    @Test(expected = UnsupportedOperationException.class)
     public void areAllVfsFreeNotSriovNic() {
         commonIsSriovDevice(false);
-        try {
-            hostNicVfsConfigHelper.areAllVfsFree(nic);
-        } catch (Exception exception) {
-            assertTrue(exception instanceof UnsupportedOperationException);
-        }
+        hostNicVfsConfigHelper.areAllVfsFree(nic);
     }
 
     @Test
