@@ -92,6 +92,14 @@ public interface VmPoolDao extends Dao, SearchDao<VmPool> {
      */
     void remove(Guid vmPool);
 
+    /**
+     * Sets beingDestroyed flag of the given pool.
+     *
+     * @param vmPoolId
+     * @param beingDestroyed
+     */
+    void setBeingDestroyed(Guid vmPoolId, boolean beingDestroyed);
+
     void addVmToPool(VmPoolMap map);
 
     List<VmPoolMap> getVmPoolsMapByVmPoolId(Guid vmPoolId);

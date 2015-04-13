@@ -400,6 +400,7 @@ public final class Cloner
         obj.setComment(instance.getComment());
         obj.setRunningVmsCount(instance.getRunningVmsCount());
         obj.setPrestartedVms(instance.getPrestartedVms());
+        obj.setBeingDestroyed(instance.isBeingDestroyed());
 
         return obj;
     }

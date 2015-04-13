@@ -72,8 +72,37 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION SetVm_poolBeingDestroyed(v_vm_pool_id UUID, v_is_being_destroyed BOOLEAN)
+  RETURNS VOID
+AS $procedure$
+BEGIN
+      UPDATE vm_pools
+      SET is_being_destroyed = v_is_being_destroyed
+      WHERE vm_pool_id = v_vm_pool_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 DROP TYPE IF EXISTS GetAllFromVm_pools_rs CASCADE;
-Create type GetAllFromVm_pools_rs AS (vm_pool_id UUID, assigned_vm_count INTEGER, vm_running_count INTEGER, vm_pool_description VARCHAR(4000), vm_pool_comment text, vm_pool_name VARCHAR(255), vm_pool_type INTEGER, parameters VARCHAR(200), prestarted_vms INTEGER, vds_group_id UUID, vds_group_name VARCHAR(40), max_assigned_vms_per_user SMALLINT, spice_proxy VARCHAR(255));
+Create type GetAllFromVm_pools_rs AS
+(
+    vm_pool_id UUID,
+    assigned_vm_count INTEGER,
+    vm_running_count INTEGER,
+    vm_pool_description VARCHAR(4000),
+    vm_pool_comment text,
+    vm_pool_name VARCHAR(255),
+    vm_pool_type INTEGER,
+    parameters VARCHAR(200),
+    prestarted_vms INTEGER,
+    vds_group_id UUID,
+    vds_group_name VARCHAR(40),
+    max_assigned_vms_per_user SMALLINT,
+    spice_proxy VARCHAR(255),
+    is_being_destroyed BOOLEAN
+);
 Create or replace FUNCTION GetAllFromVm_pools() RETURNS SETOF GetAllFromVm_pools_rs
    AS $procedure$
 BEGIN
@@ -146,7 +175,8 @@ BEGIN
             vds_group_id UUID,
             vds_group_name VARCHAR(40),
             max_assigned_vms_per_user SMALLINT,
-            spice_proxy VARCHAR(255)
+            spice_proxy VARCHAR(255),
+            is_being_destroyed BOOLEAN
          ) WITH OIDS;
          exception when others then
             truncate table tt_VM_POOL_RESULT;
@@ -163,10 +193,11 @@ BEGIN
             vds_group_id,
             vds_group_name,
             max_assigned_vms_per_user,
-            spice_proxy)
+            spice_proxy,
+            is_being_destroyed)
       select ppr.vm_pool_id, ppr.assigned_vm_count, ppr.vm_running_count,
   				 p.vm_pool_description, p.vm_pool_comment, p.vm_pool_name, p.vm_pool_type, p.parameters, p.prestarted_vms,
-					 p.vds_group_id, p.vds_group_name, p.max_assigned_vms_per_user, p.spice_proxy
+					 p.vds_group_id, p.vds_group_name, p.max_assigned_vms_per_user, p.spice_proxy, p.is_being_destroyed
       from tt_VM_POOL_PRERESULT ppr
       inner join vm_pools_view p on ppr.vm_pool_id = p.vm_pool_id;
       RETURN QUERY select *

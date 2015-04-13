@@ -200,22 +200,35 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void processOnVmStop(final Collection<Guid> vmIds, final Guid hostId) {
+        processOnVmStop(vmIds, hostId, true);
+    }
+
+    @Override
+    public void processOnVmStop(final Collection<Guid> vmIds, final Guid hostId, boolean useSeparateThread) {
         if (vmIds.isEmpty()) {
             return;
         }
 
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                for (Guid vmId : vmIds) {
-                    backend.runInternalAction(VdcActionType.ProcessDownVm,
-                            new ProcessDownVmParameters(vmId, true));
+        if (useSeparateThread) {
+            ThreadPoolUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    processOnVmStopInternal(vmIds, hostId);
                 }
+            });
+        } else {
+            processOnVmStopInternal(vmIds, hostId);
+        }
+    }
 
-                HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
-                hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
-            }
-        });
+    private void processOnVmStopInternal(final Collection<Guid> vmIds, final Guid hostId) {
+        for (Guid vmId : vmIds) {
+            backend.runInternalAction(VdcActionType.ProcessDownVm,
+                    new ProcessDownVmParameters(vmId, true));
+        }
+
+        HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
+        hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
     }
 
     /**

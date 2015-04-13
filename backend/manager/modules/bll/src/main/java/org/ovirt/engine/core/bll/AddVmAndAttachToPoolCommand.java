@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -10,7 +11,10 @@ import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 
 /**
@@ -20,13 +24,42 @@ import org.ovirt.engine.core.common.utils.Pair;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameters> extends AddVmCommand<T> {
+    private VmPool vmPool;
+
+    protected VmPool getVmPool() {
+        if (vmPool == null && getParameters().getPoolId() != null) {
+            vmPool = getDbFacade().getVmPoolDao().get(getParameters().getPoolId());
+        }
+        return vmPool;
+    }
+
     public AddVmAndAttachToPoolCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties;
+        return lockProperties.withScope(LockProperties.Scope.Execution);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return null;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return Collections.singletonMap(getParameters().getPoolId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL, getVmIsBeingCreatedAndAttachedMessage()));
+    }
+
+    private String getVmIsBeingCreatedAndAttachedMessage() {
+        StringBuilder builder = new StringBuilder(
+                EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_CREATED_AND_ATTACHED_TO_POOL.name());
+        if (getVmPool() != null) {
+            builder.append(String.format("$VmPoolName %1$s", getVmPool().getName()));
+        }
+        return builder.toString();
     }
 
     /**
@@ -48,23 +81,18 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         }
     }
 
-    @Override
-    protected Map<String, Pair<String, String>> getSharedLocks() {
-        return null;
-    }
-
     private AddVmParameters buildAddVmParameters(VdcActionType action) {
         AddVmParameters parameters = new AddVmParameters(getParameters().getVmStaticData());
         parameters.setDiskOperatorAuthzPrincipalDbId(getParameters().getDiskOperatorAuthzPrincipalDbId());
         parameters.getGraphicsDevices().putAll(getParameters().getGraphicsDevices());
+        parameters.setPoolId(getParameters().getPoolId());
 
         if (action == VdcActionType.AddVmFromScratch) {
             parameters.setDiskInfoList(getParameters().getDiskInfoList());
             parameters.setStorageDomainId(getParameters().getStorageDomainId());
             parameters.setSessionId(getParameters().getSessionId());
             parameters.setDontAttachToDefaultTag(true);
-        }
-        else {
+        } else {
             if (StringUtils.isEmpty(getParameters().getSessionId())) {
                 parameters.setParametersCurrentUser(getCurrentUser());
             } else {
@@ -90,7 +118,10 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         AddVmToPoolParameters parameters = new AddVmToPoolParameters(getParameters().getPoolId(),
                 vmStatic.getId());
         parameters.setShouldBeLogged(false);
-        setSucceeded(runInternalActionWithTasksContext(VdcActionType.AddVmToPool, parameters).getSucceeded());
+        VdcReturnValueBase result = runInternalActionWithTasksContext(
+                VdcActionType.AddVmToPool,
+                parameters);
+        setSucceeded(result.getSucceeded());
         addVmPermission();
     }
 }

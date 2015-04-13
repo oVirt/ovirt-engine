@@ -14,6 +14,7 @@ public class AddVmParameters extends VmManagementParametersBase {
     private ArrayList<DiskImage> diskInfoList;
     private TemplateProvisioningMethod templateProvisioningMethod = TemplateProvisioningMethod.THIN;
     private Guid diskOperatorAuthzPrincipalDbId;
+    private Guid poolId;
 
     public AddVmParameters() {
     }
@@ -50,4 +51,13 @@ public class AddVmParameters extends VmManagementParametersBase {
     public void setDiskOperatorAuthzPrincipalDbId(Guid diskOperatorAuthzPrincipalDbId) {
         this.diskOperatorAuthzPrincipalDbId = diskOperatorAuthzPrincipalDbId;
     }
+
+    public Guid getPoolId() {
+        return poolId;
+    }
+
+    public void setPoolId(Guid poolId) {
+        this.poolId = poolId;
+    }
+
 }

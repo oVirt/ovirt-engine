@@ -215,6 +215,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             locks.put(image.getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskSharedLockMessage()));
         }
+        if (getParameters().getPoolId() != null) {
+            locks.put(getParameters().getPoolId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL, getPoolSharedLockMessage()));
+        }
         return locks;
     }
 
@@ -233,6 +237,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return cachedDiskSharedLockMessage;
     }
 
+    private String getPoolSharedLockMessage() {
+        return new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_USED_FOR_CREATE_VM.name())
+                .append(String.format("$VmName %1$s", getVmName()))
+                .toString();
+    }
 
     protected ImageType getImageType() {
         if (imageType == null && imageTypeId != null) {

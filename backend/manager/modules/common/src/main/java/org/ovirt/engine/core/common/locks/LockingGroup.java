@@ -35,6 +35,7 @@ public enum LockingGroup {
     VDS_POOL_AND_STORAGE_CONNECTIONS,
     /** This group is used to lock host for operations that allocate host's devices to VMs */
     HOST_DEVICES,
-    VM_DISK_HOT_PLUG;
+    VM_DISK_HOT_PLUG,
+    VM_POOL;
 
 }

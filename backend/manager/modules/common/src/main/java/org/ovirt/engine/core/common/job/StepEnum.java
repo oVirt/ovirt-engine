@@ -19,6 +19,7 @@ public enum StepEnum {
     CREATING_SNAPSHOTS,
     RUN_STATELESS_VM,
     TAKING_VM_FROM_POOL,
+    REMOVING_VM,
 
     // Gluster
     SETTING_GLUSTER_OPTION,

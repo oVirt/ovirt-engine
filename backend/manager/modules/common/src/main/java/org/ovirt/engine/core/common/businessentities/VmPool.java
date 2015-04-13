@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TimeSpan;
 
-public class VmPool implements IVdcQueryable, Nameable, Commented {
+public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Commented {
 
     private static final long serialVersionUID = 4517650877696849024L;
 
@@ -61,6 +61,8 @@ public class VmPool implements IVdcQueryable, Nameable, Commented {
     @Size(max = BusinessEntitiesDefinitions.SPICE_PROXY_ADDR_SIZE)
     private String spiceProxy;
 
+    private boolean beingDestroyed;
+
     public VmPool() {
         parameters = "";
         defaultStartTime = new TimeSpan();
@@ -68,6 +70,7 @@ public class VmPool implements IVdcQueryable, Nameable, Commented {
         vmPoolAssignedCount = 1;
         vmPoolRunningCount = 1;
         maxAssignedVmsPerUser = 1;
+        beingDestroyed = false;
         type = VmPoolType.Automatic;
     }
 
@@ -110,6 +113,16 @@ public class VmPool implements IVdcQueryable, Nameable, Commented {
                 && ObjectUtils.objectsEqual(type, other.type)
                 && maxAssignedVmsPerUser == other.maxAssignedVmsPerUser
                 && ObjectUtils.objectsEqual(spiceProxy, other.spiceProxy));
+    }
+
+    @Override
+    public Guid getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Guid id) {
+        this.id = id;
     }
 
     public String getParameters() {
@@ -245,4 +258,13 @@ public class VmPool implements IVdcQueryable, Nameable, Commented {
     public String getSpiceProxy() {
         return spiceProxy;
     }
+
+    public boolean isBeingDestroyed() {
+        return beingDestroyed;
+    }
+
+    public void setBeingDestroyed(boolean beingDestroyed) {
+        this.beingDestroyed = beingDestroyed;
+    }
+
 }

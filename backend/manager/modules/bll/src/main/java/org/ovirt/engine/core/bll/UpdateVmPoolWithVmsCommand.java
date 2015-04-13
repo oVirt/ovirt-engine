@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -8,9 +10,12 @@ import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -44,6 +49,25 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     protected Guid getPoolId() {
         getVmPoolDao().update(getVmPool());
         return getVmPool().getVmPoolId();
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Execution);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getVmPoolId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL, getVmPoolIsBeingUpdatedMessage()));
+    }
+
+    private String getVmPoolIsBeingUpdatedMessage() {
+        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_BEING_UPDATED.name());
+        if (getVmPool() != null) {
+            builder.append(String.format("$VmPoolName %1$s", getVmPool().getName()));
+        }
+        return builder.toString();
     }
 
     @Override

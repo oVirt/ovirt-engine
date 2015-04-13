@@ -136,6 +136,10 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         updateVmInitPassword();
         VmHandler.warnMemorySizeLegal(getParameters().getVmStaticData(), getVdsGroup().getCompatibilityVersion());
 
+        // Free exclusive VM_POOL lock, if taken. Further AddVmAndAttachToPool commands
+        // require shared VM_POOL locks only.
+        freeLock();
+
         Guid poolId = getPoolId();
         setActionReturnValue(poolId);
         VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),

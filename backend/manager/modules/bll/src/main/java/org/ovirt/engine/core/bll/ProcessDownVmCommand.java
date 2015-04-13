@@ -75,28 +75,43 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         return true;
     }
 
+    private boolean isRemovingVmPool() {
+        Guid poolId = getVm().getVmPoolId();
+        if (poolId == null) {
+            return false;
+        }
+        VmPool vmPool = DbFacade.getInstance().getVmPoolDao().get(poolId);
+        return vmPool.isBeingDestroyed();
+    }
+
     @Override
     protected void executeCommand() {
-        applyNextRunConfiguration();
+        boolean removingVmPool = isRemovingVmPool();
 
-        boolean removedStatelessSnapshot = detachUsers();
-        if (!removedStatelessSnapshot && !templateVersionChanged) {
-            // If template version didn't change, and we are dealing with a prestarted Vm
-            // or a regular Vm - clean stateless images
-            // Otherwise this was already done in DetachUserFromVmFromPoolCommand \ updateVmVersionCommand->RemoveVmCommand
-            removeVmStatelessImages();
+        if (!removingVmPool) {
+            applyNextRunConfiguration();
+
+            boolean removedStatelessSnapshot = detachUsers();
+            if (!removedStatelessSnapshot && !templateVersionChanged) {
+                // If template version didn't change, and we are dealing with a prestarted Vm
+                // or a regular Vm - clean stateless images
+                // Otherwise this was already done in DetachUserFromVmFromPoolCommand \ updateVmVersionCommand->RemoveVmCommand
+                removeVmStatelessImages();
+            }
         }
 
         getQuotaManager().rollbackQuotaByVmId(getVmId());
-        removeStatelessVmUnmanagedDevices();
 
-        boolean vmHasDirectPassthroughDevices = releaseUsedHostDevices();
+        if (!removingVmPool) {
+            removeStatelessVmUnmanagedDevices();
 
-        Guid hostId = cleanupVfs();
-        // Only single dedicated host allowed for host devices, verified on canDoActions
-        Guid alternativeHostsList = vmHasDirectPassthroughDevices ? getVm().getDedicatedVmForVdsList().get(0) : null;
-        refreshHostIfNeeded(hostId == null ? alternativeHostsList : hostId);
+            boolean vmHasDirectPassthroughDevices = releaseUsedHostDevices();
 
+            Guid hostId = cleanupVfs();
+            // Only single dedicated host allowed for host devices, verified on canDoActions
+            Guid alternativeHostsList = vmHasDirectPassthroughDevices ? getVm().getDedicatedVmForVdsList().get(0) : null;
+            refreshHostIfNeeded(hostId == null ? alternativeHostsList : hostId);
+        }
     }
 
     private boolean releaseUsedHostDevices() {

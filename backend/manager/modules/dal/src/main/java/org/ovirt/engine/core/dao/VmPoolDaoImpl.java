@@ -91,7 +91,8 @@ public class VmPoolDaoImpl extends BaseDaoDbFacade implements VmPoolDao {
                 .addValue("prestarted_vms", pool.getPrestartedVms())
                 .addValue("vds_group_id", pool.getVdsGroupId())
                 .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser())
-                .addValue("spice_proxy", pool.getSpiceProxy());
+                .addValue("spice_proxy", pool.getSpiceProxy())
+                .addValue("is_being_destroyed", pool.isBeingDestroyed());
 
         getCallsHandler().executeModification("InsertVm_pools", parameterSource);
     }
@@ -108,7 +109,8 @@ public class VmPoolDaoImpl extends BaseDaoDbFacade implements VmPoolDao {
                 .addValue("prestarted_vms", pool.getPrestartedVms())
                 .addValue("vds_group_id", pool.getVdsGroupId())
                 .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser())
-                .addValue("spice_proxy", pool.getSpiceProxy());
+                .addValue("spice_proxy", pool.getSpiceProxy())
+                .addValue("is_being_destroyed", pool.isBeingDestroyed());
 
         getCallsHandler().executeModification("UpdateVm_pools", parameterSource);
     }
@@ -119,6 +121,15 @@ public class VmPoolDaoImpl extends BaseDaoDbFacade implements VmPoolDao {
                 .addValue("vm_pool_id", id);
 
         getCallsHandler().executeModification("DeleteVm_pools", parameterSource);
+    }
+
+    @Override
+    public void setBeingDestroyed(Guid vmPoolId, boolean beingDestroyed) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_pool_id", vmPoolId)
+                .addValue("is_being_destroyed", beingDestroyed);
+
+        getCallsHandler().executeModification("SetVm_poolBeingDestroyed", parameterSource);
     }
 
     @Override
@@ -167,6 +178,7 @@ public class VmPoolDaoImpl extends BaseDaoDbFacade implements VmPoolDao {
             entity.setRunningVmsCount(rs.getInt("vm_running_count"));
             entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
             entity.setSpiceProxy(rs.getString("spice_proxy"));
+            entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
             return entity;
         }
     }
@@ -190,6 +202,7 @@ public class VmPoolDaoImpl extends BaseDaoDbFacade implements VmPoolDao {
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
             entity.setSpiceProxy(rs.getString("spice_proxy"));
+            entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));
             return entity;
         }
     }

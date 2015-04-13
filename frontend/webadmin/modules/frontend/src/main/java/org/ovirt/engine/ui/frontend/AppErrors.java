@@ -355,6 +355,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("User is already attached to this VM-Pool.")
     String ACTION_TYPE_FAILED_USER_ATTACHED_TO_POOL();
 
+    @DefaultStringValue("VM-Pool not found")
+    String VM_POOL_NOT_FOUND();
+
     @DefaultStringValue("Cannot attach VM to pool. VM is already attached to another VM-Pool.")
     String VM_POOL_CANNOT_ADD_VM_ATTACHED_TO_POOL();
 
@@ -363,15 +366,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot attach VM to VM-Pool. VM resides on different Host Cluster than VM-Pool.")
     String VM_POOL_CANNOT_ADD_VM_DIFFERENT_CLUSTER();
-
-    @DefaultStringValue("Cannot remove VM-Pool. Detach Directory Groups from VM-Pool first.")
-    String VM_POOL_CANNOT_REMOVE_VM_POOL_WITH_ATTACHED_DIRECTORY_GROUPS();
-
-    @DefaultStringValue("Cannot remove VM-Pool. Detach Users from VM-Pool first.")
-    String VM_POOL_CANNOT_REMOVE_VM_POOL_WITH_ATTACHED_USERS();
-
-    @DefaultStringValue("Cannot remove VM-Pool. Detach VMs from VM-Pool first.")
-    String VM_POOL_CANNOT_REMOVE_VM_POOL_WITH_VMS();
 
     @DefaultStringValue("Cannot detach VM from VM-Pool. VM is running.")
     String VM_POOL_CANNOT_REMOVE_RUNNING_VM_FROM_POOL();
@@ -2083,6 +2077,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The network is currently in use. Please wait and try again later.")
     String ACTION_TYPE_FAILED_NETWORK_IS_USED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. This VM Pool is currently in use to create VM ${VmName}.")
+    String ACTION_TYPE_FAILED_VM_POOL_IS_USED_FOR_CREATE_VM();
+
     @DefaultStringValue("Cannot ${action} ${type}. This template is currently in use to create VM ${VmName}.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM();
 
@@ -3643,6 +3640,21 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskAlias} alignment is currently being determined.")
     String ACTION_TYPE_FAILED_DISK_IS_USED_BY_GET_ALIGNMENT();
+
+    @DefaultStringValue("Cannot ${action} ${type}. VM pool ${VmPoolName} is being removed.")
+    String ACTION_TYPE_FAILED_VM_POOL_IS_BEING_REMOVED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. VM pool ${VmPoolName} is being updated.")
+    String ACTION_TYPE_FAILED_VM_POOL_IS_BEING_UPDATED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. VM pool ${VmPoolName} is being removed with VM ${VmName}.")
+    String ACTION_TYPE_FAILED_VM_POOL_IS_BEING_REMOVED_WITH_VM();
+
+    @DefaultStringValue("Cannot ${action} ${type}. A VM is being created and attached to pool ${VmPoolName}.")
+    String ACTION_TYPE_FAILED_VM_IS_BEING_CREATED_AND_ATTACHED_TO_POOL();
+
+    @DefaultStringValue("Cannot ${action} ${type}. VM ${VmName} is being attached to pool ${VmPoolName}.")
+    String ACTION_TYPE_FAILED_VM_IS_BEING_ATTACHED_TO_POOL();
 
     @DefaultStringValue("$filterType external")
     String VAR__FILTERTYPE__INTERNAL();

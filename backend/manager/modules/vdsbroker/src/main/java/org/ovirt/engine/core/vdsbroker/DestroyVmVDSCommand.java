@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
@@ -68,8 +69,10 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             // if using stop then call to ProcessOnVmStop because
             // will not be called from UpdateRunTimeInfo
             if (!parameters.getGracefully()) {
-                ResourceManager.getInstance().getEventListener()
-                        .processOnVmStop(Collections.singleton(curVm.getId()), getParameters().getVdsId());
+                ResourceManager.getInstance().getEventListener().processOnVmStop(
+                        Collections.singleton(curVm.getId()),
+                        getParameters().getVdsId(),
+                        !isInPoolBeingDestroyed(curVm));
             }
 
             getVDSReturnValue().setReturnValue(curVm.getStatus());
@@ -86,6 +89,14 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                     .getExceptionObject());
             getVDSReturnValue().setVdsError(vdsBrokerCommand.getVDSReturnValue().getVdsError());
         }
+    }
+
+    private boolean isInPoolBeingDestroyed(VM vm) {
+        if (vm.getVmPoolId() == null) {
+            return false;
+        }
+        VmPool vmPool = DbFacade.getInstance().getVmPoolDao().get(vm.getVmPoolId());
+        return vmPool != null && vmPool.isBeingDestroyed();
     }
 
     private void changeStatus(DestroyVmVDSCommandParameters parameters, VM curVm) {

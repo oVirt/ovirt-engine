@@ -1760,7 +1760,8 @@ SELECT
     storage_pool.name AS storage_pool_name,
     storage_pool.id AS storage_pool_id,
     vm_pools.max_assigned_vms_per_user AS max_assigned_vms_per_user,
-    vm_pools.spice_proxy AS spice_proxy
+    vm_pools.spice_proxy AS spice_proxy,
+    vm_pools.is_being_destroyed AS is_being_destroyed
 FROM
     vm_pools
     JOIN vds_groups ON vm_pools.vds_group_id = vds_groups.vds_group_id
@@ -1801,7 +1802,8 @@ SELECT
         GROUP BY
             v2.vm_pool_id ) AS vm_running_count,
     vmp.storage_pool_name,
-    vmp.storage_pool_id
+    vmp.storage_pool_id,
+    vmp.is_being_destroyed
 FROM
     vm_pools_view vmp;
 CREATE
