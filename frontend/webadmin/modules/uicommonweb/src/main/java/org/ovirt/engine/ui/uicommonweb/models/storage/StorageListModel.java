@@ -865,6 +865,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                      storage.getStorageDomainType() == StorageDomainType.ISO;
             boolean isDataCenterAvailable = storage.getStorageType() != StorageType.GLANCE;
             boolean isGeneralAvailable = storage.getStorageType() != StorageType.GLANCE;
+            boolean isCinderStorage = storage.getStorageType().isCinderDomain();
 
             boolean isRegsiterEntityListModelSelected =
                     getActiveDetailModel() == vmRegisterListModel || getActiveDetailModel() == templateRegisterListModel;
@@ -881,7 +882,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             templateListModel.setIsAvailable(isDataStorage);
             vmRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             templateRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
-            diskListModel.setIsAvailable(isDataStorage);
+            diskListModel.setIsAvailable(isDataStorage || isCinderStorage);
             snapshotListModel.setIsAvailable(isDataStorage);
             diskProfileListModel.setIsAvailable(isDataStorage);
 
