@@ -79,7 +79,7 @@ public abstract class BaseDAOTestCase {
     public void setUp() throws Exception {
     }
 
-    private static IDataSet initDataSet() throws Exception {
+    protected static IDataSet initDataSet() throws Exception {
         return new XmlDataSet(BaseDAOTestCase.class.getResourceAsStream(
                 "/fixtures.xml"));
     }

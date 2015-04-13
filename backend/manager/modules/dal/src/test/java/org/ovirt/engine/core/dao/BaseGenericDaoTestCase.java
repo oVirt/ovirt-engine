@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNull;
 
 import java.io.Serializable;
 
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 
@@ -57,6 +59,15 @@ D extends GenericDao<T, ID>> extends BaseReadDaoTestCase<ID, T, D> {
         T result = dao.get(existingEntity.getId());
 
         assertNull(result);
+    }
+
+    protected void reinitializeDatabase() {
+        try {
+            final IDataSet dataset = initDataSet();
+            DatabaseOperation.CLEAN_INSERT.execute(getConnection(), dataset);
+        } catch (Exception ex) {
+            throw new RuntimeException("Database reinitialization failed", ex);
+        }
     }
 
 }
