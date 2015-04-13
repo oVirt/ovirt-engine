@@ -13,8 +13,6 @@ public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase 
     private Map<String, Object> fencingPolicyParams;
 
     private FenceVdsVDSCommandParameters() {
-        action = FenceActionType.RESTART;
-        fenceAgent = new FenceAgent();
     }
 
     public FenceVdsVDSCommandParameters(
