@@ -146,7 +146,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
     private void updateActionAvailability() {
         boolean allowRestore = false;
         boolean allowDelete = true;
-        boolean allowDeleteAll = true;
+        boolean allowDeleteAll = getItems() == null ? false : getItems().size() > 0;
         boolean allowActivate = false;
         boolean allowDeactivate = false;
         boolean allowCreateSnapshot = true;
