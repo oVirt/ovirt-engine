@@ -58,7 +58,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     : Guid.Empty);
         }
 
-        Version compatibilityVersion = isBlankTemplate() ? Version.getLast() : getVdsGroup().getCompatibilityVersion();
+        Version compatibilityVersion = isBlankTemplate() || isInstanceType() ? Version.getLast() : getVdsGroup().getCompatibilityVersion();
         if (getVdsGroup() != null || isBlankTemplate()) {
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(compatibilityVersion,
                     parameters.getVmTemplateData());
