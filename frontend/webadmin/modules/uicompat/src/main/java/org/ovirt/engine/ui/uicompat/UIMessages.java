@@ -446,7 +446,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Incorrect enum")
     @AlternateMessage({
         "UNKNOWN", "None",
-        "INTERVAL", "Minutely",
+        "INTERVAL", "Minute",
         "HOURLY", "Hourly",
         "DAILY", "Daily",
         "WEEKLY", "Weekly",
