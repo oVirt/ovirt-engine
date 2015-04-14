@@ -48,6 +48,7 @@ public enum TimeZoneType {
             generalTimeZones.put("America/Sao_Paulo", "(GMT-03:00) E. South America Standard Time");
             generalTimeZones.put("America/New_York", "(GMT-05:00) Eastern Standard Time");
             generalTimeZones.put("Africa/Cairo", "(GMT+02:00) Egypt Standard Time");
+            generalTimeZones.put("Africa/Algiers", "(GMT+01:00) Algeria Standard Time");
             generalTimeZones.put("Asia/Yekaterinburg", "(GMT+05:00) Ekaterinburg Standard Time");
             generalTimeZones.put("Pacific/Fiji", "(GMT+12:00) Fiji Standard Time");
             generalTimeZones.put("Europe/Kiev", "(GMT+02:00) FLE Standard Time");
