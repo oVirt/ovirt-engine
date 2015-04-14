@@ -3779,10 +3779,10 @@ actions:
       signatures:
       - mandatoryArguments:
           openstack_volume_provider.name: xs:string
-          openstack_volume_provider.data_center.id|name: xs:string,
         optionalArguments:
           openstack_volume_provider.description: xs:string
           openstack_volume_provider.url: xs:string
+          openstack_volume_provider.data_center.id|name: xs:string
           openstack_volume_provider.requires_authentication: xs:boolean
           openstack_volume_provider.username: xs:string
           openstack_volume_provider.password: xs:string

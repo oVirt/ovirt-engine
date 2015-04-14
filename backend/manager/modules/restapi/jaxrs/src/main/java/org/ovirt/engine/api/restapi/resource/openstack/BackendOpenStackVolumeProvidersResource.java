@@ -97,9 +97,11 @@ public class BackendOpenStackVolumeProvidersResource
 
     @Override
     public Response add(OpenStackVolumeProvider provider) {
-        validateParameters(provider, "name", "dataCenter.name|id");
-        StoragePool storagePool = getStoragePool(provider.getDataCenter());
-        provider.setDataCenter(DataCenterMapper.map(storagePool, null));
+        validateParameters(provider, "name");
+        if (provider.isSetDataCenter()) {
+            StoragePool storagePool = getStoragePool(provider.getDataCenter());
+            provider.setDataCenter(DataCenterMapper.map(storagePool, null));
+        }
         return performCreate(
                 VdcActionType.AddProvider,
                 new ProviderParameters(map(provider)),

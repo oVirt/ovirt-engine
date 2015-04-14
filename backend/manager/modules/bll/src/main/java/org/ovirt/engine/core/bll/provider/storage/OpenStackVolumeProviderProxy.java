@@ -43,7 +43,7 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
     public void onAddition() {
         Guid storageDomainId = addStorageDomain(StorageType.CINDER, StorageDomainType.Volume);
         Guid storagePoolId = provider.getAdditionalProperties().getStoragePoolId();
-        if (!storagePoolId.equals(Guid.Empty)) {
+        if (storagePoolId != null && !storagePoolId.equals(Guid.Empty)) {
             attachStorageDomainToDataCenter(storageDomainId, storagePoolId);
         }
     }
