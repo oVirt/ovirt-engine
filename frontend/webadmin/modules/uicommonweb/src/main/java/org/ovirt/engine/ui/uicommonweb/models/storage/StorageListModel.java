@@ -2034,6 +2034,12 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
     public void importFileStoragePostInit()
     {
+        Guid storagePoolId = null;
+        StoragePool dataCenter = storageModel.getContainer().getDataCenter().getSelectedItem();
+        if (dataCenter != null && !dataCenter.getId().equals(Guid.Empty)) {
+            storagePoolId = dataCenter.getId();
+        }
+
         // Check storage domain existence
         AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -2076,7 +2082,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                     importFileStorageConnect();
                 }
             }
-        }), null, path);
+        }), storagePoolId, path);
     }
 
     public void importFileStorageConnect() {
