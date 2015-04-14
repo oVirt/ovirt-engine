@@ -132,30 +132,9 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
         lvModel.setHashName("create_brick"); //$NON-NLS-1$
         lvModel.startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());
         setWindow(lvModel);
-
-        AsyncQuery asyncQueryForDeviceList = new AsyncQuery();
-        asyncQueryForDeviceList.setModel(lvModel);
-        asyncQueryForDeviceList.asyncCallback = new INewAsyncCallback() {
-
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                lvModel.stopProgress();
-                CreateBrickModel lvModel = (CreateBrickModel) model;
-                List<StorageDevice> devices = (List<StorageDevice>) returnValue;
-                final List<StorageDevice> eligibleDevices = new ArrayList<>();
-
-                for (StorageDevice device : devices) {
-                    if (device.getCanCreateBrick()) {
-                        eligibleDevices.add(device);
-                    }
-                }
-                lvModel.getStorageDevices().setItems(eligibleDevices);
-                if (getSelectedItems() != null) {
-                    lvModel.setSelectedDevices(getSelectedItems());
-                }
-            }
-        };
-        AsyncDataProvider.getInstance().getStorageDevices(asyncQueryForDeviceList, host.getId());
+        List<StorageDevice> selectedDevices = getSelectedItems();
+        lvModel.getStorageDevices().setItems(selectedDevices);
+        lvModel.setSelectedDevices(selectedDevices);
 
         AsyncQuery asyncQueryForDefaultMountPoint = new AsyncQuery();
         asyncQueryForDefaultMountPoint.setModel(lvModel);
@@ -186,14 +165,47 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
                 .runAction(VdcActionType.SyncStorageDevices, new VdsActionParameters(getEntity().getId()));
     }
 
+    @Override
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
+        updateActionAvailability();
+    }
+
+    @Override
+    protected void selectedItemsChanged()
+    {
+        super.selectedItemsChanged();
+        updateActionAvailability();
+    }
+
     private void updateActionAvailability() {
         VDS vds = getEntity();
-        if (vds != null) {
-            getSyncStorageDevicesCommand().setIsExecutionAllowed(vds.getStatus() == VDSStatus.Up);
-            getCreateBrickCommand().setIsExecutionAllowed(vds.getStatus() == VDSStatus.Up);
+        if (vds != null && vds.getStatus() == VDSStatus.Up) {
+            getSyncStorageDevicesCommand().setIsExecutionAllowed(true);
+            getCreateBrickCommand().setIsExecutionAllowed(canCreateBrick());
+        } else {
+            getSyncStorageDevicesCommand().setIsExecutionAllowed(false);
+            getCreateBrickCommand().setIsExecutionAllowed(false);
         }
     }
 
+    private boolean canCreateBrick(){
+        boolean canCreateBrick = false;
+        List<StorageDevice> selectedDevices = getSelectedItems();
+        if (selectedDevices != null) {
+            for (StorageDevice device : selectedDevices) {
+                if (device.getCanCreateBrick()) {
+                    canCreateBrick = true;
+                } else {
+                    canCreateBrick = false;
+                    break;
+                }
+            }
+        }
+
+        return canCreateBrick;
+
+    }
     private void onCreateBrick() {
         CreateBrickModel lvModel = (CreateBrickModel) getWindow();
         if (lvModel == null) {
