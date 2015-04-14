@@ -146,13 +146,16 @@ public class VolumeBrickModel extends Model {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
                     List<StorageDevice> bricks = (List<StorageDevice>) returnValue;
-                    List<String> lvNames = new ArrayList<String>();
+                    List<String> brickDirectories = new ArrayList<String>();
                     for (StorageDevice brick : bricks) {
-                        if (brick.getMountPoint() != null && !brick.getMountPoint().isEmpty()) {
-                            lvNames.add(brick.getMountPoint());
+                        String mountPoint = brick.getMountPoint();
+                        if (mountPoint != null && !mountPoint.isEmpty()) {
+                            // Gluster requires a directory under the mount point, not the mount point itself as a brick
+                            // directory. So adding a directory with name of the brick under the mount point.
+                            brickDirectories.add(mountPoint + mountPoint.substring(mountPoint.lastIndexOf("/"))); //$NON-NLS-1$
                         }
                     }
-                    getBricksFromServer().setItems(lvNames);
+                    getBricksFromServer().setItems(brickDirectories);
                 }
             }), selectedServer.getId());
         }
