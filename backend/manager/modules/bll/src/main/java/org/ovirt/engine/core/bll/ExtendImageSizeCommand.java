@@ -5,9 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -29,8 +26,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
-public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends BaseImagesCommand<T>
-        implements QuotaStorageDependent {
+public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends BaseImagesCommand<T> {
 
     private List<PermissionSubject> permissionsList;
     private List<VM> vmsDiskPluggedTo;
@@ -170,24 +166,6 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
         }
 
         return permissionsList;
-    }
-
-    @Override
-    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> params = new ArrayList<QuotaConsumptionParameter>();
-        if (getImage() != null) {
-            double newSizeInGigabytes = Long.valueOf(getParameters().getNewSize() / BYTES_IN_GB).doubleValue();
-            double currentSizeInGigabytes = Long.valueOf(getImage().getSizeInGigabytes()).doubleValue();
-            double additionalDiskSpace = newSizeInGigabytes - currentSizeInGigabytes;
-
-            params.add(new QuotaStorageConsumptionParameter(
-                    getImage().getQuotaId(),
-                    null,
-                    QuotaConsumptionParameter.QuotaAction.CONSUME,
-                    getParameters().getStorageDomainId(),
-                    additionalDiskSpace));
-        }
-        return params;
     }
 
     @Override
