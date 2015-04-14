@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
@@ -51,8 +50,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  */
 @NonTransactiveCommandAttribute
 public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
-
-    private static final String INTERNAL_FENCE_USER = "Engine";
 
     protected boolean skippedDueToFencingPolicy;
 
@@ -212,12 +209,6 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
             skipped = fenceResult.getStatus() == Status.SKIPPED_DUE_TO_POLICY;
         }
         return skipped;
-    }
-
-    @Override
-    public String getUserName() {
-        String userName = super.getUserName();
-        return StringUtils.isEmpty(userName) ? INTERNAL_FENCE_USER : userName;
     }
 
     @Override
