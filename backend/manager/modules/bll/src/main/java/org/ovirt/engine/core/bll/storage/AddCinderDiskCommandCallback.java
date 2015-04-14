@@ -37,6 +37,7 @@ public class AddCinderDiskCommandCallback extends AbstractCinderDiskCommandCallb
         super.onFailed(cmdId, childCmdIds);
 
         log.error("Failed adding disk to Cinder. ID: {}", getDiskId());
+        getCommand().getParameters().setTaskGroupSuccess(false);
         getCommand().endAction();
         CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
