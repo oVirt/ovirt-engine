@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
@@ -36,9 +37,11 @@ public class ExtendCinderDiskCommandCallback extends AbstractCinderDiskCommandCa
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
         super.onFailed(cmdId, childCmdIds);
 
+        ImagesHandler.updateImageStatus(getDiskId(), ImageStatus.ILLEGAL);
         log.error("Failed extending disk. ID: {}", getDiskId());
         updateAuditLog(AuditLogType.USER_EXTEND_DISK_SIZE_FAILURE, getCommand().getNewDiskSizeInGB());
 
+        getCommand().getParameters().setTaskGroupSuccess(false);
         getCommand().endAction();
         CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }

@@ -149,6 +149,7 @@ public class CinderBroker extends AuditLogableBase {
                 return ImageStatus.LOCKED;
             case Error:
             case ErrorDeleting:
+            case ErrorExtending:
                 return ImageStatus.ILLEGAL;
             default:
                 return null;

@@ -69,4 +69,8 @@ public class ExtendCinderDiskCommand<T extends UpdateVmDiskParameters> extends U
         return cinderDisk.getStorageIds().get(0);
     }
 
+    @Override
+    protected void endWithFailure() {
+        setSucceeded(true);
+    }
 }
