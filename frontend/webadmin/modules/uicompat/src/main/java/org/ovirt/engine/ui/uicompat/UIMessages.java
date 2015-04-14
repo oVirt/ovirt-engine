@@ -497,4 +497,13 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Error while executing at least some of the action tasks: {0}")
     String uiCommonRunActionPartitialyFailed(String reason);
+
+    @DefaultMessage("The selected Profile is passthrough. SR-IOV passthrough is not supported for Cluster version {0}")
+    String passthroughNotSupported(String version);
+
+    @DefaultMessage("Passthrough profile cannot be attached to a VM of type {0}")
+    String vnicTypeDoesntMatchPassthroughProfile(String type);
+
+    @DefaultMessage("Non-Passthrough profile cannot be attached to a VM of type {0}")
+    String vnicTypeDoesntMatchNonPassthroughProfile(String type);
 }

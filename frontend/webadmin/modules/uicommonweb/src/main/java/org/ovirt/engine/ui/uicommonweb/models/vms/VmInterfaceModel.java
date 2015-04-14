@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MacAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NoSpecialCharactersWithDotValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.VnicProfileValidation;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -364,6 +365,9 @@ public abstract class VmInterfaceModel extends Model
 
         getNicType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
+        getProfile().validateSelectedItem(new IValidation[] { new VnicProfileValidation(clusterCompatibilityVersion.toString(),
+                getNicType().getSelectedItem()) });
+
         getMAC().setIsValid(true);
         if (getMAC().getIsChangable())
         {
@@ -371,7 +375,7 @@ public abstract class VmInterfaceModel extends Model
         }
 
         return getName().getIsValid() && getNicType().getIsValid()
-                && getMAC().getIsValid();
+                && getMAC().getIsValid() && getProfile().getIsValid();
     }
 
     protected abstract VmNetworkInterface createBaseNic();
