@@ -4216,7 +4216,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("No. of Physical Disks in RAID Volume")
     String noOfPhysicalDisksInRaidVolume();
 
-    @DefaultStringValue("Stripe Size")
+    @DefaultStringValue("Stripe Size (KB)")
     String stripeSize();
 
     @DefaultStringValue("Choose storage devices of RAID type: ")
