@@ -360,7 +360,8 @@ public class BackendStorageDomainsResource
             case NFS:
             case LOCALFS:
             case POSIXFS:
-                mapNfsOrLocalOrPosix(model, entity);
+            case GLUSTERFS:
+                mapFileDomain(model, entity);
                 break;
             }
         }
@@ -368,27 +369,29 @@ public class BackendStorageDomainsResource
         return model;
     }
 
-    protected void mapNfsOrLocalOrPosix(StorageDomain model,
+    protected void mapFileDomain(StorageDomain model,
             org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         final Storage storage = model.getStorage();
         StorageServerConnections cnx = getStorageServerConnection(entity.getStorage());
         if (cnx.getconnection().contains(":")) {
             String[] parts = cnx.getconnection().split(":");
-            model.getStorage().setAddress(parts[0]);
-            model.getStorage().setPath(parts[1]);
+            storage.setAddress(parts[0]);
+            storage.setPath(parts[1]);
         } else {
-            model.getStorage().setPath(cnx.getconnection());
+            storage.setPath(cnx.getconnection());
         }
         storage.setMountOptions(cnx.getMountOptions());
         storage.setVfsType(cnx.getVfsType());
-        if (cnx.getNfsRetrans() != null) {
-            storage.setNfsRetrans(cnx.getNfsRetrans().intValue());
-        }
-        if (cnx.getNfsTimeo() != null) {
-            storage.setNfsTimeo(cnx.getNfsTimeo().intValue());
-        }
-        if (cnx.getNfsVersion() != null) {
-            storage.setNfsVersion(StorageDomainMapper.map(cnx.getNfsVersion(), null));
+        if (entity.getStorageType() == StorageType.NFS) {
+            if (cnx.getNfsRetrans() != null) {
+                storage.setNfsRetrans(cnx.getNfsRetrans().intValue());
+            }
+            if (cnx.getNfsTimeo() != null) {
+                storage.setNfsTimeo(cnx.getNfsTimeo().intValue());
+            }
+            if (cnx.getNfsVersion() != null) {
+                storage.setNfsVersion(StorageDomainMapper.map(cnx.getNfsVersion(), null));
+            }
         }
     }
 

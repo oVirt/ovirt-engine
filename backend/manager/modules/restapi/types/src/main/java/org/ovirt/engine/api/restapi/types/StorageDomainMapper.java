@@ -290,7 +290,8 @@ public class StorageDomainMapper {
                 model.setMountOptions(entity.getMountOptions());
             }
         }
-        else if (entity.getstorage_type().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS)) {
+        else if (entity.getstorage_type().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS)
+                || entity.getstorage_type().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.GLUSTERFS)) {
             model.setMountOptions(entity.getMountOptions());
             model.setVfsType(entity.getVfsType());
         }
