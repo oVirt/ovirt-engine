@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
@@ -28,8 +29,10 @@ public class ConvertVmCallback extends CommandCallback {
         switch (jobInfo.getStatus()) {
         case STARTING:
         case COPYING_DISK:
+            updateProgress(jobInfo);
             break;
         case DONE:
+            updateProgress("Finalizing", 100);
             getCommand().setCommandStatus(CommandStatus.SUCCEEDED);
             break;
         case NOT_EXIST:
@@ -37,6 +40,7 @@ public class ConvertVmCallback extends CommandCallback {
         case ERROR:
             log.info("Conversion of VM from exteral enironment failed: {}", jobInfo.getDescription());
         case ABORTED:
+            updateProgress("Canceling", 0);
             getCommand().setCommandStatus(CommandStatus.FAILED);
             break;
         case UNKNOWN:
@@ -49,17 +53,33 @@ public class ConvertVmCallback extends CommandCallback {
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
         getCommand().getParameters().setTaskGroupSuccess(false);
         getCommand().endAction();
+        clearProgress();
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
         getCommand().getParameters().setTaskGroupSuccess(true);
         getCommand().endAction();
+        clearProgress();
     }
 
     private V2VJobInfo getV2VJobInfo() {
         ConvertVmCommand<?> command = getCommand();
         return command.getVdsManager().getV2VJobInfoForVm(command.getVmId());
+    }
+
+    private void updateProgress(V2VJobInfo jobInfo) {
+        updateProgress(
+                StringUtils.EMPTY.equals(jobInfo.getDescription()) ? "Initializing" : jobInfo.getDescription(),
+                jobInfo.getProgress());
+    }
+
+    private void clearProgress() {
+        updateProgress(null, -1);
+    }
+
+    private void updateProgress(String description, int progress) {
+        getCommand().getVmManager().updateConvertOperation(description, progress);
     }
 
     private ConvertVmCommand<ConvertVmParameters> getCommand() {

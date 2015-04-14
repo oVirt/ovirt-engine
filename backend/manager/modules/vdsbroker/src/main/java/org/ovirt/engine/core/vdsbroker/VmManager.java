@@ -19,6 +19,9 @@ public class VmManager {
     private final Guid id;
     private final ReentrantLock lock = new ReentrantLock();
 
+    private int convertOperationProgress;
+    private String convertOperationDescription;
+
     public VmManager(Guid id) {
         this.id = id;
     }
@@ -75,5 +78,18 @@ public class VmManager {
 
     protected DbFacade db() {
         return DbFacade.getInstance();
+    }
+
+    public int getConvertOperationProgress() {
+        return convertOperationProgress;
+    }
+
+    public String getConvertOperationDescription() {
+        return convertOperationDescription;
+    }
+
+    public void updateConvertOperation(String description, int progress) {
+        this.convertOperationDescription = description;
+        this.convertOperationProgress = progress;
     }
 }

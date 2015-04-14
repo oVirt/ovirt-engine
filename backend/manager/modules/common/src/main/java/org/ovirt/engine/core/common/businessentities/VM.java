@@ -56,6 +56,9 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     private LockInfo lockInfo;
 
+    private int backgroundOperationProgress;
+    private String backgroundOperationDescription;
+
     public String getUserDefinedProperties() {
         return vmStatic.getUserDefinedProperties();
     }
@@ -2001,4 +2004,19 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         vmStatic.setConsoleDisconnectAction(consoleDisconnectAction);
     }
 
+    public int getBackgroundOperationProgress() {
+        return backgroundOperationProgress;
+    }
+
+    public void setBackgroundOperationProgress(int progress) {
+        this.backgroundOperationProgress = progress;
+    }
+
+    public String getBackgroundOperationDescription() {
+        return backgroundOperationDescription;
+    }
+
+    public void setBackgroundOperationDescription(String description) {
+        this.backgroundOperationDescription = description;
+    }
 }

@@ -36,6 +36,7 @@ import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -256,6 +257,10 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     /////////////////////////
     //// Utility Methods ////
     /////////////////////////
+
+    protected VmManager getVmManager() {
+        return getResourceManager().getVmManager(getVmId());
+    }
 
     protected VdsManager getVdsManager() {
         return getResourceManager().GetVdsManager(getVdsId());

@@ -84,6 +84,7 @@ import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -472,6 +473,11 @@ public class VmHandler {
 
     public static void updateVmLock(final VM vm) {
         vm.setLockInfo(getLockManager().getLockInfo(String.format("%s%s", vm.getId(), LockingGroup.VM.name())));
+    }
+
+    public static void updateOperationProgress(final VM vm) {
+        vm.setBackgroundOperationDescription(ResourceManager.getInstance().getVmManager(vm.getId()).getConvertOperationDescription());
+        vm.setBackgroundOperationProgress(ResourceManager.getInstance().getVmManager(vm.getId()).getConvertOperationProgress());
     }
 
     protected static LockManager getLockManager() {
