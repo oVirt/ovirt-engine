@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
 import org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -88,11 +89,19 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
             break;
         case STATIC_IP:
             putIfNotEmpty(opts, "ipaddr", attachment.getAddress());
-            putIfNotEmpty(opts, "netmask", attachment.getNetmask());
+            putPrefixOrNetmaskIfNotEmpty(opts, attachment.getNetmask());
             putIfNotEmpty(opts, "gateway", attachment.getGateway());
             break;
         default:
             break;
+        }
+    }
+
+    private void putPrefixOrNetmaskIfNotEmpty(Map<String, Object> opts, String netmask) {
+        if (MaskValidator.getInstance().isPrefixValid(netmask)) {
+            putIfNotEmpty(opts, "prefix", netmask.replace("/", ""));
+        } else {
+            putIfNotEmpty(opts, "netmask", netmask);
         }
     }
 
