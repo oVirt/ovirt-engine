@@ -156,7 +156,22 @@ USAGE:
     reportsdb                       reports database only
  --file=FILE                        file to use during backup or restore
  --log=FILE                         log file to use
+ --archive-compressor=COMPRESSOR
+    Use COMPRESSOR to compress the backup file, can be one of:
+    gzip
+    bzip2
+    xz
+    None
+ --files-compressor=COMPRESSOR      for the files, same options as --archive-compressor
  --keep-temporary-data              Do not cleanup temporary data on restore
+ --db-compressor=COMPRESSOR         for the Engine, same options as --archive-compressor
+ --db-dump-format=FORMAT
+    Engine DB dump format, see pg_dump(1) for details. Can be one of:
+    plain
+    custom
+ --db-restore-jobs=JOBS             Number of restore jobs for the Engine DB, when
+                                    using custom dump format and compressor None.
+				    Passed to pg_restore -j. Defaults to 2.
  --change-db-credentials            activate the following options, to restore
                                     the Engine database to a different location
 				    etc. If used, existing credentials are ignored.
@@ -169,6 +184,9 @@ USAGE:
  --db-name=name                     set database name
  --db-secured                       set a secured connection
  --db-secured-validation            validate host
+ --dwh-db-compressor=COMPRESSOR     for DWH, same options as --archive-compressor
+ --dwh-db-dump-format=FORMAT        for DWH, same options as --db-dump-format
+ --dwh-db-restore-jobs=JOBS         for DWH, same as --db-restore-jobs
  --change-dwh-db-credentials        activate the following options, to restore
                                     the DWH database to a different location etc.
                                     If used, existing credentials are ignored.
@@ -181,6 +199,9 @@ USAGE:
  --dwh-db-name=name                 set dwh database name
  --dwh-db-secured                   set a secured connection for dwh
  --dwh-db-secured-validation        validate host for dwh
+ --reports-db-compressor=COMPRESSOR for Reports, same options as --archive-compressor
+ --reports-db-dump-format=FORMAT    for Reports, same options as --db-dump-format
+ --reports-db-restore-jobs=JOBS     for Reports, same as --db-restore-jobs
  --change-reports-db-credentials    activate the following options, to restore
                                     the Reports database to a different location
 				    etc. If used, existing credentials are ignored.
@@ -241,6 +262,11 @@ SCOPE_ENGINE_DB=
 SCOPE_DWH_DB=
 SCOPE_REPORTS_DB=
 KEEP_TEMPORARY_DATA=
+ARCHIVE_COMPRESS_OPTION=z
+FILES_COMPRESS_OPTION=J
+DB_DUMP_COMPRESSOR=
+DB_DUMP_FORMAT=custom
+DB_RESTORE_JOBS=2
 CHANGE_DB_CREDENTIALS=
 MY_DB_HOST=
 MY_DB_PORT=5432
@@ -251,6 +277,9 @@ MY_DB_DATABASE=
 MY_DB_SECURED=False
 MY_DB_SECURED_VALIDATION=False
 MY_DB_CREDS=
+DWH_DB_DUMP_COMPRESSOR=
+DWH_DB_DUMP_FORMAT=custom
+DWH_DB_RESTORE_JOBS=2
 CHANGE_DWH_DB_CREDENTIALS=
 MY_DWH_DB_HOST=
 MY_DWH_DB_PORT=5432
@@ -261,6 +290,9 @@ MY_DWH_DB_DATABASE=
 MY_DWH_DB_SECURED=False
 MY_DWH_DB_SECURED_VALIDATION=False
 MY_DWH_DB_CREDS=
+REPORTS_DB_DUMP_COMPRESSOR=
+REPORTS_DB_DUMP_FORMAT=custom
+REPORTS_DB_RESTORE_JOBS=2
 CHANGE_REPORTS_DB_CREDENTIALS=
 MY_REPORTS_DB_HOST=
 MY_REPORTS_DB_PORT=5432
@@ -271,6 +303,46 @@ MY_REPORTS_DB_DATABASE=
 MY_REPORTS_DB_SECURED=False
 MY_REPORTS_DB_SECURED_VALIDATION=False
 MY_REPORTS_DB_CREDS=
+
+compressor_to_tar_option() {
+	local res
+	case "$1" in
+		gzip) res=z ;;
+		bzip2) res=j ;;
+		xz) res=J ;;
+		None) res= ;;
+		*) die "invalid compressor '${v}'"
+	esac
+	echo "${res}"
+}
+
+compressor_to_command() {
+	local res
+	case "$1" in
+		gzip|bzip2|xz) res="$1" ;;
+		None) res= ;;
+		*) die "invalid compressor '${v}'"
+	esac
+	echo "${res}"
+}
+
+parse_dump_format() {
+	local res
+	case "$1" in
+		plain|custom) res="$1" ;;
+		*) die "invalid dump format '${v}'"
+	esac
+	echo "${res}"
+}
+
+parse_jobs() {
+	local res
+	case "$1" in
+		''|*[!0-9]*) die "invalid number of jobs" ;;
+		*) res="$1"
+	esac
+	echo "${res}"
+}
 
 parseArgs() {
 	local DB_PASSFILE
@@ -300,8 +372,28 @@ parseArgs() {
 			--log=*)
 				LOG="${v}"
 			;;
+			--archive-compressor=*)
+				ARCHIVE_COMPRESS_OPTION=$(compressor_to_tar_option "${v}")
+				[ $? != 0 ] && logdie "failed parsing compressor"
+			;;
+			--files-compressor=*)
+				FILES_COMPRESS_OPTION=$(compressor_to_tar_option "${v}")
+				[ $? != 0 ] && logdie "failed parsing compressor"
+			;;
 			--keep-temporary-data)
 				KEEP_TEMPORARY_DATA=1
+			;;
+			--db-compressor=*)
+				DB_DUMP_COMPRESSOR=$(compressor_to_command "${v}")
+				[ $? != 0 ] && logdie "failed parsing compressor"
+			;;
+			--db-dump-format=*)
+				DB_DUMP_FORMAT=$(parse_dump_format "${v}")
+				[ $? != 0 ] && logdie "failed parsing dump format"
+			;;
+			--db-restore-jobs=*)
+				DB_RESTORE_JOBS=$(parse_jobs "${v}")
+				[ $? != 0 ] && logdie "failed parsing jobs"
 			;;
 			--change-db-credentials)
 				CHANGE_DB_CREDENTIALS=1
@@ -337,6 +429,18 @@ parseArgs() {
 			--db-sec-validation)
 				MY_DB_SECURED_VALIDATION="True"
 			;;
+			--dwh-db-compressor=*)
+				DWH_DB_DUMP_COMPRESSOR=$(compressor_to_command "${v}")
+				[ $? != 0 ] && logdie "failed parsing compressor"
+			;;
+			--dwh-db-dump-format=*)
+				DWH_DB_DUMP_FORMAT=$(parse_dump_format "${v}")
+				[ $? != 0 ] && logdie "failed parsing dump format"
+			;;
+			--dwh-db-restore-jobs=*)
+				DWH_DB_RESTORE_JOBS=$(parse_jobs "${v}")
+				[ $? != 0 ] && logdie "failed parsing jobs"
+			;;
 			--change-dwh-db-credentials)
 				CHANGE_DWH_DB_CREDENTIALS=1
 			;;
@@ -370,6 +474,18 @@ parseArgs() {
 			;;
 			--dwh-db-sec-validation)
 				MY_DWH_DB_SECURED_VALIDATION="True"
+			;;
+			--reports-db-compressor=*)
+				REPORTS_DB_DUMP_COMPRESSOR=$(compressor_to_command "${v}")
+				[ $? != 0 ] && logdie "failed parsing compressor"
+			;;
+			--reports-db-dump-format=*)
+				REPORTS_DB_DUMP_FORMAT=$(parse_dump_format "${v}")
+				[ $? != 0 ] && logdie "failed parsing dump format"
+			;;
+			--reports-db-restore-jobs=*)
+				REPORTS_DB_RESTORE_JOBS=$(parse_jobs "${v}")
+				[ $? != 0 ] && logdie "failed parsing jobs"
 			;;
 			--change-reports-db-credentials)
 				CHANGE_REPORTS_DB_CREDENTIALS=1
@@ -478,7 +594,6 @@ dobackup() {
 	local tardir="${TEMP_FOLDER}/tar"
 	log "Creating temp folder ${tardir}"
 	mkdir "${tardir}" || logdie "Cannot create '${tardir}'"
-	mkdir "${tardir}/files" || logdie "Cannot create '${tardir}/files"
 	mkdir "${tardir}/db" || logdie "Cannot create '${tardir}/db'"
 
 	if [ -n "${SCOPE_FILES}" ] ; then
@@ -490,19 +605,20 @@ dobackup() {
 	if [ -n "${SCOPE_ENGINE_DB}" -a -n "${ENGINE_DB_USER}" ]; then
 		output "- Engine database '"${ENGINE_DB_DATABASE}"'"
 		log "Backing up database to ${tardir}/db/${DB_BACKUP_FILE_NAME}"
-		backupDB "${tardir}/db/${DB_BACKUP_FILE_NAME}" "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}"
+		backupDB "${tardir}/db/${DB_BACKUP_FILE_NAME}" "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${DB_DUMP_COMPRESSOR}" "${DB_DUMP_FORMAT}"
 	fi
 	if [ -n "${SCOPE_DWH_DB}" -a -n "${DWH_DB_USER}" ]; then
 		output "- DWH database '"${DWH_DB_DATABASE}"'"
 		log "Backing up dwh database to ${tardir}/db/${DWHDB_BACKUP_FILE_NAME}"
-		backupDB "${tardir}/db/${DWHDB_BACKUP_FILE_NAME}" "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}"
+		backupDB "${tardir}/db/${DWHDB_BACKUP_FILE_NAME}" "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}" "${DWH_DB_DUMP_COMPRESSOR}" "${DWH_DB_DUMP_FORMAT}"
 	fi
 	if [ -n "${SCOPE_REPORTS_DB}" -a -n "${REPORTS_DB_USER}" ]; then
 		output "- Reports database '"${REPORTS_DB_DATABASE}"'"
 		log "Backing up reports database to ${tardir}/db/${REPORTSDB_BACKUP_FILE_NAME}"
-		backupDB "${tardir}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}"
+		backupDB "${tardir}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${REPORTS_DB_DUMP_COMPRESSOR}" "${REPORTS_DB_DUMP_FORMAT}"
 	fi
 	echo "${PACKAGE_VERSION}" > "${tardir}/version" || logdie "Can't create ${tardir}/version"
+	dump_config_for_restore > "${tardir}/config" || logdie "Can't create ${tardir}/config"
 	log "Creating md5sum at ${tardir}/md5sum"
 	createmd5 "${tardir}" "${tardir}/md5sum"
 	output "Packing into file '${FILE}'"
@@ -533,12 +649,12 @@ verifymd5() {
 backupFiles() {
 	local paths="$1"
 	local target="$2"
-	echo "${paths}" | while read -r path; do
-		[ -e "${path}" ] || continue
-		local dirname="$(dirname ${path})"
-		mkdir -p "${tardir}/files/${dirname}" || logdie "Cannot create '${tardir}/files/${dirname}"
-		cp -a "${path}" "${target}/${dirname}" || logdie "Cannot copy ${path} to ${target}/${dirname}"
-	done || logdie "Cannot read ${paths}"
+	echo "${paths}" | \
+		while read -r path; do
+			[ -e "${path}" ] && echo "${path}"
+		done | \
+		sed 's;^/;;' | \
+		tar -C / --files-from - -cpSs"${FILES_COMPRESS_OPTION}"f "${target}" || logdie "Failed backing up ${paths}"
 }
 
 backupDB() {
@@ -547,25 +663,43 @@ backupDB() {
 	local host="$3"
 	local port="$4"
 	local database="$5"
+	local compressor="$6"
+	local format="$7"
+
 	local pgdump_log="${TEMP_FOLDER}/pgdump.log"
-	PGPASSFILE="${MYPGPASS}" pg_dump \
-		-E "UTF8" \
-		--disable-dollar-quoting \
-		--disable-triggers \
-		--format=p \
-		-w \
-		-U "${user}" \
-		-h "${host}" \
-		-p "${port}" \
-		"${database}" \
-		2> "${pgdump_log}" \
-		| bzip2 > "${file}.bz2" \
-		|| logdie "bzip2 failed compressing the backup of database ${database}"
+
+	pg_cmd() {
+		local cmd="$1"
+		shift
+		"${cmd}" -w -U "${user}" -h "${host}" -p "${port}" -d "${database}" "$@"
+	}
+
+	if [ -n "${compressor}" ]; then
+		PGPASSFILE="${MYPGPASS}" pg_cmd pg_dump \
+			-E "UTF8" \
+			--disable-dollar-quoting \
+			--disable-triggers \
+			--format="${format}" \
+			2> "${pgdump_log}" \
+			| "${compressor}" > "${file}" \
+			|| logdie "${compressor} failed compressing the backup of database ${database}"
+	else
+		PGPASSFILE="${MYPGPASS}" pg_cmd pg_dump \
+			-E "UTF8" \
+			--disable-dollar-quoting \
+			--disable-triggers \
+			--format="${format}" \
+			2> "${pgdump_log}" \
+			> "${file}" \
+			|| logdie "Database ${database} backup failed"
+	fi
 
 	if [ -s "${pgdump_log}" ]; then
 		cat "${pgdump_log}" >> "${LOG}"
 		logdie "Database ${database} backup failed"
 	fi
+
+	unset -f pg_cmd
 }
 
 dorestore() {
@@ -601,11 +735,12 @@ dorestore() {
 	log "Verifying version"
 	verifyVersion
 
+	. "${TEMP_FOLDER}/config"
 	output "Restoring:"
 	if [ -n "${SCOPE_FILES}" ] ; then
 		output "- Files"
 		log "Restoring files"
-		restoreFiles "${BACKUP_PATHS}"
+		restoreFiles "${BACKUP_PATHS}" "${TEMP_FOLDER}/files"
 	fi
 
 	log "Reloading configuration"
@@ -624,7 +759,7 @@ dorestore() {
 	if [ -n "${SCOPE_ENGINE_DB}" -a -n "${ENGINE_DB_USER}" ]; then
 		output "- Engine database '"${ENGINE_DB_DATABASE}"'"
 		log "Restoring engine database backup at ${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}"
-		restoreDB "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ORIG_DB_USER}"
+		restoreDB "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ORIG_DB_USER}" "${DB_DUMP_COMPRESSOR}" "${DB_DUMP_FORMAT}" "${DB_RESTORE_JOBS}"
 		if [ -z "${KEEP_TEMPORARY_DATA}" ]; then
 			output "Cleaning up temporary tables in engine database '${ENGINE_DB_DATABASE}':"
 			cleanDbTempData "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_TABLES_TO_CLEAN_ON_RESTORE}"
@@ -633,12 +768,12 @@ dorestore() {
 	if [ -n "${SCOPE_DWH_DB}" -a -n "${DWH_DB_USER}" ]; then
 		output "- DWH database '"${DWH_DB_DATABASE}"'"
 		log "Restoring dwh database backup at ${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}"
-		restoreDB "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}" "${ORIG_DWH_DB_USER}"
+		restoreDB "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}" "${ORIG_DWH_DB_USER}" "${DWH_DB_DUMP_COMPRESSOR}" "${DWH_DB_DUMP_FORMAT}" "${DWH_DB_RESTORE_JOBS}"
 	fi
 	if [ -n "${SCOPE_REPORTS_DB}" -a -n "${REPORTS_DB_USER}" ]; then
 		output "- Reports database '"${REPORTS_DB_DATABASE}"'"
 		log "Restoring REPORTS database backup at ${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}"
-		restoreDB "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${ORIG_REPORTS_DB_USER}"
+		restoreDB "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${ORIG_REPORTS_DB_USER}" "${REPORTS_DB_DUMP_COMPRESSOR}" "${REPORTS_DB_DUMP_FORMAT}" "${REPORTS_DB_RESTORE_JOBS}"
 	fi
 	[ -n "${CHANGE_DB_CREDENTIALS}" ] && changeEngineDBConf
 	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" ] && changeDwhDBConf
@@ -651,25 +786,19 @@ verifyConnection() {
 	local host="$2"
 	local port="$3"
 	local database="$4"
-	PGPASSFILE="${MYPGPASS}" psql \
-		-w \
-		-U "${user}" \
-		-h "${host}" \
-		-p "${port}" \
-		-d "${database}" \
-		-c "select 1" \
-		>> "${LOG}" 2>&1 \
+
+	local pgrestorelog="${TEMP_FOLDER}/pg-restore-log"
+
+	pg_cmd() {
+		local cmd="$1"
+		shift
+		"${cmd}" -w -U "${user}" -h "${host}" -p "${port}" -d "${database}" "$@"
+	}
+
+	PGPASSFILE="${MYPGPASS}" pg_cmd psql -c "select 1" >> "${LOG}" 2>&1 \
 		|| logdie "Can't connect to database '${database}'. Please see '${0} --help'."
 
-	PGPASSFILE="${MYPGPASS}" psql \
-		-w \
-		-t \
-		-U "${user}" \
-		-h "${host}" \
-		-p "${port}" \
-		-d "${database}" \
-		-c "show lc_messages" \
-		2> /dev/null \
+	PGPASSFILE="${MYPGPASS}" pg_cmd psql -t -c "show lc_messages" 2> /dev/null \
 		| grep -q '^ *en_US.UTF-8$' \
 		|| logdie "lc_messages is set to an unsupported value in postgresql.conf. Please set it to en_US.UTF-8 and restart postgresql."
 
@@ -679,15 +808,17 @@ verifyConnection() {
 __EOF
 )
 
-	PGPASSFILE="${MYPGPASS}" pg_dump \
-		-U "${user}" \
-		-h "${host}" \
-		-p "${port}" \
-		-s \
-		"${database}" | \
+	PGPASSFILE="${MYPGPASS}" pg_cmd pg_dump -s 2> "${pgrestorelog}" | \
 		grep -Evi "${IGNORED_PATTERN}" | \
 		grep -iq '^create' && \
 		logdie "Database '${database}' is not empty"
+
+	if [ -s "${pgrestorelog}" ]; then
+		cat "${pgrestorelog}" >> "${LOG}"
+		logdie "Failed checking if database '${database}' is empty"
+	fi
+
+	unset -f pg_cmd
 }
 
 verifyVersion() {
@@ -716,20 +847,43 @@ restoreDB() {
 	local port="$4"
 	local database="$5"
 	local orig_user="$6"
-	log "restoreDB: backupfile ${backupfile} user ${user} host ${host} port ${port} database ${database} orig_user ${orig_user}"
-	local psqllog="${TEMP_FOLDER}/psql-restore-log"
-	bz_cat "${backupfile}" | \
-		PGPASSFILE="${MYPGPASS}" psql \
-		-w \
-		-U "${user}" \
-		-h "${host}" \
-		-p "${port}" \
-		-d "${database}" \
-		> "${psqllog}"  2>&1 \
-		|| logdie "Database ${database} restore failed"
+	local compressor="$7"
+	local format="$8"
+	local jobsnum="$9"
 
-	cat "${psqllog}" >> "${LOG}"  2>&1 \
-		|| logdie "Failed to append psql log to restore log"
+	pg_cmd() {
+		local cmd="$1"
+		shift
+		"${cmd}" -w -U "${user}" -h "${host}" -p "${port}" -d "${database}" "$@"
+	}
+
+	log "restoreDB: backupfile ${backupfile} user ${user} host ${host} port ${port} database ${database} orig_user ${orig_user} compressor ${compressor} format ${format} jobsnum ${jobsnum}"
+	local pgrestorelog="${TEMP_FOLDER}/pg-restore-log"
+
+	if [ "${format}" = "plain" ]; then
+		if [ -z "${compressor}" ]; then
+			PGPASSFILE="${MYPGPASS}" pg_cmd psql -f "${backupfile}" > "${pgrestorelog}"  2>&1 \
+				|| logdie "Database ${database} restore failed"
+		else
+			# Requires the compressor to support '-d'. All our current ones do.
+			"${compressor}" -d < "${backupfile}" | \
+				PGPASSFILE="${MYPGPASS}" pg_cmd psql > "${pgrestorelog}"  2>&1 \
+				|| logdie "Database ${database} restore failed"
+		fi
+	elif [ "${format}" = "custom" ]; then
+		if [ -z "${compressor}" ]; then
+			PGPASSFILE="${MYPGPASS}" pg_cmd pg_restore -j "${jobsnum}" "${backupfile}" > "${pgrestorelog}"  2>&1
+		else
+			# Requires the compressor to support '-d'. All our current ones do.
+			"${compressor}" -d < "${backupfile}" | \
+				PGPASSFILE="${MYPGPASS}" pg_cmd pg_restore > "${pgrestorelog}"  2>&1
+		fi
+	else
+		logdie "Unsupported format ${format}"
+	fi
+
+	cat "${pgrestorelog}" >> "${LOG}"  2>&1 \
+		|| logdie "Failed to append pg log to restore log"
 
 	local IGNORED_ERRORS=$(cat << __EOF | egrep -v '^$|^#' | tr '\012' '|' | sed 's/|$//'
 language "plpgsql" already exists
@@ -753,8 +907,10 @@ function public.uuid_ns_x500\(\) does not exist
 role "$orig_user" does not exist
 __EOF
 )
-	local numerrors=$(grep 'ERROR: ' "${psqllog}" | grep -Ev "${IGNORED_ERRORS}" | wc -l)
+	local numerrors=$(grep 'ERROR: ' "${pgrestorelog}" | grep -Ev "${IGNORED_ERRORS}" | wc -l)
 	[ ${numerrors} -ne 0 ] && logdie "Errors while restoring database ${database}"
+
+	unset -f pg_cmd
 }
 
 cleanDbTempData() {
@@ -778,21 +934,20 @@ cleanDbTempData() {
 			|| logdie "Failed cleaning up ${table}"
 			cat "${psqllog}" >> "${LOG}"  2>&1 \
 				|| logdie "Failed to append psql log to restore log"
-	done
+	done || logdie "Failed cleaning up temp data"
 }
 
 restoreFiles() {
 	local paths="$1"
-	echo "${paths}" | while read -r path; do
-		local dirname="$(dirname ${path})"
-		local backup="${TEMP_FOLDER}/files/${path}"
-		[ -e "${backup}" ] || continue
-		[ -d "${dirname}" ] || mkdir -p "${dirname}" || logdie "Cannot create directory ${dirname}"
-		cp -a "${backup}" "${dirname}" || logdie "Cannot copy '${backup}' to '${dirname}'"
-		if selinuxenabled; then
-			restorecon -R "${path}" || logdie "Failed setting selinux context for ${path}"
-		fi
-	done || logdie "Cannot read ${paths}"
+	local archive="$2"
+	tar -C / -pSsxf "${archive}" || logdie "Failed restoring ${paths}"
+	if selinuxenabled; then
+		echo "${paths}" | while read -r path; do
+			if [ -e "${path}" ]; then
+				restorecon -R "${path}" || logdie "Failed setting selinux context for ${path}"
+			fi
+		done || logdie "Failed setting selinux contexts"
+	fi
 }
 
 setMyEngineDBCredentials() {
@@ -1030,6 +1185,19 @@ readdbpassword() {
 ${dbpass}
 __EOF__
 	)
+}
+
+dump_config_for_restore() {
+	local var
+	local VARS_TO_SAVE="DB_DUMP_COMPRESSOR
+DB_DUMP_FORMAT
+DWH_DB_DUMP_COMPRESSOR
+DWH_DB_DUMP_FORMAT
+REPORTS_DB_DUMP_COMPRESSOR
+REPORTS_DB_DUMP_FORMAT"
+	echo "${VARS_TO_SAVE}" | while read -r var; do
+		eval echo "${var}=\${${var}}"
+	done
 }
 
 ## Main
