@@ -5,7 +5,6 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     public static final String FIRST_NAME = "NAME";
     public static final String LAST_NAME = "LASTNAME";
     public static final String USER_NAME = "USRNAME";
-    public static final String GROUP = "GROUP";
     public static final String DIRECTORY = "DIRECTORY";
 
     public enum UserOrGroup {
@@ -22,14 +21,9 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mVerbs.add("LOGIN");
         mVerbs.add(DIRECTORY);
         mVerbs.add("DEPARTMENT");
-        mVerbs.add(GROUP);
-        mVerbs.add("TITLE");
-        mVerbs.add("ACTIVE");
-        mVerbs.add("ROLE");
         mVerbs.add("TAG");
         mVerbs.add("POOL");
         mVerbs.add("TYPE");
-        verbsWithMultipleValues.add(GROUP);
 
         // Building the auto completion dictionary.
         buildCompletions();
@@ -40,10 +34,6 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put("LOGIN", String.class);
         getTypeDictionary().put(DIRECTORY, String.class);
         getTypeDictionary().put("DEPARTMENT", String.class);
-        getTypeDictionary().put("TITLE", String.class);
-        getTypeDictionary().put(GROUP, String.class);
-        getTypeDictionary().put("ACTIVE", Boolean.class);
-        getTypeDictionary().put("ROLE", String.class);
         getTypeDictionary().put("TAG", String.class);
         getTypeDictionary().put("POOL", String.class);
         getTypeDictionary().put("TYPE", UserOrGroup.class);
@@ -55,9 +45,6 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         columnNameDict.put("LOGIN", "username");
         columnNameDict.put("DIRECTORY", "domain");
         columnNameDict.put("DEPARTMENT", "department");
-        columnNameDict.put(GROUP, "user_group");
-        columnNameDict.put("ACTIVE", "active");
-        columnNameDict.put("ROLE", "mla_role");
         columnNameDict.put("TAG", "tag_name");
         columnNameDict.put("POOL", "vm_pool_name");
         columnNameDict.put("TYPE", "user_group");
