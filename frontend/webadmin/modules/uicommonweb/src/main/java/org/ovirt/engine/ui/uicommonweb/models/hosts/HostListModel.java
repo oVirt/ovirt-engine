@@ -2055,7 +2055,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         && (VdcActionUtils.canExecute(items, VDS.class, VdcActionType.ApproveVds) || (items.get(0)
                                 .getStatus() == VDSStatus.InstallFailed && items.get(0).getVdsType() == VDSType.oVirtNode));
         getApproveCommand().setIsExecutionAllowed(approveAvailability);
-        getApproveCommand().setIsAvailable(approveAvailability);
 
         boolean installAvailability = false;
         if (items.size() == 1 && items.get(0) instanceof VDS) {
@@ -2064,7 +2063,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                     host.getStatus() == VDSStatus.Maintenance;
         }
         getInstallCommand().setIsExecutionAllowed(installAvailability);
-        getInstallCommand().setIsAvailable(installAvailability);
 
         boolean upgradeAvailability = false;
         if (installAvailability) {
@@ -2074,7 +2072,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             }
         }
         getUpgradeCommand().setIsExecutionAllowed(upgradeAvailability);
-        getUpgradeCommand().setIsAvailable(upgradeAvailability);
 
         getMaintenanceCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.MaintenanceVds));
@@ -2094,13 +2091,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         getManualFenceCommand().setIsExecutionAllowed(items.size() == 1);
 
         getAssignTagsCommand().setIsExecutionAllowed(items.size() > 0);
-
-        // System tree dependent actions.
-        boolean isAvailable =
-                !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host);
-
-        getNewCommand().setIsAvailable(isAvailable);
-        getRemoveCommand().setIsAvailable(isAvailable);
 
         getSelectAsSpmCommand().setIsExecutionAllowed(isSelectAsSpmCommandAllowed(items));
 
