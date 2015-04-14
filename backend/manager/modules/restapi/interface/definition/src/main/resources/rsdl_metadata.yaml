@@ -27,8 +27,9 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean', action.vm.disks.detach_only: 'xs:boolean',
-          action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.force: xs:boolean
+          action.vm.disks.detach_only: xs:boolean
         description: deletes the virtual machine in the system for the given virtual machine id with optional arguments where the vm can be forced to be removed and option to just detach the disks associated with the vm.
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -316,7 +317,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: shutdown a virtual machine in the system identified by the given id
 - name: /vms/{vm:id}/stop|rel=stop
   description: stop a virtual machine in the system identified by the given id
@@ -325,7 +325,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: stop a virtual machine in the system identified by the given id
 - name: /vms/{vm:id}/reboot|rel=reboot
   description: reboot a virtual machine in the system identified by the given id
@@ -340,30 +339,46 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.vm.os.initRd: 'xs:string', action.vm.domain.name: 'xs:string',
-          action.vm.placement_policy.host.id|name: 'xs:string', action.vm.placement_policy.affinity: 'xs:string',
-          action.async: 'xs:boolean', action.vm.os.kernel: 'xs:string', action.grace_period.expiry: 'xs:long',
-          action.vm.display.type: 'xs:string', action.vm.stateless: 'xs:boolean', action.vm.os.cmdline: 'xs:string',
-          action.vm.domain.user.username: 'xs:string', action.pause: 'xs:boolean',
-          action.vm.os.boot--COLLECTION: {boot.dev: 'xs:string'},action.vm.domain.user.password: 'xs:string',
-          action.vm.initialization.cloud_init.host.address: 'xs:string',
-          action.vm.custom_emulated_machine: 'xs:string',
-          action.vm.custom_cpu_model: 'xs:string',
-          action.vm.initialization.cloud_init.network_configuration.nics.nic--COLLECTION: {nic.name: 'xs:string',
-          nic.boot_protocol: 'xs:string',
-          nic.network.address.ip: 'xs:string',
-          nic.network.address.netmask: 'xs:string',
-          nic.network.address.gateway: 'xs:string',
-          nic.onboot: 'xs:boolean'},
-          action.vm.initialization.cloud_init.network_configuration.dns.servers.host--COLLECTION: {host.address: 'xs:string'},
-          action.vm.initialization.cloud_init.network_configuration.dns.search_domains.host--COLLECTION: {host.address: 'xs:string'},
-          action.vm.initialization.cloud_init.authorized_keys.authorized_key--COLLECTION: {authorized_key.key: 'xs:string',
-          authorized_key.user.name: 'xs:string'},
-          action.vm.initialization.cloud_init.regenerate_ssh_keys: 'xs:boolean',
-          action.vm.initialization.cloud_init.timezone: 'xs:string',
-          action.vm.initialization.cloud_init.users.user--COLLECTION: {user.password: 'xs:string', user.name: 'xs:string'},
-          action.vm.initialization.cloud_init.payload_files.payload_file--COLLECTION: {payload_file.name: 'xs:string',
-          payload_file.content: 'xs:string',payload_file.type: 'xs:string'}}
+        optionalArguments:
+          action.vm.os.initRd: xs:string
+          action.vm.domain.name: xs:string
+          action.vm.placement_policy.host.id|name: xs:string
+          action.vm.placement_policy.affinity: xs:string
+          action.vm.os.kernel: xs:string
+          action.vm.display.type: xs:string
+          action.vm.stateless: xs:boolean
+          action.vm.os.cmdline: xs:string
+          action.vm.domain.user.username: xs:string
+          action.pause: xs:boolean
+          action.vm.os.boot--COLLECTION:
+            boot.dev: xs:string
+          action.vm.domain.user.password: xs:string
+          action.vm.initialization.cloud_init.host.address: xs:string
+          action.vm.custom_emulated_machine: xs:string
+          action.vm.custom_cpu_model: xs:string
+          action.vm.initialization.cloud_init.network_configuration.nics.nic--COLLECTION:
+            nic.name: xs:string
+            nic.boot_protocol: xs:string
+            nic.network.address.ip: xs:string
+            nic.network.address.netmask: xs:string
+            nic.network.address.gateway: xs:string
+            nic.onboot: xs:boolean
+          action.vm.initialization.cloud_init.network_configuration.dns.servers.host--COLLECTION:
+            host.address: xs:string
+          action.vm.initialization.cloud_init.network_configuration.dns.search_domains.host--COLLECTION:
+            host.address: xs:string
+          action.vm.initialization.cloud_init.authorized_keys.authorized_key--COLLECTION:
+            authorized_key.key: xs:string
+          authorized_key.user.name: xs:string
+          action.vm.initialization.cloud_init.regenerate_ssh_keys: xs:boolean
+          action.vm.initialization.cloud_init.timezone: xs:string
+          action.vm.initialization.cloud_init.users.user--COLLECTION:
+            user.password: xs:string
+            user.name: xs:string
+          action.vm.initialization.cloud_init.payload_files.payload_file--COLLECTION:
+            payload_file.name: xs:string
+            payload_file.content: xs:string
+            payload_file.type: xs:string
         description: start a virtual machine in the system identified by the given id with the options specified in the request body
     headers:
       Filter: {value: true|false, required: false}
@@ -374,7 +389,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: suspend a virtual machine in the system identified by the given id
 - name: /vms/{vm:id}/export|rel=export
   description: export a virtual machine in the system identified by the given id to the export domain
@@ -383,9 +397,10 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.exclusive: 'xs:boolean',
-          action.discard_snapshots: 'xs:boolean', action.storage_domain.id|name: 'xs:string',
-          action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.exclusive: xs:boolean
+          action.discard_snapshots: xs:boolean
+          action.storage_domain.id|name: xs:string
         description: export a virtual machine in the system identified by the given id to the export domain with the options specified in the request body
 - name: /vms/{vm:id}/preview_snapshot|rel=preview_snapshot
   request:
@@ -423,7 +438,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: detach a virtual machine in the system identified by the given id from the storage domain
 - name: /vms/{vm:id}/migrate|rel=migrate
   description: migrate a virtual machine in the system identified by the given id to another host
@@ -432,8 +446,10 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.host.id|name: 'xs:string', action.async: 'xs:boolean',
-          action.force: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.cluster.id: 'xs:string'}
+        optionalArguments:
+          action.host.id|name: xs:string
+          action.force: xs:boolean
+          action.cluster.id: xs:string
         description: migrate a virtual machine in the system identified by the given id to another host with options specified in the request body
 - name: /vms/{vm:id}/move|rel=move #deprecated, replaced by '/vms/{vm:id}/disks/{disk:id}/move|rel=move'
   description: This action is deprecated. Move a virtual machine's disk
@@ -442,7 +458,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.storage_domain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: This action is deprecated. Move a virtual machine's disk to the target storage domain
 - name: /vms/{vm:id}/ticket|rel=ticket
   description: Create a ticket for connecting to the VM using the display protocol.
@@ -451,7 +466,8 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.ticket.value: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.ticket.value: xs:string
         description: Create a ticket for connecting to the VM using the display protocol.
 - name: /vms/{vm:id}/logon|rel=logon
   description: Perform automatic logon on the VM using the guest agent.
@@ -546,7 +562,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.detach: 'xs:boolean'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: delete or detach a disk for a given virtual machine based on detach flag provided
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -624,7 +639,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activate a disk attached to a virtual machine
 - name: /vms/{vm:id}/disks/{disk:id}/deactivate|rel=deactivate
   description: deactivate a disk attached to a virtual machine
@@ -633,7 +647,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: deactivate a disk attached to a virtual machine
 - name: /vms/{vm:id}/disks/{disk:id}/move|rel=move
   description: move a disk attached to a virtual machine to a different storage domain. If the virtual machine is running this will trigger a live storage migration
@@ -642,7 +655,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: move a disk attached to a virtual machine to a different storage domain. If the virtual machine is running this will trigger a live storage migration
     headers:
       Filter: {value: true|false, required: false}
@@ -652,7 +664,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     headers:
       Filter: {value: true|false, required: false}
 - name: /vms/{vm:id}/nics|rel=get
@@ -776,7 +787,11 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.restore_memory: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.disks.disk--COLLECTION: {disk.id: 'xs:string', disk.image_id: 'xs:string'}}
+        optionalArguments:
+          action.restore_memory: xs:boolean
+          action.disks.disk--COLLECTION:
+            disk.id: xs:string
+            disk.image_id: xs:string
         description: restore the virtual machine from a given snapshot
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/cdroms|rel=get
   description: get the list of cdroms attached to the virtual machine at the time the snapshot was created
@@ -826,7 +841,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.maintenance_enabled: 'xs:boolean'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: enable or disable maintenance mode for this virtual machine
 - name: /disks|rel=get
   description: get a list of disks in the system
@@ -849,9 +863,6 @@ actions:
       signatures:
       - mandatoryArguments:
           action.storage_domain.id|name: xs:string
-        optionalArguments:
-          action.async: xs:boolean
-          action.grace_period.expiry: xs:long
     headers:
       Filter: {value: true|false, required: false}
 - name: /disks/{disk:id}/move|rel=move
@@ -862,9 +873,6 @@ actions:
       signatures:
       - mandatoryArguments:
           action.storage_domain.id|name: xs:string
-        optionalArguments:
-          action.async: xs:boolean
-          action.grace_period.expiry: xs:long
         description: move a disk to a different storage domain
     headers:
       Filter: {value: true|false, required: false}
@@ -876,9 +884,6 @@ actions:
       signatures:
       - mandatoryArguments:
           action.storage_domain.id|name: xs:string
-        optionalArguments:
-          action.async: xs:boolean
-          action.grace_period.expiry: xs:long
         description: copy a disk to a different storage domain
     headers:
       Filter: {value: true|false, required: false}
@@ -1159,7 +1164,9 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.import_as_template: 'xs:boolean', action.cluster.id|name: 'xs:string'}
+        optionalArguments:
+          action.import_as_template: xs:boolean
+          action.cluster.id|name: xs:string
 - name: /storagedomains/{storagedomain:id}/permissions|rel=get
   description: get the list of permissions for the storage domain
   request:
@@ -1213,7 +1220,13 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.template.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}, action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.storage_domain.id|name: xs:string
+          action.clone: xs:boolen
+          action.exclusive: xs:boolen
+          action.template.name: xs:string
+          action.vm.disks.disk--COLLECTION:
+            disk.id: xs:string
         description: import the template from the export or data domain identified by storagedomain-identifier into the destination storage domain identified by storage_domain.id|name
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/disks|rel=get
   description: get the list of disks attached to the template in the export or data domain
@@ -1248,7 +1261,14 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean',action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.vm.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}, action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.storage_domain.id|name: xs:string
+          action.vm.snapshots.collapse_snapshots: xs:boolean
+          action.clone: xs:boolen
+          action.exclusive: xs:boolen
+          action.vm.name: xs:string
+          action.vm.disks.disk--COLLECTION:
+            disk.id: xs:string
         description: import the specified virtual machine from the source storagedomain identified by storagedomain-identifier into the destination storage domain identified by storage_domain.id|name
 - name: /storagedomains/{storagedomain:id}/disksnapshots|rel=get
   description: get the list of disk snapshots in the storage domain
@@ -1482,7 +1502,8 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.force: xs:boolean
         description: delete the specified data center in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -1553,7 +1574,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activate the specified storage domain in the data center
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/deactivate|rel=deactivate
   description: deactivate the specified storage domain in the data center
@@ -1562,7 +1582,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: deactivate the specified storage domain in the data center
 - name: /datacenters/{datacenter:id}/clusters|rel=get
   description: get the list of clusters in the data center
@@ -1704,7 +1723,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: undoes the delete operation performed on the events
 - name: /events/{event:id}|rel=get
   description: get the details of the specified event in the system
@@ -1862,7 +1880,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: delete the specified host in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -1936,7 +1953,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activate the specified host in the system
 - name: /hosts/{host:id}/forceselectspm|rel=forceselectspm
   description: force the specified to be selected as storage pool manager
@@ -1945,7 +1961,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: force the specified to be selected as storage pool manager
 - name: /hosts/{host:id}/approve|rel=approve
   description: approve specified host to be added to the engine
@@ -1954,13 +1969,16 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.cluster.id|name: 'xs:string', action.async: 'xs:boolean',
-          action.grace_period.expiry: 'xs:long', host.root_password--DEPRECATED: 'xs:string'}
+        optionalArguments:
+          action.cluster.id|name: xs:string
+          host.root_password--DEPRECATED: xs:string
         description: approve specified host to be added to the engine by using root password (deprecated verb). this occurs when the host registers itself with the engine
       - mandatoryArguments: {}
-        optionalArguments: {action.cluster.id|name: 'xs:string', action.async: 'xs:boolean',
-          action.grace_period.expiry: 'xs:long', host.ssh.authentication_method: 'xs:string',
-          host.ssh.user.user_name: 'xs:string', host.ssh.user.password: 'xs:string'}
+        optionalArguments:
+          action.cluster.id|name: xs:string
+          host.ssh.authentication_method: xs:string
+          host.ssh.user.user_name: xs:string
+          host.ssh.user.password: xs:string
         description: approve specified host to be added to the engine by using ssh authentication. this occurs when the host registers itself with the engine
 - name: /hosts/{host:id}/commitnetconfig|rel=commitnetconfig
   description: commit the changes made to network configuration of the host
@@ -1969,7 +1987,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: commit the changes made to network configuration of the host
 - name: /hosts/{host:id}/deactivate|rel=deactivate
   description: deactivate the specified host
@@ -1978,16 +1995,16 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.reason: 'xs:string'}
+        optionalArguments:
+          action.reason: xs:string
         description: deactivate the specified host
 - name: /hosts/{host:id}/fence|rel=fence
-  description: perform fencing operation (start/stop/status) on the host. 
+  description: perform fencing operation (start/stop/status) on the host.
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.fence_type: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: perform fencing operation (start/stop/status) on the host.
 - name: /hosts/{host:id}/install|rel=install
   description: install vdsm and other packages required to get the host ready to be used in the engine
@@ -2010,8 +2027,6 @@ actions:
           action.ssh.user.user_name: xs:string
           action.ssh.user.password: xs:string
           action.image: xs:string
-          action.async: xs:boolean
-          action.grace_period.expiry: xs:long
           action.host.override_iptables: xs:boolean
         description: install vdsm and other packages required to get the host ready to be used in the engine providing thre ssh password
 - name: /hosts/{host:id}/iscsidiscover|rel=iscsidiscover
@@ -2021,7 +2036,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.iscsi.address: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: initiate the command to discover the iscsi targets and map the targets to the storage server connections
 - name: /hosts/{host:id}/iscsilogin|rel=iscsilogin
   description: login to the specified iscsi target at the specified address
@@ -2030,7 +2044,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.iscsi.address: 'xs:string', action.iscsi.target: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: login to the specified iscsi target at the specified address
 - name: /hosts/{host:id}/unregisteredstoragedomainsdiscover|rel=unregisteredstoragedomainsdiscover
   description: Discover the Storage Domains which are candidiates to be imported to the setup
@@ -2047,7 +2060,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: refresh the capabilities of the host
 - name: /hosts/{host:id}/katelloerrata|rel=get
   description: get the list of errata available for the host
@@ -2108,13 +2120,25 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments:
-          action.host_nics.host_nic--COLLECTION: {host_nic.network.id|name: 'xs:string', host_nic.name: 'xs:string', host_nic.base_interface: 'xs:string', host_nic.ip.gateway: 'xs:string',
-            host_nic.boot_protocol: 'xs:string', host_nic.mac: 'xs:string', host_nic.ip.address: 'xs:string', host_nic.ip.netmask: 'xs:string',
-            host_nic.bonding.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string', option.type: 'xs:string'},
-            bonding.slaves.host_nic--COLLECTION: {host_nic.name|id: 'xs:string'},
-            host_nic.override_configuration: 'xs:boolean',
-            host_nic.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'},
-            action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+          action.host_nics.host_nic--COLLECTION:
+            host_nic.network.id|name: xs:string
+            host_nic.name: xs:string
+            host_nic.base_interface: xs:string
+            host_nic.ip.gateway: xs:string
+            host_nic.boot_protocol: xs:string
+            host_nic.mac: xs:string
+            host_nic.ip.address: xs:string
+            host_nic.ip.netmask: xs:string
+            host_nic.bonding.options.option--COLLECTION:
+              option.name: xs:string
+              option.value: xs:string
+              option.type: xs:string
+            bonding.slaves.host_nic--COLLECTION:
+              host_nic.name|id: xs:string
+            host_nic.override_configuration: xs:boolean
+            host_nic.properties.property--COLLECTION:
+              property.name: xs:string
+              property.value: xs:string
           action.checkConnectivity: xs:boolean
           action.connectivityTimeout: xs:int
           action.force: xs:boolean
@@ -2126,7 +2150,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.network.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: attach the network interface card to the specified host
 - name: /hosts/{host:id}/nics/{nic:id}/detach|rel=detach
   description: detach the network interface card from the specified host
@@ -2135,7 +2158,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: detach the network interface card from the specified host
 - name: /hosts/{host:id}/nics/{nic:id}/statistics|rel=get
   description: get the statistics for the network interface card attached to the specified host
@@ -2229,7 +2251,7 @@ actions:
       - mandatoryArguments: {agent.address: 'xs:string', agent.order: 'xs:int', agent.type: 'xs:string', agent.username: 'xs:string', agent.password: 'xs:string'}
         optionalArguments: {agent.port: 'xs:int', agent.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=get
-  description: get the fencing agent with the specified ID.  
+  description: get the fencing agent with the specified ID.
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=update
   description: update a fencing-agent
   request:
@@ -2666,8 +2688,8 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.storage_domain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.exclusive: 'xs:boolean',
-          action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.exclusive: xs:boolean
         description: export the specified template to the export domain
 - name: /templates/{template:id}/cdroms|rel=get
   description: get the list of cdroms attached to the specified template
@@ -2721,7 +2743,9 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.storage_domain.id: 'xs:string', action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.storage_domain.id: xs:string
+          action.force: xs:boolean
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}/disks/{disk:id}/copy|rel=copy
@@ -2731,7 +2755,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: copy the specified disk attached to the template to a specific storage domain
     headers:
       Filter: {value: true|false, required: false}
@@ -2741,7 +2764,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     headers:
       Filter: {value: true|false, required: false}
 - name: /templates/{template:id}/nics|rel=get
@@ -2975,7 +2997,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
 - name: /vmpools|rel=add
   description: add anew vm pool to the system
   request:
@@ -3042,7 +3063,8 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.force: xs:boolean
         description: start the gluster volume attached to the cluster with an optional argument to force the operation
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stop|rel=stop
   description: stop the gluster volume attached to the cluster
@@ -3051,7 +3073,8 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.force: xs:boolean
         description: stop the gluster volume attached to the cluster with an optional argument to force the operation
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/rebalance|rel=rebalance
   description: invoke the rebalance command on the gluster volume attached to the cluster
@@ -3060,7 +3083,9 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.fix_layout: 'xs:boolean', action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.fix_layout: xs:boolean
+          action.force: xs:boolean
         description: invoke the rebalance command on the gluster volume attached to the cluster with optional arguments to fix the lay and force the operation
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stoprebalance|rel=stoprebalance
   description: invoke the stop rebalance command on the gluster volume attached to the cluster
@@ -3069,7 +3094,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: invoke the stop rebalance command on the gluster volume attached to the cluster
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/setoption|rel=setoption
   description: set an option for the gluster volume attached to the cluster
@@ -3077,7 +3101,9 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.option.name: 'xs:string', action.option.value: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+      - mandatoryArguments:
+          action.option.name: xs:string
+          action.option.value: xs:string
         optionalArguments: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetoption|rel=resetoption
   description: reset an option for the gluster volume attached to the cluster
@@ -3086,7 +3112,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.option.name: 'xs:string', action.force: 'xs:boolean'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: reset an option for the gluster volume attached to the cluster with mandatory option to force the operation
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetalloptions|rel=resetalloptions
   description: resets all options for the gluster volume attached to the cluster
@@ -3095,7 +3120,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: resets all options for the gluster volume attached to the cluster
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/startprofile|rel=startprofile
   description: start profile on the gluster volume attached to the cluster
@@ -3160,7 +3184,6 @@ actions:
       signatures:
       - mandatoryArguments:
           action.bricks--COLLECTION: {brick.name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: migrate the data from the brick to others and mark for deletion
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/stopmigrate|rel=stopmigrate
   description: stops the bricks migration task started on on volume
@@ -3170,7 +3193,6 @@ actions:
       signatures:
       - mandatoryArguments:
           action.bricks--COLLECTION: {brick.name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: stops the bricks migration task started on on volume
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/activate|rel=activate
   description: activates the bricks post migration of data for reuse
@@ -3180,7 +3202,6 @@ actions:
       signatures:
       - mandatoryArguments:
           action.bricks--COLLECTION: {brick.name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activates the bricks post migration of data for reuse
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/replace|rel=replace #deprecated, replaced by 'migrate/delete'
   description: This is deprecated.Use migrate and delete instead.
@@ -3189,7 +3210,8 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.brick.server_id: 'xs:string', action.brick.brick_dir: 'xs:string'}
-        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.force: xs:boolean
         description: replace the specified brick with a new brick directory in the gluster volume attached to the cluster
         deprecated: true
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics|rel=get
@@ -3264,7 +3286,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     headers:
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
@@ -3278,7 +3299,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     headers:
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
@@ -3349,7 +3369,8 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.status.state: 'xs:string'}
-        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.force: xs:boolean
         description: end the specified external job in the system with an optional argument to force the operation
 
 - name: /jobs/{job:id}/clear|rel=clear
@@ -3359,7 +3380,6 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: clear the specified external job in the system
 
 - name: /jobs/{job:id}/steps|rel=get
@@ -3388,7 +3408,9 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.succeeded: 'xs:boolean'}
-        optionalArguments: {action.force: 'xs:boolean', action.status.state: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.force: xs:boolean
+          action.status.state: xs:string
         description: invoke the command to end the specified step of an external job with an optional agrument to force the operation
 
 - name: /jobs/{job:id}/steps/{step:id}/statistics|rel=get
@@ -3471,21 +3493,20 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}/disable|rel=disable
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}/resolve|rel=resolve
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.resolution_type: 'xs:string'}
-        optionalArguments: {action.host.id|name: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments:
+          action.host.id|name: xs:string
 
 - name: /permissions|rel=get
   description: get the list of permissions on the system
@@ -4202,8 +4223,6 @@ actions:
       - mandatoryArguments:
           action.storagedomain.id|name: xs:string
         optionalArguments:
-          action.async: xs:boolean
-          action.grace_period.expiry: xs:long
           action.import_as_template: xs:boolean
           action.cluster.id|name: xs:string
           action.disk.alias|name: xs:string

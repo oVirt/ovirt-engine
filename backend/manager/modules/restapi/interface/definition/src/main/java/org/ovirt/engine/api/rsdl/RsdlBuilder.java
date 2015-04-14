@@ -343,7 +343,9 @@ public class RsdlBuilder {
         Class<?>[] parameterTypes = m.getParameterTypes();
         assert (parameterTypes.length == 1);
         String returnValueStr = parameterTypes[0].getSimpleName();
-        results.add(new RsdlBuilder.LinkBuilder().url(prefix + "/" + path).rel(path).requestParameter(ACTION).responseType(returnValueStr).httpMethod(HttpMethod.POST).build());
+        DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix + "/" + path).rel(path).requestParameter(ACTION).responseType(returnValueStr).httpMethod(HttpMethod.POST).build();
+        addCommonActionParameters(link);
+        results.add(link);
     }
 
     private void handleDelete(String prefix, Collection<DetailedLink> results, Method m) {
@@ -353,12 +355,16 @@ public class RsdlBuilder {
             for (int i=0; i<parameterTypes.length; i++) {
                 //ignore the id parameter (string), that's annotated with @PathParam
                 if (!( parameterTypes[i].equals(String.class) && (!(parameterAnnotations[i].length==0)))) {
-                    results.add(new RsdlBuilder.LinkBuilder().url(prefix + "/{" + getSingleForm(prefix) + ":id}").rel(DELETE).requestParameter(parameterTypes[i].getSimpleName()).httpMethod(HttpMethod.DELETE).build());
+                    DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix + "/{" + getSingleForm(prefix) + ":id}").rel(DELETE).requestParameter(parameterTypes[i].getSimpleName()).httpMethod(HttpMethod.DELETE).build();
+                    addCommonActionParameters(link);
+                    results.add(link);
                     return; //we can break, because we excpect only one parameter.
                 }
             }
         } else {
-            results.add(new RsdlBuilder.LinkBuilder().url(prefix + "/{" + getSingleForm(prefix) + ":id}").rel(DELETE).httpMethod(HttpMethod.DELETE).build());
+            DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix + "/{" + getSingleForm(prefix) + ":id}").rel(DELETE).httpMethod(HttpMethod.DELETE).build();
+            addCommonActionParameters(link);
+            results.add(link);
         }
     }
 
@@ -369,6 +375,53 @@ public class RsdlBuilder {
     private void handleGet(String prefix, Collection<DetailedLink> results, String returnValueStr) {
         DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix).rel(GET).responseType(returnValueStr).httpMethod(HttpMethod.GET).build();
         results.add(link);
+    }
+
+    /**
+     * Adds to a link the parameters that are common to all actions, like {@code async} and {@code grace_period.expiry}.
+     * These parameters will be added to all the signatures that have a body of type {@code Action}.
+     *
+     * @param link the link where the parameters will be added
+     */
+    private void addCommonActionParameters(DetailedLink link) {
+        Request request = link.getRequest();
+        if (request != null) {
+            org.ovirt.engine.api.model.Body body = request.getBody();
+            if (body != null) {
+                String type = body.getType();
+                if (ACTION.equals(type)) {
+                    List<ParametersSet> parametersSets = body.getParametersSets();
+                    for (ParametersSet parametersSet : parametersSets) {
+                        List<Parameter> parameters = parametersSet.getParameters();
+                        parameters.add(newGracePeriodParameter());
+                        parameters.add(newAsyncActionParameter());
+                    }
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Creates the definition of the {@code grace_period.expiry} action parameter.
+     */
+    private Parameter newAsyncActionParameter() {
+        Parameter parameter = new Parameter();
+        parameter.setName("action.grace_period.expiry");
+        parameter.setRequired(false);
+        parameter.setType("xs:long");
+        return parameter;
+    }
+
+    /**
+     * Creates the definition of the {@code grace_period} action parameter.
+     */
+    private Parameter newGracePeriodParameter() {
+        Parameter parameter = new Parameter();
+        parameter.setName("action.async");
+        parameter.setRequired(false);
+        parameter.setType("xs:boolean");
+        return parameter;
     }
 
     private DetailedLink addParametersMetadata(DetailedLink link) {
