@@ -732,7 +732,7 @@ public class BackendStorageDomainsResourceTest
     protected VdsStatic setUpVDStatic(int index) {
         VdsStatic vds = new VdsStatic();
         vds.setId(GUIDS[index]);
-        vds.setVdsName(NAMES[index]);
+        vds.setName(NAMES[index]);
         return vds;
     }
 

@@ -70,7 +70,7 @@ public class HostMapper {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
-            entity.setVdsName(model.getName());
+            entity.setName(model.getName());
         }
         if (model.isSetCluster() && model.getCluster().isSetId()) {
             entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));

@@ -287,7 +287,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public void setVdsName(String value) {
-        vdsStatic.setVdsName(value);
+        vdsStatic.setName(value);
     }
 
     public String getUniqueId() {

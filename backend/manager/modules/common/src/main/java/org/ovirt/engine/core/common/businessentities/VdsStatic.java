@@ -241,7 +241,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         return name;
     }
 
-    public void setVdsName(String value) {
+    public void setName(String value) {
         name = value;
     }
 
