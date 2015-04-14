@@ -1711,6 +1711,12 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     public void importFileStoragePostInit()
     {
+        Guid storagePoolId = null;
+        StoragePool dataCenter = storageModel.getContainer().getDataCenter().getSelectedItem();
+        if (dataCenter != null && !dataCenter.getId().equals(Guid.Empty)) {
+            storagePoolId = dataCenter.getId();
+        }
+
         // Check storage domain existence
         AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -1748,7 +1754,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                     importFileStorageConnect();
                 }
             }
-        }), null, path);
+        }), storagePoolId, path);
     }
 
     public void importFileStorageConnect() {
