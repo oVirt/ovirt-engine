@@ -2097,6 +2097,13 @@ public enum ConfigValues {
     MaxWriteIopsUpperBoundQosValue,
 
     /**
+     * UseHostNameIdentifier this will run external headers on STOMP connect frame, in order to identify hosts
+     */
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    UseHostNameIdentifier,
+
+    /**
     * Defines the number of history values storable by the engine for cpu/network/memory usage of a VM
     */
     @TypeConverterAttribute(Integer.class)
