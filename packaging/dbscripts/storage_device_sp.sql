@@ -4,15 +4,15 @@
 ----------------------------------------------------------------*/
 
 Create or replace FUNCTION InsertStorageDevice(v_id UUID,
-                                               v_name VARCHAR(1000),
+                                               v_name text,
                                                v_device_uuid VARCHAR(38),
                                                v_filesystem_uuid VARCHAR(38),
                                                v_vds_id UUID,
-                                               v_description VARCHAR(2000),
+                                               v_description text,
                                                v_device_type VARCHAR(50),
-                                               v_device_path VARCHAR(4096),
+                                               v_device_path text,
                                                v_filesystem_type VARCHAR(50),
-                                               v_mount_point VARCHAR(4096),
+                                               v_mount_point text,
                                                v_size BIGINT,
                                                v_is_free BOOLEAN)
 RETURNS VOID
@@ -26,14 +26,14 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateStorageDevice(v_id UUID,
-                                               v_name VARCHAR(1000),
+                                               v_name text,
                                                v_device_uuid VARCHAR(38),
                                                v_filesystem_uuid VARCHAR(38),
-                                               v_description VARCHAR(2000),
+                                               v_description text,
                                                v_device_type VARCHAR(50),
-                                               v_device_path VARCHAR(4096),
+                                               v_device_path text,
                                                v_filesystem_type VARCHAR(50),
-                                               v_mount_point VARCHAR(4096),
+                                               v_mount_point text,
                                                v_size BIGINT,
                                                v_is_free BOOLEAN)
 RETURNS VOID
