@@ -66,7 +66,9 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_predefined_properties VARCHAR(4000),
  v_userdefined_properties VARCHAR(4000),
  v_custom_emulated_machine VARCHAR(40),
- v_custom_cpu_name VARCHAR(40))
+ v_custom_cpu_name VARCHAR(40),
+ v_small_icon_id UUID,
+ v_large_icon_id UUID)
 
 RETURNS VOID
    AS $procedure$
@@ -146,7 +148,9 @@ INTO vm_static(
     predefined_properties,
     userdefined_properties,
     custom_emulated_machine,
-    custom_cpu_name)
+    custom_cpu_name,
+    small_icon_id,
+    large_icon_id)
 VALUES(
     v_child_count,
     v_creation_date,
@@ -208,7 +212,9 @@ VALUES(
     v_predefined_properties,
     v_userdefined_properties,
     v_custom_emulated_machine,
-    v_custom_cpu_name);
+    v_custom_cpu_name,
+    v_small_icon_id,
+    v_large_icon_id);
 -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
 DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
 INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id)
@@ -280,7 +286,9 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_predefined_properties VARCHAR(4000),
  v_userdefined_properties VARCHAR(4000),
  v_custom_emulated_machine VARCHAR(40),
- v_custom_cpu_name VARCHAR(40))
+ v_custom_cpu_name VARCHAR(40),
+ v_small_icon_id UUID,
+ v_large_icon_id UUID)
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -312,7 +320,9 @@ BEGIN
       numatune_mode = v_numatune_mode,
       is_auto_converge = v_is_auto_converge, is_migrate_compressed = v_is_migrate_compressed,
       predefined_properties = v_predefined_properties,userdefined_properties = v_userdefined_properties,
-      custom_emulated_machine = v_custom_emulated_machine, custom_cpu_name = v_custom_cpu_name
+      custom_emulated_machine = v_custom_emulated_machine, custom_cpu_name = v_custom_cpu_name,
+      small_icon_id = v_small_icon_id,
+      large_icon_id = v_large_icon_id
       WHERE vm_guid = v_vmt_guid
       AND   entity_type = v_template_type;
 
@@ -373,6 +383,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+
+
+Create or replace FUNCTION GetVmTemplatesWithoutIcon() RETURNS SETOF vm_templates_view STABLE
+AS $procedure$
+BEGIN
+RETURN QUERY SELECT vm_template.*
+   FROM vm_templates_view AS vm_template
+   WHERE entity_type = 'TEMPLATE'
+      AND (small_icon_id IS NULL OR large_icon_id IS NULL);
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 

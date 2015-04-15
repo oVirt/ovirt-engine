@@ -20,6 +20,8 @@ import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.utils.IconUtils;
+import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -164,6 +166,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (isHotSetEnabled()) {
             hotSetCpus(cpuPerSocket, numOfSockets);
         }
+        final List<Guid> oldIconIds = IconUtils.updateVmIcon(
+                oldVm.getStaticData(), newVmStatic, getParameters().getVmLargeIcon());
         getVmStaticDAO().update(newVmStatic);
         if (getVm().isNotRunning()) {
             updateVmPayload();
@@ -173,6 +177,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             updateGraphicsDevice();
             updateVmHostDevices();
         }
+        IconUtils.removeUnusedIcons(oldIconIds);
         VmHandler.updateVmInitToDB(getParameters().getVmStaticData());
 
         checkTrustedService();
@@ -698,6 +703,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!validate(VmHandler.checkNumaPreferredTuneMode(getParameters().getVmStaticData().getNumaTuneMode(),
                 getParameters().getVmStaticData().getvNumaNodeList(),
                 getVmId()))) {
+            return false;
+        }
+
+        if (getParameters().getVmLargeIcon() != null && !validate(IconValidator.validate(
+                IconValidator.DimensionsType.LARGE_CUSTOM_ICON,
+                getParameters().getVmLargeIcon()))) {
             return false;
         }
 

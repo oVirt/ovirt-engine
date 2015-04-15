@@ -41,6 +41,8 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmIcon;
+import org.ovirt.engine.core.common.businessentities.VmIconDefault;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
@@ -126,6 +128,8 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
+import org.ovirt.engine.core.dao.VmIconDao;
+import org.ovirt.engine.core.dao.VmIconDefaultDao;
 import org.ovirt.engine.core.dao.VmInitDAO;
 import org.ovirt.engine.core.dao.VmJobDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDAO;
@@ -232,6 +236,8 @@ public class DbFacade {
             put(EngineSession.class, EngineSessionDAO.class);
             put(HostDevice.class, HostDeviceDao.class);
             put(UserProfile.class, UserProfileDAO.class);
+            put(VmIcon.class, VmIconDao.class);
+            put(VmIconDefault.class, VmIconDefaultDao.class);
         }
     };
 
@@ -575,6 +581,19 @@ public class DbFacade {
      */
     public VmDAO getVmDao() {
         return getDao(VmDAO.class);
+    }
+
+    /**
+     * * Returns the singleton instance if {@link org.ovirt.engine.core.dao.VmIconDao}
+     *
+     * @return the dao
+     */
+    public VmIconDao getVmIconDao() {
+        return getDao(VmIconDao.class);
+    }
+
+    public VmIconDefaultDao getVmIconsDefaultDao() {
+        return getDao(VmIconDefaultDao.class);
     }
 
     /**

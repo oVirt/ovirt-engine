@@ -20,6 +20,25 @@ public class UpdateVmTemplateParameters extends VmTemplateParametersBase {
      */
     private Boolean consoleEnabled;
 
+    /**
+     * If not null, {@code UpdateVmTemplateCommand} should update icon of the template to this value.
+     */
+    private String vmLargeIcon;
+
+    /**
+     * @see #vmLargeIcon
+     */
+    public String getVmLargeIcon() {
+        return vmLargeIcon;
+    }
+
+    /**
+     * @see #vmLargeIcon
+     */
+    public void setVmLargeIcon(String vmLargeIcon) {
+        this.vmLargeIcon = vmLargeIcon;
+    }
+
     public UpdateVmTemplateParameters(VmTemplate vmTemplate) {
         _vmTemplate = vmTemplate;
     }

@@ -37,9 +37,12 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+
+import javax.inject.Inject;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -48,6 +51,9 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     private List<DiskImage> imageTemplates;
     private final Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
+
+    @Inject
+    private VmIconDao vmIconDao;
 
     public RemoveVmTemplateCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -266,6 +272,8 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     private void removeTemplateFromDb() {
         removeNetwork();
         DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplate().getId());
+        vmIconDao.removeIfUnused(getVmTemplate().getSmallIconId());
+        vmIconDao.removeIfUnused(getVmTemplate().getLargeIconId());
     }
 
     protected boolean removeVmTemplateImages() {

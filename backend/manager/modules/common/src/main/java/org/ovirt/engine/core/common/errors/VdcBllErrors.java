@@ -493,6 +493,9 @@ public enum VdcBllErrors {
     // Update num of vfs
     UPDATE_NUM_VFS_FAILURE(5500),
 
+    // Vm Icons
+    VM_ICON_NOT_FOUND(5500),
+
     // Gluster errors
     NO_UP_SERVER_FOUND(7000),
     // error to indicate backend does not recognize the session

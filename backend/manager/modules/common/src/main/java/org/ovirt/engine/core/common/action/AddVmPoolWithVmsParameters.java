@@ -13,7 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters implements HasGraphicsDevices {
+public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters
+        implements HasGraphicsDevices {
     private static final long serialVersionUID = 4826143612049185740L;
 
     @Valid
@@ -27,6 +28,7 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters implem
     private boolean balloonEnabled;
     private VmRngDevice rngDevice;
     private Map<GraphicsType, GraphicsDevice> graphicsDevices;
+    private String vmLargeIcon;
 
     public AddVmPoolWithVmsParameters() {
     }
@@ -99,6 +101,14 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters implem
 
     public void setBalloonEnabled(boolean isBallonEnabled) {
         this.balloonEnabled = isBallonEnabled;
+    }
+
+    public String getVmLargeIcon() {
+        return vmLargeIcon;
+    }
+
+    public void setVmLargeIcon(String vmLargeIcon) {
+        this.vmLargeIcon = vmLargeIcon;
     }
 
     @Override

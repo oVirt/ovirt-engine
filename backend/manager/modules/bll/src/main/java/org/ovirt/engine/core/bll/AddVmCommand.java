@@ -26,9 +26,11 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
@@ -86,6 +88,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -659,6 +662,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
+        if (getParameters().getVmLargeIcon() != null && !validate(IconValidator.validate(
+                IconValidator.DimensionsType.LARGE_CUSTOM_ICON,
+                getParameters().getVmLargeIcon()))) {
+            return false;
+        }
+
         return true;
     }
 
@@ -1037,6 +1046,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         vmStatic.setQuotaId(getQuotaId());
         vmStatic.setCreationDate(new Date());
         vmStatic.setCreatedByUserId(getUserId());
+        setIconIds(vmStatic);
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
         VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
@@ -1485,5 +1495,32 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return VmHandler.isNumOfMonitorsLegal(graphicsTypes,
                 numOfMonitors,
                 getReturnValue().getCanDoActionMessages());
+    }
+
+    /**
+     * Icon processing policy:
+     * <ul>
+     *     <li>If there is an attached icon, it is used as large icon as base for computation of small icon.
+     *         Predefined icons should not be sent in parameters.</li>
+     *     <li>If there are no icon in parameters && both (small and large) icon ids are set then those ids are used.
+     *         </li>
+     *     <li>Otherwise (at least one icon id is null) both icon ids are coppied from template.</li>
+     * </ul>
+     * @param vmStatic
+     */
+    public void setIconIds(VmStatic vmStatic) {
+        if (getParameters().getVmLargeIcon() != null){
+            final VmIconIdSizePair iconIds =
+                    IconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
+            vmStatic.setLargeIconId(iconIds.getLarge());
+            vmStatic.setSmallIconId(iconIds.getSmall());
+            return;
+        } else {
+            if (vmStatic.getLargeIconId() == null
+                    || vmStatic.getSmallIconId() == null) {
+                vmStatic.setSmallIconId(getVmTemplate().getSmallIconId());
+                vmStatic.setLargeIconId(getVmTemplate().getLargeIconId());
+            }
+        }
     }
 }

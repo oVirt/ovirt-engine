@@ -32,6 +32,8 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid EXISTING_INSTANCE_TYPE_ID = new Guid("99408929-82cf-4dc7-a532-9d998063fa95");
     private static final Guid EXISTING_IMAGE_TYPE_ID = new Guid("5849b030-626e-47cb-ad90-3ce782d831b3");
+    private static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
+    private static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
 
     private VmTemplateDAO dao;
 
@@ -57,6 +59,8 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         newVmTemplate.setVdsGroupId(VDS_GROUP_ID);
         newVmTemplate.setClusterArch(ArchitectureType.x86_64);
         newVmTemplate.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
+        newVmTemplate.setSmallIconId(SMALL_ICON_ID);
+        newVmTemplate.setLargeIconId(LARGE_ICON_ID);
     }
 
     /**

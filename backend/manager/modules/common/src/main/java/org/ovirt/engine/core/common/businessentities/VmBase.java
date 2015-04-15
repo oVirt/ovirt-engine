@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
@@ -57,6 +58,14 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @CopyOnNewVersion
     @EditableField
     private int osId;
+
+    @CopyOnNewVersion
+    @EditableField
+    private Guid smallIconId;
+
+    @CopyOnNewVersion
+    @EditableField
+    private Guid largeIconId;
 
     private Date creationDate;
 
@@ -443,7 +452,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.getPredefinedProperties(),
                 vmBase.getCustomProperties(),
                 vmBase.getCustomEmulatedMachine(),
-                vmBase.getCustomCpuName());
+                vmBase.getCustomCpuName(),
+                vmBase.getSmallIconId(),
+                vmBase.getLargeIconId());
     }
 
     public VmBase(
@@ -502,7 +513,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             String predefinedProperties,
             String customProperties,
             String customEmulatedMachine,
-            String customCpuName) {
+            String customCpuName,
+            Guid smallIconId,
+            Guid largeIconId) {
         this();
         this.name = name;
         this.id = id;
@@ -560,6 +573,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.customProperties = customProperties;
         this.customEmulatedMachine = customEmulatedMachine;
         this.customCpuName = customCpuName;
+        this.smallIconId = smallIconId;
+        this.largeIconId = largeIconId;
     }
 
     public long getDbGeneration() {
@@ -639,6 +654,22 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setOsId(int value) {
         osId = value;
+    }
+
+    public Guid getSmallIconId() {
+        return smallIconId;
+    }
+
+    public void setSmallIconId(Guid smallIconId) {
+        this.smallIconId = smallIconId;
+    }
+
+    public Guid getLargeIconId() {
+        return largeIconId;
+    }
+
+    public void setLargeIconId(Guid largeIconId) {
+        this.largeIconId = largeIconId;
     }
 
     public Date getCreationDate() {
@@ -909,6 +940,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
         result = prime * result + ((customEmulatedMachine == null) ? 0 : customEmulatedMachine.hashCode());
         result = prime * result + ((customCpuName== null) ? 0 : customCpuName.hashCode());
+        result = prime * result + ((smallIconId == null) ? 0 : smallIconId.hashCode());
+        result = prime * result + ((largeIconId == null) ? 0 : largeIconId.hashCode());
         return result;
     }
 
@@ -972,7 +1005,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(predefinedProperties, other.predefinedProperties)
                 && ObjectUtils.objectsEqual(userDefinedProperties, other.userDefinedProperties)
                 && ObjectUtils.objectsEqual(customEmulatedMachine, other.customEmulatedMachine)
-                && ObjectUtils.objectsEqual(customCpuName, other.customCpuName);
+                && ObjectUtils.objectsEqual(customCpuName, other.customCpuName)
+                && Objects.equals(smallIconId, other.smallIconId)
+                && Objects.equals(largeIconId, other.largeIconId);
     }
 
     public Guid getQuotaId() {

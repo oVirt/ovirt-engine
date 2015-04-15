@@ -11,8 +11,10 @@ import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -108,6 +110,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         if(!setAndValidateCpuProfile()) {
+            return false;
+        }
+
+        if (getParameters().getVmLargeIcon() != null && !validate(IconValidator.validate(
+                IconValidator.DimensionsType.LARGE_CUSTOM_ICON,
+                getParameters().getVmLargeIcon()))) {
             return false;
         }
 
@@ -226,7 +234,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
         updateOriginalTemplateNameOnDerivedVms();
-        UpdateVmTemplate();
+        List<Guid> oldIconIds = Collections.emptyList();
+        if (isTemplate()) {
+            oldIconIds = IconUtils.updateVmIcon(mOldTemplate, getVmTemplate(), getParameters().getVmLargeIcon());
+        }
+        updateVmTemplate();
+        IconUtils.removeUnusedIcons(oldIconIds);
         updateWatchdog(getParameters().getVmTemplateData().getId());
         updateRngDevice(getParameters().getVmTemplateData().getId());
         updateGraphicsDevice();
@@ -278,7 +291,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
     }
 
-    private void UpdateVmTemplate() {
+    private void updateVmTemplate() {
         VmHandler.updateVmInitToDB(getVmTemplate());
         DbFacade.getInstance().getVmTemplateDao().update(getVmTemplate());
         // also update the smartcard device
@@ -381,6 +394,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     private boolean isInstanceType() {
         return getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE;
+    }
+
+    private boolean isTemplate() {
+        return VmEntityType.TEMPLATE.equals(getVmTemplate().getTemplateType());
     }
 
     private VmPropertiesUtils getVmPropertiesUtils() {

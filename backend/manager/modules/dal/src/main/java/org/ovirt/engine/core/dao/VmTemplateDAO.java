@@ -195,4 +195,5 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
      */
     List<VmTemplate> getAllTemplatesWithDisksOnOtherStorageDomain(Guid storageDomainGuid);
 
+    List<VmTemplate> getAllWithoutIcon();
 }

@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -199,6 +201,12 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     private AddVmAndAttachToPoolParameters buildAddVmAndAttachToPoolParameters(Guid poolId, String vmName) {
         VmStatic currVm = new VmStatic(getParameters().getVmStaticData());
         currVm.setName(vmName);
+
+        if (getParameters().getVmLargeIcon() != null) {
+            final VmIconIdSizePair iconIds = IconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
+            currVm.setSmallIconId(iconIds.getSmall());
+            currVm.setLargeIconId(iconIds.getLarge());
+        }
 
         AddVmAndAttachToPoolParameters parameters = new AddVmAndAttachToPoolParameters(
                 currVm, poolId, vmName, diskInfoDestinationMap);

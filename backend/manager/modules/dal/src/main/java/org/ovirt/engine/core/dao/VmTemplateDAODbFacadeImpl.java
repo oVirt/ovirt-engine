@@ -165,6 +165,13 @@ public class VmTemplateDAODbFacadeImpl extends VmBaseDaoDbFacade<VmTemplate> imp
     }
 
     @Override
+    public List<VmTemplate> getAllWithoutIcon() {
+        return getCallsHandler().executeReadList("GetVmTemplatesWithoutIcon",
+                VMTemplateRowMapper.instance,
+                getCustomMapSqlParameterSource());
+    }
+
+    @Override
     protected MapSqlParameterSource createFullParametersMapper(VmTemplate template) {
         return createBaseParametersMapper(template)
                 .addValue("child_count", template.getChildCount())

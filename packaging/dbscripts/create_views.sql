@@ -591,6 +591,7 @@ LEFT
 OUTER JOIN disk_lun_map ON luns.lun_id = disk_lun_map.lun_id
 LEFT
 OUTER JOIN all_disks ON disk_lun_map.disk_id = all_disks.disk_id;
+
 CREATE
 OR REPLACE VIEW vm_templates_view AS
 SELECT
@@ -663,7 +664,9 @@ SELECT
     vm_templates.predefined_properties AS predefined_properties,
     vm_templates.userdefined_properties AS userdefined_properties,
     vm_templates.custom_emulated_machine AS custom_emulated_machine,
-    vm_templates.custom_cpu_name AS custom_cpu_name
+    vm_templates.custom_cpu_name AS custom_cpu_name,
+    vm_templates.small_icon_id AS small_icon_id,
+    vm_templates.large_icon_id AS large_icon_id
 FROM
     vm_static AS vm_templates
 LEFT
@@ -1093,7 +1096,9 @@ SELECT
     vm_dynamic.guest_agent_status AS guest_agent_status,
     vm_dynamic.guest_mem_buffered as guest_mem_buffered,
 	vm_dynamic.guest_mem_cached as guest_mem_cached,
-	vm_dynamic.guest_mem_free as guest_mem_free
+	vm_dynamic.guest_mem_free as guest_mem_free,
+    vm_static.small_icon_id as small_icon_id,
+    vm_static.large_icon_id as large_icon_id
 FROM
     vm_static
 INNER JOIN vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid
@@ -1249,7 +1254,9 @@ SELECT
     vms.guest_agent_status,
     vms.guest_mem_buffered as guest_mem_buffered,
     vms.guest_mem_cached as guest_mem_cached,
-    vms.guest_mem_free as guest_mem_free
+    vms.guest_mem_free as guest_mem_free,
+    vms.small_icon_id as small_icon_id,
+    vms.large_icon_id as large_icon_id
 FROM
     vms
 LEFT

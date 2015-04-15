@@ -35,6 +35,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     private boolean copyTemplatePermissions;
     private boolean applyChangesLater;
     private boolean updateNuma;
+    private String vmLargeIcon;
 
     /*
      * This parameter is needed at update to make sure that when we get a null watchdog from rest-api it is not meant to
@@ -266,6 +267,14 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
 
     public void setUpdateNuma(boolean updateNuma) {
         this.updateNuma = updateNuma;
+    }
+
+    public String getVmLargeIcon() {
+        return vmLargeIcon;
+    }
+
+    public void setVmLargeIcon(String vmLargeIcon) {
+        this.vmLargeIcon = vmLargeIcon;
     }
 
     @Override

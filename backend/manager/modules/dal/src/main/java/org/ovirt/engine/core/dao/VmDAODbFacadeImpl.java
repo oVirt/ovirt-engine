@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 /**
  * <code>VmDAODbFacadeImpl</code> provides a concrete implementation of {@link VmDAO}. The functionality is code
- * refactored out of {@link Dorg.ovirt.engine.core.dal.dbbroker.DbFacad}.
+ * refactored out of {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
 @Named
 @Singleton

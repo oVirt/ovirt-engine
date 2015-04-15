@@ -20,6 +20,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGenericDaoDbFacade<T, Guid> {
+
+    public static final String SMALL_ICON_ID_COLUMN = "small_icon_id";
+    public static final String LARGE_ICON_ID_COLUMN = "large_icon_id";
+
     public VmBaseDaoDbFacade(String entityStoredProcedureName) {
         super(entityStoredProcedureName);
     }
@@ -77,7 +81,9 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                 .addValue("predefined_properties", entity.getPredefinedProperties())
                 .addValue("userdefined_properties", entity.getUserDefinedProperties())
                 .addValue("custom_emulated_machine", entity.getCustomEmulatedMachine())
-                .addValue("custom_cpu_name", entity.getCustomCpuName());
+                .addValue("custom_cpu_name", entity.getCustomCpuName())
+                .addValue(SMALL_ICON_ID_COLUMN, entity.getSmallIconId())
+                .addValue(LARGE_ICON_ID_COLUMN, entity.getLargeIconId());
     }
 
     /**
@@ -143,6 +149,8 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                     userDefinedProperties));
             entity.setCustomEmulatedMachine(rs.getString("custom_emulated_machine"));
             entity.setCustomCpuName(rs.getString("custom_cpu_name"));
+            entity.setSmallIconId(getGuid(rs, SMALL_ICON_ID_COLUMN));
+            entity.setLargeIconId(getGuid(rs, LARGE_ICON_ID_COLUMN));
         }
     }
 }

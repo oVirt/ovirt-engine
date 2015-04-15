@@ -32,6 +32,8 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
     private static final Guid VDS_STATIC_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
+    private static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
+    private static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
     protected Logger log = LoggerFactory.getLogger(getClass());
     private static final String STATIC_VM_NAME = "rhel5-pool-50";
     private static final int NUM_OF_VM_STATIC_IN_FIXTURES = 3;
@@ -57,6 +59,8 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         newVmStatic.setOrigin(OriginType.OVIRT);
         newVmStatic.setQuotaId(QUOTA_ID);
         newVmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_1);
+        newVmStatic.setSmallIconId(SMALL_ICON_ID);
+        newVmStatic.setLargeIconId(LARGE_ICON_ID);
     }
 
     /**

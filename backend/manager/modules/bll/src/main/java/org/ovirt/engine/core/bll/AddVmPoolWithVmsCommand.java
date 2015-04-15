@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
@@ -46,6 +47,12 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
         if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getParameters().getVmStaticData().getVmtGuid())) {
             return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_CREATE_FROM_BLANK_TEMPLATE);
+        }
+
+        if (getParameters().getVmLargeIcon() != null && !validate(IconValidator.validate(
+                IconValidator.DimensionsType.LARGE_CUSTOM_ICON,
+                getParameters().getVmLargeIcon()))) {
+            return false;
         }
 
         return true;

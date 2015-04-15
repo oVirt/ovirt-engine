@@ -955,6 +955,7 @@ fi
 %{engine_data}/conf/osinfo-defaults.properties
 %{engine_data}/conf/sysprep/
 %{engine_data}/files/
+%{engine_data}/icons/
 %{engine_doc}/AuditLogMessages.properties
 %{engine_doc}/mibs/
 %{engine_ear}/META-INF

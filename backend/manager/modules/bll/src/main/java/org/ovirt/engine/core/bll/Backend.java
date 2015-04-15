@@ -266,13 +266,27 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         int quotaCacheIntervalInMinutes = Config.<Integer> getValue(ConfigValues.QuotaCacheIntervalInMinutes);
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(QuotaManager.getInstance(),
-                "updateQuotaCache",  new Class[] {}, new Object[] {},
+                "updateQuotaCache", new Class[]{}, new Object[]{},
                 1, quotaCacheIntervalInMinutes, TimeUnit.MINUTES);
         //initializes attestation
         initAttestation();
+        updatePredefinedIcons();
+        iconCleanup();
         EngineExtensionsManager.getInstance().engineInitialize();
         AuthenticationProfileRepository.getInstance();
         AcctUtils.reportReason(Acct.ReportReason.STARTUP, "Starting up engine");
+    }
+
+    /**
+     * It removes unused vm icons that remains in DB due to potential errors in commands.
+     */
+    private void iconCleanup() {
+        dbFacade.getVmIconDao().removeAllUnusedIcons();
+    }
+
+
+    private void updatePredefinedIcons() {
+        IconLoader.load();
     }
 
     private void initAttestation() {

@@ -165,6 +165,13 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
                         .addValue("cpu_profile_id", cpuProfileId));
     }
 
+    @Override
+    public List<VmStatic> getAllWithoutIcon() {
+        return getCallsHandler().executeReadList("GetVmStaticWithoutIcon",
+                getRowMapper(),
+                getCustomMapSqlParameterSource());
+    }
+
     /**
      * JDBC row mapper for VM static
      */

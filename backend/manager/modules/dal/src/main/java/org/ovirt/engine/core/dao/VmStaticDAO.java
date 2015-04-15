@@ -110,4 +110,6 @@ public interface VmStaticDAO extends GenericDao<VmStatic, Guid> {
      * @param cpuProfileId
      */
     void updateVmCpuProfileIdForClusterId(Guid clusterId, Guid cpuProfileId);
+
+    List<VmStatic> getAllWithoutIcon();
 }
