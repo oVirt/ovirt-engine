@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -87,6 +88,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 
 public class VmHandler {
 
@@ -661,6 +664,21 @@ public class VmHandler {
             }
         }
         return max;
+    }
+
+    /**
+     * Returns the vm's active snapshot, or null if one doesn't exist.
+     * Note that this method takes into consideration that the vm snapshots are already loaded from DB.
+     * @param vm The vm to get the active snapshot from.
+     * @return the vm's active snapshot, or null if one doesn't exist.
+     */
+    public static Snapshot getActiveSnapshot(VM vm) {
+        for (Snapshot snapshot : vm.getSnapshots()) {
+            if (snapshot.getType() == SnapshotType.ACTIVE) {
+                return snapshot;
+            }
+        }
+        return null;
     }
 
     /**

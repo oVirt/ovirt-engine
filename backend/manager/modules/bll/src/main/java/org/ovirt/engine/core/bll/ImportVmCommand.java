@@ -986,12 +986,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     @Override
     protected Snapshot getActiveSnapshot() {
-        for (Snapshot snapshot : getVm().getSnapshots()) {
-            if (snapshot.getType() == SnapshotType.ACTIVE)
-                return snapshot;
+        Snapshot activeSnapshot = VmHandler.getActiveSnapshot(getVm());
+        if (activeSnapshot == null) {
+            log.warn("VM '{}' doesn't have active snapshot in export domain", getVmId());
         }
-        log.warn("VM '{}' doesn't have active snapshot in export domain", getVmId());
-        return null;
+        return activeSnapshot;
     }
 
     /**
