@@ -839,6 +839,12 @@ select fn_db_rename_config_key('MaxVmNameLengthNonWindows', 'MaxVmNameLength', '
 select fn_db_rename_config_key('MaxVmNameLengthWindows', 'MaxVmNameLengthSysprep', 'general');
 
 ------------------------------------------------------------------------------------
+--                  SCALE
+------------------------------------------------------------------------------------
+-- Using host identifier as header when using ovirt-vdsmfake (drive by rhev-scale team)
+select fn_db_add_config_value('UseHostNameIdentifier', 'false', 'general');
+
+------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
 -- general, and should now be version-specific.
