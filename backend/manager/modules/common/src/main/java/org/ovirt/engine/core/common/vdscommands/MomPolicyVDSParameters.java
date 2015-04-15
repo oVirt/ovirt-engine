@@ -8,14 +8,19 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 public class MomPolicyVDSParameters extends VdsIdVDSCommandParametersBase {
     private boolean enableBalloon;
     private boolean enableKsm;
-
-    public MomPolicyVDSParameters(VDS vds, boolean enableBalloon, boolean enableKsm) {
-        super(vds.getId());
-        this.enableBalloon = enableBalloon;
-        this.enableKsm = enableKsm;
-    }
+    private boolean ksmMergeAcrossNumaNodes;
 
     public MomPolicyVDSParameters() {
+    }
+
+    public MomPolicyVDSParameters(VDS vds,
+            boolean enableBallooning,
+            boolean enableKsm,
+            boolean ksmMergeAcrossNumaNodes) {
+        super(vds.getId());
+        this.enableBalloon = enableBallooning;
+        this.enableKsm = enableKsm;
+        this.ksmMergeAcrossNumaNodes = ksmMergeAcrossNumaNodes;
     }
 
     public boolean isEnableBalloon() {
@@ -32,5 +37,13 @@ public class MomPolicyVDSParameters extends VdsIdVDSCommandParametersBase {
 
     public void setEnableKsm(boolean enableKsm) {
         this.enableKsm = enableKsm;
+    }
+
+    public boolean isKsmMergeAcrossNumaNodes() {
+        return ksmMergeAcrossNumaNodes;
+    }
+
+    public void setKsmMergeAcrossNumaNodes(boolean ksmMergeAcrossNumaNodes) {
+        this.ksmMergeAcrossNumaNodes = ksmMergeAcrossNumaNodes;
     }
 }

@@ -306,7 +306,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         if (cluster.getCompatibilityVersion().compareTo(Version.v3_3) >= 0) {
             try {
                 returnValue = runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
-                        new MomPolicyVDSParameters(vds, cluster.isEnableBallooning(), cluster.isEnableKsm())
+                                new MomPolicyVDSParameters(vds,
+                                        cluster.isEnableBallooning(),
+                                        cluster.isEnableKsm(),
+                                        cluster.isKsmMergeAcrossNumaNodes())
                                                 );
             } catch (VdcBLLException e) {
                 log.error("Could not update MoM policy on host '{}'", vds.getName());

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -46,11 +47,14 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.eventqueue.Event;
@@ -58,15 +62,20 @@ import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmPolicyVDSParams;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -90,7 +99,8 @@ public class VdsEventListener implements IVdsEventListener {
     private AvailableUpdatesFinder availableUpdatesFinder;
     @Inject
     AutoStartVmsRunner autoStartVmsRunner;
-
+    @Inject
+    private VdsDAO vdsDAO;
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
@@ -142,11 +152,12 @@ public class VdsEventListener implements IVdsEventListener {
 
     /**
      * The following method will clear a cache for problematic domains, which were reported by vds
+     *
      * @param vds
      */
     private void clearDomainCache(final VDS vds) {
         eventQueue.submitEventSync(new Event(vds.getStoragePoolId(),
-                    null, vds.getId(), EventType.VDSCLEARCACHE, ""),
+                null, vds.getId(), EventType.VDSCLEARCACHE, ""),
                 new Callable<EventResult>() {
                     @Override
                     public EventResult call() {
@@ -155,7 +166,6 @@ public class VdsEventListener implements IVdsEventListener {
                     }
                 });
     }
-
 
     @Override
     public EventResult storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
@@ -239,7 +249,7 @@ public class VdsEventListener implements IVdsEventListener {
             Map<String, String> customLogValues) {
         ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintenanceVds, false);
         SetNonOperationalVdsParameters tempVar =
-            new SetNonOperationalVdsParameters(vdsId, reason, customLogValues);
+                new SetNonOperationalVdsParameters(vdsId, reason, customLogValues);
         tempVar.setStorageDomainId(domainId);
         tempVar.setShouldBeLogged(logCommand);
         Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
@@ -268,7 +278,8 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     private void moveBricksToUnknown(final VDS vds) {
-        List<GlusterBrickEntity> brickEntities = DbFacade.getInstance().getGlusterBrickDao().getGlusterVolumeBricksByServerId(vds.getId());
+        List<GlusterBrickEntity> brickEntities =
+                DbFacade.getInstance().getGlusterBrickDao().getGlusterVolumeBricksByServerId(vds.getId());
         for (GlusterBrickEntity brick : brickEntities) {
             if (brick.getStatus() == GlusterStatus.UP) {
                 brick.setStatus(GlusterStatus.UNKNOWN);
@@ -310,11 +321,13 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public boolean connectHostToDomainsInActiveOrUnknownStatus(VDS vds) {
         ConnectHostToStoragePoolServersParameters params = new ConnectHostToStoragePoolServersParameters(vds, false);
-        return Backend.getInstance().runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params).getSucceeded();
+        return Backend.getInstance()
+                .runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params)
+                .getSucceeded();
     }
 
-
-    private List<VdcActionParametersBase> createMigrateVmToServerParametersList(List<VmStatic> vmsToMigrate, final VDS vds) {
+    private List<VdcActionParametersBase> createMigrateVmToServerParametersList(List<VmStatic> vmsToMigrate,
+            final VDS vds) {
         return LinqUtils.transformToList(vmsToMigrate,
                 new Function<VmStatic, VdcActionParametersBase>() {
                     @Override
@@ -374,13 +387,13 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
-                                        VdcBllErrors error) {
+            VdcBllErrors error) {
         storagePoolStatusChange(storagePoolId, status, auditLogType, error, null);
     }
 
     @Override
     public void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
-                                        VdcBllErrors error, TransactionScopeOption transactionScopeOption) {
+            VdcBllErrors error, TransactionScopeOption transactionScopeOption) {
         SetStoragePoolStatusParameters tempVar =
                 new SetStoragePoolStatusParameters(storagePoolId, status, auditLogType);
         tempVar.setError(error);
@@ -397,7 +410,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void runFailedAutoStartVMs(List<Guid> vmIds) {
-        for (Guid vmId: vmIds) {
+        for (Guid vmId : vmIds) {
             // Alert that the virtual machine failed:
             AuditLogableBase event = new AuditLogableBase();
             event.setVmId(vmId);
@@ -414,7 +427,10 @@ public class VdsEventListener implements IVdsEventListener {
     public void addExternallyManagedVms(List<VmStatic> externalVmList) {
         for (VmStatic currVm : externalVmList) {
             AddVmParameters params = new AddVmParameters(currVm);
-            VdcReturnValueBase returnValue = Backend.getInstance().runInternalAction(VdcActionType.AddVmFromScratch, params, ExecutionHandler.createInternalJobContext());
+            VdcReturnValueBase returnValue =
+                    Backend.getInstance().runInternalAction(VdcActionType.AddVmFromScratch,
+                            params,
+                            ExecutionHandler.createInternalJobContext());
             if (!returnValue.getSucceeded()) {
                 log.debug("Failed adding Externally managed VM '{}'", currVm.getName());
             }
@@ -485,7 +501,8 @@ public class VdsEventListener implements IVdsEventListener {
 
     public void onError(@Observes final VDSNetworkException vdsException) {
         ThreadPoolUtil.execute(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 resourceManagerProvider.get().GetVdsManager(
                         vdsException.getVdsError().getVdsId()).handleNetworkException(vdsException);
             }
@@ -509,5 +526,36 @@ public class VdsEventListener implements IVdsEventListener {
 
     public boolean isUpdateAvailable(VDS host) {
         return availableUpdatesFinder.isUpdateAvailable(host);
+    }
+
+    // TODO asynch event handler - design infra code to allow async events in segregated thread
+    public void onMomPolicyChange(@Observes @MomPolicyUpdate final VDSGroup cluster) {
+        if (cluster == null || cluster.getCompatibilityVersion().compareTo(Version.v3_4) < 0)
+            return;
+        List<VDS> activeHostsInCluster =
+                vdsDAO.getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
+        // collect all Active hosts into a callable list
+        List<Callable<Object>> callables = new LinkedList<>();
+        for (final VDS vds : activeHostsInCluster) {
+            callables.add(new Callable<Object>() {
+                @Override
+                public Object call() {
+                    try {
+                        resourceManagerProvider.get().runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
+                                new MomPolicyVDSParameters(vds,
+                                        cluster.isEnableBallooning(),
+                                        cluster.isEnableKsm(),
+                                        cluster.isKsmMergeAcrossNumaNodes())
+                                );
+                    } catch (VdcBLLException e) {
+                        log.error("Could not update MoM policy on host '{}'", vds.getName());
+                    }
+                    return null;
+                }
+            });
+        }
+        // run all VDSCommands concurrently with executor
+        if (callables.size() > 0)
+            ThreadPoolUtil.invokeAll(callables);
     }
 }

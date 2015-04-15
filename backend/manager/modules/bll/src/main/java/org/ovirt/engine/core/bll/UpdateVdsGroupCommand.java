@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -42,6 +43,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
+import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -62,6 +64,10 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
 
     @Inject
     private ClusterFeatureDao clusterFeatureDao;
+
+    @Inject
+    @MomPolicyUpdate
+    private Event<VDSGroup> momPolicyUpdatedEvent;
 
     private List<VDS> allForVdsGroup;
     private VDSGroup oldGroup;
@@ -130,6 +136,9 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             getParameters().getVdsGroup().setDetectEmulatedMachine(true);
         }
 
+        boolean isKsmPolicyChanged = (getVdsGroup().isKsmMergeAcrossNumaNodes() != getPrevVdsGroup().isKsmMergeAcrossNumaNodes()) ||
+                (getVdsGroup().isEnableKsm() != getPrevVdsGroup().isEnableKsm());
+
         getVdsGroupDAO().update(getParameters().getVdsGroup());
         addOrUpdateAddtionalClusterFeatures();
 
@@ -150,6 +159,9 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
 
         alertIfFencingDisabled();
 
+        if (isKsmPolicyChanged) {
+            momPolicyUpdatedEvent.fire(getVdsGroup());
+        }
         setSucceeded(true);
     }
 

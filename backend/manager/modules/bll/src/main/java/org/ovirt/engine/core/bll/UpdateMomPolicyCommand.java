@@ -27,7 +27,7 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
         try {
             succeeded = runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
                     new MomPolicyVDSParameters(getVds(), getVdsGroup().isEnableBallooning(),
-                                                getVdsGroup().isEnableKsm())
+                            getVdsGroup().isEnableKsm(), getVdsGroup().isKsmMergeAcrossNumaNodes())
                                               ).getSucceeded();
         } catch (VdcBLLException e) {
             log.error("Could not update MoM policy on host '{}': {}",

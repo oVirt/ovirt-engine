@@ -552,9 +552,9 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
                 && ObjectUtils.objectsEqual(autoConverge, other.autoConverge)
                 && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed)
                 && ObjectUtils.objectsEqual(glusterTunedProfile, other.glusterTunedProfile)
-                && ksmMergeAcrossNumaNodes == other.ksmMergeAcrossNumaNodes
                 && ObjectUtils.objectsEqual(maintenanceReasonRequired, other.maintenanceReasonRequired)
-                && ObjectUtils.objectsEqual(addtionalFeaturesSupported, other.addtionalFeaturesSupported);
+                && ObjectUtils.objectsEqual(addtionalFeaturesSupported, other.addtionalFeaturesSupported)
+                && ksmMergeAcrossNumaNodes == other.ksmMergeAcrossNumaNodes;
     }
 
 }
