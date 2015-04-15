@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,11 +20,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.linq.Predicate;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetManagementNetworkCandidatesQueryTest {
@@ -62,7 +62,8 @@ public class GetManagementNetworkCandidatesQueryTest {
 
         final List<Network> actual = underTest.getQueryReturnValue().getReturnValue();
 
-        assertThat(actual, hasSize(1));
+        assertNotNull(actual);
+        assertEquals(1, actual.size());
         assertTrue(actual.contains(mockNonExternalNetwork));
     }
 
