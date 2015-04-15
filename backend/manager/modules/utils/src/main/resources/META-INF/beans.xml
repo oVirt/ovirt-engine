@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:weld="http://jboss.org/schema/weld/beans"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://docs.jboss.org/cdi/beans_1_0.xsd
+                        http://jboss.org/schema/weld/beans http://jboss.org/schema/weld/beans_1_1.xsd">
+
+  <!--
+       We should replace this weld CDI 1.0 specific extensions with standard CDI 1.1+ extension [1] when we will move
+       to EAP & downstream.
+
+       [1] https://docs.jboss.org/weld/reference/2.1.2.Final/en-US/html_single/#d0e6114
+  -->
+  <weld:scan>
+    <!--
+         CDI containter should use producer fieal DbFacadeLocator.dataSource instead of direct class
+         instantiation.
+    -->
+    <weld:exclude name="org.ovirt.engine.core.utils.db.StandaloneDataSource" />
+  </weld:scan>
+</beans>
+
