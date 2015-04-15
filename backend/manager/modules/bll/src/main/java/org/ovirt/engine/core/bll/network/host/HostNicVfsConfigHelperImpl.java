@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -233,10 +234,12 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
             }
         });
 
-        for (HostDevice vf : vfs) {
-            vf.setVmId(vmId);
-        }
+        setVmIdOnVfsDevices(hostId, vmId, new HashSet<HostDevice>(vfs));
+    }
 
-        hostDeviceDao.updateAllInBatch(vfs);
+    private void setVmIdOnVfsDevices(Guid hostId, Guid vmId, Set<HostDevice> vfs) {
+        for (HostDevice vf : vfs) {
+            hostDeviceDao.setVmIdOnHostDevice(vf.getId(), vmId);
+        }
     }
 }

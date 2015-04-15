@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.dao;
 
-import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.HostDevice;
-import org.ovirt.engine.core.common.businessentities.HostDeviceId;
-import org.ovirt.engine.core.common.businessentities.HostDeviceView;
-import org.ovirt.engine.core.compat.Guid;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,11 +13,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.HostDevice;
+import org.ovirt.engine.core.common.businessentities.HostDeviceId;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
+import org.ovirt.engine.core.compat.Guid;
 
 public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, HostDevice, HostDeviceDao> {
 
@@ -91,15 +91,13 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
 
     @Test
     public void updateNetworkDevice() {
-        HostDeviceId netDeviceId =
-                new HostDeviceId(FixturesTool.NETWORK_HOST_DEVICE_HOST_ID, FixturesTool.NETWORK_HOST_DEVICE_NAME);
-        HostDevice before = dao.get(netDeviceId);
+        HostDevice before = getNetworkDevice();
 
         before.setNetworkInterfaceName(before.getNetworkInterfaceName() + "new");
 
         dao.update(before);
 
-        HostDevice after = dao.get(netDeviceId);
+        HostDevice after = dao.get(before.getId());
 
         assertNotNull(after);
         assertEquals(before, after);
@@ -176,5 +174,24 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
         Set<T> actualSet = new HashSet<>();
         actualSet.addAll(actual);
         assertEquals(expectedSet, actualSet);
+    }
+
+    @Test
+    public void setVmIdOnHostDeviceTest() {
+        HostDevice before = getNetworkDevice();
+        assertNull(before.getVmId());
+
+        Guid vmId = FixturesTool.VM_WITH_NO_ATTACHED_DISKS;
+        dao.setVmIdOnHostDevice(before.getId(), vmId);
+
+        before.setVmId(vmId);
+        HostDevice after = dao.get(before.getId());
+        assertEquals(before, after);
+    }
+
+    private HostDevice getNetworkDevice() {
+        HostDeviceId netDeviceId =
+                new HostDeviceId(FixturesTool.NETWORK_HOST_DEVICE_HOST_ID, FixturesTool.NETWORK_HOST_DEVICE_NAME);
+        return dao.get(netDeviceId);
     }
 }

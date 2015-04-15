@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceId;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 public interface HostDeviceDao extends GenericDao<HostDevice, HostDeviceId>, MassOperationsDao<HostDevice, HostDeviceId> {
 
@@ -24,4 +24,6 @@ public interface HostDeviceDao extends GenericDao<HostDevice, HostDeviceId>, Mas
     void markHostDevicesUsedByVmId(Guid vmId);
 
     void freeHostDevicesUsedByVmId(Guid vmId);
+
+    void setVmIdOnHostDevice(HostDeviceId deviceId, Guid vmId);
 }

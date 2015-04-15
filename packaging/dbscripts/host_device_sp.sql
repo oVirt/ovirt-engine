@@ -182,6 +182,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION SetVmIdOnHostDevice(v_host_id UUID, v_device_name VARCHAR(255), v_vm_id UUID)
+RETURNS VOID
+AS $procedure$
+BEGIN
+  UPDATE host_device
+  SET vm_id = v_vm_id
+  WHERE host_id = v_host_id AND device_name = v_device_name;
+END; $procedure$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION FreeHostDevicesUsedByVmId(v_vm_id UUID)
 RETURNS VOID
 AS $procedure$

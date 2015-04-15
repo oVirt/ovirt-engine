@@ -1,10 +1,8 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -12,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,6 +21,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
+import org.ovirt.engine.core.common.businessentities.HostDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -64,7 +62,10 @@ public class HostNicVfsConfigHelperImplTest {
     private HostNicVfsConfigDao hostNicVfsConfigDao;
 
     @Captor
-    private ArgumentCaptor<Collection<HostDevice>> hostDevicesCaptor;
+    private ArgumentCaptor<HostDeviceId> hostDeviceIdCaptor;
+
+    @Captor
+    private ArgumentCaptor<Guid> vmIdCaptor;
 
     private HostNicVfsConfigHelperImpl hostNicVfsConfigHelper;
 
@@ -390,11 +391,12 @@ public class HostNicVfsConfigHelperImplTest {
         vf.setVmId(vmId);
         hostNicVfsConfigHelper.setVmIdOnVfs(HOST_ID, vmId, Collections.singleton(vf.getDeviceName()));
 
-        verify(hostDeviceDao).updateAllInBatch(hostDevicesCaptor.capture());
+        verify(hostDeviceDao).setVmIdOnHostDevice(hostDeviceIdCaptor.capture(), vmIdCaptor.capture());
 
-        Collection<HostDevice> capturedDevices = hostDevicesCaptor.getValue();
+        HostDeviceId capturedDeviceId = hostDeviceIdCaptor.getValue();
+        Guid capturedVmId = vmIdCaptor.getValue();
 
-        assertEquals(1, capturedDevices.size());
-        assertThat(capturedDevices, hasItem(vf));
+        assertEquals(vf.getId(), capturedDeviceId);
+        assertEquals(vmId, capturedVmId);
     }
 }
