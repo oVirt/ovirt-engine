@@ -7,6 +7,9 @@
 # Load the prolog:
 . "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
+# logging configuration properties for tools
+OVIRT_LOGGING_PROPERTIES="${OVIRT_LOGGING_PROPERTIES:-${ENGINE_USR}/conf/tools-logging.properties}"
+
 usage () {
 	cat << __EOF__
 Usage: engine-config <action> [<args>]

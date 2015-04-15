@@ -7,6 +7,9 @@
 # Load the prolog:
 . "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
+# logging configuration properties for tools
+OVIRT_LOGGING_PROPERTIES="${OVIRT_LOGGING_PROPERTIES:-${ENGINE_USR}/conf/tools-logging.properties}"
+
 #
 # Add this option to the java command line to enable remote debugging in
 # all IP addresses and port 8787:
