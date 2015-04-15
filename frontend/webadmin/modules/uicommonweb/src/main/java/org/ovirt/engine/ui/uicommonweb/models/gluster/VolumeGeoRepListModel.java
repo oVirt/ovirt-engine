@@ -379,13 +379,14 @@ public class VolumeGeoRepListModel extends SearchableListModel{
         createModel.startProgress(null);
         final Guid masterVolumeId = getEntity().getId();
         final String remoteVolumeName = createModel.getSlaveVolumes().getSelectedItem().getName();
-        final String remoteHostName = createModel.getSlaveHosts().getSelectedItem();
+        final String remoteHostName = createModel.getSlaveHosts().getSelectedItem().getFirst();
         String remoteUserName = createModel.getSlaveUserName().getEntity();
         String remoteUserGroup = createModel.getSlaveUserGroupName().getEntity();
+        final Guid remoteHostId = createModel.getSlaveHosts().getSelectedItem().getSecond();
         Frontend.getInstance().runAction(VdcActionType.CreateGlusterVolumeGeoRepSession,
                 new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
                         remoteVolumeName,
-                        remoteHostName,
+                        remoteHostId ,
                         remoteUserName,
                         remoteUserGroup,
                         !createModel.getShowEligibleVolumes().getEntity()),
@@ -402,7 +403,7 @@ public class VolumeGeoRepListModel extends SearchableListModel{
                                 Frontend.getInstance().runAction(VdcActionType.StartGlusterVolumeGeoRep,
                                         new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
                                                 remoteVolumeName,
-                                                remoteHostName),
+                                                remoteHostId),
                                         new IFrontendActionAsyncCallback() {
                                             @Override
                                             public void executed(FrontendActionAsyncResult result) {

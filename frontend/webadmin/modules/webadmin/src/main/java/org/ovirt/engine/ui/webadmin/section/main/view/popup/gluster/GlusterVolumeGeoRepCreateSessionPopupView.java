@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -54,7 +56,7 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
     @UiField(provided = true)
     @Path(value = "slaveHosts.selectedItem")
     @WithElementId
-    ListModelTypeAheadListBoxEditor<String> slaveHostIpEditor;
+    ListModelTypeAheadListBoxEditor<Pair<String, Guid>> slaveHostIpEditor;
 
     @UiField(provided = true)
     @Path(value = "slaveVolumes.selectedItem")
@@ -130,16 +132,16 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
             }
         });
 
-        slaveHostIpEditor = new ListModelTypeAheadListBoxEditor<String>(new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<String>() {
+        slaveHostIpEditor = new ListModelTypeAheadListBoxEditor<Pair<String, Guid>>(new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Pair<String, Guid>>() {
 
             @Override
-            public String getReplacementStringNullSafe(String data) {
-                return data;
+            public String getReplacementStringNullSafe(Pair<String, Guid> data) {
+                return data.getFirst();
             }
 
             @Override
-            public String getDisplayStringNullSafe(String data) {
-                return templates.typeAheadNameDescription(data == null ? constants.empty() : data, constants.empty()).asString();
+            public String getDisplayStringNullSafe(Pair<String, Guid> data) {
+                return templates.typeAheadNameDescription(data == null ? constants.empty() : data.getFirst(), constants.empty()).asString();
             }
         });
 

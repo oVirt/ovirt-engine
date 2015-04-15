@@ -71,7 +71,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         }
         GlusterGeoRepSession geoRepSession =
                 getGeoRepDao().getGeoRepSession(getGlusterVolumeId(),
-                        getParameters().getSlaveHost(),
+                        slaveHost.getId(),
                         getParameters().getSlaveVolumeName());
         if (geoRepSession != null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_GEOREP_SESSION_ALREADY_CREATED);
@@ -89,7 +89,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
     }
 
     protected VDS getSlaveHost() {
-        return getVdsDAO().getByName(getParameters().getSlaveHost());
+        return getVdsDAO().get(getParameters().getSlaveHostId());
     }
 
     private boolean areAllRemoteServersUp() {
@@ -205,7 +205,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         GlusterVolumeGeoRepSessionVDSParameters params =
                 new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(),
                         getGlusterVolumeName(),
-                        getParameters().getSlaveHost(),
+                        slaveHost.getHostName(),
                         getParameters().getSlaveVolumeName(),
                         getParameters().getUserName(),
                         getParameters().isForce());

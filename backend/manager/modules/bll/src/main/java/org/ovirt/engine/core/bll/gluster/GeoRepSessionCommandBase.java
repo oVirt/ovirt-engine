@@ -59,7 +59,7 @@ public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSess
             } else {
                 geoRepSession =
                         getGlusterGeoRepDao().getGeoRepSession(getGlusterVolumeId(),
-                                getParameters().getSlaveHost(),
+                                getParameters().getSlaveHostId(),
                                 getParameters().getSlaveVolumeName());
             }
         }
