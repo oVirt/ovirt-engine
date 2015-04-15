@@ -14,7 +14,7 @@ extractkey() {
 	[ -z "${passout}" ] && extra_args="${extra_args} -nodes"
 
 	if [ "${key}" = - ]; then
-		key=/dev/fd/1
+		key=/proc/self/fd/1
 	else
 		touch "${key}"
 		chmod go-rwx "${key}" || die "Cannot set key permissions"
@@ -42,7 +42,7 @@ extractcert() {
 	common_backup "${cert}"
 
 	if [ "${cert}" = - ]; then
-		cert=/dev/fd/1
+		key=/proc/self/fd/1
 	else
 		touch "${cert}"
 		chmod a+r "${cert}" || die "Cannot set certificate permissions"
