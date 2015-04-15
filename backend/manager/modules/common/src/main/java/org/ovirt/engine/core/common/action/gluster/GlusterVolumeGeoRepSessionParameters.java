@@ -8,7 +8,7 @@ public class GlusterVolumeGeoRepSessionParameters extends GlusterVolumeParameter
 
     private Guid geoRepSessionId;
     private String slaveVolumeName;
-    private String slaveHost;
+    private Guid slaveHostId;
     private String userName;
     private String userGroup;
     private boolean force;
@@ -22,29 +22,29 @@ public class GlusterVolumeGeoRepSessionParameters extends GlusterVolumeParameter
         this.geoRepSessionId = geoRepSessionId;
     }
 
-    public GlusterVolumeGeoRepSessionParameters(Guid volumeId, String slaveVolumeName, String slaveHost) {
-        this(volumeId, slaveVolumeName, slaveHost, "root", null, false);
+    public GlusterVolumeGeoRepSessionParameters(Guid volumeId, String slaveVolumeName, Guid slaveHostId) {
+        this(volumeId, slaveVolumeName, slaveHostId, "root", null, false);
     }
 
     public GlusterVolumeGeoRepSessionParameters(Guid volumeId,
             String slaveVolumeName,
-            String slaveHost,
+            Guid slaveHostId,
             String userName,
             String userGroup,
             boolean force) {
         super(volumeId);
         this.slaveVolumeName = slaveVolumeName;
-        this.slaveHost = slaveHost;
+        this.slaveHostId = slaveHostId;
         this.userName = userName;
         this.userGroup = userGroup;
         this.force = force;
     }
 
     public GlusterVolumeGeoRepSessionParameters(Guid volumeId, String slaveVolumeName,
-            String slaveHost,
+            Guid slaveHostId,
             String userName,
             String userGroup) {
-        this(volumeId, slaveVolumeName, slaveHost, userName, userGroup, false);
+        this(volumeId, slaveVolumeName, slaveHostId, userName, userGroup, false);
     }
 
     public String getSlaveVolumeName() {
@@ -55,12 +55,12 @@ public class GlusterVolumeGeoRepSessionParameters extends GlusterVolumeParameter
         this.slaveVolumeName = slaveVolumeName;
     }
 
-    public String getSlaveHost() {
-        return slaveHost;
+    public Guid getSlaveHostId() {
+        return slaveHostId;
     }
 
-    public void setSlaveHost(String slaveHost) {
-        this.slaveHost = slaveHost;
+    public void setSlaveHostId(Guid slaveHostId) {
+        this.slaveHostId = slaveHostId;
     }
 
     public boolean isForce() {

@@ -71,14 +71,14 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
         command =
                 spy(new CreateGlusterVolumeGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
                         slaveVolumeName,
-                        slaveHost,
+                        Guid.newGuid(),
                         null,
                         null,
                         false)));
         prepareMocks();
         doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
         doReturn(volume).when(command).getSlaveVolume();
-        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(String.class), any(String.class));
+        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         doReturn(vds).when(command).getSlaveHost();
         assertTrue(command.canDoAction());
     }
@@ -100,7 +100,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
         command =
                 spy(new CreateGlusterVolumeGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
                         slaveVolumeName,
-                        slaveHost,
+                        Guid.newGuid(),
                         null,
                         null,
                         false)));
@@ -108,7 +108,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
         doReturn(null).when(command).getSlaveVolume();
         doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
         doReturn(vds).when(command).getSlaveHost();
-        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(String.class), any(String.class));
+        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         assertFalse(command.canDoAction());
     }
 
@@ -117,7 +117,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
         command =
                 spy(new CreateGlusterVolumeGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
                         slaveVolumeName,
-                        slaveHost,
+                        Guid.newGuid(),
                         null,
                         null,
                         false)));
@@ -126,7 +126,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
         doReturn(vds).when(command).getSlaveHost();
         doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
         doReturn(new GlusterGeoRepSession()).when(geoRepDao).getGeoRepSession(any(Guid.class),
-                any(String.class),
+                any(Guid.class),
                 any(String.class));
         assertFalse(command.canDoAction());
     }
@@ -136,7 +136,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
         command =
                 spy(new CreateGlusterVolumeGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(Guid.newGuid(),
                         slaveVolumeName,
-                        slaveHost,
+                        Guid.newGuid(),
                         null,
                         null,
                         false)));
@@ -145,7 +145,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
         doReturn(vds).when(command).getSlaveHost();
         doReturn(NOT_SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
         doReturn(volume).when(command).getSlaveVolume();
-        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(String.class), any(String.class));
+        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         assertFalse(command.canDoAction());
     }
 
@@ -154,7 +154,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
         command =
                 spy(new CreateGlusterVolumeGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
                         slaveVolumeName,
-                        slaveHost,
+                        Guid.newGuid(),
                         null,
                         null,
                         false)));
@@ -162,7 +162,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
         doReturn(vds).when(command).getUpServer();
         doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
         doReturn(volume).when(command).getSlaveVolume();
-        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(String.class), any(String.class));
+        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         doReturn(null).when(command).getSlaveHost();
         assertFalse(command.canDoAction());
     }

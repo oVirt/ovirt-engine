@@ -30,7 +30,7 @@ public interface GlusterGeoRepDao extends DAO {
 
     public GlusterGeoRepSession getGeoRepSession(String sessionKey);
 
-    public GlusterGeoRepSession getGeoRepSession(Guid masterVolumeId, String slaveHost, String slaveVolumeName);
+    public GlusterGeoRepSession getGeoRepSession(Guid masterVolumeId, Guid slaveHostId, String slaveVolumeName);
 
     public List<GlusterGeoRepSession> getGeoRepSessions(Guid masterVolumeId);
 
