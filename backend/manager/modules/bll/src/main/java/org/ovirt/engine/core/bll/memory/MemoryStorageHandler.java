@@ -1,12 +1,15 @@
 package org.ovirt.engine.core.bll.memory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainFilter;
+import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainSpaceRequirementsFilter;
+import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainStatusFilter;
+import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainTypeFilter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -38,27 +41,14 @@ public class MemoryStorageHandler {
     public StorageDomain findStorageDomainForMemory(Guid storagePoolId, List<DiskImage> disksList) {
         List<StorageDomain> domainsInPool =
                 DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(storagePoolId);
-        return findStorageDomainForMemory(domainsInPool, disksList);
-    }
-
-    protected StorageDomain findStorageDomainForMemory(List<StorageDomain> domainsInPool, List<DiskImage> disksList) {
-        for (StorageDomain currDomain : domainsInPool) {
-
-            updateDisksStorage(currDomain, disksList);
-            if (currDomain.getStorageDomainType().isDataDomain()
-                    && currDomain.getStatus() == StorageDomainStatus.Active
-                    && validateSpaceRequirements(currDomain, disksList)) {
-                return currDomain;
-            }
+        StorageDomain storageDomainForMemory = findStorageDomainForMemory(domainsInPool, disksList);
+        if (storageDomainForMemory != null) {
+            updateDisksStorage(storageDomainForMemory, disksList);
         }
-        return null;
+        return storageDomainForMemory;
     }
 
-    protected StorageDomainValidator getStorageDomainValidator(StorageDomain storageDomain) {
-        return new StorageDomainValidator(storageDomain);
-    }
-
-    protected void updateDisksStorage(StorageDomain storageDomain, List<DiskImage> disksList) {
+    public void updateDisksStorage(StorageDomain storageDomain, List<DiskImage> disksList) {
         for (DiskImage disk : disksList) {
             disk.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomain.getId())));
         }
@@ -69,14 +59,26 @@ public class MemoryStorageHandler {
         updateDiskVolumeType(storageDomain.getStorageType(), disksList.get(0));
     }
 
+    protected StorageDomain findStorageDomainForMemory(List<StorageDomain> domainsInPool, List<DiskImage> disksList) {
+        domainsInPool = filterStorageDomains(domainsInPool, disksList);
+        return domainsInPool.isEmpty() ? null : domainsInPool.get(0);
+    }
+
+    protected List<? extends StorageDomainFilter> getStorageDomainFilters() {
+        return Arrays.asList(new StorageDomainStatusFilter(),
+                new StorageDomainTypeFilter(),
+                new StorageDomainSpaceRequirementsFilter());
+    }
+
+    protected List<StorageDomain> filterStorageDomains(List<StorageDomain> domainsInPool, List<DiskImage> disksList) {
+        for (StorageDomainFilter storageDomainFilter : getStorageDomainFilters()) {
+            domainsInPool = storageDomainFilter.filterStorageDomains(domainsInPool, disksList);
+        }
+        return domainsInPool;
+    }
+
     private void updateDiskVolumeType(StorageType storageType, DiskImage disk) {
         VolumeType volumeType = storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
         disk.setVolumeType(volumeType);
-    }
-
-    private boolean validateSpaceRequirements(StorageDomain storageDomain, List<DiskImage> disksList) {
-        StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
-        return (storageDomainValidator.isDomainWithinThresholds().isValid() &&
-                storageDomainValidator.hasSpaceForClonedDisks(disksList).isValid());
     }
 }

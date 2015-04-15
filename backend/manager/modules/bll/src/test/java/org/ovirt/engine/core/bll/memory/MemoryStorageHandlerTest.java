@@ -2,13 +2,10 @@ package org.ovirt.engine.core.bll.memory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyCollectionOf;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.doNothing;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -17,17 +14,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainFilter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.linq.Predicate;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MemoryStorageHandlerTest {
@@ -35,16 +28,8 @@ public class MemoryStorageHandlerTest {
     private StorageDomain validStorageDomain;
     private StorageDomain invalidStorageDomain1;
     private StorageDomain invalidStorageDomain2;
+    private StorageDomain invalidStorageDomain3;
     private List<DiskImage> disksList;
-
-    @Mock
-    private StorageDomainValidator validStorageDomainValidator;
-
-    @Mock
-    private StorageDomainValidator invalidStorageDomainValidator1;
-
-    @Mock
-    private StorageDomainValidator invalidStorageDomainValidator2;
 
     @Spy
     private MemoryStorageHandler memoryStorageHandler = MemoryStorageHandler.getInstance();
@@ -52,37 +37,33 @@ public class MemoryStorageHandlerTest {
     @Before
     public void setUp() {
         disksList = new LinkedList<>();
-        doNothing().when(memoryStorageHandler).updateDisksStorage(any(StorageDomain.class), anyListOf(DiskImage.class));
-
-        validStorageDomain = initStorageDomain();
-        initStorageDomainValidator(validStorageDomainValidator, ValidationResult.VALID);
-        doReturn(validStorageDomainValidator)
-                .when(memoryStorageHandler).getStorageDomainValidator(validStorageDomain);
-
-        invalidStorageDomain1 = initStorageDomain();
-        initInvalidValidator(invalidStorageDomainValidator1);
-        doReturn(invalidStorageDomainValidator1)
-                .when(memoryStorageHandler).getStorageDomainValidator(invalidStorageDomain1);
-
-        invalidStorageDomain2 = initStorageDomain();
-        initInvalidValidator(invalidStorageDomainValidator2);
-        doReturn(invalidStorageDomainValidator2)
-                .when(memoryStorageHandler).getStorageDomainValidator(invalidStorageDomain2);
+        initStorageDomains();
+        initFilters();
     }
 
     @Test
-    public void verifyFirstDomainForMemory() {
-        verifyDomainForMemory(Arrays.asList(validStorageDomain, invalidStorageDomain1, invalidStorageDomain2));
+    public void filterAllDomainsExceptForTheFirstOne() {
+        filterAllStorageDomainsExceptOne(Arrays.asList(
+                validStorageDomain, invalidStorageDomain1, invalidStorageDomain2), validStorageDomain);
     }
 
     @Test
-    public void verifyMiddleDomainForMemory() {
-        verifyDomainForMemory(Arrays.asList(invalidStorageDomain1, validStorageDomain, invalidStorageDomain2));
+    public void filterAllDomainsExceptForTheSecondOne() {
+        filterAllStorageDomainsExceptOne(Arrays.asList(
+                invalidStorageDomain1, validStorageDomain, invalidStorageDomain2), validStorageDomain);
     }
 
     @Test
-    public void verifyLastDomainForMemory() {
-        verifyDomainForMemory(Arrays.asList(invalidStorageDomain1, invalidStorageDomain2, validStorageDomain));
+    public void filterAllDomainsExceptForTheThirdOne() {
+        filterAllStorageDomainsExceptOne(Arrays.asList(
+                invalidStorageDomain1, invalidStorageDomain2, validStorageDomain), validStorageDomain);
+    }
+
+    @Test
+    public void filterAllDomains() {
+        List<StorageDomain> filteredStorageDomains = memoryStorageHandler.filterStorageDomains(
+                Arrays.asList(invalidStorageDomain1, invalidStorageDomain2, invalidStorageDomain3), disksList);
+        assertTrue(filteredStorageDomains.isEmpty());
     }
 
     @Test
@@ -100,58 +81,32 @@ public class MemoryStorageHandlerTest {
         verifyNoDomainForMemory(Collections.singletonList(invalidStorageDomain1));
     }
 
-    @Test
-    public void verifyNoDomainForMemoryWhenDomainIsNotDataDomain() {
-        for (StorageDomainType storageDomainType : StorageDomainType.values()) {
-            if (!storageDomainType.isDataDomain()) {
-                validStorageDomain.setStorageDomainType(storageDomainType);
-                verifyNoDomainForMemory(Collections.singletonList(validStorageDomain));
-            }
-        }
+    private void initStorageDomains() {
+        validStorageDomain = initStorageDomain();
+        invalidStorageDomain1 = initStorageDomain();
+        invalidStorageDomain2 = initStorageDomain();
+        invalidStorageDomain3 = initStorageDomain();
     }
 
-    @Test
-    public void verifyNoDomainForMemoryWhenDomainIsNotActive() {
-        for (StorageDomainStatus storageDomainStatus : StorageDomainStatus.values()) {
-            if (storageDomainStatus != StorageDomainStatus.Active) {
-                validStorageDomain.setStatus(storageDomainStatus);
-                verifyNoDomainForMemory(Collections.singletonList(validStorageDomain));
-            }
-        }
-    }
-
-    @Test
-    public void verifyNoDomainForMemoryWhenDomainHasLowSpace() {
-        when(validStorageDomainValidator.isDomainWithinThresholds())
-                .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        verifyNoDomainForMemory(Collections.singletonList(validStorageDomain));
-    }
-
-    @Test
-    public void verifyNoDomainForMemoryWhenDomainHasNoSpaceForClonedDisks() {
-        when(validStorageDomainValidator.hasSpaceForClonedDisks(anyCollectionOf(DiskImage.class)))
-                .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        verifyNoDomainForMemory(Collections.singletonList(validStorageDomain));
+    private void initFilters() {
+        List<StorageDomainRejectingFilter> storageDomainFilters = Arrays.asList(
+                new StorageDomainRejectingFilter(invalidStorageDomain1),
+                new StorageDomainRejectingFilter(invalidStorageDomain2),
+                new StorageDomainRejectingFilter(invalidStorageDomain3));
+        doReturn(storageDomainFilters).when(memoryStorageHandler).getStorageDomainFilters();
     }
 
     private StorageDomain initStorageDomain() {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(Guid.newGuid());
-        storageDomain.setStorageDomainType(StorageDomainType.Data);
-        storageDomain.setStatus(StorageDomainStatus.Active);
         return storageDomain;
     }
 
-    private void initInvalidValidator(StorageDomainValidator invalidStorageDomainValidator) {
-        initStorageDomainValidator(invalidStorageDomainValidator,
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-    }
-
-    private void initStorageDomainValidator(StorageDomainValidator storageDomainValidator,
-            ValidationResult validationResult) {
-        when(storageDomainValidator.isDomainWithinThresholds()).thenReturn(validationResult);
-        when(storageDomainValidator.hasSpaceForClonedDisks(disksList))
-                .thenReturn(validationResult);
+    private void filterAllStorageDomainsExceptOne(List<StorageDomain> storageDomains,
+            StorageDomain expectedStorageDomain) {
+        List<StorageDomain> filteredStorageDomains = new ArrayList<>(
+                memoryStorageHandler.filterStorageDomains(storageDomains, disksList));
+        assertEquals(filteredStorageDomains, Arrays.asList(expectedStorageDomain));
     }
 
     private void verifyDomainForMemory(List<StorageDomain> storageDomains) {
@@ -162,5 +117,24 @@ public class MemoryStorageHandlerTest {
     private void verifyNoDomainForMemory(List<StorageDomain> storageDomains) {
         StorageDomain storageDomain = memoryStorageHandler.findStorageDomainForMemory(storageDomains, disksList);
         assertNull(storageDomain);
+    }
+
+    private static class StorageDomainRejectingFilter extends StorageDomainFilter {
+
+        private final StorageDomain sdToReject;
+
+        private StorageDomainRejectingFilter(StorageDomain storageDomainToReject) {
+            this.sdToReject = storageDomainToReject;
+        }
+
+        @Override
+        protected Predicate<StorageDomain> getPredicate(List<DiskImage> disksList) {
+            return new Predicate<StorageDomain>() {
+                @Override
+                public boolean eval(StorageDomain storageDomain) {
+                    return !sdToReject.equals(storageDomain);
+                }
+            };
+        }
     }
 }
