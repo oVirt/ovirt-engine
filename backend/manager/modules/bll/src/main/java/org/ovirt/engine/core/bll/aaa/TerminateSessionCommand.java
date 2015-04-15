@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.TerminateSessionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -60,7 +61,12 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
 
     @Override
     protected boolean isUserAuthorizedToRunAction() {
-        return isSystemSuperUserPredicate.eval(getCurrentUser().getId());
+        if (isSystemSuperUserPredicate.eval(getCurrentUser().getId())) {
+            return true;
+        } else {
+            addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            return false;
+        }
     }
 
     @Override
