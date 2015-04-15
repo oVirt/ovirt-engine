@@ -2,6 +2,8 @@ package org.ovirt.engine.core.vdsbroker.jsonrpc;
 
 import java.io.IOException;
 
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.internal.ClientPolicy;
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 public class JsonRpcUtils {
     private static Logger log = LoggerFactory.getLogger(JsonRpcUtils.class);
+    private static final String identifierLogMessage = "Setting up connection policy identifier for host {}";
 
     public static JsonRpcClient createStompClient(String hostname,
             int port,
@@ -40,6 +43,10 @@ public class JsonRpcUtils {
         connectionPolicy.setEventQueue(eventQueue);
 
         ClientPolicy clientPolicy = new ClientPolicy(clientTimeout, connectionRetry, heartbeat, IOException.class);
+        if (Config.<Boolean> getValue(ConfigValues.UseHostNameIdentifier)){
+            log.debug(identifierLogMessage, hostname);
+            connectionPolicy.setIdentifier(hostname);
+        }
         return createClient(hostname, port, connectionPolicy, clientPolicy, isSecure, ReactorType.STOMP, protocol, parallelism);
     }
 
@@ -56,6 +63,10 @@ public class JsonRpcUtils {
         ClientPolicy connectionPolicy =
                 new ClientPolicy(connectionTimeout, connectionRetry, heartbeat, IOException.class);
         ClientPolicy clientPolicy = new ClientPolicy(clientTimeout, connectionRetry, heartbeat, IOException.class);
+        if (Config.getValue(ConfigValues.UseHostNameIdentifier)){
+            log.debug(identifierLogMessage, hostname);
+            connectionPolicy.setIdentifier(hostname);
+        }
         return createClient(hostname, port, connectionPolicy, clientPolicy, isSecure, type, protocol, parallelism);
     }
 
