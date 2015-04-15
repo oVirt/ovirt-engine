@@ -563,6 +563,7 @@ actions:
           disk.interface: xs:string
           disk.format: xs:string
           disk.sparse: xs:boolean
+          disk.description: xs:string
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
@@ -584,6 +585,7 @@ actions:
           disk.name: xs:string
           disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
+          disk.description: xs:string
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
@@ -598,6 +600,7 @@ actions:
         optionalArguments:
           disk.alias: xs:string
           disk.sparse: xs:boolean
+          disk.description: xs:string
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
@@ -891,6 +894,7 @@ actions:
           disk.name: xs:string
           disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
+          disk.description: xs:string
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
@@ -905,6 +909,7 @@ actions:
         optionalArguments:
           disk.alias: xs:string
           disk.sparse: xs:boolean
+          disk.description: xs:string
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
@@ -3225,6 +3230,7 @@ actions:
           disk.name: xs:string
           disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
+          disk.description: xs:string
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
@@ -3238,6 +3244,7 @@ actions:
         optionalArguments:
           disk.alias: xs:string
           disk.sparse: xs:boolean
+          disk.description: xs:string
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
@@ -3295,6 +3302,7 @@ actions:
           disk.name: xs:string
           disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
+          disk.description: xs:string
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
@@ -3308,6 +3316,7 @@ actions:
         optionalArguments:
           disk.alias: xs:string
           disk.sparse: xs:boolean
+          disk.description: xs:string
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
