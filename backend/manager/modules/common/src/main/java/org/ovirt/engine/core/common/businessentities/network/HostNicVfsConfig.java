@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HostNicVfsConfig extends IVdcQueryable implements Serializable, BusinessEntity<Guid> {
@@ -120,23 +121,15 @@ public class HostNicVfsConfig extends IVdcQueryable implements Serializable, Bus
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(" {id=")
-                .append(getId())
-                .append(" {nicId=")
-                .append(getNicId())
-                .append(" {allNetworksAllowed=")
-                .append(isAllNetworksAllowed())
-                .append(" {maxNumOfVfs=")
-                .append(getMaxNumOfVfs())
-                .append(" {numOfVfs=")
-                .append(getNumOfVfs())
-                .append(" {networks=")
-                .append(getNetworks())
-                .append(" {networkLabels=")
-                .append(getNetworkLabels())
-                .append("}");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("id", getId())
+                .append("nicId", getNicId())
+                .append("allNetworksAllowed", isAllNetworksAllowed())
+                .append("maxNumOfVfs", getMaxNumOfVfs())
+                .append("numOfVfs", getNumOfVfs())
+                .append("networks", getNetworks())
+                .append("networkLabels", getNetworkLabels())
+                .build();
     }
 
 }

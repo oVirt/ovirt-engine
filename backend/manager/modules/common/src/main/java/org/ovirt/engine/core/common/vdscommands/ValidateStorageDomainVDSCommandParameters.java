@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ValidateStorageDomainVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -23,7 +24,8 @@ public class ValidateStorageDomainVDSCommandParameters extends VdsIdVDSCommandPa
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, storageDomainId=%s", super.toString(), getStorageDomainId());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("storageDomainId", getStorageDomainId());
     }
 }

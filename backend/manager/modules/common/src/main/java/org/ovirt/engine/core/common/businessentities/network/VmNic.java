@@ -5,6 +5,7 @@ import javax.validation.constraints.Pattern;
 
 import org.ovirt.engine.core.common.utils.MacAddressValidationPatterns;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ValidNameWithDot;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -108,26 +109,16 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getName())
-                .append(" {id=")
-                .append(getId())
-                .append(", vnicProfileId=")
-                .append(getVnicProfileId())
-                .append(", speed=")
-                .append(getSpeed())
-                .append(", type=")
-                .append(getType())
-                .append(", macAddress=")
-                .append(getMacAddress())
-                .append(", linked=")
-                .append(isLinked())
-                .append(", vmId=")
-                .append(getVmId())
-                .append(", vmTemplateId=")
-                .append(getVmTemplateId())
-                .append("}");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("id", getId())
+                .append("vnicProfileId", getVnicProfileId())
+                .append("speed", getSpeed())
+                .append("type", getType())
+                .append("macAddress", getMacAddress())
+                .append("linked", isLinked())
+                .append("vmId", getVmId())
+                .append("vmTemplateId", getVmTemplateId())
+                .build();
     }
 
     @Override

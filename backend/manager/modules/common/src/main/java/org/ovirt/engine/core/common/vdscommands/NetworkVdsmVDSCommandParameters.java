@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import java.util.Arrays;
-
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -207,26 +206,23 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, networkName=%s, oldNetworkName=%s, hostAddr=%s, checkConnectivity=%s, "
-                + "connectionTimeout=%s, vlanId=%s, bondName=%s, nics=%s, inetAddr=%s, networkMask=%s, gateway=%s, "
-                + "stp=%s, bondingOptions=%s, bootProtocol=%s, vmNetwork=%s, network=%s",
-                super.toString(),
-                getNetworkName(),
-                getOldNetworkName(),
-                getHostAddr(),
-                getCheckConnectivity(),
-                getConnectionTimeout(),
-                getVlanId(),
-                getBondName(),
-                Arrays.toString(getNics()),
-                getInetAddr(),
-                getNetworkMask(),
-                getGateway(),
-                getStp(),
-                getBondingOptions(),
-                getBootProtocol(),
-                isVmNetwork(),
-                getNetwork());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("networkName", getNetworkName())
+                .append("oldNetworkName", getOldNetworkName())
+                .append("hostAddr", getHostAddr())
+                .append("checkConnectivity", getCheckConnectivity())
+                .append("connectionTimeout", getConnectionTimeout())
+                .append("vlanId", getVlanId())
+                .append("bondName", getBondName())
+                .append("nics", getNics())
+                .append("inetAddr", getInetAddr())
+                .append("networkMask", getNetworkMask())
+                .append("gateway", getGateway())
+                .append("stp", getStp())
+                .append("bondingOptions", getBondingOptions())
+                .append("bootProtocol", getBootProtocol())
+                .append("vmNetwork", isVmNetwork())
+                .append("network", getNetwork());
     }
 }

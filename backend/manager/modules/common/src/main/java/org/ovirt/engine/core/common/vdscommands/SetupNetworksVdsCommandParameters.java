@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParametersBase {
     private VDS vds;
@@ -123,16 +123,15 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, force=%s, checkConnectivity=%s, conectivityTimeout=%s,%n\tnetworks=%s,%n\tbonds=%s,%n\tinterfaces=%s,%n\tremovedNetworks=%s,%n\tremovedBonds=%s",
-                super.toString(),
-                isForce(),
-                isCheckConnectivity(),
-                getConectivityTimeout(),
-                Entities.collectionToString(getNetworks(), "\t\t"),
-                Entities.collectionToString(getBonds(), "\t\t"),
-                Entities.collectionToString(getInterfaces(), "\t\t"),
-                getRemovedNetworks(),
-                getRemovedBonds());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("force", isForce())
+                .append("checkConnectivity", isCheckConnectivity())
+                .append("connectivityTimeout", getConectivityTimeout())
+                .append("networks", getNetworks())
+                .append("bonds", getBonds())
+                .append("interfaces", getInterfaces())
+                .append("removedNetworks", getRemovedNetworks())
+                .append("removedBonds", getRemovedBonds());
     }
 }

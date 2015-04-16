@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Commented;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.MTU;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
@@ -219,40 +220,23 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getName())
-                .append(" {id=")
-                .append(getId())
-                .append(", description=")
-                .append(getDescription())
-                .append(", comment=")
-                .append(getComment())
-                .append(", subnet=")
-                .append(getSubnet())
-                .append(", gateway=")
-                .append(getGateway())
-                .append(", type=")
-                .append(getType())
-                .append(", vlanId=")
-                .append(getVlanId())
-                .append(", stp=")
-                .append(getStp())
-                .append(", dataCenterId=")
-                .append(getDataCenterId())
-                .append(", mtu=")
-                .append(getMtu())
-                .append(", vmNetwork=")
-                .append(isVmNetwork())
-                .append(", cluster=")
-                .append(getCluster())
-                .append(", providedBy=")
-                .append(getProvidedBy())
-                .append(", label=")
-                .append(getLabel())
-                .append(", qosId=")
-                .append(getQosId())
-                .append("}");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("id", getId())
+                .append("description", getDescription())
+                .append("comment", getComment())
+                .append("subnet", getSubnet())
+                .append("gateway", getGateway())
+                .append("type", getType())
+                .append("vlanId", getVlanId())
+                .append("stp", getStp())
+                .append("dataCenterId", getDataCenterId())
+                .append("mtu", getMtu())
+                .append("vmNetwork", isVmNetwork())
+                .append("cluster", getCluster())
+                .append("providedBy", getProvidedBy())
+                .append("label", getLabel())
+                .append("qosId", getQosId())
+                .build();
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ProviderNetwork implements Serializable {
@@ -69,12 +70,9 @@ public class ProviderNetwork implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ProviderNetwork [providerId=")
-                .append(getProviderId())
-                .append(", externalId=")
-                .append(getExternalId())
-                .append("]");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("providerId", getProviderId())
+                .append("externalId", getExternalId())
+                .build();
     }
 }

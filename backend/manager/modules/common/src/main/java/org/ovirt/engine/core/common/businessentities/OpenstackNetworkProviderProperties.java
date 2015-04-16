@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+
 public class OpenstackNetworkProviderProperties extends TenantProviderProperties {
 
     private static final long serialVersionUID = -7470940167999871534L;
@@ -79,14 +81,9 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
     }
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("OpenstackNetworkProviderProperties [pluginType=")
-                .append(getPluginType())
-                .append(", tenantName=")
-                .append(getTenantName())
-                .append("]");
-        return builder.toString();
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("pluginType", getPluginType());
     }
 
     public static class MessagingConfiguration implements Serializable {

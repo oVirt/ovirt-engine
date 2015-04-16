@@ -1,18 +1,15 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.Mask;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
@@ -430,46 +427,26 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         setCustomProperties(sourceNic.getCustomProperties());
     }
 
-    protected Map<String, Object> constructStringAttributes() {
-        Map<String, Object> attributes = new LinkedHashMap<>();
-        attributes.put("id", getId());
-        attributes.put("vdsId", getVdsId());
-        attributes.put("networkName", getNetworkName());
-        attributes.put("bootProtocol", getBootProtocol());
-        attributes.put("address", getAddress());
-        attributes.put("subnet", getSubnet());
-        attributes.put("gateway", getGateway());
-        attributes.put("mtu", getMtu());
-        attributes.put("bridged", isBridged());
-        attributes.put("type", getType());
-        attributes.put("networkImplementationDetails", getNetworkImplementationDetails());
-        attributes.put("qos", getQos());
-        attributes.put("qosOverridden", isQosOverridden());
-        attributes.put("customProperties", getCustomProperties());
-        return attributes;
-    }
-
-    private static void appendEntry(StringBuilder builder, Entry<String, Object> entry) {
-        builder.append(entry.getKey()).append('=').append(entry.getValue());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return tsb.append("id", getId())
+                .append("vdsId", getVdsId())
+                .append("networkName", getNetworkName())
+                .append("bootProtocol", getBootProtocol())
+                .append("address", getAddress())
+                .append("subnet", getSubnet())
+                .append("gateway", getGateway())
+                .append("mtu", getMtu())
+                .append("bridged", isBridged())
+                .append("type", getType())
+                .append("networkImplementationDetails", getNetworkImplementationDetails())
+                .append("qos", getQos())
+                .append("qosOverridden", isQosOverridden())
+                .append("customProperties", getCustomProperties());
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getName()).append(" {");
-
-        Map<String, Object> attributes = constructStringAttributes();
-        if (attributes != null && !attributes.isEmpty()) {
-            Iterator<Entry<String, Object>> i = attributes.entrySet().iterator();
-            appendEntry(builder, i.next());
-            while (i.hasNext()) {
-                builder.append(", ");
-                appendEntry(builder, i.next());
-            }
-        }
-
-        builder.append("}");
-        return builder.toString();
+        return appendAttributes(ToStringBuilder.forInstance(this)).build();
     }
 
     @Override
@@ -641,13 +618,10 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("{inSync=")
-                    .append(isInSync())
-                    .append(", managed=")
-                    .append(isManaged())
-                    .append("}");
-            return builder.toString();
+            return ToStringBuilder.forInstance(this)
+                    .append("inSync", isInSync())
+                    .append("managed", isManaged())
+                    .build();
         }
     }
 }

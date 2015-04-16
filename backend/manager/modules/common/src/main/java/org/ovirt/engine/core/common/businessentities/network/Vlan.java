@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import java.util.Map;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 
 public class Vlan extends VdsNetworkInterface {
@@ -17,10 +17,9 @@ public class Vlan extends VdsNetworkInterface {
     }
 
     @Override
-    protected Map<String, Object> constructStringAttributes() {
-        Map<String, Object> attributes = super.constructStringAttributes();
-        attributes.put("baseInterface", getBaseInterface());
-        attributes.put("vlanId", getVlanId());
-        return attributes;
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("baseInterface", getBaseInterface())
+                .append("vlanId", getVlanId());
     }
 }

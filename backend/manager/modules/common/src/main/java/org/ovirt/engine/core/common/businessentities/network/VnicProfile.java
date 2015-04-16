@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
@@ -161,23 +162,14 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getName())
-                .append(" {id=")
-                .append(getId())
-                .append(", networkId=")
-                .append(getNetworkId())
-                .append(", networkQosId=")
-                .append(getNetworkQosId())
-                .append(", portMirroring=")
-                .append(isPortMirroring())
-                .append(", passthrough=")
-                .append(isPassthrough())
-                .append(", customProperties=")
-                .append(getCustomProperties())
-                .append(", description=")
-                .append(getDescription())
-                .append("}");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("id", getId())
+                .append("networkId", getNetworkId())
+                .append("networkQosId", getNetworkQosId())
+                .append("portMirroring", isPortMirroring())
+                .append("passthrough", isPassthrough())
+                .append("customProperties", getCustomProperties())
+                .append("description", getDescription())
+                .build();
     }
 }

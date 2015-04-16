@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.Cidr;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
@@ -96,23 +97,15 @@ public class ExternalSubnet extends IVdcQueryable implements Serializable, Namea
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Subnet [id=")
-                .append(getId())
-                .append(", name=")
-                .append(getName())
-                .append(", cidr=")
-                .append(getCidr())
-                .append(", ipVersion=")
-                .append(getIpVersion())
-                .append(", externalNetwork=")
-                .append(getExternalNetwork())
-                .append(", gateway=")
-                .append(getGateway())
-                .append(", dnsServers=")
-                .append(getDnsServers())
-                .append("]");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("id", getId())
+                .append("name", getName())
+                .append("cidr", getCidr())
+                .append("ipVersion", getIpVersion())
+                .append("externalNetwork", getExternalNetwork())
+                .append("gateway", getGateway())
+                .append("dnsServers", getDnsServers())
+                .build();
     }
 
     @Override

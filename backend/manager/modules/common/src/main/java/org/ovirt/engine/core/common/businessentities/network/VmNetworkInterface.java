@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 /**
  * <code>VmNetworkInterface</code> defines a type of {@link VmNic} for instances of {@link VM}.
@@ -96,38 +97,22 @@ public class VmNetworkInterface extends VmNic {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getName())
-                .append(" {id=")
-                .append(getId())
-                .append(", networkName=")
-                .append(getNetworkName())
-                .append(", vnicProfileName=")
-                .append(getVnicProfileName())
-                .append(", vnicProfileId=")
-                .append(getVnicProfileId())
-                .append(", speed=")
-                .append(getSpeed())
-                .append(", type=")
-                .append(getType())
-                .append(", macAddress=")
-                .append(getMacAddress())
-                .append(", active=")
-                .append(isPlugged())
-                .append(", linked=")
-                .append(isLinked())
-                .append(", portMirroring=")
-                .append(isPortMirroring())
-                .append(", vmId=")
-                .append(getVmId())
-                .append(", vmName=")
-                .append(getVmName())
-                .append(", vmTemplateId=")
-                .append(getVmTemplateId())
-                .append(", QoSName=")
-                .append(getQosName())
-                .append("}");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("id", getId())
+                .append("networkName", getNetworkName())
+                .append("vnicProfileName", getVnicProfileName())
+                .append("vnicProfileId", getVnicProfileId())
+                .append("speed", getSpeed())
+                .append("type", getType())
+                .append("macAddress", getMacAddress())
+                .append("active", isPlugged())
+                .append("linked", isLinked())
+                .append("portMirroring", isPortMirroring())
+                .append("vmId", getVmId())
+                .append("vmName", getVmName())
+                .append("vmTemplateId", getVmTemplateId())
+                .append("QoSName", getQosName())
+                .build();
     }
 
     @Override

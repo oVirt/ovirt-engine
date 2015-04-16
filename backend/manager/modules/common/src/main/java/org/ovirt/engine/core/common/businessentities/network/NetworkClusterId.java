@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkClusterId implements Serializable {
@@ -76,12 +77,9 @@ public class NetworkClusterId implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("{clusterId=")
-                .append(getClusterId())
-                .append(", networkId=")
-                .append(getNetworkId())
-                .append("}");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("clusterId", getClusterId())
+                .append("networkId", getNetworkId())
+                .build();
     }
 }

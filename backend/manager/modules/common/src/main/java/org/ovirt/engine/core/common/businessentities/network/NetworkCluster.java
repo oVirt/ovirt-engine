@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.network;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithStatus<NetworkClusterId, NetworkStatus> {
@@ -130,23 +131,15 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NetworkCluster {id=")
-                .append(getId())
-                .append(", status=")
-                .append(getStatus())
-                .append(", display=")
-                .append(isDisplay())
-                .append(", required=")
-                .append(isRequired())
-                .append(", migration=")
-                .append(isMigration())
-                .append(", management=")
-                .append(isManagement())
-                .append(", gluster=")
-                .append(isGluster())
-                .append("}");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("id", getId())
+                .append("status", getStatus())
+                .append("display", isDisplay())
+                .append("required", isRequired())
+                .append("migration", isMigration())
+                .append("management", isManagement())
+                .append("gluster", isGluster())
+                .build();
     }
 
     @Override

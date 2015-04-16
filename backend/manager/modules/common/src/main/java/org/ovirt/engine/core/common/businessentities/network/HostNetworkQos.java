@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
 
 public class HostNetworkQos extends QosBase {
@@ -52,15 +53,11 @@ public class HostNetworkQos extends QosBase {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[outAverageLinkshare=")
-                .append(renderQosParameter(outAverageLinkshare))
-                .append(", outAverageUpperlimit=")
-                .append(renderQosParameter(outAverageUpperlimit))
-                .append(", outAverageRealtime=")
-                .append(renderQosParameter(outAverageRealtime))
-                .append("]");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("outAverageLinkshare", renderQosParameter(outAverageLinkshare))
+                .append("outAverageUpperlimit", renderQosParameter(outAverageUpperlimit))
+                .append("outAverageRealtime", renderQosParameter(outAverageRealtime))
+                .build();
     }
 
     @Override

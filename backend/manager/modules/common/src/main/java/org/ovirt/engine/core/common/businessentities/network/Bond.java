@@ -1,10 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import java.util.Map;
-
 import javax.validation.constraints.Pattern;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class Bond extends VdsNetworkInterface {
 
@@ -33,11 +32,10 @@ public class Bond extends VdsNetworkInterface {
     }
 
     @Override
-    protected Map<String, Object> constructStringAttributes() {
-        Map<String, Object> attributes = super.constructStringAttributes();
-        attributes.put("macAddress", getMacAddress());
-        attributes.put("bondOptions", getBondOptions());
-        attributes.put("labels", getLabels());
-        return attributes;
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("macAddress", getMacAddress())
+                .append("bondOptions", getBondOptions())
+                .append("labels", getLabels());
     }
 }

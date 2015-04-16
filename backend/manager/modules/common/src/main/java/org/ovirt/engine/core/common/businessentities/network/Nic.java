@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import java.util.Map;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 
 public class Nic extends VdsNetworkInterface {
@@ -17,12 +17,11 @@ public class Nic extends VdsNetworkInterface {
     }
 
     @Override
-    protected Map<String, Object> constructStringAttributes() {
-        Map<String, Object> attributes = super.constructStringAttributes();
-        attributes.put("macAddress", getMacAddress());
-        attributes.put("bondName", getBondName());
-        attributes.put("speed", getSpeed());
-        attributes.put("labels", getLabels());
-        return attributes;
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("macAddress", getMacAddress())
+                .append("bondName", getBondName())
+                .append("speed", getSpeed())
+                .append("labels", getLabels());
     }
 }
