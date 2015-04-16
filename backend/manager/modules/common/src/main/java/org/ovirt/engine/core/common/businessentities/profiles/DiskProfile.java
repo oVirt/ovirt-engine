@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -52,8 +53,8 @@ public class DiskProfile extends ProfileBase implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return super.toString() + ", storage domain id=" + getStorageDomainId() + "}";
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("storageDomainId", getStorageDomainId());
     }
-
 }

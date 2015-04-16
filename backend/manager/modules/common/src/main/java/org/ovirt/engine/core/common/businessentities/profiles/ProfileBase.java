@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
@@ -130,19 +131,16 @@ public abstract class ProfileBase extends IVdcQueryable implements BusinessEntit
         return true;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getName())
-                .append(" {id=")
-                .append(getId())
-                .append(", description=")
-                .append(getDescription())
-                .append(", profile type=")
-                .append(getProfileType().name())
-                .append(", qosId=")
-                .append(getQosId());
-        return builder.toString();
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return tsb.append("id", getId())
+                .append("description", getDescription())
+                .append("profileType", getProfileType())
+                .append("qosId", getQosId());
+
     }
 
+    @Override
+    public String toString() {
+        return appendAttributes(ToStringBuilder.forInstance(this)).build();
+    }
 }
