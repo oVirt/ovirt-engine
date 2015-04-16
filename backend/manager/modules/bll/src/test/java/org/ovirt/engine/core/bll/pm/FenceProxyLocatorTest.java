@@ -60,7 +60,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
 
     @Before
     public void setup() {
-        doReturn(vdsDao).when(dbFacade).getVdsDao();
+        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
 
         mockVdsFenceOptions(true);
         mockFencedHost();
@@ -291,16 +291,15 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
 
     private void mockFencedHost() {
         fencedHost = mock(VDS.class);
-        doReturn(FENCECD_HOST_ID).when(fencedHost).getId();
-        doReturn(FENCED_HOST_CLUSTER_ID).when(fencedHost).getVdsGroupId();
-        doReturn(FENCED_HOST_DATACENTER_ID).when(fencedHost).getStoragePoolId();
-        doReturn("fencedHost").when(fencedHost).getHostName();
-        doReturn(Arrays.asList(createFenceAgent(FENCECD_HOST_ID, "ipmilan")))
-                .when(fencedHost).getFenceAgents();
+        when(fencedHost.getId()).thenReturn(FENCECD_HOST_ID);
+        when(fencedHost.getVdsGroupId()).thenReturn(FENCED_HOST_CLUSTER_ID);
+        when(fencedHost.getStoragePoolId()).thenReturn(FENCED_HOST_DATACENTER_ID);
+        when(fencedHost.getHostName()).thenReturn("fencedHost");
+        when(fencedHost.getFenceAgents()).thenReturn(Arrays.asList(createFenceAgent(FENCECD_HOST_ID, "ipmilan")));
     }
 
     private void mockProxySourcesForFencedHost(List<FenceProxySourceType> fenceProxySources) {
-        doReturn(fenceProxySources).when(fencedHost).getFenceProxySources();
+        when(fencedHost.getFenceProxySources()).thenReturn(fenceProxySources);
     }
 
     private FenceAgent createFenceAgent(Guid hostId, String type) {
@@ -317,7 +316,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
 
     private FenceProxyLocator setupLocator(FencingPolicy fencingPolicy) {
         FenceProxyLocator fenceProxyLocator = spy(new FenceProxyLocator(fencedHost, fencingPolicy));
-        doReturn(dbFacade).when(fenceProxyLocator).getDbFacade();
+        when(fenceProxyLocator.getDbFacade()).thenReturn(dbFacade);
         doReturn(vdsFenceOptions).when(fenceProxyLocator).createVdsFenceOptions(any(String.class));
         doReturn(0L).when(fenceProxyLocator).getDelayBetweenRetries();
         doReturn(1).when(fenceProxyLocator).getFindFenceProxyRetries();
@@ -329,7 +328,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     }
 
     private void setMinSupportedVersionForFencingPolicy(FenceProxyLocator locator, Version version) {
-        doReturn(version).when(locator).getMinSupportedVersionForFencingPolicy();
+        when(locator.getMinSupportedVersionForFencingPolicy()).thenReturn(version);
     }
 
     private VDS createHost() {
@@ -371,7 +370,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
 
     private void mockVdsFenceOptions(boolean agentsCompatibleWithProxy) {
         vdsFenceOptions = mock(VdsFenceOptions.class);
-        doReturn(agentsCompatibleWithProxy).when(vdsFenceOptions).isAgentSupported(any(String.class));
+        when(vdsFenceOptions.isAgentSupported(any(String.class))).thenReturn(agentsCompatibleWithProxy);
     }
 
     private boolean shouldHostBeUnreachable(VDSStatus status) {
