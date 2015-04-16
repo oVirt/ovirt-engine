@@ -1,7 +1,7 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.hostdeploy;
 
-import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class UpgradeOvirtNodeCommand<T extends UpdateVdsActionParameters> extends UpdateVdsCommand<T> {

@@ -121,7 +121,7 @@
     </Match>
 
     <Match>
-       <Class name="org.ovirt.engine.core.bll.VdsDeploy" />
+       <Class name="org.ovirt.engine.core.bll.hostdeploy.VdsDeploy" />
        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
     </Match>
 

@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.queries.RegisterVdsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.PKIResources;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;

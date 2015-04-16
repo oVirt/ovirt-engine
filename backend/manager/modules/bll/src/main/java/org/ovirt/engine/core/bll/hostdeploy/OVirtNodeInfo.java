@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.hostdeploy;
 
 import java.io.File;
 import java.util.List;

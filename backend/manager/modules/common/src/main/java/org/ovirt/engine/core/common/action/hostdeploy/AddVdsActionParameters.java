@@ -1,12 +1,14 @@
-package org.ovirt.engine.core.common.action;
+package org.ovirt.engine.core.common.action.hostdeploy;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
+
 
 public class AddVdsActionParameters extends VdsOperationActionParameters {
     private static final long serialVersionUID = 8452910234577071082L;

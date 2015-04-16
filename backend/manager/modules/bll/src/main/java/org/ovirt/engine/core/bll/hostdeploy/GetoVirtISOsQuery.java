@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.hostdeploy;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,6 +30,11 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
 
     public GetoVirtISOsQuery(P parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected void executeCommand() {
+        super.executeCommand();
     }
 
     @Override

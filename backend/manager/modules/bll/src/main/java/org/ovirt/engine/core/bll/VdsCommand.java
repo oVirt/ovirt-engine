@@ -301,25 +301,6 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         );
     }
 
-    @SuppressWarnings("serial")
-    protected static class VdsInstallException extends RuntimeException {
-        private VDSStatus status;
-
-        VdsInstallException(VDSStatus status, String message) {
-            super(message);
-            this.status = status;
-        }
-
-        VdsInstallException(VDSStatus status, String message, Exception cause) {
-            super(message, cause);
-            this.status = status;
-        }
-
-        public VDSStatus getStatus() {
-            return status;
-        }
-    }
-
     protected boolean validateNetworkProviderProperties(Guid providerId, String networkMappings) {
         NetworkProviderValidator validator = new NetworkProviderValidator(getProviderDao().get(providerId));
         return validate(validator.providerIsSet())

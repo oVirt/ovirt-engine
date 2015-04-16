@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.hostdeploy;
 
 import static org.mockito.Mockito.when;
 
@@ -6,7 +6,8 @@ import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
+import org.ovirt.engine.core.bll.VdsHandler;
+import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -54,6 +55,7 @@ public class UpdateVdsCommandTest {
         when(commandMock.isPowerManagementLegal(parameters.getVdsStaticData().isPmEnabled(),
                 parameters.getFenceAgents(),
                 new Version("1.2.3").toString())).thenReturn(true);
+
         VdsDAO vdsDaoMock = Mockito.mock(VdsDAO.class);
         Mockito.when(vdsDaoMock.get(vdsId)).thenReturn(oldVdsData);
         //now return the old vds data

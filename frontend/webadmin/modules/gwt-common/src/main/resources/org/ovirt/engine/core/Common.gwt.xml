@@ -311,6 +311,10 @@
         <include name="common/validation/CidrValidator.java"/>
         <include name="common/validation/MaskValidator.java"/>
 
+        <!-- Host-deploy -->
+        <include name="common/action/hostdeploy/*.java"/>
+        <include name="common/queries/hostdeploy/*.java"/>
+
         <!-- Gluster -->
         <include name="common/businessentities/gluster/GlusterVolumeEntity.java" />
         <include name="common/businessentities/gluster/GlusterVolumeType.java" />

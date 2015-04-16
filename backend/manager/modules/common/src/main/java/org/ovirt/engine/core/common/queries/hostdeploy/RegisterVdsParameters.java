@@ -1,7 +1,8 @@
-package org.ovirt.engine.core.common.queries;
+package org.ovirt.engine.core.common.queries.hostdeploy;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RegisterVdsParameters extends VdcQueryParametersBase implements Serializable {

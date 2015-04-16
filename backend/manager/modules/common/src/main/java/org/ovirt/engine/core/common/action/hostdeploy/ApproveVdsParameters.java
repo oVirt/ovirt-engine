@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.action;
+package org.ovirt.engine.core.common.action.hostdeploy;
 
 import org.ovirt.engine.core.compat.Guid;
 

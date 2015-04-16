@@ -1,7 +1,8 @@
-package org.ovirt.engine.core.common.action;
+package org.ovirt.engine.core.common.action.hostdeploy;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 

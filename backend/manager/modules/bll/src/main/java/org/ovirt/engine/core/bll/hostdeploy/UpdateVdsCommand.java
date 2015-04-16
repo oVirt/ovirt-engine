@@ -1,19 +1,24 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.hostdeploy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
+import org.ovirt.engine.core.bll.VdsCommand;
+import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.InstallVdsParameters;
-import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
+import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -261,5 +266,11 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 );
             }
         }
+    }
+
+    protected boolean isPowerManagementLegal(boolean pmEnabled,
+                                             List<FenceAgent> fenceAgents,
+                                             String clusterCompatibilityVersion) {
+        return super.isPowerManagementLegal(pmEnabled, fenceAgents, clusterCompatibilityVersion);
     }
 }

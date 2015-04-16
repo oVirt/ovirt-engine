@@ -1,10 +1,11 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.hostdeploy;
 
 import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.queries.RegisterVdsParameters;
+import org.ovirt.engine.core.bll.AbstractUserQueryTest;
+import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
 
 /**
  * A test case for {@link RegisterVdsQuery}.

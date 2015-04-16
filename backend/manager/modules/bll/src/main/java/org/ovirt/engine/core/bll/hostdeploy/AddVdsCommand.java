@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.hostdeploy;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
@@ -12,6 +12,10 @@ import java.util.concurrent.TimeUnit;
 import javax.naming.AuthenticationException;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.VdsCommand;
+import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -24,12 +28,12 @@ import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AddVdsActionParameters;
-import org.ovirt.engine.core.common.action.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
+import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -566,4 +570,21 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
     }
 
+    protected VdcReturnValueBase createReturnValue() {
+        return super.createReturnValue();
+    }
+
+    protected boolean isPowerManagementLegal(boolean pmEnabled,
+                                             List<FenceAgent> fenceAgents,
+                                             String clusterCompatibilityVersion) {
+        return super.isPowerManagementLegal(pmEnabled, fenceAgents, clusterCompatibilityVersion);
+    }
+
+    protected void addCanDoActionMessage(VdcBllMessages message) {
+        super.addCanDoActionMessage(message);
+    }
+
+    protected boolean validate(ValidationResult validationResult) {
+        return super.validate(validationResult);
+    }
 }
