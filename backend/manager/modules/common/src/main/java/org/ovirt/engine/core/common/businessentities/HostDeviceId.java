@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.compat.Guid;
-
 import java.io.Serializable;
+
+import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+import org.ovirt.engine.core.compat.Guid;
 
 public final class HostDeviceId implements Serializable, Comparable<HostDeviceId> {
 
@@ -58,7 +59,10 @@ public final class HostDeviceId implements Serializable, Comparable<HostDeviceId
 
     @Override
     public String toString() {
-        return String.format("hostId = %s, deviceName = %s", getHostId(), getDeviceName());
+        return ToStringBuilder.forInstance(this)
+                .append("hostId", getHostId())
+                .append("deviceName", getDeviceName())
+                .build();
     }
 
     @Override

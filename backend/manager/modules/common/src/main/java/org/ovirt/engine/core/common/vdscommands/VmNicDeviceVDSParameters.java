@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmNicDeviceVDSParameters extends VdsIdVDSCommandParametersBase {
@@ -34,11 +35,10 @@ public class VmNicDeviceVDSParameters extends VdsIdVDSCommandParametersBase {
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, vm.vm_name=%s, nic=%s, vmDevice=%s",
-                super.toString(),
-                (getVm() == null ? "" : getVm().getName()),
-                getNic(),
-                getVmDevice());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vm.vm_name", getVm() == null ? "" : getVm().getName())
+                .append("nic", getNic())
+                .append("vmDevice", getVmDevice());
     }
 }

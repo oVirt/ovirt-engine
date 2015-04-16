@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiscoverSendTargetsVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -23,8 +24,8 @@ public class DiscoverSendTargetsVDSCommandParameters extends VdsIdVDSCommandPara
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, connection=%s", super.toString(), getConnection());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("connection", getConnection());
     }
-
 }

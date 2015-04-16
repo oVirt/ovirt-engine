@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class IsVmDuringInitiatingVDSCommandParameters extends VDSParametersBase {
@@ -18,7 +19,8 @@ public class IsVmDuringInitiatingVDSCommandParameters extends VDSParametersBase 
     }
 
     @Override
-    public String toString() {
-        return String.format("vmId = %s", getVmId());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vmId", getVmId());
     }
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmLogonVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
@@ -30,11 +31,10 @@ public class VmLogonVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, domain=%s, password=%s, userName=%s",
-                super.toString(),
-                getDomain(),
-                getPassword() == null ? null : "******",
-                getUserName());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("domain", getDomain())
+                .appendFiltered("password", getPassword())
+                .append("userName", getUserName());
     }
 }

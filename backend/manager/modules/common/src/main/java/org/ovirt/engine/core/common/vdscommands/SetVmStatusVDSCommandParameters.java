@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SetVmStatusVDSCommandParameters extends VDSParametersBase {
@@ -38,8 +39,10 @@ public class SetVmStatusVDSCommandParameters extends VDSParametersBase {
     }
 
     @Override
-    public String toString() {
-        return String.format("vmId = %s, status = %s, exit status = %s",
-                getVmId(), getStatus(), getExitStatus());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vmId", getVmId())
+                .append("status", getStatus())
+                .append("exitStatus", getExitStatus());
     }
 }

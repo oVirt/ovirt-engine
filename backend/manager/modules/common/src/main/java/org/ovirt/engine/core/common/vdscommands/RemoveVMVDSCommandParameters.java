@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveVMVDSCommandParameters extends StorageDomainIdParametersBase {
@@ -28,7 +29,8 @@ public class RemoveVMVDSCommandParameters extends StorageDomainIdParametersBase 
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, vmGuid = %s", super.toString(), getVmGuid());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vmGuid", getVmGuid());
     }
 }

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -292,37 +293,21 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("VmDevice {");
-        sb.append("vmId=");
-        sb.append(id.getVmId());
-        sb.append(", deviceId=");
-        sb.append(id.getDeviceId());
-        sb.append(", device=");
-        sb.append(getDevice());
-        sb.append(", type=");
-        sb.append(getType());
-        sb.append(", bootOrder=");
-        sb.append(getBootOrder());
-        sb.append(", specParams=");
-        sb.append(getSpecParams());
-        sb.append(", address=");
-        sb.append(getAddress());
-        sb.append(", managed=");
-        sb.append(getIsManaged());
-        sb.append(", plugged=");
-        sb.append(getIsPlugged());
-        sb.append(", readOnly=");
-        sb.append(getIsReadOnly());
-        sb.append(", deviceAlias=");
-        sb.append(getAlias());
-        sb.append(", customProperties=");
-        sb.append(getCustomProperties());
-        sb.append(", snapshotId=");
-        sb.append(getSnapshotId());
-        sb.append(", logicalName=");
-        sb.append(getLogicalName());
-        sb.append("}");
-        return sb.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("id", id)
+                .append("device", getDevice())
+                .append("type", getType())
+                .append("bootOrder", getBootOrder())
+                .append("specParams", getSpecParams())
+                .append("address", getAddress())
+                .append("managed", getIsManaged())
+                .append("plugged", getIsPlugged())
+                .append("readOnly", getIsReadOnly())
+                .append("deviceAlias", getAlias())
+                .append("customProperties", getCustomProperties())
+                .append("snapshotId", getSnapshotId())
+                .append("logicalName", getLogicalName())
+                .build();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class UpdateVmDynamicDataVDSCommandParameters extends VdsAndVmIDVDSParametersBase{
     private VmDynamic privateVmDynamic;
@@ -21,7 +22,8 @@ public class UpdateVmDynamicDataVDSCommandParameters extends VdsAndVmIDVDSParame
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, vmDynamic=%s", super.toString(), getVmDynamic());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vmDynamic", getVmDynamic());
     }
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HostDevChangeNumVfsVDSParameters extends VdsIdVDSCommandParametersBase {
@@ -25,10 +26,9 @@ public class HostDevChangeNumVfsVDSParameters extends VdsIdVDSCommandParametersB
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, deviceName=%s, numOfVds=%d",
-                super.toString(),
-                getDeviceName(),
-                getNumOfVfs());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("deviceName", getDeviceName())
+                .append("numOfVfs", getNumOfVfs());
     }
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HostDevice implements BusinessEntity<HostDeviceId> {
@@ -178,21 +179,20 @@ public class HostDevice implements BusinessEntity<HostDeviceId> {
 
     @Override
     public String toString() {
-        return String.format("HostDevice{hostId=%s, deviceName='%s', parentDeviceName='%s', capability='%s', iommuGroup=%d, "
-                +
-                "productName='%s', productId='%s', vendorName='%s', vendorId='%s', parentPhysicalFunction='%s', totalVirtualFunctions=%s, networkInterfaceName='%s', vmId=%s}",
-                hostId,
-                deviceName,
-                parentDeviceName,
-                capability,
-                iommuGroup,
-                productName,
-                productId,
-                vendorName,
-                vendorId,
-                parentPhysicalFunction,
-                totalVirtualFunctions,
-                networkInterfaceName,
-                vmId);
+        return ToStringBuilder.forInstance(this)
+                .append("hostId", hostId)
+                .append("deviceName", deviceName)
+                .append("parentDeviceName", parentDeviceName)
+                .append("capability", capability)
+                .append("iommuGroup", iommuGroup)
+                .append("productName", productName)
+                .append("productId", productId)
+                .append("vendorName", vendorName)
+                .append("vendorId", vendorId)
+                .append("parentPhysicalFunction", parentPhysicalFunction)
+                .append("totalVirtualFunctions", totalVirtualFunctions)
+                .append("networkInterfaceName", networkInterfaceName)
+                .append("vmId", vmId)
+                .build();
     }
 }

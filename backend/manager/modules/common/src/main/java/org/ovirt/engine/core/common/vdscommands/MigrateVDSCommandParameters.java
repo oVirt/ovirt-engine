@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -81,25 +82,24 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         migrationMethod = MigrationMethod.OFFLINE;
     }
 
-    @Override
-    public String toString() {
-        return String.format("%s, srcHost=%s, dstVdsId=%s, dstHost=%s, migrationMethod=%s, tunnelMigration=%s, migrationDowntime=%s, autoConverge=%s, migrateCompressed=%s",
-                super.toString(),
-                getSrcHost(),
-                getDstVdsId(),
-                getDstHost(),
-                getMigrationMethod(),
-                isTunnelMigration(),
-                getMigrationDowntime(),
-                getAutoConverge(),
-                getMigrateCompressed());
-    }
-
     public void setClusterVersion(Version clusterVersion) {
         this.clusterVersion = clusterVersion;
     }
 
     public Version getClusterVersion() {
         return clusterVersion;
+    }
+
+    @Override
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("srcHost", getSrcHost())
+                .append("dstVdsId", getDstVdsId())
+                .append("dstHost", getDstHost())
+                .append("migrationMethod", getMigrationMethod())
+                .append("tunnelMigration", isTunnelMigration())
+                .append("migrationDowntime", getMigrationDowntime())
+                .append("autoConverge", getAutoConverge())
+                .append("migrateCompressed", getMigrateCompressed());
     }
 }

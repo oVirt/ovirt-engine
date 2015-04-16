@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StartSpiceVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -30,11 +31,10 @@ public class StartSpiceVDSCommandParameters extends VdsIdVDSCommandParametersBas
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, ticket=%s, guestPort=%s, vdsIp=%s",
-                super.toString(),
-                getTicket(),
-                getGuestPort(),
-                getVdsIp());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("ticket", getTicket())
+                .append("guestPort", getGuestPort())
+                .append("vdsIp", getVdsIp());
     }
 }

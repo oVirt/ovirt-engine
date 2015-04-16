@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DestroyVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
@@ -38,12 +39,11 @@ public class DestroyVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, force=%s, secondsToWait=%s, gracefully=%s, reason=%s",
-                super.toString(),
-                getForce(),
-                getSecondsToWait(),
-                getGracefully(),
-                getReason());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("force", getForce())
+                .append("secondsToWait", getSecondsToWait())
+                .append("gracefully", getGracefully())
+                .append("reason", getReason());
     }
 }

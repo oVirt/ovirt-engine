@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetVmsFromExternalProviderParameters extends VdsIdVDSCommandParametersBase {
@@ -32,7 +33,9 @@ public class GetVmsFromExternalProviderParameters extends VdsIdVDSCommandParamet
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, url=%s, username=%s", super.toString(), url, username);
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("url", url)
+                .append("username", username);
     }
 }

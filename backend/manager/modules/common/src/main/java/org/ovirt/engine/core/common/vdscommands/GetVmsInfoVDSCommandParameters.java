@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetVmsInfoVDSCommandParameters extends StorageDomainIdParametersBase {
@@ -24,7 +25,8 @@ public class GetVmsInfoVDSCommandParameters extends StorageDomainIdParametersBas
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, vmIdList = %s", super.toString(), getVmIdList());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vmIdList", getVmIdList());
     }
 }

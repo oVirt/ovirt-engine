@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
@@ -45,8 +46,12 @@ public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, protocol=%s, ticket=%s, validTime=%s,m userName=%s, userId=%s", super.toString(),
-                graphicsType, getTicket(), getValidTime(), getUserName(), getUserId());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("protocol", graphicsType)
+                .append("ticket", getTicket())
+                .append("validTime", getValidTime())
+                .append("userName", getUserName())
+                .append("userId", getUserId());
     }
 }

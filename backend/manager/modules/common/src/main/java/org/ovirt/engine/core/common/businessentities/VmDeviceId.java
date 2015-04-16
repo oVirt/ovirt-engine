@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDeviceId implements Serializable, Comparable<VmDeviceId> {
@@ -46,10 +47,10 @@ public class VmDeviceId implements Serializable, Comparable<VmDeviceId> {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("deviceId = ").append(getDeviceId());
-        sb.append(", vmId = ").append(getVmId());
-        return sb.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("deviceId", getDeviceId())
+                .append("vmId", getVmId())
+                .build();
     }
 
     public Guid getDeviceId() {

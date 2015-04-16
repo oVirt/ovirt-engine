@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 
@@ -29,7 +30,8 @@ public class UpdateVMVDSCommandParameters extends StorageDomainIdParametersBase 
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, infoDictionary.size = %s", super.toString(), getInfoDictionary().size());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("infoDictionary.size", getInfoDictionary().size());
     }
 }

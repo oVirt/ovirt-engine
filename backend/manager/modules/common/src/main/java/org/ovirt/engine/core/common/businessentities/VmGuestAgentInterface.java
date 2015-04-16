@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmGuestAgentInterface extends IVdcQueryable {
@@ -107,17 +108,11 @@ public class VmGuestAgentInterface extends IVdcQueryable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getInterfaceName())
-                .append(" {vmId=")
-                .append(getVmId())
-                .append(", macAddress=")
-                .append(getMacAddress())
-                .append(", ipv4=")
-                .append(getIpv4Addresses())
-                .append(", ipv6=")
-                .append(getIpv6Addresses())
-                .append("}");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("vmId", getVmId())
+                .append("macAddress", getMacAddress())
+                .append("ipv4", getIpv4Addresses())
+                .append("ipv6", getIpv6Addresses())
+                .build();
     }
 }

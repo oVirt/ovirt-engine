@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
@@ -21,16 +22,17 @@ public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         return vm;
     }
 
-    @Override
-    public String toString() {
-        return String.format("%s, vm=%s", super.toString(), getVm());
-    }
-
     public SysPrepParams getSysPrepParams() {
         return sysPrepParams;
     }
 
     public void setSysPrepParams(SysPrepParams sysPrepParams) {
         this.sysPrepParams = sysPrepParams;
+    }
+
+    @Override
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vm", getVm());
     }
 }
