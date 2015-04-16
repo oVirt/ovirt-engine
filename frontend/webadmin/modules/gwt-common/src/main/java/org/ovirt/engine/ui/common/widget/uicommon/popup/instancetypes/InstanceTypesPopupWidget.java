@@ -64,6 +64,7 @@ public class InstanceTypesPopupWidget extends AbstractVmPopupWidget {
                 putOne(timeZoneEditorWithInfo, hiddenField()).
                 putOne(startRunningOnPanel, hiddenField()).
                 putOne(spiceCopyPasteEnabledEditor, hiddenField()).
-                putOne(spiceFileTransferEnabledEditor, hiddenField());
+                putOne(spiceFileTransferEnabledEditor, hiddenField()).
+                putOne(iconTab, hiddenField());
     }
 }

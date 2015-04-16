@@ -189,7 +189,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public abstract void provisioning_SelectedItemChanged();
 
-    public abstract void oSType_SelectedItemChanged();
+    public void oSType_SelectedItemChanged() {
+    }
 
     public abstract void updateMinAllocatedMemory();
 

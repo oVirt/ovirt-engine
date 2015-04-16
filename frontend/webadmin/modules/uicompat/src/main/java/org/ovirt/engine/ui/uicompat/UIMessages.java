@@ -424,7 +424,16 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Force {0} session")
     String geoRepForceTitle(String action);
 
+    @DefaultMessage("Icon dimensions are too large: {0}x{1}, maximum allowed: {2}x{3}")
+    String iconDimensionsTooLarge(int width, int height, int maxWidht, int maxHeight);
+
     // Gluster Volume Snapshots
+    @DefaultMessage("Icon file is too large. Maximum size is {0}kB.")
+    String iconFileTooLarge(int maxSize);
+
+    @DefaultMessage("Unknown file format. Supported formats are {0}.")
+    String invalidIconFormat(String s);
+
     @DefaultMessage("Value of cluster configuration parameter {0} is empty")
     String clusterSnapshotOptionValueEmpty(String option);
 

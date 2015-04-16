@@ -467,6 +467,9 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
 
                         if (model.getIsNew())
                         {
+                            if (model.getIcon().getEntity().isCustom()) {
+                                param.setVmLargeIcon(model.getIcon().getEntity().getIcon());
+                            }
                             Frontend.getInstance().runMultipleAction(VdcActionType.AddVmPoolWithVms,
                                     new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
                                     new IFrontendMultipleActionAsyncCallback() {

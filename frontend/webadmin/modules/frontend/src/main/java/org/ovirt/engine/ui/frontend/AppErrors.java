@@ -3786,4 +3786,28 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. One or more configured host devices are unavailable.")
     String ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE();
+
+    @DefaultStringValue("VM icon dataurl is malformed.")
+    String VM_ICON_DATAURL_MALFORMED();
+
+    @DefaultStringValue("Provided VM icon is of unknown type.")
+    String PROVIDED_VM_ICON_OF_UNKNOWN_TYPE();
+
+    @DefaultStringValue("Provided VM icon is of unsupported type ${fileType}. Supported file types: ${supportedFileTypes}.")
+    String PROVIDED_VM_ICON_OF_UNSUPPORTED_TYPE();
+
+    @DefaultStringValue("Provided VM icon can't be read.")
+    String PROVIDED_VM_ICON_CANT_BE_READ();
+
+    @DefaultStringValue("Vm icon mime type (${mimeType}) doesn't match image data (${imageType}).")
+    String VM_ICON_MIME_TYPE_DOESNT_MATCH_IMAGE_DATA();
+
+    @DefaultStringValue("Vm icon has invalid dimensions (${currentDimensions}). Allowed dimmension: ${allowedDimensions}")
+    String PROVIDED_VM_ICON_HAS_INVALID_DIMENSIONS();
+
+    @DefaultStringValue("Data size of provided icon (${$currentSize}) is to big. Maximum allowd is ${$maxSize}")
+    String DATA_SIZE_OF_PROVIDED_VM_ICON_TOO_LARGE();
+
+    @DefaultStringValue("Base64 part of vm icon is malformed.")
+    String VM_ICON_BASE64_PART_MALFORMED();
 }

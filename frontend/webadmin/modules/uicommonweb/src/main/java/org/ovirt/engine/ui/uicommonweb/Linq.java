@@ -785,7 +785,7 @@ public final class Linq
         return list;
     }
 
-    public static List concat(List... lists)
+    public static List concatUnsafe(List... lists)
     {
         List result = new ArrayList<Object>();
         for (List list : lists)
@@ -797,6 +797,10 @@ public final class Linq
         }
 
         return result;
+    }
+
+    public static <T> List<T> concat(List<T>... lists) {
+        return concatUnsafe(lists);
     }
 
     public static <T> ArrayList<T> union(ArrayList<ArrayList<T>> lists)

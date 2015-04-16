@@ -277,7 +277,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
             }
 
             // Merge VMs and Pools, and create item models.
-            final List all = Linq.concat(getvms(), filteredPools);
+            final List all = Linq.concatUnsafe(getvms(), filteredPools);
 
             if (filteredPools.isEmpty()) {
                 finishSearch(all);

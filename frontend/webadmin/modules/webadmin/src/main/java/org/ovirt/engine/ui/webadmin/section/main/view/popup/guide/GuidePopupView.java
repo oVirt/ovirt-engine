@@ -121,7 +121,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
 
                         // Check whether there any available actions.
                         boolean hasAllowedActions = false;
-                        for (Object item : Linq.concat(guideModel.getCompulsoryActions(), guideModel.getOptionalActions())) {
+                        for (Object item : Linq.concatUnsafe(guideModel.getCompulsoryActions(), guideModel.getOptionalActions())) {
                             UICommand command = (UICommand) item;
                             if (command.getIsExecutionAllowed()) {
                                 hasAllowedActions = true;

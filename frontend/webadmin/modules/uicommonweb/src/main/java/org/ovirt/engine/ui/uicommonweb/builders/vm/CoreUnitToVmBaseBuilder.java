@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 /**
@@ -26,6 +29,13 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         vm.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
         vm.setDeleteProtected(model.getIsDeleteProtected().getEntity());
         vm.setOsId(model.getOSType().getSelectedItem());
+        Guid largeIconId = IconCache.getInstance().getId(model.getIcon().getEntity().getIcon());
+        vm.setLargeIconId(largeIconId);
+        vm.setSmallIconId(model.getIcon().getEntity().getSmallIconId() != null
+                ? model.getIcon().getEntity().getSmallIconId()
+                : AsyncDataProvider.getInstance().isCustomIconId(largeIconId)
+                        ? null
+                        : AsyncDataProvider.getInstance().getSmallByLargeOsDefaultIconId(largeIconId));
         vm.setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
         vm.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
         vm.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());

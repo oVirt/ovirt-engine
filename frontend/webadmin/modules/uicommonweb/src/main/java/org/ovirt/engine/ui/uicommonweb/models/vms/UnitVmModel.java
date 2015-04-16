@@ -68,6 +68,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.GuidValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IconWithOsDefaultValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidation;
@@ -202,6 +203,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     /**
+     * VM icon
+     */
+    private NotChangableForVmInPoolEntityModel<IconWithOsDefault> icon;
+
+    public EntityModel<IconWithOsDefault> getIcon() {
+        return icon;
+    }
+
+    public void setIcon(NotChangableForVmInPoolEntityModel<IconWithOsDefault> icon) {
+        this.icon = icon;
+    }
+
+    /**
      * Note: We assume that this method is called only once, on the creation stage of the model. if this assumption is
      * changed (i.e the VM can attached/detached from a pool after the model is created), this method should be modified
      */
@@ -285,6 +299,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             // ==Custom Properties Tab==
             getCustomProperties().setIsChangable(false);
             getCustomPropertySheet().setIsChangable(false);
+
+            // ==Icon Tab==
+            getIcon().setIsChangable(false);
 
             vmAttachedToPool = true;
         }
@@ -1717,6 +1734,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getAutoConverge().setItems(Arrays.asList(null, true, false));
         setMigrateCompressed(new NotChangableForVmInPoolListModel<Boolean>());
         getMigrateCompressed().setItems(Arrays.asList(null, true, false));
+        setIcon(new NotChangableForVmInPoolEntityModel<IconWithOsDefault>());
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -1921,23 +1939,23 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     protected void initNumOfMonitors()
     {
         AsyncDataProvider.getInstance().getNumOfMonitorList(new AsyncQuery(this,
-                                                                           new INewAsyncCallback() {
-                                                                               @Override
-                                                                               public void onSuccess(Object target, Object returnValue) {
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
 
-                                                                                   UnitVmModel model = (UnitVmModel) target;
-                                                                                   Integer oldNumOfMonitors = null;
-                                                                                   if (model.getNumOfMonitors().getSelectedItem() != null) {
-                                                                                       oldNumOfMonitors = model.getNumOfMonitors().getSelectedItem();
-                                                                                   }
-                                                                                   ArrayList<Integer> numOfMonitors = (ArrayList<Integer>) returnValue;
-                                                                                   model.getNumOfMonitors().setItems(numOfMonitors);
-                                                                                   if (oldNumOfMonitors != null) {
-                                                                                       model.getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
-                                                                                   }
+                        UnitVmModel model = (UnitVmModel) target;
+                        Integer oldNumOfMonitors = null;
+                        if (model.getNumOfMonitors().getSelectedItem() != null) {
+                            oldNumOfMonitors = model.getNumOfMonitors().getSelectedItem();
+                        }
+                        ArrayList<Integer> numOfMonitors = (ArrayList<Integer>) returnValue;
+                        model.getNumOfMonitors().setItems(numOfMonitors);
+                        if (oldNumOfMonitors != null) {
+                            model.getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
+                        }
 
-                                                                               }
-                                                                           }));
+                    }
+                }));
 
     }
 
@@ -2229,6 +2247,42 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         vmInitEnabledChanged();
         getInstanceImages().updateActionsAvailability();
+
+        updateIconAccordingToOs();
+    }
+
+    private void updateIconAccordingToOs() {
+        final Integer osId = getOSType().getSelectedItem();
+        final String oldIcon = getIcon().getEntity() == null ? null : getIcon().getEntity().getIcon();
+        final Guid osDefaultIconId = AsyncDataProvider.getInstance().getOsDefaultIconId(osId, false);
+        IconCache.getInstance().getOrFetchIcon(osDefaultIconId, new IconCache.IconCallback() {
+            @Override
+            public void onSuccess(String currentOsDefaultIcon) {
+                String iconToShow = getIconToShow(currentOsDefaultIcon);
+                Guid smallIconId = getSmallIconId(iconToShow, oldIcon, currentOsDefaultIcon, osDefaultIconId);
+                IconWithOsDefault newIconPair = new IconWithOsDefault(iconToShow, currentOsDefaultIcon, smallIconId);
+                getIcon().setEntity(newIconPair);
+            }
+        });
+    }
+
+    private Guid getSmallIconId(String newIcon, String oldIcon, String newOsDefaultIcon, Guid newOsDefaultIconId) {
+        if (newIcon.equals(oldIcon)) {
+            return getIcon().getEntity().getSmallIconId();
+        }
+        if (newIcon.equals(newOsDefaultIcon)) {
+            return AsyncDataProvider.getInstance().getSmallByLargeOsDefaultIconId(newOsDefaultIconId);
+        }
+        return null;
+    }
+
+    protected String getIconToShow(String currentOsDefaultIcon) {
+        if (getIcon().getEntity() == null) {
+            return  currentOsDefaultIcon;
+        }
+        return getIcon().getEntity().isCustom()
+                ? getIcon().getEntity().getIcon()
+                : currentOsDefaultIcon;
     }
 
     private void updateWatchdogModels() {
@@ -2725,6 +2779,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         boolean vmInitIsValid = getVmInitModel().validate();
         setValidTab(TabName.FIRST_RUN, vmInitIsValid);
 
+        getIcon().validateEntity(new IValidation[]{new IconWithOsDefaultValidation()});
+        setValidTab(TabName.ICON_TAB, getIcon().getIsValid());
+
         boolean isValid = hwPartValid && vmInitIsValid && allTabsValid();
         getValid().setEntity(isValid);
         ValidationCompleteEvent.fire(getEventBus(), this);
@@ -2813,6 +2870,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setValidTab(TabName.CONSOLE_TAB, true);
         setValidTab(TabName.INITIAL_RUN_TAB, true);
         setValidTab(TabName.GENERAL_TAB, true);
+        setValidTab(TabName.ICON_TAB, true);
         getValid().setEntity(true);
     }
 

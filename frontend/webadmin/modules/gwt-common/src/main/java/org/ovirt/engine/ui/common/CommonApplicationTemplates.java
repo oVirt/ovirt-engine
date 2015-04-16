@@ -51,8 +51,14 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<ul style='margin-top:0'>{0}</ul>")
     SafeHtml unsignedList(SafeHtml list);
 
+    @Template("<ul>{0}</ul>")
+    SafeHtml unorderedList(SafeHtml items);
+
     @Template("<li>{0}</li>")
     SafeHtml listItem(SafeHtml item);
+
+    @Template("<li>{0}</li>")
+    SafeHtml listItem(String item);
 
     @Template("{0} <sub>{1}</sub>")
     SafeHtml sub(String main, String sub);

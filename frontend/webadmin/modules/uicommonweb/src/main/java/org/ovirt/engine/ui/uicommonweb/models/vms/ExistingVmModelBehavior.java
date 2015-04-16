@@ -302,6 +302,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
     @Override
     public void oSType_SelectedItemChanged() {
+        super.oSType_SelectedItemChanged();
         Integer osType = getModel().getOSType().getSelectedItem();
 
         if (osType != null) {

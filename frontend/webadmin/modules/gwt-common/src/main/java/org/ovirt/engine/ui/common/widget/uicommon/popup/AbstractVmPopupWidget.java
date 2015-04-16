@@ -49,6 +49,7 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.IconEditorWidget;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableListBoxEditor;
@@ -881,6 +882,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Ignore
     protected DialogTabPanel mainTabPanel;
 
+    @UiField
+    @Ignore
+    protected DialogTab iconTab;
+
+    @UiField
+    @Path("icon.entity")
+    protected IconEditorWidget iconEditorWidget;
+
     private UnitVmModel unitVmModel;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -1001,6 +1010,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         getTabNameMapping().put(TabName.POOL_TAB, this.poolTab);
         getTabNameMapping().put(TabName.RESOURCE_ALLOCATION_TAB, this.resourceAllocationTab);
         getTabNameMapping().put(TabName.SYSTEM_TAB, this.systemTab);
+        getTabNameMapping().put(TabName.ICON_TAB, this.iconTab);
     }
 
     private void initDetachableFields() {
@@ -1497,6 +1507,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         numOfSocketsEditorWithDetachable.setLabel(constants.numOfSockets());
         emulatedMachine.setLabel(constants.emulatedMachineLabel());
         customCpu.setLabel(constants.cpuModelLabel());
+
+        // Icon tab
+        iconTab.setLabel(constants.iconTabVmPopup());
     }
 
     protected void applyStyles() {
@@ -2003,6 +2016,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // ==Custom Properties Tab==
         nextTabIndex = customPropertiesTab.setTabIndexes(nextTabIndex);
 
+        // ==Icon Tab==
+        nextTabIndex = iconTab.setTabIndexes(nextTabIndex);
+        iconEditorWidget.setTabIndex(nextTabIndex++);
+
         return nextTabIndex;
     }
 
@@ -2063,7 +2080,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 rngDeviceTab,
                 highAvailabilityTab,
                 poolTab,
-                systemTab);
+                systemTab,
+                iconTab);
     }
 
     protected List<Widget> adancedFieldsFromGeneralTab() {
@@ -2152,7 +2170,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             bootOptionsTab,
             customPropertiesTab,
             systemTab,
-            rngDeviceTab
+            rngDeviceTab,
+            iconTab
         );
     }
 

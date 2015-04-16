@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -70,6 +71,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBui
 import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.VmIconUnitAndVmToParameterBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -1018,60 +1020,53 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         if (storagePool != null)
         {
             AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            VmListModel<Void> vmListModel = (VmListModel<Void>) target;
-                            HashMap<VmTemplate, ArrayList<DiskImage>> templatesDiskSet =
-                                    (HashMap<VmTemplate, ArrayList<DiskImage>>) returnValue;
-                            HashMap<String, ArrayList<String>> templateDic =
-                                    new HashMap<>();
+                            new INewAsyncCallback() {
+                                @Override
+                                public void onSuccess(Object target, Object returnValue) {
+                                    VmListModel<Void> vmListModel = (VmListModel<Void>) target;
+                                    HashMap<VmTemplate, ArrayList<DiskImage>> templatesDiskSet =
+                                            (HashMap<VmTemplate, ArrayList<DiskImage>>) returnValue;
+                                    HashMap<String, ArrayList<String>> templateDic =
+                                            new HashMap<>();
 
-                            // check if relevant templates are already there
-                            for (Object selectedItem : vmListModel.getSelectedItems())
-                            {
-                                VM vm = (VM) selectedItem;
-                                boolean hasMatch = false;
-                                for (VmTemplate a : templatesDiskSet.keySet())
-                                {
-                                    if (vm.getVmtGuid().equals(a.getId()))
-                                    {
-                                        hasMatch = true;
-                                        break;
+                                    // check if relevant templates are already there
+                                    for (Object selectedItem : vmListModel.getSelectedItems()) {
+                                        VM vm = (VM) selectedItem;
+                                        boolean hasMatch = false;
+                                        for (VmTemplate a : templatesDiskSet.keySet()) {
+                                            if (vm.getVmtGuid().equals(a.getId())) {
+                                                hasMatch = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (!vm.getVmtGuid().equals(Guid.Empty) && !hasMatch) {
+                                            if (!templateDic.containsKey(vm.getVmtName())) {
+                                                templateDic.put(vm.getVmtName(), new ArrayList<String>());
+                                            }
+                                            templateDic.get(vm.getVmtName()).add(vm.getName());
+                                        }
                                     }
-                                }
 
-                                if (!vm.getVmtGuid().equals(Guid.Empty) && !hasMatch)
-                                {
-                                    if (!templateDic.containsKey(vm.getVmtName()))
-                                    {
-                                        templateDic.put(vm.getVmtName(), new ArrayList<String>());
+                                    String tempStr;
+                                    ArrayList<String> tempList;
+                                    ArrayList<String> missingTemplates = new ArrayList<>();
+                                    for (Map.Entry<String, ArrayList<String>> keyValuePair : templateDic.entrySet()) {
+                                        tempList = keyValuePair.getValue();
+                                        StringBuilder sb = new StringBuilder("Template " + keyValuePair.getKey() + " (for "); //$NON-NLS-1$ //$NON-NLS-2$
+                                        int i;
+                                        for (i = 0; i < tempList.size() - 1; i++) {
+                                            sb.append(tempList.get(i));
+                                            sb.append(", "); //$NON-NLS-1$
+                                        }
+                                        sb.append(tempList.get(i));
+                                        sb.append(")"); //$NON-NLS-1$
+                                        missingTemplates.add(sb.toString());
                                     }
-                                    templateDic.get(vm.getVmtName()).add(vm.getName());
-                                }
-                            }
 
-                            String tempStr;
-                            ArrayList<String> tempList;
-                            ArrayList<String> missingTemplates = new ArrayList<>();
-                            for (Map.Entry<String, ArrayList<String>> keyValuePair : templateDic.entrySet())
-                            {
-                                tempList = keyValuePair.getValue();
-                                StringBuilder sb = new StringBuilder("Template " + keyValuePair.getKey() + " (for "); //$NON-NLS-1$ //$NON-NLS-2$
-                                int i;
-                                for (i = 0; i < tempList.size() - 1; i++)
-                                {
-                                    sb.append(tempList.get(i));
-                                    sb.append(", "); //$NON-NLS-1$
+                                    vmListModel.postExportGetMissingTemplates(missingTemplates);
                                 }
-                                sb.append(tempList.get(i));
-                                sb.append(")"); //$NON-NLS-1$
-                                missingTemplates.add(sb.toString());
-                            }
-
-                            vmListModel.postExportGetMissingTemplates(missingTemplates);
-                        }
-                    }),
+                            }),
                     storagePool.getId(),
                     storageDomainId);
         }
@@ -1214,34 +1209,34 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         model.startProgress(null);
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, list,
-                                                 new IFrontendMultipleActionAsyncCallback() {
-                                                     @Override
-                                                     public void executed(FrontendMultipleActionAsyncResult result) {
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
-                                                         ExportVmModel localModel = (ExportVmModel) result.getState();
-                                                         localModel.stopProgress();
-                                                         cancel();
+                        ExportVmModel localModel = (ExportVmModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
 
-                                                     }
-                                                 }, model);
+                    }
+                }, model);
     }
 
     @Override
     protected void sendWarningForNonExportableDisks(VM entity) {
         // load VM disks and check if there is one which doesn't allow snapshot
         AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(getWindow(),
-                                                       new INewAsyncCallback() {
-                                                           @Override
-                                                           public void onSuccess(Object target, Object returnValue) {
-                                                               final ExportVmModel model = (ExportVmModel) target;
-                                                               @SuppressWarnings("unchecked")
-                                                               final ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
-                                                               VmModelHelper.sendWarningForNonExportableDisks(model,
-                                                                                                              vmDisks,
-                                                                                                              VmModelHelper.WarningType.VM_EXPORT);
-                                                           }
-                                                       }),
-                                        entity.getId());
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object target, Object returnValue) {
+                                final ExportVmModel model = (ExportVmModel) target;
+                                @SuppressWarnings("unchecked")
+                                final ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
+                                VmModelHelper.sendWarningForNonExportableDisks(model,
+                                        vmDisks,
+                                        VmModelHelper.WarningType.VM_EXPORT);
+                            }
+                        }),
+                entity.getId());
     }
 
     private void runOnce()
@@ -1383,8 +1378,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                         VmListModel<Void> vmListModel = (VmListModel<Void>) result.getState();
                         vmListModel.getWindow().stopProgress();
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
-                        if (returnValueBase != null && returnValueBase.getSucceeded())
-                        {
+                        if (returnValueBase != null && returnValueBase.getSucceeded()) {
                             vmListModel.cancel();
                         }
 
@@ -1393,15 +1387,15 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     }
 
     protected static VM buildVmOnNewTemplate(UnitVmModel model, VM vm) {
-        VM tempVar = new VM();
-        tempVar.setId(vm.getId());
-        BuilderExecutor.build(model, tempVar.getStaticData(), new CommonUnitToVmBaseBuilder());
-        BuilderExecutor.build(vm.getStaticData(), tempVar.getStaticData(),
-                              new KernelParamsVmBaseToVmBaseBuilder(),
-                              new DedicatedVmForVdsVmBaseToVmBaseBuilder(),
-                              new MigrationOptionsVmBaseToVmBaseBuilder(),
-                              new UsbPolicyVmBaseToVmBaseBuilder());
-        return tempVar;
+        VM resultVm = new VM();
+        resultVm.setId(vm.getId());
+        BuilderExecutor.build(model, resultVm.getStaticData(), new CommonUnitToVmBaseBuilder());
+        BuilderExecutor.build(vm.getStaticData(), resultVm.getStaticData(),
+                new KernelParamsVmBaseToVmBaseBuilder(),
+                new DedicatedVmForVdsVmBaseToVmBaseBuilder(),
+                new MigrationOptionsVmBaseToVmBaseBuilder(),
+                new UsbPolicyVmBaseToVmBaseBuilder());
+        return resultVm;
     }
 
     private void migrate()
@@ -1497,16 +1491,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             }
 
             Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVmToServer, list,
-                                                     new IFrontendMultipleActionAsyncCallback() {
-                                                         @Override
-                                                         public void executed(FrontendMultipleActionAsyncResult result) {
+                    new IFrontendMultipleActionAsyncCallback() {
+                        @Override
+                        public void executed(FrontendMultipleActionAsyncResult result) {
 
-                                                     MigrateModel localModel = (MigrateModel) result.getState();
-                                                             localModel.stopProgress();
-                                                             cancel();
+                            MigrateModel localModel = (MigrateModel) result.getState();
+                            localModel.stopProgress();
+                            cancel();
 
-                                                         }
-                                                     }, model);
+                        }
+                    }, model);
         }
     }
 
@@ -1611,24 +1605,24 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         model.startProgress(null);
 
         Frontend.getInstance().runMultipleAction(actionType, list,
-                                                 new IFrontendMultipleActionAsyncCallback() {
-                                                     @Override
-                                                     public void executed(FrontendMultipleActionAsyncResult result) {
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
-                                                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                                                         localModel.stopProgress();
-                                                         cancel();
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
 
-                                                     }
-                                                 }, model);
+                    }
+                }, model);
 
     }
 
     private void shutdown() {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
         powerAction(SHUTDOWN,
-                    constants.shutdownVirtualMachinesTitle(),
-                    constants.areYouSureYouWantToShutDownTheFollowingVirtualMachinesMsg());
+                constants.shutdownVirtualMachinesTitle(),
+                constants.areYouSureYouWantToShutDownTheFollowingVirtualMachinesMsg());
     }
 
     private void onShutdown() {
@@ -1644,8 +1638,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     private void stop() {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
         powerAction(STOP,
-                    constants.stopVirtualMachinesTitle(),
-                    constants.areYouSureYouWantToStopTheFollowingVirtualMachinesMsg());
+                constants.stopVirtualMachinesTitle(),
+                constants.areYouSureYouWantToStopTheFollowingVirtualMachinesMsg());
     }
 
     private void onStop() {
@@ -1661,9 +1655,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     private void reboot() {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
         powerAction(REBOOT,
-                    constants.rebootVirtualMachinesTitle(),
-                    constants.areYouSureYouWantToRebootTheFollowingVirtualMachinesMsg(),
-                    false);
+                constants.rebootVirtualMachinesTitle(),
+                constants.areYouSureYouWantToRebootTheFollowingVirtualMachinesMsg(),
+                false);
     }
 
     private void onReboot() {
@@ -1868,38 +1862,38 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
         getcurrentVm().setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
-            if (selectedItem.isRunningOrPaused()) {
-                AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery(this,
-                        new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object thisModel, Object returnValue) {
-                        List<String> changedFields = ((VdcQueryReturnValue)returnValue).<List<String>> getReturnValue();
-                        if (!changedFields.isEmpty()) {
-                            VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
-                            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
-                            confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
-                            confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
-                            confirmModel.setChangedFields(changedFields);
-                            confirmModel.setCpuPluggable(selectedItem.getCpuPerSocket() == getcurrentVm().getCpuPerSocket() &&
-                                    selectedItem.getNumOfSockets() != getcurrentVm().getNumOfSockets());
+        if (selectedItem.isRunningOrPaused()) {
+            AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object thisModel, Object returnValue) {
+                    List<String> changedFields = ((VdcQueryReturnValue)returnValue).<List<String>> getReturnValue();
+                    if (!changedFields.isEmpty()) {
+                        VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
+                        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
+                        confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
+                        confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
+                        confirmModel.setChangedFields(changedFields);
+                        confirmModel.setCpuPluggable(selectedItem.getCpuPerSocket() == getcurrentVm().getCpuPerSocket() &&
+                                selectedItem.getNumOfSockets() != getcurrentVm().getNumOfSockets());
 
-                            confirmModel.getCommands().add(new UICommand("updateExistingVm", VmListModel.this) //$NON-NLS-1$
-                            .setTitle(ConstantsManager.getInstance().getConstants().ok())
-                            .setIsDefault(true));
+                        confirmModel.getCommands().add(new UICommand("updateExistingVm", VmListModel.this) //$NON-NLS-1$
+                        .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                        .setIsDefault(true));
 
-                            confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", VmListModel.this)); //$NON-NLS-1$
+                        confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", VmListModel.this)); //$NON-NLS-1$
 
-                            setConfirmWindow(confirmModel);
-                        }
-                        else {
-                            updateExistingVm(false);
-                        }
+                        setConfirmWindow(confirmModel);
                     }
-                }));
-            }
-            else {
-                updateExistingVm(false);
-            }
+                    else {
+                        updateExistingVm(false);
+                    }
+                }
+            }));
+        }
+        else {
+            updateExistingVm(false);
+        }
     }
 
     private void updateExistingVm(final boolean applyCpuChangesLater) {
@@ -1964,6 +1958,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         updateVmParams.setApplyChangesLater(applyCpuChangesLater);
         updateVmParams.setUpdateNuma(model.isNumaChanged());
+        BuilderExecutor.build(
+                new Pair<>((UnitVmModel) getWindow(), getSelectedItem()),
+                updateVmParams,
+                new VmIconUnitAndVmToParameterBuilder());
         setRngDeviceToParams(model, updateVmParams);
         BuilderExecutor.build(model, updateVmParams, new UnitToGraphicsDeviceParamsBuilder());
 

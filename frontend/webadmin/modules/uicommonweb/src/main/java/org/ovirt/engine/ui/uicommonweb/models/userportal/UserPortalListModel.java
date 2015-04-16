@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -46,6 +47,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.VmIconUnitAndVmToParameterBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -1093,6 +1095,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         parameters.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+        parameters.setVmLargeIcon(model.getIcon().getEntity().getIcon());
         setRngDeviceToParams(model, parameters);
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
 
@@ -1136,6 +1139,10 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         UnitVmModel model = (UnitVmModel) getWindow();
         VmManagementParametersBase params = new VmManagementParametersBase(gettempVm());
 
+        BuilderExecutor.build(
+                new Pair<>((UnitVmModel) getWindow(), gettempVm()),
+                params,
+                new VmIconUnitAndVmToParameterBuilder());
         params.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setRngDeviceToParams(model, params);
@@ -1354,7 +1361,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             }
 
             // Merge VMs and Pools, and create item models.
-            final List all = Linq.concat(getvms(), filteredPools);
+            final List all = Linq.concatUnsafe(getvms(), filteredPools);
 
             if (filteredPools.isEmpty()) {
                 finishSearch(all);

@@ -140,6 +140,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookContentQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookQueryParameters;
@@ -204,6 +205,8 @@ public class AsyncDataProvider {
 
     private static final String GENERAL = "general"; //$NON-NLS-1$
 
+    private static int DEFAULT_OS_ID = 0;
+
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
     private HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValues =
             new HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>();
@@ -215,6 +218,14 @@ public class AsyncDataProvider {
 
     // cached OS names
     private HashMap<Integer, String> osNames;
+
+    // OS default icons
+    private Map<Integer, VmIconIdSizePair> osIdToDefaultIconIdMap;
+
+    /**
+     * large-icon-id -> small-icon-id; data comes from {@link #osIdToDefaultIconIdMap}
+     */
+    private Map<Guid, Guid> largeToSmallOsDefaultIconIdMap;
 
     // cached list of os ids
     private List<Integer> osIds;
@@ -289,6 +300,7 @@ public class AsyncDataProvider {
             }
         }));
         initOsNames();
+        initOsDefaultIconIds();
         initUniqueOsNames();
         initLinuxOsTypes();
         initWindowsOsTypes();
@@ -3397,7 +3409,7 @@ public class AsyncDataProvider {
 
         }
 
-        return StringHelper.join("+", values.toArray(new String[] {})); //$NON-NLS-1$
+        return StringHelper.join("+", values.toArray(new String[]{})); //$NON-NLS-1$
     }
 
     public <T extends Guid> T getEntityGuid(BusinessEntity<T> entity) {
@@ -3495,6 +3507,29 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetOsNames), callback);
     }
 
+    private void initOsDefaultIconIds() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                final Map<Integer, VmIconIdSizePair> returnMap = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                if (returnMap.get(DEFAULT_OS_ID) == null) {
+                    throw new RuntimeException("Engine did not provide icon IDs of default OS."); //$NON-NLS-1$
+                }
+                osIdToDefaultIconIdMap = Collections.unmodifiableMap(returnMap);
+                initializeLargeToSmallIconMap();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmIconDefaults, new VdcQueryParametersBase(), callback);
+    }
+
+    private void initializeLargeToSmallIconMap() {
+        largeToSmallOsDefaultIconIdMap = new HashMap<>();
+        for (VmIconIdSizePair pair : osIdToDefaultIconIdMap.values()) {
+            largeToSmallOsDefaultIconIdMap.put(pair.getLarge(), pair.getSmall());
+        }
+    }
+
     private void initOsIds() {
         osIds = new ArrayList<Integer>(osNames.keySet());
         Collections.sort(osIds, new Comparator<Integer>() {
@@ -3527,6 +3562,34 @@ public class AsyncDataProvider {
         }
 
         return osNames.get(osId);
+    }
+
+    public Guid getOsDefaultIconId(Integer osId, boolean small) {
+        if (osId == null) {
+            return getDefaultIconId(small);
+        }
+        final VmIconIdSizePair pair = osIdToDefaultIconIdMap.get(osId);
+        if (pair != null) {
+            return pair.get(small);
+        }
+        return getDefaultIconId(small);
+    }
+
+    public boolean isCustomIconId(Guid iconId) {
+        return (!largeToSmallOsDefaultIconIdMap.containsKey(iconId))
+                && (!largeToSmallOsDefaultIconIdMap.containsValue(iconId));
+    }
+
+    public Guid getDefaultIconId(boolean small) {
+        final VmIconIdSizePair pair = osIdToDefaultIconIdMap.get(DEFAULT_OS_ID);
+        if (pair != null) {
+            return pair.get(small);
+        }
+        throw new RuntimeException("Icon of default operating system not found."); //$NON-NLS-1$
+    }
+
+    public Guid getSmallByLargeOsDefaultIconId(Guid largeIconId) {
+        return largeToSmallOsDefaultIconIdMap.get(largeIconId);
     }
 
     public boolean hasSpiceSupport(int osId, Version version) {

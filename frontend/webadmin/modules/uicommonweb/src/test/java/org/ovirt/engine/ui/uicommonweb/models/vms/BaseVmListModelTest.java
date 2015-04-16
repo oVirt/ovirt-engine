@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.After;
+import org.junit.Before;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -19,6 +21,16 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 
 public class BaseVmListModelTest extends BaseVmTest {
+
+    @Before
+    public void setUpIconCache() {
+        REVERSE_ICON_CACHE.inject();
+    }
+
+    @After
+    public void tearDownIconCache() {
+        IconCacheModelVmBaseMock.removeMock();
+    }
 
     protected void setUpUnitVmModelExpectations(UnitVmModel model) {
         when(model.getVmType().getSelectedItem()).thenReturn(VM_TYPE);
@@ -83,6 +95,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getNumaTuneMode().getSelectedItem()).thenReturn(NumaTuneMode.INTERLEAVE);
         when(model.getAutoConverge().getSelectedItem()).thenReturn(true);
         when(model.getMigrateCompressed().getSelectedItem()).thenReturn(true);
+        when(model.getIcon().getEntity()).thenReturn(new IconWithOsDefault(LARGE_ICON_DATA, LARGE_OS_DEFAULT_ICON_DATA, SMALL_ICON_ID));
     }
 
     protected void setUpOrigVm(VM origVm) {
@@ -123,6 +136,8 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertTrue(vm.getMigrateCompressed());
         assertEquals(EMULATED_MACHINE, vm.getCustomEmulatedMachine());
         assertEquals(CUSTOM_CPU_NAME, vm.getCustomCpuName());
+        assertEquals(LARGE_ICON_ID, vm.getLargeIconId());
+        assertEquals(SMALL_ICON_ID, vm.getSmallIconId());
     }
 
     /**

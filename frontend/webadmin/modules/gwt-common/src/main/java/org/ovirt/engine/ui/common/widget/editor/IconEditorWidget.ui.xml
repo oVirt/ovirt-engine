@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
+
+    <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources'/>
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
+
+    <ui:style type="org.ovirt.engine.ui.common.widget.editor.IconEditorWidget.Style">
+
+        .iconImage {
+            display: block;
+            height: 120px;
+            width: 150px;
+            border: thin solid rgb(211, 211, 211);
+        }
+
+        .iconImageDisabled {
+            opacity: 0.4;
+        }
+
+        .horizontal-spacing > tbody > tr > td {
+            padding-left: 10px;
+        }
+
+        .inline-block {
+            display: inline-block
+        }
+
+        .iconButton {
+            margin: 0px 0px 10px;
+            min-width: 110px;
+        }
+
+        .iconButton:focus {
+            outline: thin black dotted;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .grey {
+            color: grey;
+        }
+
+        .iconInfoIcon {
+            margin: 0px 7px;
+        }
+
+        .iconErrorHtml {
+            position: relative;
+            bottom: 0px;
+            left: 0px;
+            margin: 10px;
+        }
+
+        .iconErrorHtml ul {
+            padding-left: 13px;
+        }
+
+        .no-border {
+            border: none;
+        }
+
+    </ui:style>
+
+
+    <g:HTMLPanel addStyleNames="{style.no-border}">
+        <g:HorizontalPanel addStyleNames="{style.horizontal-spacing}">
+            <g:Image ui:field="image" addStyleNames="{style.iconImage}"/>
+            <g:VerticalPanel>
+                <g:FlowPanel>
+                    <g:Button ui:field="uploadButton" text="{constants.uploadIconVmPopup}"
+                              addStyleNames="{style.inline-block} {style.iconButton}"/>
+                    <d:InfoIcon ui:field="uploadInfoIcon"
+                                addStyleNames="{style.inline-block} {style.iconInfoIcon}"/>
+                    <g:HTMLPanel addStyleNames="{style.hidden}">
+                        <g:FileUpload ui:field="fileUpload"/>
+                    </g:HTMLPanel>
+                </g:FlowPanel>
+                <g:Button ui:field="defaultButton" text="{constants.useDefaultIconVmPopup}"
+                          addStyleNames="{style.iconButton}"/>
+            </g:VerticalPanel>
+        </g:HorizontalPanel>
+        <g:HTML ui:field="errorMessageHtml" addStyleNames="{style.iconErrorHtml}"/>
+    </g:HTMLPanel>
+
+</ui:UiBinder>

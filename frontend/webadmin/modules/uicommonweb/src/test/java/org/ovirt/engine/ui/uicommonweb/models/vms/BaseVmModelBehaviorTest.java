@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
@@ -49,11 +50,23 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         vm.setSingleQxlPci(true);
         vm.setAutoConverge(true);
         vm.setMigrateCompressed(true);
+        vm.setLargeIconId(LARGE_ICON_ID);
+        vm.setSmallIconId(SMALL_ICON_ID);
     }
 
     @Before
     public void setUpVmBase() {
         setUpVm(getVm());
+    }
+
+    @Before
+    public void setUpIconCache() {
+        TWO_ICONS_ICON_CACHE.inject();
+    }
+
+    @After
+    public void tearDownIconCache() {
+        IconCacheBaseVmModelMock.removeMock();
     }
 
     @Test
@@ -139,6 +152,8 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         assertTrue(model.getSpiceCopyPasteEnabled().getEntity());
         assertTrue(model.getAutoConverge().getSelectedItem());
         assertTrue(model.getMigrateCompressed().getSelectedItem());
+        assertEquals(LARGE_ICON_DATA, model.getIcon().getEntity().getIcon());
+        assertEquals(LARGE_OS_DEFAULT_ICON_DATA, model.getIcon().getEntity().getOsDefaultIcon());
     }
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder} */

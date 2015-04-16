@@ -33,7 +33,7 @@ public final class ValidationResult
 
     public ValidationResult()
     {
-        this(true, new ArrayList<String>());
+        this(true, new ArrayList<String>(0));
     }
 
     public ValidationResult(boolean success, List<String> reasons) {
@@ -47,5 +47,13 @@ public final class ValidationResult
 
     public static ValidationResult fail(String... reasons) {
         return new ValidationResult(false, Arrays.asList(reasons));
+    }
+
+    @Override
+    public String toString() {
+        return "ValidationResult{" + //$NON-NLS-1$
+                "success=" + privateSuccess + //$NON-NLS-1$
+                ", reasons=" + privateReasons + //$NON-NLS-1$
+                "}"; //$NON-NLS-1$
     }
 }

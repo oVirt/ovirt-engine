@@ -766,6 +766,27 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Clone Name")
     String clonedVmName();
 
+    @DefaultStringValue("Icon")
+    String iconTabVmPopup();
+
+    @DefaultStringValue("New Icon")
+    String newIconVmPopup();
+
+    @DefaultStringValue("Current Icon")
+    String currentIconVmPopup();
+
+    @DefaultStringValue("Upload")
+    String uploadIconVmPopup();
+
+    @DefaultStringValue("Use default")
+    String useDefaultIconVmPopup();
+
+    @DefaultStringValue("Discard changes")
+    String discardChangesIconVmPopup();
+
+    @DefaultStringValue("Icons limitations: max dimensions: width 150px, heigth 120px; max size 24kB; supported formats: jpg, png, gif")
+    String iconLimitationsIconVmPopup();
+
     // Permissions
     @DefaultStringValue("Inherited Permission")
     String inheritedPermission();

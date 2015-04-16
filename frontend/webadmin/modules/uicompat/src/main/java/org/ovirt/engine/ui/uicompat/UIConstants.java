@@ -1027,7 +1027,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     String diskExistsOnAllActiveStorageDomainsMsg();
 
     @DefaultStringValue("The Template that the VM is based on does not exist on any active Storage Domain")
-    String noActiveStorageDomainWithTemplateMsg();;
+    String noActiveStorageDomainWithTemplateMsg();
 
     @DefaultStringValue("Field value should follow: <parameter=value;parameter=value;...>")
     String fieldValueShouldFollowMsg();
@@ -2709,4 +2709,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Register Disks")
     String registerDisksTitle();
+
+    @DefaultStringValue("Icon file is not parsable.")
+    String iconIsNotParsable();
 }

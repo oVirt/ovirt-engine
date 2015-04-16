@@ -24,6 +24,7 @@ public enum TabName {
     RESOURCE_ALLOCATION_TAB,
     SYSTEM_TAB,
     TAB_RNG,
-    FIRST_RUN;
+    FIRST_RUN,
+    ICON_TAB;
 
 }

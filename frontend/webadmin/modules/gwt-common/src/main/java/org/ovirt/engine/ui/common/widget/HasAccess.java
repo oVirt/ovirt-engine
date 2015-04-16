@@ -2,6 +2,10 @@ package org.ovirt.engine.ui.common.widget;
 
 /**
  * Widgets that implement this interface have a user access policy associated with them.
+ * <p>
+ *     Inaccessible widgets should be hidden. Usually using
+ *     {@link com.google.gwt.user.client.ui.Widget#setVisible(boolean)}
+ * </p>
  */
 public interface HasAccess {
 

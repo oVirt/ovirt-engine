@@ -203,6 +203,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     @Override
     public void oSType_SelectedItemChanged() {
+        super.oSType_SelectedItemChanged();
         VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem() == null
                 ? null
                 : getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();

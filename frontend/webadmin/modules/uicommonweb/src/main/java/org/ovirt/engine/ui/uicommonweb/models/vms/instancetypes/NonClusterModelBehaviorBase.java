@@ -88,11 +88,6 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
     }
 
     @Override
-    public void oSType_SelectedItemChanged() {
-
-    }
-
-    @Override
     public void updateMinAllocatedMemory() {
     }
 

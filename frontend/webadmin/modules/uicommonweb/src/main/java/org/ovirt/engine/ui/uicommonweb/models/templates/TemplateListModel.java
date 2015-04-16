@@ -30,6 +30,8 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
+import org.ovirt.engine.ui.uicommonweb.IconUtils;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -660,6 +662,11 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         final VmTemplate template = (VmTemplate) Cloner.clone(selectedItem);
 
+        final String iconForParameters = IconCache.getInstance().getIcon(selectedItem.getLargeIconId()).equals(
+                model.getIcon().getEntity().getIcon())
+                ? null
+                : IconUtils.filterPredefinedIcons(model.getIcon().getEntity().getIcon());
+
         String name = model.getName().getEntity();
 
         // Check name unicitate.
@@ -681,6 +688,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         template.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
         UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);
+        parameters.setVmLargeIcon(iconForParameters);
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setVmWatchdogToParams(model, parameters);
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());

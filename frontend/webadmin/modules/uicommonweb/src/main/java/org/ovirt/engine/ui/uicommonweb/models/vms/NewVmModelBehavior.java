@@ -116,16 +116,13 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
                 updateTimeZone(template.getTimeZone());
 
-                if (!template.getId().equals(Guid.Empty))
-                {
+                if (!template.getId().equals(Guid.Empty)) {
                     getModel().getStorageDomain().setIsChangable(true);
                     getModel().getProvisioning().setIsChangable(true);
 
                     getModel().getCopyPermissions().setIsAvailable(true);
                     initDisks();
-                }
-                else
-                {
+                } else {
                     getModel().getStorageDomain().setIsChangable(false);
                     getModel().getProvisioning().setIsChangable(false);
 
@@ -222,6 +219,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     @Override
     public void oSType_SelectedItemChanged() {
+        super.oSType_SelectedItemChanged();
         VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem() == null
                 ? null
                 : getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();

@@ -466,6 +466,8 @@ public final class Cloner
         obj.setPredefinedProperties(instance.getPredefinedProperties());
         obj.setUserDefinedProperties(instance.getUserDefinedProperties());
         obj.setCustomProperties(instance.getCustomProperties());
+        obj.setSmallIconId(instance.getSmallIconId());
+        obj.setLargeIconId(instance.getLargeIconId());
 
         return obj;
     }
@@ -515,6 +517,8 @@ public final class Cloner
         obj.setPredefinedProperties(instance.getPredefinedProperties());
         obj.setUserDefinedProperties(instance.getUserDefinedProperties());
         obj.setCustomProperties(instance.getCustomProperties());
+        obj.setSmallIconId(instance.getSmallIconId());
+        obj.setLargeIconId(instance.getLargeIconId());
 
         return obj;
     }

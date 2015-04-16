@@ -62,6 +62,19 @@ public class BaseVmTest {
     protected static final Integer MIGRATION_DOWNTIME_2 = 750;
     protected static final SerialNumberPolicy SERIAL_NUMBER_POLICY = SerialNumberPolicy.CUSTOM;
     protected static final String CUSTOM_SERIAL_NUMBER = "my custom number"; //$NON-NLS-1$
+
+    protected static final String LARGE_ICON_DATA = "largeIcon"; //$NON-NLS-1$
+    protected static final String LARGE_OS_DEFAULT_ICON_DATA = "largeOsDefaultIcon"; //$NON-NLS-1$
+
+    protected static final Guid SMALL_ICON_ID = Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"); //$NON-NLS-1$
+    protected static final Guid LARGE_ICON_ID = Guid.createGuidFromString("00000000-0000-0000-0000-00000000001a"); //$NON-NLS-1$
+    protected static final Guid LARGE_OS_DEFAULT_ICON_ID = Guid.createGuidFromString("00000000-0000-0000-0000-00000000001e"); //$NON-NLS-1$
+
+    protected static final IconCacheBaseVmModelMock TWO_ICONS_ICON_CACHE = new IconCacheBaseVmModelMock()
+            .put(LARGE_ICON_ID, LARGE_ICON_DATA)
+            .put(LARGE_OS_DEFAULT_ICON_ID, LARGE_OS_DEFAULT_ICON_DATA);
+    protected static final IconCacheModelVmBaseMock REVERSE_ICON_CACHE = new IconCacheModelVmBaseMock()
+            .put(LARGE_ICON_DATA, LARGE_ICON_ID);
     protected static final Version CLUSTER_VERSION = Version.v3_5;
     protected static AsyncDataProvider adp;
 
@@ -75,6 +88,7 @@ public class BaseVmTest {
         when(adp.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues)).thenReturn(Collections.emptyList());
         when(adp.osNameExists(OS_TYPE)).thenReturn(true);
         when(adp.getMaxVmNameLengthWin()).thenReturn(15);
+        when(adp.getOsDefaultIconId(OS_TYPE, false)).thenReturn(LARGE_OS_DEFAULT_ICON_ID);
     }
 
 }

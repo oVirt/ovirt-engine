@@ -431,6 +431,7 @@
         .overrideMigrationDowntimeContentEditor {
             width: 20px;
         }
+
     </ui:style>
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
@@ -792,6 +793,13 @@
                     <g:FlowPanel>
                         <k:KeyValueWidget ui:field="customPropertiesSheetEditor"/>
                     </g:FlowPanel>
+                </t:content>
+            </t:DialogTab>
+        </t:tab>
+        <t:tab>
+            <t:DialogTab ui:field="iconTab">
+                <t:content>
+                    <e:IconEditorWidget ui:field="iconEditorWidget" />
                 </t:content>
             </t:DialogTab>
         </t:tab>
