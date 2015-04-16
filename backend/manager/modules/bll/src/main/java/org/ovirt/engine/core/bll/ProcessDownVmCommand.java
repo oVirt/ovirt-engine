@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.action.IdParameters;
+import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -36,7 +36,7 @@ import javax.inject.Inject;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
-public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T> {
+public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends CommandBase<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ProcessDownVmCommand.class);
 

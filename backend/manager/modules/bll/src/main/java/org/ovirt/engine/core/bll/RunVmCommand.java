@@ -35,9 +35,9 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
-import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -537,7 +537,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private void removeVmStatlessImages() {
         runInternalAction(VdcActionType.ProcessDownVm,
-                new IdParameters(getVm().getId()),
+                new ProcessDownVmParameters(getVm().getId()),
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
         // setting lock to null in order not to release lock twice
         setLock(null);

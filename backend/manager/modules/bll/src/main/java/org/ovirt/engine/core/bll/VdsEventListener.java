@@ -26,9 +26,9 @@ import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
+import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
@@ -192,7 +192,7 @@ public class VdsEventListener implements IVdsEventListener {
             public void run() {
                 for (Guid vmId : vmIds) {
                     Backend.getInstance().runInternalAction(VdcActionType.ProcessDownVm,
-                            new IdParameters(vmId));
+                            new ProcessDownVmParameters(vmId));
                 }
             }
         });

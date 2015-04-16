@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.IdParameters;
+import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -62,7 +62,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
                 logSettingVmToDown(getVds().getId(), vm.getId());
             }
 
-            runInternalActionWithTasksContext(VdcActionType.ProcessDownVm, new IdParameters(vm.getId()));
+            runInternalActionWithTasksContext(VdcActionType.ProcessDownVm, new ProcessDownVmParameters(vm.getId()));
         }
 
         runVdsCommand(VDSCommandType.UpdateVdsVMsCleared,

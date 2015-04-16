@@ -18,7 +18,7 @@ import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.CinderBroker;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
-import org.ovirt.engine.core.common.action.IdParameters;
+import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
@@ -156,7 +156,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             public void run() {
                 runInternalActionWithTasksContext(
                         VdcActionType.ProcessDownVm,
-                        new IdParameters(getVm().getId())
+                        new ProcessDownVmParameters(getVm().getId())
                 );
             }
         });
