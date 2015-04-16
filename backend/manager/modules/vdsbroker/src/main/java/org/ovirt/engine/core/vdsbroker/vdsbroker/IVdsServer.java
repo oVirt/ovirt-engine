@@ -430,4 +430,8 @@ public interface IVdsServer {
             String[] storageDevices);
 
     StorageDeviceListReturnForXmlRpc glusterStorageDeviceList();
+
+    StatusOnlyReturnForXmlRpc glusterSnapshotScheduleOverride(boolean force);
+
+    StatusOnlyReturnForXmlRpc glusterSnapshotScheduleReset();
 }

@@ -404,4 +404,8 @@ public interface VdsServerConnector {
             String[] devices,
             String fsType,
             Map<String, Object> raidParams);
+
+    public Map<String, Object> glusterSnapshotScheduleOverride(boolean force);
+
+    public Map<String, Object> glusterSnapshotScheduleReset();
 }

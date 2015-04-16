@@ -306,7 +306,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
             return;
         }
 
-        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
+        final ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
         List<VdcActionParametersBase> paramsList = new ArrayList<VdcActionParametersBase>();
         for (GlusterVolumeSnapshotEntity snapshot : (List<GlusterVolumeSnapshotEntity>) getSelectedItems()) {
@@ -323,8 +323,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
 
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
-                        ConfirmationModel localModel = (ConfirmationModel) getConfirmWindow();
-                        localModel.stopProgress();
+                        model.stopProgress();
                         setConfirmWindow(null);
                     }
                 },
@@ -416,15 +415,14 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
             return;
         }
 
-        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
+        final ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
         model.startProgress(null);
 
         Frontend.getInstance().runAction(action, param, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
-                ConfirmationModel localModel = (ConfirmationModel) getConfirmWindow();
-                localModel.stopProgress();
+                model.stopProgress();
                 setConfirmWindow(null);
             }
         });
@@ -445,7 +443,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
         }
 
         GlusterVolumeEntity volumeEntity = getEntity();
-        GlusterVolumeSnapshotModel snapshotModel =
+        final GlusterVolumeSnapshotModel snapshotModel =
                 new GlusterVolumeSnapshotModel(true, !volumeEntity.getSnapshotScheduled());
 
         snapshotModel.setHelpTag(HelpTag.new_volume_snapshot);
@@ -453,8 +451,19 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
         snapshotModel.setTitle(ConstantsManager.getInstance().getConstants().createScheduleVolumeSnapshotTitle());
         setWindow(snapshotModel);
 
+        snapshotModel.startProgress(null);
+
         snapshotModel.getClusterName().setEntity(volumeEntity.getVdsGroupName());
         snapshotModel.getVolumeName().setEntity(volumeEntity.getName());
+
+        AsyncDataProvider.getIsGlusterVolumeSnapshotCliScheduleEnabled(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                Boolean isCliScheduleEnabled = (Boolean) returnValue;
+                snapshotModel.getDisableCliSchedule().setEntity(isCliScheduleEnabled);
+                snapshotModel.stopProgress();
+            }
+        }), volumeEntity.getClusterId());
 
         UICommand okCommand = UICommand.createDefaultOkUiCommand("onCreateSnapshot", this); //$NON-NLS-1$
         snapshotModel.getCommands().add(okCommand);
@@ -533,7 +542,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
         }
 
         ScheduleGlusterVolumeSnapshotParameters params =
-                new ScheduleGlusterVolumeSnapshotParameters(schedule, true);
+                new ScheduleGlusterVolumeSnapshotParameters(schedule, snapshotModel.getDisableCliSchedule().getEntity());
         snapshotModel.startProgress(null);
 
         VdcActionType actionType = null;
@@ -554,7 +563,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
                         localModel.postSnapshotAction(result.getReturnValue());
                     }
                 },
-                this);
+                this, snapshotModel.getDisableCliSchedule().getEntity());
     }
 
     private void createNewSnapshot(final GlusterVolumeSnapshotModel snapshotModel) {

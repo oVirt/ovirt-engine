@@ -1823,4 +1823,21 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterSnapshotScheduleOverride(boolean force) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterSnapshotScheduleOverride(force));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterSnapshotScheduleReset() {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterSnapshotScheduleReset());
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

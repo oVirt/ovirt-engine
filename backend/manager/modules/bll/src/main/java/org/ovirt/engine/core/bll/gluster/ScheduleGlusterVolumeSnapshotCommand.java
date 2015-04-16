@@ -3,8 +3,15 @@ package org.ovirt.engine.core.bll.gluster;
 import java.sql.Time;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshotParameters;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeSnapshotCommandBase<ScheduleGlusterVolumeSnapshotParameters> {
@@ -14,9 +21,15 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
 
     @Override
     protected void executeCommand() {
+        // Check and disable the gluster CLI based snapshot scheduling first
+        if (!checkAndDisableCliScheduler()) {
+            setSucceeded(false);
+            return;
+        }
+
+
         // Keep a copy of the execution time before conversion to engine time zone during scheduling
         Time originalExecutionTime = getSchedule().getExecutionTime();
-
         // schedule the snapshot creation task
         try {
             String jobId = scheduleJob();
@@ -31,6 +44,25 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
         }
     }
 
+    private boolean checkAndDisableCliScheduler() {
+        GlusterVolumeEntity metaVolume =
+                getGlusterVolumeDao().getByName(getVdsGroupId(),
+                        Config.<String> getValue(ConfigValues.GlusterMetaVolumeName));
+        VDSGroup cluster = getVdsGroup();
+        if (metaVolume != null && cluster.isGlusterCliBasedSchedulingOn()) {
+            VdcReturnValueBase returnValue =
+                    runInternalAction(VdcActionType.DisableGlusterCliSnapshotScheduleInternal,
+                            new GlusterVolumeActionParameters(getGlusterVolumeId(), true));
+            if (!returnValue.getSucceeded()) {
+                handleVdsErrors(AuditLogType.GLUSTER_CLI_SNAPSHOT_SCHEDULE_DISABLE_FAILED,
+                        returnValue.getExecuteFailedMessages());
+            }
+            return returnValue.getSucceeded();
+        }
+
+        return true;
+    }
+
     @Override
     protected boolean canDoAction() {
         if (!super.canDoAction()) {
@@ -41,6 +73,14 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
                 getGlusterVolumeSnapshotScheduleDao().getByVolumeId(getGlusterVolumeId());
         if (fetchedSchedule != null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_SCHEDULED);
+        }
+
+        if (!getParameters().getForce()) {
+            if (getGlusterVolumeDao().getByName(getVdsGroupId(),
+                    Config.<String> getValue(ConfigValues.GlusterMetaVolumeName)) != null
+                    && getVdsGroup().isGlusterCliBasedSchedulingOn()) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_CLI_SCHEDULING_ENABLED);
+            }
         }
 
         return true;

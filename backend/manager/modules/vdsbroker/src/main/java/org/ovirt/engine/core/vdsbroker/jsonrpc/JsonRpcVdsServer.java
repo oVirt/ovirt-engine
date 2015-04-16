@@ -1839,4 +1839,22 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new OneStorageDeviceReturnForXmlRpc(response);
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterSnapshotScheduleOverride(boolean force) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterVolume.snapshotScheduleOverride").withParameter("force", force).build();
+
+        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterSnapshotScheduleReset() {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterVolume.snapshotScheduleReset").build();
+
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
 }

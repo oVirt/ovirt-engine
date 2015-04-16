@@ -4216,4 +4216,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Additional features supported in the Cluster")
     String addtionalClusterFeaturesTitle();
 
+    @DefaultStringValue("Gluster CLI based snapshot scheduling is enabled. \nIt would be disabled once volume snapshots scheduled from UI.")
+    String glusterCliSchedulingEnabled();
 }

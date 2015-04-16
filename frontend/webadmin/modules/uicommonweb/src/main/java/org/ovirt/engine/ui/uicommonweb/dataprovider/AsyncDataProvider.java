@@ -1637,6 +1637,18 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void getIsGlusterVolumeSnapshotCliScheduleEnabled(AsyncQuery aQuery, Guid clusterId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery asyncQuery) {
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeSnapshotCliScheduleFlag,
+                new IdQueryParameters(clusterId),
+                aQuery);
+    }
+
     public static void getGlusterVolumeSnapshotsForVolume(AsyncQuery aQuery, Guid volumeId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

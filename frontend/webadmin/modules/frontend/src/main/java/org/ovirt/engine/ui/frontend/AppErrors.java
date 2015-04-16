@@ -3203,6 +3203,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Snapshot ${snapname} is already de-activated.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_DEACTIVATED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster CLI based scheduling is enabled.")
+    String ACTION_TYPE_FAILED_GLUSTER_CLI_SCHEDULING_ENABLED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Gluster task management is not supported in compatibility version ${compatibilityVersion}.")
     String GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL();
 

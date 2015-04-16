@@ -513,11 +513,23 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED();
 
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_SCHEDULED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_SCHEDULE_FAILED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_RESCHEDULED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_RESCHEDULE_FAILED();
+
     String AuditLogType___CREATE_GLUSTER_BRICK();
 
     String AuditLogType___CREATE_GLUSTER_BRICK_FAILED();
 
     String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_SCHEDULE_DELETED();
+
+    String AuditLogType___GLUSTER_CLI_SNAPSHOT_SCHEDULE_DISABLE_FAILED();
+
+    String AuditLogType___GLUSTER_CLI_SNAPSHOT_SCHEDULE_DISABLED();
 
     String VdcActionType___ActivateVds();
 
@@ -805,6 +817,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String VdcActionType___StartRebalanceGlusterVolume();
 
     String VdcActionType___CreateGlusterVolumeSnapshot();
+
+    String VdcActionType___ScheduleGlusterVolumeSnapshot();
+
+    String VdcActionType___RescheduleGlusterVolumeSnapshot();
 
     String VdcActionType___ReplaceGlusterVolumeBrick();
 

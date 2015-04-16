@@ -1694,11 +1694,17 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("NOTE:\n -Stopping volume will make its data inaccessible.")
     String stopVolumeWarning();
 
+    @DefaultStringValue("NOTE:\n -Stopping meta volume will impact normal working of features like volume snapshot, geo-replication etc.")
+    String stopMetaVolumeWarning();
+
     @DefaultStringValue("Remove Volume")
     String removeVolumesTitle();
 
     @DefaultStringValue("NOTE:\n -Removing volume will erase all information about the volume.")
     String removeVolumesWarning();
+
+    @DefaultStringValue("NOTE:\n - Removing meta volume will impact normal working of features like volume snapshot, geo-replication etc.")
+    String removeMetaVolumeWarning();
 
     @DefaultStringValue("Remove Bricks")
     String removeBricksTitle();
@@ -1720,6 +1726,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Are you sure you want to remove the following Brick(s)?")
     String removeBricksMessage();
+
+    @DefaultStringValue("Are you sure you want to remove the following Brick(s) from meta volume?")
+    String removeMetaVolumeBricksMessage();
+
+    @DefaultStringValue("NOTE:\n -Removing bricks from meta volume will impact normal working of features like volume snapshot, geo-replication etc.")
+    String removeMetaVolumeBricksWarning();
 
     @DefaultStringValue("NOTE:\n -Removing brick(s) can result in data loss.")
     String removeBricksWarning();

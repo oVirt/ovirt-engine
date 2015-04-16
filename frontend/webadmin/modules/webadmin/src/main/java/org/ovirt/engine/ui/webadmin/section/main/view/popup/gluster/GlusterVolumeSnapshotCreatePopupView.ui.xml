@@ -53,6 +53,18 @@
 		padding-bottom: 10px;
 		}
 
+		.disableCliScheduleMessageLabel {
+		width: 450px;
+		height:
+		50px;
+		font-size: 13px;
+		left: 10px;
+		padding-left: 15px;
+		padding-bottom:
+		10px;
+		color: #FF0000;
+		}
+
 	</ui:style>
 
 	<d:SimpleDialogPanel width="700px" height="500px">
@@ -103,6 +115,7 @@
 									addStyleNames="{style.criticalIntervalLabel}" />
 								<g:Label ui:field="scheduleTabErrorMessageLabel"
 									addStyleNames="{style.errMsgLabel}" />
+								<g:Label ui:field="disableCliScheduleMessageLabel" addStyleNames="{style.disableCliScheduleMessageLabel}" />
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>

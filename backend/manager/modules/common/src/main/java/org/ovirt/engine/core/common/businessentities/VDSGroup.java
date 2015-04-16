@@ -68,6 +68,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private boolean glusterService;
 
+    private boolean glusterCliBasedSchedulingOn;
+
     private boolean tunnelMigration;
 
     private String emulatedMachine;
@@ -244,6 +246,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     public boolean supportsGlusterService() {
         return glusterService;
+    }
+
+    public void setGlusterCliBasedSchedulingOn(boolean glusterCliBasedSchedulingOn) {
+        this.glusterCliBasedSchedulingOn = glusterCliBasedSchedulingOn;
+    }
+
+    public boolean isGlusterCliBasedSchedulingOn() {
+        return this.glusterCliBasedSchedulingOn;
     }
 
     public boolean isTunnelMigration() {
@@ -424,6 +434,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (transparentHugepages ? 1231 : 1237);
         result = prime * result + (virtService ? 1231 : 1237);
         result = prime * result + (glusterService ? 1231 : 1237);
+        result = prime * result + (glusterCliBasedSchedulingOn ? 1231 : 1237);
         result = prime * result + (tunnelMigration ? 1231 : 1237);
         result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
         result = prime * result + (trustedService ? 1231 : 1237);
@@ -479,6 +490,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && transparentHugepages == other.transparentHugepages
                 && virtService == other.virtService
                 && glusterService == other.glusterService
+                && glusterCliBasedSchedulingOn == other.glusterCliBasedSchedulingOn
                 && tunnelMigration == other.tunnelMigration
                 && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine)
                 && trustedService == other.trustedService
