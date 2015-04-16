@@ -181,6 +181,7 @@ select fn_db_add_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-vi
 -- Gluster Volume Snapshots --
 select fn_db_add_config_value_for_versions_up_to('GlusterVolumeSnapshotSupported', 'false', '3.5');
 select fn_db_add_config_value('GlusterRefreshRateSnapshotDiscovery', '300', 'general');
+select fn_db_add_config_value('GlusterMetaVolumeName', 'gluster_shared_storage', 'general');
 
 -- Gluster Disk Provisioning --
 select fn_db_add_config_value_for_versions_up_to('GlusterBrickProvisioningEnabled', 'false', '3.5');

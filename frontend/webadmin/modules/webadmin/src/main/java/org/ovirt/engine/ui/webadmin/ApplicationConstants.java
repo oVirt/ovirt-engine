@@ -4459,4 +4459,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Vm Devices")
     String virtualMachineVmDevicesSubTabLabel();
+
+    @DefaultStringValue("Gluster CLI based snapshot scheduling is enabled. \nIt would be disabled once volume snapshots scheduled from UI.")
+    String glusterCliSchedulingEnabled();
 }

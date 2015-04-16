@@ -26,6 +26,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskSt
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -45,6 +47,7 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntity, GlusterBrickEntity> {
+    private String glusterMetaVolumeName;
 
     @Override
     protected String getListName() {
@@ -64,6 +67,21 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         setReplaceBrickCommand(new UICommand("Replace Brick", this)); //$NON-NLS-1$
         setBrickAdvancedDetailsCommand(new UICommand("Brick Advanced Details", this)); //$NON-NLS-1$
         getReplaceBrickCommand().setIsAvailable(false);
+
+        // Get the meta volume name
+        AsyncQuery aQuery = new AsyncQuery();
+        aQuery.setModel(this);
+        aQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                glusterMetaVolumeName = (String) returnValue;
+            }
+        };
+        AsyncDataProvider.getInstance()
+                .getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterMetaVolumeName,
+                        AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
+                        aQuery);
+
     }
 
     private GlusterVolumeEntity volumeEntity;
@@ -595,14 +613,22 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
             if (removeBrickModel.isReduceReplica())
             {
-                removeBrickModel.setMessage(ConstantsManager.getInstance()
-                        .getMessages()
-                        .removeBricksReplicateVolumeMessage(volumeEntity.getReplicaCount(),
-                                volumeEntity.getReplicaCount() - 1));
-                removeBrickModel.setMigrationSupported(false);
-                removeBrickModel.getMigrateData().setEntity(false);
-            }
-            else
+                if (volumeEntity.getName().equals(glusterMetaVolumeName) && volumeEntity.getReplicaCount() <= 3) {
+                    removeBrickModel.setMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .removeMetaVolumeBricksMessage());
+                    removeBrickModel.setNote(ConstantsManager.getInstance()
+                            .getConstants()
+                            .removeMetaVolumeBricksWarning());
+                } else {
+                    removeBrickModel.setMessage(ConstantsManager.getInstance()
+                            .getMessages()
+                            .removeBricksReplicateVolumeMessage(volumeEntity.getReplicaCount(),
+                                    volumeEntity.getReplicaCount() - 1));
+                    removeBrickModel.setMigrationSupported(false);
+                    removeBrickModel.getMigrateData().setEntity(false);
+                }
+            } else
             {
                 removeBrickModel.setMessage(ConstantsManager.getInstance().getConstants().removeBricksMessage());
             }

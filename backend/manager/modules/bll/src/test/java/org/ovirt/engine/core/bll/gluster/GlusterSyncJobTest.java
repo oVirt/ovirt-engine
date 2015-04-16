@@ -26,9 +26,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -90,7 +95,11 @@ public class GlusterSyncJobTest {
             mockConfig(ConfigValues.GlusterRefreshHeavyWeight, "3.2", true),
             mockConfig(ConfigValues.GlusterHostUUIDSupport, "3.1", false),
             mockConfig(ConfigValues.GlusterHostUUIDSupport, "3.2", false),
-            mockConfig(ConfigValues.GlusterHostUUIDSupport, "3.3", true));
+            mockConfig(ConfigValues.GlusterHostUUIDSupport, "3.3", true),
+            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, "3.1", false),
+            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, "3.2", false),
+            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, "3.3", false),
+            mockConfig(ConfigValues.GlusterMetaVolumeName, "3.3", "gluster_shared_storage"));
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
@@ -148,6 +157,9 @@ public class GlusterSyncJobTest {
     @Mock
     private NetworkDao networkDao;
 
+    @Mock
+    private Backend backend;
+
     private VDSGroup existingCluster;
     private VDS existingServer1;
     private VDS existingServer2;
@@ -178,6 +190,7 @@ public class GlusterSyncJobTest {
         existingCluster.setGlusterService(true);
         existingCluster.setVirtService(false);
         existingCluster.setCompatibilityVersion(version);
+        existingCluster.setGlusterCliBasedSchedulingOn(true);
         createObjects(version);
     }
 
@@ -275,9 +288,20 @@ public class GlusterSyncJobTest {
                 .getVolumeAdvancedDetails(existingServer1, CLUSTER_ID, existingReplVol.getName());
         doReturn(new VDSReturnValue()).when(glusterManager).runVdsCommand(eq(VDSCommandType.RemoveVds),
                 argThat(isRemovedServer()));
+        doReturn(mockVdcReturn()).when(backend).runInternalAction(any(VdcActionType.class),
+                any(VdcActionParametersBase.class),
+                any(CommandContext.class));
+
         doNothing().when(glusterManager).acquireLock(CLUSTER_ID);
         doNothing().when(glusterManager).releaseLock(CLUSTER_ID);
         doReturn(glusterUtil).when(glusterManager).getGlusterUtil();
+    }
+
+    private VdcReturnValueBase mockVdcReturn() {
+        VdcReturnValueBase retValue = new VdcReturnValueBase();
+        retValue.setSucceeded(true);
+        retValue.setActionReturnValue(true);
+        return retValue;
     }
 
     private ArgumentMatcher<VDSParametersBase> isRemovedServer() {
@@ -389,6 +413,7 @@ public class GlusterSyncJobTest {
         doReturn(networkDao).when(glusterManager).getNetworkDao();
 
         doReturn(Collections.singletonList(existingCluster)).when(clusterDao).getAll();
+        doReturn(existingCluster).when(clusterDao).get(any(Guid.class));
         doReturn(existingServers).when(vdsDao).getAllForVdsGroup(CLUSTER_ID);
         doReturn(existingDistVol).when(volumeDao).getById(EXISTING_VOL_DIST_ID);
         doReturn(existingReplVol).when(volumeDao).getById(EXISTING_VOL_REPL_ID);
@@ -403,6 +428,7 @@ public class GlusterSyncJobTest {
         doNothing().when(volumeDao).removeAll(argThat(areRemovedVolumes()));
         doNothing().when(brickDao).updateBrickStatuses(argThat(hasBricksWithChangedStatus()));
         doNothing().when(optionDao).saveAll(argThat(areAddedOptions()));
+        doNothing().when(clusterDao).update(any(VDSGroup.class));
     }
 
     private ArgumentMatcher<Collection<Guid>> areRemovedVolumes() {

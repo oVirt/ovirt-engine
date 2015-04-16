@@ -908,6 +908,12 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed to get the gluster volume snapshot configuration")
     String GlusterSnapshotConfigGetFailedException();
 
+    @DefaultStringValue("Failed to set the gluster volume snapshot scheduler flag")
+    String GlusterSnapshotScheduleFlagUpdateFailedException();
+
+    @DefaultStringValue("Failed to disable CLI based gluster volume snapshot scheduling")
+    String GlusterDisableSnapshotScheduleFailedException();
+
     @DefaultStringValue("Storage device(s) not found")
     String GlusterHostStorageDeviceNotFoundException();
 

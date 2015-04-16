@@ -1502,6 +1502,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("300")
     GlusterRefreshRateSnapshotDiscovery,
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("gluster_shared_storage")
+    GlusterMetaVolumeName,
+
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     GlusterNetworkRoleSupported,

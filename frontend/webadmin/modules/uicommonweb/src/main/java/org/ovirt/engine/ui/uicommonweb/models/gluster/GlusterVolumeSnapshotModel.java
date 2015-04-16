@@ -44,11 +44,14 @@ public class GlusterVolumeSnapshotModel extends Model {
     private ListModel<String> daysOfMonth;
     //Listeners should be registered only once and not initially itself but only after a first validation occurs after user clicks on ok.
     private boolean listenersRegistered = false;
+    private EntityModel<Boolean> disableCliSchedule;
 
     public GlusterVolumeSnapshotModel(boolean generalTabVisible, boolean scheduleTabVisible) {
         init();
         setGeneralTabVisible(generalTabVisible);
         setScheduleTabVisible(scheduleTabVisible);
+        disableCliSchedule.setEntity(false);
+        disableCliSchedule.setIsAvailable(false);
     }
 
     private void init() {
@@ -65,6 +68,7 @@ public class GlusterVolumeSnapshotModel extends Model {
         setStartAt(new EntityModel<>(new Date()));
         setEndDate(new EntityModel<>(new Date()));
         setExecutionTime(new EntityModel<>(new Date()));
+        setDisableCliSchedule(new EntityModel<>(false));
         initIntervals();
         initTimeZones();
 
@@ -295,6 +299,14 @@ public class GlusterVolumeSnapshotModel extends Model {
 
     public void setDaysOfMonth(ListModel<String> daysOfMonth) {
         this.daysOfMonth = daysOfMonth;
+    }
+
+    public EntityModel<Boolean> getDisableCliSchedule() {
+        return this.disableCliSchedule;
+    }
+
+    public void setDisableCliSchedule(EntityModel<Boolean> value) {
+        this.disableCliSchedule = value;
     }
 
     public boolean validate(boolean inplaceValidate) {

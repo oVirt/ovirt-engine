@@ -65,6 +65,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         newGroup.setDetectEmulatedMachine(true);
         newGroup.setEmulatedMachine("rhel6.4.0");
         newGroup.setArchitecture(ArchitectureType.x86_64);
+        newGroup.setGlusterCliBasedSchedulingOn(true);
 
     }
 

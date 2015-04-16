@@ -186,6 +186,7 @@ public enum VDSCommandType {
     SetGlusterVolumeSnapshotConfig("org.ovirt.engine.core.vdsbroker.gluster"),
     GetStorageDeviceList("org.ovirt.engine.core.vdsbroker.gluster"),
     CreateBrick("org.ovirt.engine.core.vdsbroker.gluster"),
+    OverrideGlusterVolumeSnapshotSchedule("org.ovirt.engine.core.vdsbroker.gluster"),
 
     SetNumberOfCpus("org.ovirt.engine.core.vdsbroker"),
     SetAmountOfMemory("org.ovirt.engine.core.vdsbroker"),

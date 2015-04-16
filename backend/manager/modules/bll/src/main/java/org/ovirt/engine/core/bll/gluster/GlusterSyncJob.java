@@ -10,12 +10,17 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -33,6 +38,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -63,6 +70,9 @@ import org.slf4j.LoggerFactory;
  * engine as well.
  */
 public class GlusterSyncJob extends GlusterJob {
+    @Inject
+    private BackendInternal backend;
+
     private final Logger log = LoggerFactory.getLogger(GlusterSyncJob.class);
     private static final GlusterSyncJob instance = new GlusterSyncJob();
     private final AuditLogDirector auditLogDirector = new AuditLogDirector();
@@ -533,6 +543,8 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void updateExistingAndNewVolumes(Guid clusterId, Map<Guid, GlusterVolumeEntity> volumesMap) {
+        VDSGroup cluster = getClusterDao().get(clusterId);
+
         for (Entry<Guid, GlusterVolumeEntity> entry : volumesMap.entrySet()) {
             GlusterVolumeEntity volume = entry.getValue();
             log.debug("Analyzing volume '{}'", volume.getName());
@@ -544,6 +556,23 @@ public class GlusterSyncJob extends GlusterJob {
                 } catch (Exception e) {
                     log.error("Could not save volume {} in database: {}", volume.getName(), e.getMessage());
                     log.debug("Exception", e);
+                }
+
+                // If meta volume then set the CLI based snapshot scheduling flag accordingly
+                if (getGlusterUtil().isGlusterSnapshotSupported(cluster.getCompatibilityVersion(), clusterId)
+                        && cluster.isGlusterCliBasedSchedulingOn()
+                        && (Config.<String> getValue(ConfigValues.GlusterMetaVolumeName)).equalsIgnoreCase(volume.getName())) {
+
+                    VdcReturnValueBase returnValue =
+                            backend.runInternalAction(VdcActionType.DisableGlusterCliSnapshotScheduleInternal,
+                                    new GlusterVolumeActionParameters(volume.getId(), false),
+                                    ExecutionHandler.createInternalJobContext());
+
+                    if (!returnValue.getSucceeded()) {
+                        log.warn("Unbale to set volume snapshot scheduling flag to gluster CLI scheduler on cluster {}", cluster.getName());
+                    } else {
+                        logUtil.logVolumeMessage(volume, AuditLogType.GLUSTER_CLI_SNAPSHOT_SCHEDULE_DISABLED);
+                    }
                 }
             } else {
                 try {

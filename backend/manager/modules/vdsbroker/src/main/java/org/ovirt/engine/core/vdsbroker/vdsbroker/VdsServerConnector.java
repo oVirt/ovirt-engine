@@ -418,4 +418,8 @@ public interface VdsServerConnector {
     public Map<String, Object> getConvertedVm(String jobUUID);
 
     public Map<String, Object> deleteV2VJob(String jobUUID);
+
+    public Map<String, Object> glusterSnapshotScheduleOverride(boolean force);
+
+    public Map<String, Object> glusterSnapshotScheduleReset();
 }

@@ -220,6 +220,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("migrate_on_error", group.getMigrateOnError())
                 .addValue("virt_service", group.supportsVirtService())
                 .addValue("gluster_service", group.supportsGlusterService())
+                .addValue("gluster_cli_based_snapshot_scheduled", group.isGlusterCliBasedSchedulingOn())
                 .addValue("tunnel_migration", group.isTunnelMigration())
                 .addValue("required_rng_sources", VmRngDevice.sourcesToCsv(group.getRequiredRngSources()))
                 .addValue("emulated_machine", group.getEmulatedMachine())
@@ -288,6 +289,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setMigrateOnError(MigrateOnErrorOptions.forValue(rs.getInt("migrate_on_error")));
             entity.setVirtService(rs.getBoolean("virt_service"));
             entity.setGlusterService(rs.getBoolean("gluster_service"));
+            entity.setGlusterCliBasedSchedulingOn(rs.getBoolean("gluster_cli_based_snapshot_scheduled"));
             entity.setTunnelMigration(rs.getBoolean("tunnel_migration"));
             entity.getRequiredRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("required_rng_sources")));
             entity.setEmulatedMachine(rs.getString("emulated_machine"));

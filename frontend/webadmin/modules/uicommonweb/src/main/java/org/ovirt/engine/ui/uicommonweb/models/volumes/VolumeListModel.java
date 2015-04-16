@@ -119,6 +119,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     private UICommand editSnapshotScheduleCommand;
     private UICommand newGeoRepSessionCommand;
 
+    private String glusterMetaVolumeName;
+
     public UICommand getNewGeoRepSessionCommand() {
         return newGeoRepSessionCommand;
     }
@@ -297,6 +299,20 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
+
+        // Get the meta volume name
+        AsyncQuery aQuery = new AsyncQuery();
+        aQuery.setModel(this);
+        aQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                glusterMetaVolumeName = (String) returnValue;
+            }
+        };
+        AsyncDataProvider.getInstance()
+                .getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterMetaVolumeName,
+                        AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
+                        aQuery);
     }
 
     private void setDetailList(final VolumeGeneralModel volumeGeneralModel,
@@ -395,6 +411,15 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
     }
 
+    private boolean isMetaVolumeInList(List<GlusterVolumeEntity> volumes) {
+        for (GlusterVolumeEntity volume : volumes) {
+            if (volume.getName().equals(glusterMetaVolumeName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void removeVolume() {
         if (getWindow() != null)
         {
@@ -406,7 +431,11 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         model.setTitle(ConstantsManager.getInstance().getConstants().removeVolumesTitle());
         model.setHelpTag(HelpTag.remove_volume);
         model.setHashName("remove_volume"); //$NON-NLS-1$
-        model.setNote(ConstantsManager.getInstance().getConstants().removeVolumesWarning());
+        if (isMetaVolumeInList(Linq.<GlusterVolumeEntity> cast(getSelectedItems()))) {
+            model.setNote(ConstantsManager.getInstance().getConstants().removeMetaVolumeWarning());
+        } else {
+            model.setNote(ConstantsManager.getInstance().getConstants().removeVolumesWarning());
+        }
 
         if (getSelectedItems() == null) {
             return;
@@ -1060,7 +1089,11 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         model.setHelpTag(HelpTag.volume_stop);
         model.setHashName("volume_stop"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().stopVolumeMessage());
-        model.setNote(ConstantsManager.getInstance().getConstants().stopVolumeWarning());
+        if (isMetaVolumeInList(Linq.<GlusterVolumeEntity> cast(getSelectedItems()))) {
+            model.setNote(ConstantsManager.getInstance().getConstants().stopMetaVolumeWarning());
+        } else {
+            model.setNote(ConstantsManager.getInstance().getConstants().stopVolumeWarning());
+        }
 
         if (getSelectedItems() == null) {
             return;

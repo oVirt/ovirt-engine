@@ -152,6 +152,11 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     @WithElementId
     Label scheduleTabErrorMessageLabel;
 
+    @UiField
+    @Ignore
+    @WithElementId
+    Label disableCliScheduleMessageLabel;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
@@ -215,17 +220,19 @@ public class GlusterVolumeSnapshotCreatePopupView extends
         startAtEditor.setLabel(constants.startAtLabel());
         endDate.setLabel(constants.endByDateLabel());
         executionTimeEditor.setLabel(constants.executionTimeLabel());
-
         criticalIntervalLabel.setText(constants.criticalSnapshotIntervalNote());
+        disableCliScheduleMessageLabel.setText(constants.glusterCliSchedulingEnabled());
     }
 
     private void setVisibilities() {
         criticalIntervalLabel.setVisible(false);
+        disableCliScheduleMessageLabel.setVisible(false);
     }
 
     @Override
     public void edit(final GlusterVolumeSnapshotModel object) {
         driver.edit(object);
+
         updateVisibilities(object);
         updateTabVisibilities(object);
     }
@@ -244,6 +251,8 @@ public class GlusterVolumeSnapshotCreatePopupView extends
         executionTimeEditor.setVisible(recurrenceOption == GlusterVolumeSnapshotScheduleRecurrence.DAILY
                 || recurrenceOption == GlusterVolumeSnapshotScheduleRecurrence.WEEKLY
                 || recurrenceOption == GlusterVolumeSnapshotScheduleRecurrence.MONTHLY);
+        disableCliScheduleMessageLabel.setVisible(object.getDisableCliSchedule().getEntity()
+                && recurrenceOption != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN);
 
         setEndDateVisibility(object);
     }
