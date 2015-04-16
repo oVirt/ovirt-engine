@@ -24,6 +24,11 @@ OVIRT_LOGGING_PROPERTIES="${OVIRT_LOGGING_PROPERTIES:-${ENGINE_USR}/conf/tools-l
 exec "${JAVA_HOME}/bin/java" \
 	-Djava.util.logging.config.file="${OVIRT_LOGGING_PROPERTIES}" \
 	-Djboss.modules.write-indexes=false \
+	-Dorg.ovirt.engine.exttool.core.programName="${0}" \
+	-Dorg.ovirt.engine.exttool.core.packageName="${PACKAGE_NAME}" \
+	-Dorg.ovirt.engine.exttool.core.packageVersion="${PACKAGE_VERSION}" \
+	-Dorg.ovirt.engine.exttool.core.packageDisplayName="${PACKAGE_DISPLAY_NAME}" \
+	-Dorg.ovirt.engine.exttool.core.engineEtc="${ENGINE_ETC}" \
 	-jar "${JBOSS_HOME}/jboss-modules.jar" \
 	-dependencies org.ovirt.engine.extensions.builtin \
 	-class org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsExecutor \

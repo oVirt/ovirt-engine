@@ -8,7 +8,6 @@ import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArgumen
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ACTION_EDIT;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ACTION_LIST;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ACTION_VALIDATE;
-import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_ACTION;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_ADD_PERMISSIONS;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_CHANGE_PASSWORD_MSG;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_CONFIG_FILE;
@@ -20,6 +19,8 @@ import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArgumen
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_REPORT;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_RESOLVE_KDC;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_USER;
+import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.PROV_AD;
+import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.PROV_OLDAP;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -66,6 +67,7 @@ import org.slf4j.LoggerFactory;
 
 public class ManageDomains {
 
+    private static final String ENGINE_ETC = System.getProperty("org.ovirt.engine.exttool.core.engineEtc");
     private final String WARNING_ABOUT_TO_DELETE_LAST_DOMAIN =
             "WARNING: Domain %1$s is the last domain in the configuration. After deleting it you will have to either add another domain, or to use the internal admin user in order to login.";
     private final String INFO_ABOUT_NOT_ADDING_PERMISSIONS =
@@ -95,7 +97,8 @@ public class ManageDomains {
 
     private final static Logger log = LoggerFactory.getLogger(ManageDomains.class);
 
-    private final ManageDomainsArguments args;
+    private final Map<String, Object> args;
+    private String action;
 
     // This function gets the user name and the domain, and constructs the UPN as follows:
     // If the user already contains the domain (contains @), it just makes it upper-case.
@@ -124,14 +127,17 @@ public class ManageDomains {
         return returnUserName;
     }
 
-    public ManageDomains(ManageDomainsArguments args) {
+    public ManageDomains(String action, Map<String, Object> args) {
+        this.action = action;
         this.args = args;
     }
 
     public void init() throws ManageDomainsResult {
 
         try {
-            utilityConfiguration = new ManageDomainsConfiguration(args.get(ARG_CONFIG_FILE));
+            utilityConfiguration = new ManageDomainsConfiguration(
+                ((String)args.get(ARG_CONFIG_FILE)).replace("@ENGINE_ETC@", ENGINE_ETC)
+            );
         } catch (Exception e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_READING_CONFIGURATION, e.getMessage());
         }
@@ -242,8 +248,6 @@ public class ManageDomains {
     }
 
     public void runCommand() throws ManageDomainsResult {
-        String action = args.get(ARG_ACTION);
-
         if (ACTION_ADD.equals(action)) {
             addDomain();
         } else if (ACTION_EDIT.equals(action)) {
@@ -258,7 +262,7 @@ public class ManageDomains {
     }
 
     protected String getChangePasswordMsg(boolean edit) throws ManageDomainsResult, UnsupportedEncodingException {
-        if (!args.contains(ARG_CHANGE_PASSWORD_MSG)) {
+        if (!args.containsKey(ARG_CHANGE_PASSWORD_MSG)) {
             return null;
         }
         String emptyValueDescription = edit ? " (Not providing a value will cause the existing value to be reset)" : "";
@@ -283,9 +287,9 @@ public class ManageDomains {
     private String getPasswordInput() throws ManageDomainsResult {
         String pass = null;
 
-        if (args.contains(ARG_PASSWORD_FILE)) {
+        if (args.containsKey(ARG_PASSWORD_FILE)) {
             try {
-                pass = readPasswordFile(args.get(ARG_PASSWORD_FILE));
+                pass = readPasswordFile((String)args.get(ARG_PASSWORD_FILE));
             } catch (Exception e) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_READING_PASSWORD_FILE, e.getMessage());
             }
@@ -405,7 +409,7 @@ public class ManageDomains {
 
     protected List<String> getLdapServers(String domainName) throws ManageDomainsResult {
         ArrayList<String> servers = new ArrayList<String>();
-        String argValue = args.get(ARG_LDAP_SERVERS);
+        String argValue = (String)args.get(ARG_LDAP_SERVERS);
         if (StringUtils.isEmpty(argValue)) {
             LdapSRVLocator locator = new LdapSRVLocator();
             DnsSRVResult ldapDnsResult = null;
@@ -457,8 +461,8 @@ public class ManageDomains {
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomains, DOMAIN_SEPERATOR, null);
 
-        String domainName = args.get(ARG_DOMAIN);
-        String userName = args.get(ARG_USER);
+        String domainName = (String)args.get(ARG_DOMAIN);
+        String userName = (String)args.get(ARG_USER);
         if (domainNameEntry.doesDomainExist(domainName)) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DOMAIN_ALREADY_EXISTS_IN_CONFIGURATION, domainName);
         }
@@ -491,44 +495,40 @@ public class ManageDomains {
                 new DomainsConfigurationEntry(currentChangePasswordUrl, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
 
-        LdapProviderType ldapProviderType = args.getLdapProvider();
-        if (ldapProviderType == null) {
-            System.err.println("Provider typ was not provided. Use --providerType=<ldap_provider_type");
-        } else {
-            adUserNameEntry.setValueForDomain(domainName, userName);
-            adUserPasswordEntry.setValueForDomain(domainName, getPasswordInput());
-            authModeEntry.setValueForDomain(domainName, authMode);
-            ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
-            if (args.contains(ARG_LDAP_SERVERS)) {
-                setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
-            }
-            handleChangePasswordMsg(domainName, changePasswordUrlEntry, false);
-            testConfiguration(domainName,
-                    domainNameEntry,
-                    adUserNameEntry,
-                    adUserPasswordEntry,
-                    authModeEntry,
-                    adUserIdEntry,
-                    ldapProviderTypesEntry,
-                    ldapServersEntry,
-                    ldapServerPort,
-                    true,
-                    false,
-                    ldapServers);
-
-            handleAddPermissions(domainName, userName, adUserIdEntry.getValueForDomain(domainName));
-
-            // Update the configuration
-            setConfigurationEntries(domainNameEntry,
-                    adUserNameEntry,
-                    adUserPasswordEntry,
-                    authModeEntry,
-                    ldapServersEntry,
-                    adUserIdEntry,
-                    ldapProviderTypesEntry, changePasswordUrlEntry);
-
-            printSuccessMessage(domainName, "added");
+        LdapProviderType ldapProviderType = getProvider();
+        adUserNameEntry.setValueForDomain(domainName, userName);
+        adUserPasswordEntry.setValueForDomain(domainName, getPasswordInput());
+        authModeEntry.setValueForDomain(domainName, authMode);
+        ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
+        if (args.containsKey(ARG_LDAP_SERVERS)) {
+            setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
         }
+        handleChangePasswordMsg(domainName, changePasswordUrlEntry, false);
+        testConfiguration(domainName,
+                domainNameEntry,
+                adUserNameEntry,
+                adUserPasswordEntry,
+                authModeEntry,
+                adUserIdEntry,
+                ldapProviderTypesEntry,
+                ldapServersEntry,
+                ldapServerPort,
+                true,
+                false,
+                ldapServers);
+
+        handleAddPermissions(domainName, userName, adUserIdEntry.getValueForDomain(domainName));
+
+        // Update the configuration
+        setConfigurationEntries(domainNameEntry,
+                adUserNameEntry,
+                adUserPasswordEntry,
+                authModeEntry,
+                ldapServersEntry,
+                adUserIdEntry,
+                ldapProviderTypesEntry, changePasswordUrlEntry);
+
+        printSuccessMessage(domainName, "added");
     }
 
     private void setLdapServersPerDomain(String domainName,
@@ -544,14 +544,14 @@ public class ManageDomains {
     }
 
     private void printSuccessMessage(String domainName, String action) {
-        if (args.contains(ARG_ADD_PERMISSIONS)) {
+        if (args.containsKey(ARG_ADD_PERMISSIONS)) {
             System.out.print(String.format(SUCCESS_MESSAGE_FOR_ACTION_WITH_ADD_PERMISSIONS, "added", domainName));
         }
         System.out.println(SERVICE_RESTART_MESSAGE);
     }
 
     private void handleAddPermissions(String domainName, String userName, String userId) {
-        if (args.contains(ARG_ADD_PERMISSIONS)) {
+        if (args.containsKey(ARG_ADD_PERMISSIONS)) {
             updatePermissionsTable(userName, domainName, userId);
         } else
         if (!userHasPermissions(userName, domainName)) {
@@ -582,11 +582,11 @@ public class ManageDomains {
 
     public void editDomain() throws ManageDomainsResult {
         String authMode;
-        String domainName = args.get(ARG_DOMAIN);
+        String domainName = (String)args.get(ARG_DOMAIN);
         authMode = getDomainAuthMode(domainName);
         validateKdcServers(authMode, domainName);
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
-        String userName  = args.get(ARG_USER);
+        String userName  = (String)args.get(ARG_USER);
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomains, DOMAIN_SEPERATOR, null);
 
@@ -636,12 +636,12 @@ public class ManageDomains {
         // Set the the obtained LDAP servers (either from arguments or from a DNS SRV record query
         // only if the -ldapServers option is used.
 
-        if (args.contains(ARG_LDAP_SERVERS)) {
+        if (args.containsKey(ARG_LDAP_SERVERS)) {
             setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
         }
         LdapProviderType ldapProviderType = null;
-        if (args.contains(ARG_PROVIDER)) {
-            ldapProviderType = args.getLdapProvider();
+        if (args.containsKey(ARG_PROVIDER)) {
+            ldapProviderType = getProvider();
         }
         if (ldapProviderType != null) {
             ldapProviderTypeEntry.setValueForDomain(domainName, ldapProviderType.name());
@@ -680,7 +680,7 @@ public class ManageDomains {
             DomainsConfigurationEntry changePaswordUrlEntry,
             boolean edit)
             throws ManageDomainsResult {
-        if (args.contains(ARG_CHANGE_PASSWORD_MSG)) {
+        if (args.containsKey(ARG_CHANGE_PASSWORD_MSG)) {
             try {
                 String changePasswordMsgStr = getChangePasswordMsg(edit);
                 if (StringUtils.isNotBlank(changePasswordMsgStr)) {
@@ -728,8 +728,8 @@ public class ManageDomains {
     }
 
     private boolean shouldResolveKdc() {
-        return !args.contains(ARG_LDAP_SERVERS) && useDnsLookup
-                || args.contains(ARG_RESOLVE_KDC);
+        return !args.containsKey(ARG_LDAP_SERVERS) && useDnsLookup
+                || args.containsKey(ARG_RESOLVE_KDC);
     }
 
     private void checkKerberosConfiguration(String domainName,
@@ -770,7 +770,7 @@ public class ManageDomains {
                 ManageDomainsResult result =
                         new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN,
                                 new String[] { domain, e.getMessage() });
-                if ((isValidate && args.contains(ARG_REPORT)) || ((domainName != null) && !domain.equals(domainName))) {
+                if ((isValidate && args.containsKey(ARG_REPORT)) || ((domainName != null) && !domain.equals(domainName))) {
                     System.out.println("WARNING, domain: " + domain + " may not be functional: "
                             + result.getDetailedMessage());
                 } else {
@@ -843,7 +843,7 @@ public class ManageDomains {
                     userGuid, LdapProviderType.valueOf(ldapProviderType.getValueForDomain(domain)), domainLdapServers);
             if (!result.isSuccessful()) {
                 if (isValidate || ((domainName != null) && !domain.equals(domainName))) {
-                    if (args.contains(ARG_REPORT)) {
+                    if (args.containsKey(ARG_REPORT)) {
                         System.out.println("WARNING, domain: " + domain + " may not be functional: "
                                 + result.getDetailedMessage());
                     } else {
@@ -976,14 +976,14 @@ public class ManageDomains {
         configurationProvider.setConfigValue(ConfigValues.LDAPProviderTypes,
                 ldapProviderTypeEntry);
 
-        if (args.contains(ARG_CHANGE_PASSWORD_MSG)) {
+        if (args.containsKey(ARG_CHANGE_PASSWORD_MSG)) {
             configurationProvider.setConfigValue(ConfigValues.ChangePasswordMsg, changePasswordUrlEntry);
         }
     }
 
     public void deleteDomain() throws ManageDomainsResult {
 
-        String domainName = args.get(ARG_DOMAIN);
+        String domainName = (String)args.get(ARG_DOMAIN);
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomains, DOMAIN_SEPERATOR, null);
@@ -994,11 +994,11 @@ public class ManageDomains {
 
         //Prompt warning about last domain only if not "force delete", as using
         //the force delete option should remove with no confirmation/warning
-        if (domainNameEntry.getDomainNames().size() == 1 && !args.contains(ARG_FORCE)) {
+        if (domainNameEntry.getDomainNames().size() == 1 && !args.containsKey(ARG_FORCE)) {
             System.out.println(String.format(WARNING_ABOUT_TO_DELETE_LAST_DOMAIN, domainName));
         }
 
-        if(!args.contains(ARG_FORCE) && !confirmDeleteDomain(domainName)) {
+        if(!args.containsKey(ARG_FORCE) && !confirmDeleteDomain(domainName)) {
             return;
         }
 
@@ -1047,6 +1047,31 @@ public class ManageDomains {
                 ldapProviderTypeEntry, changePasswordUrlEntry);
 
         System.out.println(String.format(DELETE_DOMAIN_SUCCESS, domainName));
+    }
+
+    /**
+     * Return {@code true} if valid action has been specified, otherwise {@code false}
+     */
+    public boolean isValidAction() {
+        return action != null
+            && (ACTION_ADD.equals(action)
+            || ACTION_EDIT.equals(action)
+            || ACTION_DELETE.equals(action)
+            || ACTION_LIST.equals(action)
+            || ACTION_VALIDATE.equals(action));
+    }
+
+    /**
+     * Converts string provider value to match name of {@link LdapProviderType} enum
+     */
+    private LdapProviderType getProvider() {
+        String providerStr = ((String)args.get(ARG_PROVIDER)).toLowerCase();
+        if (PROV_AD.equals(providerStr)) {
+            providerStr = LdapProviderType.activeDirectory.name();
+        } else if (PROV_OLDAP.equals(providerStr)) {
+            providerStr = LdapProviderType.openLdap.name();
+        }
+        return LdapProviderType.valueOfIgnoreCase(providerStr);
     }
 
     private boolean confirmDeleteDomain(String domainName) {
