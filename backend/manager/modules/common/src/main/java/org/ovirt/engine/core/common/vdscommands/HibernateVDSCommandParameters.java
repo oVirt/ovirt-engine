@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HibernateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
@@ -22,7 +23,8 @@ public class HibernateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, hibernationVolHandle=%s", super.toString(), getHibernationVolHandle());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("hibernationVolHandle", getHibernationVolHandle());
     }
 }

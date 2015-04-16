@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogSeverity;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.notifier.transport.Transport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,10 +179,10 @@ public class FirstMatchSimpleFilter {
 
         @Override
         public String toString() {
-            return "Recipient{" +
-                    "transport='" + transport + '\'' +
-                    ", name='" + name + '\'' +
-                    '}';
+            return ToStringBuilder.forInstance(this)
+                    .append("transport", transport)
+                    .append("name", name)
+                    .build();
         }
     }
 
@@ -224,13 +225,12 @@ public class FirstMatchSimpleFilter {
 
         @Override
         public String toString() {
-            return "FilterEntry{" +
-                    "eventName='" + eventName + '\'' +
-                    ", severity=" + (severity != null ? severity.name() : "any") +
-                    ", exclude=" + exclude +
-                    ", recipient=" + recipient +
-                    '}';
+            return ToStringBuilder.forInstance(this)
+                    .append("eventName", eventName)
+                    .append("severity", severity != null ? severity.name() : "any")
+                    .append("exclude", exclude)
+                    .append("recipient", recipient)
+                    .build();
         }
-
     }
 }

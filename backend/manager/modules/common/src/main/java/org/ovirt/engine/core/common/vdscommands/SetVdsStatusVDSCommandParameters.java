@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -66,12 +67,11 @@ public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersB
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, status=%s, nonOperationalReason=%s, stopSpmFailureLogged=%s, maintenanceReason=%s",
-                super.toString(),
-                getStatus(),
-                getNonOperationalReason(),
-                isStopSpmFailureLogged(),
-                getMaintenanceReason());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("status", getStatus())
+                .append("nonOperationalReason", getNonOperationalReason())
+                .append("stopSpmFailureLogged", isStopSpmFailureLogged())
+                .append("maintenanceReason", getMaintenanceReason());
     }
 }

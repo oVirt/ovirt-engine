@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 /**
  * Used to represent the validation result for a "Can Do Action" validation operation, which can either return that the
@@ -123,13 +124,10 @@ public final class ValidationResult {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ValidationResult [message=")
-                .append(getMessage())
-                .append(", variableReplacements=")
-                .append(getVariableReplacements())
-                .append("]");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("message", getMessage())
+                .append("variableReplacements", getVariableReplacements())
+                .build();
     }
 
     /**

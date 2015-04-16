@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
@@ -272,17 +273,14 @@ public class VdcActionParametersBase implements Serializable {
         ROLLBACK_FLOW;
     }
 
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return tsb.append("commandId", getCommandId())
+                .append("user", getParametersCurrentUser() == null ? null : getParametersCurrentUser().getLoginName())
+                .append("commandType", getCommandType());
+    }
+
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder(50);
-        builder.append("commandId: "); //$NON-NLS-1$
-        builder.append(getCommandId());
-        builder.append(", user: "); //$NON-NLS-1$
-        if (getParametersCurrentUser() != null) {
-            builder.append(getParametersCurrentUser().getLoginName());
-        }
-        builder.append(", commandType: "); //$NON-NLS-1$
-        builder.append(getCommandType());
-        return builder.toString();
+        return appendAttributes(ToStringBuilder.forInstance(this)).build();
     }
 }

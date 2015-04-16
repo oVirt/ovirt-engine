@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class VdsIdAndVdsVDSCommandParametersBase extends VdsIdVDSCommandParametersBase {
     private VDS privateVds;
@@ -22,7 +23,8 @@ public class VdsIdAndVdsVDSCommandParametersBase extends VdsIdVDSCommandParamete
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, vds=%s", super.toString(), getVds());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vds", getVds());
     }
 }

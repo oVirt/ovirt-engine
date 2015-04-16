@@ -18,6 +18,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.spi.NamingManager;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +53,13 @@ public class DnsSRVLocator {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("valid: ").append(valid).append(" sum: ").append(sum).append("priority: ").append(priority)
-                    .append(" weight: ").append(weight).append(" hostport: ").append(address);
-            return sb.toString();
+            return ToStringBuilder.forInstance(this)
+                    .append("valid", valid)
+                    .append("sum", sum)
+                    .append("priority", priority)
+                    .append("weight", weight)
+                    .append("hostport", address)
+                    .build();
         }
 
         public SrvRecord(int priority, int weight, String hostPort) {

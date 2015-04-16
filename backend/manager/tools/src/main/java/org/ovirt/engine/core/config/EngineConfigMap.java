@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.config;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 
 /**
@@ -112,22 +113,16 @@ public class EngineConfigMap {
 
     @Override
     public String toString() {
-        final String SEPARATOR = ", ";
-
-        StringBuffer retValue = new StringBuffer();
-
-        retValue.append("( ")
-                .append("version = ").append(this.version).append(SEPARATOR)
-                .append("configAction = ").append(this.configAction).append(SEPARATOR)
-                .append("key = ").append(this.key).append(SEPARATOR)
-                .append("value = ").append(this.value).append(SEPARATOR)
-                .append("alternateConfigFile = ").append(this.alternateConfigFile).append(SEPARATOR)
-                .append("alternatePropertiesFile = ").append(this.alternatePropertiesFile).append(SEPARATOR)
-                .append("logFile = ").append(this.logFile).append(SEPARATOR)
-                .append("logLevel = ").append(this.logLevel).append(SEPARATOR)
-                .append(" )");
-
-        return retValue.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("version", version)
+                .append("configAction", configAction)
+                .append("key", key)
+                .append("value", value)
+                .append("alternateConfigFile", alternateConfigFile)
+                .append("alternatePropertiesFile", alternatePropertiesFile)
+                .append("logFile", logFile)
+                .append("logLevel", logLevel)
+                .build();
     }
 
     public void setOnlyReloadable(String parseOptionKey) {

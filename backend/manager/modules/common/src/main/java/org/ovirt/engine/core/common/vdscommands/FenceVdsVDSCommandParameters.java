@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -45,13 +46,11 @@ public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase 
     }
 
     @Override
-    public String toString() {
-        return String.format(
-                "%s, targetVdsId = %s, action = %s, agent = '%s', policy = '%s'",
-                super.toString(),
-                getTargetVdsID(),
-                getAction(),
-                getFenceAgent(),
-                getFencingPolicyParams());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("targetVdsId", getTargetVdsID())
+                .append("action", getAction())
+                .append("agent", getFenceAgent())
+                .append("policy", getFencingPolicyParams());
     }
 }

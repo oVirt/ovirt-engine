@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -63,7 +64,10 @@ public class BusinessEntitySnapshot {
 
         @Override
         public String toString() {
-            return "EntityStatusSnapshot [id=" + id + ", status=" + status + "]";
+            return ToStringBuilder.forInstance(this)
+                    .append("id", id)
+                    .append("status", status)
+                    .build();
         }
     }
 

@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+
 /**
  * A class representing extended fencing policy (extended in the meaning that not only host status and power management
  * settings will be used to decide to fence the host)
@@ -97,15 +99,11 @@ public class FencingPolicy implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("{ fencingEnabled=");
-        sb.append(fencingEnabled);
-        sb.append(", skipFencingIfSDActive=");
-        sb.append(skipFencingIfSDActive);
-        sb.append(", skipFencingIfConnectivityBroken=");
-        sb.append(skipFencingIfConnectivityBroken);
-        sb.append(", hostsWithBrokenConnectivityThreshold=");
-        sb.append(hostsWithBrokenConnectivityThreshold);
-        sb.append(" }");
-        return sb.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("fencingEnabled", fencingEnabled)
+                .append("skipFencingIfSDActive", skipFencingIfSDActive)
+                .append("skipFencingIfConnectivityBroken", skipFencingIfConnectivityBroken)
+                .append("hostsWithBrokenConnectivityThreshold", hostsWithBrokenConnectivityThreshold)
+                .build();
     }
 }

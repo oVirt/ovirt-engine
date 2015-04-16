@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.eventqueue;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class Event {
@@ -80,7 +81,12 @@ public class Event {
 
     @Override
     public String toString() {
-        return "Event [eventType=" + eventType + ", storagePoolId=" + storagePoolId + ", domainId=" + domainId
-                + ", vdsId=" + vdsId + ", description=" + description + "]";
+        return ToStringBuilder.forInstance(this)
+                .append("eventType",  eventType)
+                .append("storagePoolId", storagePoolId)
+                .append("domainId", domainId)
+                .append("vdsId", vdsId)
+                .append("description", description)
+                .build();
     }
 }

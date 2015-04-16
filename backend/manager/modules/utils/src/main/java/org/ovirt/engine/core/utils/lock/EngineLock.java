@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.lock;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 /**
  *The following class is represent a lock which is used in the system
@@ -39,20 +40,10 @@ public class EngineLock implements AutoCloseable {
 
     @Override
     public String toString() {
-        StringBuilder message = new StringBuilder("EngineLock [exclusiveLocks= ");
-        buildEntryStrings(exclusiveLocks, message);
-        message.append(", sharedLocks= ");
-        buildEntryStrings(sharedLocks, message);
-        message.append("]");
-        return message.toString();
-    }
-
-    private void buildEntryStrings(Map<String, Pair<String, String>> locks, StringBuilder message) {
-        if (locks != null) {
-            for (Map.Entry<String, Pair<String, String>> entry : locks.entrySet()) {
-                message.append("key: ").append(entry.getKey()).append(" value: ").append(entry.getValue().getFirst()).append('\n');
-            }
-        }
+        return ToStringBuilder.forInstance(this)
+                .append("exclusiveLocks", exclusiveLocks)
+                .append("sharedLocks", sharedLocks)
+                .build();
     }
 
     @Override

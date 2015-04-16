@@ -3,6 +3,7 @@ package org.ovirt.engine.core.notifier.filter;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AuditLogEvent {
@@ -199,25 +200,25 @@ public class AuditLogEvent {
 
     @Override
     public String toString() {
-        return "AuditLogEvent{" +
-                "id=" + id +
-                ", logTypeName='" + logTypeName + '\'' +
-                ", type=" + type +
-                ", userId=" + userId +
-                ", userName='" + userName + '\'' +
-                ", vmId=" + vmId +
-                ", vmName='" + vmName + '\'' +
-                ", vmTemplateId=" + vmTemplateId +
-                ", vmTemplateName='" + vmTemplateName + '\'' +
-                ", vdsId=" + vdsId +
-                ", vdsName='" + vdsName + '\'' +
-                ", storagePoolId=" + storagePoolId +
-                ", storagePoolName='" + storagePoolName + '\'' +
-                ", storageDomainId=" + storageDomainId +
-                ", storageDomainName='" + storageDomainName + '\'' +
-                ", logTime=" + logTime +
-                ", severity=" + severity +
-                ", message='" + message + '\'' +
-                '}';
+        return ToStringBuilder.forInstance(this)
+                .append("id", id)
+                .append("logTypeName", logTypeName)
+                .append("type", type)
+                .append("userId", userId)
+                .append("userName", userName)
+                .append("vmId", vmId)
+                .append("vmName", vmName)
+                .append("vmTemplateId", vmTemplateId)
+                .append("vmTemplateName", vmTemplateName)
+                .append("vdsId", vdsId)
+                .append("vdsName", vdsName)
+                .append("storagePoolId", storagePoolId)
+                .append("storagePoolName", storagePoolName)
+                .append("storageDomainId", storageDomainId)
+                .append("storageDomainName", storageDomainName)
+                .append("logTime", logTime)
+                .append("severity", severity)
+                .append("message", message)
+                .build();
     }
 }

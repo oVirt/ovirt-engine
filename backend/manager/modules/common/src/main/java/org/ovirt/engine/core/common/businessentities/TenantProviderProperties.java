@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class TenantProviderProperties implements AdditionalProperties {
 
@@ -53,10 +54,12 @@ public class TenantProviderProperties implements AdditionalProperties {
         return true;
     }
 
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return tsb.append("tenantName", getTenantName());
+    }
+
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("MultiTenantProviderProperties [tenantName=").append(getTenantName()).append("]");
-        return builder.toString();
+        return appendAttributes(ToStringBuilder.forInstance(this)).build();
     }
 }

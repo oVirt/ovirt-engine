@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import java.util.Arrays;
-
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetDevicesVisibilityVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -25,8 +24,8 @@ public class GetDevicesVisibilityVDSCommandParameters extends VdsIdVDSCommandPar
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, devicesIds=%s", super.toString(), Arrays.toString(getDevicesIds()));
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("devicesIds", getDevicesIds());
     }
-
 }

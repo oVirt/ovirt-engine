@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+
 public class GetConfigurationValueParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -5889171970595969719L;
 
@@ -36,16 +38,10 @@ public class GetConfigurationValueParameters extends VdcQueryParametersBase {
         setRefresh(false);
     }
 
-
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder(50);
-        builder.append("version: "); //$NON-NLS-1$
-        builder.append(getVersion());
-        builder.append(", configuration value: ");
-        builder.append(getConfigValue());
-        builder.append(", ");
-        builder.append(super.toString());
-        return builder.toString();
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("version", getVersion())
+                .append("configurationValue", getConfigValue());
     }
 }

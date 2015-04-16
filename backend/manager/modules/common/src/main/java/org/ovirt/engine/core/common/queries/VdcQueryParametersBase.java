@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+
 public class VdcQueryParametersBase implements Serializable {
     private static final long serialVersionUID = -6766170283465888549L;
 
@@ -72,13 +74,13 @@ public class VdcQueryParametersBase implements Serializable {
         this.isFiltered = isFiltered;
     }
 
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return tsb.append("refresh", refresh)
+                .append("filtered", isFiltered);
+    }
+
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder(25);
-        builder.append("refresh: ");
-        builder.append(refresh);
-        builder.append(", filtered: ");
-        builder.append(isFiltered);
-        return builder.toString();
+        return appendAttributes(ToStringBuilder.forInstance(this)).build();
     }
 }

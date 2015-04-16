@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class AsyncTaskStatus implements Serializable {
@@ -75,7 +76,11 @@ public class AsyncTaskStatus implements Serializable {
 
     @Override
     public String toString() {
-        return "(status = " + getStatus() + ", result = " + getResult() + ", exception = " + getException()
-                + ", message = " + getMessage() + ")";
+        return ToStringBuilder.forInstance(this)
+                .append("status", getStatus())
+                .append("result", getResult())
+                .append("exception", getException())
+                .append("message", getMessage())
+                .build();
     }
 }

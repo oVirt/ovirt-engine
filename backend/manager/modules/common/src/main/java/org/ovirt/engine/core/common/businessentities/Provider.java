@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
@@ -253,31 +254,19 @@ public class Provider<P extends AdditionalProperties> extends IVdcQueryable impl
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Provider [id=")
-                .append(getId())
-                .append(", name=")
-                .append(getName())
-                .append(", description=")
-                .append(getDescription())
-                .append(", url=")
-                .append(getUrl())
-                .append(", type=")
-                .append(getType())
-                .append(", requiringAuthentication=")
-                .append(isRequiringAuthentication())
-                .append(", username=")
-                .append(getUsername())
-                .append(", password=")
-                .append(getPassword() == null ? null : "******")
-                .append(", customProperties=")
-                .append(getCustomProperties())
-                .append(", additionalProperties=")
-                .append(getAdditionalProperties())
-                .append(", authUrl=")
-                .append(getAuthUrl())
-                .append("]");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("id", getId())
+                .append("name", getName())
+                .append("description", getDescription())
+                .append("url", getUrl())
+                .append("type", getType())
+                .append("requiringAuthentication", isRequiringAuthentication())
+                .append("username", getUsername())
+                .appendFiltered("password", getPassword())
+                .append("customProperties", getCustomProperties())
+                .append("additionalProperties", getAdditionalProperties())
+                .append("authUrl", getAuthUrl())
+                .build();
     }
 
     /**

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class SyntaxObject {
     protected SyntaxObjectType mType = SyntaxObjectType.forValue(0);
@@ -36,8 +36,11 @@ public class SyntaxObject {
 
     @Override
     public String toString() {
-        String retval = StringFormat.format("body = '%1$s' , startPos = %2$s , endPos = %3$s, type = %4$s", mBody,
-                mPos[0], mPos[1], mType);
-        return retval;
+        return ToStringBuilder.forInstance(this)
+                .append("body", mBody)
+                .append("startPos", mPos[0])
+                .append("endPos", mPos[1])
+                .append("type", mType)
+                .build();
     }
 }
