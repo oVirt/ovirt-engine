@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MergeVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
@@ -102,16 +103,14 @@ public class MergeVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     }
 
     @Override
-    public String toString() {
-        return new StringBuilder("MergeVDSCommandParameters{")
-                .append(super.toString())
-                .append(", storagePoolId=").append(storagePoolId)
-                .append(", storageDomainId=").append(storageDomainId)
-                .append(", imageGroupId=").append(imageGroupId)
-                .append(", imageId=").append(imageId)
-                .append(", baseImageId=").append(baseImageId)
-                .append(", topImageId=").append(topImageId)
-                .append(", bandwidth=").append(bandwidth)
-                .append('}').toString();
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("storagePoolId", storagePoolId)
+                .append("storageDomainId", storageDomainId)
+                .append("imageGroupId", imageGroupId)
+                .append("imageId", imageId)
+                .append("baseImageId", baseImageId)
+                .append("topImageId", topImageId)
+                .append("bandwidth", bandwidth);
     }
 }

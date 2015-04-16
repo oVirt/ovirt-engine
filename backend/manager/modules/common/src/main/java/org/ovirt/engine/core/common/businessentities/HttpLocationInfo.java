@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+
 public class HttpLocationInfo extends LocationInfo {
     String url;
     Map<String, String> headers;
@@ -30,6 +32,9 @@ public class HttpLocationInfo extends LocationInfo {
 
     @Override
     public String toString() {
-        return "HttpLocationInfo [url=" + url + ", headers=" + headers + "]";
+        return ToStringBuilder.forInstance(this)
+                .append("url", url)
+                .append("headers", headers)
+                .build();
     }
 }

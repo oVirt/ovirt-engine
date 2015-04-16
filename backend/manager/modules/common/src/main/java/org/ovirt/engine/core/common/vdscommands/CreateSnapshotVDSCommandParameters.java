@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateSnapshotVDSCommandParameters extends CreateImageVDSCommandParameters {
@@ -35,10 +36,9 @@ public class CreateSnapshotVDSCommandParameters extends CreateImageVDSCommandPar
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, imageId = %s, sourceImageGroupId = %s",
-                super.toString(),
-                getImageId(),
-                getSourceImageGroupId());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("imageId", getImageId())
+                .append("sourceImageGroupId", getSourceImageGroupId());
     }
 }

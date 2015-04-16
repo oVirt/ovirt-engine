@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MergeSnapshotsVDSCommandParameters
@@ -46,11 +47,10 @@ public class MergeSnapshotsVDSCommandParameters
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, imageId2 = %s, vmId = %s, postZero = %s",
-                super.toString(),
-                getImageId2(),
-                getVmId(),
-                getPostZero());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("imageId2", getImageId2())
+                .append("vmId", getVmId())
+                .append("postZero", getPostZero());
     }
 }

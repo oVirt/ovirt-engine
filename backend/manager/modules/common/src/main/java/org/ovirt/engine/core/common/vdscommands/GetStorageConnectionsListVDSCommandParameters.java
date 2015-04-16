@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetStorageConnectionsListVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -23,7 +24,8 @@ public class GetStorageConnectionsListVDSCommandParameters extends VdsIdVDSComma
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, storagePoolId = %s", super.toString(), getStoragePoolId());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("storagePoolId", getStoragePoolId());
     }
 }

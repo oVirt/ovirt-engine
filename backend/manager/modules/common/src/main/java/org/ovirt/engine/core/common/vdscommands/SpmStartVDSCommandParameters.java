@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.RecoveryMode;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SpmStartVDSCommandParameters extends GetStorageConnectionsListVDSCommandParameters {
@@ -70,13 +71,12 @@ public class SpmStartVDSCommandParameters extends GetStorageConnectionsListVDSCo
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, prevId=%s, prevLVER=%s, storagePoolFormatType=%s, recoveryMode=%s, SCSIFencing=%s",
-                super.toString(),
-                getPrevId(),
-                getPrevLVER(),
-                getStoragePoolFormatType(),
-                getRecoveryMode(),
-                getSCSIFencing());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("prevId", getPrevId())
+                .append("prevLVER", getPrevLVER())
+                .append("storagePoolFormatType", getStoragePoolFormatType())
+                .append("recoveryMode", getRecoveryMode())
+                .append("SCSIFencing", getSCSIFencing());
     }
 }

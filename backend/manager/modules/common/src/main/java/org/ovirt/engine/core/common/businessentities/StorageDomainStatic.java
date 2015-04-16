@@ -4,6 +4,7 @@ import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -224,6 +225,9 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     @Override
     public String toString() {
-        return "StorageDomainStatic[" + getName() + ", " + getId() + "]";
+        return ToStringBuilder.forInstance(this)
+                .append("name", getName())
+                .append("id", getId())
+                .build();
     }
 }

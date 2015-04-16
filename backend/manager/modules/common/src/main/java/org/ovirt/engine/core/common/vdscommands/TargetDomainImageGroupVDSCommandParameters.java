@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TargetDomainImageGroupVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
@@ -27,7 +28,8 @@ public class TargetDomainImageGroupVDSCommandParameters extends StoragePoolDomai
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, dstDomainId = %s", super.toString(), getDstDomainId());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("dstDomainId", getDstDomainId());
     }
 }

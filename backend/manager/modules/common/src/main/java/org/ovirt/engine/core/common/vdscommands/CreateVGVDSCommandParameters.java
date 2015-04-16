@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateVGVDSCommandParameters extends ValidateStorageDomainVDSCommandParameters {
@@ -36,7 +37,9 @@ public class CreateVGVDSCommandParameters extends ValidateStorageDomainVDSComman
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, deviceList=%s, force=%b", super.toString(), getDeviceList(), isForce());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("deviceList", getDeviceList())
+                .append("force", isForce());
     }
 }

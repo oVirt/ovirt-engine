@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetDeviceListVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -24,7 +25,8 @@ public class GetDeviceListVDSCommandParameters extends VdsIdVDSCommandParameters
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, storageType=%s", super.toString(), getStorageType());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("storageType", getStorageType());
     }
 }

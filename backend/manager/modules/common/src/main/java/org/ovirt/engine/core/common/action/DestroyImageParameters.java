@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DestroyImageParameters extends StorageDomainParametersBase {
@@ -53,14 +54,12 @@ public class DestroyImageParameters extends StorageDomainParametersBase {
     }
 
     @Override
-    public String toString() {
-        return new StringBuilder("DestroyImageParameters{")
-                .append(super.toString())
-                .append(", vmId=").append(vmId)
-                .append(", imageGroupId=").append(imageGroupId)
-                .append(", imageList=").append(imageList)
-                .append(", postZero=").append(postZero)
-                .append(", force=").append(force)
-                .append('}').toString();
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vmId", vmId)
+                .append("imageGroupId", imageGroupId)
+                .append("imageList", imageList)
+                .append("postZero", postZero)
+                .append("force", force);
     }
 }

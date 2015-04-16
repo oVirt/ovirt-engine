@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
@@ -46,7 +47,8 @@ public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, diskId = %s", super.toString(), disk.getId());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("diskId", disk.getId());
     }
 }

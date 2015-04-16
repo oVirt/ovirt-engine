@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MoveImageGroupVDSCommandParameters
@@ -62,12 +63,11 @@ public class MoveImageGroupVDSCommandParameters
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, vmId = %s, op = %s, postZero = %s, force = %s",
-                super.toString(),
-                getVmId(),
-                getOp(),
-                getPostZero(),
-                getForce());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vmId", getVmId())
+                .append("op", getOp())
+                .append("postZero", getPostZero())
+                .append("force", getForce());
     }
 }

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 /*
@@ -172,19 +173,30 @@ public class StorageDevice extends IVdcQueryable implements BusinessEntity<Guid>
         return false;
     }
 
-    @Override
-    public String toString() {
-        return "StorageDevice [id=" + id + ", name=" + name + ", devUuid=" + devUuid + ", fsUuid=" + fsUuid
-                + ", vdsId=" + vdsId + ", description=" + description + ", devType=" + devType + ", devPath=" + devPath
-                + ", fsType=" + fsType + ", mountPoint=" + mountPoint + ", size=" + size + ", canCreateBrick="
-                + canCreateBrick + ", isGlusterBrick=" + isGlusterBrick + "]";
-    }
-
     public boolean isGlusterBrick() {
         return isGlusterBrick;
     }
 
     public void setGlusterBrick(boolean isGlusterBrick) {
         this.isGlusterBrick = isGlusterBrick;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("id", id)
+                .append("name", name)
+                .append("devUuid", devUuid)
+                .append("fsUuid", fsUuid)
+                .append("vdsId", vdsId)
+                .append("description", description)
+                .append("devType", devType)
+                .append("devPath", devPath)
+                .append("fsType", fsType)
+                .append("mountPoint", mountPoint)
+                .append("size", size)
+                .append("canCreateBrick", canCreateBrick)
+                .append("isGlusterBrick", isGlusterBrick)
+                .build();
     }
 }

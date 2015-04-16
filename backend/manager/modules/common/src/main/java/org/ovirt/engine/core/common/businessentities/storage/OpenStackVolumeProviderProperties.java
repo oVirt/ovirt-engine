@@ -44,15 +44,4 @@ public class OpenStackVolumeProviderProperties extends TenantProviderProperties 
         result = 31 * result + (storagePoolId != null ? storagePoolId.hashCode() : 0);
         return result;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("OpenStackVolumeProviderProperties [pluginType=")
-                .append(", tenantName=")
-                .append(getTenantName())
-                .append("]");
-        return builder.toString();
-    }
-
 }

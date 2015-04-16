@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SyncImageGroupDataVDSCommandParameters extends TargetDomainImageGroupVDSCommandParameters {
@@ -28,7 +29,8 @@ public class SyncImageGroupDataVDSCommandParameters extends TargetDomainImageGro
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, syncType=%s", super.toString(), getSyncType());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("syncType", getSyncType());
     }
 }

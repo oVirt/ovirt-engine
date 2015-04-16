@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CopyImageVDSCommandParameters
@@ -136,20 +137,17 @@ public class CopyImageVDSCommandParameters
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, dstImageGroupId = %s, vmId = %s, dstImageId = %s, imageDescription = %s, " +
-                "dstStorageDomainId = %s, copyVolumeType = %s, volumeFormat = %s, preallocate = %s, postZero = %s, " +
-                "force = %s",
-                super.toString(),
-                getdstImageGroupId(),
-                getVmId(),
-                getDstImageId(),
-                getImageDescription(),
-                getDstStorageDomainId(),
-                getCopyVolumeType(),
-                getVolumeFormat(),
-                getPreallocate(),
-                getPostZero(),
-                getForce());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("dstImageGroupId", getdstImageGroupId())
+                .append("vmId", getVmId())
+                .append("dstImageId", getDstImageId())
+                .append("imageDescription", getImageDescription())
+                .append("dstStorageDomainId", getDstStorageDomainId())
+                .append("copyVolumeType", getCopyVolumeType())
+                .append("volumeFormat", getVolumeFormat())
+                .append("preallocate", getPreallocate())
+                .append("postZero", getPostZero())
+                .append("force", getForce());
     }
 }

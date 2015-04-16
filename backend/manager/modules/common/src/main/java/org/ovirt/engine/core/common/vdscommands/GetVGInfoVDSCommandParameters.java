@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetVGInfoVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -22,7 +23,8 @@ public class GetVGInfoVDSCommandParameters extends VdsIdVDSCommandParametersBase
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, VGID=%s", super.toString(), getVGID());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("VGID", getVGID());
     }
 }

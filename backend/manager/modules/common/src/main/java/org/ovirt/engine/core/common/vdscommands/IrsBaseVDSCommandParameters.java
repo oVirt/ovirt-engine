@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class IrsBaseVDSCommandParameters extends VDSParametersBase {
@@ -31,8 +32,9 @@ public class IrsBaseVDSCommandParameters extends VDSParametersBase {
     }
 
     @Override
-    public String toString() {
-        return String.format("storagePoolId = %s, ignoreFailoverLimit = %s",
-                getStoragePoolId(), getIgnoreFailoverLimit());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("storagePoolId", getStoragePoolId())
+                .append("ignoreFailoverLimit", getIgnoreFailoverLimit());
     }
 }

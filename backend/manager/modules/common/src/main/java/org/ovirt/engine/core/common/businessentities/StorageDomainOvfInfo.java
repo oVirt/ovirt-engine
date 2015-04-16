@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainOvfInfo implements BusinessEntity<Guid> {
@@ -101,12 +102,12 @@ public class StorageDomainOvfInfo implements BusinessEntity<Guid> {
 
     @Override
     public String toString() {
-        return "StorageDomainOvfInfo{" +
-                "storageDomainId=" + storageDomainId +
-                ", storedOvfIds=" + storedOvfIds +
-                ", ovfDiskId=" + ovfDiskId +
-                ", status=" + status +
-                ", lastUpdated=" + lastUpdated +
-                '}';
+        return ToStringBuilder.forInstance(this)
+                .append("storageDomainId", storageDomainId)
+                .append("storedOvfIds", storedOvfIds)
+                .append("ovfDiskId", ovfDiskId)
+                .append("status", status)
+                .append("lastUpdated", lastUpdated)
+                .build();
     }
 }

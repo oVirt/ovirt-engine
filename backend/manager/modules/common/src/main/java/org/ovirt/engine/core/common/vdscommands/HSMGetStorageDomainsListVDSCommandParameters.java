@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -61,12 +62,11 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, storagePoolId=%s, storageType=%s, storageDomainType=%s, path=%s",
-                super.toString(),
-                getStoragePoolId(),
-                getStorageType(),
-                getStorageDomainType(),
-                getPath());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("storagePoolId", getStoragePoolId())
+                .append("storageType", getStorageType())
+                .append("storageDomainType", getStorageDomainType())
+                .append("path", getPath());
     }
 }

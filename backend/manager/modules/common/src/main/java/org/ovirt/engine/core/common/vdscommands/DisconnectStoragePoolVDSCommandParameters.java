@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DisconnectStoragePoolVDSCommandParameters extends GetStorageConnectionsListVDSCommandParameters {
@@ -22,7 +23,8 @@ public class DisconnectStoragePoolVDSCommandParameters extends GetStorageConnect
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, vds_spm_id = %s", super.toString(), getvds_spm_id());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vds_spm_id", getvds_spm_id());
     }
 }

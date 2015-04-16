@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomain extends IVdcQueryable implements BusinessEntityWithStatus<Guid, StorageDomainStatus>, Nameable, Commented {
@@ -359,8 +360,9 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
     public String toString() {
         // Since the static data arrives from external source it's not guarenteed not to be null so a null check is
         // mandatory in order to avoid NPE when invoking toString by the logger
-        String domainName = staticData == null ? "null" : staticData.getName();
-        Guid domainId = staticData == null ? null : staticData.getId();
-        return "StorageDomain[" + domainName + ", " + domainId + "]";
+        return ToStringBuilder.forInstance(this)
+                .append("domainName", staticData == null ? null : staticData.getName())
+                .append("domainId", staticData == null ? null : staticData.getId())
+                .build();
     }
 }

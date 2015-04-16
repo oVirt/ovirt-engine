@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetImagesListVDSCommandParameters extends IrsBaseVDSCommandParameters {
@@ -23,7 +24,8 @@ public class GetImagesListVDSCommandParameters extends IrsBaseVDSCommandParamete
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, sdUUID = %s", super.toString(), getStorageDomainId());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("sdUUID", getStorageDomainId());
     }
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DeactivateStorageDomainVDSCommandParameters extends ActivateStorageDomainVDSCommandParameters {
@@ -35,8 +36,9 @@ public class DeactivateStorageDomainVDSCommandParameters extends ActivateStorage
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, masterDomainId = %s, masterVersion = %s", super.toString(),
-                getMasterStorageDomainId(), getMasterVersion());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("masterDomainId", getMasterStorageDomainId())
+                .append("masterVersion", getMasterVersion());
     }
 }

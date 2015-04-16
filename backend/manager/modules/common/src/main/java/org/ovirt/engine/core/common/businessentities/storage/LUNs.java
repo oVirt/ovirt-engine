@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class LUNs implements BusinessEntity<String> {
@@ -289,43 +290,25 @@ public class LUNs implements BusinessEntity<String> {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("LUNs [id=")
-                .append(getLUN_id())
-                .append(", physicalVolumeId=")
-                .append(getphysical_volume_id())
-                .append(", volumeGroupId=")
-                .append(getvolume_group_id())
-                .append(", serial=")
-                .append(getSerial())
-                .append(", lunMapping=")
-                .append(getLunMapping())
-                .append(", vendorId=")
-                .append(getVendorId())
-                .append(", productId=")
-                .append(getProductId())
-                .append(", _lunConnections=")
-                .append(getLunConnections())
-                .append(", deviceSize=")
-                .append(getDeviceSize())
-                .append(", vendorName=")
-                .append(getVendorName())
-                .append(", pathsDictionary=")
-                .append(getPathsDictionary())
-                .append(", lunType=")
-                .append(getLunType())
-                .append(", status=")
-                .append(getStatus())
-                .append(", diskId=")
-                .append(getDiskId())
-                .append(", diskAlias=")
-                .append(getDiskAlias())
-                .append(", storageDomainId=")
-                .append(getStorageDomainId())
-                .append(", storageDomainName=")
-                .append(getStorageDomainName())
-                .append("]");
-        return builder.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("id", getLUN_id())
+                .append("physicalVolumeId", getphysical_volume_id())
+                .append("volumeGroupId", getvolume_group_id())
+                .append("serial", getSerial())
+                .append("lunMapping", getLunMapping())
+                .append("vendorId", getVendorId())
+                .append("productId", getProductId())
+                .append("lunConnections", getLunConnections())
+                .append("deviceSize", getDeviceSize())
+                .append("vendorName", getVendorName())
+                .append("pathsDictionary", getPathsDictionary())
+                .append("lunType", getLunType())
+                .append("status", getStatus())
+                .append("diskId", getDiskId())
+                .append("diskAlias", getDiskAlias())
+                .append("storageDomainId", getStorageDomainId())
+                .append("storageDomainName", getStorageDomainName())
+                .build();
     }
 
     @Override

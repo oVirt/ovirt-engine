@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DestroyImageVDSCommandParameters
@@ -48,12 +49,12 @@ public class DestroyImageVDSCommandParameters
 
     public DestroyImageVDSCommandParameters() {
     }
+
     @Override
-    public String toString() {
-        return String.format("%s, imageList = %s, postZero = %s, force = %s",
-                super.toString(),
-                getImageList(),
-                getPostZero(),
-                getForce());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("imageList", getImageList())
+                .append("postZero", getPostZero())
+                .append("force", getForce());
     }
 }

@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.businessentities.storage;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+
 public class CinderVolumeType implements Serializable {
 
     private String id;
@@ -58,7 +60,11 @@ public class CinderVolumeType implements Serializable {
      */
     @Override
     public String toString() {
-        return "Snapshot [id=" + id + ", name=" + name + ", extra_specs=" + extraSpecs + "]";
+        return ToStringBuilder.forInstance(this)
+                .append("id", id)
+                .append("name", name)
+                .append("extra_specs", extraSpecs)
+                .build();
     }
 
 }

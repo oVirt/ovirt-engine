@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -71,15 +72,12 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, storagePoolId=%s, storagePoolName=%s, masterDomainId=%s, " +
-                "domainsIdList=%s, masterVersion=%s",
-                super.toString(),
-                getStoragePoolId(),
-                getStoragePoolName(),
-                getMasterDomainId(),
-                getDomainsIdList(),
-                getMasterVersion());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("storagePoolId", getStoragePoolId())
+                .append("storagePoolName", getStoragePoolName())
+                .append("masterDomainId", getMasterDomainId())
+                .append("domainsIdList", getDomainsIdList())
+                .append("masterVersion", getMasterVersion());
     }
-
 }

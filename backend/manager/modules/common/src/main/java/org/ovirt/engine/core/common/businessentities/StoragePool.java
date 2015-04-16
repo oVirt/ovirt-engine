@@ -4,6 +4,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -243,6 +244,9 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
 
     @Override
     public String toString() {
-        return "StoragePool[" + getName() + ", " + getId() + "]";
+        return ToStringBuilder.forInstance(this)
+                .append("name", getName())
+                .append("id", getId())
+                .build();
     }
 }

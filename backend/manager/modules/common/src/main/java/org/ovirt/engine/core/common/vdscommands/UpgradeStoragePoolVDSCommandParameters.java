@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class UpgradeStoragePoolVDSCommandParameters extends IrsBaseVDSCommandParameters {
@@ -22,8 +23,9 @@ public class UpgradeStoragePoolVDSCommandParameters extends IrsBaseVDSCommandPar
     }
 
     @Override
-    public String toString() {
-        return String.format("storagePoolId = %s, poolVersion = %s",
-                             getStoragePoolId(), getCompatibilityVersion());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("storagePoolId", getStoragePoolId())
+                .append("poolVersion ", getCompatibilityVersion());
     }
 }

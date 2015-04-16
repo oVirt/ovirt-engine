@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnectionManagementVDSParameters extends GetStorageConnectionsListVDSCommandParameters {
@@ -39,16 +40,9 @@ public class StorageServerConnectionManagementVDSParameters extends GetStorageCo
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, storageType = %s, connectionList = [%s]",
-                super.toString(), getStorageType().name(), getPrintableConnectionsList());
-    }
-
-    private String getPrintableConnectionsList() {
-        StringBuilder sb = new StringBuilder();
-        for (StorageServerConnections con : getConnectionList()) {
-            sb.append(con);
-        }
-        return sb.toString();
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("storageType", getStorageType())
+                .append("connectionList", getConnectionList());
     }
 }

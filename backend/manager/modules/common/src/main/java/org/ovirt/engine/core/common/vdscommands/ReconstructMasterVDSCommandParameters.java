@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -84,28 +85,13 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, vdsSpmId = %d, storagePoolId = %s, "
-                + "storagePoolName = %s, masterDomainId = %s, masterVersion = %s, "
-                + "domainsList = [%s]",
-                super.toString(),
-                getVdsSpmId(),
-                getStoragePoolId(),
-                getStoragePoolName(),
-                getMasterDomainId(),
-                getMasterVersion(),
-                getPrintableDomainsList());
-    }
-
-    private String getPrintableDomainsList() {
-        StringBuilder sb = new StringBuilder();
-        for (StoragePoolIsoMap map : getDomainsList()) {
-            sb.append("{ domainId: ");
-            sb.append(map.getstorage_id());
-            sb.append(", status: ");
-            sb.append(map.getStatus().name());
-            sb.append(" };");
-        }
-        return sb.toString();
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vdsSpmId", getVdsSpmId())
+                .append("storagePoolId", getStoragePoolId())
+                .append("storagePoolName", getStoragePoolName())
+                .append("masterDomainId", getMasterDomainId())
+                .append("masterVersion", getMasterVersion())
+                .append("domainsList", getDomainsList());
     }
 }

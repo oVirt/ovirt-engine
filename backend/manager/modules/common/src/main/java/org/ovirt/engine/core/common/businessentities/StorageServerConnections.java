@@ -5,6 +5,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class StorageServerConnections implements Serializable {
     private static final long serialVersionUID = 5444293590307760809L;
@@ -239,33 +240,18 @@ public class StorageServerConnections implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{ id: ");
-        sb.append(this.getid());
-        sb.append(", connection: ");
-        sb.append(this.getconnection());
-        sb.append(", iqn: ");
-        sb.append(this.getiqn());
-        sb.append(", vfsType: ");
-        sb.append(this.getVfsType());
-        sb.append(", mountOptions: ");
-        sb.append(this.getMountOptions());
-        sb.append(", nfsVersion: ");
-        sb.append(this.getNfsVersion());
-        sb.append(", nfsRetrans: ");
-        sb.append(this.getNfsRetrans());
-        sb.append(", nfsTimeo: ");
-        sb.append(this.getNfsTimeo());
-        if (this.getIface() != null) {
-            sb.append(", iface: ");
-            sb.append(this.getIface());
-        }
-        if (getNetIfaceName() != null) {
-            sb.append(", netIfaceName: ");
-            sb.append(this.getNetIfaceName());
-        }
-        sb.append(" };");
-        return sb.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("id", getid())
+                .append("connection", getconnection())
+                .append("iqn", getiqn())
+                .append("vfsType", getVfsType())
+                .append("mountOptions", getMountOptions())
+                .append("nfsVersion", getNfsVersion())
+                .append("nfsRetrans", getNfsRetrans())
+                .append("nfsTimeo", getNfsTimeo())
+                .append("iface", getIface())
+                .append("netIfaceName", getNetIfaceName())
+                .build();
     }
 
     public Short getNfsRetrans() {

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SetStorageDomainDescriptionVDSCommandParameters extends ActivateStorageDomainVDSCommandParameters {
@@ -22,7 +23,8 @@ public class SetStorageDomainDescriptionVDSCommandParameters extends ActivateSto
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, description = %s", super.toString(), getDescription());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("description", getDescription());
     }
 }

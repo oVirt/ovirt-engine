@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StoragePoolIsoMapId implements Serializable {
@@ -47,10 +48,10 @@ public class StoragePoolIsoMapId implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("storagePoolId = ").append(getStoragePoolId());
-        sb.append(", storageId = ").append(getStorageId());
-        return sb.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("storagePoolId", getStoragePoolId())
+                .append("storageId", getStorageId())
+                .build();
     }
 
     public Guid getStorageId() {

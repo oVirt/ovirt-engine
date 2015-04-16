@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ExtendStorageDomainVDSCommandParameters extends ActivateStorageDomainVDSCommandParameters {
@@ -47,7 +48,8 @@ public class ExtendStorageDomainVDSCommandParameters extends ActivateStorageDoma
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, deviceList = %s", super.toString(), getDeviceList());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("deviceList", getDeviceList());
     }
 }

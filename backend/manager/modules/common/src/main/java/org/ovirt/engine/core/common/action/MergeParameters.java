@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.action;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MergeParameters extends StorageDomainParametersBase {
@@ -80,14 +81,12 @@ public class MergeParameters extends StorageDomainParametersBase {
     }
 
     @Override
-    public String toString() {
-        return new StringBuilder("MergeParameters{")
-                .append(super.toString())
-                .append(", vmId=").append(vmId)
-                .append(", activeImage=").append(activeImage)
-                .append(", baseImage=").append(baseImage)
-                .append(", topImage=").append(topImage)
-                .append(", bandwidth=").append(bandwidth)
-                .append('}').toString();
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vmId", vmId)
+                .append("activeImage", activeImage)
+                .append("baseImage", baseImage)
+                .append("topImage", topImage)
+                .append("bandwidth", bandwidth);
     }
 }

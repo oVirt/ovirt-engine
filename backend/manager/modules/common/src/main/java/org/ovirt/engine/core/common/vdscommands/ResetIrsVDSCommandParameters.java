@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
@@ -58,10 +59,9 @@ public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, vdsId = %s, ignoreStopFailed = %s",
-                super.toString(),
-                getVdsId(),
-                getIgnoreStopFailed());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vdsId", getVdsId())
+                .append("ignoreStopFailed", getIgnoreStopFailed());
     }
 }

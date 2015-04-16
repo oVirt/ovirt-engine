@@ -3,10 +3,10 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 import java.util.List;
-
 
 public class ConnectStoragePoolVDSCommandParameters extends VdsIdVDSCommandParametersBase {
 
@@ -74,9 +74,10 @@ public class ConnectStoragePoolVDSCommandParameters extends VdsIdVDSCommandParam
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, vdsId = %s, storagePoolId = %s, masterVersion = %d",
-                super.toString(), vds.getId().toString(), storagePool.getId().toString(),
-                storagePool.getMasterDomainVersion());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("vdsId", vds.getId())
+                .append("storagePoolId", storagePool.getId())
+                .append("masterVersion", storagePool.getMasterDomainVersion());
     }
 }

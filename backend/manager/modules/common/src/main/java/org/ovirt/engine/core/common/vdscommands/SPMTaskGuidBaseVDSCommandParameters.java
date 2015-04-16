@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SPMTaskGuidBaseVDSCommandParameters extends IrsBaseVDSCommandParameters {
@@ -23,7 +24,8 @@ public class SPMTaskGuidBaseVDSCommandParameters extends IrsBaseVDSCommandParame
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, taskId = %s", super.toString(), getTaskId());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("taskId", getTaskId());
     }
 }

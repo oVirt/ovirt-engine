@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DeleteImageGroupVDSCommandParameters
@@ -35,10 +36,9 @@ public class DeleteImageGroupVDSCommandParameters
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, postZeros = %s, forceDelete = %s",
-                super.toString(),
-                getPostZero(),
-                getForceDelete());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("postZeros", getPostZero())
+                .append("forceDelete", getForceDelete());
     }
 }
