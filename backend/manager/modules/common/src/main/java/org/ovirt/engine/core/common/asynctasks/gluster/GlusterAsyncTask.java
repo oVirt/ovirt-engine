@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterAsyncTask implements Serializable{
@@ -117,7 +118,11 @@ public class GlusterAsyncTask implements Serializable{
 
     @Override
     public String toString() {
-        return "GlusterAsyncTask[" + getTaskId() + "-" + getType() + "-" + getStatus() + "]";
+        return ToStringBuilder.forInstance(this)
+                .append("taskId", getTaskId())
+                .append("type", getType())
+                .append("status", getStatus())
+                .build();
     }
 
 

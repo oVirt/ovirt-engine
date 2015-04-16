@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands.gluster;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterVolumeActivateSnapshotVDSParameters extends GlusterVolumeSnapshotActionVDSParameters {
@@ -25,7 +26,8 @@ public class GlusterVolumeActivateSnapshotVDSParameters extends GlusterVolumeSna
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, force=%s", super.toString(), getForce());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("force", getForce());
     }
 }

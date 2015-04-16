@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -20,7 +21,8 @@ public class GlusterVolumeSnapshotSetConfigVDSParameters extends VdsIdVDSCommand
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, configParam=%s", super.toString(), configParam);
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("configParam", configParam);
     }
 }

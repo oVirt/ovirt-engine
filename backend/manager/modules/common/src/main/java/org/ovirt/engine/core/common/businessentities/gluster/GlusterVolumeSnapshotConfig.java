@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterVolumeSnapshotConfig extends IVdcQueryable {
@@ -93,16 +94,11 @@ public class GlusterVolumeSnapshotConfig extends IVdcQueryable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("GlusterVolumeSnapshotConfig {");
-        sb.append("clusterId=");
-        sb.append(getClusterId());
-        sb.append(", volumeId=");
-        sb.append(getVolumeId());
-        sb.append(", paramName=");
-        sb.append(getParamName());
-        sb.append(", paramValue=");
-        sb.append(getParamValue());
-        sb.append("}");
-        return sb.toString();
+        return ToStringBuilder.forInstance(this)
+                .append("clusterId", getClusterId())
+                .append("volumeId", getVolumeId())
+                .append("paramName", getParamName())
+                .append("paramValue", getParamValue())
+                .build();
     }
 }

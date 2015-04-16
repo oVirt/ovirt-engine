@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -68,17 +69,6 @@ public class CreateBrickVDSParameters extends VdsIdVDSCommandParametersBase {
         this.mountPoint = mountPoint;
     }
 
-    @Override
-    public String toString() {
-        return String.format("CreateBrickVDSParameters %s, lvName=%s, mountPoint=%s, storageDevices=%s, raidParams=%s, fsType=%s,  ",
-                super.toString(),
-                lvName,
-                mountPoint,
-                storageDevices,
-                raidParams,
-                fsType);
-    }
-
     public String getFsType() {
         return fsType;
     }
@@ -87,4 +77,13 @@ public class CreateBrickVDSParameters extends VdsIdVDSCommandParametersBase {
         this.fsType = fsType;
     }
 
+    @Override
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("lvName", lvName)
+                .append("mountPoint", mountPoint)
+                .append("storageDevices", storageDevices)
+                .append("raidParams", raidParams)
+                .append("fsType", fsType);
+    }
 }

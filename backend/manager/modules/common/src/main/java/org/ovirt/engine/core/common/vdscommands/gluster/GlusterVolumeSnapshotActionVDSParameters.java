@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands.gluster;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterVolumeSnapshotActionVDSParameters extends GlusterVolumeVDSParameters {
@@ -22,7 +23,8 @@ public class GlusterVolumeSnapshotActionVDSParameters extends GlusterVolumeVDSPa
     }
 
     @Override
-    public String toString() {
-        return String.format("%s, snapshotName=%s", super.toString(), getSnapshotName());
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("snapshotName", getSnapshotName());
     }
 }
