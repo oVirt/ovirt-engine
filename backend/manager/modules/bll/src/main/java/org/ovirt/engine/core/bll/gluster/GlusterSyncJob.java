@@ -928,7 +928,11 @@ public class GlusterSyncJob extends GlusterJob {
         List<GlusterBrickEntity> brickPropertiesToAdd = new ArrayList<GlusterBrickEntity>();
 
         GlusterVolumeAdvancedDetails volumeAdvancedDetails = getVolumeAdvancedDetails(upServer, volume.getClusterId(), volume.getName());
-
+        if (volumeAdvancedDetails == null) {
+            log.debugFormat("Error while refreshing brick statuses for volume '{}'. Failed to get volume advanced details ",
+                    volume.getName());
+            return;
+        }
         if (volumeAdvancedDetails.getCapacityInfo() != null) {
             if (volume.getAdvancedDetails().getCapacityInfo() == null) {
                 getVolumeDao().addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
@@ -1005,7 +1009,10 @@ public class GlusterSyncJob extends GlusterJob {
                         null,
                         false, true));
 
-        return result.getSucceeded() ? (GlusterVolumeAdvancedDetails) result.getReturnValue() : null;
+        // Purposely returning returnValue as is without checking result.getSucceeded(), because
+        // VolumeAdvancedDetails runs multiple commands internally and if the last one fails, getSucceeded() will be
+        // false. But still we have the brick status details and we can update the brick status without any issue.
+        return (GlusterVolumeAdvancedDetails) result.getReturnValue();
     }
 
     private void removeVdsStatisticsFromDb(VDS server) {
