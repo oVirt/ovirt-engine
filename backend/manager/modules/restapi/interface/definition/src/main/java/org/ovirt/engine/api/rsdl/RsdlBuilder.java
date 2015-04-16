@@ -548,7 +548,14 @@ public class RsdlBuilder {
         // "201-created" value, so instead of explicitly adding it in the metadata file it is better to add it
         // implicitly:
         if (ADD.equals(link.getRel())) {
-            addExpectHeader(link);
+            addExpectHeader(link, "201-created");
+        }
+
+        // All the operations that update entities (those whose rel is "update") support the "Expect" header with the
+        // "202-accepted" value, so instead of explicitly adding it in the metadata file it is better to add it
+        // implicitly:
+        if (UPDATE.equals(link.getRel())) {
+            addExpectHeader(link, "202-accepted");
         }
     }
 
@@ -592,8 +599,9 @@ public class RsdlBuilder {
      * Adds the description of the {@code Expect} header to a link.
      *
      * @param link the link where the description of the header will be added
+     * @param value the value of the header
      */
-    private void addExpectHeader(DetailedLink link) {
+    private void addExpectHeader(DetailedLink link, String value) {
         Headers headers = link.getRequest().getHeaders();
         if (headers == null) {
             headers = new Headers();
@@ -601,7 +609,7 @@ public class RsdlBuilder {
         }
         Header header = new Header();
         header.setName("Expect");
-        header.setValue("201-created");
+        header.setValue(value);
         header.setRequired(false);
         headers.getHeaders().add(header);
     }
