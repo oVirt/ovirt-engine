@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.json;
+package org.ovirt.engine.api.restapi.json;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;

@@ -71,8 +71,18 @@
     </dependency>
 
     <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
     </dependency>
 
     <dependency>
@@ -106,7 +116,6 @@
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>fop</artifactId>
       <version>${fop.version}</version>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -140,6 +149,24 @@
       <artifactId>jaxb-impl</artifactId>
       <version>${jaxb-impl.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-jaxrs</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-xc</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
 
   </dependencies>

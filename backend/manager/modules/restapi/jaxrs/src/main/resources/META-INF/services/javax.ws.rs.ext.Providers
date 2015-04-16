@@ -1,0 +1,3 @@
+org.ovirt.engine.api.restapi.json.JSONProvider
+org.ovirt.engine.api.restapi.xml.JAXBProvider
+org.ovirt.engine.api.restapi.pdf.FOPMessageBodyWriter

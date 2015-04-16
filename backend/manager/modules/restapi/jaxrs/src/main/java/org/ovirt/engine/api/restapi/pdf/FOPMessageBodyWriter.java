@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.pdf;
+package org.ovirt.engine.api.restapi.pdf;
 
 import java.io.IOException;
 import java.io.InputStream;

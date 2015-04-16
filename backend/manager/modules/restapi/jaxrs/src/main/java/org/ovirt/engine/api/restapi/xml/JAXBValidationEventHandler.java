@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.xml;
+package org.ovirt.engine.api.restapi.xml;
 
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;

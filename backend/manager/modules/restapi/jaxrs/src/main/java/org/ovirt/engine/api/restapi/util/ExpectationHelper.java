@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.utils;
+package org.ovirt.engine.api.restapi.util;
 
 import java.util.HashSet;
 import java.util.List;

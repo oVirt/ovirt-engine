@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.xml;
+package org.ovirt.engine.api.restapi.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +60,7 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
     /**
      * The logger used by this class.
      */
-    private Logger log = LoggerFactory.getLogger(JAXBProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(JAXBProvider.class);
 
     /**
      * The factory used to create JAXB elements.

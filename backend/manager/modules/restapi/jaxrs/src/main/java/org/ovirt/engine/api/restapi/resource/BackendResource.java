@@ -21,7 +21,7 @@ import org.ovirt.engine.api.restapi.resource.exception.UrlParamException;
 import org.ovirt.engine.api.restapi.resource.validation.Validator;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
-import org.ovirt.engine.api.utils.ExpectationHelper;
+import org.ovirt.engine.api.restapi.util.ExpectationHelper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;

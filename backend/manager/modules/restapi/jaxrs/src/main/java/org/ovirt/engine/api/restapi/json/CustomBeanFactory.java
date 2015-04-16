@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.json;
+package org.ovirt.engine.api.restapi.json;
 
 import java.util.List;
 

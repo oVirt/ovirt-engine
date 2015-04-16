@@ -1,3 +1,0 @@
-org.ovirt.engine.api.json.JSONProvider
-org.ovirt.engine.api.xml.JAXBProvider
-org.ovirt.engine.api.pdf.FOPMessageBodyWriter

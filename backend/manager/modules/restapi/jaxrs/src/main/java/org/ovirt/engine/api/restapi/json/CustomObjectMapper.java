@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.json;
+package org.ovirt.engine.api.restapi.json;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.DeserializationConfig;
