@@ -170,6 +170,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEntityInfo(getParameters().getEntityInfo());
+        parameters.setRemovePermissions(false);
         return parameters;
     }
 
