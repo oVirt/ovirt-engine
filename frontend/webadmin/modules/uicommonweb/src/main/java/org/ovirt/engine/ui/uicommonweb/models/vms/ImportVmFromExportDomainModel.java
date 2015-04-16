@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -51,6 +54,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -672,5 +676,73 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         getCommands().clear();
         getCommands().add(getCloseCommand());
         stopProgress();
+    }
+
+    public void importVms(IFrontendMultipleActionAsyncCallback callback,
+            Map<Guid, Object> cloneObjectMap) {
+        Frontend.getInstance().runMultipleAction(
+                VdcActionType.ImportVm,
+                buildImportVmParameters(cloneObjectMap),
+                callback,
+                this);
+    }
+
+    private List<VdcActionParametersBase> buildImportVmParameters(Map<Guid, Object> cloneObjectMap) {
+        List<VdcActionParametersBase> prms = new ArrayList<>();
+
+        for (Object item : getItems()) {
+            VM vm = ((ImportVmData) item).getVm();
+
+            ImportVmParameters prm = new ImportVmParameters(vm, (Guid) getEntity(),
+                    Guid.Empty, getStoragePool().getId(),
+                    getCluster().getSelectedItem().getId());
+
+            if (getClusterQuota().getSelectedItem() != null &&
+                    getClusterQuota().getIsAvailable()) {
+                prm.setQuotaId(getClusterQuota().getSelectedItem().getId());
+            }
+
+            CpuProfile cpuProfile = getCpuProfiles().getSelectedItem();
+            if (cpuProfile != null) {
+                prm.setCpuProfileId(cpuProfile.getId());
+            }
+
+            prm.setForceOverride(true);
+            prm.setCopyCollapse(((ImportVmData) item).getCollapseSnapshots().getEntity());
+
+            Map<Guid, Guid> map = new HashMap<>();
+            for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
+                DiskImage disk = (DiskImage) entry.getValue();
+                map.put(disk.getId(), getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
+                disk.setvolumeFormat(
+                        AsyncDataProvider.getInstance().getDiskVolumeFormat(
+                                getDiskImportData(disk.getId()).getSelectedVolumeType(),
+                                getDiskImportData(
+                                        disk.getId()).getSelectedStorageDomain().getStorageType()));
+                disk.setVolumeType(getDiskImportData(disk.getId()).getSelectedVolumeType());
+
+                if (getDiskImportData(disk.getId()).getSelectedQuota() != null) {
+                    disk.setQuotaId(
+                            getDiskImportData(disk.getId()).getSelectedQuota().getId());
+                }
+            }
+
+            prm.setImageToDestinationDomainMap(map);
+
+            if (((ImportVmData) item).isExistsInSystem() ||
+                    ((ImportVmData) item).getClone().getEntity()) {
+                if (!cloneObjectMap.containsKey(vm.getId())) {
+                    continue;
+                }
+                prm.setImportAsNewEntity(true);
+                prm.setCopyCollapse(true);
+                prm.getVm().setName(((ImportVmData) cloneObjectMap.get(vm.getId())).getVm().getName());
+            }
+
+            prms.add(prm);
+
+        }
+
+        return prms;
     }
 }

@@ -9,22 +9,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -418,64 +412,7 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     protected void executeImport() {
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
-
-        for (Object item : importModel.getItems()) {
-            VM vm = ((ImportVmData) item).getVm();
-
-            ImportVmParameters prm = new ImportVmParameters(vm, getEntity().getId(),
-                    Guid.Empty, importModel.getStoragePool().getId(),
-                    ((VDSGroup) importModel.getCluster().getSelectedItem()).getId());
-
-            if (importModel.getClusterQuota().getSelectedItem() != null &&
-                    importModel.getClusterQuota().getIsAvailable()) {
-                prm.setQuotaId(((Quota) importModel.getClusterQuota().getSelectedItem()).getId());
-            }
-
-            CpuProfile cpuProfile = importModel.getCpuProfiles().getSelectedItem();
-            if (cpuProfile != null) {
-                prm.setCpuProfileId(cpuProfile.getId());
-            }
-
-            prm.setForceOverride(true);
-            prm.setCopyCollapse(((ImportVmData) item).getCollapseSnapshots().getEntity());
-
-            Map<Guid, Guid> map = new HashMap<Guid, Guid>();
-            for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
-                DiskImage disk = (DiskImage) entry.getValue();
-                map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
-                disk.setvolumeFormat(
-                        AsyncDataProvider.getInstance().getDiskVolumeFormat(
-                                importModel.getDiskImportData(disk.getId()).getSelectedVolumeType(),
-                                importModel.getDiskImportData(
-                                        disk.getId()).getSelectedStorageDomain().getStorageType()));
-                disk.setVolumeType(importModel.getDiskImportData(disk.getId()).getSelectedVolumeType());
-
-                if (importModel.getDiskImportData(disk.getId()).getSelectedQuota() != null) {
-                    disk.setQuotaId(
-                            importModel.getDiskImportData(disk.getId()).getSelectedQuota().getId());
-                }
-            }
-
-            prm.setImageToDestinationDomainMap(map);
-
-            if (((ImportVmData) item).isExistsInSystem() ||
-                    ((ImportVmData) item).getClone().getEntity()) {
-                if (!cloneObjectMap.containsKey(vm.getId())) {
-                    continue;
-                }
-                prm.setImportAsNewEntity(true);
-                prm.setCopyCollapse(true);
-                prm.getVm().setName(((ImportVmData) cloneObjectMap.get(vm.getId())).getVm().getName());
-            }
-
-            prms.add(prm);
-
-        }
-
-        importModel.startProgress(null);
-
-        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVm, prms,
+        importModel.importVms(
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(
@@ -527,7 +464,9 @@ public class VmBackupModel extends ManageBackupModel {
 
                     }
                 },
-                this);
+                cloneObjectMap);
+
+        setWindow(null);
     }
 
     @Override

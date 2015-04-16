@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
-import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -40,8 +39,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -2546,60 +2545,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         assignedVmNames.clear();
     }
 
-    protected void executeImport(ImportVmFromExportDomainModel importModel) {
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
-
-        for (Object item : importModel.getItems()) {
-            VM vm = ((ImportVmData) item).getVm();
-
-            ImportVmParameters prm = new ImportVmParameters(vm, (Guid) importModel.getEntity(),
-                    Guid.Empty, importModel.getStoragePool().getId(),
-                    importModel.getCluster().getSelectedItem().getId());
-
-            if (importModel.getClusterQuota().getSelectedItem() != null &&
-                    importModel.getClusterQuota().getIsAvailable()) {
-                prm.setQuotaId(importModel.getClusterQuota().getSelectedItem().getId());
-            }
-
-            prm.setForceOverride(true);
-            prm.setCopyCollapse(((ImportVmData) item).getCollapseSnapshots().getEntity());
-
-            Map<Guid, Guid> map = new HashMap<>();
-            for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
-                DiskImage disk = (DiskImage) entry.getValue();
-                map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
-                disk.setvolumeFormat(
-                        AsyncDataProvider.getInstance().getDiskVolumeFormat(
-                                importModel.getDiskImportData(disk.getId()).getSelectedVolumeType(),
-                                importModel.getDiskImportData(
-                                        disk.getId()).getSelectedStorageDomain().getStorageType()));
-                disk.setVolumeType(importModel.getDiskImportData(disk.getId()).getSelectedVolumeType());
-
-                if (importModel.getDiskImportData(disk.getId()).getSelectedQuota() != null) {
-                    disk.setQuotaId(
-                            importModel.getDiskImportData(disk.getId()).getSelectedQuota().getId());
-                }
-            }
-
-            prm.setImageToDestinationDomainMap(map);
-
-            if (((ImportVmData) item).isExistsInSystem() ||
-                    ((ImportVmData) item).getClone().getEntity()) {
-                if (!cloneObjectMap.containsKey(vm.getId())) {
-                    continue;
-                }
-                prm.setImportAsNewEntity(true);
-                prm.setCopyCollapse(true);
-                prm.getVm().setName(((ImportVmData) cloneObjectMap.get(vm.getId())).getVm().getName());
-            }
-
-            prms.add(prm);
-
-        }
-
-        importModel.startProgress(null);
-
-        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVm, prms,
+    protected void executeImport(ImportVmFromExportDomainModel importVmModel) {
+        importVmModel.importVms(
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(
@@ -2651,7 +2598,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
                     }
                 },
-                this);
+                cloneObjectMap);
+
+        setWindow(null);
     }
 
     private void onImportVmAsClone(ImportVmFromExportDomainModel importModel) {
