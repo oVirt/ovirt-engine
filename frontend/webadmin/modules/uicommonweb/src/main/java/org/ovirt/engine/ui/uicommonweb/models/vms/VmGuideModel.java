@@ -96,7 +96,7 @@ public class VmGuideModel extends GuideModel
         model.initialize();
     }
 
-    public void cancel()
+    protected void cancel()
     {
         setWindow(null);
     }

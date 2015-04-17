@@ -2250,6 +2250,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Please select an action to continue")
     String noActionSelectedManageGlusterSwift();
 
+    @DefaultStringValue("Activating the Hosts may take a while, please close the 'Guide Me' window and track the Hosts activation via the Events tab or the Hosts tab")
+    String hostActivationTimeOut();
+
+    @DefaultStringValue("Changing Host Clusters is taking longer than expected, please close the 'Guide Me' window and activate hosts via the Hosts tab")
+    String hostChangeClusterTimeOut();
+
     @DefaultStringValue("Host cannot be set highly available when 'Do not allow migration' or 'Allow manual migration' is selected")
     String hostNonMigratable();
 

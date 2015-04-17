@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.gwt.user.client.Timer;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -32,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHostData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NewHostModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -310,6 +313,7 @@ public class ClusterGuideModel extends GuideModel
 
     public void onSelectHost()
     {
+
         MoveHost model = (MoveHost) getWindow();
 
         if (model.getProgress() != null)
@@ -322,55 +326,70 @@ public class ClusterGuideModel extends GuideModel
             return;
         }
 
-        model.setSelectedHosts(new ArrayList<VDS>());
+        model.setSelectedHosts(new ArrayList<MoveHostData>());
         for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
         {
             if (a.getIsSelected())
             {
-                model.getSelectedHosts().add((VDS) a.getEntity());
+                model.getSelectedHosts().add((MoveHostData) a);
             }
         }
 
         VDSGroup cluster = (VDSGroup) model.getCluster().getSelectedItem();
 
-        ArrayList<VdcActionParametersBase> paramerterList =
-                new ArrayList<VdcActionParametersBase>();
-        for (VDS host : model.getSelectedHosts())
+        final List<VdcActionParametersBase> parameterList = new ArrayList<>();
+        for (MoveHostData hostData : model.getSelectedHosts())
         {
+            VDS host = hostData.getEntity();
             // Try to change host's cluster as neccessary.
             if (host.getVdsGroupId() != null && !host.getVdsGroupId().equals(cluster.getId()))
             {
-                paramerterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
+                parameterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
 
             }
         }
         model.startProgress(null);
-        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeVDSCluster, paramerterList,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeVDSCluster, parameterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
-                        ClusterGuideModel clusterGuideModel = (ClusterGuideModel) result.getState();
-                        ArrayList<VDS> hosts = ((MoveHost) clusterGuideModel.getWindow()).getSelectedHosts();
-                        ArrayList<VdcReturnValueBase> retVals =
-                                (ArrayList<VdcReturnValueBase>) result.getReturnValue();
+                        final ClusterGuideModel clusterGuideModel = (ClusterGuideModel) result.getState();
+                        List<MoveHostData> hosts = ((MoveHost) clusterGuideModel.getWindow()).getSelectedHosts();
+                        List<VdcReturnValueBase> retVals = result.getReturnValue();
+                        final List<VdcActionParametersBase> activateVdsParameterList = new ArrayList<>();
                         if (retVals != null && hosts.size() == retVals.size())
                         {
                             int i = 0;
-                            for (VDS selectedHost : hosts)
+
+                            for (MoveHostData selectedHostData : hosts)
                             {
+                                VDS selectedHost= selectedHostData.getEntity();
                                 if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
                                         && retVals.get(i).getSucceeded())
                                 {
                                     Frontend.getInstance().runAction(VdcActionType.ApproveVds,
                                             new ApproveVdsParameters(selectedHost.getId()));
+                                } else if (selectedHostData.getActivateHost()) {
+                                    activateVdsParameterList.add(new VdsActionParameters(selectedHostData.getEntity().getId()));
                                 }
                                 i++;
                             }
                         }
-                        clusterGuideModel.getWindow().stopProgress();
-                        clusterGuideModel.cancel();
-                        clusterGuideModel.postAction();
+
+                        if (activateVdsParameterList.isEmpty()) {
+                            clusterGuideModel.getWindow().stopProgress();
+                            clusterGuideModel.cancel();
+                            clusterGuideModel.postAction();
+                        } else {
+                            final String searchString = getVdsSearchString(((MoveHost) clusterGuideModel.getWindow()));
+                            Timer timer = new Timer() {
+                                public void run() {
+                                    checkVdsClusterChangeSucceeded(clusterGuideModel, searchString, parameterList, activateVdsParameterList);
+                                }
+                            };
+                            timer.schedule(2000);
+                        }
 
                     }
                 },
@@ -561,13 +580,14 @@ public class ClusterGuideModel extends GuideModel
         }
     }
 
-    private void postAction()
+    @Override
+    protected void postAction()
     {
         resetData();
         updateOptions();
     }
 
-    public void cancel()
+    protected void cancel()
     {
         resetData();
         setWindow(null);

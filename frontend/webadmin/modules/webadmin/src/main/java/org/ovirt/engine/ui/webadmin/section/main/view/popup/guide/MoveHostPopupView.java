@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.guide;
 
+import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.view.client.CellPreviewEvent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -10,10 +14,12 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
+import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHostData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.MoveHostPopupPresenterWidget;
@@ -75,17 +81,17 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         table = new EntityModelCellTable<>(true);
         table.setWidth("100%", true); //$NON-NLS-1$
 
-        AbstractTextColumn<EntityModel<VDS>> nameColumn = new AbstractTextColumn<EntityModel<VDS>>() {
+        AbstractTextColumn<MoveHostData> nameColumn = new AbstractTextColumn<MoveHostData>() {
             @Override
-            public String getValue(EntityModel<VDS> object) {
+            public String getValue(MoveHostData object) {
                 return object.getEntity().getName();
             }
         };
         table.addColumn(nameColumn, constants.nameHost());
 
-        AbstractTextColumn<EntityModel<VDS>> hostColumn = new AbstractTextColumn<EntityModel<VDS>>() {
+        AbstractTextColumn<MoveHostData> hostColumn = new AbstractTextColumn<MoveHostData>() {
             @Override
-            public String getValue(EntityModel<VDS> object) {
+            public String getValue(MoveHostData object) {
                 return object.getEntity().getHostName();
             }
         };
@@ -98,6 +104,31 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
             }
         };
         table.addColumn(statusColumn, constants.statusHost(), "90px"); //$NON-NLS-1$
+
+        final Column<MoveHostData, Boolean> activateColumn = new Column<MoveHostData, Boolean>(new ActivateCheckboxCell()) {
+            @Override
+            public Boolean getValue(MoveHostData object) {
+                return object.getActivateHost();
+            }
+        };
+
+        activateColumn.setFieldUpdater(new FieldUpdater<MoveHostData, Boolean>() {
+            @Override
+            public void update(int idx, MoveHostData object, Boolean value) {
+                object.setActivateHost(value);
+            }
+        });
+
+        table.addColumn(activateColumn, constants.activateHost(), "60px"); //$NON-NLS-1$
+    }
+
+    class ActivateCheckboxCell extends CheckboxCell implements EventHandlingCell {
+
+        @Override
+        public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
+            return true;
+        }
+
     }
 
     @Override

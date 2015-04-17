@@ -9,7 +9,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -17,7 +16,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
 @SuppressWarnings("unused")
-public class MoveHost extends ListModel<EntityModel<VDS>>
+public class MoveHost extends ListModel<MoveHostData>
 {
     private ListModel<VDSGroup> privateCluster;
 
@@ -31,14 +30,14 @@ public class MoveHost extends ListModel<EntityModel<VDS>>
         privateCluster = value;
     }
 
-    private ArrayList<VDS> privateSelectedHosts;
+    private ArrayList<MoveHostData> privateSelectedHosts;
 
-    public ArrayList<VDS> getSelectedHosts()
+    public ArrayList<MoveHostData> getSelectedHosts()
     {
         return privateSelectedHosts;
     }
 
-    public void setSelectedHosts(ArrayList<VDS> value)
+    public void setSelectedHosts(ArrayList<MoveHostData> value)
     {
         privateSelectedHosts = value;
     }
@@ -77,7 +76,7 @@ public class MoveHost extends ListModel<EntityModel<VDS>>
     private void postGetHostList(ArrayList<VDS> hosts) {
 
         VDSGroup cluster = getCluster().getSelectedItem();
-        ArrayList<EntityModel<VDS>> items = new ArrayList<>();
+        ArrayList<MoveHostData> items = new ArrayList<>();
 
         for (VDS vds : hosts)
         {
@@ -85,8 +84,8 @@ public class MoveHost extends ListModel<EntityModel<VDS>>
                     (vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
                     && vds.getSupportedClusterVersionsSet().contains(cluster.getCompatibilityVersion()))
             {
-                EntityModel<VDS> entity = new EntityModel<>();
-                entity.setEntity(vds);
+                MoveHostData entity = new MoveHostData(vds);
+                entity.setActivateHost(true);
                 items.add(entity);
             }
         }
@@ -94,7 +93,7 @@ public class MoveHost extends ListModel<EntityModel<VDS>>
         ArrayList<Guid> previouslySelectedHostIDs = new ArrayList<>();
         if (getItems() != null)
         {
-            for (EntityModel<VDS> entity : getItems())
+            for (MoveHostData entity : getItems())
             {
                 if (entity.getIsSelected())
                 {
@@ -103,7 +102,7 @@ public class MoveHost extends ListModel<EntityModel<VDS>>
             }
         }
         setItems(items);
-        for (EntityModel<VDS> entity : items)
+        for (MoveHostData entity : items)
         {
             entity.setIsSelected(previouslySelectedHostIDs.contains((entity.getEntity()).getId()));
         }

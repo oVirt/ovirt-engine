@@ -18,7 +18,7 @@
 		}
 	</ui:style>
 
-	<d:SimpleDialogPanel width="400px" height="300px">
+	<d:SimpleDialogPanel width="460px" height="300px">
 		<d:content>
 			<g:FlowPanel>
 				<g:ScrollPanel addStyleNames="{style.tablePanel}">

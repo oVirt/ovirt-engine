@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.gwt.user.client.Timer;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -54,6 +56,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHostData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NewHostModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
@@ -1422,45 +1425,46 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             return;
         }
 
-        model.setSelectedHosts(new ArrayList<VDS>());
+        model.setSelectedHosts(new ArrayList<MoveHostData>());
         for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
         {
             if (a.getIsSelected())
             {
-                model.getSelectedHosts().add((VDS) a.getEntity());
+                model.getSelectedHosts().add((MoveHostData) a);
             }
         }
 
         VDSGroup cluster = (VDSGroup) model.getCluster().getSelectedItem();
-        ArrayList<VdcActionParametersBase> paramerterList =
-                new ArrayList<VdcActionParametersBase>();
-        for (VDS host : model.getSelectedHosts())
+        final List<VdcActionParametersBase> parameterList = new ArrayList<>();
+        for (MoveHostData hostData : model.getSelectedHosts())
         {
+            VDS host = hostData.getEntity();
             // Try to change host's cluster as neccessary.
             if (host.getVdsGroupId() != null && !host.getVdsGroupId().equals(cluster.getId()))
             {
-                paramerterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
+                parameterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
 
             }
         }
 
         model.startProgress(null);
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeVDSCluster, paramerterList,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeVDSCluster, parameterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
-                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
-                        ArrayList<VDS> hosts =
+                        final DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+                        List<MoveHostData> hosts =
                                 ((MoveHost) dataCenterGuideModel.getWindow()).getSelectedHosts();
-                        ArrayList<VdcReturnValueBase> retVals =
-                                (ArrayList<VdcReturnValueBase>) result.getReturnValue();
+                        List<VdcReturnValueBase> retVals = result.getReturnValue();
+                        final List<VdcActionParametersBase> activateVdsParameterList = new ArrayList<>();
                         if (retVals != null && hosts.size() == retVals.size())
                         {
                             int i = 0;
-                            for (VDS selectedHost : hosts)
+                            for (MoveHostData selectedHostData : hosts)
                             {
+                                VDS selectedHost = selectedHostData.getEntity();
                                 if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
                                         && retVals.get(i).getSucceeded())
                                 {
@@ -1469,13 +1473,26 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                             new ApproveVdsParameters(selectedHost.getId()),
                                             null,
                                             this);
+                                } else if (selectedHostData.getActivateHost()) {
+                                    activateVdsParameterList.add(new VdsActionParameters(selectedHostData.getEntity().getId()));
                                 }
                                 i++;
                             }
                         }
-                        dataCenterGuideModel.getWindow().stopProgress();
-                        dataCenterGuideModel.cancel();
-                        dataCenterGuideModel.postAction();
+
+                        if (activateVdsParameterList.isEmpty()) {
+                            dataCenterGuideModel.getWindow().stopProgress();
+                            dataCenterGuideModel.cancel();
+                            dataCenterGuideModel.postAction();
+                        } else {
+                            final String searchString = getVdsSearchString(((MoveHost) dataCenterGuideModel.getWindow()));
+                            Timer timer = new Timer() {
+                                public void run() {
+                                    checkVdsClusterChangeSucceeded(dataCenterGuideModel, searchString, parameterList, activateVdsParameterList);
+                                }
+                            };
+                            timer.schedule(2000);
+                        }
                     }
                 },
                 this);
@@ -1648,13 +1665,15 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
     }
 
-    private void postAction()
+    @Override
+    protected void postAction()
     {
         resetData();
         updateOptions();
     }
 
-    public void cancel()
+    @Override
+    protected void cancel()
     {
         resetData();
         setWindow(null);
