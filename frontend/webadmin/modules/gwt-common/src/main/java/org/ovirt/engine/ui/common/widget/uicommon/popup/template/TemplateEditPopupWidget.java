@@ -34,7 +34,7 @@ public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
         PopupWidgetConfigMap popupWidgetConfigMap = super.createWidgetConfiguration().
                 putOne(logicalNetworksEditorPanel, hiddenField()).
                 putAll(poolSpecificFields(), hiddenField()).
-                putOne(instanceTypesEditor, hiddenField()).
+                putOne(detachableInstanceTypesEditor, hiddenField()).
                 putOne(templateWithVersionEditor, hiddenField()).
                 putAll(resourceAllocationTemplateHiddenFields(), hiddenField());
 
