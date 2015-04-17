@@ -1247,7 +1247,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/gluster-bricks")
-    DefaultGlusterBrickMountPoint,
+    GlusterDefaultBrickMountPoint,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
@@ -1460,11 +1460,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/,/home,/boot")
-    MountPointsToIgoreInGlusterStorageList,
+    GlusterStorageDeviceListMountPointsToIgore,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("swap")
-    FileSystemTypesToIgoreInGlusterStorageList,
+    GlusterStorageDeviceListFileSystemTypesToIgore,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3600")

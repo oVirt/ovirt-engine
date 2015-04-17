@@ -88,7 +88,7 @@ public enum ConfigurationValues {
     GlusterVolumeOptionGroupVirtValue,
     GlusterVolumeOptionOwnerUserVirtValue,
     GlusterVolumeOptionOwnerGroupVirtValue,
-    DefaultGlusterBrickMountPoint,
+    GlusterDefaultBrickMountPoint,
     CpuPinningEnabled,
     CpuPinMigrationEnabled,
     MigrationSupportForNativeUsb(ConfigAuthType.User),

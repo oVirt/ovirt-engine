@@ -44,12 +44,12 @@ public class GetGlusterStorageDevicesQuery<P extends VdsIdParametersBase> extend
     }
 
     private List<String> getMountPointsFilter() {
-        return Arrays.asList(Config.<String> getValue(ConfigValues.MountPointsToIgoreInGlusterStorageList).split(","));
+        return Arrays.asList(Config.<String> getValue(ConfigValues.GlusterStorageDeviceListMountPointsToIgore).split(","));
 
     }
 
     private List<String> getFsTypesFilter() {
-        return Arrays.asList(Config.<String> getValue(ConfigValues.FileSystemTypesToIgoreInGlusterStorageList)
+        return Arrays.asList(Config.<String> getValue(ConfigValues.GlusterStorageDeviceListFileSystemTypesToIgore)
                 .split(","));
     }
 }

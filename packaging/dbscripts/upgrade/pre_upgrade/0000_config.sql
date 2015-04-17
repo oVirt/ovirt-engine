@@ -176,9 +176,9 @@ select fn_db_add_config_value('GlusterRefreshRateSnapshotDiscovery', '300', 'gen
 
 -- Gluster Disk Provisioning --
 select fn_db_add_config_value_for_versions_up_to('GlusterBrickProvisioningEnabled', 'false', '3.5');
-select fn_db_add_config_value('MountPointsToIgoreInGlusterStorageList','/,/home,/boot','general');
-select fn_db_add_config_value('FileSystemTypesToIgoreInGlusterStorageList','swap','general');
-select fn_db_add_config_value('DefaultGlusterBrickMountPoint','/gluster-bricks','general');
+select fn_db_add_config_value('GlusterStorageDeviceListMountPointsToIgore','/,/home,/boot','general');
+select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgore','swap','general');
+select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks','general');
 
 -- Gluster Network Role --
 select fn_db_add_config_value_for_versions_up_to('GlusterNetworkRoleSupported', 'false', '3.5');
@@ -936,6 +936,9 @@ select fn_db_delete_config_value('ProductKeyWindows8','general');
 select fn_db_delete_config_value('ProductKeyWindows8x64','general');
 select fn_db_delete_config_value('ProductKeyWindows2012x64','general');
 select fn_db_delete_config_value('VdsFenceOptionMapping','general');
+select fn_db_delete_config_value('MountPointsToIgoreInGlusterStorageList','general');
+select fn_db_delete_config_value('FileSystemTypesToIgoreInGlusterStorageList','general');
+select fn_db_delete_config_value('DefaultGlusterBrickMountPoint','general');
 -- removing power client
 select fn_db_delete_config_value('PowerClientAllowUsingAsIRS','general');
 select fn_db_delete_config_value('PowerClientGUI','general');

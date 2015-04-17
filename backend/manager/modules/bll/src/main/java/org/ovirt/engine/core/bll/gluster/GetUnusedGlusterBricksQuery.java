@@ -34,11 +34,12 @@ public class GetUnusedGlusterBricksQuery<P extends VdsIdParametersBase> extends 
         for (GlusterBrickEntity brick : usedBricks) {
             bricksDir.add(brick.getBrickDirectory());
         }
+
         for (StorageDevice storageDevice : storageDevicesInHost) {
             if (storageDevice.getMountPoint() != null
                     && !storageDevice.getMountPoint().isEmpty()
                     && (storageDevice.getMountPoint()
-                            .startsWith(Config.<String> getValue(ConfigValues.DefaultGlusterBrickMountPoint))
+                            .startsWith(Config.<String> getValue(ConfigValues.GlusterDefaultBrickMountPoint))
                     || storageDevice.isGlusterBrick())
                     && !bricksDir.contains(storageDevice.getMountPoint())) {
                 freeBricks.add(storageDevice);

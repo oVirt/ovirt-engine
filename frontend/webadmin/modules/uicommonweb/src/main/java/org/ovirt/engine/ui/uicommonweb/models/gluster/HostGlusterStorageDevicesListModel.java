@@ -149,7 +149,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
             }
         };
         AsyncDataProvider.getInstance()
-                .getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.DefaultGlusterBrickMountPoint,
+                .getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterDefaultBrickMountPoint,
                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
                         asyncQueryForDefaultMountPoint);
 
