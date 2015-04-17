@@ -148,10 +148,9 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel {
                 lvModel.getDefaultMountFolder().setEntity(defaultMountPoint);
             }
         };
-
-        AsyncDataProvider.getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.DefaultGlusterBrickMountPoint,
+        AsyncDataProvider.getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterDefaultBrickMountPoint,
                 AsyncDataProvider.getDefaultConfigurationVersion()),
-                        asyncQueryForDefaultMountPoint);
+                asyncQueryForDefaultMountPoint);
 
         UICommand okCommand = UICommand.createDefaultOkUiCommand("onCreateBrick", this); //$NON-NLS-1$
         lvModel.getCommands().add(okCommand);
