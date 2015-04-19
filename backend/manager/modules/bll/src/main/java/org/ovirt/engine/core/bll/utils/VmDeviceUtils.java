@@ -7,7 +7,6 @@ import org.ovirt.engine.core.bll.smartcard.SmartcardSpecParams;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -26,10 +25,10 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -214,8 +213,8 @@ public class VmDeviceUtils {
      *
      * @param oldVm
      * @param newVmBase
-     * @param cluster compatibility version
-     * @param sound device enabled - if null, keep old state
+     * @param compatibilityVersion cluster compatibility version
+     * @param isSoundDeviceEnabled device enabled - if null, keep old state
      */
     public static void updateAudioDevice(VmBase oldVm, VmBase newVmBase, Version compatibilityVersion, Boolean isSoundDeviceEnabled) {
         boolean removeDevice = false;
@@ -1146,21 +1145,54 @@ public class VmDeviceUtils {
 
     /**
      * Determines whether a VM device change has been request by the user.
-     * @param deviceType VmDeviceGeneralType.
-     * @param device VmDeviceType name.
+     * @param deviceGeneralType VmDeviceGeneralType.
+     * @param deviceTypeName VmDeviceType name.
      * @param deviceEnabled indicates whether the user asked to enable the device.
      * @return true if a change has been requested; otherwise, false
      */
-    public static boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceType, String device, boolean deviceEnabled) {
-        List<VmDevice> vmDevices = device != null ?
-                dao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceType, device):
-                dao.getVmDeviceByVmIdAndType(vmId, deviceType);
+    public static boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceGeneralType, String deviceTypeName,
+                                          boolean deviceEnabled) {
+        List<VmDevice> vmDevices = deviceTypeName != null ?
+                dao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceGeneralType, deviceTypeName):
+                dao.getVmDeviceByVmIdAndType(vmId, deviceGeneralType);
 
         return deviceEnabled == vmDevices.isEmpty();
     }
 
+    /**
+     * Determines whether a VM device change has been request by the user.
+     * @param deviceGeneralType VmDeviceGeneralType.
+     * @param deviceTypeName VmDeviceType name.
+     * @param device device object provided by user
+     * @return true if a change has been requested; otherwise, false
+     */
+    public static boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceGeneralType, String deviceTypeName,
+                                          VmDevice device) {
+        List<VmDevice> vmDevices = deviceTypeName != null ?
+                dao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceGeneralType, deviceTypeName):
+                dao.getVmDeviceByVmIdAndType(vmId, deviceGeneralType);
+
+        if (device == null)
+            return !vmDevices.isEmpty();
+        if (vmDevices.isEmpty()) // && device != null
+            return true;
+        if (device.getSpecParams() != null) { // if device.getSpecParams() == null, it is not used for comparison
+            for (VmDevice vmDevice : vmDevices) {
+                if (!vmDevice.getSpecParams().equals(device.getSpecParams())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public static boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceType, boolean deviceEnabled) {
         return vmDeviceChanged(vmId, deviceType, null, deviceEnabled);
+    }
+
+    public static boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceType, VmDevice device) {
+        return vmDeviceChanged(vmId, deviceType, null, device);
     }
 
     /**
@@ -1175,34 +1207,41 @@ public class VmDeviceUtils {
         VmDeviceUtils.setVmDevices(vm.getStaticData());
         Map<Guid, VmDevice> vmManagedDeviceMap = vm.getManagedVmDeviceMap();
 
-        List<Pair<EditableDeviceOnVmStatusField, Boolean>> fieldList =
+        List<VmDeviceUpdate> fieldList =
                 VmHandler.getVmDevicesFieldsToUpdateOnNextRun(vm.getId(), vm.getStatus(), objectWithEditableDeviceFields);
 
         // Add the enabled devices and remove the disabled ones
-        for (Pair<EditableDeviceOnVmStatusField, Boolean> pair : fieldList) {
-            final EditableDeviceOnVmStatusField field = pair.getFirst();
-            Boolean isEnabled = pair.getSecond();
-
-            if (Boolean.TRUE.equals(isEnabled)) {
-                VmDevice device =
-                        new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
-                                field.generalType(),
-                                field.type().getName(),
-                                "",
-                                0,
-                                new HashMap<String, Object>(),
-                                true,
-                                true,
-                                field.isReadOnly(),
-                                "",
-                                null,
-                                null,
-                                null);
+        for (VmDeviceUpdate update : fieldList) {
+            if (update.isEnable()) {
+                VmDevice device;
+                if (update.getDevice() == null) {
+                    device = new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
+                                    update.getGeneralType(),
+                                    update.getType().getName(),
+                                    "",
+                                    0,
+                                    new HashMap<String, Object>(),
+                                    true,
+                                    true,
+                                    update.isReadOnly(),
+                                    "",
+                                    null,
+                                    null,
+                                    null);
+                } else {
+                    device = update.getDevice();
+                    if (device.getVmId() == null) {
+                        device.setVmId(vm.getId());
+                    }
+                    if (device.getDeviceId() == null) {
+                        device.setDeviceId(Guid.newGuid());
+                    }
+                }
 
                 vmManagedDeviceMap.put(device.getDeviceId(), device);
-            }
-            else {
-                vmManagedDeviceMap.remove(getVmDeviceIdByName(vmManagedDeviceMap, field.generalType(), field.type().getName()));
+            } else {
+                vmManagedDeviceMap.remove(getVmDeviceIdByName(vmManagedDeviceMap, update.getGeneralType(),
+                        update.getType().getName()));
             }
         }
 

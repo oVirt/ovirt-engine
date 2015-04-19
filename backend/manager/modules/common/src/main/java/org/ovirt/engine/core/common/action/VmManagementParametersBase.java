@@ -22,9 +22,9 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     private static final long serialVersionUID = -7695630335738521510L;
 
     @Valid
-    private VmStatic _vmStatic;
+    private VmStatic vmStatic;
     private boolean makeCreatorExplicitOwner;
-    private Guid privateStorageDomainId;
+    private Guid storageDomainId;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private VmPayload payload;
     private boolean clearPayload;
@@ -80,6 +80,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
      * null for removing the device. If the map doesn't contain entry for graphics type, VM's graphics card
      * of this type is not modified.
      */
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.GRAPHICS, type = VmDeviceType.UNKNOWN)
     private Map<GraphicsType, GraphicsDevice> graphicsDevices;
 
     public VmManagementParametersBase() {
@@ -88,12 +89,12 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
 
     public VmManagementParametersBase(VmStatic vmStatic) {
         super(vmStatic.getId());
-        _vmStatic = vmStatic;
+        this.vmStatic = vmStatic;
         init();
     }
 
     private void init() {
-        privateStorageDomainId = Guid.Empty;
+        storageDomainId = Guid.Empty;
         consoleEnabled = Boolean.FALSE;
         graphicsDevices = new HashMap<GraphicsType, GraphicsDevice>();
     }
@@ -103,19 +104,19 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     }
 
     public VmStatic getVmStaticData() {
-        return _vmStatic;
+        return vmStatic;
     }
 
     public void setVmStaticData(VmStatic value) {
-        _vmStatic = value;
+        vmStatic = value;
     }
 
     public Guid getStorageDomainId() {
-        return privateStorageDomainId;
+        return storageDomainId;
     }
 
     public void setStorageDomainId(Guid value) {
-        privateStorageDomainId = value;
+        storageDomainId = value;
     }
 
     private boolean privateDontAttachToDefaultTag;
@@ -131,7 +132,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     public VM getVm() {
         if (vm == null) {
             vm = new VM();
-            vm.setStaticData(_vmStatic);
+            vm.setStaticData(vmStatic);
         }
         return vm;
     }
@@ -139,7 +140,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     public void setVm(VM value) {
         // to make the getVm() use the new value
         vm = null;
-        _vmStatic = value.getStaticData();
+        vmStatic = value.getStaticData();
     }
 
     public void setMakeCreatorExplicitOwner(boolean makeCreatorExplicitOwner) {

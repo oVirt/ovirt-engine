@@ -47,6 +47,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
@@ -69,6 +71,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -105,7 +108,7 @@ public class VmHandler {
      * Initialize static list containers, for identity and permission check. The initialization should be executed
      * before calling ObjectIdentityChecker.
      *
-     * @see Backend#InitHandlers
+     * @see Backend#initHandlers
      */
     public static void init() {
         Class<?>[] inspectedClassNames = new Class<?>[] {
@@ -822,9 +825,9 @@ public class VmHandler {
         return getVmDevicesFieldsToUpdateOnNextRun(vmId, vmStatus, objectWithEditableDeviceFields).isEmpty();
     }
 
-    public static List<Pair<EditableDeviceOnVmStatusField, Boolean>> getVmDevicesFieldsToUpdateOnNextRun(
+    public static List<VmDeviceUpdate> getVmDevicesFieldsToUpdateOnNextRun(
             Guid vmId, VMStatus vmStatus, Object objectWithEditableDeviceFields) {
-        List<Pair<EditableDeviceOnVmStatusField, Boolean>> fieldList = new ArrayList<>();
+        List<VmDeviceUpdate> fieldList = new ArrayList<>();
 
         if (objectWithEditableDeviceFields == null) {
             return fieldList;
@@ -838,33 +841,90 @@ public class VmHandler {
             Field field = pair.getSecond();
             field.setAccessible(true);
 
-            Boolean isEnabled = null;
-            try {
-                isEnabled = (Boolean) field.get(objectWithEditableDeviceFields);
-            } catch (IllegalAccessException | ClassCastException e) {
-                log.warn("VmHandler:: isUpdateValidForVmDevices: Reflection error");
-                log.debug("Original exception was:", e);
-            }
-
-            // if device type is set to unknown, search by general type only
-            // because some devices has more than one type, like sound can be ac97/ich6
-            String device = null;
-            if (annotation.type() != VmDeviceType.UNKNOWN) {
-                device = annotation.type().getName();
-            }
-
-            if (isEnabled == null ||
-                    !VmDeviceUtils.vmDeviceChanged(vmId, annotation.generalType(),
-                            device, isEnabled)) {
+            if (VmHandler.isUpdateValidForVmDevice(field.getName(), vmStatus)) {
+                // field may be updated on the current run, so not including for the next run
                 continue;
             }
 
-            if (!VmHandler.isUpdateValidForVmDevice(field.getName(), vmStatus)) {
-                fieldList.add(new Pair<>(annotation, isEnabled));
+            try {
+                Object value = field.get(objectWithEditableDeviceFields);
+                if (value instanceof Boolean) {
+                    addDeviceUpdateOnNextRun(vmId, annotation, null, value, fieldList);
+                } else if (value instanceof Map) {
+                    Map<?, ?> map = (Map<?, ?>) value;
+                    for (Map.Entry<?, ?> entry : map.entrySet()) {
+                        boolean success = addDeviceUpdateOnNextRun(vmId, annotation,
+                                entry.getKey(), entry.getValue(), fieldList);
+                        if (!success)
+                            break;
+                    }
+                } else {
+                    log.warn("getVmDevicesFieldsToUpdateOnNextRun: Unsupported field type: " +
+                            value.getClass().getName());
+                }
+            } catch (IllegalAccessException | ClassCastException e) {
+                log.warn("getVmDevicesFieldsToUpdateOnNextRun: Reflection error");
+                log.debug("Original exception was:", e);
             }
+
+
         }
 
         return fieldList;
+    }
+
+    private static boolean addDeviceUpdateOnNextRun(Guid vmId, EditableDeviceOnVmStatusField annotation,
+                                                Object key, Object value, List<VmDeviceUpdate> updates) {
+        VmDeviceGeneralType generalType = annotation.generalType();
+        VmDeviceType type = annotation.type();
+
+        if (key != null) {
+            VmDeviceGeneralType keyGeneralType = VmDeviceGeneralType.UNKNOWN;
+            VmDeviceType keyType = VmDeviceType.UNKNOWN;
+
+            if (key instanceof VmDeviceGeneralType) {
+                keyGeneralType = (VmDeviceGeneralType) key;
+            } else if (key instanceof VmDeviceType) {
+                keyType = (VmDeviceType) key;
+            } else if (key instanceof GraphicsType) {
+                keyType = ((GraphicsType) key).getCorrespondingDeviceType();
+            } else {
+                log.warn("addDeviceUpdateOnNextRun: Unsupported map key type: " +
+                        key.getClass().getName());
+                return false;
+            }
+
+            if (keyGeneralType != VmDeviceGeneralType.UNKNOWN) {
+                generalType = keyGeneralType;
+            }
+            if (keyType != VmDeviceType.UNKNOWN) {
+                type = keyType;
+            }
+        }
+
+        // if device type is set to unknown, search by general type only
+        // because some devices have more than one type, like sound can be ac97/ich6
+        String typeName = type != VmDeviceType.UNKNOWN ? type.getName() : null;
+
+        if (value == null) {
+            if (VmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, false)) {
+                updates.add(new VmDeviceUpdate(generalType, type, annotation.isReadOnly(), false));
+            }
+        } else if (value instanceof Boolean) {
+            if (VmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, (Boolean) value)) {
+                updates.add(new VmDeviceUpdate(annotation, (Boolean) value));
+            }
+        } else if (value instanceof VmDevice) {
+            if (VmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, (VmDevice) value)) {
+                updates.add(new VmDeviceUpdate(generalType, type, annotation.isReadOnly(), (VmDevice) value));
+            }
+        } else {
+            log.warn("addDeviceUpdateOnNextRun: Unsupported value type: " +
+                    value.getClass().getName());
+            return false;
+        }
+
+        return true;
     }
 
     public static boolean isCpuSupported(int osId, Version version, String cpuName, ArrayList<String> canDoActionMessages) {

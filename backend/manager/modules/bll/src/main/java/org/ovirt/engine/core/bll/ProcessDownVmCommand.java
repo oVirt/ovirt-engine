@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -157,9 +159,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     }
 
     /**
-     * remove VMs unmanaged devices that are created during run-once or stateless run.
-     *
-     * @param vmId
+     * Remove VM's unmanaged devices that are created during run-once or stateless run.
      */
     private void removeStatelessVmUnmanagedDevices() {
         if (getVm().isStateless() || isRunOnce()) {
@@ -200,8 +200,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     }
 
     /**
-     * Update vm configuration with NEXT_RUN configuration, if exists
-     * @param vmId
+     * Update VM configuration with NEXT_RUN configuration, if exists.
      */
     private void applyNextRunConfiguration() {
         // Remove snpashot first, in case other update is in progress, it will block this one with exclusive lock
@@ -229,6 +228,9 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         updateVmParams.setBalloonEnabled(false);
         updateVmParams.setVirtioScsiEnabled(false);
         updateVmParams.setClearPayload(true);
+        for (GraphicsType graphicsType : GraphicsType.values()) {
+            updateVmParams.getGraphicsDevices().put(graphicsType, null);
+        }
 
         for (VmDevice device : getVm().getManagedVmDeviceMap().values()) {
             switch (device.getType()) {
@@ -253,6 +255,10 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
                     break;
                 case CONSOLE:
                     updateVmParams.setConsoleEnabled(true);
+                    break;
+                case GRAPHICS:
+                    updateVmParams.getGraphicsDevices().put(GraphicsType.fromString(device.getDevice()),
+                            new GraphicsDevice(device));
                     break;
                 default:
             }

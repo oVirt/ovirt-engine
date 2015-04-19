@@ -330,6 +330,15 @@ public abstract class InstanceTypeManager {
             deactivate();
             getModel().getIsSoundcardEnabled().setEntity(isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.SOUND.getName()));
             getModel().getIsConsoleDeviceEnabled().setEntity(isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.CONSOLE.getName()));
+
+            Set<GraphicsType> graphicsTypeSet = new HashSet<>();
+            for (GraphicsType graphicsType : GraphicsType.values()) {
+                if (isVmDeviceExists(vmBase.getManagedDeviceMap(), graphicsType.getCorrespondingDeviceType().getName())) {
+                    graphicsTypeSet.add(graphicsType);
+                }
+            }
+            getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypeSet));
+
             activate();
         }
 
