@@ -440,6 +440,18 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     hosts.add(hostMap);
                 }
                 struct.put(VdsProperties.NetworkDiskHosts, hosts);
+
+                boolean authEnabled = (boolean) connectionInfoData.get(VdsProperties.CinderAuthEnabled);
+                String secretType = (String) connectionInfoData.get(VdsProperties.CinderSecretType);
+                String authUsername = (String) connectionInfoData.get(VdsProperties.CinderAuthUsername);
+                String secretUuid = (String) connectionInfoData.get(VdsProperties.CinderSecretUuid);
+                if (authEnabled) {
+                    Map<String, Object> authMap = new HashMap<>();
+                    authMap.put(VdsProperties.NetworkDiskAuthSecretType, secretType);
+                    authMap.put(VdsProperties.NetworkDiskAuthUsername, authUsername);
+                    authMap.put(VdsProperties.NetworkDiskAuthSecretUuid, secretUuid);
+                    struct.put(VdsProperties.NetworkDiskAuth, authMap);
+                }
                 break;
         }
     }

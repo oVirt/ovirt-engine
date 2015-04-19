@@ -362,6 +362,14 @@ public final class VdsProperties {
     public static final String NetworkDiskPort = "port";
     public static final String NetworkDiskTransport = "transport";
     public static final String NetworkDiskHosts = "hosts";
+    public static final String NetworkDiskAuth = "auth";
+    public static final String NetworkDiskAuthUsername = "username";
+    public static final String NetworkDiskAuthSecretType = "type";
+    public static final String NetworkDiskAuthSecretUuid = "uuid";
+    public static final String CinderAuthEnabled = "auth_enabled";
+    public static final String CinderSecretType = "secret_type";
+    public static final String CinderAuthUsername = "auth_username";
+    public static final String CinderSecretUuid = "secret_uuid";
 
     // iotune
     public static final String Iotune = "ioTune";
