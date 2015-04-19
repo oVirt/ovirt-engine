@@ -230,6 +230,7 @@ public class VmBackupModel extends ManageBackupModel {
         }
 
         ImportVmFromExportDomainModel model = importModelProvider.get();
+        model.setEntity(getEntity().getId());
         setWindow(model);
         model.startProgress(null);
         UICommand restoreCommand;
