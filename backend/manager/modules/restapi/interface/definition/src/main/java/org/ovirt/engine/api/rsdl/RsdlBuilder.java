@@ -349,20 +349,30 @@ public class RsdlBuilder {
     }
 
     private void handleDelete(String prefix, Collection<DetailedLink> results, Method m) {
+        boolean collectionLevel = m.getAnnotation(Path.class) == null;
         if (m.getParameterTypes().length>1) {
             Class<?>[] parameterTypes = m.getParameterTypes();
             Annotation[][] parameterAnnotations = m.getParameterAnnotations();
             for (int i=0; i<parameterTypes.length; i++) {
                 //ignore the id parameter (string), that's annotated with @PathParam
                 if (!( parameterTypes[i].equals(String.class) && (!(parameterAnnotations[i].length==0)))) {
-                    DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix + "/{" + getSingleForm(prefix) + ":id}").rel(DELETE).requestParameter(parameterTypes[i].getSimpleName()).httpMethod(HttpMethod.DELETE).build();
+                    DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix
+                            + (collectionLevel ? "" : "/{" + getSingleForm(prefix) + ":id}"))
+                            .rel(DELETE)
+                            .requestParameter(parameterTypes[i].getSimpleName())
+                            .httpMethod(HttpMethod.DELETE)
+                            .build();
                     addCommonActionParameters(link);
                     results.add(link);
                     return; //we can break, because we excpect only one parameter.
                 }
             }
         } else {
-            DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix + "/{" + getSingleForm(prefix) + ":id}").rel(DELETE).httpMethod(HttpMethod.DELETE).build();
+            DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix
+                    + (collectionLevel ? "" : "/{" + getSingleForm(prefix) + ":id}"))
+                    .rel(DELETE)
+                    .httpMethod(HttpMethod.DELETE)
+                    .build();
             addCommonActionParameters(link);
             results.add(link);
         }

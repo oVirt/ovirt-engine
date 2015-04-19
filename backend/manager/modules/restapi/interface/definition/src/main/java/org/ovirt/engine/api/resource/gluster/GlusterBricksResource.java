@@ -17,7 +17,6 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.GlusterBricks;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ApiMediaType;
-import org.ovirt.engine.api.resource.RsdlIgnore;
 
 /**
  * Resource interface for the "clusters/{cluster_id}/glustervolumes/{volume_id}/bricks" resource
@@ -51,7 +50,6 @@ public interface GlusterBricksResource {
      * @return
      */
     @DELETE
-    @RsdlIgnore //TODO: remove this when we have support for delete at collection level in yaml metadata
     public Response remove(GlusterBricks bricks);
 
     /**
