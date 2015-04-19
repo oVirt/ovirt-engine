@@ -46,5 +46,24 @@ public class CinderConnectionInfo implements Serializable {
                 " data=" + data + "]";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CinderConnectionInfo that = (CinderConnectionInfo) o;
+
+        if (driverVolumeType != null ? !driverVolumeType.equals(that.driverVolumeType) : that.driverVolumeType != null)
+            return false;
+        return !(data != null ? !data.equals(that.data) : that.data != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = driverVolumeType != null ? driverVolumeType.hashCode() : 0;
+        result = 31 * result + (data != null ? data.hashCode() : 0);
+        return result;
+    }
 }
 
