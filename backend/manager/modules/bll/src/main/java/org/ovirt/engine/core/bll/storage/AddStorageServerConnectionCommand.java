@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -122,17 +121,6 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                             VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
-    }
-
-    @Override
-    public Map<String, String> getJobMessageProperties() {
-        if (jobProperties == null) {
-            jobProperties = super.getJobMessageProperties();
-            if (getVds() != null) {
-                jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), getVds().getName());
-            }
-        }
-        return jobProperties;
     }
 
     @Override

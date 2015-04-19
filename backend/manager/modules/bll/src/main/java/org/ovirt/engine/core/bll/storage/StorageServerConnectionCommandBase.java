@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -121,5 +122,16 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
             fieldName = "connection";
         }
         return fieldName;
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            if (getVds() != null) {
+                jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), getVds().getName());
+            }
+        }
+        return jobProperties;
     }
 }
