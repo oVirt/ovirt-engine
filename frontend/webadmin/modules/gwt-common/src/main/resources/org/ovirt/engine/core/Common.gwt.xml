@@ -250,6 +250,7 @@
         <include name="common/utils/ListUtils.java" />
         <include name="common/utils/ObjectUtils.java" />
         <include name="common/utils/VmDeviceType.java" />
+        <include name="common/utils/VmDeviceCommonUtils.java" />
         <include name="common/utils/Pair.java" />
         <include name="common/utils/PairQueryable.java" />
         <include name="common/VdcObjectType.java" />

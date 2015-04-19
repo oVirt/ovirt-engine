@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
@@ -21,6 +22,41 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
 
     private static final long serialVersionUID = -7695630335738521510L;
 
+    /**
+     * This class combines a value and update flag. If update flag is false, the value is not used to update the VM.
+     * This is used to maintain backward compatibility in REST API: when null value comes from REST API it doesn't mean
+     * the value must be cleaned in the VM. REST API has separate commands to update values marked as Optional<T> here.
+     *
+     * @param <T> type of the value
+     */
+    public static class Optional<T> implements Serializable {
+
+        private static final long serialVersionUID = 2456445711176920294L;
+
+        private boolean update;
+        private T value;
+
+        public Optional() {
+        }
+
+        public boolean isUpdate() {
+            return update;
+        }
+
+        public void setUpdate(boolean update) {
+            this.update = update;
+        }
+
+        public T getValue() {
+            return value;
+        }
+
+        public void setValue(T value) {
+            this.value = value;
+        }
+
+    }
+
     @Valid
     private VmStatic vmStatic;
     private boolean makeCreatorExplicitOwner;
@@ -30,25 +66,17 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     private boolean clearPayload;
     private Boolean balloonEnabled;
     private VM vm;
-    private VmWatchdog watchdog;
-    private VmRngDevice rngDevice;
     private boolean copyTemplatePermissions;
     private boolean applyChangesLater;
     private boolean updateNuma;
     private String vmLargeIcon;
 
-    /*
-     * This parameter is needed at update to make sure that when we get a null watchdog from rest-api it is not meant to
-     * be removing the watchdog, rest-api will simply call watchdog commands directly. Default is false so to avoid
-     * breaking rest-api.
-     */
-    private boolean updateWatchdog;
-    /*
-     * This parameter is used to decide if to create sound device or not if it is null then: for add vm legacy logic
-     * will be used: create device for desktop type for update the current configuration will remain
-     * Used by rest-api.
-     */
-    private boolean updateRngDevice;
+
+    private Optional<VmWatchdog> watchdog = new Optional<>();
+
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.RNG, type = VmDeviceType.VIRTIO)
+    private Optional<VmRngDevice> rngDevice = new Optional<>();
+
     /*
      * This parameter is used to decide if to create sound device or not
      * if it is null then:
@@ -57,6 +85,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
      */
     @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.SOUND, type = VmDeviceType.UNKNOWN, isReadOnly = true)
     private Boolean soundDeviceEnabled;
+
     /*
      * This parameter is used to decide if to create console device or not if it is null then: for add vm don't add
      * console device for update the current configuration will remain
@@ -184,38 +213,38 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     }
 
     public VmWatchdog getWatchdog() {
-        return watchdog;
+        return watchdog.getValue();
     }
 
     public void setWatchdog(VmWatchdog watchdog) {
-        this.watchdog = watchdog;
+        this.watchdog.setValue(watchdog);
     }
 
     public VmRngDevice getRngDevice() {
-        return rngDevice;
+        return rngDevice.getValue();
     }
 
     public void setRngDevice(VmRngDevice rngDevice) {
-        this.rngDevice = rngDevice;
-        if (this.rngDevice != null) {
-            this.rngDevice.setVmId(getVmId());
+        this.rngDevice.setValue(rngDevice);
+        if (this.rngDevice.getValue() != null) {
+            this.rngDevice.getValue().setVmId(getVmId());
         }
     }
 
     public boolean isUpdateRngDevice() {
-        return updateRngDevice;
+        return rngDevice.isUpdate();
     }
 
     public void setUpdateRngDevice(boolean updateRngDevice) {
-        this.updateRngDevice = updateRngDevice;
+        this.rngDevice.setUpdate(updateRngDevice);
     }
 
     public boolean isUpdateWatchdog() {
-        return updateWatchdog;
+        return watchdog.isUpdate();
     }
 
     public void setUpdateWatchdog(boolean updateWatchdog) {
-        this.updateWatchdog = updateWatchdog;
+        this.watchdog.setUpdate(updateWatchdog);
     }
 
     public Boolean isConsoleEnabled() {

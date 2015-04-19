@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -228,6 +229,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         updateVmParams.setBalloonEnabled(false);
         updateVmParams.setVirtioScsiEnabled(false);
         updateVmParams.setClearPayload(true);
+        updateVmParams.setUpdateRngDevice(true);
         for (GraphicsType graphicsType : GraphicsType.values()) {
             updateVmParams.getGraphicsDevices().put(graphicsType, null);
         }
@@ -255,6 +257,9 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
                     break;
                 case CONSOLE:
                     updateVmParams.setConsoleEnabled(true);
+                    break;
+                case RNG:
+                    updateVmParams.setRngDevice(new VmRngDevice(device));
                     break;
                 case GRAPHICS:
                     updateVmParams.getGraphicsDevices().put(GraphicsType.fromString(device.getDevice()),

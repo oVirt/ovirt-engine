@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -37,7 +39,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Base class which takes care about copying the proper fields from instance type/template/vm static to the VM.
@@ -256,20 +257,6 @@ public abstract class InstanceTypeManager {
         }
     }
 
-    private VmDevice findVmDeviceByName(Map<Guid, VmDevice> vmManagedDeviceMap, String name) {
-        for (VmDevice vmDevice : vmManagedDeviceMap.values()) {
-            if (vmDevice.getDevice().equals(name)) {
-                return vmDevice;
-            }
-        }
-
-        return null;
-    }
-
-    private boolean isVmDeviceExists(Map<Guid, VmDevice> vmManagedDeviceMap, String name) {
-        return findVmDeviceByName(vmManagedDeviceMap, name) != null;
-    }
-
     protected void doUpdateManagedFieldsFrom(final VmBase vmBase) {
         if (vmBase == null) {
             model.stopProgress();
@@ -328,12 +315,15 @@ public abstract class InstanceTypeManager {
     private void postDoUpdateManagedFieldsFrom(VmBase vmBase) {
         if (isNextRunConfigurationExists()) {
             deactivate();
-            getModel().getIsSoundcardEnabled().setEntity(isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.SOUND.getName()));
-            getModel().getIsConsoleDeviceEnabled().setEntity(isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.CONSOLE.getName()));
+            getModel().getIsSoundcardEnabled().setEntity(
+                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.SOUND.getName()));
+            getModel().getIsConsoleDeviceEnabled().setEntity(
+                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.CONSOLE.getName()));
 
             Set<GraphicsType> graphicsTypeSet = new HashSet<>();
             for (GraphicsType graphicsType : GraphicsType.values()) {
-                if (isVmDeviceExists(vmBase.getManagedDeviceMap(), graphicsType.getCorrespondingDeviceType().getName())) {
+                if (VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(),
+                        graphicsType.getCorrespondingDeviceType().getName())) {
                     graphicsTypeSet.add(graphicsType);
                 }
             }
@@ -401,23 +391,35 @@ public abstract class InstanceTypeManager {
 
     protected void updateRngDevice(final VmBase vmBase) {
         if (model.getIsRngEnabled().getIsChangable() && model.getIsRngEnabled().getIsAvailable()) {
-            Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(vmBase.getId()), new AsyncQuery(
-                    this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            deactivate();
-                            List<VmDevice> rngDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                            getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
-                            if (!rngDevices.isEmpty()) {
-                                VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
-                                getModel().setRngDevice(rngDevice);
+            if (!isNextRunConfigurationExists()) {
+                Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(vmBase.getId()), new AsyncQuery(
+                        this,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object model, Object returnValue) {
+                                deactivate();
+                                List<VmDevice> rngDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
+                                if (!rngDevices.isEmpty()) {
+                                    VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
+                                    getModel().setRngDevice(rngDevice);
+                                }
+                                activate();
+                                updateVirtioScsi(vmBase);
                             }
-                            activate();
-                            updateVirtioScsi(vmBase);
                         }
-                    }
-            ));
+                ));
+            } else {
+                deactivate();
+                VmDevice rngDevice = VmDeviceCommonUtils.findVmDeviceByGeneralType(
+                        vmBase.getManagedDeviceMap(), VmDeviceGeneralType.RNG);
+                getModel().getIsRngEnabled().setEntity(rngDevice != null);
+                if (rngDevice != null) {
+                    getModel().setRngDevice(new VmRngDevice(rngDevice));
+                }
+                activate();
+                updateVirtioScsi(vmBase);
+            }
         } else {
             updateVirtioScsi(vmBase);
         }
@@ -425,7 +427,8 @@ public abstract class InstanceTypeManager {
 
     private void updateVirtioScsi(VmBase vmBase) {
         if (isNextRunConfigurationExists()) {
-            getModel().getIsVirtioScsiEnabled().setEntity(isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.VIRTIOSCSI.getName()));
+            getModel().getIsVirtioScsiEnabled().setEntity(
+                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.VIRTIOSCSI.getName()));
             model.stopProgress();
             return;
         }

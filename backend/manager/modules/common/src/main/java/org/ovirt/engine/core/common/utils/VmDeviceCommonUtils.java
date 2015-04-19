@@ -387,7 +387,55 @@ public class VmDeviceCommonUtils {
                 || (VmDeviceType.SPICEVMC.getName().equals(device) && VmDeviceGeneralType.REDIR == type)
                 || (VmDeviceType.MEMBALLOON.getName().equals(device) && VmDeviceGeneralType.BALLOON == type))
                 || (VmDeviceType.WATCHDOG.getName().equals(device) && VmDeviceGeneralType.WATCHDOG == type)
+                || (VmDeviceType.VIRTIO.getName().equals(device) && VmDeviceGeneralType.RNG == type)
                 || (VmDeviceType.VIRTIOSERIAL.getName().equals(device) && VmDeviceGeneralType.CONTROLLER == type)
                 || (VmDeviceType.VIRTIOSCSI.getName().equals(device) && VmDeviceGeneralType.CONTROLLER == type);
     }
+
+    /**
+     * Find a device in the map given by device name.
+     *
+     * @param vmManagedDeviceMap
+     * @param name
+     * @return
+     */
+    public static VmDevice findVmDeviceByName(Map<Guid, VmDevice> vmManagedDeviceMap, String name) {
+        for (VmDevice vmDevice : vmManagedDeviceMap.values()) {
+            if (vmDevice.getDevice().equals(name)) {
+                return vmDevice;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find a device in the map given by device general type.
+     *
+     * @param vmManagedDeviceMap
+     * @param generalType
+     * @return
+     */
+    public static VmDevice findVmDeviceByGeneralType(Map<Guid, VmDevice> vmManagedDeviceMap,
+                                               VmDeviceGeneralType generalType) {
+        for (VmDevice vmDevice : vmManagedDeviceMap.values()) {
+            if (vmDevice.getType() == generalType) {
+                return vmDevice;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if device with the name given exists in the map.
+     *
+     * @param vmManagedDeviceMap
+     * @param name
+     * @return
+     */
+    public static boolean isVmDeviceExists(Map<Guid, VmDevice> vmManagedDeviceMap, String name) {
+        return findVmDeviceByName(vmManagedDeviceMap, name) != null;
+    }
+
 }

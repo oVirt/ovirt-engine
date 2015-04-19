@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 
@@ -43,10 +42,15 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
 
         for (VmDeviceUpdate device :
                 VmHandler.getVmDevicesFieldsToUpdateOnNextRun(srcVm.getId(), VMStatus.Up, getParameters().getUpdateVmParameters())) {
-            if (device.getType() != VmDeviceType.UNKNOWN) {
-                result.add(device.getType().getName());
-            } else {
-                result.add(device.getGeneralType().name());
+            switch (device.getType()) {
+                case UNKNOWN:
+                case VIRTIO:
+                    result.add(device.getGeneralType().name());
+                    break;
+
+                default:
+                    result.add(device.getType().getName());
+                    break;
             }
         }
 
