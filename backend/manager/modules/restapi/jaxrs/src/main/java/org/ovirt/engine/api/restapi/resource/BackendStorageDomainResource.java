@@ -159,7 +159,7 @@ public class BackendStorageDomainResource extends
                 : isExportDomain(storageDomain) ? new String[] { "files", "images" }
                         : isImageDomain(storageDomain) ? new String[] { "templates", "vms", "files", "disks",
                                 "storageconnections" }
-                                : new String[] { "templates", "vms", "files", "images" };
+                                : new String[] { "files", "images" };
     }
 
     /**
