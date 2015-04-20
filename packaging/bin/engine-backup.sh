@@ -534,6 +534,8 @@ backupDB() {
 		-U "${user}" \
 		-h "${host}" \
 		-p "${port}" \
+		--no-owner \
+		--no-privileges \
 		"${database}" \
 		2> "${pgdump_log}" \
 		| bzip2 > "${file}.bz2" \

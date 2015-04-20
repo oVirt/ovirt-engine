@@ -578,6 +578,8 @@ class OvirtUtils(base.Base):
                 '-p', str(self.environment[self._dbenvkeys['port']]),
                 '-U', self.environment[self._dbenvkeys['user']],
                 '-d', self.environment[self._dbenvkeys['database']],
+                '--no-owner',
+                '--no-privileges',
                 '-j', '2',
                 backupFile,
             ),
