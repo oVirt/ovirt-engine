@@ -680,6 +680,7 @@ backupDB() {
 			--disable-dollar-quoting \
 			--disable-triggers \
 			--format="${format}" \
+			--no-owner \
 			2> "${pgdump_log}" \
 			| "${compressor}" > "${file}" \
 			|| logdie "${compressor} failed compressing the backup of database ${database}"
@@ -689,6 +690,7 @@ backupDB() {
 			--disable-dollar-quoting \
 			--disable-triggers \
 			--format="${format}" \
+			--no-owner \
 			2> "${pgdump_log}" \
 			> "${file}" \
 			|| logdie "Database ${database} backup failed"
@@ -872,11 +874,11 @@ restoreDB() {
 		fi
 	elif [ "${format}" = "custom" ]; then
 		if [ -z "${compressor}" ]; then
-			PGPASSFILE="${MYPGPASS}" pg_cmd pg_restore -j "${jobsnum}" "${backupfile}" > "${pgrestorelog}"  2>&1
+			PGPASSFILE="${MYPGPASS}" pg_cmd pg_restore --no-owner -j "${jobsnum}" "${backupfile}" > "${pgrestorelog}"  2>&1
 		else
 			# Requires the compressor to support '-d'. All our current ones do.
 			"${compressor}" -d < "${backupfile}" | \
-				PGPASSFILE="${MYPGPASS}" pg_cmd pg_restore > "${pgrestorelog}"  2>&1
+				PGPASSFILE="${MYPGPASS}" pg_cmd pg_restore --no-owner > "${pgrestorelog}"  2>&1
 		fi
 	else
 		logdie "Unsupported format ${format}"
@@ -903,8 +905,6 @@ function public.uuid_ns_dns\(\) does not exist
 function public.uuid_ns_oid\(\) does not exist
 function public.uuid_ns_url\(\) does not exist
 function public.uuid_ns_x500\(\) does not exist
-# Ignore error when trying to set owner to changed user
-role "$orig_user" does not exist
 __EOF
 )
 	local numerrors=$(grep 'ERROR: ' "${pgrestorelog}" | grep -Ev "${IGNORED_ERRORS}" | wc -l)

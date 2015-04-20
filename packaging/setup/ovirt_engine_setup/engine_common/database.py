@@ -595,6 +595,7 @@ class OvirtUtils(base.Base):
                         if _ind_env(self, DEK.RESTORE_JOBS) and backupfile
                         else []
                     ) +
+                    ['--no-owner'] +
                     (
                         [backupfile]
                         if backupfile else []
@@ -611,6 +612,7 @@ class OvirtUtils(base.Base):
                         ['--file=%s' % backupfile]
                         if backupfile else []
                     ) +
+                    ['--no-owner'] +
                     [database]
                 ),
                 'restore_args': (
