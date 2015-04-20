@@ -153,7 +153,7 @@ public class BackendStorageDomainResource extends
         return isIsoDomain(storageDomain) ? new String[] { "templates", "vms", "disks", "storageconnections", "images" }
                 : isExportDomain(storageDomain) ? new String[] { "files", "storageconnections", "images" }
                     : isImageDomain(storageDomain) ? new String[] { "templates", "vms", "files", "disks", "storageconnections" }
-                        : new String[] { "templates", "vms", "files", "images" };
+                        : new String[] { "files", "images" };
     }
 
     /**
