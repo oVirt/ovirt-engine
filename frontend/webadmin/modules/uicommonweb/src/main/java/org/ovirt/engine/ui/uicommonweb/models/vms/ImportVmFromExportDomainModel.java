@@ -221,6 +221,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
                // get cluster
                if (dataCenter != null) {
+                   getCluster().setItems(null);
                    AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(ImportVmFromExportDomainModel.this, new INewAsyncCallback() {
                        @Override
                        public void onSuccess(Object model, Object returnValue) {
