@@ -45,4 +45,23 @@
 
     <bean id="engineDataSource" class="org.ovirt.engine.core.dao.BaseDAOTestCase"
           factory-method="getDataSource"/>
+
+    <bean id="transactionManagerJPA" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <bean id="entityManagerFactory"
+        class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="engineDataSource" />
+        <property name="packagesToScan"
+            value="org.ovirt.engine.core.common.businessentities" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+            </props>
+        </property>
+    </bean>
 </beans>
