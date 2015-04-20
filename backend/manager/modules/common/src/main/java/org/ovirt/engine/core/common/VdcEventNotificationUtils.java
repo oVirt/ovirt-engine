@@ -15,6 +15,10 @@ public final class VdcEventNotificationUtils {
     static {
         // VDC
         AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.VDC_STOP);
+        AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.ENGINE_BACKUP_STARTED);
+        AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.ENGINE_BACKUP_COMPLETED);
+        AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.ENGINE_BACKUP_FAILED);
+
         // VDS GROUP
         AddEventNotificationEntry(EventNotificationEntity.VdsGroup, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
         AddEventNotificationEntry(EventNotificationEntity.VdsGroup,

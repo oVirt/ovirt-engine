@@ -296,6 +296,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___VDC_STOP();
 
+    String AuditLogType___ENGINE_BACKUP_STARTED();
+
+    String AuditLogType___ENGINE_BACKUP_COMPLETED();
+
+    String AuditLogType___ENGINE_BACKUP_FAILED();
+
     String AuditLogType___CLUSTER_ALERT_HA_RESERVATION();
 
     String AuditLogType___HOST_INTERFACE_STATE_DOWN();
