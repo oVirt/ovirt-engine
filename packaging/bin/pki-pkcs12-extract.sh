@@ -42,7 +42,7 @@ extractcert() {
 	common_backup "${cert}"
 
 	if [ "${cert}" = - ]; then
-		key=/proc/self/fd/1
+		cert=/proc/self/fd/1
 	else
 		touch "${cert}"
 		chmod a+r "${cert}" || die "Cannot set certificate permissions"
