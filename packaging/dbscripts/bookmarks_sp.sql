@@ -90,13 +90,3 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAllVm_poolsByUser_id_with_groups_and_UserRoles(v_user_id UUID)
-RETURNS SETOF vm_pools_view STABLE
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT DISTINCT pools.*
-	FROM vm_pools_view pools
-    INNER JOIN user_vm_pool_permissions_view ON user_id = v_user_id AND entity_id = pools.vm_pool_id;
-END; $procedure$
-LANGUAGE plpgsql;
-
