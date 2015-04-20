@@ -5,6 +5,7 @@
     <persistence-unit name="ovirt">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <non-jta-data-source>java:/ENGINEDataSource</non-jta-data-source>
+        <class>org.ovirt.engine.core.common.businessentities.Bookmark</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
             <property name="jboss.entity.manager.jndi.name" value="java:/ovirtEM"/>

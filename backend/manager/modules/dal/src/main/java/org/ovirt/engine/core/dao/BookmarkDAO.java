@@ -7,10 +7,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 /**
  * <code>BookmarkDAO</code> defines a type for performing CRUD operations on instances of <code>bookmarks</code>.
- *
- *
  */
-public interface BookmarkDAO extends DAO {
+public interface BookmarkDAO extends GenericDao<Bookmark, Guid> {
     /**
      * Retrieves the specified bookmark with the supplied id.
      *
