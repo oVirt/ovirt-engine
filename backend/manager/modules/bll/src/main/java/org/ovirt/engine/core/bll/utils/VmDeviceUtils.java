@@ -12,6 +12,8 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -141,12 +143,12 @@ public class VmDeviceUtils {
      */
     public static VmDevice addCdDevice(Guid vmId, String cdPath) {
         return addManagedDevice(
-                new VmDeviceId(Guid.newGuid(), vmId),
-                VmDeviceGeneralType.DISK,
-                VmDeviceType.CDROM,
-                getCdDeviceSpecParams("", cdPath),
-                true,
-                true);
+            new VmDeviceId(Guid.newGuid(), vmId),
+            VmDeviceGeneralType.DISK,
+            VmDeviceType.CDROM,
+            getCdDeviceSpecParams("", cdPath),
+            true,
+            true);
     }
 
     /**
@@ -369,12 +371,12 @@ public class VmDeviceUtils {
      */
     public static VmDevice addVirtioScsiController(Guid vmId) {
         return addManagedDevice(
-                new VmDeviceId(Guid.newGuid(), vmId),
-                VmDeviceGeneralType.CONTROLLER,
-                VmDeviceType.VIRTIOSCSI,
-                EMPTY_SPEC_PARAMS,
-                true,
-                false);
+            new VmDeviceId(Guid.newGuid(), vmId),
+            VmDeviceGeneralType.CONTROLLER,
+            VmDeviceType.VIRTIOSCSI,
+            EMPTY_SPEC_PARAMS,
+            true,
+            false);
     }
 
     /**
@@ -644,15 +646,15 @@ public class VmDeviceUtils {
      */
     public static VmDevice addInterface(Guid vmId, Guid deviceId, boolean plugged, boolean hostDev, String address) {
         return addManagedDevice(
-                new VmDeviceId(deviceId, vmId),
-                VmDeviceGeneralType.INTERFACE,
-                hostDev ? VmDeviceType.HOST_DEVICE : VmDeviceType.BRIDGE,
-                EMPTY_SPEC_PARAMS,
-                plugged,
-                false,
-                address,
-                null,
-                false);
+            new VmDeviceId(deviceId, vmId),
+            VmDeviceGeneralType.INTERFACE,
+            hostDev ? VmDeviceType.HOST_DEVICE : VmDeviceType.BRIDGE,
+            EMPTY_SPEC_PARAMS,
+            plugged,
+            false,
+            address,
+            null,
+            false);
     }
 
     /**
@@ -661,15 +663,25 @@ public class VmDeviceUtils {
      * The network interface cannot be plugged if another plugged network interface has the same MAC address.
      *
      * @param iface the network interface to be checked
+     * @param vdsGroupId cluster id.
      * @return true if the network interface can be plugged, false otherwise
      */
-    private static boolean canPlugInterface(VmNic iface) {
-        VmInterfaceManager vmIfaceManager = new VmInterfaceManager();
-        if (vmIfaceManager.existsPluggedInterfaceWithSameMac(iface)) {
-            vmIfaceManager.auditLogMacInUseUnplug(iface);
+    private static boolean canPlugInterface(VmNic iface, Guid vdsGroupId) {
+        VDSGroup vdsGroup = dbFacade.getVdsGroupDao().get(vdsGroupId);
+        Guid dataCenterId = vdsGroup == null ? null : vdsGroup.getStoragePoolId();
+        boolean canPlugInterface = canPlugInterfaceInDc(iface, dataCenterId);
+        if (!canPlugInterface) {
+            new VmInterfaceManager().auditLogMacInUseUnplug(iface);
+        }
+        return canPlugInterface;
+    }
+
+    private static boolean canPlugInterfaceInDc(VmNic iface, Guid dataCenterId) {
+        if (dataCenterId == null) {
             return false;
         } else {
-            return true;
+            MacPoolManagerStrategy pool = MacPoolPerDcSingleton.getInstance().poolForDataCenter(dataCenterId);
+            return !pool.isMacInUse(iface.getMacAddress());
         }
     }
 
@@ -1633,6 +1645,7 @@ public class VmDeviceUtils {
      * @param vmDevicesToUpdate    list of devices to be updated in the DB
      */
     private static void addImportedInterfaces(VmBase vmBase, List<VmDevice> vmDevicesToUpdate) {
+
         for (VmNic iface : vmBase.getInterfaces()) {
             Guid deviceId = iface.getId();
             VmDevice vmDevice = addInterface(vmBase.getId(), deviceId, true, iface.isPassthrough(),
@@ -1644,7 +1657,7 @@ public class VmDeviceUtils {
                 exportedDevice = vmDevice;
             }
 
-            exportedDevice.setIsPlugged(exportedDevice.getIsPlugged() && canPlugInterface(iface));
+            exportedDevice.setIsPlugged(exportedDevice.getIsPlugged() && canPlugInterface(iface, vmBase.getVdsGroupId()));
             updateImportedVmDevice(vmBase, vmDevice, deviceId, vmDevicesToUpdate);
         }
     }

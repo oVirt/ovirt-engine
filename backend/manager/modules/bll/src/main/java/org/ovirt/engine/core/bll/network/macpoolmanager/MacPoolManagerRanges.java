@@ -161,6 +161,11 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
         }
     }
 
+    @Override
+    public boolean isDuplicateMacAddressesAllowed() {
+        return this.allowDuplicates;
+    }
+
 
     private void checkIfInitialized() {
         if (!initialized) {

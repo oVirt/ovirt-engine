@@ -58,4 +58,7 @@ public interface MacPoolManagerStrategy {
      * @throws org.ovirt.engine.core.common.errors.EngineException if mac address cannot be allocated.
      */
     List<String> allocateMacAddresses(int numberOfAddresses);
+
+    boolean isDuplicateMacAddressesAllowed();
+
 }
