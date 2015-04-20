@@ -686,8 +686,8 @@ public class IrsProxyData {
             if (spmStatus != null) {
                 mCurrentVdsId = selectedVds.getId();
                 boolean performedPoolConnect = false;
-                log.info("hostFromVds::selectedVds - '{}', spmStatus '{}', storage pool '{}'",
-                        selectedVds.getName(), spmStatus.getSpmStatus(), storagePool.getName());
+                log.info("hostFromVds::selectedVds - '{}', spmStatus '{}', storage pool '{}', storage pool version '{}'",
+                        selectedVds.getName(), spmStatus.getSpmStatus(), storagePool.getName(), storagePool.getCompatibilityVersion());
                 if (spmStatus.getSpmStatus() == SpmStatus.Unknown_Pool) {
                     Guid masterDomainId = DbFacade.getInstance().getStorageDomainDao()
                             .getMasterStorageDomainIdForPool(_storagePoolId);
