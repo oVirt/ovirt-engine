@@ -240,6 +240,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                                getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
                            }
 
+                           getStorage().setItems(null);
                            // get storage domains
                            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(ImportVmFromExportDomainModel.this,
                                    new INewAsyncCallback() {
