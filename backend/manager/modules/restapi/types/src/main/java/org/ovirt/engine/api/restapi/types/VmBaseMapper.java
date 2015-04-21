@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.HighAvailability;
+import org.ovirt.engine.api.model.IO;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmBase;
@@ -34,6 +35,11 @@ public class VmBaseMapper {
         if (model.isSetMemory()) {
             entity.setMemSizeMb((int) (model.getMemory() / BYTES_PER_MB));
         }
+
+        if (model.isSetIo() && model.getIo().isSetThreads()) {
+            entity.setNumOfIoThreads(model.getIo().getThreads());
+        }
+
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
@@ -181,6 +187,13 @@ public class VmBaseMapper {
         model.setDescription(entity.getDescription());
         model.setComment(entity.getComment());
         model.setMemory((long) entity.getMemSizeMb() * BYTES_PER_MB);
+
+        IO io = model.getIo();
+        if (io == null) {
+            io = new IO();
+            model.setIo(io);
+        }
+        io.setThreads(entity.getNumOfIoThreads());
 
         if (entity.getVdsGroupId() != null) {
             Cluster cluster = new Cluster();

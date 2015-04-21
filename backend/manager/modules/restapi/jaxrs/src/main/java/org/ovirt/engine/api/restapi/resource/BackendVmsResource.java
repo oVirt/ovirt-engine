@@ -35,7 +35,6 @@ import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
-import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
@@ -129,9 +128,8 @@ public class BackendVmsResource extends
                 VmStatic builtFromInstanceType = null;
                 org.ovirt.engine.core.common.businessentities.InstanceType instanceTypeEntity = null;
                 if (vm.isSetInstanceType() && (vm.getInstanceType().isSetId() || vm.getInstanceType().isSetName())) {
-                    Mapper<org.ovirt.engine.core.common.businessentities.InstanceType, VmStatic> instanceTypeMapper = getMapper(org.ovirt.engine.core.common.businessentities.InstanceType.class, VmStatic.class);
                     instanceTypeEntity = lookupInstanceType(getTemplateId(vm.getInstanceType()));
-                    builtFromInstanceType = instanceTypeMapper.map(instanceTypeEntity, builtFromTemplate);
+                    builtFromInstanceType = VmMapper.map(instanceTypeEntity, builtFromTemplate, cluster.getCompatibilityVersion());
                     builtFromInstanceType.setInstanceTypeId(getTemplateId(vm.getInstanceType()));
                 }
 

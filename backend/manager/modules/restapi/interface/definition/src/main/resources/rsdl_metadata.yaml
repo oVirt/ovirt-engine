@@ -63,6 +63,7 @@ actions:
           vm.cpu.topology.cores: xs:int
           vm.cpu_shares: xs:int
           vm.memory: xs:long
+          vm.io.threads: xs:int
           vm.memory_policy.guaranteed: xs:long
           vm.memory_policy.ballooning: xs:boolean
           vm.high_availability.priority: xs:int
@@ -142,6 +143,7 @@ actions:
           vm.cpu.topology.cores: xs:int
           vm.cpu.architecture: xs:string
           vm.memory: xs:long
+          vm.io.threads: xs:int
           vm.memory_policy.guaranteed: xs:long
           vm.memory_policy.ballooning: xs:boolean
           vm.high_availability.priority: xs:int
@@ -2333,6 +2335,7 @@ actions:
         optionalArguments:
           template.name: 'xs:string'
           template.memory: xs:long
+          template.io.threads: xs:int
           template.cpu.topology.cores: xs:int
           template.high_availability.enabled: 'xs:boolean'
           template.os.cmdline: xs:string
@@ -2394,6 +2397,7 @@ actions:
       - mandatoryArguments: {template.vm.id|name: 'xs:string', template.name: 'xs:string'}
         optionalArguments:
           template.memory: xs:long
+          template.io.threads: xs:int
           template.cpu.topology.cores: xs:int
           template.high_availability.enabled: 'xs:boolean'
           template.os.cmdline: xs:string
@@ -3235,6 +3239,7 @@ actions:
       - mandatoryArguments: {instance_type.name: 'xs:string'}
         optionalArguments:
           instance_type.memory: xs:long
+          instance_type.io.threads: xs:int
           instance_type.cpu.topology.cores: xs:int
           instance_type.high_availability.enabled: xs:boolean
           instance_type.origin: xs:string

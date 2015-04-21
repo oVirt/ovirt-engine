@@ -3312,6 +3312,14 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="io" type="IO" />
+
+  <xs:complexType name="IO">
+    <xs:sequence>
+      <xs:element name="threads" type="xs:int" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="VmBase">
     <xs:annotation>
       <xs:appinfo>
@@ -3350,6 +3358,7 @@
           <xs:element name="start_paused" type="xs:boolean" minOccurs="0" maxOccurs="1" />
           <xs:element ref="cpu_profile" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="migration" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="io" minOccurs="0" maxOccurs="1" />
           <xs:element name="custom_properties" type="CustomProperties" minOccurs="0" maxOccurs="1"/>
           <xs:element name="custom_emulated_machine" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="custom_cpu_model" type="xs:string" minOccurs="0" maxOccurs="1"/>

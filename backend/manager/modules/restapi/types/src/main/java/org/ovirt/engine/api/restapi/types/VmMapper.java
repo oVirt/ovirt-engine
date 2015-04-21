@@ -145,15 +145,16 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setCustomEmulatedMachine(entity.getCustomEmulatedMachine());
         staticVm.setCustomCpuName(entity.getCustomCpuName());
         staticVm.setConsoleDisconnectAction(entity.getConsoleDisconnectAction());
-        return doMapVmBaseHwPartToVmStatic(entity, staticVm);
+        return doMapVmBaseHwPartToVmStatic(entity, staticVm, version);
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.InstanceType.class, to = VmStatic.class)
-    public static VmStatic map(org.ovirt.engine.core.common.businessentities.InstanceType entity, VmStatic vmStatic) {
-        return doMapVmBaseHwPartToVmStatic((VmBase) entity, vmStatic != null ? vmStatic : new VmStatic());
+    public static VmStatic map(org.ovirt.engine.core.common.businessentities.InstanceType entity, VmStatic vmStatic, Version version) {
+        return doMapVmBaseHwPartToVmStatic((VmBase) entity, vmStatic != null ? vmStatic : new VmStatic(), version);
     }
 
-    private static VmStatic doMapVmBaseHwPartToVmStatic(VmBase entity, VmStatic staticVm) {
+    private static VmStatic doMapVmBaseHwPartToVmStatic(VmBase entity, VmStatic staticVm, Version version) {
+        Version clusterVersion = version == null ? Version.getLast() : version;
         staticVm.setMemSizeMb(entity.getMemSizeMb());
         staticVm.setAutoStartup(entity.isAutoStartup());
         staticVm.setSmartcardEnabled(entity.isSmartcardEnabled());
@@ -169,6 +170,9 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setMigrationSupport(entity.getMigrationSupport());
         staticVm.setMigrationDowntime(entity.getMigrationDowntime());
         staticVm.setMinAllocatedMem(entity.getMinAllocatedMem());
+        if (FeatureSupported.isIoThreadsSupported(clusterVersion)) {
+            staticVm.setNumOfIoThreads(entity.getNumOfIoThreads());
+        }
         return staticVm;
     }
 

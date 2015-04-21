@@ -13,7 +13,8 @@ public class VmMapperMockConfigUtils extends ConfigUtilsBase {
             ConfigValues.SpiceFileTransferToggleSupported,
             ConfigValues.SpiceCopyPasteToggleSupported,
             ConfigValues.AutoConvergenceSupported,
-            ConfigValues.MigrationCompressionSupported
+            ConfigValues.MigrationCompressionSupported,
+            ConfigValues.IoThreadsSupported
     );
 
     @Override
