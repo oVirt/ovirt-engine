@@ -1819,6 +1819,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("{\"x86_64\":\"true\",\"ppc64\":\"false\"}")
     HotPlugCpuSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    IoThreadsSupported,
+
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"x86_64\":\"false\",\"ppc64\":\"false\"}")
     HotUnplugCpuSupported,

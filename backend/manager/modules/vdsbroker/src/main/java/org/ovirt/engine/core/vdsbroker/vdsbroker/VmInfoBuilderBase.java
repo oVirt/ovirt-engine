@@ -71,6 +71,10 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.mem_guaranteed_size_mb, vm.getMinAllocatedMem());
         createInfo.put(VdsProperties.smartcardEnabled, Boolean.toString(vm.isSmartcardEnabled()));
         createInfo.put(VdsProperties.num_of_cpus, String.valueOf(vm.getNumOfCpus()));
+        if (vm.getNumOfIoThreads() != 0) {
+            createInfo.put(VdsProperties.numOfIoThreads, vm.getNumOfIoThreads());
+        }
+
         if (Config.<Boolean> getValue(ConfigValues.SendSMPOnRunVm)) {
             createInfo.put(VdsProperties.cores_per_socket, (Integer.toString(vm.getCpuPerSocket())));
             if (FeatureSupported.supportedInConfig(

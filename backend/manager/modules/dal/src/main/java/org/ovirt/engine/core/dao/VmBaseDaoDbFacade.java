@@ -34,6 +34,7 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                 .addValue("free_text_comment", entity.getComment())
                 .addValue("creation_date", entity.getCreationDate())
                 .addValue("mem_size_mb", entity.getMemSizeMb())
+                .addValue("num_of_io_threads", entity.getNumOfIoThreads())
                 .addValue("vnc_keyboard_layout", entity.getVncKeyboardLayout())
                 .addValue("tunnel_migration", entity.getTunnelMigration())
                 .addValue("vds_group_id", entity.getVdsGroupId())
@@ -94,6 +95,7 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
 
         protected final void map(final ResultSet rs, final T entity) throws SQLException {
             entity.setMemSizeMb(rs.getInt("mem_size_mb"));
+            entity.setNumOfIoThreads(rs.getInt("num_of_io_threads"));
             entity.setOsId(rs.getInt("os"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
             entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));

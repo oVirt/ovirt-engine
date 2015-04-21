@@ -2098,6 +2098,7 @@
     <table name="vm_static">
         <column>vm_guid</column>
         <column>entity_type</column>
+        <column>num_of_io_threads</column>
         <column>vm_name</column>
         <column>mem_size_mb</column>
         <column>vmt_guid</column>
@@ -2166,6 +2167,7 @@
             <value>00000000-0000-0000-0000-000000000000</value>
             <value>TEMPLATE</value>
             <value>1</value>
+            <value>1</value>
             <value>512</value>
             <value>00000000-0000-0000-0000-000000000000</value>
             <value>1</value>
@@ -2232,6 +2234,7 @@
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
             <value>TEMPLATE</value>
+            <value>1</value>
             <value>1</value>
             <value>512</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -2300,6 +2303,7 @@
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
             <value>TEMPLATE</value>
             <value>1</value>
+            <value>1</value>
             <value>512</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
             <value>1</value>
@@ -2366,6 +2370,7 @@
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
             <value>TEMPLATE</value>
+            <value>1</value>
             <value>1</value>
             <value>512</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -2434,6 +2439,7 @@
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
             <value>TEMPLATE</value>
             <value>1</value>
+            <value>1</value>
             <value>512</value>
              <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
             <value>1</value>
@@ -2500,6 +2506,7 @@
          <row>
             <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
             <value>INSTANCE_TYPE</value>
+            <value>1</value>
             <value>1</value>
             <value>512</value>
              <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
@@ -2568,6 +2575,7 @@
             <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
             <value>IMAGE_TYPE</value>
             <value>1</value>
+            <value>1</value>
             <value>512</value>
              <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
             <value>1</value>
@@ -2634,6 +2642,7 @@
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
             <value>TEMPLATE</value>
+            <value>1</value>
             <value>1</value>
             <value>1024</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -2703,6 +2712,7 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
             <value>VM</value>
+            <value>1</value>
             <value>rhel5-pool-50</value>
             <value>512</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -2770,6 +2780,7 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <value>VM</value>
+            <value>1</value>
             <value>rhel5-pool-57</value>
             <value>512</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -2837,6 +2848,7 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
             <value>VM</value>
+            <value>1</value>
             <value>rhel5-pool-51</value>
             <value>512</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -2904,6 +2916,7 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
             <value>VM</value>
+            <value>1</value>
             <value>rhel5-pool-50</value>
             <value>512</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -2971,6 +2984,7 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
             <value>VM</value>
+            <value>1</value>
             <value>rhel5-pool-59</value>
             <value>512</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -3038,6 +3052,7 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
             <value>VM</value>
+            <value>1</value>
             <value>rhel5-pool-60</value>
             <value>512</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -3105,6 +3120,7 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
             <value>VM</value>
+            <value>1</value>
             <value>rhel5-pool-50</value>
             <value>512</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -3172,6 +3188,7 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
             <value>VM</value>
+            <value>1</value>
             <value>rhel5-pool-52</value>
             <value>1024</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
@@ -3239,6 +3256,7 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
             <value>VM</value>
+            <value>1</value>
             <value>rhel5-pool-50</value>
             <value>1024</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>

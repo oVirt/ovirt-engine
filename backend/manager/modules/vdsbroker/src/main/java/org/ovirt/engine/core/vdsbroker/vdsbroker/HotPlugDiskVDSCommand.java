@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -50,6 +51,24 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         drive.put(VdsProperties.Type, VmDeviceType.DISK.getName());
         addAddress(drive, getParameters().getVmDevice().getAddress());
         drive.put(VdsProperties.INTERFACE, disk.getDiskInterface().getName());
+
+        int numOfIoThreads = getParameters().getVm().getNumOfIoThreads();
+        if (numOfIoThreads != 0 && disk.getDiskInterface() == DiskInterface.VirtIO) {
+            if (vmDevice.getSpecParams() == null) {
+                vmDevice.setSpecParams(new HashMap<String, Object>());
+            }
+
+            List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getParameters().getVmId(), false);
+            int numOfAttachedVirtioInterfaces = 0;
+            for (Disk oneDisk : allDisks) {
+                if (oneDisk.getPlugged() && oneDisk.getDiskInterface() == DiskInterface.VirtIO) {
+                    numOfAttachedVirtioInterfaces ++;
+                }
+            }
+
+            int pinToIoThread = numOfAttachedVirtioInterfaces % numOfIoThreads + 1;
+            vmDevice.getSpecParams().put(VdsProperties.pinToIoThread, pinToIoThread);
+        }
         drive.put(VdsProperties.Shareable,
                 (vmDevice.getSnapshotId() != null && FeatureSupported.hotPlugDiskSnapshot(getParameters().getVm()
                         .getVdsGroupCompatibilityVersion())) ? VdsProperties.Transient

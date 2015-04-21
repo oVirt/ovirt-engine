@@ -28,6 +28,7 @@ public class OvfProperties {
     final static String TUNNEL_MIGRATION = "TunnelMigration";
     final static String VNC_KEYBOARD_LAYOUT = "VncKeyboardLayout";
     final static String MIN_ALLOCATED_MEMORY = "MinAllocatedMem";
+    final static String NUM_OF_IOTHREADS = "NumOfIoThreads";
     final static String IS_STATELESS = "IsStateless";
     final static String IS_RUN_AND_PAUSE = "IsRunAndPause";
     final static String CREATED_BY_USER_ID = "CreatedByUserId";

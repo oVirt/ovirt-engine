@@ -276,6 +276,12 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteRaw(String.valueOf(vmBase.isSmartcardEnabled()));
         _writer.WriteEndElement();
 
+        if (vmBase.getNumOfIoThreads() != 0) {
+            _writer.WriteStartElement(OvfProperties.NUM_OF_IOTHREADS);
+            _writer.WriteRaw(String.valueOf(vmBase.getNumOfIoThreads()));
+            _writer.WriteEndElement();
+        }
+
         _writer.WriteStartElement(OvfProperties.TIMEZONE);
         _writer.WriteRaw(vmBase.getTimeZone());
         _writer.WriteEndElement();

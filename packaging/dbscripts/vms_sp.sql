@@ -488,6 +488,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000),
  v_free_text_comment text,
  v_mem_size_mb INTEGER,
+ v_num_of_io_threads INTEGER,
  v_os INTEGER,
  v_vds_group_id UUID,
  v_vm_guid UUID,
@@ -557,9 +558,11 @@ DECLARE
 BEGIN
 -- lock template for child count update
 select vm_guid into v_val FROM vm_static WHERE vm_guid = v_vmt_guid for update;
+
 INSERT INTO vm_static(description,
                       free_text_comment,
                       mem_size_mb,
+                      num_of_io_threads,
                       os,
                       vds_group_id,
                       vm_guid,
@@ -626,6 +629,7 @@ INSERT INTO vm_static(description,
 	VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
+           v_num_of_io_threads,
            v_os,
            v_vds_group_id,
            v_vm_guid,
@@ -788,6 +792,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION UpdateVmStatic(v_description VARCHAR(4000) ,
  v_free_text_comment text,
  v_mem_size_mb INTEGER,
+ v_num_of_io_threads INTEGER,
  v_os INTEGER,
  v_vds_group_id UUID,
  v_vm_guid UUID,
@@ -858,7 +863,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vm_static
-      SET description = v_description, free_text_comment = v_free_text_comment ,mem_size_mb = v_mem_size_mb,os = v_os,vds_group_id = v_vds_group_id,
+      SET description = v_description, free_text_comment = v_free_text_comment ,mem_size_mb = v_mem_size_mb, num_of_io_threads = v_num_of_io_threads, os = v_os,vds_group_id = v_vds_group_id,
       VM_NAME = v_vm_name,vmt_guid = v_vmt_guid,
       creation_date = v_creation_date,num_of_monitors = v_num_of_monitors,single_qxl_pci = v_single_qxl_pci,
       allow_console_reconnect = v_allow_console_reconnect,

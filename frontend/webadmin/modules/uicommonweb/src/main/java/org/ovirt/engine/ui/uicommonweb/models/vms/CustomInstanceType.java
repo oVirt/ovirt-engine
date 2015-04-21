@@ -227,4 +227,9 @@ public class CustomInstanceType implements InstanceType {
         return null;
     }
 
+    @Override
+    public int getNumOfIoThreads() {
+        return 0;
+    }
+
 }

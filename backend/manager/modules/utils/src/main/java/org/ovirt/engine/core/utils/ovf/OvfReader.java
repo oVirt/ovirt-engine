@@ -527,13 +527,14 @@ public abstract class OvfReader implements IOvfBuilder {
 
         XmlNodeList list = content.SelectNodes("Section");
 
+        Version version = new Version(getVersion());
         if (list != null) {
             // The Os need to be read before the hardware
             node = getNode(list, "xsi:type", "ovf:OperatingSystemSection_Type");
             if (node != null) {
                 readOsSection(node);
                 if (!osRepository.isLinux(vmBase.getOsId())
-                        || !FeatureSupported.singleQxlPci(new Version(getVersion()))
+                        || !FeatureSupported.singleQxlPci(version)
                         || vmBase.getDefaultDisplayType() != DisplayType.qxl) {
                     vmBase.setSingleQxlPci(false);
                 }
@@ -580,6 +581,13 @@ public abstract class OvfReader implements IOvfBuilder {
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setSmartcardEnabled(Boolean.parseBoolean(node.innerText));
+            }
+        }
+
+        node = content.SelectSingleNode(OvfProperties.NUM_OF_IOTHREADS);
+        if (node != null) {
+            if (!StringUtils.isEmpty(node.innerText) && !FeatureSupported.isIoThreadsSupported(version)) {
+                vmBase.setNumOfIoThreads(Integer.parseInt(node.innerText));
             }
         }
 

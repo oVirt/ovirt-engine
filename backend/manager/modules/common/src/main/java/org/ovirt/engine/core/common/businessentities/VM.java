@@ -154,6 +154,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmStatic.setMemSizeMb(value);
     }
 
+    public int getNumOfIoThreads() {
+        return this.vmStatic.getNumOfIoThreads();
+    }
+
+    public void setNumOfIoThreads(int numOfIoThreads) {
+        this.vmStatic.setNumOfIoThreads(numOfIoThreads);
+    }
+
     public int getOs() {
         return this.getVmOsId();
     }

@@ -83,6 +83,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnTemplate
     private int memSizeMb;
 
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    private int numOfIoThreads;
+
     @EditableOnVmStatusField(isHotsetAllowed = true)
     @EditableOnTemplate
     @CopyOnNewVersion
@@ -454,7 +459,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.getCustomEmulatedMachine(),
                 vmBase.getCustomCpuName(),
                 vmBase.getSmallIconId(),
-                vmBase.getLargeIconId());
+                vmBase.getLargeIconId(),
+                vmBase.getNumOfIoThreads());
     }
 
     public VmBase(
@@ -515,7 +521,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             String customEmulatedMachine,
             String customCpuName,
             Guid smallIconId,
-            Guid largeIconId) {
+            Guid largeIconId,
+            int numOfIoThreads) {
         this();
         this.name = name;
         this.id = id;
@@ -575,6 +582,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.customCpuName = customCpuName;
         this.smallIconId = smallIconId;
         this.largeIconId = largeIconId;
+        this.numOfIoThreads = numOfIoThreads;
     }
 
     public long getDbGeneration() {
@@ -698,6 +706,14 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public int getMemSizeMb() {
         return memSizeMb;
+    }
+
+    public int getNumOfIoThreads() {
+        return numOfIoThreads;
+    }
+
+    public void setNumOfIoThreads(int numOfIoThreads) {
+        this.numOfIoThreads = numOfIoThreads;
     }
 
     public void setMemSizeMb(int value) {

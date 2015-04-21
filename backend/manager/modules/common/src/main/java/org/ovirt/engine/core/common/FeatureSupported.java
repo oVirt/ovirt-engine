@@ -415,6 +415,15 @@ public class FeatureSupported {
 
     /**
      * @param version
+     *          Compatibility version to check for.
+     * @return  <code>true</code> if IO Threads are supported for the given version.
+     */
+    public static boolean isIoThreadsSupported(Version version) {
+        return supportedInConfig(ConfigValues.IoThreadsSupported, version);
+    }
+
+    /**
+     * @param version
      *            Compatibility version to check for.
      * @return <code>true</code> if the pool memory backend is supported for the given version.
      */

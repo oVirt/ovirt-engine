@@ -75,6 +75,7 @@ public enum ConfigurationValues {
     RhevhLocalFSPath,
     HotPlugEnabled(ConfigAuthType.User),
     HotPlugCpuSupported(ConfigAuthType.User),
+    IoThreadsSupported(ConfigAuthType.User),
     NetworkLinkingSupported(ConfigAuthType.User),
     SupportBridgesReportByVDSM(ConfigAuthType.User),
     ApplicationMode(ConfigAuthType.User),

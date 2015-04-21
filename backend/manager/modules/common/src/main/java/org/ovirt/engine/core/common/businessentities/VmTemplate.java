@@ -91,7 +91,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             String customProperties,
             String emulatedMachine, String customCpuName,
             Guid smallIconId,
-            Guid largeIconId) {
+            Guid largeIconId,
+            int numOfIoThreads) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
@@ -149,7 +150,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 emulatedMachine,
                 customCpuName,
                 smallIconId,
-                largeIconId);
+                largeIconId,
+                numOfIoThreads);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
         diskImageMap = new HashMap<Guid, DiskImage>();

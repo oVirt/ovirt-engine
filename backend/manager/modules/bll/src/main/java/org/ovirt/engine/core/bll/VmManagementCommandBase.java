@@ -238,6 +238,10 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                 vmStatic.setMigrationSupport(instanceType.getMigrationSupport());
             }
 
+            if (FeatureSupported.isIoThreadsSupported(getVdsGroup().getCompatibilityVersion())) {
+                vmStatic.setNumOfIoThreads(instanceType.getNumOfIoThreads());
+            }
+
             vmStatic.setMigrationDowntime(instanceType.getMigrationDowntime());
             vmStatic.setPriority(instanceType.getPriority());
             vmStatic.setTunnelMigration(instanceType.getTunnelMigration());

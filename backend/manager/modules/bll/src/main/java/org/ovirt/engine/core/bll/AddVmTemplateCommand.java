@@ -686,7 +686,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getCustomEmulatedMachine(),
                         getParameters().getMasterVm().getCustomCpuName(),
                         getParameters().getMasterVm().getSmallIconId(),
-                        getParameters().getMasterVm().getLargeIconId()));
+                        getParameters().getMasterVm().getLargeIconId(),
+                        getParameters().getMasterVm().getNumOfIoThreads()));
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
