@@ -434,4 +434,6 @@ public interface VdsServerConnector {
     public Map<String, Object> freeze(String vmId);
 
     public Map<String, Object> thaw(String vmId);
+
+    public Map<String, Object> isolateVolume(String sdUUID, String srcImgUUID, String dstImgUUID, String volumeID);
 }

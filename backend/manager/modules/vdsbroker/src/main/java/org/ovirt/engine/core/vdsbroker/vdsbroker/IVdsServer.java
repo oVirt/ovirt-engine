@@ -462,4 +462,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc freeze(String vmId);
 
     StatusOnlyReturnForXmlRpc thaw(String vmId);
+
+    StatusOnlyReturnForXmlRpc isolateVolume(String sdUUID, String srcImageID, String dstImageID, String volumeID);
 }

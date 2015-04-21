@@ -1701,7 +1701,6 @@ public class VdsServerWrapper implements IVdsServer {
         return wrapper;
     }
 
-    @Override
     public void close() {
         XmlRpcUtils.shutDownConnection(this.httpClient);
     }
@@ -1977,5 +1976,13 @@ public class VdsServerWrapper implements IVdsServer {
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc isolateVolume(String sdUUID, String srcImageID, String dstImageID, String volumeID) {
+        Map<String, Object> xmlRpcReturnValue = vdsServer.isolateVolume(sdUUID, srcImageID,
+                dstImageID, volumeID);
+        StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
     }
 }

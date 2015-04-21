@@ -2037,4 +2037,17 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc isolateVolume(String sdUUID, String srcImageID, String dstImageID, String volumeID) {
+        JsonRpcRequest request =
+                new RequestBuilder("SDM.isolateVolume")
+                        .withParameter("storagedomainID", sdUUID)
+                        .withParameter("srcImageID", srcImageID)
+                        .withParameter("dstImageID", dstImageID)
+                        .withParameter("volumeID", volumeID).build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
 }
