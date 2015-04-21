@@ -212,6 +212,10 @@ if [ "${TYPE}" != "all" ]; then
     [ -n "${IDS}" -a -n "${QUERY}" ] && die "Please specify one ids or query"
 fi
 
+# Install fn_db_unlock_all procedure
+dbfunc_psql_die --file="$(dirname "$0")/unlock_entity.sql" > /dev/null
+
+# Execute
 if [ -n "${QUERY}" ]; then
 	entity_query "${TYPE}"
 else
