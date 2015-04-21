@@ -50,7 +50,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -2549,58 +2548,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         importVmModel.importVms(
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void executed(
-                            FrontendMultipleActionAsyncResult result) {
-
-                        VmListModel<Void> vmListModel = (VmListModel<Void>) result.getState();
-                        vmListModel.stopProgress();
-                        vmListModel.setConfirmWindow(null);
-                        vmListModel.setWindow(null);
-                        vmListModel.clearCachedAssignedVmNames();
-                        List<VdcReturnValueBase> retVals =
-                                result.getReturnValue();
-                        if (retVals != null
-                                && vmListModel.getSelectedItems().size() == retVals
-                                        .size()) {
-                            StringBuilder importedVms = new StringBuilder();
-                            int counter = 0;
-                            boolean toShowConfirmWindow = false;
-                            for (Object item : vmListModel.getSelectedItems()) {
-                                VM vm = (VM) item;
-                                if (retVals.get(counter) != null
-                                        && retVals.get(counter).getCanDoAction()) {
-                                    importedVms.append(vm.getName()).append(", "); //$NON-NLS-1$
-                                    toShowConfirmWindow = true;
-                                }
-                                counter++;
-                            }
-                            // show the confirm window only if the import has been successfully started for at least one
-                            // VM
-                            if (toShowConfirmWindow) {
-                                ConfirmationModel confirmModel = new ConfirmationModel();
-                                vmListModel.setConfirmWindow(confirmModel);
-                                confirmModel.setTitle(ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .importVirtualMachinesTitle());
-                                confirmModel.setHelpTag(HelpTag.import_virtual_machine);
-                                confirmModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
-                                confirmModel.setMessage(ConstantsManager.getInstance()
-                                        .getMessages()
-                                        .importProcessHasBegunForVms(StringHelper.trimEnd(importedVms.toString().trim(), ',')));
-                                UICommand tempVar2 = new UICommand("CancelConfirm", //$NON-NLS-1$
-                                        vmListModel);
-                                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
-                                tempVar2.setIsDefault(true);
-                                tempVar2.setIsCancel(true);
-                                confirmModel.getCommands().add(tempVar2);
-                            }
-                        }
-
+                    public void executed(FrontendMultipleActionAsyncResult result) {
+                        setWindow(null);
                     }
                 },
                 cloneObjectMap);
-
-        setWindow(null);
     }
 
     private void onImportVmAsClone(ImportVmFromExportDomainModel importModel) {
