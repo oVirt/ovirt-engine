@@ -2549,6 +2549,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
+                        getWindow().stopProgress();
                         setWindow(null);
                     }
                 },

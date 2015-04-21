@@ -680,6 +680,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
 
     public void importVms(IFrontendMultipleActionAsyncCallback callback,
             Map<Guid, Object> cloneObjectMap) {
+        startProgress(null);
         Frontend.getInstance().runMultipleAction(
                 VdcActionType.ImportVm,
                 buildImportVmParameters(cloneObjectMap),
