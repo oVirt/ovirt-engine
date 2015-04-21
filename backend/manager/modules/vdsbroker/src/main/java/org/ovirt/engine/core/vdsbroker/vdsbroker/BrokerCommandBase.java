@@ -176,7 +176,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         case V2V_JOB_NOT_DONE:
         case V2V_JOB_ALREADY_EXIST:
         case UnsupportedGlusterVolumeReplicaCountError:
-            if (this instanceof IrsBrokerCommand) {
+            if (this instanceof IrsBrokerCommand || this instanceof StorageDomainMetadataCommand) {
                 outEx = new IrsOperationFailedNoFailoverException(getReturnStatus().mMessage);
             } else {
                 outEx = new VDSErrorException(String.format("Failed in vdscommand to %1$s, error = %2$s",

@@ -33,6 +33,8 @@ public enum LockingGroup {
     /** This group is used for indication that an operation is executed using the specified host */
     VDS_EXECUTION,
     VDS_POOL_AND_STORAGE_CONNECTIONS,
+    /** This group is used for indication that a storage manipulating operation is executed on a domain */
+    DOMAIN_EXECUTION,
     /** This group is used to lock host for operations that allocate host's devices to VMs */
     HOST_DEVICES,
     VM_DISK_HOT_PLUG,

@@ -11,6 +11,7 @@ public class VDSReturnValue {
     private RuntimeException exceptionObject;
     private AsyncTaskCreationInfo creationInfo;
     private VDSError vdsError;
+    private boolean canTryOnDifferentVds;
 
     public VDSReturnValue() {
         exceptionString = "";
@@ -62,5 +63,13 @@ public class VDSReturnValue {
 
     public void setVdsError(VDSError value) {
         vdsError = value;
+    }
+
+    public boolean isCanTryOnDifferentVds() {
+        return canTryOnDifferentVds;
+    }
+
+    public void setCanTryOnDifferentVds(boolean isVdsSpecificError) {
+        this.canTryOnDifferentVds = isVdsSpecificError;
     }
 }
