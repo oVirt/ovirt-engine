@@ -84,6 +84,13 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc copyData(Map src, Map dst, boolean collapse) {
+        Map<String, Object> xmlRpcReturnValue = vdsServer.copyData(src, dst, collapse);
+        StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc destroy(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.destroy(vmId);

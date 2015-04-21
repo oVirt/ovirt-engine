@@ -132,6 +132,18 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc copyData(Map src, Map dst, boolean collapse) {
+        JsonRpcRequest request =
+                new RequestBuilder("SDM.copyData")
+                        .withParameter("srcImage", src)
+                        .withParameter("dstImage", dst)
+                        .withParameter("collapse", collapse)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc createVolumeContainer(
                                                String sdUUID,
                                                String imgGUID,

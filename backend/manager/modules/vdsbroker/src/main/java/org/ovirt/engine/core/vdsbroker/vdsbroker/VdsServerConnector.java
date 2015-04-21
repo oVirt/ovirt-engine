@@ -11,6 +11,8 @@ public interface VdsServerConnector {
     public Map<String, Object> createVolumeContainer(String sdUUID, String imgGUID, String size, int volFormat,
                                                      int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID);
 
+    public Map<String, Object> copyData(Map srcImage, Map dstImage, boolean collapse);
+
     public Map<String, Object> destroy(String vmId);
 
     public Map<String, Object> shutdown(String vmId, String timeout, String message);
