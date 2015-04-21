@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.LeaseState;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -86,6 +87,11 @@ public class GetVolumeInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters
             }
             if (xmlRpcStruct.containsKey("format")) {
                 newImage.setVolumeFormat(EnumUtils.valueOf(VolumeFormat.class, xmlRpcStruct.get("format")
+                        .toString(), true));
+            }
+            // TODO: change as leaseState is added to vdsm.
+            if (xmlRpcStruct.containsKey("leaseStateTemp")) {
+                newImage.getImage().setLeaseState(EnumUtils.valueOf(LeaseState.class, xmlRpcStruct.get("leaseState")
                         .toString(), true));
             }
         } catch (RuntimeException ex) {

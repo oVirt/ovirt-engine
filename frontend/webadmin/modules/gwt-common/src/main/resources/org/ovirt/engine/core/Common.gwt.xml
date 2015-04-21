@@ -37,6 +37,7 @@
         <include name="common/businessentities/GraphicsDevice.java" />
         <include name="common/businessentities/GraphicsType.java" />
         <include name="common/businessentities/GraphicsInfo.java" />
+        <include name="common/businessentities/LeaseState.java" />
         <include name="common/businessentities/LocationInfo.java" />
         <include name="common/businessentities/HttpLocationInfo.java" />
         <include name="common/businessentities/VdsmImageInfo.java" />

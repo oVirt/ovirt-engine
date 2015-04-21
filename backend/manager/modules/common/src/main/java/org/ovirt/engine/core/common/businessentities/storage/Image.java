@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
+import org.ovirt.engine.core.common.businessentities.LeaseState;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,6 +42,8 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     @NotNull(message = "VALIDATION_VOLUME_FORMAT_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private VolumeFormat volumeFormat;
+
+    private LeaseState leaseState;
 
     public Image() {
         id = Guid.Empty;
@@ -161,6 +164,15 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     public void setVolumeClassification(VolumeClassification volumeClassification) {
         this.volumeClassification = volumeClassification;
+    }
+
+
+    public LeaseState getLeaseState() {
+        return leaseState;
+    }
+
+    public void setLeaseState(LeaseState leaseState) {
+        this.leaseState = leaseState;
     }
 
     @Override
