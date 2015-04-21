@@ -300,6 +300,7 @@ public class HostMapper {
             model.getExternalHostProvider().setId(entity.getHostProviderId().toString());
         }
 
+        model.setUpdateAvailable(entity.isUpdateAvailable());
         return model;
     }
 
