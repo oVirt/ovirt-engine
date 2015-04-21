@@ -59,7 +59,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
         }
 
         String deviceType;
-        if (getParameters().getDisks().isEmpty()) {
+        if (getParameters().getDisks() == null || getParameters().getDisks().isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DEVICE_REQUIRED);
             return false;
         } else {
