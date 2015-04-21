@@ -418,20 +418,18 @@ public class VmBackupModel extends ManageBackupModel {
                     public void executed(
                             FrontendMultipleActionAsyncResult result) {
 
-                        VmBackupModel vmBackupModel = (VmBackupModel) result
-                                .getState();
-                        vmBackupModel.getWindow().stopProgress();
-                        vmBackupModel.cancel();
+                        getWindow().stopProgress();
+                        cancel();
                         ArrayList<VdcReturnValueBase> retVals =
                                 (ArrayList<VdcReturnValueBase>) result
                                         .getReturnValue();
                         if (retVals != null
-                                && vmBackupModel.getSelectedItems().size() == retVals
+                                && getSelectedItems().size() == retVals
                                         .size()) {
                             StringBuilder importedVms = new StringBuilder();
                             int counter = 0;
                             boolean toShowConfirmWindow = false;
-                            for (Object item : vmBackupModel.getSelectedItems()) {
+                            for (Object item : getSelectedItems()) {
                                 VM vm = (VM) item;
                                 if (retVals.get(counter) != null
                                         && retVals.get(counter).getCanDoAction()) {
@@ -444,7 +442,7 @@ public class VmBackupModel extends ManageBackupModel {
                             // VM
                             if (toShowConfirmWindow) {
                                 ConfirmationModel confirmModel = new ConfirmationModel();
-                                vmBackupModel.setConfirmWindow(confirmModel);
+                                setConfirmWindow(confirmModel);
                                 confirmModel.setTitle(ConstantsManager.getInstance()
                                         .getConstants()
                                         .importVirtualMachinesTitle());
@@ -454,7 +452,7 @@ public class VmBackupModel extends ManageBackupModel {
                                         .getMessages()
                                         .importProcessHasBegunForVms(StringHelper.trimEnd(importedVms.toString().trim(), ',')));
                                 UICommand tempVar2 = new UICommand("CancelConfirm", //$NON-NLS-1$
-                                        vmBackupModel);
+                                        VmBackupModel.this);
                                 tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
                                 tempVar2.setIsDefault(true);
                                 tempVar2.setIsCancel(true);
@@ -465,8 +463,6 @@ public class VmBackupModel extends ManageBackupModel {
                     }
                 },
                 cloneObjectMap);
-
-        setWindow(null);
     }
 
     @Override
