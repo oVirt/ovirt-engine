@@ -247,13 +247,13 @@ public final class ImagesHandler {
     }
 
     /**
-     * Returns a collection of image IDs by a specified DiskImages collection
+     * Returns a list of image IDs for the specified DiskImages collection.
      *
      * @param diskImages collection of DiskImages
-     * @return list of image IDs
+     * @return list of image IDs ordered by the order of the retrieved list.
      */
-    public static Collection<Guid> getDiskImageIds(Collection<DiskImage> diskImages) {
-        Collection<Guid> result = new ArrayList<>();
+    public static List<Guid> getDiskImageIds(List<DiskImage> diskImages) {
+        List<Guid> result = new ArrayList<>();
         if (diskImages != null) {
             for (DiskImage diskImage : diskImages) {
                 result.add(diskImage.getImageId());
