@@ -2050,4 +2050,17 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc wipeVolume(String sdUUID, String imgUUID, String volUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("SDM.wipeVolume")
+                 .withParameter("storagedomainID", sdUUID)
+                .withParameter("imageID", imgUUID)
+                .withParameter("volumeID", volUUID)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
 }

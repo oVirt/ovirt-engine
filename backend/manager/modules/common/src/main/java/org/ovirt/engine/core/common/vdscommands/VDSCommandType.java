@@ -56,6 +56,7 @@ public enum VDSCommandType {
     CreateVolumeContainer("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CopyVolumeData("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     IsolateVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    WipeVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     AllocateVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DestroyImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
     GetImageInfo("org.ovirt.engine.core.vdsbroker.irsbroker"),

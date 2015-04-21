@@ -1985,4 +1985,12 @@ public class VdsServerWrapper implements IVdsServer {
         StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc wipeVolume(String sdUUID, String imgUUID, String volUUID) {
+        Map<String, Object> xmlRpcReturnValue = vdsServer.wipeVolume(sdUUID, imgUUID,
+                volUUID);
+        StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
 }
