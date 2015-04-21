@@ -91,6 +91,13 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc allocateVolume(String spUUID, String sdUUID, String imgGUID, String volUUID, String size) {
+        Map<String, Object> xmlRpcReturnValue = vdsServer.allocateVolume(sdUUID, spUUID, imgGUID, volUUID, size);
+        StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc destroy(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.destroy(vmId);

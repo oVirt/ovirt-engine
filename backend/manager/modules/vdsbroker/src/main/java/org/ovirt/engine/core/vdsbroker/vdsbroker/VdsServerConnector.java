@@ -13,6 +13,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> copyData(Map srcImage, Map dstImage, boolean collapse);
 
+    public Map<String, Object> allocateVolume(String spUUID, String sdUUID, String imgGUID, String volUUID, String size);
+
     public Map<String, Object> destroy(String vmId);
 
     public Map<String, Object> shutdown(String vmId, String timeout, String message);

@@ -49,6 +49,8 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc copyData(Map src, Map dst, boolean collapse);
 
+    StatusOnlyReturnForXmlRpc allocateVolume(String spUUID, String sdUUID, String imgGUID, String volUUID, String size);
+
     StatusOnlyReturnForXmlRpc destroy(String vmId);
 
     StatusOnlyReturnForXmlRpc shutdown(String vmId, String timeout, String message);
