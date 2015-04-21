@@ -34,7 +34,6 @@ public class HttpLocationInfo extends LocationInfo {
     public String toString() {
         return ToStringBuilder.forInstance(this)
                 .append("url", url)
-                .append("headers", headers)
                 .build();
     }
 }
