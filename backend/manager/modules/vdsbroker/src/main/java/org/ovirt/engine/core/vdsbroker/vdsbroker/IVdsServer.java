@@ -78,7 +78,7 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc migrate(Map<String, String> migrationInfo);
 
-    StatusOnlyReturnForXmlRpc migrateStatus(String vmId);
+    MigrateStatusReturnForXmlRpc migrateStatus(String vmId);
 
     StatusOnlyReturnForXmlRpc migrateCancel(String vmId);
 

@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.MigrateStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
@@ -50,6 +51,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     /** Used to log the migration error. */
     private VdcBllErrors migrationErrorCode;
+
+    private Integer actualDowntime;
 
     public MigrateVmCommand(T parameters) {
         this(parameters, null);
@@ -181,11 +184,26 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     @Override
     public void runningSucceded() {
         try {
+            getDowntime();
             getVmDynamicDao().clearMigratingToVds(getVmId());
             updateVmAfterMigrationToDifferentCluster();
         }
         finally {
             super.runningSucceded();
+        }
+    }
+
+    protected void getDowntime() {
+        if (FeatureSupported.migrateDowntime(getVm().getVdsGroupCompatibilityVersion())) {
+            try {
+                VDSReturnValue retVal = runVdsCommand(VDSCommandType.MigrateStatus,
+                        new MigrateStatusVDSCommandParameters(getDestinationVdsId(), getVmId()));
+                if (retVal != null) {
+                    actualDowntime = (Integer) retVal.getReturnValue();
+                }
+            } catch (VdcBLLException e) {
+                migrationErrorCode = e.getErrorCode();
+            }
         }
     }
 
@@ -485,6 +503,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     // TotalDuration: time that took migration including retries (can be identical to Duration)
     public String getTotalDuration() {
         return DurationFormatUtils.formatDurationWords(new Date().getTime() - getParameters().getTotalMigrationTime().getTime(), true, true);
+    }
+
+    // ActualDowntime: returns the actual time that the vm was offline (not available for access)
+    public String getActualDowntime() {
+        return (actualDowntime == null) ? "(N/A)" : actualDowntime + "ms";
     }
 
     @Override

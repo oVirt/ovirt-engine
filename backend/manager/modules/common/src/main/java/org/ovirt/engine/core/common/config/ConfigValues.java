@@ -2132,6 +2132,10 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     HostDevicePassthroughCapabilities,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    MigrateDowntimeSupported,
+
     Invalid
 
 }

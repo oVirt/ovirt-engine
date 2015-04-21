@@ -45,6 +45,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.IQNListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageSizeReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.LUNListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVGReturnForXmlRpc;
@@ -282,10 +283,11 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc migrateStatus(String vmId) {
+    public MigrateStatusReturnForXmlRpc migrateStatus(String vmId) {
         JsonRpcRequest request = new RequestBuilder("VM.getMigrationStatus").withParameter("vmID", vmId).build();
-        Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        Map<String, Object> response = new FutureMap(this.client, request).withResponseKey("response")
+                .withResponseType(Long.class);
+        return new MigrateStatusReturnForXmlRpc(response);
     }
 
     @Override

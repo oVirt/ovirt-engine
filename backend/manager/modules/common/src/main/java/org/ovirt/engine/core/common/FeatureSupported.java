@@ -523,4 +523,13 @@ public class FeatureSupported {
     public static boolean sriov(Version version) {
         return supportedInConfig(ConfigValues.NetworkSriovSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if migraton downtime supported
+     */
+    public static boolean migrateDowntime(Version version) {
+        return supportedInConfig(ConfigValues.MigrateDowntimeSupported, version);
+    }
 }
