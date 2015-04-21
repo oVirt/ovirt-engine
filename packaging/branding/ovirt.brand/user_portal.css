@@ -42,22 +42,6 @@ top of the user portal. */
     margin: 0 0 16px 16px;
 }
 
-.obrand_logo {
-    float: left;
-    background-image: url(images/user_portal_logo.gif);
-    background-repeat: no-repeat;
-    background-position: left bottom;
-    height: 74px;
-    width: 131px;
-}
-
-.obrand_barOuter {
-    background-image: url(images/bg_head.gif);
-    background-repeat: repeat-x;
-    height: 74px;
-    width: 100%;
-}
-
 /* VerticalTabPanel.ui.xml:
 This class works together with obrand_vertical tab to change the
 colors of the side tab in the extended view */

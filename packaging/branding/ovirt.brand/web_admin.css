@@ -1,28 +1,6 @@
-/* HeaderView.ui.xml:
-These classes allow you to customize the header at the top of the screen */
-.obrand_logo {
-    float: left;
-    background-image: url(images/logo.png);
-    background-repeat: no-repeat;
-    background-position: left;
-    width: 255px;
-    height: 36px;
-}
-
 .obrand_menuBar {
     float: right;
     padding: 10px 10px 10px 10px;
-}
-
-.obrand_wrapperOuter {
-    background-image: url(images/header_background_repetitive.png);
-    background-repeat: repeat-x;
-}
-
-.obrand_wrapperInner {
-    background-image: url(images/header_background.png);
-    background-repeat: no-repeat;
-    background-position: left;
 }
 
 /* StoragePopupView.ui.xml */
@@ -34,26 +12,6 @@ These classes allow you to customize the header at the top of the screen */
     margin-bottom: 5px;
     padding-top: 7px;
     padding-bottom: 7px;
-}
-
-/* feedback image */
-.obrand_feedbackImageLeft {
-    width: 75px;
-    height: 36px;
-    background-image: url(images/feedback_left.png);
-    float:left;
-}
-
-.obrand_feedbackImageLabel {
-    cursor: pointer;
-    background-image: url(images/feedback_bg.png);
-    background-repeat: repeat-x;
-    background-position: left;
-    height: 36px;
-    float:left;
-    font-weight: bold;
-    line-height: 2em;
-    padding-right: 10px;
 }
 
 /* GuidePopupView.ui.xml:
