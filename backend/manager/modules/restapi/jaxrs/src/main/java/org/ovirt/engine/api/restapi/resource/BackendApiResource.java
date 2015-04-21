@@ -46,10 +46,11 @@ import org.ovirt.engine.api.model.SpecialObjects;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.model.VMs;
+import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.resource.ApiResource;
 import org.ovirt.engine.api.restapi.types.DateMapper;
+import org.ovirt.engine.api.restapi.types.VersionMapper;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
-import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.api.rsdl.RsdlManager;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
 import org.ovirt.engine.api.utils.LinkHelper;
@@ -59,6 +60,7 @@ import org.ovirt.engine.core.common.constants.QueryConstants;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -269,8 +271,13 @@ public class BackendApiResource
     }
 
     private RSDL addSystemVersion(RSDL rsdl) {
-            rsdl.setVersion(VersionHelper.parseVersion(getConfigurationValueDefault(String.class, ConfigurationValues.VdcVersion)));
-            return rsdl;
+        rsdl.setVersion(getVersion());
+        return rsdl;
+    }
+
+    private Version getVersion() {
+        VdcQueryReturnValue result = runQuery(VdcQueryType.GetProductVersion, new VdcQueryParametersBase());
+        return VersionMapper.map((org.ovirt.engine.core.compat.Version) result.getReturnValue(), null);
     }
 
     public synchronized RSDL getRSDL() throws ClassNotFoundException, IOException {
@@ -291,7 +298,7 @@ public class BackendApiResource
         api.getProductInfo().setName(obrand.getMessage("obrand.backend.product"));
         api.getProductInfo().setVendor(obrand.getMessage("obrand.backend.vendor"));
         api.getProductInfo().setFullVersion(productVersion);
-        api.getProductInfo().setVersion(VersionHelper.parseVersion(getConfigurationValueDefault(String.class, ConfigurationValues.VdcVersion)));
+        api.getProductInfo().setVersion(getVersion());
         return api;
     }
 

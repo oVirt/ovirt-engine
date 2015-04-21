@@ -380,6 +380,7 @@ public enum VdcQueryType implements Serializable {
     GetGlusterTunedProfiles,
 
     GetDefaultConfigurationVersion(VdcQueryAuthType.User),
+    GetProductVersion(VdcQueryAuthType.User),
     OsRepository(VdcQueryAuthType.User),
     GetArchitectureCapabilities(VdcQueryAuthType.User),
 

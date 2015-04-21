@@ -31,12 +31,14 @@ import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 public class BackendApiResourceTest extends Assert {
 
@@ -440,14 +442,20 @@ public class BackendApiResourceTest extends Assert {
     }
 
     protected void setUpGetSystemVersionExpectations() {
-        VdcQueryReturnValue queryResult = createMock(VdcQueryReturnValue.class);
+        VdcQueryReturnValue productRpmQueryResult = createMock(VdcQueryReturnValue.class);
+        expect(productRpmQueryResult.getSucceeded()).andReturn(true).anyTimes();
+        expect(productRpmQueryResult.getReturnValue()).andReturn(SYSTEM_VERSION).anyTimes();
+        expect(backend.runQuery(eq(VdcQueryType.GetConfigurationValue), getProductRPMVersionParams())).andReturn(productRpmQueryResult);
 
-        expect(backend.runQuery(eq(VdcQueryType.GetConfigurationValue), queryVdcVersionParams())).andReturn(queryResult);
-        expect(backend.runQuery(eq(VdcQueryType.GetConfigurationValue),
-                queryProductRPMVersionParams())).andReturn(queryResult);
+        VdcQueryReturnValue productVersionQueryResult = createMock(VdcQueryReturnValue.class);
+        expect(productVersionQueryResult.getSucceeded()).andReturn(true).anyTimes();
+        expect(productVersionQueryResult.getReturnValue()).andReturn(new Version(MAJOR, MINOR, BUILD, REVISION))
+                .anyTimes();
+        expect(backend.runQuery(eq(VdcQueryType.GetProductVersion), getProductVersionParams())).andReturn(productVersionQueryResult);
+    }
 
-        expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
-        expect(queryResult.getReturnValue()).andReturn(SYSTEM_VERSION).anyTimes();
+    private VdcQueryParametersBase getProductVersionParams() {
+        return eqQueryParams(VdcQueryParametersBase.class, new String[0], new Object[0]);
     }
 
     protected void setUpGetSystemStatisticsExpectations() {
@@ -461,22 +469,16 @@ public class BackendApiResourceTest extends Assert {
         replayAll();
     }
 
-    protected VdcQueryParametersBase queryProductRPMVersionParams() {
+    protected VdcQueryParametersBase getProductRPMVersionParams() {
         return eqQueryParams(GetConfigurationValueParameters.class,
-                             new String[] { "SessionId" },
-                             new Object[] { SESSION_ID });
-    }
-
-    protected VdcQueryParametersBase queryVdcVersionParams() {
-        return eqQueryParams(GetConfigurationValueParameters.class,
-                             new String[] { "SessionId" },
-                             new Object[] { SESSION_ID });
+                new String[] { "SessionId", "ConfigValue" },
+                new Object[] { SESSION_ID, ConfigurationValues.ProductRPMVersion });
     }
 
     protected VdcQueryParametersBase queryParams() {
         return eqQueryParams(GetSystemStatisticsQueryParameters.class,
                              new String[] { "SessionId" },
-                             new Object[] { SESSION_ID });
+                new Object[] { SESSION_ID });
     }
 }
 

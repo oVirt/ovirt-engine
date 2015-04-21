@@ -18,4 +18,17 @@ public class VersionMapper {
         }
         return model;
     }
+
+    @Mapping(from = org.ovirt.engine.core.compat.Version.class, to = Version.class)
+    public static Version map(org.ovirt.engine.core.compat.Version versionEngine, Version versionApi) {
+        if (versionApi == null) {
+            versionApi = new Version();
+        }
+        versionApi.setMajor(versionEngine.getMajor());
+        versionApi.setMinor(versionEngine.getMinor());
+        versionApi.setBuild(versionEngine.getBuild());
+        versionApi.setRevision(versionEngine.getRevision());
+        return versionApi;
+    }
 }
+
