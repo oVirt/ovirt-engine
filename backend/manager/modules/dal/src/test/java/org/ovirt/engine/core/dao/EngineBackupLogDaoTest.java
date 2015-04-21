@@ -3,8 +3,11 @@ package org.ovirt.engine.core.dao;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
+import org.ovirt.engine.core.common.businessentities.EngineBackupLogId;
+import org.ovirt.engine.core.utils.RandomUtils;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -12,10 +15,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class EngineBackupLogDaoTest extends BaseDAOTestCase {
+public class EngineBackupLogDaoTest extends BaseHibernateDaoTestCase<EngineBackupLogDao, EngineBackupLog, EngineBackupLogId> {
 
     private EngineBackupLogDao dao;
     private EngineBackupLog existingEngineBackupLog;
+    private EngineBackupLog newEntity;
     private final static String DB_NAME = "engine";
     private final static String NON_EXISTING_DB_NAME = "invalid";
 
@@ -23,8 +27,13 @@ public class EngineBackupLogDaoTest extends BaseDAOTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
         dao = dbFacade.getEngineBackupLogDao();
+        existingEngineBackupLog = dao.getLastSuccessfulEngineBackup(DB_NAME);
+        newEntity = new EngineBackupLog();
+        newEntity.setDbName(RandomUtils.instance().nextString(20));
+        newEntity.setOutputMessage(RandomUtils.instance().nextString(20));
+        newEntity.setDoneAt(new Date());
+        newEntity.setPassed(true);
     }
 
     @Test
@@ -41,7 +50,6 @@ public class EngineBackupLogDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testAddingNewUnsuccessfulBackupEvent() {
-        existingEngineBackupLog = dao.getLastSuccessfulEngineBackup(DB_NAME);
         EngineBackupLog engineBackupLog = new EngineBackupLog();
         engineBackupLog.setDbName(DB_NAME);
         engineBackupLog.setDoneAt(Calendar.getInstance().getTime());
@@ -55,7 +63,6 @@ public class EngineBackupLogDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testAddingNewSuccessfulBackupEvent() {
-        existingEngineBackupLog = dao.getLastSuccessfulEngineBackup(DB_NAME);
         EngineBackupLog engineBackupLog = new EngineBackupLog();
         engineBackupLog.setDbName(DB_NAME);
         engineBackupLog.setDoneAt(Calendar.getInstance().getTime());
@@ -68,4 +75,28 @@ public class EngineBackupLogDaoTest extends BaseDAOTestCase {
         assertTrue(entry.isPassed());
     }
 
+    @Override protected EngineBackupLogDao getDao() {
+        return dao;
+    }
+
+    @Override protected EngineBackupLog getExistingEntity() {
+        return existingEngineBackupLog;
+    }
+
+    @Override protected EngineBackupLog getNonExistentEntity() {
+        return newEntity;
+    }
+
+    @Override protected int getAllEntitiesCount() {
+        return 1;
+    }
+
+    @Override protected EngineBackupLog modifyEntity(EngineBackupLog entity) {
+        entity.setOutputMessage("test");
+        return entity;
+    }
+
+    @Override protected void verifyEntityModification(EngineBackupLog result) {
+        assertEquals("test", result.getOutputMessage());
+    }
 }

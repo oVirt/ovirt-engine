@@ -3,15 +3,37 @@ package org.ovirt.engine.core.common.businessentities;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-public class EngineBackupLog extends IVdcQueryable implements Serializable {
+@Entity
+@Table(name = "engine_backup_log")
+@IdClass(EngineBackupLogId.class)
+@NamedQueries({
+        @NamedQuery(name = "EngineBackupLog.getLatest", query = "select e from EngineBackupLog e where e.dbName = :dbName and passed = true order by doneAt DESC")
+})
+public class EngineBackupLog extends IVdcQueryable implements Serializable, BusinessEntity<EngineBackupLogId> {
 
+    @Id
+    @Column(name="db_name")
     private String dbName;
+
+    @Id
+    @Column(name="done_at")
     private Date doneAt;
+
+    @Column(name="is_passed")
     private boolean passed;
+
+    @Column(name="output_message")
     private String outputMessage;
 
     public String getDbName() {
@@ -65,7 +87,7 @@ public class EngineBackupLog extends IVdcQueryable implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (obj.getClass() != this.getClass()) {
+        if (!(obj instanceof EngineBackupLog)) {
             return false;
         }
         EngineBackupLog other = (EngineBackupLog) obj;
@@ -83,5 +105,19 @@ public class EngineBackupLog extends IVdcQueryable implements Serializable {
                 .append("passed", passed)
                 .append("outputMessage", outputMessage)
                 .build();
+    }
+
+    @Override
+    public EngineBackupLogId getId() {
+        EngineBackupLogId key = new EngineBackupLogId();
+        key.setDbName(dbName);
+        key.setDoneAt(doneAt);
+        return key;
+    }
+
+    @Override
+    public void setId(EngineBackupLogId id) {
+        dbName = id.getDbName();
+        doneAt = id.getDoneAt();
     }
 }
