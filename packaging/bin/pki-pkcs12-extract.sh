@@ -9,13 +9,13 @@ extractkey() {
 	local extra_args=""
 
 	local pkcs12="${PKIDIR}/keys/${name}.p12"
-	common_backup "${key}"
 
 	[ -z "${passout}" ] && extra_args="${extra_args} -nodes"
 
 	if [ "${key}" = - ]; then
 		key=/proc/self/fd/1
 	else
+		common_backup "${key}"
 		touch "${key}"
 		chmod go-rwx "${key}" || die "Cannot set key permissions"
 	fi
@@ -39,11 +39,11 @@ extractcert() {
 	local passin="$3"
 
 	local pkcs12="${PKIDIR}/keys/${name}.p12"
-	common_backup "${cert}"
 
 	if [ "${cert}" = - ]; then
 		cert=/proc/self/fd/1
 	else
+		common_backup "${cert}"
 		touch "${cert}"
 		chmod a+r "${cert}" || die "Cannot set certificate permissions"
 	fi
