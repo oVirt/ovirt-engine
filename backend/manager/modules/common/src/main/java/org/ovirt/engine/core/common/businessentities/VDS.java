@@ -194,6 +194,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setAutoNumaBalancing(getAutoNumaBalancing());
         vds.setFenceAgents(getFenceAgents());
         vds.setVdsGroupCompatibilityVersion(getVdsGroupCompatibilityVersion());
+        vds.setUpdateAvailable(isUpdateAvailable());
         return vds;
     }
 
@@ -1325,5 +1326,13 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setMaintenanceReason(String value) {
         vdsDynamic.setMaintenanceReason(value);
+    }
+
+    public boolean isUpdateAvailable() {
+        return vdsDynamic.isUpdateAvailable();
+    }
+
+    public void setUpdateAvailable(boolean updateAvailable) {
+        vdsDynamic.setUpdateAvailable(updateAvailable);
     }
 }

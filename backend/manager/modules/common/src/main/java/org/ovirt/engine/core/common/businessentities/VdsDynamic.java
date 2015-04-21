@@ -162,6 +162,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private String maintenanceReason;
 
+    private boolean updateAvailable;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -698,6 +700,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.maintenanceReason = maintenanceReason;
     }
 
+    public boolean isUpdateAvailable() {
+        return updateAvailable;
+    }
+
+    public void setUpdateAvailable(boolean updateAvailable) {
+        this.updateAvailable = updateAvailable;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -762,6 +772,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + (liveSnapshotSupport ? 0 : 1);
         result = prime * result + (liveMergeSupport ? 0 : 1);
         result = prime * result + (maintenanceReason == null ? 0 : maintenanceReason.hashCode());
+        result = prime * result + (updateAvailable ? 0 : 1);
 
         return result;
     }
@@ -836,6 +847,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(supportedRngSources, other.supportedRngSources)
                 && liveSnapshotSupport == other.liveSnapshotSupport
                 && liveMergeSupport == other.liveMergeSupport
-                && ObjectUtils.objectsEqual(maintenanceReason, other.maintenanceReason);
+                && ObjectUtils.objectsEqual(maintenanceReason, other.maintenanceReason)
+                && updateAvailable == other.updateAvailable;
     }
 }

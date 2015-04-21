@@ -113,6 +113,7 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setSupportedEmulatedMachines(rs.getString("supported_emulated_machines"));
             entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
             entity.setMaintenanceReason(rs.getString("maintenance_reason"));
+            entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
             return entity;
         }
     }
@@ -267,7 +268,8 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines())
                 .addValue("is_live_snapshot_supported", vds.getLiveSnapshotSupport())
                 .addValue("is_live_merge_supported", vds.getLiveMergeSupport())
-                .addValue("maintenance_reason", vds.getMaintenanceReason());
+                .addValue("maintenance_reason", vds.getMaintenanceReason())
+                .addValue("is_update_available", vds.isUpdateAvailable());
 
         return parameterSource;
     }

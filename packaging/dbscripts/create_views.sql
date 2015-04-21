@@ -1433,7 +1433,8 @@ SELECT
     fence_agents.port AS agent_port,
     fence_agents.options AS agent_options,
     vds_dynamic.maintenance_reason AS maintenance_reason,
-    fence_agents.encrypt_options AS agent_encrypt_options
+    fence_agents.encrypt_options AS agent_encrypt_options,
+    vds_dynamic.is_update_available AS is_update_available
 FROM
     vds_groups
 INNER JOIN vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id
@@ -1571,7 +1572,8 @@ SELECT
     fence_agents.agent_password AS agent_password,
     fence_agents.port AS agent_port,
     fence_agents.options AS agent_options,
-    vds_dynamic.maintenance_reason AS maintenance_reason
+    vds_dynamic.maintenance_reason AS maintenance_reason,
+    vds_dynamic.is_update_available AS is_update_available
 FROM
     vds_groups
 INNER JOIN vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id

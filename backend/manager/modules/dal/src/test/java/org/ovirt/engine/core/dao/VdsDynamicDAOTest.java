@@ -76,6 +76,7 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
     public void testSave() {
         staticDao.save(newStaticVds);
         newDynamicVds.setId(newStaticVds.getId());
+        newDynamicVds.setUpdateAvailable(true);
         dao.save(newDynamicVds);
 
         VdsStatic staticResult = staticDao.get(newStaticVds.getId());
@@ -85,6 +86,7 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         assertEquals(newStaticVds, staticResult);
         assertNotNull(dynamicResult);
         assertEquals(newDynamicVds, dynamicResult);
+        assertEquals(newDynamicVds.isUpdateAvailable(), dynamicResult.isUpdateAvailable());
     }
 
     /**
