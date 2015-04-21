@@ -1,5 +1,14 @@
 package org.ovirt.engine.core.common.config;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ListUtils.Predicate;
+import org.ovirt.engine.core.common.utils.ListUtils.PredicateFilter;
+
 /**
  * Config Class
  */
@@ -44,4 +53,21 @@ public final class Config {
                 Config.<String> getValue(ConfigValues.AttestationTruststore));
     }
 
+    public static Collection<String> getPackagesForCheckUpdate() {
+        List<String> systemPackages = Config.getValue(ConfigValues.PackageNamesForCheckUpdate);
+        List<String> userPackages = Config.getValue(ConfigValues.UserPackageNamesForCheckUpdate);
+
+        userPackages = ListUtils.filter(userPackages, new PredicateFilter<String>(new Predicate<String>() {
+            @Override
+            public boolean evaluate(String obj) {
+                return obj != null && !obj.isEmpty();
+            }
+        }));
+
+        Set<String> packagesForUpdate = new HashSet<>();
+        packagesForUpdate.addAll(systemPackages);
+        packagesForUpdate.addAll(userPackages);
+
+        return packagesForUpdate;
+    }
 }

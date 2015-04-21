@@ -76,6 +76,7 @@ public class VdsManager {
     private long nextMaintenanceAttemptTime;
     private String onTimerJobId;
     private String vmsMonitoringJobId;
+    private String availableUpdatesJobId;
     private int refreshIteration = 1;
     private boolean isSetNonOperationalExecuted;
     private MonitoringStrategy monitoringStrategy;
@@ -151,6 +152,20 @@ public class VdsManager {
                         refreshRate,
                         refreshRate,
                         TimeUnit.MILLISECONDS);
+
+        double availableUpdatesRefreshRate = Config.<Double> getValue(ConfigValues.HostPackagesUpdateTimeInHours);
+        final int HOURS_TO_MINUTES = 60;
+        long rateInMinutes = Math.round(availableUpdatesRefreshRate * HOURS_TO_MINUTES);
+
+        availableUpdatesJobId =
+                sched.scheduleAFixedDelayJob(
+                        this,
+                        "availableUpdates",
+                        new Class[0],
+                        new Object[0],
+                        rateInMinutes,
+                        rateInMinutes,
+                        TimeUnit.MINUTES);
     }
 
     private void initVdsBroker() {
@@ -264,6 +279,33 @@ public class VdsManager {
                     fetcher.getVmsWithChangedDevices(),
                     auditLogDirector
             ).perform();
+        }
+    }
+
+    @OnTimerMethodAnnotation("availableUpdates")
+    public void availableUpdates() {
+        if (cachedVds.getStatus() != VDSStatus.Maintenance
+                && cachedVds.getStatus() != VDSStatus.Up
+                && cachedVds.getStatus() != VDSStatus.NonOperational) {
+            return;
+        }
+
+        boolean updateAvailable;
+        try {
+            updateAvailable = ResourceManager.getInstance().isUpdateAvailable(cachedVds);
+        } catch (Exception e) {
+            log.error("Failed to check if updates are available for host {}", cachedVds.getName());
+
+            AuditLogableBase auditLog = new AuditLogableBase();
+            auditLog.setVds(cachedVds);
+            auditLog.addCustomValue("Message", e.getMessage());
+            auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FAILED);
+            return;
+        }
+
+        synchronized (getLockObj()) {
+            cachedVds.getDynamicData().setUpdateAvailable(updateAvailable);
+            updateDynamicData(cachedVds.getDynamicData());
         }
     }
 
@@ -756,6 +798,7 @@ public class VdsManager {
         log.info("vdsManager::disposing");
         SchedulerUtilQuartzImpl.getInstance().deleteJob(onTimerJobId);
         SchedulerUtilQuartzImpl.getInstance().deleteJob(vmsMonitoringJobId);
+        SchedulerUtilQuartzImpl.getInstance().deleteJob(availableUpdatesJobId);
         vdsProxy.close();
     }
 

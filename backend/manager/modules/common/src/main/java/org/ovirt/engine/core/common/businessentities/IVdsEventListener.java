@@ -79,4 +79,6 @@ public interface IVdsEventListener {
     void updateSlaPolicies(List<Guid> vmIds, Guid vdsId);
 
     void refreshHostIfAnyVmHasHostDevices(List<Guid> vmIds, Guid hostId);
+
+    boolean isUpdateAvailable(VDS host);
 }

@@ -2135,6 +2135,30 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     MigrateDowntimeSupported,
 
+    /**
+     * A comma delimited list of package names for checking if updates are available for the host
+     */
+    @TypeConverterAttribute(List.class)
+    @DefaultValueAttribute("vdsm,vdsm-cli")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    PackageNamesForCheckUpdate,
+
+    /**
+     * A comma delimited list of package names provided by the user for checking if updates are available for the host,
+     * and for updating in addition to {@code HostPackageNamesForCheckUpdate}
+     */
+    @TypeConverterAttribute(List.class)
+    @DefaultValueAttribute("")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    UserPackageNamesForCheckUpdate,
+
+    /**
+     * The interval in hours of checking for available updates on the host.
+     */
+    @TypeConverterAttribute(Double.class)
+    @DefaultValueAttribute("24")
+    HostPackagesUpdateTimeInHours,
+
     Invalid
 
 }

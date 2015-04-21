@@ -16,6 +16,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.bll.host.AvailableUpdatesFinder;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -86,6 +87,9 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Inject
     Instance<ResourceManager> resourceManagerProvider;
+
+    @Inject
+    private AvailableUpdatesFinder availableUpdatesFinder;
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
@@ -498,5 +502,9 @@ public class VdsEventListener implements IVdsEventListener {
                 hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
             }
         });
+    }
+
+    public boolean isUpdateAvailable(VDS host) {
+        return availableUpdatesFinder.isUpdateAvailable(host);
     }
 }

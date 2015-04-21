@@ -265,6 +265,15 @@ select fn_db_add_config_value_for_versions_up_to('MigrationCompressionSupported'
 select fn_db_add_config_value_for_versions_up_to('HostDevicePassthroughSupported','false','3.5');
 select fn_db_add_config_value('HostDevicePassthroughCapabilities', 'pci,scsi,usb_device', 'general');
 
+-- A list of system required packages to be checked and updated on the host
+select fn_db_add_config_value('PackageNamesForCheckUpdate','vdsm,vdsm-cli','general');
+
+-- A comma delimited list of package names provided by the user for availability check and update for the host
+select fn_db_add_config_value('UserPackageNamesForCheckUpdate','','general');
+
+-- The internal between checking for new updates availability for the host
+select fn_db_add_config_value('HostPackagesUpdateTimeInHours','24','general');
+
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
 

@@ -500,4 +500,8 @@ public class ResourceManager {
     public void subscribe(EventSubscriber subscriber) {
         ReactorFactory.getWorker(this.parallelism).getPublisher().subscribe(subscriber);
     }
+
+    public boolean isUpdateAvailable(VDS host) {
+        return getEventListener().isUpdateAvailable(host);
+    }
 }
