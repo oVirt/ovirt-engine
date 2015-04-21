@@ -19,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
+import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscoveryThread;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -46,6 +48,7 @@ import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -293,6 +296,14 @@ public class SchedulingManager {
                     0,
                     0);
 
+            if (bestHost != null) {
+                VfScheduler vfScheduler = Injector.get(VfScheduler.class);
+                Map<Guid, String> passthroughVnicToVfMap = vfScheduler.getVnicToVfMap(vm.getId(), bestHost);
+                if (passthroughVnicToVfMap != null && !passthroughVnicToVfMap.isEmpty()) {
+                    markVfsAsUsedByVm(bestHost, vm.getId(), passthroughVnicToVfMap);
+                }
+            }
+
             return bestHost;
         } catch (InterruptedException e) {
             log.error("interrupted", e);
@@ -305,6 +316,11 @@ public class SchedulingManager {
             }
             log.debug("Scheduling ended, correlation Id: {}", correlationId);
         }
+    }
+
+    private void markVfsAsUsedByVm(Guid hostId, Guid vmId, Map<Guid, String> passthroughVnicToVfMap) {
+        HostNicVfsConfigHelper hostNicVfsConfigHelper = Injector.get(HostNicVfsConfigHelper.class);
+        hostNicVfsConfigHelper.setVmIdOnVfs(hostId, vmId, new HashSet<String>(passthroughVnicToVfMap.values()));
     }
 
     /**

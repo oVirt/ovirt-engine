@@ -4,10 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -16,6 +19,8 @@ import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
+import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
+import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -77,8 +82,6 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 @NonTransactiveCommandAttribute
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         implements QuotaVdsDependent {
@@ -107,6 +110,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private Guid cachedActiveIsoDomainId;
     private boolean needsHostDevices = false;
+
+    @Inject
+    private HostNicVfsConfigHelper hostNicVfsConfigHelper;
+
+    @Inject
+    private VfScheduler vfScheduler;
 
     public static final String ISO_PREFIX = "iso://";
     public static final String STATELESS_SNAPSHOT_DESCRIPTION = "stateless snapshot";
@@ -247,6 +256,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 switch (e.getErrorCode()) {
                 case Done: // should never get here with errorCode = 'Done' though
                 case exist:
+                    cleanupPassthroughVnics();
                     reportCompleted();
                     throw e;
                 case VDS_NETWORK_ERROR: // probably wrong xml format sent.
@@ -302,6 +312,20 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         releaseHostDevicesLock();
     }
 
+    private void cleanupPassthroughVnics() {
+        Map<Guid, String> vnicToVfMap = getVnicToVfMap();
+        if (vnicToVfMap != null) {
+            hostNicVfsConfigHelper.setVmIdOnVfs(getVdsId(), null, new HashSet<String>(vnicToVfMap.values()));
+        }
+
+        vfScheduler.cleanVmData(getVmId());
+    }
+
+    private Map<Guid, String> getVnicToVfMap() {
+        Guid hostId = getVdsId();
+        return hostId == null ? null : vfScheduler.getVnicToVfMap(getVmId(), hostId);
+    }
+
     @Override
     protected void executeVmCommand() {
         setActionReturnValue(VMStatus.Down);
@@ -311,6 +335,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     public void rerun() {
+        cleanupPassthroughVnics();
         setFlow(null);
         // re-acquire the host device lock (if needed) as the canDoAction already expects this
         // lock to be held (originally acquired in 'postConstruct'
@@ -542,6 +567,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         initParametersForExternalNetworks();
 
+        initParametersForPassthroughVnics();
+
         VMStatus vmStatus = (VMStatus) getBackend()
                 .getResourceManager()
                 .RunAsyncVdsCommand(VDSCommandType.CreateVm, buildCreateVmParameters(), this).getReturnValue();
@@ -589,6 +616,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getVm().getRuntimeDeviceCustomProperties().put(vmDevice.getId(), deviceProperties);
             }
         }
+    }
+
+    protected void initParametersForPassthroughVnics() {
+        getVm().setPassthroughVnicToVfMap(getVnicToVfMap());
+        vfScheduler.cleanVmData(getVmId());
     }
 
     @Override
@@ -1084,6 +1116,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void runningFailed() {
+        cleanupPassthroughVnics();
         if (memoryFromSnapshotUsed) {
             removeMemoryFromActiveSnapshot();
         }

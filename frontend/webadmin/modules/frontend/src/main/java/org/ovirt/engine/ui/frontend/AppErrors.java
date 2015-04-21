@@ -3568,6 +3568,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$detailMessage the display network ${DisplayNetwork} must have a DHCP or Static boot protocol when configured on a host")
     String VAR__DETAIL__DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL();
 
+    @DefaultStringValue("$detailMessage there are no free virtual functions which are suitable for virtual nic(s) ${vnicNames}. A virtual function is constidered as suitable if the VF's configuration of its physical function contains the virtual nic's network/network label")
+    String VAR__DETAIL__NO_SUITABLE_VF();
+
     @DefaultStringValue("$detailMessage its CPU level ${hostCPULevel} is lower than the VM requires ${vmCPULevel}")
     String VAR__DETAIL__LOW_CPU_LEVEL();
 

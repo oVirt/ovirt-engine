@@ -337,6 +337,7 @@ public class RunVmCommandTest {
         mockIsoDomainListSyncronizer();
         mockSuccessfulRunVmValidator();
         doNothing().when(command).initParametersForExternalNetworks();
+        doNothing().when(command).initParametersForPassthroughVnics();
         mockSuccessfulSnapshotValidator();
         mockBackend();
     }

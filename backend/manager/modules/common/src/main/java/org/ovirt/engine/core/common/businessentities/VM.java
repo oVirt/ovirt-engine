@@ -46,6 +46,8 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     private Map<VmDeviceId, Map<String, String>> runtimeDeviceCustomProperties;
 
+    private Map<Guid, String> passthroughVnicToVfMap;
+
     private ArchitectureType clusterArch;
 
     private boolean nextRunConfigurationExists;
@@ -86,6 +88,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.runtimeDeviceCustomProperties = runtimeDeviceCustomProperties;
     }
 
+    public Map<Guid, String> getPassthroughVnicToVfMap() {
+        return passthroughVnicToVfMap;
+    }
+
+    public void setPassthroughVnicToVfMap(Map<Guid, String> passthroughVnicToVfMap) {
+        this.passthroughVnicToVfMap = passthroughVnicToVfMap;
+    }
+
     public VM() {
         this(new VmStatic(), new VmDynamic(), new VmStatistics());
     }
@@ -102,6 +112,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         snapshots = new ArrayList<Snapshot>();
         initializationType = InitializationType.None;
         runtimeDeviceCustomProperties = new HashMap<VmDeviceId, Map<String, String>>();
+        passthroughVnicToVfMap = new HashMap<>();
         vmtCreationDate = new Date(0);
         storagePoolId = Guid.Empty;
     }

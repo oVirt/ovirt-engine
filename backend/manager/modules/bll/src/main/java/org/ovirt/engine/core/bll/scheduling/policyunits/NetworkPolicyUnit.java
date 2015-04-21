@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +63,10 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                             hostNics.get(host.getId()),
                             hostDisplayNics.get(host.getId()));
 
+            if (result.isValid()) {
+                result = validatePassthroughVnics(vm.getId(), host, vmNICs);
+            }
+
             if (!result.isValid()) {
                 toRemoveHostList.add(host);
                 messages.addMessages(host.getId(), result.getVariableReplacements());
@@ -88,6 +94,8 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
      * ConfigValue.OnlyRequiredNetworksMandatoryForVdsSelection, is defined as: 1. false: any network that is defined on
      * an Active vNic of the VM or the cluster's display network. 2. true: a Cluster-Required Network that is defined on
      * an Active vNic of the VM.
+     * Vnic configured for 'passthrough' will skip the network existence check for the host and will be validated later by
+     * {@code validatePassthroughVnics(...)}
      *
      * @param vds
      *            the Host
@@ -116,12 +124,14 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                 Config.<Boolean> getValue(ConfigValues.OnlyRequiredNetworksMandatoryForVdsSelection);
         for (final VmNetworkInterface vmIf : vmNICs) {
             boolean found = false;
+            boolean skipNetworkExistenceCheckForVnicPassthrough = vmIf.isPassthrough();
 
             if (vmIf.getNetworkName() == null) {
                 found = true;
             } else {
                 for (String networkName : hostNetworks) {
-                    if (!networkRequiredOnVds(vmIf, networksByName, onlyRequiredNetworks)
+                    if (skipNetworkExistenceCheckForVnicPassthrough
+                            || !networkRequiredOnVds(vmIf, networksByName, onlyRequiredNetworks)
                             || StringUtils.equals(vmIf.getNetworkName(), networkName)) {
                         found = true;
                         break;
@@ -201,6 +211,23 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                     displayNic.getName());
             return new ValidationResult(VdcBllMessages.VAR__DETAIL__DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
                     String.format("$DisplayNetwork %1$s", displayNetwork.getName()));
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    private ValidationResult validatePassthroughVnics(Guid vmId, VDS host,
+            List<VmNetworkInterface> vnics) {
+
+        VfScheduler vfScheduler = Injector.get(VfScheduler.class);
+        List<String> problematicVnics = vfScheduler.validatePassthroughVnics(vmId, host.getId(), vnics);
+
+        if (!problematicVnics.isEmpty()) {
+            String vnicsString = StringUtils.join(problematicVnics, ", ");
+            log.warn("host {} doesn't contain suitable virtual functions for VM nics {}",
+                    host.getName(), vnics);
+            return new ValidationResult(VdcBllMessages.VAR__DETAIL__NO_SUITABLE_VF,
+                    String.format("$vnicNames %1$s", vnicsString));
         }
 
         return ValidationResult.VALID;
