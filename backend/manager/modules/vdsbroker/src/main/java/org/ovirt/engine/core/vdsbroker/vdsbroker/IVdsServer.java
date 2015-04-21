@@ -43,6 +43,10 @@ public interface IVdsServer {
 
     OneVmReturnForXmlRpc create(Map createInfo);
 
+
+    StatusOnlyReturnForXmlRpc createVolumeContainer(String sdUUID, String imgGUID, String size, int volFormat,
+                                                    int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID);
+
     StatusOnlyReturnForXmlRpc destroy(String vmId);
 
     StatusOnlyReturnForXmlRpc shutdown(String vmId, String timeout, String message);

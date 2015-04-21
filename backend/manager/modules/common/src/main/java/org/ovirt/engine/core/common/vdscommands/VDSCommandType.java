@@ -53,6 +53,7 @@ public enum VDSCommandType {
     HSMGetStorageDomainInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMGetStorageDomainsList("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CreateImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    CreateVolumeContainer("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DestroyImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
     GetImageInfo("org.ovirt.engine.core.vdsbroker.irsbroker"),
     SetVolumeDescription("org.ovirt.engine.core.vdsbroker.irsbroker"),

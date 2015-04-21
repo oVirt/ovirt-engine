@@ -75,6 +75,15 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc createVolumeContainer(String sdUUID, String imgGUID, String size, int volFormat,
+                                                               int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID) {
+        Map<String, Object> xmlRpcReturnValue = vdsServer.createVolumeContainer(sdUUID, imgGUID, size, volFormat,
+                diskType, volUUID, descr, srcImgGUID, srcVolUUID);
+        StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc destroy(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.destroy(vmId);
