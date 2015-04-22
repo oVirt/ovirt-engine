@@ -134,7 +134,15 @@ DB_BACKUP_FILE_NAME="engine_backup.db"
 DWHDB_BACKUP_FILE_NAME="dwh_backup.db"
 REPORTSDB_BACKUP_FILE_NAME="reports_backup.db"
 
+FAILURE_NOTIFIED=
+
 cleanup() {
+	ec="$?"
+	if [ -n "${ENGINE_DB_USER}" -a "${ec}" = '1' -a "${MODE}" = "backup" -a -z "${FAILURE_NOTIFIED}" ]; then
+		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" -1 "Failed"
+		FAILURE_NOTIFIED=1
+	fi
+
 	[ -n "${TEMP_FOLDER}" ] && rm -rf "${TEMP_FOLDER}"
 }
 
@@ -609,6 +617,9 @@ dobackup() {
 	output "Backing up:"
 	log "Generating pgpass"
 	generatePgPass
+	if [ -n "${ENGINE_DB_USER}" ]; then
+		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" 0 "Started"
+	fi
 
 	# Create temporary folder
 	local tardir="${TEMP_FOLDER}/tar"
@@ -644,6 +655,10 @@ dobackup() {
 	output "Packing into file '${FILE}'"
 	log "Creating tarball ${FILE}"
 	createtar "${tardir}" "${FILE}"
+	if [ -n "${ENGINE_DB_USER}" ]; then
+		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" 1 "Finished"
+	fi
+
 }
 
 createtar() {
@@ -1192,6 +1207,10 @@ log() {
 logdie() {
 	local m="$1"
 	log "FATAL: ${m}"
+	if [ -n "${ENGINE_DB_USER}" -a "${MODE}" = "backup" ]; then
+		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" -1 "${m}"
+		FAILURE_NOTIFIED=1
+	fi
 	die "${m}"
 }
 
@@ -1233,6 +1252,37 @@ REPORTS_DB_DUMP_FORMAT"
 	echo "${VARS_TO_SAVE}" | while read -r var; do
 		eval echo "${var}=\${${var}}"
 	done
+}
+
+notify_engine() {
+	local user="$1"
+	local host="$2"
+	local port="$3"
+	local database="$4"
+	local status="$5"
+	local message="$6"
+
+	message="$(printf "%s" "${message}" | sed "s/'/''/g")"
+
+	local psqllog="${TEMP_FOLDER}/psql-notification-log"
+	local logpath="$(readlink -f ${LOG})"
+
+	do_notify() {
+		local scope="$1"
+		pg_cmd psql -t -c "SELECT LogEngineBackupEvent('${scope}', now(), ${status}, '${message}', '${ENGINE_FQDN}', '${logpath}');" \
+			> "${psqllog}"  2>&1 \
+			|| logdie "Failed notifying engine"
+		cat "${psqllog}" >> "${LOG}"  2>&1 \
+			|| logdie "Failed to append psql log to main log"
+	}
+
+	output "Notifying engine"
+	[ -n "${SCOPE_FILES}" ] && do_notify 'files'
+	[ -n "${SCOPE_ENGINE_DB}" ] && do_notify 'db'
+	[ -n "${SCOPE_DWH_DB}" ] && do_notify 'dwhdb'
+	[ -n "${SCOPE_REPORTS_DB}" ] && do_notify 'reportsdb'
+
+	unset -f do_notify
 }
 
 ## Main
