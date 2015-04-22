@@ -31,8 +31,6 @@ actions:
           action.force: xs:boolean
           action.vm.disks.detach_only: xs:boolean
         description: deletes the virtual machine in the system for the given virtual machine id with optional arguments where the vm can be forced to be removed and option to just detach the disks associated with the vm.
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}|rel=update
   description: update the virtual machine in the system for the given virtual machine id
   request:
@@ -491,9 +489,6 @@ actions:
       current: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/cdroms/{cdrom:id}|rel=delete
   description: delete the cdrom for a virtual machine identified by the given id
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/cdroms/{cdrom:id}|rel=update
   description: update the cdrom for a virtual machine identified by the given id
   request:
@@ -504,7 +499,6 @@ actions:
         optionalArguments: {cdrom.file.id: 'xs:string'}
         description: update the cdrom for a virtual machine identified by the given id with a new file
     urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       current: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/cdroms|rel=add
   description: add a cdrom to a virtual machine identified by the given id
@@ -524,10 +518,6 @@ actions:
   request:
 - name: /vms/{vm:id}/watchdogs/{watchdog:id}|rel=delete
   description: delete the watchdog for the virtual machine identified by the given id
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
 - name: /vms/{vm:id}/watchdogs/{watchdog:id}|rel=update
   description: update the watchdog for the virtual machine identified by the given id
   request:
@@ -563,8 +553,6 @@ actions:
       signatures:
       - mandatoryArguments: {action.detach: 'xs:boolean'}
         description: delete or detach a disk for a given virtual machine based on detach flag provided
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/disks/{disk:id}|rel=update
   description: update the parameters of the disk attached to the virtual machine
   request:
@@ -682,9 +670,6 @@ actions:
       All-Content: {value: true|false, required: false}
 - name: /vms/{vm:id}/nics/{nic:id}|rel=delete
   description: remove the network interface from the given virtual machine
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/nics/{nic:id}|rel=update
   description: update the network interface for the given virtual machine
   request:
@@ -732,9 +717,6 @@ actions:
   description: get details of a permission for a given virtual machine
 - name: /vms/{vm:id}/permissions/{permission:id}|rel=delete
   description: delete a permission for a given virtual machine
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/permissions|rel=add
   description: add a new permission for a given virtual machine
   request:
@@ -768,9 +750,6 @@ actions:
       All-Content: {value: true|false, required: false}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}|rel=delete
   description: delete the snapshot for a given virtual machine
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/snapshots|rel=add
   description: create a new snapshot for a given virtual machine
   request:
@@ -805,9 +784,6 @@ actions:
   description: get the details of a disk attached to the virtual machine at the time the snapshot was created
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/disks/{disk:id}|rel=delete
   description: delete a disk from a VM snapshot
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/nics|rel=get
   description: get the list of network interfaces attached to the virtual machine at the time the snapshot was created
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/nics/{nic:id}|rel=get
@@ -821,9 +797,6 @@ actions:
   description: get the details of the tag added to the virtual machine
 - name: /vms/{vm:id}/tags/{tag:id}|rel=delete
   description: delete a tag added to the virtual machine
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/tags|rel=add
   description: add a new tag to the virtual machine
   request:
@@ -855,9 +828,6 @@ actions:
   description: get the details of a disk in the system
 - name: /disks/{disk:id}|rel=delete
   description: delete the specified disk in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /disks/{disk:id}/export|rel=export
   request:
     body:
@@ -952,9 +922,6 @@ actions:
   description: get the specified network in the datacenter
 - name: /datacenters/{datacenter:id}/networks/{network:id}|rel=delete
   description: delete the specified network in the datacenter
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/networks/{network:id}|rel=update
   description: update the specified network in the datacenter
   request:
@@ -997,9 +964,6 @@ actions:
   description: get a specific label of a network
 - name: /datacenters/{datacenter:id}/networks/{network:id}/labels/{label:id}|rel=delete
   description: delete the specified label of a network
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/qoss|rel=get
   description: get QoSs for the datacenter in the system
   request:
@@ -1009,9 +973,6 @@ actions:
   description: get the specified QoS in the datacenter
 - name: /datacenters/{datacenter:id}/qoss/{qos:id}|rel=delete
   description: delete the specified QoS in the datacenter
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/qoss/{qos:id}|rel=update
   description: update the specified QoS in the datacenter
   request:
@@ -1079,8 +1040,6 @@ actions:
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string'}
         optionalArguments: {storagedomain.format: 'xs:boolean'}
         description: delete the specified storage domain in the system with options to format the storage domain
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/isattached|rel=isattached
   description: Querying if the Storage Domain is already attached to a Data Center by the is_attached boolean field, which is part of the storage server. IMPORTANT, Executing this API will cause the Host to disconnect from the Storage Domain.
   request:
@@ -1090,8 +1049,6 @@ actions:
       - mandatoryArguments: {action.host.id: 'xs:string'}
         optionalArguments: {}
         description:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}|rel=update
   description: update the storage domain
   request:
@@ -1107,8 +1064,6 @@ actions:
             logical_unit.lun_mapping: 'xs:int', logical_unit.portal: 'xs:string', logical_unit.paths: 'xs:int', logical_unit.id: 'xs:string'}}
         optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean', storagedomain.wipe_after_delete: 'xs:boolean'}
         description: update the storage domain
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains|rel=add
   description: add a new storage domain to the system
   request:
@@ -1144,8 +1099,6 @@ actions:
           storagedomain.format: 'xs:boolean', storagedomain.storage.path: 'xs:string', storagedomain.storage.vfs_type: 'xs:string'}
         optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.address: 'xs:string', storagedomain.storage.mount_options: 'xs:string', storagedomain.storage_format: 'xs:string', storagedomain.wipe_after_delete: 'xs:boolean'}
         description: add a new storage domain to the system using the gluster or posixfs storage
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/files|rel=get
   description: get the files stored in the iso storage domain
   request:
@@ -1178,9 +1131,6 @@ actions:
   description: get the details of the specified permission for the storage domain
 - name: /storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the storage domain
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/permissions|rel=add
   description: add a new user or group level permission on the storage domain
   request:
@@ -1195,9 +1145,6 @@ actions:
         description: add a new group level permission on the storage domain
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}|rel=delete
   description: delete the specified template from the export or data domain
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/templates|rel=get
   description: get the list of templates in the export or data domain
   request:
@@ -1242,9 +1189,6 @@ actions:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}|rel=delete
   description: delete the specified virtual machine from the storage domain
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}|rel=get
   description: get the details of the specified virtual machine in the storage domain
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/register|rel=register
@@ -1279,10 +1223,6 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
 - name: /storagedomains/{storagedomain:id}/disksnapshots/{disksnapshot:id}|rel=delete
   description: delete the specified disk snapshot from the storage domain
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
 - name: /storagedomains/{storagedomain:id}/disksnapshots/{disksnapshot:id}|rel=get
   description: get the details of the specified disk snapshot in the storage domain
 - name: /clusters|rel=get
@@ -1311,9 +1251,6 @@ actions:
 - name: /storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=get
   description: get the details of the specified storage connection in the storage domain. allow sediting just the connection details without editing the storage domain itself. multiple storage domains could use a single storage connection in the case of iSCSI.
 - name: /storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=delete
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/storageconnections|rel=add
   request:
     body:
@@ -1323,9 +1260,6 @@ actions:
         optionalArguments: {}
 - name: /clusters/{cluster:id}|rel=delete
   description: get the details of the specified cluster in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /clusters/{cluster:id}|rel=update
   description: update the specified cluster in the system
   request:
@@ -1371,9 +1305,6 @@ actions:
   description: get the details of the specified network in the cluster
 - name: /clusters/{cluster:id}/networks/{network:id}|rel=delete
   description: delete the specified network in the cluster
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /clusters/{cluster:id}/networks/{network:id}|rel=update
   description: update the specified network in the cluster
   request:
@@ -1401,9 +1332,6 @@ actions:
   description: get the details of the permission on the cluster
 - name: /clusters/{cluster:id}/permissions/{permission:id}|rel=delete
   description: delete the permission on the cluster
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /clusters/{cluster:id}/permissions|rel=add
   description: add a new permission on the cluster
   request:
@@ -1447,8 +1375,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {}
         description: delete the specified data center from the system
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /macpools/{macpool:id}|rel=update
   description: update the specified mac pool in the system
   request:
@@ -1507,8 +1433,6 @@ actions:
         optionalArguments:
           action.force: xs:boolean
         description: delete the specified data center in the system
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters|rel=add
   description: add a new data center to the system
   request:
@@ -1533,9 +1457,6 @@ actions:
   description: get details of the specified permission on the data center
 - name: /datacenters/{datacenter:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the data center
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/permissions|rel=add
   description: add a new permission on the data center
   request:
@@ -1557,9 +1478,6 @@ actions:
   description: get details of the specified storage domain in a data center
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=delete
   description: delete the specified storage domain in a data center
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains|rel=add
   description: add a new storage domain to the data center
   request:
@@ -1599,9 +1517,6 @@ actions:
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}|rel=delete
   description: delete specified cluster from the data center
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}|rel=update
   description: update specified cluster in the data center
   request:
@@ -1640,9 +1555,6 @@ actions:
   description: get the details of the specified network in a cluster in the specified data center
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=delete
   description: delete the specified network in a cluster in the specified data center
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=update
   description: update the specified network in a cluster in the specified data center
   request:
@@ -1670,9 +1582,6 @@ actions:
   description: get the details of the specified permission on the cluster in the specified data center.
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the cluster in the specified data center.
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=add
   description: add a new permission on the cluster in the specified data center.
   request:
@@ -1752,9 +1661,6 @@ actions:
   description: get the details of the specified group in the system
 - name: /groups/{group:id}|rel=delete
   description: delete the specified group in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /groups|rel=add
   description: add a new group to the system
   request:
@@ -1773,9 +1679,6 @@ actions:
   description: get the details of the specified permission for the group in the system
 - name: /groups/{group:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission from the group in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /groups/{group:id}/permissions|rel=add
   description: add a new permission to the group in the system
   request:
@@ -1820,9 +1723,6 @@ actions:
   description: get details of the specified permit for a role in a group
 - name: /groups/{group:id}/roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for a role in a group
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /groups/{group:id}/roles/{role:id}/permits|rel=add
   description: add a new permit for a role in a group
   request:
@@ -1840,9 +1740,6 @@ actions:
   description: get details of the specified tag attached to a given group
 - name: /groups/{group:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag attached to a given group
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /groups/{group:id}/tags|rel=add
   description: add a new tag to a given group
   request:
@@ -1883,8 +1780,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         description: delete the specified host in the system
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /hosts/{host:id}|rel=update
   description: update the specified host in the system
   request:
@@ -1917,8 +1812,6 @@ actions:
           options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'},
           host.power_management.kdump_detection: 'xs:boolean'}
         description: update the specified host in the system
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /hosts|rel=add
   description: add a new host to the system
   request:
@@ -2079,9 +1972,6 @@ actions:
   description: get the details of the specified network interface for the host
 - name: /hosts/{host:id}/nics/{nic:id}|rel=delete
   description: delete the specified network interface for the host
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /hosts/{host:id}/nics/{nic:id}|rel=update
   description: update the specified network interface for the host
   request:
@@ -2101,8 +1991,6 @@ actions:
           hostnic.ip.address: xs:string
           hostnic.ip.netmask: xs:string
         description: update the specified network interface for the host
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /hosts/{host:id}/nics|rel=add
   description: add a new network interface for the host
   request:
@@ -2182,9 +2070,6 @@ actions:
   description: get a specific label of an interface
 - name: /hosts/{host:id}/nics/{nic:id}/labels/{label:id}|rel=delete
   description: delete the specified label of an interface
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /hosts/{host:id}/permissions|rel=get
   description: get the list of permissions for the host
   request:
@@ -2194,9 +2079,6 @@ actions:
   description: get the details of the specified permission for the host
 - name: /hosts/{host:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the host
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /hosts/{host:id}/permissions|rel=add
   description: add a new permission for the host
   request:
@@ -2232,9 +2114,6 @@ actions:
   description: get the details of the specified tag added to the host
 - name: /hosts/{host:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag added to the host
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /hosts/{host:id}/tags|rel=add
   description: add a new tag to the host
   request:
@@ -2264,9 +2143,6 @@ actions:
         optionalArguments: {agent.address: 'xs:string', agent.order: 'xs:int', agent.type: 'xs:string', agent.username: 'xs:string', agent.password: 'xs:string', agent.port: 'xs:int', agent.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, encrypt_options: 'xs:boolean'}
 - name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=delete
   description: delete the specified fencing agent
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /networks|rel=get
   description: get the list of all networks in the system
   request:
@@ -2278,9 +2154,6 @@ actions:
   description: get the details of the specified network in the system
 - name: /networks/{network:id}|rel=delete
   description: delete the specified network in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /networks/{network:id}|rel=update
   description: update the specified network in the system
   request:
@@ -2324,9 +2197,6 @@ actions:
   description: get the details of the specified permission on a network in the system
 - name: /networks/{network:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on a network in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /networks/{network:id}/permissions|rel=add
   description: add a new permission on a network in the system
   request:
@@ -2348,9 +2218,6 @@ actions:
   description: get the details of the specified virtual network interface card profile for the network
 - name: /networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=delete
   description: delete the specified virtual network interface card profile for the network
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /networks/{network:id}/vnicprofiles|rel=add
   description: add a new virtual network interface card profile for the network
   request:
@@ -2375,9 +2242,6 @@ actions:
   description: get a specific label of a network
 - name: /networks/{network:id}/labels/{label:id}|rel=delete
   description: delete the specified label of a network
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vnicprofiles|rel=get
   description: get the list of all virtual network interface card profiles in the system
   request:
@@ -2387,9 +2251,6 @@ actions:
   description: get the details of the specified virtual network interface card profile in the system
 - name: /vnicprofiles/{vnicprofile:id}|rel=delete
   description: delete the specified virtual network interface card profile in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vnicprofiles/{vnicprofile:id}|rel=update
   description: update the specified virtual network interface card profile in the system
   request:
@@ -2419,9 +2280,6 @@ actions:
   description: get details of the specified permission on the virtual network interface card profile in the system
 - name: /vnicprofiles/{vnicprofile:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the virtual network interface card profile
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vnicprofiles/{vnicprofile:id}/permissions|rel=add
   description: add a new permission on the virtual network interface card profile in the system
   request:
@@ -2443,9 +2301,6 @@ actions:
   description: get the details of the specified role in the system
 - name: /roles/{role:id}|rel=delete
   description: get the details of the specified role in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /roles|rel=add
   description: add a new role to the system
   request:
@@ -2473,9 +2328,6 @@ actions:
   description: get the details of the specified permit for the role in the system
 - name: /roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for the role in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /roles/{role:id}/permits|rel=add
   description: add a new permit for the role in the system
   request:
@@ -2514,9 +2366,6 @@ actions:
   description: get the details of the specified tag in the system
 - name: /tags/{tag:id}|rel=delete
   description: delete the specified tag in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /tags/{tag:id}|rel=update
   description: update the specified tag in the system
   request:
@@ -2552,9 +2401,6 @@ actions:
       All-Content: {value: true|false, required: false}
 - name: /templates/{template:id}|rel=delete
   description: delete the specified template in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}|rel=update
   description: update the specified template in the system
   request:
@@ -2709,9 +2555,6 @@ actions:
   description: get the watchdog identified by the id for a given template
 - name: /templates/{template:id}/watchdogs/{watchdog:id}|rel=delete
   description: delete the watchdog for the template identified by the given id
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}/watchdogs/{watchdog:id}|rel=update
   description: update the watchdog for the template identified by the given id
   request:
@@ -2748,8 +2591,6 @@ actions:
         optionalArguments:
           action.storage_domain.id: xs:string
           action.force: xs:boolean
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}/disks/{disk:id}/copy|rel=copy
   description: copy the specified disk attached to the template to a specific storage domain
   request:
@@ -2790,9 +2631,6 @@ actions:
   description: get the details of the specified network interface card attached to the template
 - name: /templates/{template:id}/nics/{nic:id}|rel=delete
   description: delete the specified network interface card attached to the template
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}/nics/{nic:id}|rel=update
   description: update the specified network interface card attached to the template
   request:
@@ -2813,9 +2651,6 @@ actions:
   description: get the details of the specified permission on the template
 - name: /templates/{template:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the template
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}/permissions|rel=add
   description: add a new permission on the template
   request:
@@ -2837,9 +2672,6 @@ actions:
   description: get the details of the tag added to the template
 - name: /templates/{template:id}/tags/{tag:id}|rel=delete
   description: delete a tag added to the template
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /templates/{template:id}/tags|rel=add
   description: add a new tag to the template
   request:
@@ -2872,9 +2704,6 @@ actions:
         description: add a new user to the specified domain with the specified user name
 - name: /users/{user:id}|rel=delete
   description: delete the from the domain
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /users/{user:id}/permissions|rel=get
   description: get the list of all permissions for the user
   request:
@@ -2884,9 +2713,6 @@ actions:
   description: get the details of the specified permission for the user
 - name: /users/{user:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the user
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /users/{user:id}/permissions|rel=add
   description: add a new permission for the user
   request:
@@ -2930,9 +2756,6 @@ actions:
   description: get the details of the specified permit for the role assigned to the user
 - name: /users/{user:id}/roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for the role assigned to the user
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /users/{user:id}/roles/{role:id}/permits|rel=add
   description: add a new permit for the role assigned to the user
   request:
@@ -2951,9 +2774,6 @@ actions:
   description: get the details of the specified tag attached to the user
 - name: /users/{user:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag attached to the user
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /users/{user:id}/tags|rel=add
   description: add a new tag to the user
   request:
@@ -2978,9 +2798,6 @@ actions:
       Filter: {value: true|false, required: false}
 - name: /vmpools/{vmpool:id}|rel=delete
   description: delete the specified virtual machine pool in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vmpools/{vmpool:id}|rel=update
   description: update the specified virtual machine pool in the system
   request:
@@ -3019,9 +2836,6 @@ actions:
   description: get the details of the specified permission on the vm pool
 - name: /vmpools/{vmpool:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the vm pool
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vmpools/{vmpool:id}/permissions|rel=add
   description: add a new permission on the vm pool
   request:
@@ -3235,9 +3049,6 @@ actions:
   description: get the details of the specified disk in the storage domain
 - name: /storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk in the storage domain
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/disks|rel=add
   description: add a new disk to the storage domain
   request:
@@ -3305,9 +3116,6 @@ actions:
       Filter: {value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk from the storage domain in the data center
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=add
   description: add a new disk to the storage domain in the data center
   request:
@@ -3439,8 +3247,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments:  {action.host.id|name: 'xs:string'}
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 
 - name: /storageconnections/{storageconnection:id}|rel=update
   description: update the specified storage connection in the system
@@ -3486,9 +3292,6 @@ actions:
 - name: /clusters/{cluster:id}/glusterhooks|rel=get
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=get
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=delete
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}/enable|rel=enable
   request:
     body:
@@ -3519,9 +3322,6 @@ actions:
   description: get the details of the permission on the system
 - name: /permissions/{permission:id}|rel=delete
   description: delete the permission on the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /permissions|rel=add
   description: add a new permission on the system
   request:
@@ -3544,9 +3344,6 @@ actions:
   description: get the details of the instance type on the system
 - name: /instancetypes/{instancetype:id}|rel=delete
   description: delete the instance type from the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /instancetypes|rel=add
   description: add a new instance type to the system
   request:
@@ -3644,9 +3441,6 @@ actions:
   description: get the details of the specified virtual NUMA node for the vm
 - name: /vms/{vm:id}/numanodes/{numanode:id}|rel=delete
   description: delete the specified virtual NUMA node for the vm
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/numanodes/{numanode:id}|rel=update
   description: update the specified virtual NUMA node for the vm
   request:
@@ -3660,8 +3454,6 @@ actions:
           vm_numa_node.cpu.cores.core--COLLECTION: {core.index: 'xs:int'}
           vm_numa_node.numa_node_pins.numa_node_pin--COLLECTION: {numa_node_pin.index: 'xs:int'}
         description: update the specified virtual NUMA node for the vm
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /vms/{vm:id}/numanodes|rel=add
   description: add a new virtual NUMA node for the vm
   request:
@@ -3687,9 +3479,6 @@ actions:
       Filter: {value: true|false, required: false}
 - name: /schedulingpolicyunits/{schedulingpolicyunit:id}|rel=delete
   description: delete the specified disabled and external scheduling policy unit in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}|rel=update
   description: update the specified user defined scheduling policy in the system
   request:
@@ -3724,8 +3513,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         description: delete the specified user defined scheduling policy in the system
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /schedulingpolicies|rel=add
   description: add a new scheduling policy to the system
   request:
@@ -3762,8 +3549,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         description: delete the specified scheduling policy in the system
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}/filters|rel=add
   description: add a filter to a specified user defined scheduling policy
   request:
@@ -3799,8 +3584,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         description: delete a weight from specified user defined scheduling policy
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}/weights|rel=add
   description: add a weight to a specified user defined scheduling policy
   request:
@@ -3836,8 +3619,6 @@ actions:
       signatures:
       - mandatoryArguments: {}
         description: delete a balance module from specified user defined scheduling policy
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /schedulingpolicies/{schedulingpolicy:id}/balances|rel=add
   description: add a balance module to a specified user defined scheduling policy
   request:
@@ -3889,9 +3670,6 @@ actions:
   description: get the details of the specified disk profile in the system
 - name: /diskprofiles/{diskprofile:id}|rel=delete
   description: delete the specified disk profile in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /diskprofiles/{diskprofile:id}|rel=update
   description: update the specified disk profile in the system
   request:
@@ -3922,9 +3700,6 @@ actions:
   description: get details of the specified permission on the disk profile in the system
 - name: /diskprofiles/{diskprofile:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the disk profile
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /diskprofiles/{diskprofile:id}/permissions|rel=add
   description: add a new permission on the disk profile in the system
   request:
@@ -3946,9 +3721,6 @@ actions:
   description: get the details of the specified disk profile for the storage domain
 - name: /storagedomains/{storagedomain:id}/diskprofiles/{diskprofile:id}|rel=delete
   description: delete the specified disk profile for the storage domain
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/diskprofiles|rel=add
   description: add a new disk profile for the storage domain
   request:
@@ -3968,9 +3740,6 @@ actions:
   description: get the details of the specified cpu profile in the system
 - name: /cpuprofiles/{cpuprofile:id}|rel=delete
   description: delete the specified cpu profile in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /cpuprofiles/{cpuprofile:id}|rel=update
   description: update the specified cpu profile in the system
   request:
@@ -4001,9 +3770,6 @@ actions:
   description: get details of the specified permission on the cpu profile in the system
 - name: /cpuprofiles/{cpuprofile:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the cpu profile
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /cpuprofiles/{cpuprofile:id}/permissions|rel=add
   description: add a new permission on the cpu profile in the system
   request:
@@ -4025,9 +3791,6 @@ actions:
   description: get the details of the specified cpu profile for the cluster
 - name: /clusters/{cluster:id}/cpuprofiles/{cpuprofile:id}|rel=delete
   description: delete the specified cpu profile for the cluster
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /clusters/{cluster:id}/cpuprofiles|rel=add
   description: add a new cpu profile for the cluster
   request:
@@ -4053,9 +3816,6 @@ actions:
   description: get the details of the specified external host provider in the system
 - name: /externalhostproviders/{externalhostprovider:id}|rel=delete
   description: delete the specified external host provider in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /externalhostproviders/{externalhostprovider:id}|rel=update
   description: update the specified external host provider in the system
   request:
@@ -4148,9 +3908,6 @@ actions:
   description: get the details of the specified OpenStack image provider in the system
 - name: /openstackimageproviders/{openstackimageprovider:id}|rel=delete
   description: delete the specified OpenStack image provider in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /openstackimageproviders/{openstackimageprovider:id}|rel=update
   description: update the specified OpenStack image provider in the system
   request:
@@ -4239,9 +3996,6 @@ actions:
   description: get the details of the specified OpenStack volume provider in the system
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}|rel=delete
   description: delete the specified OpenStack volume provider in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}|rel=update
   description: update the specified OpenStack volume provider in the system
   request:
@@ -4298,9 +4052,6 @@ actions:
   description: get the details of the specified OpenStack network provider in the system
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}|rel=delete
   description: delete the specified OpenStack network provider in the system
-  request:
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}|rel=update
   description: update the specified OpenStack network provider in the system
   request:

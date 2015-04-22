@@ -345,6 +345,7 @@ public class RsdlBuilder {
         String returnValueStr = parameterTypes[0].getSimpleName();
         DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix + "/" + path).rel(path).requestParameter(ACTION).responseType(returnValueStr).httpMethod(HttpMethod.POST).build();
         addCommonActionParameters(link);
+        addAsyncMatrixParameter(link);
         results.add(link);
     }
 
@@ -363,6 +364,7 @@ public class RsdlBuilder {
                             .httpMethod(HttpMethod.DELETE)
                             .build();
                     addCommonActionParameters(link);
+                    addAsyncMatrixParameter(link);
                     results.add(link);
                     return; //we can break, because we excpect only one parameter.
                 }
@@ -374,12 +376,15 @@ public class RsdlBuilder {
                     .httpMethod(HttpMethod.DELETE)
                     .build();
             addCommonActionParameters(link);
+            addAsyncMatrixParameter(link);
             results.add(link);
         }
     }
 
     private void handlePut(String prefix, Collection<DetailedLink> results, String returnValueStr) {
-        results.add(new RsdlBuilder.LinkBuilder().url(prefix).rel(UPDATE).requestParameter(returnValueStr).responseType(returnValueStr).httpMethod(HttpMethod.PUT).build());
+        DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix).rel(UPDATE).requestParameter(returnValueStr).responseType(returnValueStr).httpMethod(HttpMethod.PUT).build();
+        addAsyncMatrixParameter(link);
+        results.add(link);
     }
 
     private void handleGet(String prefix, Collection<DetailedLink> results, String returnValueStr) {
@@ -408,7 +413,6 @@ public class RsdlBuilder {
                     }
                 }
             }
-
         }
     }
 
@@ -432,6 +436,40 @@ public class RsdlBuilder {
         parameter.setRequired(false);
         parameter.setType("xs:boolean");
         return parameter;
+    }
+
+    /**
+     * Adds to a link the {@code async} matrix parameter.
+     *
+     * @param link the link where the parameters will be added
+     */
+    private void addAsyncMatrixParameter(DetailedLink link) {
+        Request request = link.getRequest();
+        if (request == null) {
+            request = new Request();
+            link.setRequest(request);
+        }
+        Url url = request.getUrl();
+        if (url == null) {
+            url = new Url();
+            request.setUrl(url);
+        }
+        List<ParametersSet> parametersSets = url.getParametersSets();
+        ParametersSet parametersSet;
+        if (parametersSets.isEmpty()) {
+            parametersSet = new ParametersSet();
+            parametersSets.add(parametersSet);
+        }
+        else {
+            parametersSet = parametersSets.get(0);
+        }
+        Parameter asyncParameter = new Parameter();
+        asyncParameter.setName("async");
+        asyncParameter.setRequired(false);
+        asyncParameter.setType("xs:boolean");
+        asyncParameter.setValue("true|false");
+        asyncParameter.setContext("matrix");
+        parametersSet.getParameters().add(asyncParameter);
     }
 
     private DetailedLink addParametersMetadata(DetailedLink link) {
