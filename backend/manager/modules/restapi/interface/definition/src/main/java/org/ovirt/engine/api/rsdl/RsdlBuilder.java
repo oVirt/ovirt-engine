@@ -37,6 +37,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.ovirt.engine.api.model.Actionable;
+import org.ovirt.engine.api.model.BaseResources;
+import org.ovirt.engine.api.model.Capabilities;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.DetailedLinks;
 import org.ovirt.engine.api.model.GeneralMetadata;
@@ -49,6 +51,7 @@ import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Response;
 import org.ovirt.engine.api.model.Schema;
+import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.RsdlIgnore;
@@ -300,7 +303,6 @@ public class RsdlBuilder {
             if (concreteReturnType == null) {
                 concreteReturnType = m.getReturnType();
             }
-            String returnTypeStr = getReturnTypeStr(concreteReturnType);
 
             Type[] genericParameterTypes = m.getGenericParameterTypes();
             Class<?>[] concreteParameterTypes = m.getParameterTypes();
@@ -312,9 +314,9 @@ public class RsdlBuilder {
             }
 
             if (m.isAnnotationPresent(javax.ws.rs.GET.class)) {
-                handleGet(prefix, results, returnTypeStr);
+                handleGet(prefix, results, concreteReturnType);
             } else if (m.isAnnotationPresent(PUT.class)) {
-                handlePut(prefix, results, returnTypeStr);
+                handlePut(prefix, results, concreteReturnType);
             } else if (m.isAnnotationPresent(javax.ws.rs.DELETE.class)) {
                 handleDelete(prefix, results, m);
             } else if (m.isAnnotationPresent(Path.class)) {
@@ -381,14 +383,19 @@ public class RsdlBuilder {
         }
     }
 
-    private void handlePut(String prefix, Collection<DetailedLink> results, String returnValueStr) {
-        DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix).rel(UPDATE).requestParameter(returnValueStr).responseType(returnValueStr).httpMethod(HttpMethod.PUT).build();
+    private void handlePut(String prefix, Collection<DetailedLink> results, Class<?> returnType) {
+        String returnTypeStr = getReturnTypeStr(returnType);
+        DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix).rel(UPDATE).requestParameter(returnTypeStr).responseType(returnTypeStr).httpMethod(HttpMethod.PUT).build();
         addAsyncMatrixParameter(link);
         results.add(link);
     }
 
-    private void handleGet(String prefix, Collection<DetailedLink> results, String returnValueStr) {
-        DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix).rel(GET).responseType(returnValueStr).httpMethod(HttpMethod.GET).build();
+    private void handleGet(String prefix, Collection<DetailedLink> results, Class<?> returnType) {
+        String returnTypeStr = getReturnTypeStr(returnType);
+        DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix).rel(GET).responseType(returnTypeStr).httpMethod(HttpMethod.GET).build();
+        if (BaseResources.class.isAssignableFrom(returnType) && returnType != Capabilities.class && returnType != Statistics.class) {
+            addMaxMatrixParameter(link);
+        }
         results.add(link);
     }
 
@@ -444,6 +451,37 @@ public class RsdlBuilder {
      * @param link the link where the parameters will be added
      */
     private void addAsyncMatrixParameter(DetailedLink link) {
+        Parameter parameter = new Parameter();
+        parameter.setName("async");
+        parameter.setRequired(false);
+        parameter.setType("xs:boolean");
+        parameter.setValue("true|false");
+        parameter.setContext("matrix");
+        addUrlParameter(link, parameter);
+    }
+
+    /**
+     * Adds to a link the {@code max} matrix parameter.
+     *
+     * @param link the link where the parameters will be added
+     */
+    private void addMaxMatrixParameter(DetailedLink link) {
+        Parameter parameter = new Parameter();
+        parameter.setName("max");
+        parameter.setRequired(false);
+        parameter.setType("xs:int");
+        parameter.setValue("max results");
+        parameter.setContext("matrix");
+        addUrlParameter(link, parameter);
+    }
+
+    /**
+     * Adds to a link the a URL parameter, creating all the intermediate objects if they don't exist.
+     *
+     * @param link the link where the parameters will be added
+     * @param parameter the parameter to add
+     */
+    private void addUrlParameter(DetailedLink link, Parameter parameter) {
         Request request = link.getRequest();
         if (request == null) {
             request = new Request();
@@ -463,13 +501,7 @@ public class RsdlBuilder {
         else {
             parametersSet = parametersSets.get(0);
         }
-        Parameter asyncParameter = new Parameter();
-        asyncParameter.setName("async");
-        asyncParameter.setRequired(false);
-        asyncParameter.setType("xs:boolean");
-        asyncParameter.setValue("true|false");
-        asyncParameter.setContext("matrix");
-        parametersSet.getParameters().add(asyncParameter);
+        parametersSet.getParameters().add(parameter);
     }
 
     private DetailedLink addParametersMetadata(DetailedLink link) {
