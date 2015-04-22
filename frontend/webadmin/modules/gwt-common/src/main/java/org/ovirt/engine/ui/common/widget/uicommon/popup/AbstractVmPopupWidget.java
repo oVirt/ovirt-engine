@@ -752,6 +752,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     protected FlowPanel memAllocationPanel;
 
     @UiField
+    protected FlowPanel ioThreadsPanel;
+
+    @UiField
     protected FlowPanel storageAllocationPanel;
 
     @UiField
@@ -771,10 +774,22 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     public DetachableLabel memAllocationLabel;
 
+    @UiField
+    public DetachableLabel ioThreadsLabel;
+
+    @UiField(provided = true)
+    @Path(value = "numOfIoThreads.entity")
+    @WithElementId("numOfIoThreadsEditor")
+    public IntegerEntityModelTextBoxEditor numOfIoThreadsEditor;
+
     @UiField(provided = true)
     @Path(value = "minAllocatedMemory.entity")
     @WithElementId("minAllocatedMemory")
     public EntityModelTextBoxEditor<Integer> minAllocatedMemoryEditor;
+
+    @UiField(provided = true)
+    @Path(value = "ioThreadsEnabled.entity")
+    EntityModelCheckBoxEditor isIoThreadsEnabled;
 
     @UiField(provided = true)
     @Path(value = "memoryBalloonDeviceEnabled.entity")
@@ -911,6 +926,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         minAllocatedMemoryEditor = new EntityModelTextBoxEditor<Integer>(
                 new MemorySizeRenderer<Integer>(), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
 
+        numOfIoThreadsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+
         // TODO: How to align right without creating the widget manually?
         hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -948,6 +965,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         ssoMethodGuestAgent = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer());//$NON-NLS-1$
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
+        isIoThreadsEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo =
@@ -1425,6 +1443,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         copyTemplatePermissionsEditor.setLabel(constants.copyTemplatePermissions());
         isSmartcardEnabledEditor.setLabel(constants.smartcardVmPopup());
         isMemoryBalloonDeviceEnabled.setLabel(constants.memoryBalloonDeviceEnabled());
+        isIoThreadsEnabled.setLabel(constants.ioThreadsEnabled());
         isVirtioScsiEnabled.setLabel(constants.isVirtioScsiEnabled());
 
         // Rng device tab
@@ -1491,6 +1510,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         provisioningThinEditor.setLabel(constants.thinVmPopup());
         provisioningCloneEditor.setLabel(constants.cloneVmPopup());
         minAllocatedMemoryEditor.setLabel(constants.physMemGuarVmPopup());
+        numOfIoThreadsEditor.setLabel(constants.numOfIoThreadsVmPopup());
 
         // Boot Options
         firstBootDeviceEditor.setLabel(constants.firstDeviceVmPopup());
@@ -1987,6 +2007,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nextTabIndex = resourceAllocationTab.setTabIndexes(nextTabIndex);
         cpuProfilesEditor.setTabIndex(nextTabIndex++);
         minAllocatedMemoryEditor.setTabIndex(nextTabIndex++);
+        numOfIoThreadsEditor.setTabIndex(nextTabIndex++);
         provisioningEditor.setTabIndex(nextTabIndex++);
         provisioningThinEditor.setTabIndex(nextTabIndex++);
         provisioningCloneEditor.setTabIndex(nextTabIndex++);
@@ -2103,6 +2124,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 priorityLabelWithDetachable,
                 migrationModeEditorWithDetachable,
                 memAllocationLabel,
+                ioThreadsLabel,
                 detachableMemSizeEditor,
                 detachableInstanceTypesEditor,
                 overrideMigrationDowntimeEditorWithDetachable

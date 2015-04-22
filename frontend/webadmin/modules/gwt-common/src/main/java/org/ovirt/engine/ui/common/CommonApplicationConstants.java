@@ -712,6 +712,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Physical Memory Guaranteed")
     String physMemGuarVmPopup();
 
+    @DefaultStringValue("Num Of IO Threads")
+    String numOfIoThreadsVmPopup();
+
     @DefaultStringValue("First Device")
     String firstDeviceVmPopup();
 
@@ -747,6 +750,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Memory Allocation:")
     String memAllocVmPopup();
+
+    @DefaultStringValue("IO Threads:")
+    String ioThreadsVmPopup();
 
     @DefaultStringValue("CPU Allocation:")
     String cpuAllocVmPopup();
@@ -1814,6 +1820,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Memory Balloon Device Enabled")
     String memoryBalloonDeviceEnabled();
+
+    @DefaultStringValue("IO Threads Enabled")
+    String ioThreadsEnabled();
 
     @DefaultStringValue("VM Id")
     String vmId();

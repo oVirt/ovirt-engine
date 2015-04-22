@@ -49,7 +49,7 @@ public class ExistingBlankTemplateModelBehavior extends ExistingNonClusterModelB
                 new NameAndDescriptionVmBaseToUnitBuilder(),
                 new CommentVmBaseToUnitBuilder(),
                 new CommonVmBaseToUnitBuilder(
-                        new HwOnlyVmBaseToUnitBuilder(),
+                        new HwOnlyVmBaseToUnitBuilder().withEveryFeatureSupported(),
                         new CoreVmBaseToUnitBuilder(
                                 new KernelParamsVmBaseToUnitBuilder(),
                                 new SerialNumberPolicyVmBaseToUnitBuilder().withEveryFeatureSupported()

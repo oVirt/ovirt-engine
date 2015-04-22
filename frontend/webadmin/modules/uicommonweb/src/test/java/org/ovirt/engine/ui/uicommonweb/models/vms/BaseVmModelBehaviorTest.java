@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -52,6 +53,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         vm.setMigrateCompressed(true);
         vm.setLargeIconId(LARGE_ICON_ID);
         vm.setSmallIconId(SMALL_ICON_ID);
+        vm.setNumOfIoThreads(NUM_OF_IO_THREADS);
     }
 
     @Before
@@ -102,9 +104,12 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
                 return cluster;
             }
         };
+
+        mockAsyncDataProvider(model);
+
         model.initialize(null);
         model.getInstanceImages().setItems(new ArrayList<InstanceImageLineModel>());
-        mockAsyncDataProvider(model);
+
         return model;
     }
 
@@ -115,6 +120,9 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         when(adp.supportedForUnitVmModel(ConfigurationValues.AutoConvergenceSupported, model)).thenReturn(true);
         when(adp.supportedForUnitVmModel(ConfigurationValues.MigrationCompressionSupported, model)).thenReturn(true);
         when(adp.supportedForUnitVmModel(ConfigurationValues.SerialNumberPolicySupported, model)).thenReturn(true);
+        when(adp.supportedForUnitVmModel(ConfigurationValues.IoThreadsSupported, model)).thenReturn(true);
+        when(adp.getConfigValuePreConverted(ConfigurationValues.IoThreadsSupported, CLUSTER_VERSION.getValue())).thenReturn(true);
+        when(adp.getConfigValuePreConverted(ConfigurationValues.IoThreadsSupported, Version.getLast().getValue())).thenReturn(true);
     }
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder} */
@@ -181,5 +189,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         assertEquals(NUM_OF_SOCKETS, (int) model.getNumOfSockets().getSelectedItem());
         assertTrue(model.getIsSmartcardEnabled().getEntity());
         assertEquals(MIGRATION_DOWNTIME, model.getSelectedMigrationDowntime());
+        assertEquals(NUM_OF_IO_THREADS, model.getNumOfIoThreads().getEntity());
+
     }
 }

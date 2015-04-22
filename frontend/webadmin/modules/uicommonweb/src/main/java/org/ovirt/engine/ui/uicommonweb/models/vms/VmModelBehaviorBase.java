@@ -65,6 +65,9 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
+    // no need to have this configurable
+    public static final int DEFAULT_NUM_OF_IOTHREADS = 1;
+
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
@@ -533,14 +536,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public void updataMaxVmsInPool() {
         AsyncDataProvider.getInstance().getMaxVmsInPool(new AsyncQuery(this,
-                                                                       new INewAsyncCallback() {
-                                                                           @Override
-                                                                           public void onSuccess(Object target, Object returnValue) {
-                                                                               VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                                                                               behavior.setMaxVmsInPool((Integer) returnValue);
-                                                                               behavior.updateMaxNumOfVmCpus();
-                                                                           }
-                                                                       }
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
+                        behavior.setMaxVmsInPool((Integer) returnValue);
+                        behavior.updateMaxNumOfVmCpus();
+                    }
+                }
         ));
     }
 
@@ -734,36 +737,36 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             }
             Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
                     new IdQueryParameters(cluster.getId()), new AsyncQuery(getModel(),
-                    new INewAsyncCallback() {
+                            new INewAsyncCallback() {
 
-                        @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            UnitVmModel vmModel = (UnitVmModel) model;
-                            ArrayList<Quota> quotaList = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                            if (quotaList != null && !quotaList.isEmpty()) {
-                                vmModel.getQuota().setItems(quotaList);
-                            }
-                            if (quotaList != null && defaultQuota != null && !Guid.Empty.equals(defaultQuota)) {
-                                boolean hasQuotaInList = false;
-                                for (Quota quota : quotaList) {
-                                    if (quota.getId().equals(defaultQuota)) {
-                                        vmModel.getQuota().setSelectedItem(quota);
-                                        hasQuotaInList = true;
-                                        break;
+                                @Override
+                                public void onSuccess(Object model, Object returnValue) {
+                                    UnitVmModel vmModel = (UnitVmModel) model;
+                                    ArrayList<Quota> quotaList = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                    if (quotaList != null && !quotaList.isEmpty()) {
+                                        vmModel.getQuota().setItems(quotaList);
+                                    }
+                                    if (quotaList != null && defaultQuota != null && !Guid.Empty.equals(defaultQuota)) {
+                                        boolean hasQuotaInList = false;
+                                        for (Quota quota : quotaList) {
+                                            if (quota.getId().equals(defaultQuota)) {
+                                                vmModel.getQuota().setSelectedItem(quota);
+                                                hasQuotaInList = true;
+                                                break;
+                                            }
+                                        }
+                                        // Add the quota to the list only in edit mode
+                                        if (!hasQuotaInList && !getModel().getIsNew()) {
+                                            Quota quota = new Quota();
+                                            quota.setId(defaultQuota);
+                                            quota.setQuotaName(quotaName);
+                                            quotaList.add(quota);
+                                            vmModel.getQuota().setItems(quotaList);
+                                            vmModel.getQuota().setSelectedItem(quota);
+                                        }
                                     }
                                 }
-                                // Add the quota to the list only in edit mode
-                                if (!hasQuotaInList && !getModel().getIsNew()) {
-                                    Quota quota = new Quota();
-                                    quota.setId(defaultQuota);
-                                    quota.setQuotaName(quotaName);
-                                    quotaList.add(quota);
-                                    vmModel.getQuota().setItems(quotaList);
-                                    vmModel.getQuota().setSelectedItem(quota);
-                                }
-                            }
-                        }
-                    }));
+                            }));
         }
     }
 
@@ -1156,7 +1159,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        if(returnValue != null) {
+                        if (returnValue != null) {
                             Set<String> emulatedSet = new TreeSet<String>((HashSet<String>) returnValue);
                             emulatedSet.add(""); //$NON-NLS-1$
                             String oldVal = getModel().getEmulatedMachine().getSelectedItem();
@@ -1282,6 +1285,23 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             if (osIdList.intValue() == osId) {
                 getModel().getOSType().setSelectedItem(osIdList);
                 break;
+            }
+        }
+    }
+
+    public void updateNumOfIoThreads() {
+        Version clusterVersion = getClusterCompatibilityVersion();
+        if (clusterVersion == null) {
+            return;
+        }
+
+        getModel().getIoThreadsEnabled().updateChangeability(ConfigurationValues.IoThreadsSupported, getClusterCompatibilityVersion());
+        getModel().getNumOfIoThreads().updateChangeability(ConfigurationValues.IoThreadsSupported, getClusterCompatibilityVersion());
+
+        if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.IoThreadsSupported, clusterVersion.getValue())) {
+            getModel().getNumOfIoThreads().setIsAvailable(getModel().getIoThreadsEnabled().getEntity());
+            if (getModel().getIoThreadsEnabled().getEntity() && getModel().getNumOfIoThreads().getEntity() == 0) {
+                getModel().getNumOfIoThreads().setEntity(DEFAULT_NUM_OF_IOTHREADS);
             }
         }
     }

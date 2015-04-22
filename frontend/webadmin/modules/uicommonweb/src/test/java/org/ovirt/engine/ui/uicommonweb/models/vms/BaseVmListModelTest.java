@@ -96,6 +96,8 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getAutoConverge().getSelectedItem()).thenReturn(true);
         when(model.getMigrateCompressed().getSelectedItem()).thenReturn(true);
         when(model.getIcon().getEntity()).thenReturn(new IconWithOsDefault(LARGE_ICON_DATA, LARGE_OS_DEFAULT_ICON_DATA, SMALL_ICON_ID));
+        when(model.getNumOfIoThreads().getEntity()).thenReturn(NUM_OF_IO_THREADS);
+        when(model.getIoThreadsEnabled().getEntity()).thenReturn(true);
     }
 
     protected void setUpOrigVm(VM origVm) {
@@ -138,6 +140,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertEquals(CUSTOM_CPU_NAME, vm.getCustomCpuName());
         assertEquals(LARGE_ICON_ID, vm.getLargeIconId());
         assertEquals(SMALL_ICON_ID, vm.getSmallIconId());
+        assertEquals(NUM_OF_IO_THREADS.intValue(), vm.getNumOfIoThreads());
     }
 
     /**

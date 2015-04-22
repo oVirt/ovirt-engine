@@ -170,7 +170,6 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
         getModel().getEmulatedMachine().setSelectedItem(entity.getCustomEmulatedMachine());
         getModel().getCustomCpu().setSelectedItem(entity.getCustomCpuName());
         getModel().getMigrationMode().setSelectedItem(entity.getMigrationSupport());
-
     }
 
     protected void postBuild() {
@@ -181,7 +180,7 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
     protected void buildModel(VmBase vmBase, BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
         new BuilderExecutor<>(callback,
                 new NameAndDescriptionVmBaseToUnitBuilder(),
-                new HwOnlyVmBaseToUnitBuilder())
+                new HwOnlyVmBaseToUnitBuilder().withEveryFeatureSupported())
                 .build(vmBase, getModel());
     }
 

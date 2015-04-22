@@ -265,6 +265,9 @@ public abstract class InstanceTypeManager {
 
         deactivate();
         maybeSetEntity(model.getMemSize(), vmBase.getMemSizeMb());
+        maybeSetEntity(model.getIoThreadsEnabled(), vmBase.getNumOfIoThreads() != 0);
+        maybeSetEntity(model.getNumOfIoThreads(), vmBase.getNumOfIoThreads());
+        maybeSetEntity(model.getMemSize(), vmBase.getMemSizeMb());
         maybeSetEntity(model.getTotalCPUCores(), Integer.toString(vmBase.getNumOfCpus()));
         model.setBootSequence(vmBase.getDefaultBootSequence());
 

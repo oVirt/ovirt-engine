@@ -12,6 +12,11 @@ public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBui
     @Override
     protected void build(UnitVmModel model, T vm) {
         vm.setMemSizeMb(model.getMemSize().getEntity());
+        if (model.getIoThreadsEnabled().getEntity()) {
+            vm.setNumOfIoThreads(model.getNumOfIoThreads().getEntity());
+        } else {
+            vm.setNumOfIoThreads(0);
+        }
         vm.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
         vm.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity()) / model.getNumOfSockets().getSelectedItem());
         vm.setDefaultDisplayType(model.getDisplayType().getSelectedItem());

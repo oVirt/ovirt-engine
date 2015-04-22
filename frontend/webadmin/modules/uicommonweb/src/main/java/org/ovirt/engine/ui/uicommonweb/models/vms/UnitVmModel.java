@@ -202,6 +202,26 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.nicsWithLogicalNetworks = nicsWithLogicalNetworks;
     }
 
+    private NotChangableForVmInPoolEntityModel<Boolean> ioThreadsEnabled;
+
+    public EntityModel<Boolean> getIoThreadsEnabled() {
+        return ioThreadsEnabled;
+    }
+
+    public void setIoThreadsEnabled(NotChangableForVmInPoolEntityModel<Boolean> ioThreadsEnabled) {
+        this.ioThreadsEnabled = ioThreadsEnabled;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Integer> numOfIoThreads;
+
+    public EntityModel<Integer> getNumOfIoThreads() {
+        return numOfIoThreads;
+    }
+
+    public void setNumOfIoThreads(NotChangableForVmInPoolEntityModel<Integer> numOfIoThreads) {
+        this.numOfIoThreads = numOfIoThreads;
+    }
+
     /**
      * VM icon
      */
@@ -279,6 +299,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getProvisioningThin_IsSelected().setIsChangeable(false);
             getProvisioningClone_IsSelected().setIsChangeable(false);
             getDisksAllocationModel().setIsChangeable(false);
+            getIoThreadsEnabled().setIsChangeable(false);
+            getNumOfIoThreads().setIsChangeable(false);
 
             // ==Boot Options Tab==
             getFirstBootDevice().setIsChangeable(false);
@@ -1735,6 +1757,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setMigrateCompressed(new NotChangableForVmInPoolListModel<Boolean>());
         getMigrateCompressed().setItems(Arrays.asList(null, true, false));
         setIcon(new NotChangableForVmInPoolEntityModel<IconWithOsDefault>());
+
+        setIoThreadsEnabled(new NotChangableForVmInPoolEntityModel<>(false));
+        setNumOfIoThreads(new NotChangableForVmInPoolEntityModel<>(0));
+        getNumOfIoThreads().setIsAvailable(false);
+        getIoThreadsEnabled().getEntityChangedEvent().addListener(this);
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -1784,6 +1811,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 dataCenterWithClusterSelectedItemChanged(sender, args);
                 updateDisplayAndGraphics();
                 updateMemoryBalloonDevice();
+                behavior.updateNumOfIoThreads();
                 initUsbPolicy();
                 behavior.updateEmulatedMachines();
                 behavior.updateCustomCpu();
@@ -1861,8 +1889,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         {
             if (sender == getVmInitEnabled()) {
                 vmInitEnabledChanged();
-            }
-            else if (sender == getMemSize())
+            } else if (sender == getIoThreadsEnabled()) {
+                behavior.updateNumOfIoThreads();
+            } else if (sender == getMemSize())
             {
                 memSize_EntityChanged(sender, args);
             }
@@ -2086,7 +2115,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         boolean isBalloonEnabled = AsyncDataProvider.getInstance().isBalloonEnabled(osType,
-                        cluster.getCompatibilityVersion());
+                cluster.getCompatibilityVersion());
 
         getMemoryBalloonDeviceEnabled().setIsChangeable(isBalloonEnabled);
 
@@ -2306,7 +2335,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 }
             };
             AsyncDataProvider.getInstance().getVmWatchdogTypes(osType,
-                                                               cluster.getCompatibilityVersion(), asyncQuery);
+                    cluster.getCompatibilityVersion(), asyncQuery);
         }
     }
 
@@ -2679,7 +2708,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         boolean hwPartValid = validateHwPart();
 
         getInstanceTypes().setIsValid(true);
-        getInstanceTypes().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getInstanceTypes().validateSelectedItem(new IValidation[]{new NotEmptyValidation()});
 
         getDataCenterWithClustersList().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
@@ -2728,7 +2757,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (templateWithVersionRequired) {
             getTemplateWithVersion().validateSelectedItem(new IValidation[]{new NotEmptyValidation()});
         }
-        getDisksAllocationModel().validateEntity(new IValidation[] {});
+        getDisksAllocationModel().validateEntity(new IValidation[]{});
 
         getCdImage().setIsValid(true);
         if (getCdImage().getIsChangable()) {
@@ -2843,7 +2872,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (!getBehavior().isAnyTemplateBehavior() && getMemSize().getIsValid()) {
             validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
         }
-        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, getMinAllocatedMemory().getIsValid());
+
+        if (getIoThreadsEnabled().getEntity()) {
+            getNumOfIoThreads().validateEntity(new IValidation[] {new NotNullIntegerValidation(1, Integer.MAX_VALUE)});
+        }
+
+        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, getMinAllocatedMemory().getIsValid() && getNumOfIoThreads().getIsValid());
 
         setValidTab(TabName.SYSTEM_TAB, getMemSize().getIsValid() &&
                 getTotalCPUCores().getIsValid() &&

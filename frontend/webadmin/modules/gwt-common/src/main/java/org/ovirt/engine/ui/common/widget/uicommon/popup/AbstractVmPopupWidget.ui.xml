@@ -715,6 +715,18 @@
                             <ge:EntityModelTextBoxEditor ui:field="minAllocatedMemoryEditor" />
                             <ge:EntityModelCheckBoxEditor addStyleNames="{style.checkbox}" ui:field="isMemoryBalloonDeviceEnabled"/>
                         </g:FlowPanel>
+
+                        <g:FlowPanel ui:field="ioThreadsPanel" addStyleNames="{style.sectionPanelTight}">
+                            <ge:DetachableLabel ui:field="ioThreadsLabel" labelStyleName="{style.sectionLabel}">
+                                <ge:decorated>
+                                    <g:Label text="{constants.ioThreadsVmPopup}" />
+                                </ge:decorated>
+                            </ge:DetachableLabel>
+
+                            <ge:EntityModelCheckBoxEditor addStyleNames="{style.checkbox}" ui:field="isIoThreadsEnabled"/>
+                            <ge:IntegerEntityModelTextBoxEditor ui:field="numOfIoThreadsEditor" />
+                        </g:FlowPanel>
+
                         <g:FlowPanel ui:field="storageAllocationPanel" addStyleNames="{style.sectionPanelTight}">
                             <g:HorizontalPanel>
                                 <g:Label addStyleNames="{style.sectionLabel}" text="{constants.storageAllocVmPopup}" />
