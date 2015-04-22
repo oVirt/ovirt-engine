@@ -142,11 +142,16 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     }
 
     public List<CommandEntity> getCommandsWithCallbackEnabled() {
+        return getCommands(true);
+    }
+
+
+    public List<CommandEntity> getCommands(boolean onlyWithCallbackEnabled) {
         List<CommandEntity> cmdEntities = new ArrayList<>();
         CommandEntity cmdEntity;
         for (Guid cmdId : commandsCache.keySet()) {
             cmdEntity = commandsCache.get(cmdId);
-            if (commandsCache.get(cmdId).isCallbackEnabled()) {
+            if (!onlyWithCallbackEnabled || commandsCache.get(cmdId).isCallbackEnabled()) {
                 cmdEntities.add(cmdEntity);
             }
         }
@@ -253,7 +258,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
             synchronized(LOCK) {
                 if (!childHierarchyInitialized) {
                     childHierarchy.clear();
-                    for (CommandEntity cmd : getCommandsWithCallbackEnabled()) {
+                    for (CommandEntity cmd : getCommands(false)) {
                         buildCmdHierarchy(cmd);
                     }
                 }
