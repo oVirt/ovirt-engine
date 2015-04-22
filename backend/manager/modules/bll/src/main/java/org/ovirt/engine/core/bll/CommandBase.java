@@ -1386,7 +1386,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     startPollingAsyncTasks();
                 }
             } finally {
-                if (!hasTasks() && !ExecutionHandler.checkIfJobHasTasks(getExecutionContext())) {
+                if (noAsyncOperations() && !ExecutionHandler.checkIfJobHasTasks(getExecutionContext())) {
                     ExecutionHandler.endJob(getExecutionContext(), getSucceeded());
                 }
             }
