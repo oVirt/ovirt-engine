@@ -240,12 +240,20 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         AbstractImageResourceColumn<Object> isProblematicImportVmColumn = new AbstractImageResourceColumn<Object>() {
             @Override
             public ImageResource getValue(Object object) {
-                return ((ImportVmData) object).getWarning() != null ? resources.alertImage() : null;
+                ImportVmData importVmData = ((ImportVmData) object);
+                if (!importVmData.getClone().getEntity() && importVmData.getError() != null) {
+                    return resources.errorImage();
+                }
+                if (importVmData.getWarning() != null) {
+                    return resources.alertImage();
+                }
+                return null;
             }
 
             @Override
             public SafeHtml getTooltip(Object object) {
-                String problem = ((ImportVmData) object).getWarning();
+                ImportVmData importVmData = ((ImportVmData) object);
+                String problem = !importVmData.getClone().getEntity() && importVmData.getError() != null ? importVmData.getError() : importVmData.getWarning();
                 return problem != null ? SafeHtmlUtils.fromSafeConstant(problem) : null;
             }
         };
@@ -677,6 +685,9 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                     diskTable.asEditor().edit(object.getImportDiskListModel());
                 } else if (args.propertyName.equals("Message")) { ////$NON-NLS-1$
                     message.setText(object.getMessage());
+                }
+                else if (args.propertyName.equals("InvalidVm")) { ////$NON-NLS-1$
+                    table.redraw();
                 }
             }
         });

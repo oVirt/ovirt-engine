@@ -13,6 +13,7 @@ public class ImportVmData extends ImportEntityData<VM> {
     private boolean templateExistsInSetup = true;
     private EntityModel<Boolean> collapseSnapshots;
     private String warning;
+    private String error;
 
     public ImportVmData(VM vm) {
         setCollapseSnapshots(new EntityModel<>(true));
@@ -79,5 +80,13 @@ public class ImportVmData extends ImportEntityData<VM> {
 
     public void setWarning(String warning) {
         this.warning = warning;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 }

@@ -198,8 +198,8 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         setDetailModels(list);
     }
 
-    public void init(List items, final Guid storageDomainId) {
-        setItems(items, storageDomainId);
+    public void init(List<?> value, final Guid storageDomainId) {
+        setItems(value, storageDomainId);
     }
 
     protected void doInit(final Guid storageDomainId) {
@@ -599,58 +599,79 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         getCluster().validateSelectedItem(
                 new IValidation[] { new NotEmptyValidation() });
 
-        return getStorage().getIsValid()
+        return validateNames()
+                && getStorage().getIsValid()
                 && getCluster().getIsValid()
                 && getClusterQuota().getIsValid();
     }
 
-    public void setItems(final Collection value, final Guid storageDomainId)
-    {
+    private boolean validateNames() {
+        for (ImportVmData importVmData : (Iterable<ImportVmData>) getItems()) {
+            if (!importVmData.getClone().getEntity() && importVmData.getError() != null) {
+                onPropertyChanged(new PropertyChangedEventArgs("InvalidVm")); //$NON-NLS-1$
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String createSearchPattern(Collection<VM> vms) {
         String vm_guidKey = "ID ="; //$NON-NLS-1$
+        String vm_nameKey = "NAME ="; //$NON-NLS-1$
         String orKey = " or "; //$NON-NLS-1$
         StringBuilder searchPattern = new StringBuilder();
         searchPattern.append("VM: "); //$NON-NLS-1$
 
-        final List<VM> list = (List<VM>) value;
-        for (int i = 0; i < list.size(); i++) {
-            VM vm = list.get(i);
-
+        for (VM vm : vms) {
             searchPattern.append(vm_guidKey);
             searchPattern.append(vm.getId().toString());
-            if (i < list.size() - 1) {
-                searchPattern.append(orKey);
-            }
+            searchPattern.append(orKey);
+            searchPattern.append(vm_nameKey);
+            searchPattern.append(vm.getName());
+            searchPattern.append(orKey);
         }
 
+        return searchPattern.substring(0, searchPattern.length() - orKey.length());
+    }
+
+    public void setItems(final Collection<?> value, final Guid storageDomainId) {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        final List<VM> externalVms = (List<VM>) new ArrayList(value);
         Frontend.getInstance().runQuery(VdcQueryType.Search,
-                new SearchParameters(searchPattern.toString(), SearchType.VM),
+                new SearchParameters(createSearchPattern(externalVms), SearchType.VM),
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        List<VM> vmList =
-                                ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        List<VM> vms = ((VdcQueryReturnValue) returnValue).getReturnValue();
+
+                        Set<String> existingNames = new HashSet<>();
+                        for (VM vm : vms) {
+                            existingNames.add(vm.getName());
+                        }
 
                         List<ImportVmData> vmDataList = new ArrayList<>();
-
-                        for (VM vm : (Iterable<VM>) value) {
+                        for (VM vm : externalVms) {
                             ImportVmData vmData = new ImportVmData(vm);
-                            boolean vmExistsInSystem = vmList.contains(vm);
-                            vmData.setExistsInSystem(vmExistsInSystem);
-                            if (vmExistsInSystem) {
+                            if (vms.contains(vm)) {
+                                vmData.setExistsInSystem(true);
                                 vmData.getClone().setEntity(true);
                                 vmData.getClone().setChangeProhibitionReason(ConstantsManager.getInstance()
                                         .getConstants()
                                         .importVMThatExistsInSystemMustClone());
                                 vmData.getClone().setIsChangable(false);
                             }
+
+                            if (!vmData.getClone().getEntity() && existingNames.contains(vm.getName())) {
+                                vmData.setError(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
+                            }
+
                             vmDataList.add(vmData);
                         }
                         ImportVmFromExportDomainModel.super.setItems(vmDataList);
                         doInit(storageDomainId);
                     }
                 }));
-
     }
 
     public void setSuperItems(Collection value) {

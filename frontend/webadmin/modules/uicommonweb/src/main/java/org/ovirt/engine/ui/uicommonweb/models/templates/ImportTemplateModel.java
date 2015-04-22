@@ -56,7 +56,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
     }
 
     @Override
-    public void setItems(final Collection value, final Guid storageDomainId)
+    public void setItems(final Collection<?> value, final Guid storageDomainId)
     {
         String vmt_guidKey = "_VMT_ID ="; //$NON-NLS-1$
         String orKey = " or "; //$NON-NLS-1$
