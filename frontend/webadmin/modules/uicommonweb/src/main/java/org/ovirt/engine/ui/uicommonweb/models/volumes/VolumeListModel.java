@@ -558,13 +558,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 && asyncTask.getStatus() == JobExecutionStatus.STARTED;
                 allowConfigureVolumeSnapshotOptions = volumeEntity.getStatus() == GlusterStatus.UP;
                 allowCreateGeoRepSession = volumeEntity.getStatus() == GlusterStatus.UP;
+                allowCreateSnapshot = isCreateSnapshotAvailable(volumeEntity);
             }
             else {
                 allowStopRebalance = false;
             }
             allowStatusRebalance = getRebalanceStatusAvailability(getSelectedItems());
             allowProfileStatisticsDetails = getProfileStatisticsAvailability(list);
-            allowCreateSnapshot = isCreateSnapshotAvailable(list);
             allowEditSnapshotSchedule = isEditSnapshotScheduleAvailable(list);
         }
         getStartCommand().setIsExecutionAllowed(allowStart);
@@ -591,8 +591,19 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         getNewGeoRepSessionCommand().setIsExecutionAllowed(allowCreateGeoRepSession);
     }
 
-    private boolean isCreateSnapshotAvailable(List<GlusterVolumeEntity> list) {
-        return ((list.size() == 1) && (list.get(0).getStatus() == GlusterStatus.UP));
+    private boolean isCreateSnapshotAvailable(GlusterVolumeEntity volume) {
+        if (volume.getStatus() == GlusterStatus.UP) {
+            List<GlusterBrickEntity> bricks = volume.getBricks();
+            for (GlusterBrickEntity brick : bricks) {
+                if (brick.getStatus() != GlusterStatus.UP) {
+                    return false;
+                }
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private boolean isEditSnapshotScheduleAvailable(List<GlusterVolumeEntity> list) {

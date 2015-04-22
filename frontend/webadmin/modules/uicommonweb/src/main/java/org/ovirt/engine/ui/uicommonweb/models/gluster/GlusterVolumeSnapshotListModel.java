@@ -566,7 +566,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
         snapshot.setDescription(snapshotModel.getDescription().getEntity());
 
         CreateGlusterVolumeSnapshotParameters parameter =
-                new CreateGlusterVolumeSnapshotParameters(snapshot, true);
+                new CreateGlusterVolumeSnapshotParameters(snapshot, false);
 
         snapshotModel.startProgress(null);
         Frontend.getInstance().runAction(VdcActionType.CreateGlusterVolumeSnapshot,
