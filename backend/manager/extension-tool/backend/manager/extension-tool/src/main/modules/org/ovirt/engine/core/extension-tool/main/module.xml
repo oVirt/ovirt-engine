@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.1" name="org.ovirt.engine.core.extension-tool">
+
+  <resources>
+      <resource-root path="extension-tool.jar"/>
+  </resources>
+
+  <dependencies>
+    <module name="org.apache.commons.lang" />
+    <module name="org.ovirt.engine.api.ovirt-engine-extensions-api"/>
+    <module name="org.ovirt.engine.core.extensions-manager"/>
+    <module name="org.ovirt.engine.core.uutils"/>
+    <module name="org.slf4j" />
+  </dependencies>
+</module>

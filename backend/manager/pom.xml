@@ -14,5 +14,6 @@
     <module>dependencies</module>
     <module>modules</module>
     <module>tools</module>
+    <module>extension-tool</module>
   </modules>
 </project>
