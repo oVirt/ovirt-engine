@@ -1899,7 +1899,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private void freeLockExecute() {
         if (releaseLocksAtEndOfExecute || !getSucceeded() ||
-                (!hasTasks() && !(this instanceof IVdsAsyncCommand))) {
+                (noAsyncOperations() && !(this instanceof IVdsAsyncCommand))) {
             freeLock();
         }
     }
