@@ -292,6 +292,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeRebalanceStatus(String volumeName);
 
+    public Map<String, Object> glusterVolumeEmptyCheck(String volumeName);
+
     public Map<String, Object> glusterGeoRepKeysGet();
 
     public Map<String, Object> glusterGeoRepKeysUpdate(String userName, List<String> geoRepPubKeys);

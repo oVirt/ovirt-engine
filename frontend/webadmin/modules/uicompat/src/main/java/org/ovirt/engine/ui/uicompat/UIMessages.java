@@ -474,7 +474,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
         "SLAVE_VOLUME_SHOULD_NOT_BE_SLAVE_OF_ANOTHER_GEO_REP_SESSION", "Destination volume is already a part of another geo replication session.",
         "SLAVE_VOLUME_SHOULD_BE_UP", "Destination volume should be up.",
         "SLAVE_VOLUME_SIZE_TO_BE_AVAILABLE", "Capacity information of the destination volume is not available.",
-        "MASTER_VOLUME_SIZE_TO_BE_AVAILABLE", "Capacity information of the master volume is not available."
+        "MASTER_VOLUME_SIZE_TO_BE_AVAILABLE", "Capacity information of the master volume is not available.",
+        "SLAVE_VOLUME_TO_BE_EMPTY", "Destination volume should be empty.",
+        "NO_UP_SLAVE_SERVER", "No up server in the destination volume"
     })
     String geoRepEligibilityViolations(@Select GlusterGeoRepNonEligibilityReason reason);
 

@@ -134,6 +134,7 @@ public enum VDSCommandType {
     StartRebalanceGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     StopRebalanceGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     SetupGlusterGeoRepMountBroker("org.ovirt.engine.core.vdsbroker.gluster"),
+    CheckEmptyGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     GetGlusterHostsPubKey("org.ovirt.engine.core.vdsbroker.gluster"),
     UpdateGlusterGeoRepKeys("org.ovirt.engine.core.vdsbroker.gluster"),
     CreateGlusterVolumeGeoRepSession("org.ovirt.engine.core.vdsbroker.gluster"),

@@ -57,7 +57,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     private List<GlusterVolumeEntity> getVolumesByClusterId() {
         List<GlusterVolumeEntity> volumeInCluster = new ArrayList<GlusterVolumeEntity>();
 
-        volumeInCluster.add(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_1_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L)));
+        volumeInCluster.add(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_1_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 10000L, 0L)));
         volumeInCluster.add(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_2_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.DOWN, new GlusterVolumeSizeInfo(4000L, 0L, 0L)));
         volumeInCluster.add(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_3_ID(), baseTest.getMASTER_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L)));
         volumeInCluster.add(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_4_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.UP, null));
@@ -76,7 +76,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     }
 
     private List<GlusterVolumeEntity> getExpectedVolumes() {
-        return Collections.singletonList(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_1_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L)));
+        return Collections.singletonList(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_1_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 10000L, 0L)));
     }
 
     private boolean checkEquals(List<GlusterVolumeEntity> actual, List<GlusterVolumeEntity> expected) {

@@ -37,6 +37,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.AlignmentScanReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DevicesVisibilityMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FenceStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostDevListReturnForXmlRpc;
@@ -1198,6 +1199,13 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public BooleanReturnForXmlRpc glusterVolumeEmptyCheck(String volumeName) {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.volumeEmptyCheck").withParameter("volumeName", volumeName).build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new BooleanReturnForXmlRpc(response, "volumeEmptyCheck");
+    }
+
+    @Override
     public GlusterHostsPubKeyReturnForXmlRpc glusterGeoRepKeysGet() {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepKeysGet").build();
         Map<String, Object> response = new FutureMap(this.client, request);
@@ -1867,4 +1875,5 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
+
 }

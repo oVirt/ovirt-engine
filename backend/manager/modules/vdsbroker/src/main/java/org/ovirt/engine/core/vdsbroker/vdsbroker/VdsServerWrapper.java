@@ -1122,6 +1122,17 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public BooleanReturnForXmlRpc glusterVolumeEmptyCheck(String volumeName) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeEmptyCheck(volumeName);
+            BooleanReturnForXmlRpc wrapper = new BooleanReturnForXmlRpc(xmlRpcReturnValue, "volumeEmptyCheck");
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public GlusterHostsPubKeyReturnForXmlRpc glusterGeoRepKeysGet() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterGeoRepKeysGet();
