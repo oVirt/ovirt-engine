@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -18,8 +19,9 @@ import java.util.Map;
 public class EmulatedMachineFilterPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(EmulatedMachineFilterPolicyUnit.class);
 
-    public EmulatedMachineFilterPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public EmulatedMachineFilterPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override

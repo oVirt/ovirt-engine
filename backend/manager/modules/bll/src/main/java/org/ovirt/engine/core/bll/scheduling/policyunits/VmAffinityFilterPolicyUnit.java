@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -25,19 +27,21 @@ import org.slf4j.LoggerFactory;
 public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(VmAffinityFilterPolicyUnit.class);
 
-    public VmAffinityFilterPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public VmAffinityFilterPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override
     public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
-        return getAcceptableHosts(true, hosts, vm, messages);
+        return getAcceptableHosts(true, hosts, vm, messages, getPendingResourceManager());
     }
 
     public static List<VDS> getAcceptableHosts(boolean enforcing,
             List<VDS> hosts,
             VM vm,
-            PerHostMessages messages) {
+            PerHostMessages messages,
+            PendingResourceManager pendingResourceManager) {
         List<AffinityGroup> affinityGroups = getAffinityGroupDao().getAllAffinityGroupsByVmId(vm.getId());
         // no affinity groups found for VM return all hosts
         if (affinityGroups.isEmpty()) {
@@ -73,6 +77,14 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
         Map<Guid, VM> runningVMsMap = new HashMap<>();
         for (VM iter : getVmDao().getAllRunningByCluster(vm.getVdsGroupId())) {
             runningVMsMap.put(iter.getId(), iter);
+        }
+
+        // Update the VM list with pending VMs
+        for (PendingVM resource: pendingResourceManager.pendingResources(PendingVM.class)) {
+            VM pendingVm = new VM();
+            pendingVm.setId(resource.getVm());
+            pendingVm.setRunOnVds(resource.getHost());
+            runningVMsMap.put(pendingVm.getId(), pendingVm);
         }
 
         Set<Guid> acceptableHosts = new HashSet<>();

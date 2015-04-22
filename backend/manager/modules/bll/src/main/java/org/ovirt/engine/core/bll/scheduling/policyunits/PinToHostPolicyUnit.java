@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -14,8 +15,9 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 
 public class PinToHostPolicyUnit extends PolicyUnitImpl {
 
-    public PinToHostPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public PinToHostPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override

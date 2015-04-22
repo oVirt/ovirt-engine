@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.CinderBroker;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
@@ -56,7 +57,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected boolean _isRerun;
     private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
     private final List<Guid> runVdsList = new ArrayList<>();
-    private Guid lastDecreasedVds;
 
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
@@ -294,16 +294,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     protected final void decreasePendingVm(VmStatic vm) {
         Guid vdsId = getCurrentVdsId();
-        if (vdsId == null || vdsId.equals(lastDecreasedVds)) {
-            log.debug("PendingVms for the guest '{}' running on host '{}' was already released, not releasing again",
-                    vm.getName(), vdsId);
-            // do not decrease twice..
-            return;
-        }
-
-        lastDecreasedVds = vdsId;
-        VmHandler.decreasePendingVm(vm, vdsId);
-
+        SchedulingManager.getInstance().clearPendingVm(vm);
         getBlockingQueue(vdsId).offer(Boolean.TRUE);
     }
 

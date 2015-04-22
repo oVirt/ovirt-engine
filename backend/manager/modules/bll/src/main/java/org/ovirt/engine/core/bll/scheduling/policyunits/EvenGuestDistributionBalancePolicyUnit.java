@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
@@ -21,8 +22,9 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
     private final int highVmCountDefault;
     protected static final Logger log = LoggerFactory.getLogger(EvenGuestDistributionBalancePolicyUnit.class);
 
-    public EvenGuestDistributionBalancePolicyUnit (PolicyUnit policyUnit) {
-        super(policyUnit);
+    public EvenGuestDistributionBalancePolicyUnit (PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
         spmVmGraceDefault = Config.<Integer> getValue(ConfigValues.SpmVmGraceForEvenGuestDistribute);
         migrationThresholdDefault = Config.<Integer> getValue(ConfigValues.MigrationThresholdForEvenGuestDistribute);
         highVmCountDefault = Config.<Integer> getValue(ConfigValues.HighVmCountForEvenGuestDistribute);

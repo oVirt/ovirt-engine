@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -24,6 +26,13 @@ import org.slf4j.LoggerFactory;
 public class HaReservationHandling {
 
     private static final Logger log = LoggerFactory.getLogger(HaReservationHandling.class);
+
+    private final PendingResourceManager pendingResourceManager;
+
+    public HaReservationHandling(PendingResourceManager pendingResourceManager) {
+        this.pendingResourceManager = pendingResourceManager;
+    }
+
     /**
      * @param cluster
      *            - Cluster to check
@@ -172,7 +181,8 @@ public class HaReservationHandling {
             innerUnutilizedCpuRamPair.setFirst(hostFreeCpu);
 
             // Get available memory for the Host, round down to int
-            int hostFreeMem = (int) host.getMaxSchedulingMemory();
+            int hostFreeMem = (int) host.getMaxSchedulingMemory()
+                    - PendingMemory.collectForHost(pendingResourceManager, host.getId());
             innerUnutilizedCpuRamPair.setSecond(hostFreeMem);
 
             Pair<Guid, Pair<Integer, Integer>> outerUnutilizedCpuRamPair =

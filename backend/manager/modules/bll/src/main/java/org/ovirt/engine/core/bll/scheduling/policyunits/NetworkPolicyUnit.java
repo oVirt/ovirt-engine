@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -34,8 +35,9 @@ import org.slf4j.LoggerFactory;
 public class NetworkPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(NetworkPolicyUnit.class);
 
-    public NetworkPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public NetworkPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override

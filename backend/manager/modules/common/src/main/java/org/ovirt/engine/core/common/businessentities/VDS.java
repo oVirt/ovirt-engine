@@ -557,7 +557,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setMemCommited(Integer value) {
         vdsDynamic.setMemCommited(value);
-        calculateFreeVirtualMemory();
+        calculateFreeSchedulingMemoryCache();
     }
 
     public Integer getVmActive() {
@@ -891,6 +891,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         maxVdsMemoryOverCommit = value;
     }
 
+    /**
+     * Get the number of CPUs that were scheduled but not yet
+     * assigned to a running VM.
+     *
+     * This field is a cache, use for reporting only.
+     * The authoritative source for current value is the
+     * {@link org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager}
+     */
     public Integer getPendingVcpusCount() {
         return vdsDynamic.getPendingVcpusCount();
     }
@@ -899,12 +907,21 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vdsDynamic.setPendingVcpusCount(value);
     }
 
+    /**
+     * Get the amount of memory that was scheduled but not yet
+     * assigned to a running VM.
+     *
+     * This field is a cache, use for reporting only.
+     * The authoritative source for current value is the
+     * {@link org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager}
+     */
     public int getPendingVmemSize() {
         return vdsDynamic.getPendingVmemSize();
     }
 
     public void setPendingVmemSize(int value) {
         vdsDynamic.setPendingVmemSize(value);
+        calculateFreeSchedulingMemoryCache();
     }
 
     public Boolean getNetConfigDirty() {
@@ -1180,14 +1197,23 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         this.fenceAgents = fenceAgents;
     }
 
-    public void calculateFreeVirtualMemory() {
+    public void calculateFreeSchedulingMemoryCache() {
         if (getMemCommited() != null && getPhysicalMemMb() != null && getReservedMem() != null) {
-            maxSchedulingMemory = (getMaxVdsMemoryOverCommit() * getPhysicalMemMb() / 100.0f)
-                    - getMemCommited()
-                    - getReservedMem()
-                    - getPendingVmemSize();
+            maxSchedulingMemory = getFreeVirtualMemory() - getPendingVmemSize();
             // avoid negative values
             maxSchedulingMemory = maxSchedulingMemory > 0 ? maxSchedulingMemory : 0;
+        }
+    }
+
+    public float getFreeVirtualMemory() {
+        if (getMemCommited() != null && getPhysicalMemMb() != null && getReservedMem() != null) {
+            float freeMemory = (getMaxVdsMemoryOverCommit() * getPhysicalMemMb() / 100.0f)
+                    - getMemCommited()
+                    - getReservedMem();
+            // avoid negative values
+            return freeMemory > 0 ? freeMemory : 0;
+        } else {
+            return 0;
         }
     }
 

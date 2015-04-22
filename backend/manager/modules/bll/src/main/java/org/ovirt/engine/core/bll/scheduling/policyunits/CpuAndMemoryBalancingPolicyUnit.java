@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUsageComparator;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -48,9 +49,9 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      */
     protected static final String HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED = "MinFreeMemoryForUnderUtilized";
 
-
-    public CpuAndMemoryBalancingPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public CpuAndMemoryBalancingPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override

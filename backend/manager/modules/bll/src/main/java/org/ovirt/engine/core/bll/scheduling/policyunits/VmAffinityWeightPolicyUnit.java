@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
@@ -14,8 +15,9 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmAffinityWeightPolicyUnit extends PolicyUnitImpl {
-    public VmAffinityWeightPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public VmAffinityWeightPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override
@@ -25,7 +27,8 @@ public class VmAffinityWeightPolicyUnit extends PolicyUnitImpl {
                 VmAffinityFilterPolicyUnit.getAcceptableHosts(false,
                         hosts,
                         vm,
-                        new PerHostMessages());
+                        new PerHostMessages(),
+                        getPendingResourceManager());
         Map<Guid, VDS> acceptableHostsMap = new HashMap<>();
         if (acceptableHostsList != null) {
             for (VDS acceptableHost : acceptableHostsList) {

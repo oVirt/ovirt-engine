@@ -67,6 +67,13 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private Integer vmsCoresCount;
 
+    /**
+     * Cached (best effort) value of the number of CPUs scheduled
+     * as part of not yet running VM.
+     *
+     * Do not use for anything critical as scheduling, ask for the
+     * exact data using {@link org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager}.
+     */
     private Integer pendingVcpusCount;
 
     private Integer cpuSockets;
@@ -124,6 +131,13 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private NonOperationalReason nonOperationalReason;
 
+    /**
+     * Cached (best effort) amount of memory scheduled
+     * as part of not yet running VM.
+     *
+     * Do not use for anything critical as scheduling, ask for the
+     * exact data using {@link org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager}.
+     */
     private Integer pendingVmemSize;
 
     private RpmVersion rpmVersion;

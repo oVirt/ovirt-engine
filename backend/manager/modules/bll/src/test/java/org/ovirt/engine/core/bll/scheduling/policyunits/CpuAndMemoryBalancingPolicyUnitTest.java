@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -29,7 +30,8 @@ public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest 
             Map<Guid, VM> vms)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
             InstantiationException, ParseException {
-        T unit = spy(unitType.getConstructor(PolicyUnit.class).newInstance((PolicyUnit)null));
+        T unit = spy(unitType.getConstructor(PolicyUnit.class, PendingResourceManager.class)
+                .newInstance(null, null));
 
         // mock current time
         doReturn(TIME_FORMAT.parse("2015-01-01 12:00:00")).when(unit).getTime();

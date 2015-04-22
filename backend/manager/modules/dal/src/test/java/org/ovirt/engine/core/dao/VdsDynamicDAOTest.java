@@ -136,36 +136,6 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testSmartUpdatePartialVds() {
-        int vmCount = 1;
-        int pendingVcpusCount = 5;
-        int pendingVmemSize = 25;
-        int memCommited = 50;
-        int vmsCoresCount = 15;
-        VdsDynamic before = dao.get(existingVds.getId());
-        before.setVmCount(before.getVmCount() + vmCount);
-        before.setPendingVcpusCount(before.getPendingVcpusCount() + pendingVcpusCount);
-        before.setPendingVmemSize(before.getPendingVmemSize() + pendingVmemSize);
-        before.setMemCommited(before.getMemCommited() + memCommited + before.getGuestOverhead());
-        before.setVmsCoresCount(before.getVmsCoresCount() + vmsCoresCount);
-        dao.updatePartialVdsDynamicCalc(before.getId(),
-                vmCount,
-                pendingVcpusCount,
-                pendingVmemSize,
-                memCommited,
-                vmsCoresCount);
-        VdsDynamic after = dao.get(existingVds.getId());
-        assertEquals(before, after);
-
-        vmCount = before.getVmCount() + 1;
-        before.setVmCount(0);
-        before.setMemCommited(before.getMemCommited() - memCommited - before.getGuestOverhead());
-        dao.updatePartialVdsDynamicCalc(before.getId(), -vmCount, 0, 0, -memCommited, 0);
-        after = dao.get(existingVds.getId());
-        assertEquals(before, after);
-    }
-
-    @Test
     public void testGetIdsOfHostsWithStatus() {
         List<Guid> hostIds = dao.getIdsOfHostsWithStatus(VDSStatus.Up);
         assertEquals(5, hostIds.size());

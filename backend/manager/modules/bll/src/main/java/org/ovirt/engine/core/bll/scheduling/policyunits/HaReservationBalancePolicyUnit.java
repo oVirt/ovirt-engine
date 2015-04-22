@@ -9,6 +9,7 @@ import java.util.Random;
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.HaReservationHandling;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -36,8 +37,9 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
     private static final int DEFAULT_OVER_UTILIZATION_VALUE = 200;
     private static final long serialVersionUID = 4926515666890804243L;
 
-    public HaReservationBalancePolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public HaReservationBalancePolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override

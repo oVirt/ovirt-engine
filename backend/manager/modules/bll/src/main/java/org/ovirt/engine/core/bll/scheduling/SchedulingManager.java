@@ -23,6 +23,10 @@ import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscoveryThread;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -30,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -51,12 +56,16 @@ import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SchedulingManager {
     private static final Logger log = LoggerFactory.getLogger(SchedulingManager.class);
     private AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private ResourceManager resourceManager = ResourceManager.getInstance();
+    private PendingResourceManager pendingResourceManager = new PendingResourceManager(resourceManager);
+
     /**
      * singleton
      */
@@ -99,6 +108,10 @@ public class SchedulingManager {
     private SchedulingManager() {
         policyMap = new ConcurrentHashMap<>();
         policyUnits = new ConcurrentHashMap<>();
+    }
+
+    private PendingResourceManager getPendingResourceManager() {
+        return pendingResourceManager;
     }
 
     public void init() {
@@ -180,9 +193,9 @@ public class SchedulingManager {
         List<PolicyUnit> allPolicyUnits = getPolicyUnitDao().getAll();
         for (PolicyUnit policyUnit : allPolicyUnits) {
             if (policyUnit.isInternal()) {
-                policyUnits.put(policyUnit.getId(), PolicyUnitImpl.getPolicyUnitImpl(policyUnit));
+                policyUnits.put(policyUnit.getId(), PolicyUnitImpl.getPolicyUnitImpl(policyUnit, getPendingResourceManager()));
             } else {
-                policyUnits.put(policyUnit.getId(), new PolicyUnitImpl(policyUnit));
+                policyUnits.put(policyUnit.getId(), new PolicyUnitImpl(policyUnit, getPendingResourceManager()));
             }
         }
     }
@@ -259,15 +272,16 @@ public class SchedulingManager {
             List<String> messages,
             VdsFreeMemoryChecker memoryChecker,
             String correlationId) {
-        clusterLockMap.putIfAbsent(cluster.getId(), new Semaphore(1));
+        prepareClusterLock(cluster.getId());
         try {
             log.debug("Scheduling started, correlation Id: {}", correlationId);
             checkAllowOverbooking(cluster);
-            clusterLockMap.get(cluster.getId()).acquire();
+            lockCluster(cluster.getId());
             List<VDS> vdsList = getVdsDAO()
                     .getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
             updateInitialHostList(vdsList, hostBlackList, true);
             updateInitialHostList(vdsList, hostWhiteList, false);
+            refreshCachedPendingValues(vdsList);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             Map<String, String> parameters = createClusterPolicyParameters(cluster);
 
@@ -288,15 +302,12 @@ public class SchedulingManager {
 
             Guid bestHost = selectBestHost(cluster, vm, destHostId, vdsList, policy, parameters);
 
-            getVdsDynamicDao().updatePartialVdsDynamicCalc(
-                    bestHost,
-                    1,
-                    vm.getNumOfCpus(),
-                    vm.getMinAllocatedMem(),
-                    0,
-                    0);
-
             if (bestHost != null) {
+                getPendingResourceManager().addPending(new PendingCpuCores(bestHost, vm, vm.getNumOfCpus()));
+                getPendingResourceManager().addPending(new PendingMemory(bestHost, vm, vm.getMinAllocatedMem()));
+                getPendingResourceManager().addPending(new PendingVM(bestHost, vm));
+                getPendingResourceManager().notifyHostManagers(bestHost);
+
                 VfScheduler vfScheduler = Injector.get(VfScheduler.class);
                 Map<Guid, String> passthroughVnicToVfMap = vfScheduler.getVnicToVfMap(vm.getId(), bestHost);
                 if (passthroughVnicToVfMap != null && !passthroughVnicToVfMap.isEmpty()) {
@@ -309,18 +320,46 @@ public class SchedulingManager {
             log.error("interrupted", e);
             return null;
         } finally {
-            // ensuring setting the semaphore permits to 1
-            synchronized (clusterLockMap.get(cluster.getId())) {
-                clusterLockMap.get(cluster.getId()).drainPermits();
-                clusterLockMap.get(cluster.getId()).release();
-            }
+            releaseCluster(cluster.getId());
+
             log.debug("Scheduling ended, correlation Id: {}", correlationId);
         }
+    }
+
+    private void releaseCluster(Guid cluster) {
+        // ensuring setting the semaphore permits to 1
+        synchronized (clusterLockMap.get(cluster)) {
+            clusterLockMap.get(cluster).drainPermits();
+            clusterLockMap.get(cluster).release();
+        }
+    }
+
+    private void lockCluster(Guid cluster) throws InterruptedException {
+        clusterLockMap.get(cluster).acquire();
+    }
+
+    private void prepareClusterLock(Guid cluster) {
+        clusterLockMap.putIfAbsent(cluster, new Semaphore(1));
     }
 
     private void markVfsAsUsedByVm(Guid hostId, Guid vmId, Map<Guid, String> passthroughVnicToVfMap) {
         HostNicVfsConfigHelper hostNicVfsConfigHelper = Injector.get(HostNicVfsConfigHelper.class);
         hostNicVfsConfigHelper.setVmIdOnVfs(hostId, vmId, new HashSet<>(passthroughVnicToVfMap.values()));
+    }
+
+    /**
+     * Refresh cached VDS pending fields with the current pending
+     * values from PendingResourceManager.
+     * @param vdsList - list of candidate hosts
+     */
+    private void refreshCachedPendingValues(List<VDS> vdsList) {
+        for (VDS vds: vdsList) {
+            int pendingMemory = PendingMemory.collectForHost(getPendingResourceManager(), vds.getId());
+            int pendingCpuCount = PendingCpuCores.collectForHost(getPendingResourceManager(), vds.getId());
+
+            vds.setPendingVcpusCount(pendingCpuCount);
+            vds.setPendingVmemSize(pendingMemory);
+        }
     }
 
     /**
@@ -413,6 +452,7 @@ public class SchedulingManager {
                 .getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
         updateInitialHostList(vdsList, vdsBlackList, true);
         updateInitialHostList(vdsList, vdsWhiteList, false);
+        refreshCachedPendingValues(vdsList);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
         Map<String, String> parameters = createClusterPolicyParameters(cluster);
 
@@ -820,7 +860,7 @@ public class SchedulingManager {
         log.debug("HA Reservation check timer entered.");
         List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAll();
         if (clusters != null) {
-            HaReservationHandling haReservationHandling = new HaReservationHandling();
+            HaReservationHandling haReservationHandling = new HaReservationHandling(getPendingResourceManager());
             for (VDSGroup cluster : clusters) {
                 if (cluster.supportsHaReservation()) {
                     List<VDS> returnedFailedHosts = new ArrayList<>();
@@ -976,4 +1016,36 @@ public class SchedulingManager {
         }
     }
 
+    /**
+     * Clear pending records for a VM.
+     * This operation locks the cluster to make sure a possible scheduling operation is not under way.
+     */
+    public void clearPendingVm(VmStatic vm) {
+        prepareClusterLock(vm.getVdsGroupId());
+        try {
+            lockCluster(vm.getVdsGroupId());
+            getPendingResourceManager().clearVm(vm);
+        } catch (InterruptedException e) {
+            log.warn("Interrupted.. pending counters can be out of sync");
+        } finally {
+            releaseCluster(vm.getVdsGroupId());
+        }
+    }
+
+
+    /**
+     * Clear pending records for a Host.
+     * This operation locks the cluster to make sure a possible scheduling operation is not under way.
+     */
+    public void clearPendingHost(VDS host) {
+        prepareClusterLock(host.getVdsGroupId());
+        try {
+            lockCluster(host.getVdsGroupId());
+            getPendingResourceManager().clearHost(host);
+        } catch (InterruptedException e) {
+            log.warn("Interrupted.. pending counters can be out of sync");
+        } finally {
+            releaseCluster(host.getVdsGroupId());
+        }
+    }
 }

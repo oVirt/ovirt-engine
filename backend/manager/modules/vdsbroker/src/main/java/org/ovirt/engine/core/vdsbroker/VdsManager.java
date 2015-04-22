@@ -444,6 +444,20 @@ public class VdsManager {
     }
 
     /**
+     * Publish the current pending resource summary
+     *
+     * @param pendingMemory - scheduled memory in MiB
+     * @param pendingCpuCount - scheduled number of CPUs
+     */
+    public void updatePendingData(int pendingMemory, int pendingCpuCount) {
+        synchronized (getLockObj()) {
+            cachedVds.setPendingVcpusCount(pendingCpuCount);
+            cachedVds.setPendingVmemSize(pendingMemory);
+            updateDynamicData(cachedVds.getDynamicData());
+        }
+    }
+
+    /**
      * Save or update numa data to DB
      *
      * @param vds

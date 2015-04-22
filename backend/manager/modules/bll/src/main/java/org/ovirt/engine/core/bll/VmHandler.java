@@ -784,17 +784,6 @@ public class VmHandler {
         return validationResult;
     }
 
-    public static void decreasePendingVm(VmStatic vm, Guid vdsId) {
-        decreasePendingResources(vdsId, vm.getNumOfCpus(), vm.getMinAllocatedMem(), vm.getName());
-    }
-
-    private static void decreasePendingResources(Guid vdsId, int numOfCpus, int minAllocatedMem, String vmName) {
-        getVdsDynamicDao().updatePartialVdsDynamicCalc(vdsId, 0, -numOfCpus, -minAllocatedMem, 0, 0);
-
-        log.debug("Decreasing vds '{}' pending vcpu count by {} and vmem size by {} (Vm '{}')",
-                vdsId, numOfCpus, minAllocatedMem, vmName);
-    }
-
     private static VdsDynamicDAO getVdsDynamicDao() {
         return DbFacade.getInstance().getVdsDynamicDao();
     }

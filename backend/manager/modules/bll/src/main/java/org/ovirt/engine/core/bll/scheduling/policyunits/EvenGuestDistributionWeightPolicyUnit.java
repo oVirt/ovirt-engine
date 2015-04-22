@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
@@ -16,8 +17,10 @@ import java.util.Map;
 
 public class EvenGuestDistributionWeightPolicyUnit extends PolicyUnitImpl {
     final int spmVmGrace;
-    public EvenGuestDistributionWeightPolicyUnit (PolicyUnit policyUnit) {
-        super(policyUnit);
+
+    public EvenGuestDistributionWeightPolicyUnit (PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
         spmVmGrace = Config.<Integer> getValue(ConfigValues.SpmVmGraceForEvenGuestDistribute);
     }
 

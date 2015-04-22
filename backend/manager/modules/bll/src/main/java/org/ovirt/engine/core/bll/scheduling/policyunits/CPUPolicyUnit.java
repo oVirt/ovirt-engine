@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -20,8 +21,9 @@ import org.slf4j.LoggerFactory;
 public class CPUPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(CPUPolicyUnit.class);
 
-    public CPUPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public CPUPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override

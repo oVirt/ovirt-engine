@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -20,8 +21,9 @@ import org.slf4j.LoggerFactory;
 public class MigrationPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(MigrationPolicyUnit.class);
 
-    public MigrationPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public MigrationPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     private boolean validateDestinationVdsAddress(VDS srcVds, VDS dstVds) {

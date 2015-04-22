@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.HaReservationHandling;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -26,8 +27,9 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
     private static final int RATIO_FACTOR = 100;
     private static final int DEFAULT_SCORE = 0;
 
-    public HaReservationWeightPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public HaReservationWeightPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override

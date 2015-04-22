@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -33,8 +35,9 @@ import org.slf4j.LoggerFactory;
 public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {
     private static final Logger log = LoggerFactory.getLogger(PowerSavingBalancePolicyUnit.class);
 
-    public PowerSavingBalancePolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public PowerSavingBalancePolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override
@@ -142,8 +145,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             if (vds.getStatus() == VDSStatus.Up
                     && vds.getVmCount() == 0
                     && vds.getVmMigrating() == 0
-                    && vds.getPendingVmemSize() == 0
-                    && vds.getPendingVcpusCount() == 0) {
+                    && PendingVM.collectForHost(getPendingResourceManager(), vds.getId()).size() == 0) {
                 emptyHosts.add(vds);
             }
             else if (vds.isPowerManagementControlledByPolicy() && !vds.isDisablePowerManagementPolicy()) {

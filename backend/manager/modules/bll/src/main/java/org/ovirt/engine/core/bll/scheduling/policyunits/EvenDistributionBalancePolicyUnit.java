@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -14,8 +15,9 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
 
     private static final String HIGH_UTILIZATION = "HighUtilization";
 
-    public EvenDistributionBalancePolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public EvenDistributionBalancePolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     protected int getHighUtilizationDefaultValue() {

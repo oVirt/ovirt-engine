@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -27,8 +28,9 @@ import org.slf4j.LoggerFactory;
 public class MemoryPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(MemoryPolicyUnit.class);
 
-    public MemoryPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public MemoryPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override

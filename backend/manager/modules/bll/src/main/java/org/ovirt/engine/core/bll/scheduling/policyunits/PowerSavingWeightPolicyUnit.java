@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -14,8 +15,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class PowerSavingWeightPolicyUnit extends EvenDistributionWeightPolicyUnit {
 
-    public PowerSavingWeightPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public PowerSavingWeightPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override

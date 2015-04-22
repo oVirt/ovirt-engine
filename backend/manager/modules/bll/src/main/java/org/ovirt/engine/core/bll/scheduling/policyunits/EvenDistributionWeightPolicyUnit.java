@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -19,8 +21,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
 
-    public EvenDistributionWeightPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public EvenDistributionWeightPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     /**
@@ -35,7 +38,7 @@ public class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
         int spmCpu = (vds.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
                 .<Integer> getValue(ConfigValues.SpmVCpuConsumption);
         double hostCpu = vds.getUsageCpuPercent();
-        double pendingVcpus = vds.getPendingVcpusCount();
+        double pendingVcpus = PendingCpuCores.collectForHost(getPendingResourceManager(), vds.getId());
 
         return (hostCpu / vcpu) + (pendingVcpus + vm.getNumOfCpus() + spmCpu) / hostCores;
     }
@@ -44,8 +47,7 @@ public class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
         int score = MaxSchedulerWeight - 1;
         Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
         if (effectiveCpuCores != null
-                && vds.getUsageCpuPercent() != null
-                && vds.getPendingVcpusCount() != null) {
+                && vds.getUsageCpuPercent() != null) {
             // round the result and adding one to avoid zero
             score = Math.min((int) Math.round(
                     calcDistributeMetric(vds, vm, effectiveCpuCores)) + 1, MaxSchedulerWeight);

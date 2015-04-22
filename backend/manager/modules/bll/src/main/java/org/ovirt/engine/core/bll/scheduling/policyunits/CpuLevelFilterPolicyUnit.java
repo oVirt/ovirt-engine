@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -20,8 +21,9 @@ import org.ovirt.engine.core.compat.Version;
 public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(CpuLevelFilterPolicyUnit.class);
 
-    public CpuLevelFilterPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public CpuLevelFilterPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     @Override

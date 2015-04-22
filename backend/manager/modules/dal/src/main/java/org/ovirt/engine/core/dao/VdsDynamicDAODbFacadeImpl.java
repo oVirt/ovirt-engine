@@ -168,25 +168,6 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
     }
 
     @Override
-    public void updatePartialVdsDynamicCalc(Guid id,
-            int vmCount,
-            int pendingVcpusCount,
-            int pendingVmemSize,
-            int memCommited,
-            int vmsCoresCount) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_guid", id)
-                .addValue("vmCount", vmCount)
-                .addValue("pendingVcpusCount", pendingVcpusCount)
-                .addValue("pendingVmemSize", pendingVmemSize)
-                .addValue("memCommited", memCommited)
-                .addValue("vmsCoresCount", vmsCoresCount);
-
-        getCallsHandler().executeModification("UpdatePartialVdsDynamicCalc", parameterSource);
-
-    }
-
-    @Override
     public void updateVdsDynamicPowerManagementPolicyFlag(Guid id,
                                                           boolean controlledByPmPolicy) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()

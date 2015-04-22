@@ -33,6 +33,7 @@ public class SlaValidatorTest {
         vds.setMaxVdsMemoryOverCommit(200); // 200% mem overcommit
 
         VM vm = new VM();
+        vm.setId(Guid.newGuid());
 
         // vmMem < hostMem (pass)
         vm.setMinAllocatedMem(8800);

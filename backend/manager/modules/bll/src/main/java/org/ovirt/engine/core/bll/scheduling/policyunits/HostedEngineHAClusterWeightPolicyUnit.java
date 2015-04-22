@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -15,8 +16,9 @@ public class HostedEngineHAClusterWeightPolicyUnit extends PolicyUnitImpl {
     private static int DEFAULT_WEIGHT = 1;
     private static int MAXIMUM_HA_SCORE = 2400;
 
-    public HostedEngineHAClusterWeightPolicyUnit(PolicyUnit policyUnit) {
-        super(policyUnit);
+    public HostedEngineHAClusterWeightPolicyUnit(PolicyUnit policyUnit,
+            PendingResourceManager pendingResourceManager) {
+        super(policyUnit, pendingResourceManager);
     }
 
     void fillDefaultScores(List<VDS> hosts, List<Pair<Guid, Integer>> scores) {
