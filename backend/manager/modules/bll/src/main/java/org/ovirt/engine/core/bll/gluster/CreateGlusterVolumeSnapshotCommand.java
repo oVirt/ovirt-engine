@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeSnapshotPa
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -196,6 +197,13 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
 
         if (getDbFacade().getGlusterVolumeSnapshotDao().getByName(getGlusterVolumeId(), snapshot.getSnapshotName()) != null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SNAPSHOT_ALREADY_EXISTS);
+        }
+
+        List<GlusterBrickEntity> bricks = volume.getBricks();
+        for (GlusterBrickEntity brick : bricks) {
+            if (!brick.isOnline()) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN);
+            }
         }
 
         for (GlusterGeoRepSession session : georepSessions) {
