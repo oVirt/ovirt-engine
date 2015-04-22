@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.presenter.SetDynamicTabAccessibleEvent;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.action.AbstractButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
+import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityType;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunctionResultHelper;
@@ -33,6 +34,7 @@ import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 /**
  * Contains UI related functionality exposed to UI plugins through the plugin API.
@@ -44,13 +46,17 @@ public class PluginUiFunctions implements HasHandlers {
     private final DynamicUrlContentTabProxyFactory dynamicUrlContentTabProxyFactory;
     private final Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider;
 
+    private final WebAdminPlaceManager placeManager;
+
     @Inject
     public PluginUiFunctions(EventBus eventBus,
             DynamicUrlContentTabProxyFactory dynamicUrlContentTabProxyFactory,
-            Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider) {
+            Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider,
+            WebAdminPlaceManager placeManager) {
         this.eventBus = eventBus;
         this.dynamicUrlContentTabProxyFactory = dynamicUrlContentTabProxyFactory;
         this.dynamicUrlContentPopupPresenterWidgetProvider = dynamicUrlContentPopupPresenterWidgetProvider;
+        this.placeManager = placeManager;
     }
 
     @Override
@@ -233,6 +239,18 @@ public class PluginUiFunctions implements HasHandlers {
             public void execute() {
                 CloseDynamicPopupEvent.fire(PluginUiFunctions.this,
                         dialogToken);
+            }
+        });
+    }
+
+    /**
+     * Reveals the given application place.
+     */
+    public void revealPlace(final String placeToken) {
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                placeManager.revealPlace(new PlaceRequest.Builder().nameToken(placeToken).build());
             }
         });
     }
