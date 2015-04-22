@@ -197,18 +197,27 @@ public class CoCoAsyncTaskHelper {
             public Integer runInTransaction() {
                 AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(taskId);
                 int retVal = DbFacade.getInstance().getAsyncTaskDao().remove(taskId);
-                if (asyncTask != null && !Guid.isNullOrEmpty(asyncTask.getCommandId())) {
-                    CommandEntity cmdEntity = coco.getCommandEntity(asyncTask.getCommandId());
-                    if (cmdEntity != null && !cmdEntity.isCallbackEnabled()) {
-                        coco.removeCommand(asyncTask.getCommandId());
-                        if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
-                            coco.removeCommand(asyncTask.getRootCommandId());
-                        }
+                if (shouldRemoveCommand(asyncTask)) {
+                    coco.removeCommand(asyncTask.getCommandId());
+                    if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
+                        coco.removeCommand(asyncTask.getRootCommandId());
                     }
                 }
+
                 return retVal;
             }
         });
+    }
+
+    private boolean shouldRemoveCommand(AsyncTask asyncTask) {
+        if (asyncTask == null || Guid.isNullOrEmpty(asyncTask.getCommandId())) {
+            return false;
+        }
+
+        CommandEntity cmdEntity = coco.getCommandEntity(asyncTask.getCommandId());
+        CommandEntity parentEntity = coco.getCommandEntity(asyncTask.getRootCommandId());
+        return (cmdEntity != null && !cmdEntity.isCallbackEnabled() &&
+                (parentEntity == null || !parentEntity.isCallbackEnabled()));
     }
 
     public AsyncTask getByVdsmTaskId(Guid vdsmTaskId) {
@@ -227,15 +236,13 @@ public class CoCoAsyncTaskHelper {
             public Integer runInTransaction() {
                 AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(vdsmTaskId);
                 int retVal = DbFacade.getInstance().getAsyncTaskDao().removeByVdsmTaskId(vdsmTaskId);
-                if (asyncTask != null && !Guid.isNullOrEmpty(asyncTask.getCommandId())) {
-                    CommandEntity cmdEntity = coco.getCommandEntity(asyncTask.getCommandId());
-                    if (cmdEntity != null && !cmdEntity.isCallbackEnabled()) {
-                        coco.removeCommand(asyncTask.getCommandId());
-                        if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
-                            coco.removeCommand(asyncTask.getRootCommandId());
-                        }
+                if (shouldRemoveCommand(asyncTask)) {
+                    coco.removeCommand(asyncTask.getCommandId());
+                    if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
+                        coco.removeCommand(asyncTask.getRootCommandId());
                     }
                 }
+
                 return retVal;
             }
         });
