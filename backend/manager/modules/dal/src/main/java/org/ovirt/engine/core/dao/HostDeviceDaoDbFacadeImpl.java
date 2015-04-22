@@ -109,6 +109,12 @@ public class HostDeviceDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 getCustomMapSqlParameterSource().addValue("host_id", hostId));
     }
 
+    @Override
+    public void cleanDownVms() {
+        getCallsHandler().executeModification("CleanDownVms",
+                getCustomMapSqlParameterSource());
+    }
+
     private static abstract class BaseHostDeviceRowMapper<T extends HostDevice> implements RowMapper<T> {
 
         protected void map(ResultSet rs, HostDevice device) throws SQLException{

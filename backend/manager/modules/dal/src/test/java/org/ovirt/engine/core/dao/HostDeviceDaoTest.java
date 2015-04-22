@@ -189,6 +189,25 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
         assertEquals(before, after);
     }
 
+    @Test
+    public void cleanDownVmsTest() {
+        HostDevice device = getNetworkDevice();
+        HostDeviceId deviceId = device.getId();
+
+        // Setting an id of VM with <code>VMStatus.Down</code>
+        Guid vmId = FixturesTool.VM_WITH_NO_ATTACHED_DISKS;
+        dao.setVmIdOnHostDevice(deviceId, vmId);
+
+        device = dao.get(deviceId);
+        assertNotNull(device);
+        assertEquals(vmId, device.getVmId());
+
+        dao.cleanDownVms();
+
+        device = dao.get(deviceId);
+        assertNull(device.getVmId());
+    }
+
     private HostDevice getNetworkDevice() {
         HostDeviceId netDeviceId =
                 new HostDeviceId(FixturesTool.NETWORK_HOST_DEVICE_HOST_ID, FixturesTool.NETWORK_HOST_DEVICE_NAME);

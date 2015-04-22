@@ -12,12 +12,16 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 
 @ApplicationScoped
 public class HostDeviceManager {
 
     @Inject
     private VdsDynamicDAO hostDynamicDao;
+
+    @Inject
+    private HostDeviceDao hostDeviceDao;
 
     @Inject
     private BackendInternal backend;
@@ -29,6 +33,8 @@ public class HostDeviceManager {
         for (Guid hostId : hostDynamicDao.getIdsOfHostsWithStatus(VDSStatus.Up)) {
             parameters.add(new VdsActionParameters(hostId));
         }
+
         backend.runInternalMultipleActions(VdcActionType.RefreshHostDevices, parameters);
+        hostDeviceDao.cleanDownVms();
     }
 }

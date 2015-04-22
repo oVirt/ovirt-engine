@@ -26,4 +26,6 @@ public interface HostDeviceDao extends GenericDao<HostDevice, HostDeviceId>, Mas
     void freeHostDevicesUsedByVmId(Guid vmId);
 
     void setVmIdOnHostDevice(HostDeviceId deviceId, Guid vmId);
+
+    void cleanDownVms();
 }

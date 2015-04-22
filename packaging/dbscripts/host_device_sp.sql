@@ -203,3 +203,15 @@ BEGIN
                         WHERE vm_id = v_vm_id AND type = 'hostdev');
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION CleanDownVms()
+RETURNS VOID
+AS $procedure$
+BEGIN
+  UPDATE host_device
+  SET vm_id = NULL
+  FROM vm_dynamic
+  WHERE host_device.vm_id = vm_dynamic.vm_guid AND vm_dynamic.status = 0;
+END; $procedure$
+LANGUAGE plpgsql;
