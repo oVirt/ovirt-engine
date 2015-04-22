@@ -43,6 +43,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -62,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.Snap
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -140,6 +142,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private List<SPMAsyncTaskHandler> taskHandlers;
 
     private CommandStatus commandStatus = CommandStatus.NOT_STARTED;
+
+    protected boolean isDataCenterWithSpm() {
+        return isDataCenterWithSpm(getStoragePool());
+    }
+
+    protected boolean isDataCenterWithSpm(StoragePool storagePool) {
+         return !FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion());
+     }
+
+     protected boolean isDataCenterWithoutSpm() {
+         return FeatureSupported.dataCenterWithoutSpm(getStoragePool().getCompatibilityVersion());
+     }
 
     protected CommandActionState getActionState() {
         return _actionState;
