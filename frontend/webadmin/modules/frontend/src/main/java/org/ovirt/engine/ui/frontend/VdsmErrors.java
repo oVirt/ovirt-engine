@@ -721,6 +721,9 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster Volume Rebalance Start Failed.")
     String GlusterVolumeRebalanceStartFailed();
 
+    @DefaultStringValue("Failed to check if gluster volume is empty")
+    String GlusterVolumeEmptyCheckFailed();
+
     @DefaultStringValue("Failed to create gluster host public key file.")
     String GlusterGeoRepPublicKeyFileCreateFailed();
 

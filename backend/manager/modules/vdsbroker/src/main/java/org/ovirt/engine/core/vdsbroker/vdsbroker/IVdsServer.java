@@ -317,6 +317,8 @@ public interface IVdsServer {
 
     GlusterVolumeTaskReturnForXmlRpc glusterVolumeRebalanceStatus(String volumeName);
 
+    BooleanReturnForXmlRpc glusterVolumeEmptyCheck(String volumeName);
+
     GlusterHostsPubKeyReturnForXmlRpc glusterGeoRepKeysGet();
 
     StatusOnlyReturnForXmlRpc glusterGeoRepKeysUpdate(List<String> geoRepPubKeys, String userName);

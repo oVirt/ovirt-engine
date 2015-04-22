@@ -7,10 +7,15 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEligibilityReason;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -85,6 +90,29 @@ public class GlusterGeoRepUtil {
             }
         });
 
+        eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.NO_UP_SLAVE_SERVER,
+                new Predicate<GlusterVolumeEntity>() {
+                    @Override
+                    public boolean eval(GlusterVolumeEntity slaveVolume) {
+                        Guid slaveUpserverId = getUpServerId(slaveVolume.getClusterId());
+                        if (slaveUpserverId == null) {
+                            return false;
+                        }
+                        return true;
+                    }
+                });
+
+        eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_TO_BE_EMPTY,
+                new Predicate<GlusterVolumeEntity>() {
+                    @Override
+                    public boolean eval(GlusterVolumeEntity slaveVolume) {
+                        Guid slaveUpserverId = getUpServerId(slaveVolume.getClusterId());
+                        if(slaveUpserverId == null) {
+                            return false;
+                        }
+                        return checkEmptyGlusterVolume(slaveUpserverId, slaveVolume.getName());
+                    }
+                });
 
         return eligibilityPredicates;
     }
@@ -96,6 +124,23 @@ public class GlusterGeoRepUtil {
             sessionSlavesIds.add(currentSession.getSlaveVolumeId());
         }
         return sessionSlavesIds;
+    }
+
+    public boolean checkEmptyGlusterVolume(Guid slaveUpserverId, String slaveVolumeName) {
+        VDSReturnValue returnValue =
+                Backend.getInstance()
+                        .getResourceManager()
+                        .RunVdsCommand(VDSCommandType.CheckEmptyGlusterVolume,
+                                new GlusterVolumeVDSParameters(slaveUpserverId, slaveVolumeName));
+        if (!returnValue.getSucceeded()) {
+            return false;
+        }
+        return (boolean) returnValue.getReturnValue();
+    }
+
+    public Guid getUpServerId(Guid clusterId) {
+        VDS randomUpServer = ClusterUtils.getInstance().getRandomUpServer(clusterId);
+        return randomUpServer == null ? null : randomUpServer.getId();
     }
 
     public VdsGroupDAO getVdsGroupDao() {
