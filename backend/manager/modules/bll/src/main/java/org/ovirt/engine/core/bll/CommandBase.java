@@ -1737,6 +1737,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
+    protected boolean noAsyncOperations() {
+        return !hasTasks() && getCallback() == null;
+    }
+
     protected void startPollingAsyncTasks() {
         startPollingAsyncTasks(getReturnValue().getVdsmTaskIdList());
     }
