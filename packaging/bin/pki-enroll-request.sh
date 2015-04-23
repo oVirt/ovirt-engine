@@ -23,7 +23,7 @@ sign() {
 		-days "${days}" \
 		-in "${req}" \
 		-out "${cert}" \
-		-startdate "$(date --utc --date "now -1 days" +"%y%m%d%H%M%S%z")" \
+		-startdate "$(date --utc --date "now -1 days" +"%y%m%d%H%M%SZ")" \
 		${subject:+-subj "${subject}"} \
 		${EXTRA_COMMAND} \
 		|| die "Cannot sign certificate"
