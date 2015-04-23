@@ -1,5 +1,6 @@
 #!/bin/sh
 
+CA_DAYS="3650"
 KEYTOOL="${JAVA_HOME:-/usr}/bin/keytool"
 
 clean_pki_dir() {
@@ -78,7 +79,7 @@ enroll() {
 			-keyfile private/ca.pem \
 			-selfsign \
 			-subj "${subject}" \
-			-days 3650 \
+			-days "${CA_DAYS}" \
 			-startdate "$(date --utc --date "now -1 days" +"%y%m%d%H%M%SZ")"
 	) || die "Cannot enroll CA certificate"
 
@@ -90,6 +91,7 @@ renew() {
 		-signkey "${PKIDIR}/private/ca.pem" \
 		-in "${PKIDIR}/ca.pem" \
 		-out "${PKIDIR}/ca.pem.new" \
+		-days "${CA_DAYS}" \
 		|| die "Cannot renew CA certificate"
 
 	common_backup "${PKIDIR}/ca.pem" || die "Cannot backup CA certificate"
