@@ -163,24 +163,6 @@ public class VolumeModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel> getVolumeGeoRepListProvider(EventBus eventBus, final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider, final Provider<GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget> geoRepActionConfirmationPopupProvider, final Provider<GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget> geoRepConfigPopupProvider) {
-        return new SearchableDetailTabModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>(eventBus, defaultConfirmPopupProvider, VolumeListModel.class, VolumeGeoRepListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeGeoRepListModel source, UICommand lastExecutedCommand, Model windowModel) {
-                if(lastExecutedCommand == getModel().getStartSessionCommand() || lastExecutedCommand == getModel().getStopSessionCommand() || lastExecutedCommand == getModel().getPauseSessionCommand() || lastExecutedCommand == getModel().getResumeSessionCommand()) {
-                    return geoRepActionConfirmationPopupProvider.get();
-                }  else if (lastExecutedCommand == getModel().getSessionOptionsCommand()) {
-                            return geoRepConfigPopupProvider.get();
-                } else {
-                    return defaultConfirmPopupProvider.get();
-                }
-            }
-        };
-    }
-
-
-    @Provides
-    @Singleton
     public SearchableDetailModelProvider<GlusterVolumeSnapshotEntity, VolumeListModel, GlusterVolumeSnapshotListModel> getVolumeSnapshotListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<GlusterVolumeSnapshotCreatePopupPresenterWidget> snapshotPopupProvider) {
