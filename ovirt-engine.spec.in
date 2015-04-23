@@ -57,8 +57,11 @@
 %endif
 %if %{fedora} >= 21
 %global docker docker
+%global ovirt_with_aio 1
 %else
 %global docker docker-io
+# all-in-one can't work on fc20 due to missing vdsm
+%global ovirt_with_aio 0
 %endif
 %endif
 
@@ -71,6 +74,7 @@
 %global ovirt_provides_jboss 1
 %global jboss ovirt-engine-jboss-as >= 7.1.1
 %global docker docker
+%global ovirt_with_aio 1
 %else
 %global ovirt_install_systemd 0
 %global ovirt_install_systemv 1
@@ -79,6 +83,9 @@
 %global ovirt_provides_jboss 1
 %global jboss ovirt-engine-jboss-as >= 7.1.1
 %global docker docker-io
+
+# all-in-one can't work on el6 due to missing vdsm
+%global ovirt_with_aio 0
 
 # emulate fedora java for simplicity
 %undefine add_maven_depmap
@@ -593,6 +600,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 %description setup-plugin-websocket-proxy
 Setup and upgrade specific plugins for websocket-proxy
 
+%if %{ovirt_with_aio}
 %package setup-plugin-allinone
 Summary:	All-in-one plugin for %{ovirt_product_name_short}'s setup
 Group:		%{ovirt_product_group}
@@ -605,6 +613,7 @@ Requires:	vdsm-jsonrpc-java >= 1.1.1
 
 %description setup-plugin-allinone
 All-in-one plugin for %{ovirt_product_name_short}'s setup
+%endif
 
 %package setup-plugin-dockerc
 Summary:	Docker container plugin for %{ovirt_product_name_short}'s setup
@@ -856,6 +865,7 @@ cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" <
 [environment:default]
 OVESETUP_APACHE/configureRootRedirectionDefault=bool:True
 __EOF__
+%if %{ovirt_with_aio}
 cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-aio.conf" << __EOF__
 [environment:default]
 OVESETUP_AIO/enable=bool:True
@@ -865,6 +875,9 @@ cat > "%{buildroot}%{_sysconfdir}/ovirt-host-deploy.conf.d/10-packaging-aio.conf
 [environment:default]
 VDSM/disableNetworkManager=bool:False
 __EOF__
+%else
+rm -rf "%{buildroot}%{engine_data}/firewalld/aio"
+%endif
 
 %if %{ovirt_provides_jboss}
 cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf" << __EOF__
@@ -1095,11 +1108,13 @@ fi
 %{engine_data}/setup/ovirt_engine_setup/websocket_proxy/
 %{engine_data}/setup/plugins/*/websocket_proxy/
 
+%if %{ovirt_with_aio}
 %files setup-plugin-allinone
 
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-aio.conf
 %config %{_sysconfdir}/ovirt-host-deploy.conf.d/10-packaging-aio.conf
 %{engine_data}/firewalld/aio/
+%endif
 
 %files setup-plugin-dockerc
 
