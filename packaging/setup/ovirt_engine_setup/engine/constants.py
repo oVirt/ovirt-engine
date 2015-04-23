@@ -533,11 +533,16 @@ class SystemEnv(object):
 class PKIEnv(object):
     STORE_PASS = 'OVESETUP_PKI/storePassword'
 
-    COUNTRY = 'OVESETUP_PKI/country'
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def COUNTRY(self):
+        return 'OVESETUP_PKI/country'
 
     @osetupattrs(
         answerfile=True,
         summary=True,
+        postinstallfile=True,
         description=_('PKI organization'),
     )
     def ORG(self):
