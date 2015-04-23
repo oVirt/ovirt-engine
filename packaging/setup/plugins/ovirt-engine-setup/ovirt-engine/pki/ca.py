@@ -19,6 +19,7 @@
 """CA plugin."""
 
 
+import datetime
 import gettext
 import os
 import random
@@ -80,6 +81,221 @@ class Plugin(plugin.PluginBase):
             fileList=files,
         )
 
+    def _extractPKCS12CertificateString(self, pkcs12):
+        rc, stdout, stderr = self.execute(
+            args=(
+                self.command.get('openssl'),
+                'pkcs12',
+                '-in', pkcs12,
+                '-passin', 'pass:%s' % self.environment[
+                    oenginecons.PKIEnv.STORE_PASS
+                ],
+                '-nokeys',
+            ),
+        )
+        return '\n'.join(stdout)
+
+    def _extractPKCS12Certificate(self, pkcs12):
+        return X509.load_cert_string(
+            str(
+                self._extractPKCS12CertificateString(pkcs12)
+            )
+        )
+
+    def _expandPKCS12(self, pkcs12, name, owner, uninstall_files):
+        rc, key, stderr = self.execute(
+            args=(
+                self.command.get('openssl'),
+                'pkcs12',
+                '-in', pkcs12,
+                '-passin', 'pass:%s' % self.environment[
+                    oenginecons.PKIEnv.STORE_PASS
+                ],
+                '-nodes',
+                '-nocerts',
+            ),
+            logStreams=False,
+        )
+
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            filetransaction.FileTransaction(
+                name=os.path.join(
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKICERTSDIR,
+                    '%s.cer' % name,
+                ),
+                content=self._extractPKCS12CertificateString(pkcs12),
+                mode=0o644,
+                modifiedList=uninstall_files,
+            )
+        )
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            filetransaction.FileTransaction(
+                name=os.path.join(
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKIKEYSDIR,
+                    '%s.key.nopass' % name,
+                ),
+                content=key,
+                mode=0o600,
+                owner=owner,
+                modifiedList=uninstall_files,
+            )
+        )
+
+    def _enrollCertificate(self, name, uninstall_files, keepKey=False):
+        self.execute(
+            (
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
+                '--name=%s' % name,
+                '--password=%s' % (
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
+                ),
+                '--subject=/C=%s/O=%s/CN=%s' % (
+                    self._subjectComponentEscape(
+                        self.environment[oenginecons.PKIEnv.COUNTRY],
+                    ),
+                    self._subjectComponentEscape(
+                        self.environment[oenginecons.PKIEnv.ORG],
+                    ),
+                    self._subjectComponentEscape(
+                        self.environment[osetupcons.ConfigEnv.FQDN],
+                    ),
+                ),
+            ) + (('--keep-key',) if keepKey else ())
+        )
+        uninstall_files.extend(
+            (
+                os.path.join(
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKIKEYSDIR,
+                    name,
+                ),
+                os.path.join(
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKICERTSDIR,
+                    name,
+                ),
+            )
+        )
+
+    def _expired(self, x509):
+        #
+        # LEGACY NOTE
+        # Since 3.0 and maybe before the CA certificate's
+        # notBefore attribute was set using timezone offset
+        # instead of Z
+        # in this case we need to reissue CA certificate.
+        #
+        return (
+            x509.get_not_before().get_datetime().tzname() is None or
+            (
+                x509.get_not_after().get_datetime().replace(tzinfo=None) -
+                datetime.datetime.utcnow() <
+                datetime.timedelta(days=365)
+            )
+        )
+
+    def _enrollCertificates(self, renew, uninstall_files):
+        for entry in (
+            {
+                'name': 'engine',
+                'extract': False,
+                'user': osetupcons.SystemEnv.USER_ENGINE,
+                'keepKey': True,
+            },
+            {
+                'name': 'jboss',
+                'extract': False,
+                'user': osetupcons.SystemEnv.USER_ENGINE,
+                'keepKey': False,
+            },
+            {
+                'name': 'websocket-proxy',
+                'extract': True,
+                'user': osetupcons.SystemEnv.USER_ENGINE,
+                'keepKey': False,
+            },
+            {
+                'name': 'apache',
+                'extract': True,
+                'user': oengcommcons.SystemEnv.USER_ROOT,
+                'keepKey': False,
+            },
+            {
+                'name': 'reports',
+                'extract': True,
+                'user': oengcommcons.SystemEnv.USER_ROOT,
+                'keepKey': False,
+            },
+        ):
+            self.logger.debug(
+                "processing: '%s'[renew=%s]",
+                entry['name'],
+                renew,
+            )
+
+            pkcs12 = os.path.join(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKIKEYSDIR,
+                '%s.p12' % entry['name'],
+            )
+
+            enroll = not renew
+
+            if not enroll:
+                x509 = self._extractPKCS12Certificate(pkcs12)
+                if self._expired(x509):
+                    if not entry['extract']:
+                        enroll = True
+                    else:
+                        if x509.verify(
+                            X509.load_cert(
+                                oenginecons.FileLocations.
+                                OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+                            ).get_pubkey()
+                        ):
+                            self.logger.debug(
+                                'certificate is an internal certificate'
+                            )
+
+                            # sanity check, make sure user did not manually
+                            # change cert
+                            x509x = X509.load_cert(
+                                os.path.join(
+                                    (
+                                        oenginecons.FileLocations.
+                                        OVIRT_ENGINE_PKICERTSDIR
+                                    ),
+                                    '%s.cer' % entry['name'],
+                                )
+                            )
+
+                            if x509x.as_pem() == x509.as_pem():
+                                self.logger.debug('certificate is sane')
+                                enroll = True
+
+                if enroll:
+                    self.logger.info(
+                        _('Renewing {name} certificate').format(
+                            name=entry['name'],
+                        )
+                    )
+
+            if enroll:
+                self._enrollCertificate(
+                    entry['name'],
+                    uninstall_files,
+                    keepKey=entry['keepKey'] and renew,
+                )
+                os.chown(
+                    pkcs12,
+                    osetuputil.getUid(self.environment[entry['user']]),
+                    -1,
+                )
+                if entry['extract']:
+                    self._expandPKCS12(
+                        pkcs12,
+                        entry['name'],
+                        self.environment[entry['user']],
+                        uninstall_files,
+                    )
+
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._enabled = False
@@ -111,6 +327,12 @@ class Plugin(plugin.PluginBase):
             oenginecons.PKIEnv.ORG,
             None
         )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        self.command.detect('openssl')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -160,6 +382,26 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _miscUpgrade(self):
+        #
+        # In <3.6 setup did not store the organization and
+        # country in post install file. Load it from CA certificate.
+        #
+        if self.environment[oenginecons.PKIEnv.ORG] is None:
+            ca = X509.load_cert(
+                oenginecons.FileLocations.
+                OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            )
+            self.environment[
+                oenginecons.PKIEnv.ORG
+            ] = ca.get_subject().get_entries_by_nid(
+                X509.X509_Name.nid['O']
+            )[0].get_data().as_text()
+            self.environment[
+                oenginecons.PKIEnv.COUNTRY
+            ] = ca.get_subject().get_entries_by_nid(
+                X509.X509_Name.nid['C']
+            )[0].get_data().as_text()
+
         self.logger.info(_('Upgrading CA'))
 
         #
@@ -216,17 +458,11 @@ class Plugin(plugin.PluginBase):
                         ),
                     )
 
-        #
-        # LEGACY NOTE
-        # Since 3.0 and maybe before the CA certificate's
-        # notBefore attribute was set using timezone offset
-        # instead of Z
-        # in this case we need to reissue CA certificate.
-        #
-        x509 = X509.load_cert(
-            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-        )
-        if x509.get_not_before().get_datetime().tzname() is None:
+        if self._expired(
+            X509.load_cert(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            )
+        ):
             self._ca_was_renewed = True
             self.logger.info(_('Renewing CA'))
             self.execute(
@@ -243,6 +479,8 @@ class Plugin(plugin.PluginBase):
                     ],
                 },
             )
+
+        self._enrollCertificates(True, uninstall_files)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
@@ -336,111 +574,14 @@ class Plugin(plugin.PluginBase):
             },
         )
 
-        for name in (
-            'engine',
-            'apache',
-            'jboss',
-            'websocket-proxy',
-            'reports'
-        ):
-            self.execute(
-                (
-                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
-                    '--name=%s' % name,
-                    '--password=%s' % (
-                        self.environment[oenginecons.PKIEnv.STORE_PASS],
-                    ),
-                    '--subject=/C=%s/O=%s/CN=%s' % (
-                        self._subjectComponentEscape(
-                            self.environment[oenginecons.PKIEnv.COUNTRY],
-                        ),
-                        self._subjectComponentEscape(
-                            self.environment[oenginecons.PKIEnv.ORG],
-                        ),
-                        self._subjectComponentEscape(
-                            self.environment[osetupcons.ConfigEnv.FQDN],
-                        ),
-                    ),
-                ),
-            )
-
         uninstall_files.extend(
             (
-                oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_KEY,
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CERT,
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_TRUST_STORE,
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_CERT,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_CERT_CONF,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF,
-                (
-                    oenginecons.FileLocations.
-                    OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_CERT
-                ),
-                (
-                    oenginecons.FileLocations.
-                    OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_STORE
-                ),
             )
-        )
-
-        self.execute(
-            args=(
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
-                '--name=websocket-proxy',
-                '--passin=%s' % (
-                    self.environment[oenginecons.PKIEnv.STORE_PASS],
-                ),
-                '--key=%s' % (
-                    oenginecons.FileLocations.
-                    OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_KEY,
-                ),
-            ),
-            logStreams=False,
-        )
-        uninstall_files.append(
-            oenginecons.FileLocations.
-            OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_KEY
-        )
-
-        self.execute(
-            args=(
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
-                '--name=reports',
-                '--passin=%s' % (
-                    self.environment[oenginecons.PKIEnv.STORE_PASS],
-                ),
-                '--key=%s' % (
-                    oenginecons.FileLocations.
-                    OVIRT_ENGINE_PKI_REPORTS_KEY,
-                ),
-            ),
-            logStreams=False,
-        )
-        uninstall_files.append(
-            oenginecons.FileLocations.
-            OVIRT_ENGINE_PKI_REPORTS_KEY
-        )
-
-        self.execute(
-            args=(
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
-                '--name=apache',
-                '--passin=%s' % (
-                    self.environment[oenginecons.PKIEnv.STORE_PASS],
-                ),
-                '--key=%s' % (
-                    oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
-                ),
-            ),
-            logStreams=False,
-        )
-        uninstall_files.append(
-            oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
         )
 
         if not os.path.exists(
@@ -454,21 +595,7 @@ class Plugin(plugin.PluginBase):
                 oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
             )
 
-        for f in (
-            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE,
-            oenginecons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
-            oenginecons.FileLocations.
-            OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_KEY,
-            oenginecons.FileLocations.
-            OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_STORE,
-        ):
-            os.chown(
-                f,
-                osetuputil.getUid(
-                    self.environment[osetupcons.SystemEnv.USER_ENGINE]
-                ),
-                -1,
-            )
+        self._enrollCertificates(False, uninstall_files)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
