@@ -65,18 +65,9 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             getParameters().setChildCommands(new HashMap<RemoveSnapshotSingleDiskLiveStep, Guid>());
         }
 
-        List<Guid> childCommandIds = CommandCoordinatorUtil.getChildCommandIds(getCommandId());
-        if (childCommandIds.size() != getParameters().getChildCommands().size()) {
-            // Upon recovery or after invoking a new child command, our map may be missing an entry
-            for (Guid id : childCommandIds) {
-                if (!getParameters().getChildCommands().containsValue(id)) {
-                    getParameters().getChildCommands().put(getParameters().getCommandStep(), id);
-                    break;
-                }
-            }
-        }
-        Guid currentChildId = getParameters().getChildCommands().get(
-                getParameters().getCommandStep());
+        // Upon recovery or after invoking a new child command, our map may be missing an entry
+        syncChildCommandList();
+        Guid currentChildId = getCurrentChildId();
 
         VdcReturnValueBase vdcReturnValue = null;
         if (currentChildId != null) {
@@ -159,7 +150,30 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         persistCommand(getParameters().getParentCommand(), true);
         if (nextCommand != null) {
             CommandCoordinatorUtil.executeAsyncCommand(nextCommand.getFirst(), nextCommand.getSecond(), cloneContextAndDetachFromParent());
+            // Add the child, but wait, it's a race!  child will start, task may spawn, get polled, and we won't have the child id
         }
+    }
+
+    /**
+     * Updates (but does not persist) the parameters.childCommands list to ensure the current
+     * child command is present.  This is necessary in various entry points called externally
+     * (e.g. by endAction()), which can be called after a child command is started but before
+     * the main proceedCommandExecution() loop has persisted the updated child list.
+     */
+    private void syncChildCommandList() {
+        List<Guid> childCommandIds = CommandCoordinatorUtil.getChildCommandIds(getCommandId());
+        if (childCommandIds.size() != getParameters().getChildCommands().size()) {
+            for (Guid id : childCommandIds) {
+                if (!getParameters().getChildCommands().containsValue(id)) {
+                    getParameters().getChildCommands().put(getParameters().getCommandStep(), id);
+                    break;
+                }
+            }
+        }
+    }
+
+    private Guid getCurrentChildId() {
+        return getParameters().getChildCommands().get(getParameters().getCommandStep());
     }
 
     private RemoveSnapshotSingleDiskLiveStep getInitialMergeStepForImage(Guid imageId) {
@@ -377,9 +391,12 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     @Override
     protected void endSuccessfully() {
+        // SPM tasks report their final status to the spawning command's parent (in this case, us)
+        // rather than the spawning command (ie DestroyImageCommand); therefore, we must redirect
+        // endAction so that upon SPM task completion the status is propagated to the proper command.
         if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
-            Guid currentChildId = getParameters().getChildCommands().get(
-                    getParameters().getCommandStep());
+            syncChildCommandList();
+            Guid currentChildId = getCurrentChildId();
             if (!Guid.isNullOrEmpty(currentChildId)) {
                 CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(currentChildId);
                 if (command != null) {
@@ -389,9 +406,8 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                     CommandCoordinatorUtil.getCommandEntity(currentChildId).setCallbackNotified(true);
                 }
             }
-        } else {
-            setSucceeded(true);
         }
+        setSucceeded(true);
     }
 
     public void onFailed() {
@@ -432,9 +448,10 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     @Override
     protected void endWithFailure() {
+        // See comment in endSuccessfully() for an explanation of this redirection
         if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
-            Guid currentChildId = getParameters().getChildCommands().get(
-                    getParameters().getCommandStep());
+            syncChildCommandList();
+            Guid currentChildId = getCurrentChildId();
             if (!Guid.isNullOrEmpty(currentChildId)) {
                 CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(currentChildId);
                 if (command != null) {
@@ -444,9 +461,8 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                             cloneContextAndDetachFromParent());
                 }
             }
-        } else {
-            setSucceeded(true);
         }
+        setSucceeded(true);
     }
 
     @Override
