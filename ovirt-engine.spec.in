@@ -617,7 +617,8 @@ for war in \
 	"%{buildroot}%{engine_restapi_war}" \
 	"%{buildroot}%{engine_legacy_restapi_war}"; do
 	sed -i \
-		's#<transport-guarantee>NONE</transport-guarantee>#<transport-guarantee>CONFIDENTIAL</transport-guarantee>#' \
+                -e 's#<transport-guarantee>NONE</transport-guarantee>#<transport-guarantee>CONFIDENTIAL</transport-guarantee>#' \
+                -e 's#<secure>false</secure>#<secure>true</secure>#' \
 		"${war}/WEB-INF/web.xml"
 done
 
