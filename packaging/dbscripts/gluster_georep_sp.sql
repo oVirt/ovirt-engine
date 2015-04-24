@@ -43,20 +43,25 @@ Create or replace FUNCTION InsertGlusterGeoRepSessionDetail(v_session_id UUID,
                                                             v_status VARCHAR(20),
                                                             v_checkpoint_status VARCHAR(20),
                                                             v_crawl_status VARCHAR(20),
-                                                            v_files_synced BIGINT,
-                                                            v_files_pending BIGINT,
-                                                            v_bytes_pending BIGINT,
-                                                            v_deletes_pending BIGINT,
-                                                            v_files_skipped BIGINT)
+                                                            v_data_pending BIGINT,
+                                                            v_entry_pending BIGINT,
+                                                            v_meta_pending BIGINT,
+                                                            v_failures BIGINT,
+                                                            v_last_synced_at TIMESTAMP,
+                                                            v_checkpoint_time TIMESTAMP,
+                                                            v_checkpoint_completed_time TIMESTAMP,
+                                                            v_is_checkpoint_completed BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
     INSERT INTO gluster_georep_session_details(session_id, master_brick_id, slave_host_name,
-    slave_host_uuid, status, checkpoint_status, crawl_status, files_synced, files_pending,
-    bytes_pending, deletes_pending, files_skipped)
+    slave_host_uuid, status, checkpoint_status, crawl_status, data_pending, entry_pending,
+    meta_pending, failures, last_synced_at, checkpoint_time, checkpoint_completed_time,
+    is_checkpoint_completed)
     VALUES (v_session_id, v_master_brick_id, v_slave_host_name,
-    v_slave_host_uuid, v_status, v_checkpoint_status, v_crawl_status, v_files_synced, v_files_pending,
-    v_bytes_pending, v_deletes_pending, v_files_skipped);
+    v_slave_host_uuid, v_status, v_checkpoint_status, v_crawl_status, v_data_pending, v_entry_pending,
+    v_meta_pending, v_failures, v_last_synced_at, v_checkpoint_time, v_checkpoint_completed_time,
+    v_is_checkpoint_completed);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -67,11 +72,14 @@ Create or replace FUNCTION UpdateGlusterGeoRepSessionDetail(v_session_id UUID,
                                                             v_status VARCHAR(20),
                                                             v_checkpoint_status VARCHAR(20),
                                                             v_crawl_status VARCHAR(20),
-                                                            v_files_synced BIGINT,
-                                                            v_files_pending BIGINT,
-                                                            v_bytes_pending BIGINT,
-                                                            v_deletes_pending BIGINT,
-                                                            v_files_skipped BIGINT)
+                                                            v_data_pending BIGINT,
+                                                            v_entry_pending BIGINT,
+                                                            v_meta_pending BIGINT,
+                                                            v_failures BIGINT,
+                                                            v_last_synced_at TIMESTAMP,
+                                                            v_checkpoint_time TIMESTAMP,
+                                                            v_checkpoint_completed_time TIMESTAMP,
+                                                            v_is_checkpoint_completed BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -81,11 +89,14 @@ BEGIN
     status = v_status,
     checkpoint_status = v_checkpoint_status,
     crawl_status = v_crawl_status,
-    files_synced = v_files_synced,
-    files_pending = v_files_pending,
-    bytes_pending = v_bytes_pending,
-    deletes_pending = v_deletes_pending,
-    files_skipped = v_files_skipped,
+    data_pending = v_data_pending,
+    entry_pending = v_entry_pending,
+    meta_pending = v_meta_pending,
+    failures = v_failures,
+    last_synced_at = v_last_synced_at,
+    checkpoint_time = v_checkpoint_time,
+    checkpoint_completed_time = v_checkpoint_completed_time,
+    is_checkpoint_completed = v_is_checkpoint_completed,
     _update_date = LOCALTIMESTAMP
     WHERE session_id = v_session_id AND master_brick_id = v_master_brick_id;
 END; $procedure$
@@ -192,10 +203,7 @@ Create or replace FUNCTION GetGlusterGeoRepSessionDetails(v_session_id UUID)
 RETURNS SETOF gluster_georep_session_details STABLE
 AS $procedure$
 BEGIN
-    RETURN QUERY SELECT session_id, master_brick_id, slave_host_uuid,
-    slave_host_name, status, checkpoint_status, crawl_status, files_synced, files_pending,
-    bytes_pending, deletes_pending, files_skipped, _update_date
-    FROM  gluster_georep_session_details
+    RETURN QUERY SELECT * FROM  gluster_georep_session_details
     WHERE session_id = v_session_id order by slave_host_name asc;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -205,10 +213,7 @@ Create or replace FUNCTION GetGlusterGeoRepSessionDetailsForBrick(v_session_id U
 RETURNS SETOF gluster_georep_session_details STABLE
 AS $procedure$
 BEGIN
-    RETURN QUERY SELECT session_id, master_brick_id, slave_host_uuid,
-    slave_host_name, status, checkpoint_status, crawl_status, files_synced, files_pending,
-    bytes_pending, deletes_pending, files_skipped, _update_date
-    FROM  gluster_georep_session_details
+    RETURN QUERY SELECT * FROM  gluster_georep_session_details
     WHERE session_id = v_session_id AND master_brick_id = v_master_brick_id;
 END; $procedure$
 LANGUAGE plpgsql;

@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterGeoRepSessionDetails implements Serializable{
@@ -17,16 +17,16 @@ public class GlusterGeoRepSessionDetails implements Serializable{
     private GeoRepSessionStatus status;
     private String checkPointStatus;
     private GeoRepCrawlStatus crawlStatus;
-    private Long filesSynced;
-    private Long filesPending;
-    private Long bytesPending;
-    private Long deletesPending;
-    private Long filesSkipped;
+    private Long dataOpsPending;
+    private Long metaOpsPending;
+    private Long entryOpsPending;
+    private Long failures;
     private Date updatedAt;
+    private Date lastSyncedAt;
+    private Date checkPointTime;
+    private Date checkPointCompletedAt;
+    private boolean checkpointCompleted;
 
-    public Long getFilesSynced() {
-        return filesSynced;
-    }
 
     public Guid getMasterBrickId() {
         return masterBrickId;
@@ -84,40 +84,68 @@ public class GlusterGeoRepSessionDetails implements Serializable{
         this.updatedAt = updatedAt;
     }
 
-    public void setFilesSynced(Long filesSynced) {
-        this.filesSynced = filesSynced;
+    public Long getDataOpsPending() {
+        return dataOpsPending;
     }
 
-    public Long getFilesPending() {
-        return filesPending;
+    public void setDataOpsPending(Long dataOpsPending) {
+        this.dataOpsPending = dataOpsPending;
     }
 
-    public void setFilesPending(Long filesPending) {
-        this.filesPending = filesPending;
+    public Long getMetaOpsPending() {
+        return metaOpsPending;
     }
 
-    public Long getBytesPending() {
-        return bytesPending;
+    public void setMetaOpsPending(Long metaOpsPending) {
+        this.metaOpsPending = metaOpsPending;
     }
 
-    public void setBytesPending(Long bytesPending) {
-        this.bytesPending = bytesPending;
+    public Long getEntryOpsPending() {
+        return entryOpsPending;
     }
 
-    public Long getDeletesPending() {
-        return deletesPending;
+    public void setEntryOpsPending(Long entryOpsPending) {
+        this.entryOpsPending = entryOpsPending;
     }
 
-    public void setDeletesPending(Long deletesPending) {
-        this.deletesPending = deletesPending;
+    public Date getLastSyncedAt() {
+        return lastSyncedAt;
     }
 
-    public Long getFilesSkipped() {
-        return filesSkipped;
+    public void setLastSyncedAt(Date lastSyncedAt) {
+        this.lastSyncedAt = lastSyncedAt;
     }
 
-    public void setFilesSkipped(Long filesSkipped) {
-        this.filesSkipped = filesSkipped;
+    public Date getCheckPointTime() {
+        return checkPointTime;
+    }
+
+    public void setCheckPointTime(Date checkPointTime) {
+        this.checkPointTime = checkPointTime;
+    }
+
+    public Date getCheckPointCompletedAt() {
+        return checkPointCompletedAt;
+    }
+
+    public void setCheckPointCompletedAt(Date checkPointCompletedAt) {
+        this.checkPointCompletedAt = checkPointCompletedAt;
+    }
+
+    public boolean isCheckpointCompleted() {
+        return checkpointCompleted;
+    }
+
+    public void setCheckpointCompleted(boolean checkpointCompleted) {
+        this.checkpointCompleted = checkpointCompleted;
+    }
+
+    public Long getFailures() {
+        return failures;
+    }
+
+    public void setFailures(Long failures) {
+        this.failures = failures;
     }
 
     public Guid getSessionId() {
@@ -130,21 +158,27 @@ public class GlusterGeoRepSessionDetails implements Serializable{
 
     @Override
     public boolean equals(Object obj) {
-        return (obj != null) &&
-                (obj instanceof GlusterGeoRepSessionDetails) &&
-                ObjectUtils.objectsEqual(getSessionId(), ((GlusterGeoRepSessionDetails) obj).getSessionId()) &&
-                ObjectUtils.objectsEqual(getMasterBrickId(), ((GlusterGeoRepSessionDetails) obj).getMasterBrickId()) &&
-                ObjectUtils.objectsEqual(getSlaveNodeUuid(), ((GlusterGeoRepSessionDetails) obj).getSlaveNodeUuid()) &&
-                ObjectUtils.objectsEqual(getSlaveHostName(), ((GlusterGeoRepSessionDetails) obj).getSlaveHostName()) &&
-                ObjectUtils.objectsEqual(getStatus(), ((GlusterGeoRepSessionDetails) obj).getStatus()) &&
-                ObjectUtils.objectsEqual(getCheckPointStatus(), ((GlusterGeoRepSessionDetails) obj).getCheckPointStatus()) &&
-                ObjectUtils.objectsEqual(getCrawlStatus(), ((GlusterGeoRepSessionDetails) obj).getCrawlStatus()) &&
-                ObjectUtils.objectsEqual(getFilesSynced(), ((GlusterGeoRepSessionDetails) obj).getFilesSynced()) &&
-                ObjectUtils.objectsEqual(getFilesPending(), ((GlusterGeoRepSessionDetails) obj).getFilesPending()) &&
-                ObjectUtils.objectsEqual(getFilesSkipped(), ((GlusterGeoRepSessionDetails) obj).getFilesSkipped()) &&
-                ObjectUtils.objectsEqual(getBytesPending(), ((GlusterGeoRepSessionDetails) obj).getBytesPending()) &&
-                ObjectUtils.objectsEqual(getDeletesPending(), ((GlusterGeoRepSessionDetails) obj).getDeletesPending()) &&
-                ObjectUtils.objectsEqual(getUpdatedAt(), ((GlusterGeoRepSessionDetails) obj).getUpdatedAt());
+        if (obj == null || !(obj instanceof GlusterGeoRepSessionDetails)) {
+            return false;
+        }
+
+        GlusterGeoRepSessionDetails geoRep = (GlusterGeoRepSessionDetails) obj;
+        return Objects.equals(getSessionId(), geoRep.getSessionId()) &&
+                Objects.equals(getMasterBrickId(), geoRep.getMasterBrickId()) &&
+                Objects.equals(getSlaveNodeUuid(), geoRep.getSlaveNodeUuid()) &&
+                Objects.equals(getSlaveHostName(), geoRep.getSlaveHostName()) &&
+                Objects.equals(getStatus(), geoRep.getStatus()) &&
+                Objects.equals(getCheckPointStatus(), geoRep.getCheckPointStatus()) &&
+                Objects.equals(getCrawlStatus(), geoRep.getCrawlStatus()) &&
+                Objects.equals(getDataOpsPending(), geoRep.getDataOpsPending()) &&
+                Objects.equals(getMetaOpsPending(), geoRep.getMetaOpsPending()) &&
+                Objects.equals(getEntryOpsPending(), geoRep.getEntryOpsPending()) &&
+                Objects.equals(getCheckPointCompletedAt(), geoRep.getCheckPointCompletedAt()) &&
+                Objects.equals(getCheckPointTime(), geoRep.getCheckPointTime()) &&
+                Objects.equals(getLastSyncedAt(), geoRep.getLastSyncedAt()) &&
+                Objects.equals(getUpdatedAt(), geoRep.getUpdatedAt()) &&
+                Objects.equals(getFailures(), geoRep.getFailures()) &&
+                isCheckpointCompleted() == geoRep.isCheckpointCompleted();
     }
 
     @Override
@@ -158,11 +192,14 @@ public class GlusterGeoRepSessionDetails implements Serializable{
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((checkPointStatus == null) ? 0 : checkPointStatus.hashCode());
         result = prime * result + ((crawlStatus == null) ? 0 : crawlStatus.hashCode());
-        result = prime * result + ((filesSynced == null) ? 0 : filesSynced.hashCode());
-        result = prime * result + ((filesPending == null) ? 0 : filesPending.hashCode());
-        result = prime * result + ((filesSkipped == null) ? 0 : filesSkipped.hashCode());
-        result = prime * result + ((bytesPending == null) ? 0 : bytesPending.hashCode());
-        result = prime * result + ((deletesPending == null) ? 0 : deletesPending.hashCode());
+        result = prime * result + ((dataOpsPending == null) ? 0 : dataOpsPending.hashCode());
+        result = prime * result + ((metaOpsPending == null) ? 0 : metaOpsPending.hashCode());
+        result = prime * result + ((entryOpsPending == null) ? 0 : entryOpsPending.hashCode());
+        result = prime * result + ((checkPointCompletedAt == null) ? 0 : checkPointCompletedAt.hashCode());
+        result = prime * result + ((checkPointTime == null) ? 0 : checkPointTime.hashCode());
+        result = prime * result + (checkpointCompleted ? 1 : 0);
+        result = prime * result + ((lastSyncedAt == null) ? 0 : lastSyncedAt.hashCode());
+        result = prime * result + ((failures == null) ? 0 : failures.hashCode());
         result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
         return result;
     }

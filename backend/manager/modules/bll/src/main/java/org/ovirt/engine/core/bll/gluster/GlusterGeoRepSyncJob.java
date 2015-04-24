@@ -37,7 +37,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
     private static final GlusterGeoRepSyncJob instance = new GlusterGeoRepSyncJob();
     private static final GeoRepSessionStatus[] overridableStatuses = { GeoRepSessionStatus.ACTIVE,
             GeoRepSessionStatus.INITIALIZING,
-            GeoRepSessionStatus.NOTSTARTED
+            GeoRepSessionStatus.CREATED
     };
 
     public void init() {

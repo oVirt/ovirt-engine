@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
@@ -85,11 +86,14 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             entity.setStatus(GeoRepSessionStatus.valueOf(rs.getString("status")));
             entity.setCheckPointStatus(rs.getString("checkpoint_status"));
             entity.setCrawlStatus(GeoRepCrawlStatus.valueOf(rs.getString("crawl_status")));
-            entity.setFilesSynced(rs.getLong("files_synced"));
-            entity.setFilesPending(rs.getLong("files_pending"));
-            entity.setBytesPending(rs.getLong("bytes_pending"));
-            entity.setDeletesPending(rs.getLong("deletes_pending"));
-            entity.setFilesSkipped(rs.getLong("files_skipped"));
+            entity.setDataOpsPending(rs.getLong("data_pending"));
+            entity.setMetaOpsPending(rs.getLong("meta_pending"));
+            entity.setEntryOpsPending(rs.getLong("entry_pending"));
+            entity.setFailures(rs.getLong("failures"));
+            entity.setCheckpointCompleted(rs.getBoolean("is_checkpoint_completed"));
+            entity.setCheckPointCompletedAt(DbFacadeUtils.fromDate(rs.getTimestamp("checkpoint_completed_time")));
+            entity.setCheckPointTime(DbFacadeUtils.fromDate(rs.getTimestamp("checkpoint_time")));
+            entity.setLastSyncedAt(DbFacadeUtils.fromDate(rs.getTimestamp("last_synced_at")));
             return entity;
         }
     }
@@ -193,11 +197,14 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                 .addValue("status", EnumUtils.nameOrNull(geoRepSessionDetails.getStatus()))
                 .addValue("checkpoint_status", geoRepSessionDetails.getCheckPointStatus())
                 .addValue("crawl_status", EnumUtils.nameOrNull(geoRepSessionDetails.getCrawlStatus()))
-                .addValue("files_synced", geoRepSessionDetails.getFilesSynced())
-                .addValue("files_pending", geoRepSessionDetails.getFilesPending())
-                .addValue("bytes_pending", geoRepSessionDetails.getBytesPending())
-                .addValue("deletes_pending", geoRepSessionDetails.getDeletesPending())
-                .addValue("files_skipped", geoRepSessionDetails.getFilesSkipped());
+                .addValue("data_pending", geoRepSessionDetails.getDataOpsPending())
+                .addValue("meta_pending", geoRepSessionDetails.getMetaOpsPending())
+                .addValue("entry_pending", geoRepSessionDetails.getEntryOpsPending())
+                .addValue("failures", geoRepSessionDetails.getFailures())
+                .addValue("is_checkpoint_completed", geoRepSessionDetails.isCheckpointCompleted())
+                .addValue("checkpoint_completed_time", geoRepSessionDetails.getCheckPointCompletedAt())
+                .addValue("checkpoint_time", geoRepSessionDetails.getCheckPointTime())
+                .addValue("last_synced_at", geoRepSessionDetails.getLastSyncedAt());
     }
 
 

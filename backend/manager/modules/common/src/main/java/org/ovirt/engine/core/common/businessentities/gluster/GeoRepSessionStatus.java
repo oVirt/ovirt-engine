@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 public enum GeoRepSessionStatus {
     INITIALIZING("INITIALIZING"),
-    NOTSTARTED("NOT STARTED"),
+    CREATED("CREATED"),
     ACTIVE("ACTIVE"),
     PASSIVE("PASSIVE"),
     STOPPED("STOPPED"),
