@@ -4,6 +4,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atLeastOnce;
@@ -235,7 +236,7 @@ public class VmAnalyzerTest {
         //then
         assertTrue(vmAnalyzer.isClientIpChanged());
         verify(vmsMonitoring.getResourceManager(), never()).InternalSetVmStatus(data.dbVm(),
-                VMStatus.MigratingTo);
+                VMStatus.MigratingTo, data.dbVm().getStatusUpdatedTime());
     }
 
     @Theory
@@ -249,7 +250,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         //then
         verify(vmsMonitoring.getResourceManager(), times(1)).InternalSetVmStatus(data.dbVm(),
-                VMStatus.MigratingTo);
+                VMStatus.MigratingTo, data.dbVm().getStatusUpdatedTime());
         verify(vmsMonitoring, atLeastOnce()).addVmDynamicToList(data.dbVm().getDynamicData());
         verify(vmsMonitoring, atLeastOnce()).addVmStatisticsToList(data.dbVm().getStatisticsData());
         assertTrue(data.dbVm().getRunOnVds().equals(VmTestPairs.DST_HOST_ID));
@@ -347,6 +348,7 @@ public class VmAnalyzerTest {
         when(vdsManager.getCopyVds()).thenReturn(vdsManagerVds);
         when(vmsMonitoring.getVdsManager()).thenReturn(vdsManager);
         when(vmsMonitoring.getResourceManager()).thenReturn(resourceManager);
+        when(resourceManager.GetVdsManager(any(Guid.class))).thenReturn(vdsManager);
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setSucceeded(true);
         when(vmsMonitoring.getResourceManager().runVdsCommand((VDSCommandType) anyObject(),

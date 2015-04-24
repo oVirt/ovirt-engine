@@ -198,6 +198,10 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.status)) {
             vmdynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
         }
+        if (xmlRpcStruct.containsKey(VdsProperties.statusTime)) {
+            vmdynamic.setStatusUpdatedTime(VdsBrokerObjectsBuilder.AssignDoubleValue(xmlRpcStruct,
+                    VdsProperties.statusTime));
+        }
         return vmdynamic;
     }
 
@@ -277,6 +281,10 @@ public class VdsBrokerObjectsBuilder {
         }
         if (xmlRpcStruct.containsKey(VdsProperties.status)) {
             vm.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
+        }
+        if (xmlRpcStruct.containsKey(VdsProperties.statusTime)) {
+            vm.setStatusUpdatedTime(VdsBrokerObjectsBuilder.AssignDoubleValue(xmlRpcStruct,
+                    VdsProperties.statusTime));
         }
 
         boolean hasGraphicsInfo = updateGraphicsInfo(vm, xmlRpcStruct);

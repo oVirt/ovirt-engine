@@ -352,19 +352,26 @@ public class ResourceManager implements BackendService {
      * @param vm
      * @param status
      */
+    public void InternalSetVmStatus(VM vm, final VMStatus status, final Double statusUpdatedTime) {
+        InternalSetVmStatus(vm, status, VmExitStatus.Normal, StringUtils.EMPTY, VmExitReason.Unknown, statusUpdatedTime);
+    }
+
     public void InternalSetVmStatus(VM vm, final VMStatus status) {
-        InternalSetVmStatus(vm, status, VmExitStatus.Normal, StringUtils.EMPTY, VmExitReason.Unknown);
+        InternalSetVmStatus(vm, status, VmExitStatus.Normal, StringUtils.EMPTY, VmExitReason.Unknown, vm.getStatusUpdatedTime());
     }
 
     public void InternalSetVmStatus(VM vm, final VMStatus status, VmExitStatus exitStatus) {
-        InternalSetVmStatus(vm, status, exitStatus, StringUtils.EMPTY, VmExitReason.Unknown);
+        InternalSetVmStatus(vm, status, exitStatus, StringUtils.EMPTY, VmExitReason.Unknown, vm.getStatusUpdatedTime());
     }
 
-    public void InternalSetVmStatus(VM vm, final VMStatus status, final VmExitStatus exitStaus, final String exitMessage, final VmExitReason exitReason) {
+    public void InternalSetVmStatus(VM vm, final VMStatus status, final VmExitStatus exitStaus, final String exitMessage, final VmExitReason exitReason,
+            final Double statusUpdatedTime) {
         vm.setStatus(status);
         vm.setExitStatus(exitStaus);
         vm.setExitMessage(exitMessage);
         vm.setExitReason(exitReason);
+        vm.setStatusUpdatedTime(statusUpdatedTime);
+
         boolean isVmNotRunning = status.isNotRunning();
 
         if (isVmNotRunning || status == VMStatus.Unknown) {

@@ -53,6 +53,7 @@ public final class VdsProperties {
     // vds runtime (i.e. VdsDynamic req getVdsStats)
     public static final String netConfigDirty = "netConfigDirty";
     public static final String status = "status"; // in vm also
+    public static final String notify_time = "notify_time";
     public static final String cpu_idle = "cpuIdle";
     public static final String cpu_load = "cpuLoad";
     public static final String cpu_sys = "cpuSys"; // in vm also
@@ -60,6 +61,7 @@ public final class VdsProperties {
     public static final String destroy_rate = "destroyRate";
     public static final String destroy_total = "destroyTotal";
     public static final String elapsed_time = "elapsedTime"; // in vm also
+    public static final String statusTime = "statusTime";
     public static final String launch_rate = "launchRate";
     public static final String launch_total = "launchTotal";
     public static final String vds_usage_mem_percent = "memUsed";

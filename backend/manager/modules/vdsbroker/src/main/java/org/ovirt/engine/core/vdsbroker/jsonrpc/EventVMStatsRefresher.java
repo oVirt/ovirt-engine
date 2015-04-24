@@ -4,15 +4,17 @@ import static org.ovirt.engine.core.vdsbroker.VmsListFetcher.isDevicesChanged;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.convertToVmStatus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmExitReason;
+import org.ovirt.engine.core.common.businessentities.VmExitStatus;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.GetVmStatsVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmsListFetcher;
 import org.ovirt.engine.core.vdsbroker.VmsMonitoring;
 import org.ovirt.engine.core.vdsbroker.VmsStatisticsFetcher;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
 import org.reactivestreams.Subscription;
@@ -59,58 +62,79 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
                     List<Pair<VM, VmInternalData>> changedVms = new ArrayList<>();
                     List<Pair<VM, VmInternalData>> devicesChangedVms = new ArrayList<>();
 
-                    List<VmInternalData> vdsmVms = convertEvent(map);
-                    prepareChanges(vdsmVms, changedVms, devicesChangedVms);
+                    convertEvent(changedVms, devicesChangedVms, map);
 
-                    new VmsMonitoring(manager, changedVms, devicesChangedVms, auditLogDirector).perform();
+                    if (!changedVms.isEmpty() || !devicesChangedVms.isEmpty()) {
+                        new VmsMonitoring(manager, changedVms, devicesChangedVms, auditLogDirector, System.nanoTime()).perform();
+                    }
                 } finally {
                     subscription.request(1);
                 }
             }
 
-            private List<VmInternalData> convertEvent(Map<String, Object> map) {
-                List<VmInternalData> returnVMs = new ArrayList<VmInternalData>();
+            @SuppressWarnings("unchecked")
+            private void convertEvent(List<Pair<VM, VmInternalData>> changedVms,
+                    List<Pair<VM, VmInternalData>> devicesChangedVms, Map<String, Object> map) {
+                Double notifyTime = parseDouble(map.remove(VdsProperties.notify_time));
+
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    VmDynamic vmdynamic = new VmDynamic();
-                    vmdynamic.setId(new Guid((String) entry.getKey()));
-                    vmdynamic.setStatus(convertToVmStatus((String) map.get(entry.getKey())));
-                    VmInternalData vmData = new VmInternalData(vmdynamic, null, null, null);
-                    returnVMs.add(vmData);
-                }
-                return returnVMs;
-            }
-
-            private void prepareChanges(List<VmInternalData> vms, List<Pair<VM, VmInternalData>> changedVms,
-                    List<Pair<VM, VmInternalData>> devicesChangedVms) {
-                Map<Guid, VM> dbVms = dbFacade.getVmDao().getAllRunningByVds(manager.getVdsId());
-                for (VmInternalData vdsmVm : vms) {
-                    VM dbVm = dbVms.get(vdsmVm.getVmDynamic().getId());
-
-                    VmInternalData vmData = fetchStats(dbVm, vdsmVm);
-                    if (vmData != null) {
-                        changedVms.add(new Pair<>(dbVm, vmData));
+                    Guid vmid = new Guid((String) entry.getKey());
+                    VM dbVm = dbFacade.getVmDao().get(vmid);
+                    if (dbVm == null) {
+                        log.error("failed to fetch VM '{}' from db. Status remain unchanged", vmid);
+                        return;
                     }
-                    if (isDevicesChanged(dbVm, vdsmVm)) {
-                        devicesChangedVms.add(new Pair<>(dbVm, vdsmVm));
+                    VmInternalData vdsmVm = createVmInternalData(dbVm, (Map<String, Object>) map.get(vmid.toString()), notifyTime);
+                    // make sure to ignore events from other hosts during migration
+                    // and process once the migration is done
+                    if (dbVm.getRunOnVds() == null || dbVm.getRunOnVds().equals(manager.getVdsId())
+                            || (!dbVm.getRunOnVds().equals(manager.getVdsId()) && vdsmVm.getVmDynamic().getStatus() == VMStatus.Up)) {
+                        if (vdsmVm != null) {
+                            changedVms.add(new Pair<>(dbVm, vdsmVm));
+                        }
+                        if (isDevicesChanged(dbVm, vdsmVm)) {
+                            devicesChangedVms.add(new Pair<>(dbVm, vdsmVm));
+                        }
                     }
                 }
             }
 
-            private VmInternalData fetchStats(VM dbVm, VmInternalData vdsmVm) {
-                // TODO move VmStats to be part of an event
-                VDSReturnValue vmStats =
-                        resourceManager.runVdsCommand(
-                                VDSCommandType.GetVmStats,
-                                new GetVmStatsVDSCommandParameters(manager.getCopyVds(), vdsmVm.getVmDynamic().getId()));
-                if (vmStats.getSucceeded()) {
-                    return (VmInternalData) vmStats.getReturnValue();
+            private VmInternalData createVmInternalData(VM dbVm, Map<String, Object> xmlRpcStruct, Double notifyTime) {
+                VmDynamic vmDynamic = new VmDynamic(dbVm.getDynamicData());
+                vmDynamic.setId(dbVm.getId());
+                vmDynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
+
+                if (xmlRpcStruct.containsKey(VdsProperties.status)) {
+                    vmDynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
+                }
+
+                vmDynamic.setStatusUpdatedTime(notifyTime);
+
+                if (xmlRpcStruct.containsKey(VdsProperties.hash)) {
+                    vmDynamic.setHash((String) xmlRpcStruct.get(VdsProperties.hash));
+                }
+
+                if (xmlRpcStruct.containsKey(VdsProperties.exit_code)) {
+                    String exitCodeStr = xmlRpcStruct.get(VdsProperties.exit_code).toString();
+                    vmDynamic.setExitStatus(VmExitStatus.forValue(Integer.parseInt(exitCodeStr)));
+                }
+                if (xmlRpcStruct.containsKey(VdsProperties.exit_message)) {
+                    String exitMsg = (String) xmlRpcStruct.get(VdsProperties.exit_message);
+                    vmDynamic.setExitMessage(exitMsg);
+                }
+                if (xmlRpcStruct.containsKey(VdsProperties.exit_reason)) {
+                    String exitReasonStr = xmlRpcStruct.get(VdsProperties.exit_reason).toString();
+                    vmDynamic.setExitReason(VmExitReason.forValue(Integer.parseInt(exitReasonStr)));
                 } else {
-                    if (dbVm != null) {
-                        log.error(
-                                "failed to fetch VM '{}' stats. status remain unchanged ({})",
-                                dbVm.getName(),
-                                dbVm.getStatus());
-                    }
+                    vmDynamic.setExitReason(VmExitReason.Unknown);
+                }
+
+                return new VmInternalData(vmDynamic, dbVm.getStatisticsData(), null, new HashMap<String, LUNs>());
+            }
+
+            private Double parseDouble(Object value) {
+                if (Long.class.isInstance(value)) {
+                    return ((Long) value).doubleValue();
                 }
                 return null;
             }
@@ -142,7 +166,7 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
 
             new VmsMonitoring(this.manager,
                     fetcher.getChangedVms(),
-                    fetcher.getVmsWithChangedDevices(), this.auditLogDirector).perform();
+                    fetcher.getVmsWithChangedDevices(), this.auditLogDirector, System.nanoTime()).perform();
         }
     }
 }

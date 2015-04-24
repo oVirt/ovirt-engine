@@ -76,6 +76,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private Long guestMemoryCached;
     private Long guestMemoryBuffered;
     private Long guestMemoryFree;
+    private Double statusUpdatedTime;
     private String guestOsVersion;
     private String guestOsDistribution;
     private String guestOsCodename;
@@ -84,6 +85,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private String guestOsKernelVersion;
     private String guestOsTimezoneName;
     private int guestOsTimezoneOffset;
+
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
     public static final String STATUS_FIELD_NAME = "status";
 
@@ -269,6 +271,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         exitReason = VmExitReason.Unknown;
         graphicsInfos = new HashMap<GraphicsType, GraphicsInfo>();
         guestAgentStatus = GuestAgentStatus.DoesntExist;
+        statusUpdatedTime = -1d;
         guestOsTimezoneName = "";
         guestOsTimezoneOffset = 0;
         guestOsVersion = "";
@@ -277,6 +280,63 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         guestOsKernelVersion = "";
         guestOsArch = ArchitectureType.undefined;
         guestOsType = OsType.Other;
+    }
+
+    public VmDynamic(VmDynamic template) {
+        id = template.getId();
+        status = template.getStatus();
+        vmIp = template.getVmIp();
+        vmFQDN = template.getVmFQDN();
+        vmHost = template.getVmHost();
+        vmPid = template.getVmPid();
+        lastStartTime = template.getLastStartTime();
+        lastStopTime = template.getLastStopTime();
+        guestCurUserName = template.getGuestCurrentUserName();
+        consoleCurrentUserName = template.getConsoleCurrentUserName();
+        consoleUserId = template.getConsoleUserId();
+        guestOs = template.getGuestOs();
+        migratingToVds = template.getMigratingToVds();
+        runOnVds = template.getRunOnVds();
+        appList = template.getAppList();
+        acpiEnabled = template.getAcpiEnable();
+        session = template.getSession();
+        vncKeyboardLayout = template.getVncKeyboardLayout();
+        kvmEnable = template.getKvmEnable();
+        utcDiff = template.getUtcDiff();
+        lastVdsRunOn = template.getLastVdsRunOn();
+        clientIp = template.getClientIp();
+        guestRequestedMemory = template.getGuestRequestedMemory();
+        bootSequence = template.getBootSequence();
+        exitStatus = template.getExitStatus();
+        pauseStatus = template.getPauseStatus();
+        hash = template.getHash();
+        guestAgentNicsHash = template.getGuestAgentNicsHash();
+        exitMessage = template.getExitMessage();
+        disks = template.getDisks();
+        win2kHackEnabled = template.getWin2kHackEnable();
+        lastWatchdogEvent = template.getLastWatchdogEvent();
+        lastWatchdogAction = template.getLastWatchdogAction();
+        runOnce = template.isRunOnce();
+        cpuName = template.getCpuName();
+        guestAgentStatus = template.getGuestAgentStatus();
+        emulatedMachine = template.getEmulatedMachine();
+        currentCd = template.getCurrentCd();
+        stopReason = template.getStopReason();
+        exitReason = template.getExitReason();
+        guestCpuCount = template.getGuestCpuCount();
+        graphicsInfos = template.getGraphicsInfos();
+        guestMemoryCached = template.getGuestMemoryCached();
+        guestMemoryBuffered = template.getGuestMemoryBuffered();
+        guestMemoryFree = template.getGuestMemoryFree();
+        statusUpdatedTime = template.getStatusUpdatedTime();
+        guestOsVersion = template.getGuestOsVersion();
+        guestOsDistribution = template.getGuestOsDistribution();
+        guestOsCodename = template.getGuestOsCodename();
+        guestOsArch = template.getGuestOsArch();
+        guestOsType = template.getGuestOsType();
+        guestOsKernelVersion = template.getGuestOsKernelVersion();
+        guestOsTimezoneName = template.getGuestOsTimezoneName();
+        guestOsTimezoneOffset = template.getGuestOsTimezoneOffset();
     }
 
     public String getAppList() {
@@ -599,6 +659,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setGuestMemoryFree(Long guestMemoryFree) {
         this.guestMemoryFree = guestMemoryFree;
+    }
+
+    public void setStatusUpdatedTime(Double statusUpdatedTime) {
+        this.statusUpdatedTime = statusUpdatedTime;
+    }
+
+    public Double getStatusUpdatedTime() {
+        return this.statusUpdatedTime;
     }
 
     public int getGuestOsTimezoneOffset() {

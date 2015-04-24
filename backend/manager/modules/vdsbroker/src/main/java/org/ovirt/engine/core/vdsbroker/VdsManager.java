@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -68,6 +70,7 @@ import org.slf4j.LoggerFactory;
 public class VdsManager {
     private static Logger log = LoggerFactory.getLogger(VdsManager.class);
     private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<Guid, String>();
+    private final ConcurrentMap<Guid, Double> vmStatusUpdated = new ConcurrentHashMap<Guid, Double>();
     private final Object lockObj = new Object();
     private final AtomicInteger mFailedToRunVmAttempts;
     private final AtomicInteger mUnrespondedAttempts;
@@ -165,6 +168,25 @@ public class VdsManager {
 
     private SchedulerUtil getSchedulUtil() {
         return Injector.get(SchedulerUtilQuartzImpl.class);
+    }
+
+    public boolean shouldUpdateVmStatus(VmDynamic vmDynamic) {
+        Guid id = vmDynamic.getId();
+        if (!vmStatusUpdated.containsKey(id)) {
+            vmStatusUpdated.put(id, vmDynamic.getStatusUpdatedTime());
+            return true;
+        }
+        Double knownStatusUpdate = vmStatusUpdated.get(id);
+        Double statusUpdateTime = vmDynamic.getStatusUpdatedTime();
+        if (knownStatusUpdate <= statusUpdateTime) {
+            vmStatusUpdated.replace(id, statusUpdateTime);
+            return true;
+        }
+        return false;
+    }
+
+    public void resetStatusUpdateTime(Guid id) {
+        vmStatusUpdated.remove(id);
     }
 
     private void initVdsBroker() {
