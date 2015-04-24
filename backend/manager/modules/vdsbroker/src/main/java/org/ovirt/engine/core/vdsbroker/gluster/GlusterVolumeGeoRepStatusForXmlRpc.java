@@ -20,7 +20,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
     protected static final String GEO_REP = "geo-rep";
 
-    private static final Log log = LogFactory.getLog(GlusterVolumeGeoRepStatusForXmlRpc.class);
+    protected static final Log log = LogFactory.getLog(GlusterVolumeGeoRepStatusForXmlRpc.class);
 
     protected static final String VOLUME_NAME = "volumeName";
     protected static final String BRICKS = "bricks";
@@ -34,7 +34,7 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
     private static final String CRAWL_STATUS = "crawlStatus";
     private static final String REMOTE_VOL_NAME = "remoteVolumeName";
 
-    private final List<GlusterGeoRepSession> geoRepSessions = new ArrayList<GlusterGeoRepSession>();
+    protected final List<GlusterGeoRepSession> geoRepSessions = new ArrayList<GlusterGeoRepSession>();
 
     protected GlusterGeoRepSessionDetails getSessionDetails(Map<String, Object> innerMap) {
         GlusterGeoRepSessionDetails details = new GlusterGeoRepSessionDetails();

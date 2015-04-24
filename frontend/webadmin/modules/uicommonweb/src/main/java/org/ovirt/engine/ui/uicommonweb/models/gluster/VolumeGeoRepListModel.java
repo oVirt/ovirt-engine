@@ -201,7 +201,7 @@ public class VolumeGeoRepListModel extends SearchableListModel{
             GlusterGeoRepSession selectedSession = (GlusterGeoRepSession)getSelectedItem();
             GeoRepSessionStatus sessionStatus = selectedSession.getStatus();
             allowStartSessionCommand =
-                    sessionStatus == GeoRepSessionStatus.NOTSTARTED || sessionStatus == GeoRepSessionStatus.STOPPED;
+                    sessionStatus == GeoRepSessionStatus.CREATED || sessionStatus == GeoRepSessionStatus.STOPPED;
             allowStopSessionCommand = !allowStartSessionCommand;
             allowResumeSessionCommand = sessionStatus == GeoRepSessionStatus.PAUSED;
             allowPauseSessionCommand =

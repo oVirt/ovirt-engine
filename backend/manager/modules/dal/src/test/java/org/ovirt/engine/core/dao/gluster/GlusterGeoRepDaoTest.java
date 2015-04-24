@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -45,11 +46,13 @@ public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
         sessionDetails.setStatus(GeoRepSessionStatus.ACTIVE);
         sessionDetails.setCheckPointStatus("NA");
         sessionDetails.setCrawlStatus(GeoRepCrawlStatus.CHANGELOG_CRAWL);
-        sessionDetails.setFilesPending(100L);
-        sessionDetails.setDeletesPending(200L);
-        sessionDetails.setBytesPending(129832972545904L);
-        sessionDetails.setFilesSynced(2343958349L);
-        sessionDetails.setFilesSkipped(0L);
+        sessionDetails.setDataOpsPending(100L);
+        sessionDetails.setMetaOpsPending(40L);
+        sessionDetails.setEntryOpsPending(10L);
+        sessionDetails.setFailures(0L);
+        sessionDetails.setCheckpointCompleted(false);
+        sessionDetails.setCheckPointTime(new Date());
+        sessionDetails.setLastSyncedAt(new Date());
         return sessionDetails;
     }
 
@@ -120,15 +123,15 @@ public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
     public void testUpdateDetails() {
         GlusterGeoRepSessionDetails sessionDetails = getGlusterGeoRepSessionDetails();
         dao.saveDetails(sessionDetails);
-        Long updatedBytesPending = 567888L;
-        Long updatedFilesPending = 50L;
-        sessionDetails.setFilesPending(updatedFilesPending);
+        Long entryOpsPending = 567888L;
+        Long dataOpsPending = 50L;
+        sessionDetails.setEntryOpsPending(entryOpsPending);
         sessionDetails.setCheckPointStatus("NEW");
-        sessionDetails.setBytesPending(updatedBytesPending);
+        sessionDetails.setDataOpsPending(dataOpsPending);
         dao.updateDetails(sessionDetails);
         List<GlusterGeoRepSessionDetails> fetchedSessionDetails = dao.getGeoRepSessionDetails(FixturesTool.GLUSTER_GEOREP_SESSION_ID);
-        assertEquals(updatedBytesPending, fetchedSessionDetails.get(0).getBytesPending());
-        assertEquals(updatedFilesPending, fetchedSessionDetails.get(0).getFilesPending());
+        assertEquals(entryOpsPending, fetchedSessionDetails.get(0).getEntryOpsPending());
+        assertEquals(dataOpsPending, fetchedSessionDetails.get(0).getDataOpsPending());
         assertEquals("NEW", fetchedSessionDetails.get(0).getCheckPointStatus());
     }
 
