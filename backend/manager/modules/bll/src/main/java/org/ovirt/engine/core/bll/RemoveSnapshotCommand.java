@@ -394,7 +394,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(imagesToValidate);
 
         return validate(diskImagesValidator.diskImagesNotLocked()) &&
-                validate(diskImagesValidator.diskImagesNotIllegal());
+                (getVm().isQualifiedForLiveSnapshotMerge()
+                 || validate(diskImagesValidator.diskImagesNotIllegal()));
     }
 
     protected boolean validateImageNotInTemplate() {
