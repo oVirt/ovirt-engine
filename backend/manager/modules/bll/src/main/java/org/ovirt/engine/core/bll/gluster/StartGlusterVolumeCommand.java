@@ -64,6 +64,7 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
         setSucceeded(returnValue.getSucceeded());
         if(getSucceeded()) {
             GlusterDBUtils.getInstance().updateVolumeStatus(getParameters().getVolumeId(), GlusterStatus.UP);
+            GlusterSyncJob.getInstance().refreshVolumeDetails(upServer, getGlusterVolume());
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_START_FAILED, returnValue.getVdsError().getMessage());
             return;
