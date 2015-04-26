@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
+import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
@@ -49,6 +50,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
     @Inject
     private EngineBackupAwarenessManager engineBackupAwarenessManager;
+
+    @Inject
+    private HostDeviceManager hostDeviceManager;
 
     /**
      * This method is called upon the bean creation as part
@@ -109,6 +113,8 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             SchedulingManager.getInstance().init();
 
             SessionDataContainer.getInstance().cleanupEngineSessionsOnStartup();
+
+            hostDeviceManager.init();
 
             new DwhHeartBeat().init();
 
