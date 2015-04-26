@@ -2789,6 +2789,8 @@
           <xs:element name="wipe_after_delete" type="xs:boolean" minOccurs="0"/>
           <xs:element name="import" type="xs:boolean" minOccurs="0"/>
           <xs:element name="is_attached" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="warning_low_space_indicator" type="xs:int" minOccurs="0"/>
+          <xs:element name="critical_space_action_blocker" type="xs:int" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

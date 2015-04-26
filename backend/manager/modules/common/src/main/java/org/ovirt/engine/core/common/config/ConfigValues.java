@@ -258,11 +258,13 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    FreeSpaceLow,
+    //This value is in percents
+    WarningLowSpaceIndicator,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
-    FreeSpaceCriticalLowInGB,
+    //This value is in GB
+    CriticalSpaceActionBlocker,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     MacPoolRanges,

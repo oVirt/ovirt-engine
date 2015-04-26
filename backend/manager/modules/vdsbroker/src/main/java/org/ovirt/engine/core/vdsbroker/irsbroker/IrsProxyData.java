@@ -432,17 +432,12 @@ public class IrsProxyData {
                     AuditLogType type = AuditLogType.UNASSIGNED;
                     Integer freeDiskInGB = data.getStorageDynamicData().getAvailableDiskSize();
                     if (freeDiskInGB != null) {
-                        boolean spaceThresholdMet =
-                                freeDiskInGB < Config.<Integer>getValue(ConfigValues.FreeSpaceCriticalLowInGB);
-                        boolean percentThresholdMet =
-                                freePercent < Config.<Integer>getValue(ConfigValues.FreeSpaceLow);
-
-                        if (spaceThresholdMet && percentThresholdMet) {
+                        if (freePercent < domainFromDb.getWarningLowSpaceIndicator()) {
+                            type = AuditLogType.IRS_DISK_SPACE_LOW;
+                        }
+                        if (freeDiskInGB < domainFromDb.getCriticalSpaceActionBlocker()) {
+                        // Note, if both conditions are met, only IRS_DISK_SPACE_LOW_ERROR will be shown
                             type = AuditLogType.IRS_DISK_SPACE_LOW_ERROR;
-                        } else {
-                            if (spaceThresholdMet || percentThresholdMet) {
-                                type = AuditLogType.IRS_DISK_SPACE_LOW;
-                            }
                         }
                     }
 

@@ -43,6 +43,8 @@ select fn_db_rename_config_key('NormalizedMgmgNetworkEnabled', 'NormalizedMgmtNe
 select fn_db_rename_config_key('NormalizedMgmgNetworkEnabled', 'NormalizedMgmtNetworkEnabled', '3.2');
 select fn_db_rename_config_key('DefaultMtu', 'DefaultMTU', 'general');
 select fn_db_rename_config_key('ManagementNetwork', 'DefaultManagementNetwork', 'general');
+select fn_db_rename_config_key('FreeSpaceCriticalLowInGB','CriticalSpaceActionBlocker', 'general');
+select fn_db_rename_config_key('FreeSpaceLow', 'WarningLowSpaceIndicator', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -142,8 +144,8 @@ select fn_db_add_config_value('FencePowerWaitParam','apc=power_wait,apc_snmp=pow
 select fn_db_add_config_value('FilteringLUNsEnabled','true','3.0');
 select fn_db_add_config_value('FindFenceProxyDelayBetweenRetriesInSec','30','general');
 select fn_db_add_config_value('FindFenceProxyRetries','3','general');
-select fn_db_add_config_value('FreeSpaceCriticalLowInGB','5','general');
-select fn_db_add_config_value('FreeSpaceLow','10','general');
+select fn_db_add_config_value('CriticalSpaceActionBlocker','5','general');
+select fn_db_add_config_value('WarningLowSpaceIndicator','10','general');
 
 -- VirtIO Random Number Generator device enabled
 select fn_db_add_config_value_for_versions_up_to('VirtIoRngDeviceSupported', 'false', '3.4');
@@ -921,6 +923,8 @@ select fn_db_delete_config_value('ENMailUser','general');
 select fn_db_delete_config_value('FreeSpaceCriticalLow','general');
 select fn_db_delete_config_value('GlusterRefreshRateGeoRepStatus', 'general');
 select fn_db_delete_config_value('GlusterRefreshRateGeoRepDiscovery', 'general');
+select fn_db_delete_config_value('FreeSpaceCriticalLowInGB','general');
+select fn_db_delete_config_value('FreeSpaceLow','general');
 select fn_db_delete_config_value('HotPlugUnsupportedOsList','general');
 select fn_db_delete_config_value('HotPlugSupportedOsList','general');
 select fn_db_delete_config_value('ImagesSyncronizationTimeout','general');

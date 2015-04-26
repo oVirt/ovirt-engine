@@ -51,6 +51,10 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     private Boolean wipeAfterDelete;
 
+    private Integer warningLowSpaceIndicator;
+
+    private Integer criticalSpaceActionBlocker;
+
     public StorageDomainStatic() {
         id = Guid.Empty;
         storageType = StorageDomainType.Master;
@@ -173,6 +177,22 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         this.sanState = sanState;
     }
 
+    public Integer getWarningLowSpaceIndicator() {
+        return warningLowSpaceIndicator;
+    }
+
+    public void setWarningLowSpaceIndicator(Integer warningLowSpaceIndicator) {
+        this.warningLowSpaceIndicator = warningLowSpaceIndicator;
+    }
+
+    public Integer getCriticalSpaceActionBlocker() {
+        return criticalSpaceActionBlocker;
+    }
+
+    public void setCriticalSpaceActionBlocker(Integer criticalSpaceActionBlocker) {
+        this.criticalSpaceActionBlocker = criticalSpaceActionBlocker;
+    }
+
     @Override
     public String getName() {
         return getStorageName();
@@ -194,6 +214,8 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((sanState == null) ? 0 : sanState.hashCode());
         result = prime * result + ((wipeAfterDelete == null) ? 0 : wipeAfterDelete.hashCode());
+        result = prime * result + ((warningLowSpaceIndicator == null) ? 0 : warningLowSpaceIndicator.hashCode());
+        result = prime * result + ((criticalSpaceActionBlocker == null) ? 0 : criticalSpaceActionBlocker.hashCode());
         return result;
     }
 
@@ -220,7 +242,9 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 && storageType == other.storageType
                 && sanState == other.sanState
                 && ObjectUtils.objectsEqual(wipeAfterDelete, other.wipeAfterDelete)
-                && ObjectUtils.objectsEqual(description, other.description));
+                && ObjectUtils.objectsEqual(description, other.description))
+                && ObjectUtils.objectsEqual(warningLowSpaceIndicator, other.warningLowSpaceIndicator)
+                && ObjectUtils.objectsEqual(criticalSpaceActionBlocker, other.criticalSpaceActionBlocker);
     }
 
     @Override

@@ -54,6 +54,12 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     @Ignore
     PercentLabel<Integer> overAllocationRatio = new PercentLabel<Integer>();
 
+    @Ignore
+    PercentLabel<Integer> warningLowSpaceIndicator = new PercentLabel<Integer>();
+
+    @Ignore
+    StorageSizeLabel<Integer> criticalSpaceActionBlocker = new StorageSizeLabel<Integer>();
+
     @Path("path")
     TextBoxLabel path = new TextBoxLabel();
 
@@ -95,7 +101,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
         generateIds();
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 12);
+        formBuilder = new FormBuilder(formPanel, 1, 14);
         formBuilder.setRelativeColumnWidth(0, 4);
         formBuilder.addFormItem(new FormItem(constants.sizeStorageGeneral(), totalSize, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.availableStorageGeneral(), availableSize, 1, 0));
@@ -149,6 +155,9 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
                 return getDetailModel().getIsNfs() && getDetailModel().getTimeout() != null;
             }
         });
+
+        formBuilder.addFormItem(new FormItem(constants.warningLowSpaceIndicator(), warningLowSpaceIndicator, 12, 0));
+        formBuilder.addFormItem(new FormItem(constants.criticalSpaceActionBlocker(), criticalSpaceActionBlocker, 13, 0));
     }
 
     @Override
@@ -168,6 +177,8 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
             usedSize.setValue(entity.getUsedDiskSize());
             allocatedSize.setValue(entity.getCommittedDiskSize());
             overAllocationRatio.setValue(entity.getStorageDomainOverCommitPercent());
+            warningLowSpaceIndicator.setValue(entity.getWarningLowSpaceIndicator());
+            criticalSpaceActionBlocker.setValue(entity.getCriticalSpaceActionBlocker());
         }
 
         formBuilder.update(getDetailModel());

@@ -40,7 +40,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
 
     @Override
     protected void executeCommand() {
-        updateStorageDomainWipeAfterDelete();
+        updateStaticDataDefaults();
         // Add StorageDomain object to DB and update statistics
         addStorageDomainInDb();
         updateStorageDomainDynamicFromIrs();

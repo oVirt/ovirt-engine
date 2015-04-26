@@ -54,6 +54,12 @@ public class StorageDomainMapper {
         if (model.isSetWipeAfterDelete()) {
             entity.setWipeAfterDelete(model.isWipeAfterDelete());
         }
+        if (model.isSetWarningLowSpaceIndicator()) {
+            entity.setWarningLowSpaceIndicator((model.getWarningLowSpaceIndicator()));
+        }
+        if (model.isSetCriticalSpaceActionBlocker()) {
+            entity.setCriticalSpaceActionBlocker((model.getCriticalSpaceActionBlocker()));
+        }
         return entity;
     }
 
@@ -128,6 +134,8 @@ public class StorageDomainMapper {
         model.setDescription(entity.getDescription());
         model.setComment(entity.getComment());
         model.setType(map(entity.getStorageDomainType(), null));
+        model.setWarningLowSpaceIndicator(entity.getWarningLowSpaceIndicator());
+        model.setCriticalSpaceActionBlocker(entity.getCriticalSpaceActionBlocker());
         model.setMaster(entity.getStorageDomainType() == org.ovirt.engine.core.common.businessentities.StorageDomainType.Master);
         if (entity.getStatus() != null) {
             StorageDomainStatus status = map(entity.getStatus(), null);

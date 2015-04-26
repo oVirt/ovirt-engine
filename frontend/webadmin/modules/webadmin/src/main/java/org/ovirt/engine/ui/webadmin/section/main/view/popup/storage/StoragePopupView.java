@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import com.google.gwt.user.client.ui.VerticalPanel;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -13,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
@@ -98,6 +100,16 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     @WithElementId("activateDomainEditor")
     EntityModelCheckBoxEditor activateDomainEditor;
 
+    @UiField
+    @Path(value = "warningLowSpaceIndicator.entity")
+    @WithElementId("warningLowSpaceIndicatorEditor")
+    IntegerEntityModelTextBoxEditor warningLowSpaceIndicatorEditor;
+
+    @UiField
+    @Path(value = "criticalSpaceActionBlocker.entity")
+    @WithElementId("criticalSpaceActionBlockerEditor")
+    IntegerEntityModelTextBoxEditor criticalSpaceActionBlockerEditor;
+
     @Ignore
     @UiField
     FlowPanel specificStorageTypePanel;
@@ -108,7 +120,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
     @UiField
     @Ignore
-    FlowPanel advancedParametersExpanderContent;
+    VerticalPanel advancedParametersExpanderContent;
 
     @UiField
     @Path(value = "wipeAfterDelete.entity")
@@ -205,6 +217,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         formatListEditor.addContentWidgetContainerStyleName(style.formatContentWidget());
         activateDomainEditor.addContentWidgetContainerStyleName(style.activateDomainEditor());
         advancedParametersExpanderContent.setStyleName(style.advancedParametersExpanderContent());
+        warningLowSpaceIndicatorEditor.addContentWidgetStyleName(style.storageTextBoxEditor());
+        criticalSpaceActionBlockerEditor.addContentWidgetStyleName(style.storageTextBoxEditor());
     }
 
     void localize() {
@@ -217,6 +231,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         hostListEditor.setLabel(constants.storagePopupHostLabel());
         activateDomainEditor.setLabel(constants.activateDomainLabel());
         wipeAfterDeleteEditor.setLabel(constants.wipeAfterDelete());
+        warningLowSpaceIndicatorEditor.setLabel(constants.warningLowSpaceIndicatorUnits());
+        criticalSpaceActionBlockerEditor.setLabel(constants.criticalSpaceActionBlockerUnits());
     }
 
     @Override
@@ -328,6 +344,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         String storageDomainTypeLabel();
 
         String advancedParametersExpanderContent();
+
+        String storageTextBoxEditor();
     }
 
 }

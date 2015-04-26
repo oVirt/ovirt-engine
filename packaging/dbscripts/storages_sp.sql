@@ -413,18 +413,24 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION Insertstorage_domain_static(v_id UUID,
 	v_storage VARCHAR(250),
 	v_storage_name VARCHAR(250),
-        v_storage_description VARCHAR(4000),
+    v_storage_description VARCHAR(4000),
 	v_storage_comment text,
 	v_storage_type INTEGER,
 	v_storage_domain_type INTEGER,
     v_storage_domain_format_type VARCHAR(50),
     v_last_time_used_as_master BIGINT,
-    v_wipe_after_delete BOOLEAN)
+    v_wipe_after_delete BOOLEAN,
+    v_warning_low_space_indicator INTEGER,
+    v_critical_space_action_blocker INTEGER)
 RETURNS VOID
    AS $procedure$
    BEGIN
-INSERT INTO storage_domain_static(id, storage,storage_name, storage_description, storage_comment, storage_type, storage_domain_type, storage_domain_format_type, last_time_used_as_master, wipe_after_delete)
-VALUES(v_id, v_storage, v_storage_name, v_storage_description, v_storage_comment, v_storage_type, v_storage_domain_type, v_storage_domain_format_type, v_last_time_used_as_master, v_wipe_after_delete);
+INSERT INTO storage_domain_static(id, storage,storage_name, storage_description, storage_comment, storage_type, storage_domain_type, storage_domain_format_type,
+                                  last_time_used_as_master, wipe_after_delete, warning_low_space_indicator, critical_space_action_blocker)
+  VALUES
+    (v_id, v_storage, v_storage_name, v_storage_description, v_storage_comment, v_storage_type, v_storage_domain_type,
+     v_storage_domain_format_type, v_last_time_used_as_master, v_wipe_after_delete,
+     v_warning_low_space_indicator, v_critical_space_action_blocker);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -451,7 +457,9 @@ Create or replace FUNCTION Updatestorage_domain_static(v_id UUID,
 	v_storage_domain_type INTEGER,
 	v_storage_domain_format_type INTEGER,
     v_last_time_used_as_master BIGINT,
-    v_wipe_after_delete BOOLEAN)
+    v_wipe_after_delete BOOLEAN,
+    v_warning_low_space_indicator INTEGER,
+    v_critical_space_action_blocker INTEGER)
 RETURNS VOID
 
 	--The [storage_domain_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -463,7 +471,8 @@ BEGIN
       storage_domain_format_type = v_storage_domain_format_type,
       last_time_used_as_master = v_last_time_used_as_master,
       wipe_after_delete = v_wipe_after_delete,
-      storage_description = v_storage_description, storage_comment = v_storage_comment
+      storage_description = v_storage_description, storage_comment = v_storage_comment,
+      warning_low_space_indicator = v_warning_low_space_indicator, critical_space_action_blocker = v_critical_space_action_blocker
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;

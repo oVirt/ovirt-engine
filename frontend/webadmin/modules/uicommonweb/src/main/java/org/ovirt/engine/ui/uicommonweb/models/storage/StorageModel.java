@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -32,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
@@ -44,6 +46,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 public class StorageModel extends ListModel<IStorageModel> implements ISupportSystemTreeContext
 {
     public static final Guid UnassignedDataCenterId = Guid.Empty;
+
     private StorageModelBehavior behavior;
 
     private String localFSPath;
@@ -166,6 +169,26 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         privateAvailableStorageItems = value;
     }
 
+    private EntityModel<Integer> warningLowSpaceIndicator;
+
+    public EntityModel<Integer> getWarningLowSpaceIndicator() {
+        return warningLowSpaceIndicator;
+    }
+
+    public void setWarningLowSpaceIndicator(EntityModel<Integer> warningLowSpaceIndicator) {
+        this.warningLowSpaceIndicator = warningLowSpaceIndicator;
+    }
+
+    private EntityModel<Integer> criticalSpaceActionBlocker;
+
+    public EntityModel<Integer> getCriticalSpaceActionBlocker() {
+        return criticalSpaceActionBlocker;
+    }
+
+    public void setCriticalSpaceActionBlocker(EntityModel<Integer> criticalSpaceActionBlocker) {
+        this.criticalSpaceActionBlocker = criticalSpaceActionBlocker;
+    }
+
     private EntityModel<Boolean> activateDomain;
 
     public EntityModel<Boolean> getActivateDomain() {
@@ -202,6 +225,11 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         setFormat(new ListModel<StorageFormatType>());
         setAvailableStorageItems(new ListModel<IStorageModel>());
         getAvailableStorageItems().getSelectedItemChangedEvent().addListener(this);
+
+        setWarningLowSpaceIndicator(new EntityModel<Integer>());
+        getWarningLowSpaceIndicator().setEntity(getWarningLowSpaceIndicatorValue());
+        setCriticalSpaceActionBlocker(new EntityModel<Integer>());
+        getCriticalSpaceActionBlocker().setEntity(getCriticalSpaceThresholdValue());
         setActivateDomain(new EntityModel<Boolean>(true));
         getActivateDomain().setIsAvailable(false);
         setWipeAfterDelete(new EntityModel<>(false));
@@ -663,8 +691,22 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
-        return getName().getIsValid() && getHost().getIsValid() && getIsValid() && getSelectedItem().validate()
-                && getDescription().getIsValid() && getComment().getIsValid();
+        getWarningLowSpaceIndicator().validateEntity(new IValidation[]{
+                new NotEmptyValidation(), new IntegerValidation(0, StorageConstants.LOW_SPACE_THRESHOLD)
+        });
+
+        getCriticalSpaceActionBlocker().validateEntity(new IValidation[] {
+                new NotEmptyValidation(), new IntegerValidation(0,  StorageConstants.CRITICAL_SPACE_THRESHOLD)
+        });
+
+        return getName().getIsValid()
+                && getHost().getIsValid()
+                && getIsValid()
+                && getSelectedItem().validate()
+                && getDescription().getIsValid()
+                && getComment().getIsValid()
+                && getWarningLowSpaceIndicator().getIsValid()
+                && getCriticalSpaceActionBlocker().getIsValid();
     }
 
     private SystemTreeItemModel privateSystemTreeSelectedItem;
@@ -697,5 +739,19 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
     public StorageModelBehavior getBehavior() {
         return behavior;
+    }
+
+    private int getWarningLowSpaceIndicatorValue() {
+        if (isNewStorage()) {
+            return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WarningLowSpaceIndicator);
+        }
+        return getStorage().getWarningLowSpaceIndicator();
+    }
+
+    private int getCriticalSpaceThresholdValue() {
+        if (isNewStorage()) {
+            return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.CriticalSpaceActionBlocker);
+        }
+        return getStorage().getCriticalSpaceActionBlocker();
     }
 }

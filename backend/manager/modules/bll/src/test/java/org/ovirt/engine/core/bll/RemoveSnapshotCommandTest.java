@@ -102,7 +102,6 @@ public class RemoveSnapshotCommandTest {
         mockSnapshot(SnapshotType.REGULAR);
         snapshotValidator = spy(new SnapshotsValidator());
         doReturn(snapshotValidator).when(cmd).createSnapshotValidator();
-        mockConfigSizeDefaults();
         spySdValidator();
     }
 
@@ -120,15 +119,6 @@ public class RemoveSnapshotCommandTest {
         snapshot.setId(cmd.getParameters().getSnapshotId());
         snapshot.setType(snapshotType);
         doReturn(snapshot).when(snapshotDao).get(snapshot.getId());
-    }
-
-    private void mockConfigSizeRequirements(int requiredSpaceBufferInGB) {
-        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, requiredSpaceBufferInGB);
-    }
-
-    private void mockConfigSizeDefaults() {
-        int requiredSpaceBufferInGB = 5;
-        mockConfigSizeRequirements(requiredSpaceBufferInGB);
     }
 
     private void spySdValidator() {

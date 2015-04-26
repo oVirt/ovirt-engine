@@ -38,6 +38,10 @@
             width: 437px;
         }
 
+        .storageTextBoxEditor {
+            width: 20%;
+        }
+
 		.nameEditor,
 		.datacenterListEditor,
 		.hostListEditor {
@@ -113,12 +117,14 @@
 					<e:ListModelListBoxEditor ui:field="storageTypeListEditor" addStyleNames="{style.storageTypeListEditor}"/>
 					<e:ListModelListBoxEditor ui:field="formatListEditor" addStyleNames="{style.formatListEditor}"/>
 				</g:HorizontalPanel>
-                <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.hostListEditor}"/>
+				<e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.hostListEditor}"/>
 				<g:FlowPanel ui:field="specificStorageTypePanel" addStyleNames="{style.specificStorageTypePanel}"></g:FlowPanel>
                 <d:AdvancedParametersExpander ui:field="advancedParametersExpander"/>
-                <g:FlowPanel ui:field="advancedParametersExpanderContent">
+                <g:VerticalPanel ui:field="advancedParametersExpanderContent">
+                    <ge:IntegerEntityModelTextBoxEditor ui:field="warningLowSpaceIndicatorEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+                    <ge:IntegerEntityModelTextBoxEditor ui:field="criticalSpaceActionBlockerEditor" />
                     <ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.wipeAfterDeleteEditor}"/>
-                </g:FlowPanel>
+                </g:VerticalPanel>
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

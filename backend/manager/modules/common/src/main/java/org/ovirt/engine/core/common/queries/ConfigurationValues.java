@@ -52,6 +52,8 @@ public enum ConfigurationValues {
     VM32BitMaxMemorySizeInMB(ConfigAuthType.User),
     VM64BitMaxMemorySizeInMB(ConfigAuthType.User),
     VmPriorityMaxValue(ConfigAuthType.User),
+    WarningLowSpaceIndicator,
+    CriticalSpaceActionBlocker,
     StorageDomainNameSizeLimit(ConfigAuthType.User),
     ImportDataStorageDomain,
     HostedEngineStorageDomainName,

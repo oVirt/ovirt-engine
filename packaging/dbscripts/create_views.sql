@@ -17,7 +17,9 @@ SELECT
     storage_domain_static.last_time_used_as_master AS last_time_used_as_master,
     storage_domain_static.wipe_after_delete AS wipe_after_delete,
     storage_pool.name AS storage_pool_name,
-    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities
+    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
+    storage_domain_static.warning_low_space_indicator,
+    storage_domain_static.critical_space_action_blocker
 FROM
     storage_domain_static
 LEFT
@@ -467,7 +469,9 @@ SELECT
         storage_pool_iso_map.status,
         storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
-    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities
+    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
+    storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
+    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker
 FROM
     storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
@@ -505,7 +509,9 @@ SELECT
         storage_pool_iso_map.status,
         storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
-    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities
+    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
+    storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
+    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker
 FROM
     storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
@@ -545,7 +551,9 @@ SELECT
         status_table.status,
         storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
-    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities
+    unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
+    storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
+    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker
 FROM
     storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id

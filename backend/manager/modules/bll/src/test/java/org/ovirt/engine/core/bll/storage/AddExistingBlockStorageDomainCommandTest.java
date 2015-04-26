@@ -36,10 +36,14 @@ public class AddExistingBlockStorageDomainCommandTest {
 
     private AddExistingBlockStorageDomainCommand<StorageDomainManagementParameter> command;
     private StorageDomainManagementParameter parameters;
+    private static Integer WARNING_LOW_SPACE_INDICATOR = 10;
+    private static Integer CRITICAL_SPACE_ACTION_BLOCKER = 5;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.HostedEngineStorageDomainName, StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME)
+            mockConfig(ConfigValues.HostedEngineStorageDomainName, StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME),
+            mockConfig(ConfigValues.WarningLowSpaceIndicator, WARNING_LOW_SPACE_INDICATOR),
+            mockConfig(ConfigValues.CriticalSpaceActionBlocker, CRITICAL_SPACE_ACTION_BLOCKER)
     );
 
     @Mock

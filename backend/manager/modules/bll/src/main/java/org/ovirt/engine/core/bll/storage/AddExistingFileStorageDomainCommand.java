@@ -37,7 +37,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
 
     @Override
     protected void executeCommand() {
-        updateStorageDomainWipeAfterDelete();
+        updateStaticDataDefaults();
         if (StringUtils.isEmpty(getStorageDomain().getStorage())) {
             getStorageDomain().setStorage(
                     (String) Backend

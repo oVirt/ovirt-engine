@@ -408,6 +408,8 @@ public final class Cloner
         obj.setStorageName(instance.getStorageName());
         obj.setStorageFormat(instance.getStorageFormat());
         obj.setWipeAfterDelete(instance.getWipeAfterDelete());
+        obj.setWarningLowSpaceIndicator(instance.getWarningLowSpaceIndicator());
+        obj.setCriticalSpaceActionBlocker(instance.getCriticalSpaceActionBlocker());
 
         return obj;
     }

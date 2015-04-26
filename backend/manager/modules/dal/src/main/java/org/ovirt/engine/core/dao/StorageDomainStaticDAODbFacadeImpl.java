@@ -90,7 +90,9 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
                         domain.getStorageDomainType())
                 .addValue("storage_domain_format_type", domain.getStorageFormat())
                 .addValue("last_time_used_as_master", domain.getLastTimeUsedAsMaster())
-                .addValue("wipe_after_delete", domain.getWipeAfterDelete());
+                .addValue("wipe_after_delete", domain.getWipeAfterDelete())
+                .addValue("warning_low_space_indicator", domain.getWarningLowSpaceIndicator())
+                .addValue("critical_space_action_blocker", domain.getCriticalSpaceActionBlocker());
     }
 
     @Override
@@ -118,6 +120,8 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
                     .getString("storage_domain_format_type")));
             entity.setLastTimeUsedAsMaster(rs.getLong("last_time_used_as_master"));
             entity.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
+            entity.setWarningLowSpaceIndicator((Integer) rs.getObject("warning_low_space_indicator"));
+            entity.setCriticalSpaceActionBlocker((Integer) rs.getObject("critical_space_action_blocker"));
             return entity;
         }
     }

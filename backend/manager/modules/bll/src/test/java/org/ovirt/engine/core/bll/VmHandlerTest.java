@@ -6,7 +6,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -33,11 +31,9 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /** A test case for the {@link VmHandler} class. */
@@ -49,10 +45,6 @@ public class VmHandlerTest {
     public static final Integer THRESHOLD_IN_GB = 4;
     public static final Integer THRESHOLD_HIGH_GB = 10;
     public static final int VM_SPACE_IN_MB = 2000;
-
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, THRESHOLD_IN_GB));
 
     @Before
     public void setUp() {
@@ -116,8 +108,7 @@ public class VmHandlerTest {
             Guid selectedId = storageDomain.getId();
             assertThat(selectedId.equals(sdId), is(true));
         }
-
-        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, THRESHOLD_HIGH_GB);
+        storageDomain.setCriticalSpaceActionBlocker(THRESHOLD_HIGH_GB);
 
         storageDomain = VmHandler.findStorageDomainForMemory(storageDomains, disksList);
         assertThat(storageDomain, nullValue());
@@ -138,6 +129,7 @@ public class VmHandlerTest {
         storageDomain.setStorageType(storageType);
         storageDomain.setStatus(StorageDomainStatus.Active);
         storageDomain.setAvailableDiskSize(size);
+        storageDomain.setCriticalSpaceActionBlocker(THRESHOLD_IN_GB);
         return storageDomain;
     }
 

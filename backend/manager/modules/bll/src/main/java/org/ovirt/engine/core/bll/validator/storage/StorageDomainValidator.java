@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -61,10 +62,12 @@ public class StorageDomainValidator {
         if (storageDomain.getStorageType().isCinderDomain()) {
             return ValidationResult.VALID;
         }
-        StorageDomainDynamic dynamic = storageDomain.getStorageDynamicData();
-        if (dynamic != null
-                && dynamic.getAvailableDiskSize() != null
-                && dynamic.getAvailableDiskSize() < getLowDiskSpaceThreshold()) {
+        StorageDomainDynamic dynamicData = storageDomain.getStorageDynamicData();
+        StorageDomainStatic staticData = storageDomain.getStorageStaticData();
+        if (dynamicData != null && staticData != null
+                && dynamicData.getAvailableDiskSize() != null
+                && staticData.getCriticalSpaceActionBlocker() != null
+                && dynamicData.getAvailableDiskSize() < staticData.getCriticalSpaceActionBlocker()) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                     storageName());
         }
@@ -73,10 +76,6 @@ public class StorageDomainValidator {
 
     private String storageName() {
         return String.format("$%1$s %2$s", "storageName", storageDomain.getStorageName());
-    }
-
-    private static Integer getLowDiskSpaceThreshold() {
-        return Config.<Integer> getValue(ConfigValues.FreeSpaceCriticalLowInGB);
     }
 
     /**

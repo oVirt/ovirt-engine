@@ -67,13 +67,11 @@ import org.slf4j.LoggerFactory;
 public class AddDiskCommandTest {
     private static final Logger log = LoggerFactory.getLogger(AddDiskCommandTest.class);
     private static int MAX_BLOCK_SIZE = 8192;
-    private static int FREE_SPACE_CRITICAL_LOW_IN_GB = 5;
     private static int MAX_PCI_SLOTS = 26;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE),
-            mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, FREE_SPACE_CRITICAL_LOW_IN_GB),
             mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true),
             mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3.toString(), true)
             );

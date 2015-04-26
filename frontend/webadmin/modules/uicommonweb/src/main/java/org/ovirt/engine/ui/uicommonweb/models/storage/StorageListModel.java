@@ -346,6 +346,9 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.getAvailableStorageItems().setIsChangeable(false);
         model.setIsChangeable(isStorageNameEditable || isStoragePropertiesEditable);
 
+        model.getWarningLowSpaceIndicator().setEntity(storage.getWarningLowSpaceIndicator());
+        model.getCriticalSpaceActionBlocker().setEntity(storage.getCriticalSpaceActionBlocker());
+
         boolean isPathEditable = isPathEditable(storage);
         isStorageNameEditable = isStorageNameEditable || isPathEditable;
 
@@ -1036,6 +1039,26 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
     }
 
+    private void saveBaseStorageProperties(StorageModel model) {
+        boolean isNew = model.getStorage() == null;
+        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
+        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
+        storageDomain.setDescription(model.getDescription().getEntity());
+        storageDomain.setComment(model.getComment().getEntity());
+        saveCommonStorageProperties(model);
+    }
+
+    private void saveCommonStorageProperties(StorageModel model) {
+        storageDomain.setStorageName(model.getName().getEntity());
+        saveDefaultedStorageProperties(model, storageDomain);
+    }
+
+    private void saveDefaultedStorageProperties(StorageModel model, StorageDomainStatic storageDomainStatic) {
+        storageDomainStatic.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
+        storageDomainStatic.setWarningLowSpaceIndicator(model.getWarningLowSpaceIndicator().getEntity());
+        storageDomainStatic.setCriticalSpaceActionBlocker(model.getCriticalSpaceActionBlocker().getEntity());
+    }
+
     private void savePosixStorage(TaskContext context) {
 
         this.context = context;
@@ -1048,13 +1071,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         path = posixModel.getPath().getEntity();
 
         storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
-        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
-        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
-        storageDomain.setStorageName(model.getName().getEntity());
-        storageDomain.setDescription(model.getDescription().getEntity());
-        storageDomain.setComment(model.getComment().getEntity());
+        saveBaseStorageProperties(model);
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
-        storageDomain.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
 
         if (isNew) {
             AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
@@ -1182,15 +1200,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 isNew ? new StorageDomainStatic()
                         : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
 
-        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
-
-        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
-
-        storageDomain.setStorageName(model.getName().getEntity());
-        storageDomain.setDescription(model.getDescription().getEntity());
-        storageDomain.setComment(model.getComment().getEntity());
+        saveBaseStorageProperties(model);
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
-        storageDomain.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
 
         if (isNew)
         {
@@ -1421,14 +1432,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 isNew ? new StorageDomainStatic()
                         : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
 
-        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
-
-        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
-
-        storageDomain.setStorageName(model.getName().getEntity());
-        storageDomain.setDescription(model.getDescription().getEntity());
-        storageDomain.setComment(model.getComment().getEntity());
-        storageDomain.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
+        saveBaseStorageProperties(model);
 
         if (isNew)
         {
@@ -1572,10 +1576,9 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 .getFormat()
                 .getSelectedItem() : storageDomain.getStorageFormat());
 
-        storageDomain.setStorageName(model.getName().getEntity());
         storageDomain.setDescription(model.getDescription().getEntity());
         storageDomain.setComment(model.getComment().getEntity());
-        storageDomain.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
+        saveCommonStorageProperties(model);
 
         if (isNew)
         {
@@ -1653,9 +1656,10 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         List<IFrontendActionAsyncCallback> callbacks = new LinkedList<IFrontendActionAsyncCallback>();
 
         for (final StorageDomain storageDomain : storageDomains) {
-            storageDomain.setWipeAfterDelete(((StorageModel) getWindow()).getWipeAfterDelete().getEntity());
+            StorageDomainStatic staticData = storageDomain.getStorageStaticData();
+            saveDefaultedStorageProperties((StorageModel) getWindow(), staticData);
             StorageDomainManagementParameter parameters =
-                    new StorageDomainManagementParameter(storageDomain.getStorageStaticData());
+                    new StorageDomainManagementParameter(staticData);
             parameters.setVdsId(hostId);
             parametersList.add(parameters);
 
@@ -1828,8 +1832,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     public void addExistingFileStorageDomain() {
         StorageDomain sdToAdd = Linq.firstOrDefault(storageDomainsToAdd);
-        sdToAdd.setWipeAfterDelete(((StorageModel)getWindow()).getWipeAfterDelete().getEntity());
         StorageDomainStatic sdsToAdd = sdToAdd.getStorageStaticData();
+        saveDefaultedStorageProperties((StorageModel) getWindow(), sdsToAdd);
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
         params.setVdsId(hostId);

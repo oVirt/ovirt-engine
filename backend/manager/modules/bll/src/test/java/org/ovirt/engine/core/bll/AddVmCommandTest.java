@@ -159,7 +159,6 @@ public class AddVmCommandTest {
         mockDiskImageDAOGetSnapshotById();
         mockVerifyAddVM(cmd);
         mockConfig();
-        mockConfigSizeDefaults();
         mockMaxPciSlots();
 
         mockOsRepository();
@@ -260,7 +259,6 @@ public class AddVmCommandTest {
         mockDiskImageDAOGetSnapshotById();
         mockVerifyAddVM(cmd);
         mockConfig();
-        mockConfigSizeDefaults();
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllStoragesForPool(20);
         mockUninterestingMethods(cmd);
@@ -334,7 +332,6 @@ public class AddVmCommandTest {
         mockDiskImageDAOGetSnapshotById();
         mockVerifyAddVM(cmd);
         mockConfig();
-        mockConfigSizeDefaults();
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllStoragesForPool(20);
         mockDisplayTypes(vm.getOs(), vdsGroup.getCompatibilityVersion());
@@ -474,7 +471,6 @@ public class AddVmCommandTest {
         mockStorageDomainDAOGetForStoragePool(domainSizeGB);
         mockStorageDomainDAOGet(domainSizeGB);
         mockConfig();
-        mockConfigSizeRequirements(sizeRequired);
         VM vm = createVm();
         return vm;
     }
@@ -605,15 +601,6 @@ public class AddVmCommandTest {
         mcr.mockConfigValue(ConfigValues.VirtIoScsiEnabled, Version.v3_3, true);
         mcr.mockConfigValue(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(",")));
         mcr.mockConfigValue(ConfigValues.IsMigrationSupported, Version.v3_3, migrationMap);
-    }
-
-    private void mockConfigSizeRequirements(int requiredSpaceBufferInGB) {
-        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, requiredSpaceBufferInGB);
-    }
-
-    private void mockConfigSizeDefaults() {
-        int requiredSpaceBufferInGB = 5;
-        mockConfigSizeRequirements(requiredSpaceBufferInGB);
     }
 
     protected static VM createVm() {

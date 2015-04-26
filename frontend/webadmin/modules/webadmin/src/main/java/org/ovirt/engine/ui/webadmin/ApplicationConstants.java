@@ -1785,6 +1785,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Timeout (deciseconds)")
     String nfsTimeoutGeneral();
 
+    @DefaultStringValue("Warning Low Space Indicator (%)")
+    String warningLowSpaceIndicatorUnits();
+
+    @DefaultStringValue("Critical Space Action Blocker (GB)")
+    String criticalSpaceActionBlockerUnits();
+
+    @DefaultStringValue("Warning Low Space Indicator")
+    String warningLowSpaceIndicator();
+
+    @DefaultStringValue("Critical Space Action Blocker")
+    String criticalSpaceActionBlocker();
+
     // VM
     @DefaultStringValue("Cluster")
     String clusterVm();

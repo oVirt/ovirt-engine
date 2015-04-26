@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -46,11 +47,15 @@ public class AddExistingFileStorageDomainCommandTest {
     private StorageDomainManagementParameter parameters;
 
     private static final int SD_MAX_NAME_LENGTH = 50;
+    private static Integer WARNING_LOW_SPACE_INDICATOR = 10;
+    private static Integer CRITICAL_SPACE_ACTION_BLOCKER = 5;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.StorageDomainNameSizeLimit, SD_MAX_NAME_LENGTH),
-            mockConfig(ConfigValues.HostedEngineStorageDomainName, StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME)
+            mockConfig(ConfigValues.HostedEngineStorageDomainName, StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME),
+            mockConfig(ConfigValues.WarningLowSpaceIndicator, WARNING_LOW_SPACE_INDICATOR),
+            mockConfig(ConfigValues.CriticalSpaceActionBlocker, CRITICAL_SPACE_ACTION_BLOCKER)
     );
 
     @Mock
@@ -89,7 +94,7 @@ public class AddExistingFileStorageDomainCommandTest {
     }
 
     @Test
-    public void testCandoPassSuccessfully() {
+    public void testAddExistingSuccessfully() {
         when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(null);
 
         StorageDomainStatic sdStatic = command.getStorageDomain().getStorageStaticData();
@@ -97,6 +102,9 @@ public class AddExistingFileStorageDomainCommandTest {
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+
+        command.executeCommand();
+        assertTrue(command.getReturnValue().getSucceeded());
     }
 
     @Test

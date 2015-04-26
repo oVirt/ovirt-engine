@@ -139,6 +139,22 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
         return availableSize != null ? availableSize * SizeConverter.BYTES_IN_GB : null;
     }
 
+    public Integer getWarningLowSpaceIndicator() {
+        return staticData.getWarningLowSpaceIndicator();
+    }
+
+    public void setWarningLowSpaceIndicator(Integer warningLowSpaceIndicator) {
+        staticData.setWarningLowSpaceIndicator(warningLowSpaceIndicator);
+    }
+
+    public Integer getCriticalSpaceActionBlocker() {
+        return staticData.getCriticalSpaceActionBlocker();
+    }
+
+    public void setCriticalSpaceActionBlocker(Integer criticalSpaceActionBlocker) {
+        staticData.setCriticalSpaceActionBlocker(criticalSpaceActionBlocker);
+    }
+
     public void setAvailableDiskSize(Integer availableDiskSize) {
         getStorageDynamicData().setAvailableDiskSize(availableDiskSize);
         UpdateTotalDiskSize();

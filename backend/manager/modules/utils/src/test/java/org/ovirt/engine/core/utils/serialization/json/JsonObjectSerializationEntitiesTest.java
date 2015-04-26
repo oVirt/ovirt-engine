@@ -97,6 +97,8 @@ public class JsonObjectSerializationEntitiesTest {
         sds.setStorageType(random.nextEnum(StorageType.class));
         sds.setStorageName(random.nextString(10));
         sds.setDescription(random.nextString(10));
+        sds.setWarningLowSpaceIndicator(5);
+        sds.setCriticalSpaceActionBlocker(10);
         return sds;
     }
 

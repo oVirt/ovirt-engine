@@ -11,7 +11,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -28,18 +26,15 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 /** A test class for the {@link MultipleStorageDomainsValidator} class. */
 @RunWith(MockitoJUnitRunner.class)
 public class MultipleStorageDomainsValidatorTest {
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, 10));
+    private final static int CRITICAL_SPACE_THRESHOLD = 5;
 
     @Mock
     private StorageDomainDAO dao;
@@ -99,15 +94,19 @@ public class MultipleStorageDomainsValidatorTest {
 
     @Test
     public void testAllDomainsWithinThresholdAllOk() {
-        domain1.getStorageDynamicData().setAvailableDiskSize(15);
-        domain2.getStorageDynamicData().setAvailableDiskSize(15);
+        domain1.getStorageDynamicData().setAvailableDiskSize(CRITICAL_SPACE_THRESHOLD +1);
+        domain2.getStorageDynamicData().setAvailableDiskSize(CRITICAL_SPACE_THRESHOLD);
+        domain1.setCriticalSpaceActionBlocker(CRITICAL_SPACE_THRESHOLD);
+        domain2.setCriticalSpaceActionBlocker(CRITICAL_SPACE_THRESHOLD);
         assertTrue("Both domains should be within space threshold", validator.allDomainsWithinThresholds().isValid());
     }
 
     @Test
     public void testAllDomainsWithinThresholdsOneLacking() {
-        domain1.getStorageDynamicData().setAvailableDiskSize(15);
-        domain2.getStorageDynamicData().setAvailableDiskSize(7);
+        domain1.getStorageDynamicData().setAvailableDiskSize(CRITICAL_SPACE_THRESHOLD + 1);
+        domain2.getStorageDynamicData().setAvailableDiskSize(CRITICAL_SPACE_THRESHOLD - 1);
+        domain1.setCriticalSpaceActionBlocker(CRITICAL_SPACE_THRESHOLD);
+        domain2.setCriticalSpaceActionBlocker(CRITICAL_SPACE_THRESHOLD);
         ValidationResult result = validator.allDomainsWithinThresholds();
         assertFalse("domain2 should not be within thresholds", result.isValid());
         assertEquals("Wrong validation error",

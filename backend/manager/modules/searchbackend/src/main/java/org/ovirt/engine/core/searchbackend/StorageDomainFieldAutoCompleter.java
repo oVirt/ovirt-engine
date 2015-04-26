@@ -15,6 +15,8 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public static final String COMMENT = "COMMENT";
     public static final String DESCRIPTION = "DESCRIPTION";
     public static final String WIPE_AFTER_DELETE = "WIPE_AFTER_DELETE";
+    public static final String LOW_SPACE_THRESHOLD = "LOW_SPACE_THRESHOLD (%)";
+    public static final String CRITICAL_SPACE_THRESHOLD = "CRITICAL_SPACE_THRESHOLD (GB)";
 
     public StorageDomainFieldAutoCompleter() {
         // Building the basic vervs Dict
@@ -28,6 +30,8 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mVerbs.add(COMMENT);
         mVerbs.add(DESCRIPTION);
         mVerbs.add(WIPE_AFTER_DELETE);
+        mVerbs.add(LOW_SPACE_THRESHOLD);
+        mVerbs.add(CRITICAL_SPACE_THRESHOLD);
 
         // Building the autoCompletion Dict
         buildCompletions();
@@ -42,6 +46,8 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put(COMMENT, String.class);
         getTypeDictionary().put(DESCRIPTION, String.class);
         getTypeDictionary().put(WIPE_AFTER_DELETE, Boolean.class);
+        getTypeDictionary().put(LOW_SPACE_THRESHOLD, Integer.class);
+        getTypeDictionary().put(CRITICAL_SPACE_THRESHOLD, Integer.class);
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "storage_name");
@@ -54,6 +60,8 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put(COMMENT, "storage_comment");
         columnNameDict.put(DESCRIPTION, "storage_description");
         columnNameDict.put(WIPE_AFTER_DELETE, "wipe_after_delete");
+        columnNameDict.put(LOW_SPACE_THRESHOLD, "warning_low_space_indicator");
+        columnNameDict.put(CRITICAL_SPACE_THRESHOLD, "critical_space_action_blocker");
 
         // Building the validation dict
         buildBasicValidationTable();

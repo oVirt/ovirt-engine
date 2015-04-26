@@ -42,6 +42,8 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
         newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
         newStaticDomain.setStorageFormat(StorageFormatType.V1);
         newStaticDomain.setWipeAfterDelete(true);
+        newStaticDomain.setWarningLowSpaceIndicator(3);
+        newStaticDomain.setCriticalSpaceActionBlocker(9);
     }
 
     /**
@@ -168,6 +170,8 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
     public void testUpdate() {
         existingDomain.setStorageName("UpdatedName");
         existingDomain.setWipeAfterDelete(true);
+        existingDomain.setWarningLowSpaceIndicator(4);
+        existingDomain.setCriticalSpaceActionBlocker(8);
         dao.update(existingDomain);
 
         StorageDomainStatic after = dao.get(existingDomain.getId());

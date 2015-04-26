@@ -23,6 +23,8 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -51,14 +53,28 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     protected void initializeStorageDomain() {
         getStorageDomain().setId(Guid.newGuid());
-        updateStorageDomainWipeAfterDelete();
+        updateStaticDataDefaults();
     }
 
-    protected void updateStorageDomainWipeAfterDelete() {
+    protected void updateStaticDataDefaults() {
+        updateStorageDomainWipeAfterDelete();
+        updateSpaceThresholds();
+    }
+
+    private void updateStorageDomainWipeAfterDelete() {
         if(getStorageDomain().getStorageStaticData().getWipeAfterDelete() == null) {
             getStorageDomain().getStorageStaticData().setWipeAfterDelete(
                     WipeAfterDeleteUtils.getDefaultWipeAfterDeleteFlag(
                             getStorageDomain().getStorageStaticData().getStorageType()));
+        }
+    }
+
+    private void updateSpaceThresholds() {
+        if(getStorageDomain().getWarningLowSpaceIndicator() == null) {
+            getStorageDomain().setWarningLowSpaceIndicator(Config.<Integer>getValue(ConfigValues.WarningLowSpaceIndicator));
+        }
+        if(getStorageDomain().getCriticalSpaceActionBlocker() == null) {
+            getStorageDomain().setCriticalSpaceActionBlocker(Config.<Integer>getValue(ConfigValues.CriticalSpaceActionBlocker));
         }
     }
 

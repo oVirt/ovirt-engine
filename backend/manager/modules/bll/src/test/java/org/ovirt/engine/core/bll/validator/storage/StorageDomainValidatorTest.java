@@ -3,19 +3,15 @@ package org.ovirt.engine.core.bll.validator.storage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
  * A test case for the {@link org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator} class.
@@ -25,12 +21,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class StorageDomainValidatorTest {
     private StorageDomain domain;
     private StorageDomainValidator validator;
-    private final static int FREE_SPACE_CRITICAL_LOW_IN_GB = 5;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, FREE_SPACE_CRITICAL_LOW_IN_GB)
-            );
+    private final static int CRITICAL_SPACE_THRESHOLD = 5;
 
     @Before
     public void setUp() {
@@ -91,6 +82,7 @@ public class StorageDomainValidatorTest {
         sd.setUsedDiskSize(usedSize);
         sd.setStatus(StorageDomainStatus.Active);
         sd.setStorageType(storageType);
+        sd.setCriticalSpaceActionBlocker(CRITICAL_SPACE_THRESHOLD);
         return sd;
     }
 }
