@@ -240,12 +240,12 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         AbstractImageResourceColumn<Object> isProblematicImportVmColumn = new AbstractImageResourceColumn<Object>() {
             @Override
             public ImageResource getValue(Object object) {
-                return ((ImportVmData) object).getProblem() != null ? resources.alertImage() : null;
+                return ((ImportVmData) object).getWarning() != null ? resources.alertImage() : null;
             }
 
             @Override
             public SafeHtml getTooltip(Object object) {
-                String problem = ((ImportVmData) object).getProblem();
+                String problem = ((ImportVmData) object).getWarning();
                 return problem != null ? SafeHtmlUtils.fromSafeConstant(problem) : null;
             }
         };

@@ -363,7 +363,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                             && getDiskImportData(disk.getId()) != null
                             && (getDiskImportData(disk.getId()).getSelectedStorageDomain()
                                     .getStorageType().isBlockDomain())) {
-                        ((ImportVmData) item).setProblem(ConstantsManager.getInstance().getConstants()
+                        ((ImportVmData) item).setWarning(ConstantsManager.getInstance().getConstants()
                                 .importSparseDiskToBlockDeviceMustCollapseSnapshots());
                         ((ImportVmData) item).getCollapseSnapshots().setEntity(true);
                         ((ImportVmData) item).getCollapseSnapshots()
