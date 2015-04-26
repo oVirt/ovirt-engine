@@ -163,10 +163,6 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
             }
         }
 
-        if (getParameters().getVm().isUseLatestVersion()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_USE_LATEST_WITH_CLONE);
-        }
-
         return true;
     }
 
