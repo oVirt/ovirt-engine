@@ -35,9 +35,9 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInf
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -1275,14 +1275,31 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      */
     private void addNumaSetting(final String compatibilityVersion) {
         if (Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinningEnabled,
-                        compatibilityVersion))) {
+                compatibilityVersion))) {
             List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(vm.getId());
-            if (vmNumaNodes.isEmpty()) {
-                return;
-            }
-            NumaTuneMode numaTune = vm.getNumaTuneMode();
             List<VdsNumaNode> totalVdsNumaNodes = DbFacade.getInstance().getVdsNumaNodeDAO()
                     .getAllVdsNumaNodeByVdsId(vdsId);
+            if (totalVdsNumaNodes.isEmpty()) {
+                log.warn("No NUMA nodes found for host {} for vm {} {}",  vdsId, vm.getName(), vm.getId());
+                return;
+            }
+
+            // if user didn't set specific NUMA conf
+            // create a default one with the first numa node of the host
+            if (vmNumaNodes.isEmpty()) {
+                if (FeatureSupported.hotPlugMemory(vm.getVdsGroupCompatibilityVersion(), vm.getClusterArch())) {
+                    VmNumaNode vmNode = new VmNumaNode();
+                    vmNode.setIndex(totalVdsNumaNodes.get(0).getIndex());
+                    vmNode.setMemTotal(vm.getMemSizeMb());
+                    vmNode.setCpuIds(totalVdsNumaNodes.get(0).getCpuIds());
+                    vmNumaNodes.add(vmNode);
+                } else {
+                    // no need to send numa if memory hotplug not supported
+                    return;
+                }
+            }
+            NumaTuneMode numaTune = vm.getNumaTuneMode();
+
             if (numaTune != null) {
                 Map<String, Object> numaTuneSetting =
                         NumaSettingFactory.buildVmNumatuneSetting(numaTune, vmNumaNodes, totalVdsNumaNodes);
