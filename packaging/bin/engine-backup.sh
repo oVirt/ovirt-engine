@@ -585,6 +585,14 @@ verifyArgs() {
 	fi
 }
 
+# Expects user/host/port/database in the environment.
+# Note that in most shells they can be local to the caller and will be inherited.
+pg_cmd() {
+	local cmd="$1"
+	shift
+	PGPASSFILE="${MYPGPASS}" "${cmd}" -w -U "${user}" -h "${host}" -p "${port}" -d "${database}" "$@"
+}
+
 dobackup() {
 	output "Backing up:"
 	log "Generating pgpass"
@@ -668,14 +676,8 @@ backupDB() {
 
 	local pgdump_log="${TEMP_FOLDER}/pgdump.log"
 
-	pg_cmd() {
-		local cmd="$1"
-		shift
-		"${cmd}" -w -U "${user}" -h "${host}" -p "${port}" -d "${database}" "$@"
-	}
-
 	if [ -n "${compressor}" ]; then
-		PGPASSFILE="${MYPGPASS}" pg_cmd pg_dump \
+		pg_cmd pg_dump \
 			-E "UTF8" \
 			--disable-dollar-quoting \
 			--disable-triggers \
@@ -685,7 +687,7 @@ backupDB() {
 			| "${compressor}" > "${file}" \
 			|| logdie "${compressor} failed compressing the backup of database ${database}"
 	else
-		PGPASSFILE="${MYPGPASS}" pg_cmd pg_dump \
+		pg_cmd pg_dump \
 			-E "UTF8" \
 			--disable-dollar-quoting \
 			--disable-triggers \
@@ -700,8 +702,6 @@ backupDB() {
 		cat "${pgdump_log}" >> "${LOG}"
 		logdie "Database ${database} backup failed"
 	fi
-
-	unset -f pg_cmd
 }
 
 dorestore() {
@@ -791,16 +791,10 @@ verifyConnection() {
 
 	local pgrestorelog="${TEMP_FOLDER}/pg-restore-log"
 
-	pg_cmd() {
-		local cmd="$1"
-		shift
-		"${cmd}" -w -U "${user}" -h "${host}" -p "${port}" -d "${database}" "$@"
-	}
-
-	PGPASSFILE="${MYPGPASS}" pg_cmd psql -c "select 1" >> "${LOG}" 2>&1 \
+	pg_cmd psql -c "select 1" >> "${LOG}" 2>&1 \
 		|| logdie "Can't connect to database '${database}'. Please see '${0} --help'."
 
-	PGPASSFILE="${MYPGPASS}" pg_cmd psql -t -c "show lc_messages" 2> /dev/null \
+	pg_cmd psql -t -c "show lc_messages" 2> /dev/null \
 		| grep -q '^ *en_US.UTF-8$' \
 		|| logdie "lc_messages is set to an unsupported value in postgresql.conf. Please set it to en_US.UTF-8 and restart postgresql."
 
@@ -810,7 +804,7 @@ verifyConnection() {
 __EOF
 )
 
-	PGPASSFILE="${MYPGPASS}" pg_cmd pg_dump -s 2> "${pgrestorelog}" | \
+	pg_cmd pg_dump -s 2> "${pgrestorelog}" | \
 		grep -Evi "${IGNORED_PATTERN}" | \
 		grep -iq '^create' && \
 		logdie "Database '${database}' is not empty"
@@ -819,8 +813,6 @@ __EOF
 		cat "${pgrestorelog}" >> "${LOG}"
 		logdie "Failed checking if database '${database}' is empty"
 	fi
-
-	unset -f pg_cmd
 }
 
 verifyVersion() {
@@ -853,32 +845,26 @@ restoreDB() {
 	local format="$8"
 	local jobsnum="$9"
 
-	pg_cmd() {
-		local cmd="$1"
-		shift
-		"${cmd}" -w -U "${user}" -h "${host}" -p "${port}" -d "${database}" "$@"
-	}
-
 	log "restoreDB: backupfile ${backupfile} user ${user} host ${host} port ${port} database ${database} orig_user ${orig_user} compressor ${compressor} format ${format} jobsnum ${jobsnum}"
 	local pgrestorelog="${TEMP_FOLDER}/pg-restore-log"
 
 	if [ "${format}" = "plain" ]; then
 		if [ -z "${compressor}" ]; then
-			PGPASSFILE="${MYPGPASS}" pg_cmd psql -f "${backupfile}" > "${pgrestorelog}"  2>&1 \
+			pg_cmd psql -f "${backupfile}" > "${pgrestorelog}"  2>&1 \
 				|| logdie "Database ${database} restore failed"
 		else
 			# Requires the compressor to support '-d'. All our current ones do.
 			"${compressor}" -d < "${backupfile}" | \
-				PGPASSFILE="${MYPGPASS}" pg_cmd psql > "${pgrestorelog}"  2>&1 \
+				pg_cmd psql > "${pgrestorelog}"  2>&1 \
 				|| logdie "Database ${database} restore failed"
 		fi
 	elif [ "${format}" = "custom" ]; then
 		if [ -z "${compressor}" ]; then
-			PGPASSFILE="${MYPGPASS}" pg_cmd pg_restore --no-owner -j "${jobsnum}" "${backupfile}" > "${pgrestorelog}"  2>&1
+			pg_cmd pg_restore --no-owner -j "${jobsnum}" "${backupfile}" > "${pgrestorelog}"  2>&1
 		else
 			# Requires the compressor to support '-d'. All our current ones do.
 			"${compressor}" -d < "${backupfile}" | \
-				PGPASSFILE="${MYPGPASS}" pg_cmd pg_restore --no-owner > "${pgrestorelog}"  2>&1
+				pg_cmd pg_restore --no-owner > "${pgrestorelog}"  2>&1
 		fi
 	else
 		logdie "Unsupported format ${format}"
@@ -909,8 +895,6 @@ __EOF
 )
 	local numerrors=$(grep 'ERROR: ' "${pgrestorelog}" | grep -Ev "${IGNORED_ERRORS}" | wc -l)
 	[ ${numerrors} -ne 0 ] && logdie "Errors while restoring database ${database}"
-
-	unset -f pg_cmd
 }
 
 cleanDbTempData() {
@@ -922,13 +906,8 @@ cleanDbTempData() {
 	local psqllog="${TEMP_FOLDER}/psql-cleanup-log"
 	echo "${tables_to_clean}" | while read -r table; do
 		output "- ${table}"
-		PGPASSFILE="${MYPGPASS}" psql \
-			-w \
+		pg_cmd psql \
 			-t \
-			-U "${user}" \
-			-h "${host}" \
-			-p "${port}" \
-			-d "${database}" \
 			-c "TRUNCATE TABLE ${table} cascade" \
 			> "${psqllog}"  2>&1 \
 			|| logdie "Failed cleaning up ${table}"
