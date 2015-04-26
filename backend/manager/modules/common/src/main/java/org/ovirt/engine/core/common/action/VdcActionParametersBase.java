@@ -55,6 +55,9 @@ public class VdcActionParametersBase implements Serializable {
 
     private int executionIndex;
 
+
+    private boolean shouldBeEndedByParent = true;
+
     /**
      * A cross system identifier of the executed action
      */
@@ -292,5 +295,13 @@ public class VdcActionParametersBase implements Serializable {
     @Override
     public String toString() {
         return appendAttributes(ToStringBuilder.forInstance(this)).build();
+    }
+
+    public boolean getShouldBeEndedByParent() {
+        return shouldBeEndedByParent;
+    }
+
+    public void setShouldBeEndedByParent(boolean shouldBeEndedByParent) {
+        this.shouldBeEndedByParent = shouldBeEndedByParent;
     }
 }
