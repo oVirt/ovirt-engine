@@ -34,7 +34,7 @@ public abstract class OvfLogEventHandler<T> {
     // OvfExportOnlyField
     private List<String> fieldNames = new ArrayList<String>();
 
-    // list containing the aliases of the entit's fields that are annotated with
+    // list containing the aliases of the entity's fields that are annotated with
     // OvfExportOnlyField
     private List<String> aliases = new ArrayList<String>();
 
@@ -47,7 +47,7 @@ public abstract class OvfLogEventHandler<T> {
     }
 
     /**
-     * Returns a type convert maps (the key is a field name, the value is a type converter)
+     * Returns a type converter map (the key is a field name, the value is a type converter)
      *
      * @return map
      */
@@ -84,7 +84,7 @@ public abstract class OvfLogEventHandler<T> {
             }
 
         } catch (Exception ex) {
-            log.error("Error in initializing the OvfLogHandler: {}", ex.getMessage());
+            log.error("Error initializing the OvfLogHandler: {}", ex.getMessage());
             log.debug("Exception", ex);
         }
 
@@ -125,7 +125,7 @@ public abstract class OvfLogEventHandler<T> {
             return map;
 
         } catch (Exception ex) {
-            log.error("Error in getting aliases values map: {}", ex.getMessage());
+            log.error("Error getting aliases values map: {}", ex.getMessage());
             log.debug("Exception", ex);
             return null;
         }
@@ -139,8 +139,6 @@ public abstract class OvfLogEventHandler<T> {
      *            new alias to add
      * @param value
      *            new value to add
-     * @param accumulatingMap
-     *            map that accumulates the new aliases/values
      */
     public void addValueForAlias(String alias, String value) {
         String fieldName = aliasesToFieldsMap.get(alias);
@@ -169,8 +167,6 @@ public abstract class OvfLogEventHandler<T> {
      *
      * @param defaultEntity
      *            an entity that is provided in order to get the default values from
-     * @param useDefaultFromDefaultEntity
-     *            flag that determines if to get default values from the default entity or from the annotation
      */
     public void resetDefaults(T defaultEntity) {
         try {
@@ -191,7 +187,7 @@ public abstract class OvfLogEventHandler<T> {
             }
 
         } catch (Exception ex) {
-            log.error("Error resseting the log event fields to default values: {}", ex.getMessage());
+            log.error("Error resetting the log event fields to default values: {}", ex.getMessage());
             log.debug("Exception", ex);
         }
     }

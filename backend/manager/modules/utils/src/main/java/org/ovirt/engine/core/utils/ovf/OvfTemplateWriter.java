@@ -250,10 +250,10 @@ public class OvfTemplateWriter extends OvfWriter {
         // monitors
         writeMonitors(_vmTemplate);
         // graphics
-        writeGraphics(vmBase);
+        writeGraphics(_vmTemplate);
         // CD
         writeCd(_vmTemplate);
-        // ummanged devices
+        // unmanaged devices
         writeOtherDevices(_vmTemplate, _writer);
 
         // End hardware section

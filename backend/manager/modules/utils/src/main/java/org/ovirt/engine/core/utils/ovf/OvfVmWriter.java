@@ -344,7 +344,7 @@ public class OvfVmWriter extends OvfWriter {
         writeGraphics(vmBase);
         // CD
         writeCd(vmBase);
-        // ummanged devices
+        // unmanaged devices
         writeOtherDevices(vmBase, _writer);
 
         // End hardware section

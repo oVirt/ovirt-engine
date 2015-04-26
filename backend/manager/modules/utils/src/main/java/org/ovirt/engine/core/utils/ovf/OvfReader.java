@@ -215,7 +215,6 @@ public abstract class OvfReader implements IOvfBuilder {
      * Reads vm device attributes from OVF and stores it in the collection
      *
      * @param node
-     * @param vmBase
      * @param deviceId
      */
     private VmDevice readVmDevice(XmlNode node, Guid deviceId) {
@@ -295,7 +294,7 @@ public abstract class OvfReader implements IOvfBuilder {
      *            the xml node
      * @return VmNetworkInterface
      */
-    public VmNetworkInterface getNetwotkInterface(XmlNode node) {
+    public VmNetworkInterface getNetworkInterface(XmlNode node) {
         // prior to 3.0 the instanceId is int , in 3.1 and on this is Guid
         String str = node.SelectSingleNode("rasd:InstanceId", _xmlNS).innerText;
         final Guid guid;
@@ -416,7 +415,7 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     private void readNetworkItem(XmlNode node) {
-        VmNetworkInterface iface = getNetwotkInterface(node);
+        VmNetworkInterface iface = getNetworkInterface(node);
         updateSingleNic(node, iface);
         vmBase.getInterfaces().add(iface);
         readManagedVmDevice(node, iface.getId());
