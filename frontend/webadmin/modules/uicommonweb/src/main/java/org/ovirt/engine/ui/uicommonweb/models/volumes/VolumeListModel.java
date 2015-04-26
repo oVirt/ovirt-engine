@@ -766,7 +766,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeRebalanceParameters(volume.getId(), false, false));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.StartRebalanceGlusterVolume, list);
+        Frontend.getInstance().runMultipleAction(VdcActionType.StartRebalanceGlusterVolume, list, null, true, true);
     }
 
     private void stopRebalance() {
