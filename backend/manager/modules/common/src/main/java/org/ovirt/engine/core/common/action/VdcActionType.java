@@ -441,7 +441,8 @@ public enum VdcActionType {
     CloneSingleCinderDisk(3204, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
 
     // Host Devices
-    RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE);
+    RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
+    RefreshHost(4001, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

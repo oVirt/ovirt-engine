@@ -11,11 +11,9 @@ import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HostDevChangeNumVfsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -100,18 +98,8 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
     }
 
     private boolean refreshHost() {
-        // save the new network topology to DB
-        VDSReturnValue returnValue =
-                runVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                        new CollectHostNetworkDataVdsCommandParameters(getVds(),
-                                Collections.<VdsNetworkInterface> emptyList()));
-
-        if (returnValue.getSucceeded()) {
             VdsActionParameters vdsActionParams = new VdsActionParameters(getVdsId());
-            return runInternalAction(VdcActionType.RefreshHostDevices, vdsActionParams).getSucceeded();
-        }
-
-        return false;
+            return runInternalAction(VdcActionType.RefreshHost, vdsActionParams).getSucceeded();
     }
 
     @Override
