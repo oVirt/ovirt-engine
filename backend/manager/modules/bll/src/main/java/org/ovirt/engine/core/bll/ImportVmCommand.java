@@ -308,7 +308,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
         // At this point we should work with the VM that was read from
         // the OVF because the VM from the parameters may lack images
-        setVm(vm);
+        setVmFromExportDomain(vm);
 
         if (!validateImages(domainsMap)) {
             return false;
@@ -364,6 +364,14 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         return true;
+    }
+
+    private void setVmFromExportDomain(VM vm) {
+        // preserve the given name
+        if (getVmName() != null) {
+            vm.setName(getVmName());
+        }
+        setVm(vm);
     }
 
     protected DiskImage getActiveVolumeDisk(List<DiskImage> diskList) {
