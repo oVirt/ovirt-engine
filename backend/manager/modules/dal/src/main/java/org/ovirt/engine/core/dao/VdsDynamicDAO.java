@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,4 +43,11 @@ public interface VdsDynamicDAO extends GenericDao<VdsDynamic, Guid>, StatusAware
      * @param cpuFlags
      */
     void updateCpuFlags(Guid id, String cpuFlags);
+
+    /**
+     * Retrieves all host ids of hosts that are in given status
+     * @param status
+     * @return list of host ids
+     */
+    List<Guid> getIdsOfHostsWithStatus(VDSStatus status);
 }

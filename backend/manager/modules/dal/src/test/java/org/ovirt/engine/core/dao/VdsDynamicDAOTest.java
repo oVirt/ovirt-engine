@@ -3,6 +3,11 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -20,13 +25,20 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
     private VdsStatic newStaticVds;
     private VdsDynamic newDynamicVds;
 
+    private static final List<Guid> HOSTS_WITH_UP_STATUS =
+            new ArrayList<>(Arrays.asList(new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6"),
+                    new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7"),
+                    new Guid("afce7a39-8e8c-4819-ba9c-796d316592e8"),
+                    new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3"),
+                    new Guid("2001751e-549b-4e7a-aff6-32d36856c125")));
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
         dao = dbFacade.getVdsDynamicDao();
-        staticDao =  dbFacade.getVdsStaticDao();
-        statisticsDao =  dbFacade.getVdsStatisticsDao();
+        staticDao = dbFacade.getVdsStaticDao();
+        statisticsDao = dbFacade.getVdsStatisticsDao();
         existingVds = staticDao.get(FixturesTool.VDS_GLUSTER_SERVER2);
 
         newStaticVds = new VdsStatic();
@@ -148,5 +160,15 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         dao.updatePartialVdsDynamicCalc(before.getId(), -vmCount, 0, 0, -memCommited, 0);
         after = dao.get(existingVds.getId());
         assertEquals(before, after);
+    }
+
+    @Test
+    public void testGetIdsOfHostsWithStatus() {
+        List<Guid> hostIds = dao.getIdsOfHostsWithStatus(VDSStatus.Up);
+        assertEquals(5, hostIds.size());
+        assertTrue(hostIds.containsAll(HOSTS_WITH_UP_STATUS));
+
+        hostIds = dao.getIdsOfHostsWithStatus(VDSStatus.Maintenance);
+        assertEquals(0, hostIds.size());
     }
 }

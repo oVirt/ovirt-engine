@@ -979,6 +979,17 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetIdsOfHostsWithStatus(v_status integer) RETURNS SETOF UUID STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vds_id
+   FROM vds_dynamic
+   WHERE status = v_status;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 
 ----------------------------------------------------------------
 -- [vds_cpu_statistics] Table

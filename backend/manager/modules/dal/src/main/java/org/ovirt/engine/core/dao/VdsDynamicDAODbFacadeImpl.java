@@ -300,4 +300,13 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                         .addValue("vds_id", id)
                         .addValue("cpu_flags", cpuFlags));
     }
+
+    @Override
+    public List<Guid> getIdsOfHostsWithStatus(VDSStatus status) {
+        return getCallsHandler().executeReadList("GetIdsOfHostsWithStatus",
+                createGuidMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("status", status.getValue()));
+    }
+
 }
