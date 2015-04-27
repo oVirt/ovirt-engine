@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -567,9 +568,19 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private StorageDomain updateStorageDomainInMemoryVolumes(List<DiskImage> disksList) {
         List<DiskImage> memoryDisksList = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.META_DATA_SIZE_IN_BYTES);
         StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
-                getParameters().getStoragePoolId(), memoryDisksList);
+                getParameters().getStoragePoolId(), memoryDisksList, getVmDisksDummies());
         disksList.addAll(memoryDisksList);
         return storageDomain;
+    }
+
+    private Collection<DiskImage> getVmDisksDummies() {
+        Collection<DiskImage> disksDummies = new LinkedList<>();
+        for (Guid storageDomainId : getParameters().getImageToDestinationDomainMap().values()) {
+            DiskImage diskImage = new DiskImage();
+            diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
+            disksDummies.add(diskImage);
+        }
+        return disksDummies;
     }
 
     /**

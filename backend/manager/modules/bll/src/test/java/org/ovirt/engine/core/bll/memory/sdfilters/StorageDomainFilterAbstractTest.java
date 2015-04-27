@@ -11,12 +11,12 @@ import org.ovirt.engine.core.compat.Guid;
 public class StorageDomainFilterAbstractTest {
 
     protected StorageDomain storageDomain;
-    protected List<DiskImage> disksList;
+    protected List<DiskImage> memoryDisks;
 
     @Before
     public void setUp() {
         storageDomain = new StorageDomain();
         storageDomain.setId(Guid.newGuid());
-        disksList = new LinkedList<>();
+        memoryDisks = new LinkedList<>();
     }
 }

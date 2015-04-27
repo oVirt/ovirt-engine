@@ -10,7 +10,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class StorageDomainStatusFilter extends StorageDomainFilter {
 
     @Override
-    protected Predicate<StorageDomain> getPredicate(final List<DiskImage> disksList) {
+    protected Predicate<StorageDomain> getPredicate(final List<DiskImage> memoryDisks) {
         return new Predicate<StorageDomain>() {
             @Override
             public boolean eval(StorageDomain storageDomain) {

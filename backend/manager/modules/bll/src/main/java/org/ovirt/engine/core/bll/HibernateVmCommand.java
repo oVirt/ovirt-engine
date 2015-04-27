@@ -83,7 +83,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                     getVm().getTotalMemorySizeInBytes(),
                     MemoryUtils.META_DATA_SIZE_IN_BYTES);
             StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
-                    getStoragePoolId(), diskDummiesForMemSize);
+                    getStoragePoolId(), diskDummiesForMemSize,
+                    ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), false, false, false));
             if (storageDomain != null) {
                 cachedStorageDomainId = storageDomain.getId();
             }

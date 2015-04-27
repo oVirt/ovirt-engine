@@ -9,7 +9,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class StorageDomainTypeFilter extends StorageDomainFilter {
 
     @Override
-    protected Predicate<StorageDomain> getPredicate(List<DiskImage> disksList) {
+    protected Predicate<StorageDomain> getPredicate(List<DiskImage> memoryDisks) {
         return new Predicate<StorageDomain>() {
             @Override
             public boolean eval(StorageDomain storageDomain) {

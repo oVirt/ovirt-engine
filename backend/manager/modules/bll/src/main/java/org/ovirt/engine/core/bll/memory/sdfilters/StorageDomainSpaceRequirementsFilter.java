@@ -11,14 +11,14 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class StorageDomainSpaceRequirementsFilter extends StorageDomainFilter {
 
     @Override
-    protected Predicate<StorageDomain> getPredicate(final List<DiskImage> disksList) {
+    protected Predicate<StorageDomain> getPredicate(final List<DiskImage> memoryDisks) {
         return new Predicate<StorageDomain>() {
             @Override
             public boolean eval(StorageDomain storageDomain) {
-                updateDisksStorage(storageDomain, disksList);
+                updateDisksStorage(storageDomain, memoryDisks);
                 StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
                 return storageDomainValidator.isDomainWithinThresholds().isValid() &&
-                        storageDomainValidator.hasSpaceForClonedDisks(disksList).isValid();
+                        storageDomainValidator.hasSpaceForClonedDisks(memoryDisks).isValid();
             }
         };
     }

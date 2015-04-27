@@ -39,21 +39,21 @@ public class StorageDomainSpaceRequirementsFilterTest extends StorageDomainFilte
 
     @Test
     public void testStorageDomainForMemoryIsValid() {
-        assertTrue(filter.getPredicate(disksList).eval(storageDomain));
+        assertTrue(filter.getPredicate(memoryDisks).eval(storageDomain));
     }
 
     @Test
     public void testStorageDomainForMemoryIsNotValidWhenItHasLowSpace() {
         when(storageDomainValidator.isDomainWithinThresholds())
                 .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        assertFalse(filter.getPredicate(disksList).eval(storageDomain));
+        assertFalse(filter.getPredicate(memoryDisks).eval(storageDomain));
     }
 
     @Test
     public void testStorageDomainForMemoryIsNotValidWhenItHasNoSpaceForClonedDisks() {
-        when(storageDomainValidator.hasSpaceForClonedDisks(disksList))
+        when(storageDomainValidator.hasSpaceForClonedDisks(memoryDisks))
                 .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        assertFalse(filter.getPredicate(disksList).eval(storageDomain));
+        assertFalse(filter.getPredicate(memoryDisks).eval(storageDomain));
     }
 
     private void initFilter() {
@@ -63,7 +63,7 @@ public class StorageDomainSpaceRequirementsFilterTest extends StorageDomainFilte
 
     private void initStorageDomainValidator() {
         when(storageDomainValidator.isDomainWithinThresholds()).thenReturn(ValidationResult.VALID);
-        when(storageDomainValidator.hasSpaceForClonedDisks(disksList))
+        when(storageDomainValidator.hasSpaceForClonedDisks(memoryDisks))
                 .thenReturn(ValidationResult.VALID);
     }
 }

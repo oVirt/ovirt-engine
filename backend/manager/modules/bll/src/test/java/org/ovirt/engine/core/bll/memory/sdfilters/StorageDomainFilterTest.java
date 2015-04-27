@@ -39,7 +39,7 @@ public class StorageDomainFilterTest extends StorageDomainFilterAbstractTest {
     private List<StorageDomain> filterStorageDomain(boolean removeStorageDomainFromList) {
         filter = new StorageDomainFilter() {
             @Override
-            protected Predicate<StorageDomain> getPredicate(List<DiskImage> disksList) {
+            protected Predicate<StorageDomain> getPredicate(List<DiskImage> memoryDisks) {
                 return predicate;
             }
         };
@@ -47,6 +47,6 @@ public class StorageDomainFilterTest extends StorageDomainFilterAbstractTest {
         when(predicate.eval(storageDomain)).thenReturn(!removeStorageDomainFromList);
 
         List<StorageDomain> storageDomains = Arrays.asList(storageDomain);
-        return filter.filterStorageDomains(storageDomains, disksList);
+        return filter.filterStorageDomains(storageDomains, memoryDisks);
     }
 }

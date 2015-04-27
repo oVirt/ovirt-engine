@@ -27,7 +27,7 @@ public class StorageDomainStatusFilterTest extends StorageDomainFilterAbstractTe
     @Theory
     public void testStorageDomainForMemoryIsValidOnlyForActiveStatus(StorageDomainStatus storageDomainStatus) {
         storageDomain.setStatus(storageDomainStatus);
-        assertEquals(filter.getPredicate(disksList).eval(storageDomain),
+        assertEquals(filter.getPredicate(memoryDisks).eval(storageDomain),
                 storageDomainStatus == StorageDomainStatus.Active);
     }
 }

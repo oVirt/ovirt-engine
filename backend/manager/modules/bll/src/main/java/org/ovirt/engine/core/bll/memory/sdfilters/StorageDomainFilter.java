@@ -10,16 +10,16 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public abstract class StorageDomainFilter {
 
-    public List<StorageDomain> filterStorageDomains(List<StorageDomain> domainsInPool, List<DiskImage> disksList) {
+    public List<StorageDomain> filterStorageDomains(List<StorageDomain> domainsInPool, List<DiskImage> memoryDisks) {
         domainsInPool = new LinkedList<>(domainsInPool);
         Iterator<StorageDomain> iterator = domainsInPool.iterator();
         while (iterator.hasNext()) {
-            if (!getPredicate(disksList).eval(iterator.next())) {
+            if (!getPredicate(memoryDisks).eval(iterator.next())) {
                 iterator.remove();
             }
         }
         return domainsInPool;
     }
 
-    protected abstract Predicate<StorageDomain> getPredicate(final List<DiskImage> disksList);
+    protected abstract Predicate<StorageDomain> getPredicate(final List<DiskImage> memoryDisks);
 }
