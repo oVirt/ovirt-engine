@@ -155,9 +155,10 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         List<DiskImage> templateDiskImages = ImagesHandler.filterImageDisks(
                 getVmTemplate().getDiskTemplateMap().values(), true, false, false);
         for (DiskImage dit : templateDiskImages) {
-            if (!ImagesHandler.checkImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getStorageIds().get(0))
-                    .getStorageStaticData(),
-                    diskInfoDestinationMap.get(dit.getId()),
+            DiskImage diskImage = diskInfoDestinationMap.get(dit.getId());
+            if (!ImagesHandler.checkImageConfiguration(
+                    destStorages.get(diskImage.getStorageIds().get(0)).getStorageStaticData(),
+                    diskImage,
                     getReturnValue().getCanDoActionMessages())) {
                 return false;
             }
