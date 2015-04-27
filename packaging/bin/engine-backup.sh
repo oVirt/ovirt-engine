@@ -149,11 +149,13 @@ USAGE:
     backup                          backup system into FILE
     restore                         restore system from FILE
  SCOPE is one of the following:
-    all                             complete backup/restore (default)
+    all                             If MODE=backup: backup everything below.
+                                    If MODE=restore: restore everything found in FILE.
     files                           files only
     db                              engine database only
     dwhdb                           dwh database only
     reportsdb                       reports database only
+    The option --scope can be passed more than once, with different scopes.
  --file=FILE                        file to use during backup or restore
  --log=FILE                         log file to use
  --archive-compressor=COMPRESSOR
@@ -256,7 +258,8 @@ __EOF__
 }
 
 MODE=
-SCOPE=all
+DEFAULT_SCOPE=all
+SCOPE=
 SCOPE_FILES=
 SCOPE_ENGINE_DB=
 SCOPE_DWH_DB=
@@ -344,6 +347,37 @@ parse_jobs() {
 	echo "${res}"
 }
 
+set_scope() {
+	local s="$1"
+	case "${s}" in
+		all)
+			SCOPE_FILES=1
+			SCOPE_ENGINE_DB=1
+			SCOPE_DWH_DB=1
+			SCOPE_REPORTS_DB=1
+			;;
+		files)
+			SCOPE_FILES=1
+			;;
+		db)
+			SCOPE_ENGINE_DB=1
+			;;
+		dwhdb)
+			SCOPE_DWH_DB=1
+			;;
+		reportsdb)
+			SCOPE_REPORTS_DB=1
+			;;
+		*) die "invalid scope '${s}'"
+	esac
+
+	if [ -z "${SCOPE}" ]; then
+		SCOPE="${s}"
+	else
+		SCOPE="${SCOPE},${s}"
+	fi
+}
+
 parseArgs() {
 	local DB_PASSFILE
 
@@ -360,11 +394,7 @@ parseArgs() {
 				esac
 			;;
 			--scope=*)
-				SCOPE="${v}"
-				case "${SCOPE}" in
-					all|files|db|dwhdb|reportsdb) ;;
-					*) die "invalid scope '${SCOPE}'"
-				esac
+				set_scope "${v}"
 			;;
 			--file=*)
 				FILE="${v}"
@@ -532,27 +562,9 @@ parseArgs() {
 		esac
 	done
 
-	case "${SCOPE}" in
-		all)
-			SCOPE_FILES=1
-			SCOPE_ENGINE_DB=1
-			SCOPE_DWH_DB=1
-			SCOPE_REPORTS_DB=1
-			;;
-		files)
-			SCOPE_FILES=1
-			;;
-		db)
-			SCOPE_ENGINE_DB=1
-			;;
-		dwhdb)
-			SCOPE_DWH_DB=1
-			;;
-		reportsdb)
-			SCOPE_REPORTS_DB=1
-			;;
-		*) die "invalid scope '${SCOPE}'"
-	esac
+	if [ -z "${SCOPE}" ]; then
+		set_scope "${DEFAULT_SCOPE}"
+	fi
 }
 
 verifyArgs() {
@@ -710,6 +722,7 @@ dorestore() {
 		ps "$(cat ${ENGINE_UP_MARK})" | grep -q 'ovirt-engine.py' &&
 			logdie "Engine service is active - can not restore backup"
 	fi
+
 	if [ -n "${CHANGE_DB_CREDENTIALS}" ]; then
 		output "- Setting credentials for Engine database '${MY_DB_DATABASE}'"
 		setMyEngineDBCredentials
@@ -738,6 +751,13 @@ dorestore() {
 	verifyVersion
 
 	. "${TEMP_FOLDER}/config"
+
+	# Refresh scope vars according to what actually found
+	[ -s "${TEMP_FOLDER}/files" ] || SCOPE_FILES=
+	[ -s "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" ] || SCOPE_ENGINE_DB=
+	[ -s "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" ] || SCOPE_DWH_DB=
+	[ -s "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" ] || SCOPE_REPORTS_DB=
+
 	output "Restoring:"
 	if [ -n "${SCOPE_FILES}" ] ; then
 		output "- Files"
@@ -763,7 +783,7 @@ dorestore() {
 		log "Restoring engine database backup at ${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}"
 		restoreDB "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ORIG_DB_USER}" "${DB_DUMP_COMPRESSOR}" "${DB_DUMP_FORMAT}" "${DB_RESTORE_JOBS}"
 		if [ -z "${KEEP_TEMPORARY_DATA}" ]; then
-			output "Cleaning up temporary tables in engine database '${ENGINE_DB_DATABASE}':"
+			output "  - Cleaning up temporary tables in engine database '${ENGINE_DB_DATABASE}'"
 			cleanDbTempData "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_TABLES_TO_CLEAN_ON_RESTORE}"
 			resetDwhCurrentlyRunning "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_TABLES_TO_CLEAN_ON_RESTORE}"
 		fi
@@ -779,7 +799,7 @@ dorestore() {
 		restoreDB "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${ORIG_REPORTS_DB_USER}" "${REPORTS_DB_DUMP_COMPRESSOR}" "${REPORTS_DB_DUMP_FORMAT}" "${REPORTS_DB_RESTORE_JOBS}"
 	fi
 	[ -n "${CHANGE_DB_CREDENTIALS}" ] && changeEngineDBConf
-	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" ] && changeDwhDBConf
+	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" ] && changeDwhDBConf
 	[ -n "${CHANGE_REPORTS_DB_CREDENTIALS}" ] && changeReportsDBConf
 	output "You should now run engine-setup."
 }
@@ -906,7 +926,7 @@ cleanDbTempData() {
 	local tables_to_clean="$5"
 	local psqllog="${TEMP_FOLDER}/psql-cleanup-log"
 	echo "${tables_to_clean}" | while read -r table; do
-		output "- ${table}"
+		log "truncating ${table}"
 		pg_cmd psql \
 			-t \
 			-c "TRUNCATE TABLE ${table} cascade" \
@@ -1074,6 +1094,16 @@ changeDwhDBConf() {
 		MY_DB_SECURED_VALIDATION="${ENGINE_DB_SECURED_VALIDATION}"
 		setMyEngineDBCredentials
 	fi
+	if [ -z "${MY_DWH_DB_CREDS}" ]; then
+		MY_DWH_DB_HOST="${DWH_DB_HOST}"
+		MY_DWH_DB_PORT="${DWH_DB_PORT}"
+		MY_DWH_DB_USER="${DWH_DB_USER}"
+		MY_DWH_DB_PASSWORD="${DWH_DB_PASSWORD}"
+		MY_DWH_DB_DATABASE="${DWH_DB_DATABASE}"
+		MY_DWH_DB_SECURED="${DWH_DB_SECURED}"
+		MY_DWH_DB_SECURED_VALIDATION="${DWH_DB_SECURED_VALIDATION}"
+		setMyDwhDBCredentials
+	fi
 	printf "%s\n" "${MY_DB_CREDS}" > "${conf}"
 	printf "%s\n" "${MY_DWH_DB_CREDS}" >> "${conf}"
 }
@@ -1167,7 +1197,7 @@ logdie() {
 
 output() {
 	local m="$1"
-	log "${m}"
+	log "OUTPUT: ${m}"
 	printf "%s\n" "${m}"
 }
 
@@ -1220,3 +1250,5 @@ log "Start of engine-backup mode ${MODE} scope ${SCOPE} file ${FILE}"
 generatePgPass
 do${MODE}
 output "Done."
+
+# vim: set noexpandtab shiftwidth=8 tabstop=8:
