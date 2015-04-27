@@ -465,7 +465,7 @@ public abstract class AbstractDiskModel extends DiskModel
         }
     }
 
-    private void updateBootableDiskAvailable() {
+    protected void updateBootableDiskAvailable() {
         AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {

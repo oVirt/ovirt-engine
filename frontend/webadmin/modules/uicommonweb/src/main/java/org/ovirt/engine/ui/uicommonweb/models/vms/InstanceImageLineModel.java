@@ -121,6 +121,11 @@ public class InstanceImageLineModel extends EntityModel {
                     parentModel.getParentListModel().setWindow(parentModel.getUnitVmModel());
                 }
             }
+
+            @Override
+            protected void updateBootableDiskAvailable() {
+                updateBootableFrom(parentModel.getAllCurrentDisks());
+            }
         };
 
         model.setDisk(disk);
@@ -172,6 +177,11 @@ public class InstanceImageLineModel extends EntityModel {
 
                     fillData();
                 }
+            }
+
+            @Override
+            protected void updateBootableDiskAvailable() {
+                updateBootableFrom(parentModel.getAllCurrentDisks());
             }
         };
 
@@ -239,7 +249,17 @@ public class InstanceImageLineModel extends EntityModel {
                     attachCommand.setIsAvailable(false);
 
                     fillData();
+
+                    Disk disk = super.getDisk();
+                    if (disk.getDiskStorageType() == DiskStorageType.IMAGE || disk.getDiskStorageType() == DiskStorageType.CINDER) {
+                        ((DiskImage) disk).setActive(true);
+                    }
                 }
+            }
+
+            @Override
+            protected void updateBootableDiskAvailable() {
+                updateBootableFrom(parentModel.getAllCurrentDisks());
             }
         };
 
