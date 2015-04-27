@@ -48,6 +48,10 @@ public class HostNicPopupView extends AbstractTabbedModelBoundPopupView<HostNicM
     @Ignore
     NicLabelWidget labelsWidget;
 
+    @UiField
+    @Ignore
+    VfsConfigWidget vfsConfigWidget;
+
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
@@ -67,11 +71,13 @@ public class HostNicPopupView extends AbstractTabbedModelBoundPopupView<HostNicM
     public void edit(HostNicModel model) {
         driver.edit(model);
         labelsWidget.edit(model.getLabelsModel());
+        vfsConfigWidget.edit(model.getVfsConfigModel());
     }
 
     @Override
     public HostNicModel flush() {
         labelsWidget.flush();
+        vfsConfigWidget.flush();
         return driver.flush();
     }
 
@@ -111,5 +117,4 @@ public class HostNicPopupView extends AbstractTabbedModelBoundPopupView<HostNicM
         contentPanel.setWidget(vfsConfigTab.getContent());
         mainPanel.setWidth("400px"); //$NON-NLS-1$
     }
-
 }

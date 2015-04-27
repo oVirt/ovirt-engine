@@ -161,6 +161,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.VfsConfigWidget;
 
 import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 
@@ -447,4 +448,6 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<Permission, VnicProfileListModel, PermissionListModel<VnicProfileView>> getSubTabVnicProfilePermissionModelProvider();
 
+    // Widgets
+    VfsConfigWidget getVfsConfigWidget();
 }

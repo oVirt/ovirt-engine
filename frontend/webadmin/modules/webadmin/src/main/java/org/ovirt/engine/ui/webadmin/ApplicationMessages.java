@@ -119,4 +119,6 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("Volume data from {0} of cluster {1} is replicated to this volume.")
     String geoRepSlaveVolumeToolTip(String mastervolName, String clusterName);
 
+    @DefaultMessage("0 - {0}")
+    String maxVfs(int maxVfs);
 }

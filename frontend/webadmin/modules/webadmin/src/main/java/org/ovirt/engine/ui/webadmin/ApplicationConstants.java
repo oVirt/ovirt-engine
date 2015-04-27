@@ -4296,4 +4296,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Virtual Functions (SR-IOV)")
     String vfsConfigTab();
+
+    @DefaultStringValue("Number of VFs setting")
+    String numOfVfsSetting();
+
+    @DefaultStringValue("Number of VFs")
+    String numOfVfs();
 }

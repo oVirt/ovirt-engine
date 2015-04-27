@@ -27,6 +27,9 @@
 					<t:tab>
 						<t:DialogTab ui:field="vfsConfigTab">
 							<t:content>
+								<g:FlowPanel>
+									<h:VfsConfigWidget ui:field="vfsConfigWidget"/>
+								</g:FlowPanel>
 							</t:content>
 						</t:DialogTab>
 					</t:tab>

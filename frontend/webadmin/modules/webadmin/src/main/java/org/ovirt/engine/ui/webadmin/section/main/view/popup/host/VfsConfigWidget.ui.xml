@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.VfsConfigWidget.WidgetStyle">
+        .valueWidth {
+            width: 60px;
+        }
+
+        .numOfVfs {
+            width: 165px;
+        }
+
+        .maxVfsLabel {
+            display: block;
+            font-size: 9px;
+            padding-left: 112px;
+        }
+
+        .expanderContent {
+            margin-left: 20px;
+        }
+	</ui:style>
+
+	<g:FlowPanel>
+		<d:AdvancedParametersExpander ui:field="numVfsExpander"/>
+		<g:FlowPanel ui:field="numVfsExpanderContent" addStyleNames="{style.expanderContent}">
+			<ge:IntegerEntityModelTextBoxEditor ui:field="numOfVfs" addStyleNames="{style.numOfVfs}" />
+			<g:ValueLabel ui:field="maxVfsLabel" addStyleNames="{style.maxVfsLabel}" />
+		</g:FlowPanel>
+	</g:FlowPanel>
+
+</ui:UiBinder>

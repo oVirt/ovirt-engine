@@ -13,8 +13,10 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class HostNicModel extends Model {
 
+    public static final VfsConfigModel EMPTY_VFS_CONFIG_MODEL = new VfsConfigModel();
+
     private final NicLabelModel labelsModel;
-    private VfsConfigModel vfsConfigModel = null;
+    private VfsConfigModel vfsConfigModel = EMPTY_VFS_CONFIG_MODEL;
     private VdsNetworkInterface iface;
 
     public NicLabelModel getLabelsModel() {

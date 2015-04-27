@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +19,10 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
     private EntityModel<Boolean> allNetworksAllowed = new EntityModel<>();
     private ListModel<Network> networks = new ListModel<>();
     private ListModel<String> labels = new ListModel<>();
+
+    public VfsConfigModel() {
+        this(new HostNicVfsConfig(), new ArrayList<Network>());
+    }
 
     public VfsConfigModel(HostNicVfsConfig vfsConfig, List<Network> allClusterNetworks) {
         setEntity(vfsConfig);

@@ -23,9 +23,7 @@ public class HostNicPopupPresenterWidget extends AbstractModelBoundPopupPresente
 
     @Override
     public void init(HostNicModel model) {
-        super.init(model);
-
-        if (model.getVfsConfigModel() != null) {
+        if (model.getVfsConfigModel() != HostNicModel.EMPTY_VFS_CONFIG_MODEL) {
             if (model.getInterface().getBondName() == null) {
                 // sriov nic
                 getView().showTabs();
@@ -37,6 +35,8 @@ public class HostNicPopupPresenterWidget extends AbstractModelBoundPopupPresente
             // regular nic
             getView().showOnlyPf();
         }
+
+        super.init(model);
     }
 
 }
