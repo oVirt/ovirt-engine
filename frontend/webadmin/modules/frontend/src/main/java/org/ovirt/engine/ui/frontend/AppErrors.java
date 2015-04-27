@@ -2084,7 +2084,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot export VM. Template ${TemplateName} does not exist on the export domain. if you want to export VM without its Template please use TemplateMustExists=false")
     String ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN();
 
-    @DefaultStringValue("Cannot delete VM, VM not exists in export domain")
+    @DefaultStringValue("Cannot ${action} ${type}. VM not exists in export domain")
     String ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN();
 
     @DefaultStringValue("The Action ${action} ${type} is not supported for this Cluster or Data Center compatibility version")

@@ -100,6 +100,7 @@ public class ImportVmCommandTest {
     @Test
     public void insufficientDiskSpaceWithCollapse() {
         final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
+        doReturn(true).when(command).validateImages(any(Map.class));
         when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
@@ -109,6 +110,7 @@ public class ImportVmCommandTest {
     @Test
     public void insufficientDiskSpaceWithSnapshots() {
         final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
+        doReturn(true).when(command).validateImages(any(Map.class));
         when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
@@ -130,13 +132,14 @@ public class ImportVmCommandTest {
     public void refuseBalloonOnPPC() {
         final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(createParameters());
 
-        addBalloonToVm(c.getParameters().getVm());
+        addBalloonToVm(c.getVmFromExportDomain(null));
 
         c.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         VDSGroup cluster = new VDSGroup();
         cluster.setArchitecture(ArchitectureType.ppc64);
         cluster.setCompatibilityVersion(Version.getLast());
         doReturn(cluster).when(c).getVdsGroup();
+        doReturn(true).when(c).validateImages(any(Map.class));
         when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(false);
         assertFalse(c.canDoAction());
         assertTrue(c.getReturnValue()
@@ -164,6 +167,7 @@ public class ImportVmCommandTest {
     @Test
     public void lowThresholdStorageSpace() {
         final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
+        doReturn(true).when(command).validateImages(any(Map.class));
         when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
@@ -195,7 +199,7 @@ public class ImportVmCommandTest {
         doReturn(true).when(cmd).validateNoDuplicateDiskImages(any(Iterable.class));
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
-        doReturn(Collections.<VM> singletonList(createVM())).when(cmd).getVmsFromExportDomain();
+        doReturn(parameters.getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
         doReturn(new VDSGroup()).when(cmd).getVdsGroup();
@@ -412,7 +416,7 @@ public class ImportVmCommandTest {
         params.setCopyCollapse(Boolean.TRUE);
         DiskImage diskImage = params.getVm().getImages().get(0);
         diskImage.setVmSnapshotId(Guid.Empty);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params){
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
             @Override
             public VDSGroup getVdsGroup() {
                 return null;
@@ -429,7 +433,7 @@ public class ImportVmCommandTest {
         doReturn(true).when(cmd).validateNoDuplicateDiskImages(any(Iterable.class));
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
-        doReturn(Collections.<VM> singletonList(params.getVm())).when(cmd).getVmsFromExportDomain();
+        doReturn(params.getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
         doReturn(new VDSGroup()).when(cmd).getVdsGroup();
@@ -470,6 +474,7 @@ public class ImportVmCommandTest {
     @Test
     public void testValidateClusterSupportForVirtioScsi() {
         ImportVmCommand<ImportVmParameters> cmd = setupDiskSpaceTest(createParameters());
+        doReturn(true).when(cmd).validateImages(any(Map.class));
         cmd.getParameters().getVm().getDiskMap().values().iterator().next().setDiskInterface(DiskInterface.VirtIO_SCSI);
         cmd.getVdsGroup().setCompatibilityVersion(Version.v3_2);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,

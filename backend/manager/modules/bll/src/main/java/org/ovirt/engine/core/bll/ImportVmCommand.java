@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -61,11 +62,11 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -93,7 +94,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -266,8 +266,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     protected boolean canDoActionBeforeCloneVm(Map<Guid, StorageDomain> domainsMap) {
-        List<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
-
         if (getVm() != null) {
             setDescription(getVmName());
         }
@@ -303,65 +301,66 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             }
         }
 
-        List<VM> vms = getVmsFromExportDomain();
-        if (vms == null) {
+        VM vm = getVmFromExportDomain(getParameters().getVmId());
+        if (vm == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
+        }
+
+        // At this point we should work with the VM that was read from
+        // the OVF because the VM from the parameters may lack images
+        setVm(vm);
+
+        if (!validateImages(domainsMap)) {
             return false;
         }
 
-        VM vm = LinqUtils.firstOrNull(vms, new Predicate<VM>() {
-            @Override
-            public boolean eval(VM evalVm) {
-                return evalVm.getId().equals(getParameters().getVmId());
+        return true;
+    }
+
+    protected boolean validateImages(Map<Guid, StorageDomain> domainsMap) {
+        List<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
+
+        // Iterate over all the VM images (active image and snapshots)
+        for (DiskImage image : getImages()) {
+            if (Guid.Empty.equals(image.getVmSnapshotId())) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
             }
-        });
 
-        if (vm != null) {
-            // At this point we should work with the VM that was read from
-            // the OVF
-            setVm(vm);
-
-            // Iterate over all the VM images (active image and snapshots)
-            for (DiskImage image : getImages()) {
-                if (Guid.Empty.equals(image.getVmSnapshotId())) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
-                }
-
-                if (getParameters().getCopyCollapse()) {
-                    // If copy collapse sent then iterate over the images got from the parameters, until we got
-                    // a match with the image from the VM.
-                    for (DiskImage p : imageList) {
-                        // copy the new disk volume format/type if provided,
-                        // only if requested by the user
-                        if (p.getImageId().equals(image.getImageId())) {
-                            if (p.getVolumeFormat() != null) {
-                                image.setvolumeFormat(p.getVolumeFormat());
-                            }
-                            if (p.getVolumeType() != null) {
-                                image.setVolumeType(p.getVolumeType());
-                            }
-                            // Validate the configuration of the image got from the parameters.
-                            if (!validateImageConfig(canDoActionMessages, domainsMap, image)) {
-                                return false;
-                            }
-                            break;
+            if (getParameters().getCopyCollapse()) {
+                // If copy collapse sent then iterate over the images got from the parameters, until we got
+                // a match with the image from the VM.
+                for (DiskImage p : imageList) {
+                    // copy the new disk volume format/type if provided,
+                    // only if requested by the user
+                    if (p.getImageId().equals(image.getImageId())) {
+                        if (p.getVolumeFormat() != null) {
+                            image.setvolumeFormat(p.getVolumeFormat());
                         }
+                        if (p.getVolumeType() != null) {
+                            image.setVolumeType(p.getVolumeType());
+                        }
+                        // Validate the configuration of the image got from the parameters.
+                        if (!validateImageConfig(canDoActionMessages, domainsMap, image)) {
+                            return false;
+                        }
+                        break;
                     }
                 }
-
-                image.setStoragePoolId(getParameters().getStoragePoolId());
-                // we put the source domain id in order that copy will
-                // work properly.
-                // we fix it to DestDomainId in
-                // MoveOrCopyAllImageGroups();
-                image.setStorageIds(new ArrayList<Guid>(Arrays.asList(getSourceDomainId(image))));
             }
 
-            Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getImages());
-            for (Map.Entry<Guid, List<DiskImage>> entry : images.entrySet()) {
-                Guid id = entry.getKey();
-                List<DiskImage> diskList = entry.getValue();
-                getVm().getDiskMap().put(id, getActiveVolumeDisk(diskList));
-            }
+            image.setStoragePoolId(getParameters().getStoragePoolId());
+            // we put the source domain id in order that copy will
+            // work properly.
+            // we fix it to DestDomainId in
+            // MoveOrCopyAllImageGroups();
+            image.setStorageIds(new ArrayList<Guid>(Arrays.asList(getSourceDomainId(image))));
+        }
+
+        Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getImages());
+        for (Map.Entry<Guid, List<DiskImage>> entry : images.entrySet()) {
+            Guid id = entry.getKey();
+            List<DiskImage> diskList = entry.getValue();
+            getVm().getDiskMap().put(id, getActiveVolumeDisk(diskList));
         }
 
         return true;
@@ -371,17 +370,28 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return diskList.get(diskList.size() - 1);
     }
 
+    protected VM getVmFromExportDomain(Guid vmId) {
+        for (VM vm : getVmsFromExportDomain()) {
+            if (vmId.equals(vm.getId())) {
+                return vm;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Load images from Import/Export domain.
-     * @return A {@link List} of {@link VM}s, or <code>null</code> if the query to the export domain failed.
+     * @return A {@link List} of {@link VM}s from the export domain.
      */
+    @SuppressWarnings("unchecked")
     protected List<VM> getVmsFromExportDomain() {
-        GetAllFromExportDomainQueryParameters p =
-                new GetAllFromExportDomainQueryParameters
-                (getParameters().getStoragePoolId(), getParameters().getSourceDomainId());
-        VdcQueryReturnValue qRetVal =
-                runInternalQuery(VdcQueryType.GetVmsFromExportDomain, p);
-        return qRetVal.getSucceeded() ? qRetVal.<List<VM>>getReturnValue() : null;
+        VdcQueryReturnValue qRetVal = runInternalQuery(
+                VdcQueryType.GetVmsFromExportDomain,
+                new GetAllFromExportDomainQueryParameters(
+                        getParameters().getStoragePoolId(),
+                        getParameters().getSourceDomainId()));
+        return (List<VM>) (qRetVal.getSucceeded() ? qRetVal.getReturnValue() : Collections.emptyList());
     }
 
     private boolean validateImageConfig(List<String> canDoActionMessages,
