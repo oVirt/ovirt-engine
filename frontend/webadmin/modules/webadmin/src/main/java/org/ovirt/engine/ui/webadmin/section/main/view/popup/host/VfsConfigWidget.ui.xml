@@ -30,13 +30,29 @@
             margin-bottom: 20px;
         }
 
+        .allowedNetworksPanel {
+            margin-left: 15px;
+        }
+
         .allAllowedLabel {
             font-weight: bold;
             margin-left: 5px;
         }
 
+        .selectNetworksLabel {
+            margin-top: 10px;
+        }
+
         .allAllowedSelector {
             float: left;
+        }
+
+        .dock {
+            height: 50%;
+        }
+
+        .clear {
+            clear: both;
         }
 	</ui:style>
 
@@ -48,6 +64,13 @@
 		</g:FlowPanel>
 		<g:Label ui:field="allowedNetworksLabel" addStyleNames="{style.allAllowedLabel}" />
 		<e:ListModelRadioGroupEditor ui:field="allNetworksSelectorEditor" addStyleNames="{style.allAllowedSelector}" />
+		<g:SimplePanel addStyleNames="{style.clear}" />
+		<g:FlowPanel ui:field="allowedNetworksPanel" addStyleNames="{style.allowedNetworksPanel}" >
+			<g:Label ui:field="selectNetworksLabel" addStyleNames="{style.selectNetworksLabel}" />
+			<g:ScrollPanel addStyleNames="{style.dock}">
+				<e:EntityModelCellTable ui:field="networks" />
+			</g:ScrollPanel>
+		</g:FlowPanel>
 	</g:FlowPanel>
 
 </ui:UiBinder>

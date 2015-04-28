@@ -2,10 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
@@ -19,7 +16,7 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
     private EntityModel<Integer> maxNumOfVfs = new EntityModel<>();
     private EntityModel<Integer> numOfVfs = new EntityModel<>();
     private ListModel<AllNetworksSelector> allNetworksAllowed = new ListModel<>();
-    private ListModel<Network> networks = new ListModel<>();
+    private ListModel<VfsConfigNetwork> networks = new ListModel<>();
     private ListModel<String> labels = new ListModel<>();
 
     public VfsConfigModel() {
@@ -53,11 +50,11 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         this.allNetworksAllowed = allNetworksAllowed;
     }
 
-    public ListModel<Network> getNetworks() {
+    public ListModel<VfsConfigNetwork> getNetworks() {
         return networks;
     }
 
-    public void setNetworks(ListModel<Network> networks) {
+    public void setNetworks(ListModel<VfsConfigNetwork> networks) {
         this.networks = networks;
     }
 
@@ -74,27 +71,25 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
     }
 
     private void initNetworks(List<Network> allClusterNetworks) {
-        Map<Guid, Network> clusterNetworksMap = createClusterNetworksMap(allClusterNetworks);
-        Set<Network> vfsConfigNetworks = new HashSet<>();
+        List<VfsConfigNetwork> vfsConfigNetworks = new ArrayList<>();
 
-        for (Guid networkGuid : getEntity().getNetworks()) {
-            vfsConfigNetworks.add(clusterNetworksMap.get(networkGuid));
+        Set<Guid> attachedNetworks = getEntity().getNetworks();
+        for (Network network : allClusterNetworks) {
+            boolean isAttached = attachedNetworks.contains(network.getId());
+            VfsConfigNetwork vfsConfigNetwork =
+                    new VfsConfigNetwork(isAttached, isAttached ? getAttachedViaLabel(network) : null, network);
+            vfsConfigNetworks.add(vfsConfigNetwork);
         }
 
         networks.setItems(vfsConfigNetworks);
     }
 
-    private Map<Guid, Network> createClusterNetworksMap(List<Network> allClusterNetworks) {
-        Map<Guid, Network> clusterNetworksMap = new HashMap<>();
-
-        for (Network network : allClusterNetworks) {
-            clusterNetworksMap.put(network.getId(), network);
-        }
-
-        return clusterNetworksMap;
+    private String getAttachedViaLabel(Network network) {
+        // TODO return the label just if the network is really attached via the label
+        return network.getLabel();
     }
 
-    public enum AllNetworksSelector {
+    public static enum AllNetworksSelector {
         allNetworkAllowed(ConstantsManager.getInstance().getConstants().allNetworksAllowed()),
         specificNetworks(ConstantsManager.getInstance().getConstants().specificNetworksAllowed());
 

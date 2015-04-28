@@ -4305,4 +4305,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Allowed Networks")
     String allowedNetworks();
+
+    @DefaultStringValue("Select Network(s)")
+    String selectNetworks();
+
+    @DefaultStringValue("Network")
+    String vfsConfigNetworkName();
+
+    @DefaultStringValue("Via Label")
+    String vfsConfigViaLabel();
 }
