@@ -262,6 +262,9 @@ Requires:	springframework-jdbc
 Requires:	springframework-tx
 Requires:	xmlrpc-client
 %endif
+%if %{fedora} >= 21
+Requires:	apache-sshd
+%endif
 %endif
 
 # We can't require exactly the same version and release of the
@@ -756,6 +759,7 @@ tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
 %if %{fedora} >= 19
 %if %{fedora} >= 21
 common/com/mchange/c3p0/main/c3p0.jar c3p0/c3p0.jar
+common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 %else
 common/com/mchange/c3p0/main/c3p0.jar
 %endif
