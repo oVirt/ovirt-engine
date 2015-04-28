@@ -1,17 +1,13 @@
 package org.ovirt.engine.core.bll.storage;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -22,14 +18,11 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
-import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
-import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -37,14 +30,11 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
@@ -53,10 +43,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.utils.JsonHelper;
-import org.ovirt.engine.core.utils.OvfUtils;
-import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
-import org.ovirt.engine.core.utils.ovf.OvfParser;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
 
@@ -64,7 +50,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoolParameters> extends
         StorageDomainCommandBase<T> {
     private StoragePoolIsoMap map;
-    private List<DiskImage> ovfDisks;
 
     public AttachStorageDomainToPoolCommand(T parameters) {
         this(parameters, null);
@@ -145,7 +130,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                 // DetachStorageDomainVdsCommand does not use it.
                                 // Storage pool id can be empty
                                 DetachStorageDomainVDSCommandParameters detachParams =
-                                        new DetachStorageDomainVDSCommandParameters(getVds().getStoragePoolId(),
+                                        new DetachStorageDomainVDSCommandParameters(getStoragePoolIdFromVds(),
                                                 getParameters().getStorageDomainId(),
                                                 Guid.Empty,
                                                 0);
@@ -173,7 +158,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     runVdsCommand(VDSCommandType.AttachStorageDomain,
                             new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
                                     getParameters().getStorageDomainId()));
-                    final List<OvfEntityData> unregisteredEntitiesFromOvfDisk = getEntitiesFromStorageOvfDisk();
+                    final List<OvfEntityData> unregisteredEntitiesFromOvfDisk =
+                            getEntitiesFromStorageOvfDisk(getParameters().getStorageDomainId(),
+                                    getStoragePoolIdFromVds());
                     executeInNewTransaction(new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
@@ -187,8 +174,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
                             // upgrade the domain format to the storage pool format
                             updateStorageDomainFormatIfNeeded(getStorageDomain());
+                            List<DiskImage> ovfStoreDiskImages =
+                                    getAllOVFDisks(getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
+                            registerAllOvfDisks(ovfStoreDiskImages, getParameters().getStorageDomainId());
 
-                            registerAllOvfDisks(getAllOVFDisks());
                             // Update unregistered entities
                             for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
                                 getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(),
@@ -242,198 +231,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         }
     }
 
-    protected List<OvfEntityData> getEntitiesFromStorageOvfDisk() {
-        // Initialize a new ArrayList with all the ovfDisks in the specified Storage Domain,
-        // so the entities can be removed from the list every time we register the latest OVF disk and we can keep the
-        // ovfDisks cache list updated.
-        List<DiskImage> ovfStoreDiskImages = new ArrayList(getAllOVFDisks());
-        if (!ovfStoreDiskImages.isEmpty()) {
-            if (!FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getCompatibilityVersion())) {
-                auditLogDirector.log(this, AuditLogType.RETRIEVE_UNREGISTERED_ENTITIES_NOT_SUPPORTED_IN_DC_VERSION);
-                return Collections.emptyList();
-            }
-            while (!ovfStoreDiskImages.isEmpty()) {
-                Pair<DiskImage, Long> ovfDiskAndSize = getLatestOVFDisk(ovfStoreDiskImages);
-                DiskImage ovfDisk = ovfDiskAndSize.getFirst();
-                if (ovfDisk != null) {
-                    try {
-                        VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RetrieveImageData,
-                                new RetrieveImageDataParameters(getParameters().getStoragePoolId(),
-                                        getParameters().getStorageDomainId(),
-                                        ovfDisk.getId(),
-                                        ovfDisk.getImage().getId(),
-                                        ovfDiskAndSize.getSecond()), cloneContextAndDetachFromParent());
-
-                        getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
-                        if (vdcReturnValue.getSucceeded()) {
-                            return OvfUtils.getOvfEntities((byte[]) vdcReturnValue.getActionReturnValue(),
-                                    getParameters().getStorageDomainId());
-                        } else {
-                            log.error("Image data could not be retrieved for disk id '{}' in storage domain id '{}'",
-                                    ovfDisk.getId(),
-                                    getParameters().getStorageDomainId());
-                        }
-                    } catch (RuntimeException e) {
-                        // We are catching RuntimeException, since the call for OvfUtils.getOvfEntities will throw
-                        // a RuntimeException if there is a problem to untar the file.
-                        log.error("Image data could not be retrieved for disk id '{}' in storage domain id '{}': {}",
-                                ovfDisk.getId(),
-                                getParameters().getStorageDomainId(),
-                                e.getMessage());
-                        log.debug("Exception", e);
-                    }
-                    ovfStoreDiskImages.remove(ovfDisk);
-                }
-            }
-            auditLogDirector.log(this, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
-        } else {
-            log.warn("There are no OVF_STORE disks on storage domain id {}",
-                    getParameters().getStorageDomainId());
-            auditLogDirector.log(this, AuditLogType.OVF_STORE_DOES_NOT_EXISTS);
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Register all the OVF_STORE disks as floating disks in the engine.
-     */
-    private void addOvfStoreDiskToDomain(DiskImage ovfDisk) {
-        // Setting OVF_STORE disk to be outdated so it will be updated.
-        StorageDomainOvfInfo storageDomainOvfInfo =
-                new StorageDomainOvfInfo(getStorageDomainId(),
-                        null,
-                        ovfDisk.getId(),
-                        StorageDomainOvfInfoStatus.OUTDATED,
-                        null);
-        getDbFacade().getStorageDomainOvfInfoDao().save(storageDomainOvfInfo);
-    }
-
-    private void registerAllOvfDisks(List<DiskImage> ovfStoreDiskImages) {
-        for (DiskImage ovfStoreDiskImage : ovfStoreDiskImages) {
-            ovfStoreDiskImage.setDiskAlias(OvfInfoFileConstants.OvfStoreDescriptionLabel);
-            ovfStoreDiskImage.setDiskDescription(OvfInfoFileConstants.OvfStoreDescriptionLabel);
-            ovfStoreDiskImage.setShareable(true);
-            RegisterDiskParameters registerDiskParams =
-                    new RegisterDiskParameters(ovfStoreDiskImage, getParameters().getStorageDomainId());
-
-            boolean registerDiskResult = runInternalAction(VdcActionType.RegisterDisk, registerDiskParams,
-                    cloneContext()).getSucceeded();
-
-            log.info("Register new floating OVF_STORE disk with disk id '{}' for storage domain '{}' has {}",
-                    ovfStoreDiskImage.getId(),
-                    getParameters().getStorageDomainId(),
-                    registerDiskResult ? "succeeded" : "failed");
-
-            if (registerDiskResult) {
-                addOvfStoreDiskToDomain(ovfStoreDiskImage);
-            }
-        }
-    }
-
-    protected List<DiskImage> getAllOVFDisks() {
-        if (ovfDisks == null) {
-            ovfDisks = new ArrayList<>();
-
-            // Get all unregistered disks.
-            List<Disk> unregisteredDisks = getBackend().runInternalQuery(VdcQueryType.GetUnregisteredDisks,
-                    new GetUnregisteredDisksQueryParameters(getParameters().getStorageDomainId(),
-                            getVds().getStoragePoolId())).getReturnValue();
-            for (Disk disk : unregisteredDisks) {
-                DiskImage ovfStoreDisk = (DiskImage) disk;
-                String diskDecription = ovfStoreDisk.getDescription();
-                if (diskDecription.contains(OvfInfoFileConstants.OvfStoreDescriptionLabel)) {
-                    Map<String, Object> diskDescriptionMap;
-                    try {
-                        diskDescriptionMap = JsonHelper.jsonToMap(diskDecription);
-                    } catch (IOException e) {
-                        log.warn("Exception while generating json containing ovf store info: {}", e.getMessage());
-                        log.debug("Exception", e);
-                        continue;
-                    }
-
-                    // The purpose of this check is to verify that it's an OVF store with data related to the Storage
-                    // Domain.
-                    if (!isDomainExistsInDiskDescription(diskDescriptionMap, getParameters().getStorageDomainId())) {
-                        log.warn("The disk description does not contain the storage domain id '{}'",
-                                getParameters().getStorageDomainId());
-                        continue;
-                    }
-                    ovfDisks.add(ovfStoreDisk);
-                }
-            }
-        }
-        return ovfDisks;
-    }
-
-    /**
-     * Returns the best match for OVF disk from all the disks. If no OVF disk was found, it returns null for disk and
-     * size 0. If there are OVF disks, we first match the updated ones, and from them we retrieve the one which was last
-     * updated.
-     *
-     * @param ovfStoreDiskImages
-     *            - A list of OVF_STORE disks
-     * @return A Pair which contains the best OVF disk to retrieve data from and its size.
-     */
-    private Pair<DiskImage, Long> getLatestOVFDisk(List<DiskImage> ovfStoreDiskImages) {
-        Date foundOvfDiskUpdateDate = new Date();
-        boolean isFoundOvfDiskUpdated = false;
-        Long size = 0L;
-        Disk ovfDisk = null;
-        for (DiskImage ovfStoreDisk : ovfStoreDiskImages) {
-            boolean isBetterOvfDiskFound = false;
-            Map<String, Object> diskDescriptionMap;
-            try {
-                diskDescriptionMap = JsonHelper.jsonToMap(ovfStoreDisk.getDescription());
-            } catch (IOException e) {
-                log.warn("Exception while generating json containing ovf store info: {}", e.getMessage());
-                log.debug("Exception", e);
-                continue;
-            }
-
-            boolean isUpdated = Boolean.valueOf(diskDescriptionMap.get(OvfInfoFileConstants.IsUpdated).toString());
-            Date date = getDateFromDiskDescription(diskDescriptionMap);
-            if (date == null) {
-                continue;
-            }
-            if (isFoundOvfDiskUpdated && !isUpdated) {
-                continue;
-            }
-            if ((isUpdated && !isFoundOvfDiskUpdated) || date.after(foundOvfDiskUpdateDate)) {
-                isBetterOvfDiskFound = true;
-            }
-            if (isBetterOvfDiskFound) {
-                isFoundOvfDiskUpdated = isUpdated;
-                foundOvfDiskUpdateDate = date;
-                ovfDisk = ovfStoreDisk;
-                size = new Long(diskDescriptionMap.get(OvfInfoFileConstants.Size).toString());
-            }
-        }
-        return new Pair<>((DiskImage)ovfDisk, size);
-    }
-
-    private Date getDateFromDiskDescription(Map<String, Object> map) {
-        try {
-            Object lastUpdate = map.get(OvfInfoFileConstants.LastUpdated);
-            if (lastUpdate != null) {
-                return new SimpleDateFormat(OvfParser.formatStrFromDiskDescription).parse(lastUpdate.toString());
-            } else {
-                log.info("LastUpdate Date is not initialized in the OVF_STORE disk.");
-            }
-        } catch (java.text.ParseException e) {
-            log.error("LastUpdate Date could not be parsed from disk description: {}", e.getMessage());
-            log.debug("Exception", e);
-        }
-        return null;
-    }
-
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-    }
-
-    private boolean isDomainExistsInDiskDescription(Map<String, Object> map, Guid storageDomainId) {
-        return map.get(OvfInfoFileConstants.Domains).toString().contains(storageDomainId.toString());
     }
 
     protected void attemptToActivateDomain() {
@@ -498,5 +299,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 VdcObjectType.StoragePool,
                 getActionType().getActionGroup()));
         return permissionList;
+    }
+
+    protected Guid getStoragePoolIdFromVds() {
+        return getVds().getStoragePoolId();
     }
 }

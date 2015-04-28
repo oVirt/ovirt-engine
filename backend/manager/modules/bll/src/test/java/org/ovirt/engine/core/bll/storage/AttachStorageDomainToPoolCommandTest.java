@@ -83,8 +83,10 @@ public class AttachStorageDomainToPoolCommandTest {
 
     @Test
     public void statusSetInMap() {
+        Guid storageDomainId = Guid.newGuid();
+        Guid poolId = Guid.newGuid();
         AttachStorageDomainToPoolParameters params =
-                new AttachStorageDomainToPoolParameters(Guid.newGuid(), Guid.newGuid());
+                new AttachStorageDomainToPoolParameters(storageDomainId, poolId);
         AttachStorageDomainToPoolCommand<AttachStorageDomainToPoolParameters> cmd =
                 spy(new AttachStorageDomainToPoolCommand<AttachStorageDomainToPoolParameters>(params));
 
@@ -97,12 +99,13 @@ public class AttachStorageDomainToPoolCommandTest {
         when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDAO);
         when(dbFacade.getStorageDomainStaticDao()).thenReturn(storageDomainStaticDAO);
         StoragePool pool = new StoragePool();
+        pool.setId(poolId);
         pool.setStatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(pool);
         when(isoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
         when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
         when(storageDomainStaticDAO.get(any(Guid.class))).thenReturn(new StorageDomainStatic());
-
+        doReturn(pool.getId()).when(cmd).getStoragePoolIdFromVds();
         doReturn(backendInternal).when(cmd).getBackend();
         when(backendInternal.getResourceManager()).thenReturn(vdsBrokerFrontend);
         VdcReturnValueBase vdcReturnValue = new VdcReturnValueBase();
@@ -116,8 +119,8 @@ public class AttachStorageDomainToPoolCommandTest {
         mockGetStorageDomainInfoVdsCommand(storageDomain);
         mockAttachStorageDomainVdsCommand();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
-        doReturn(getUnregisteredList()).when(cmd).getEntitiesFromStorageOvfDisk();
-        doReturn(Collections.<DiskImage>emptyList()).when(cmd).getAllOVFDisks();
+        doReturn(getUnregisteredList()).when(cmd).getEntitiesFromStorageOvfDisk(storageDomainId, pool.getId());
+        doReturn(Collections.<DiskImage>emptyList()).when(cmd).getAllOVFDisks(storageDomainId, pool.getId());
         doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
