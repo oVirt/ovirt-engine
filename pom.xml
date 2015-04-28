@@ -116,6 +116,7 @@
     <antlr.version>4.2.2</antlr.version>
     <deltaspike.version>1.1.0</deltaspike.version>
     <reflections.version>0.9.9-RC1</reflections.version>
+    <hamcrest.version>1.3</hamcrest.version>
   </properties>
   <dependencyManagement>
     <dependencies>

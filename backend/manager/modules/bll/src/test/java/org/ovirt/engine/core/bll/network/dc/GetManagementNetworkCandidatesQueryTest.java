@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll.network.dc;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -63,7 +64,7 @@ public class GetManagementNetworkCandidatesQueryTest {
         final List<Network> actual = underTest.getQueryReturnValue().getReturnValue();
 
         assertNotNull(actual);
-        assertEquals(1, actual.size());
+        assertThat(actual, hasSize(1));
         assertTrue(actual.contains(mockNonExternalNetwork));
     }
 
