@@ -8696,15 +8696,19 @@
         </row>
      </table>
     <table name="engine_backup_log">
-        <column>db_name</column>
+        <column>scope</column>
         <column>done_at</column>
         <column>is_passed</column>
         <column>output_message</column>
+        <column>fqdn</column>
+        <column>log_path</column>
         <row>
-            <value>engine</value>
+            <value>db</value>
             <value>2015-02-10 16:35:15.362494+05:30</value>
             <value>true</value>
             <value>OK</value>
+            <value>10.35.1.1</value>
+            <value>/etc/share/ovirt-engine/log/engine-backup.log</value>
         </row>
     </table>
 </dataset>

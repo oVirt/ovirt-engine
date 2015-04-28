@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class EngineBackupAwarenessManager {
     private static final Logger log = LoggerFactory.getLogger(EngineBackupAwarenessManager.class);
-    private static final String ENGINE_DB_ID = "engine";
+    private static final String SCOPE = "db";
     private volatile boolean active;
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -73,7 +73,7 @@ public class EngineBackupAwarenessManager {
         AuditLogableBase alert = new AuditLogableBase();
 
         //try to get last backup record
-        EngineBackupLog lastBackup = engineBackupLogDao.getLastSuccessfulEngineBackup(ENGINE_DB_ID);
+        EngineBackupLog lastBackup = engineBackupLogDao.getLastSuccessfulEngineBackup(SCOPE);
         if (lastBackup == null) {
             auditLogDirector.log(alert, AuditLogType.ENGINE_NO_BACKUP);
         } else {

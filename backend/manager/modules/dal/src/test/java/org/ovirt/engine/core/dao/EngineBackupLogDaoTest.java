@@ -20,43 +20,47 @@ public class EngineBackupLogDaoTest extends BaseHibernateDaoTestCase<EngineBacku
     private EngineBackupLogDao dao;
     private EngineBackupLog existingEngineBackupLog;
     private EngineBackupLog newEntity;
-    private final static String DB_NAME = "engine";
-    private final static String NON_EXISTING_DB_NAME = "invalid";
+    private final static String SCOPE = "db";
+    private final static String NON_EXISTING_SCOPE = "invalid";
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getEngineBackupLogDao();
-        existingEngineBackupLog = dao.getLastSuccessfulEngineBackup(DB_NAME);
+        existingEngineBackupLog = dao.getLastSuccessfulEngineBackup(SCOPE);
         newEntity = new EngineBackupLog();
-        newEntity.setDbName(RandomUtils.instance().nextString(20));
-        newEntity.setOutputMessage(RandomUtils.instance().nextString(20));
+        newEntity.setScope(RandomUtils.instance().nextString(20));
         newEntity.setDoneAt(new Date());
         newEntity.setPassed(true);
+        newEntity.setOutputMessage(RandomUtils.instance().nextString(20));
+        newEntity.setFqdn(RandomUtils.instance().nextString(20));
+        newEntity.setLogPath(RandomUtils.instance().nextString(20));
     }
 
     @Test
     public void testGetLastSuccessfulEngineBackup() {
-        existingEngineBackupLog = dao.getLastSuccessfulEngineBackup(DB_NAME);
+        existingEngineBackupLog = dao.getLastSuccessfulEngineBackup(SCOPE);
         assertNotNull(existingEngineBackupLog);
     }
 
     @Test
     public void testGetLastSuccessfulEngineBackupWithWrongDbName() {
-        existingEngineBackupLog = dao.getLastSuccessfulEngineBackup(NON_EXISTING_DB_NAME);
+        existingEngineBackupLog = dao.getLastSuccessfulEngineBackup(NON_EXISTING_SCOPE);
         assertNull(existingEngineBackupLog);
     }
 
     @Test
     public void testAddingNewUnsuccessfulBackupEvent() {
         EngineBackupLog engineBackupLog = new EngineBackupLog();
-        engineBackupLog.setDbName(DB_NAME);
+        engineBackupLog.setScope(SCOPE);
         engineBackupLog.setDoneAt(Calendar.getInstance().getTime());
         engineBackupLog.setPassed(false);
         engineBackupLog.setOutputMessage("backup failed");
+        engineBackupLog.setFqdn(RandomUtils.instance().nextString(20));
+        engineBackupLog.setLogPath(RandomUtils.instance().nextString(20));
         dao.save(engineBackupLog);
-        EngineBackupLog entry = dao.getLastSuccessfulEngineBackup(DB_NAME);
+        EngineBackupLog entry = dao.getLastSuccessfulEngineBackup(SCOPE);
         assertNotNull(entry);
         assertEquals(entry, existingEngineBackupLog);
     }
@@ -64,12 +68,14 @@ public class EngineBackupLogDaoTest extends BaseHibernateDaoTestCase<EngineBacku
     @Test
     public void testAddingNewSuccessfulBackupEvent() {
         EngineBackupLog engineBackupLog = new EngineBackupLog();
-        engineBackupLog.setDbName(DB_NAME);
+        engineBackupLog.setScope(SCOPE);
         engineBackupLog.setDoneAt(Calendar.getInstance().getTime());
         engineBackupLog.setPassed(true);
         engineBackupLog.setOutputMessage("backup completed successfully");
+        engineBackupLog.setFqdn(RandomUtils.instance().nextString(20));
+        engineBackupLog.setLogPath(RandomUtils.instance().nextString(20));
         dao.save(engineBackupLog);
-        EngineBackupLog entry = dao.getLastSuccessfulEngineBackup(DB_NAME);
+        EngineBackupLog entry = dao.getLastSuccessfulEngineBackup(SCOPE);
         assertNotNull(entry);
         assertNotEquals(entry.getDoneAt(), existingEngineBackupLog.getDoneAt());
         assertTrue(entry.isPassed());

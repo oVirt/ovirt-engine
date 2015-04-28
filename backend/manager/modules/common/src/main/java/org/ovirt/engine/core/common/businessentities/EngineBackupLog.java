@@ -18,13 +18,13 @@ import java.util.Objects;
 @Table(name = "engine_backup_log")
 @IdClass(EngineBackupLogId.class)
 @NamedQueries({
-        @NamedQuery(name = "EngineBackupLog.getLatest", query = "select e from EngineBackupLog e where e.dbName = :dbName and passed = true order by doneAt DESC")
+        @NamedQuery(name = "EngineBackupLog.getLatest", query = "select e from EngineBackupLog e where e.scope = :scope and passed = true order by doneAt DESC")
 })
 public class EngineBackupLog extends IVdcQueryable implements Serializable, BusinessEntity<EngineBackupLogId> {
 
     @Id
-    @Column(name="db_name")
-    private String dbName;
+    @Column(name="scope")
+    private String scope;
 
     @Id
     @Column(name="done_at")
@@ -36,12 +36,18 @@ public class EngineBackupLog extends IVdcQueryable implements Serializable, Busi
     @Column(name="output_message")
     private String outputMessage;
 
-    public String getDbName() {
-        return dbName;
+    @Column(name="fqdn")
+    private String fqdn;
+
+    @Column(name = "log_path")
+    private String logPath;
+
+    public String getScope() {
+        return scope;
     }
 
-    public void setDbName(String dbName) {
-        this.dbName = dbName;
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
     public Date getDoneAt() {
@@ -68,15 +74,25 @@ public class EngineBackupLog extends IVdcQueryable implements Serializable, Busi
         this.outputMessage = outputMessage;
     }
 
+    public String getFqdn() {
+        return fqdn;
+    }
+
+    public void setFqdn(String fqdn) {
+        this.fqdn = fqdn;
+    }
+
+    public String getLogPath() {
+        return logPath;
+    }
+
+    public void setLogPath(String logPath) {
+        this.logPath = logPath;
+    }
+
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((dbName == null) ? 0 : dbName.hashCode());
-        result = prime * result + ((doneAt == null) ? 0 : doneAt.hashCode());
-        result = prime * result + (passed ? 0 : 1);
-        result = prime * result + ((outputMessage == null) ? 0 : outputMessage.hashCode());
-        return result;
+        return  Objects.hash(scope, doneAt);
     }
 
     @Override
@@ -84,40 +100,37 @@ public class EngineBackupLog extends IVdcQueryable implements Serializable, Busi
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof EngineBackupLog)) {
             return false;
         }
         EngineBackupLog other = (EngineBackupLog) obj;
-        return (Objects.equals(dbName, other.dbName)
-                && Objects.equals(doneAt, other.doneAt)
-                && this.passed == other.passed
-                && Objects.equals(outputMessage, other.outputMessage));
+        return Objects.equals(scope, other.scope)
+               && Objects.equals(doneAt, other.doneAt);
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
-                .append("dbName", dbName)
+                .append("scope", scope)
                 .append("doneAt", doneAt)
                 .append("passed", passed)
                 .append("outputMessage", outputMessage)
+                .append("fqdn", fqdn)
+                .append("logPath", logPath)
                 .build();
     }
 
     @Override
     public EngineBackupLogId getId() {
         EngineBackupLogId key = new EngineBackupLogId();
-        key.setDbName(dbName);
+        key.setScope(scope);
         key.setDoneAt(doneAt);
         return key;
     }
 
     @Override
     public void setId(EngineBackupLogId id) {
-        dbName = id.getDbName();
+        scope = id.getScope();
         doneAt = id.getDoneAt();
     }
 }

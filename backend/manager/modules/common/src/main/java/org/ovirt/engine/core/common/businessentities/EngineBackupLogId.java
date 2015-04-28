@@ -2,18 +2,19 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 public class EngineBackupLogId implements Serializable {
     private static final long serialVersionUID = 1740373688528083410L;
-    private String dbName;
+    private String scope;
     private Date doneAt;
 
-    public String getDbName() {
-        return dbName;
+    public String getScope() {
+        return scope;
     }
 
-    public void setDbName(String dbName) {
-        this.dbName = dbName;
+    public void setScope(String dbName) {
+        this.scope = dbName;
     }
 
     public Date getDoneAt() {
@@ -26,24 +27,20 @@ public class EngineBackupLogId implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + dbName.hashCode();
-        result = prime * result + doneAt.hashCode();
-        return  result;
+        return  Objects.hash(scope, doneAt);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
-            return false;
+        }
         if (!(obj instanceof EngineBackupLogId)) {
             return false;
         }
         EngineBackupLogId other = (EngineBackupLogId)obj;
-        return (dbName.equals(other.getDbName()) && doneAt.equals(other.getDoneAt()));
+        return  Objects.equals(scope, other.scope)
+                && Objects.equals(doneAt, other.doneAt);
     }
 
 

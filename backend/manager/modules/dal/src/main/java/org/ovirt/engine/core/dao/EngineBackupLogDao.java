@@ -8,5 +8,5 @@ public interface EngineBackupLogDao extends GenericDao<EngineBackupLog, EngineBa
     /**
      * Gets the last successful engine backup record
      */
-    EngineBackupLog getLastSuccessfulEngineBackup(String dbName);
+    EngineBackupLog getLastSuccessfulEngineBackup(String scope);
 }

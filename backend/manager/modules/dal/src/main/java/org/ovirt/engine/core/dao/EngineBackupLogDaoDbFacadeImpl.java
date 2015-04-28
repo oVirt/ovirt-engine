@@ -17,9 +17,9 @@ public class EngineBackupLogDaoDbFacadeImpl extends AbstractJpaDao<EngineBackupL
     }
 
     @Override
-    public EngineBackupLog getLastSuccessfulEngineBackup(String dbName) {
+    public EngineBackupLog getLastSuccessfulEngineBackup(String scope) {
         TypedQuery<EngineBackupLog> query = entityManager.createNamedQuery("EngineBackupLog.getLatest",
-                EngineBackupLog.class).setParameter("dbName", dbName).setMaxResults(1);
+                EngineBackupLog.class).setParameter("scope", scope).setMaxResults(1);
         return singleResult(query);
     }
 }
