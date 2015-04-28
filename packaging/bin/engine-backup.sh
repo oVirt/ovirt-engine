@@ -765,6 +765,7 @@ dorestore() {
 		if [ -z "${KEEP_TEMPORARY_DATA}" ]; then
 			output "Cleaning up temporary tables in engine database '${ENGINE_DB_DATABASE}':"
 			cleanDbTempData "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_TABLES_TO_CLEAN_ON_RESTORE}"
+			resetDwhCurrentlyRunning "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_TABLES_TO_CLEAN_ON_RESTORE}"
 		fi
 	fi
 	if [ -n "${SCOPE_DWH_DB}" -a -n "${DWH_DB_USER}" ]; then
@@ -914,6 +915,31 @@ cleanDbTempData() {
 			cat "${psqllog}" >> "${LOG}"  2>&1 \
 				|| logdie "Failed to append psql log to restore log"
 	done || logdie "Failed cleaning up temp data"
+}
+
+resetDwhCurrentlyRunning() {
+	local user="$1"
+	local host="$2"
+	local port="$3"
+	local database="$4"
+	local psqllog="${TEMP_FOLDER}/psql-dwhrunning-log"
+	local psqlout="${TEMP_FOLDER}/psql-dwhrunning-out"
+
+	local sel_q="SELECT var_value FROM dwh_history_timekeeping WHERE var_name='DwhCurrentlyRunning'"
+	local upd_q="UPDATE dwh_history_timekeeping SET var_value='0' WHERE var_name='DwhCurrentlyRunning'"
+
+	pg_cmd psql -t -c "${sel_q}" > "${psqlout}" 2> "${psqllog}" \
+		|| logdie "Failed checking DwhCurrentlyRunning"
+	cat "${psqllog}" "${psqlout}" >> "${LOG}"  2>&1 \
+		|| logdie "Failed to append psql log to restore log"
+
+	if grep -q '1' "${psqlout}"; then
+		output '  - Resetting DwhCurrentlyRunning in dwh_history_timekeeping in engine database'
+		pg_cmd psql -t -c "${upd_q}" > "${psqllog}" 2>&1 \
+			|| logdie "Failed resetting DwhCurrentlyRunning"
+		cat "${psqllog}" >> "${LOG}"  2>&1 \
+			|| logdie "Failed to append psql log to restore log"
+	fi
 }
 
 restoreFiles() {
