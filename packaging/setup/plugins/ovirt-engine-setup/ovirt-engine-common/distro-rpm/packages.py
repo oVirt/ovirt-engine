@@ -210,6 +210,7 @@ class Plugin(plugin.PluginBase):
             sink=self._getSink(),
             disabledPlugins=('versionlock',),
         )
+        plist = []
         with myum.transaction():
             groups = [group['name'] for group in myum.queryGroups()]
             for entry in self.environment[
@@ -224,12 +225,19 @@ class Plugin(plugin.PluginBase):
             if myum.buildTransaction():
                 upgradeAvailable = True
 
-                # Some debug
                 for p in myum.queryTransaction():
                     self.logger.debug('PACKAGE: [%s] %s' % (
                         p['operation'],
                         p['display_name']
                     ))
+                    plist.append(
+                        _(
+                            'PACKAGE: [{operation}] {display_name}'
+                        ).format(
+                            operation=p['operation'],
+                            display_name=p['display_name']
+                        )
+                    )
 
                 # Verify all installed packages available in yum
                 for package in myum.queryTransaction():
@@ -252,7 +260,7 @@ class Plugin(plugin.PluginBase):
                     if installed and not reinstall_available:
                         haveRollback = False
                         break
-        return (upgradeAvailable, haveRollback)
+        return (upgradeAvailable, haveRollback, plist)
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -337,6 +345,7 @@ class Plugin(plugin.PluginBase):
             (
                 upgradeAvailable,
                 haveRollback,
+                plist,
             ) = self._checkForProductUpdate()
 
             if not upgradeAvailable:
@@ -348,9 +357,12 @@ class Plugin(plugin.PluginBase):
                     dialog=self.dialog,
                     name='OVESETUP_RPMDISTRO_PACKAGE_UPGRADE',
                     note=_(
-                        'Setup has found updates for some packages, '
+                        'Setup has found updates for some packages:\n'
+                        '{plist}\n'
                         'do you wish to update them now? '
                         '(@VALUES@) [@DEFAULT@]: '
+                    ).format(
+                        plist='\n'.join(plist)
                     ),
                     prompt=True,
                     true=_('Yes'),
@@ -382,6 +394,7 @@ class Plugin(plugin.PluginBase):
                 (
                     upgradeAvailable,
                     haveRollback,
+                    plist,
                 ) = self._checkForProductUpdate()
 
             if not upgradeAvailable:
