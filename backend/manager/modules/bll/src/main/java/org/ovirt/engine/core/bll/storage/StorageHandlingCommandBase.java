@@ -606,6 +606,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     private boolean isDomainExistsInDiskDescription(Map<String, Object> map, Guid storageDomainId) {
+        if (map.get(OvfInfoFileConstants.Domains) == null) {
+            return false;
+        }
         return map.get(OvfInfoFileConstants.Domains).toString().contains(storageDomainId.toString());
     }
 
