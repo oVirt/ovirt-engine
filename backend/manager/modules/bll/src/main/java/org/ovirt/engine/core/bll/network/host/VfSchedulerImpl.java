@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
@@ -25,14 +26,20 @@ public class VfSchedulerImpl implements VfScheduler {
 
     private InterfaceDao interfaceDao;
 
+    private HostDeviceDao hostDeviceDao;
+
     private HostNicVfsConfigHelper vfsConfigHelper;
 
     private Map<Guid, Map<Guid, Map<Guid, String>>> vmToHostToVnicToVfMap = new ConcurrentHashMap<>();
 
     @Inject
-    public VfSchedulerImpl(NetworkDao networkDao, InterfaceDao interfaceDao, HostNicVfsConfigHelper vfsConfigHelper) {
+    public VfSchedulerImpl(NetworkDao networkDao,
+            InterfaceDao interfaceDao,
+            HostDeviceDao hostDeviceDao,
+            HostNicVfsConfigHelper vfsConfigHelper) {
         this.networkDao = networkDao;
         this.interfaceDao = interfaceDao;
+        this.hostDeviceDao = hostDeviceDao;
         this.vfsConfigHelper = vfsConfigHelper;
     }
 
@@ -104,6 +111,10 @@ public class VfSchedulerImpl implements VfScheduler {
         HostDevice freeVf = vfsConfigHelper.getFreeVf(nic, usedVfsByNic);
 
         if (freeVf != null) {
+            if (isSharingIommuGroup(freeVf)) {
+                return null;
+            }
+
             String vfName = freeVf.getDeviceName();
 
             if (usedVfsByNic == null) {
@@ -137,5 +148,13 @@ public class VfSchedulerImpl implements VfScheduler {
     @Override
     public void cleanVmData(Guid vmId) {
         vmToHostToVnicToVfMap.remove(vmId);
+    }
+
+    private boolean isSharingIommuGroup(HostDevice device) {
+        // Check that the device doesn't share iommu group with other devices
+        List<HostDevice> iommoGroupDevices =
+                hostDeviceDao.getHostDevicesByHostIdAndIommuGroup(device.getHostId(), device.getIommuGroup());
+
+        return iommoGroupDevices.size() > 1;
     }
 }

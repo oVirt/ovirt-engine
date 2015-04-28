@@ -28,8 +28,10 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VfSchedulerImplTest {
@@ -39,6 +41,9 @@ public class VfSchedulerImplTest {
 
     @Mock
     private InterfaceDao interfaceDao;
+
+    @Mock
+    private HostDeviceDao hostDeviceDao;
 
     @Mock
     private NetworkDao networkDao;
@@ -55,7 +60,7 @@ public class VfSchedulerImplTest {
 
     @Before
     public void setUp() {
-        vfScheduler = new VfSchedulerImpl(networkDao, interfaceDao, hostNicVfsConfigHelper);
+        vfScheduler = new VfSchedulerImpl(networkDao, interfaceDao, hostDeviceDao, hostNicVfsConfigHelper);
         expectedVnicToVfMap = new HashMap<>();
     }
 
@@ -110,6 +115,14 @@ public class VfSchedulerImplTest {
     public void hostNicNotHaveFreeVfs() {
         VmNetworkInterface vnic = mockVnic(true);
         initHostWithOneVfsConfig(Collections.singletonList(vnic), 8, true, false, false, false);
+
+        assertHostNotValid(Collections.singletonList(vnic), Collections.singletonList(vnic.getName()));
+    }
+
+    @Test
+    public void hostNicHaveOneFreeVfWhichShareIommuGroup() {
+        VmNetworkInterface vnic = mockVnic(true);
+        initHostWithOneVfsConfig(Collections.singletonList(vnic), 1, true, false, false, true, true);
 
         assertHostNotValid(Collections.singletonList(vnic), Collections.singletonList(vnic.getName()));
     }
@@ -191,7 +204,8 @@ public class VfSchedulerImplTest {
             boolean allNetworksAllowed,
             boolean networkInSriovConfig,
             boolean labelInSriovConfig,
-            boolean hasFreeVf) {
+            boolean hasFreeVf,
+            boolean freeVfShareIommuGroup) {
         HostNicVfsConfig hostNicVfsConfig = new HostNicVfsConfig();
         for (VmNetworkInterface vnic : passthroughVnics) {
             updateVfsConfig(hostNicVfsConfig,
@@ -200,9 +214,25 @@ public class VfSchedulerImplTest {
                     allNetworksAllowed,
                     networkInSriovConfig,
                     labelInSriovConfig,
-                    hasFreeVf);
+                    hasFreeVf,
+                    freeVfShareIommuGroup);
         }
         mockVfsConfigsOnHost(Collections.singletonList(hostNicVfsConfig));
+    }
+
+    private void initHostWithOneVfsConfig(List<VmNetworkInterface> passthroughVnics,
+            int numOfVfs,
+            boolean allNetworksAllowed,
+            boolean networkInSriovConfig,
+            boolean labelInSriovConfig,
+            boolean hasFreeVf) {
+        initHostWithOneVfsConfig(passthroughVnics,
+                numOfVfs,
+                allNetworksAllowed,
+                networkInSriovConfig,
+                labelInSriovConfig,
+                hasFreeVf,
+                false);
     }
 
     private void validateVnics(List<VmNetworkInterface> vnics, List<String> excetedProblematicVnics) {
@@ -240,7 +270,8 @@ public class VfSchedulerImplTest {
             boolean allNetworksAllowed,
             boolean vnicNetworkInSriovConfig,
             boolean vnicLabelInSriovConfig,
-            boolean hasFreeVf) {
+            boolean hasFreeVf,
+            boolean freeVfShareIommuGroup) {
         hostNicVfsConfig.setNicId(Guid.newGuid());
         hostNicVfsConfig.setNumOfVfs(numOfVfs);
         hostNicVfsConfig.setAllNetworksAllowed(allNetworksAllowed);
@@ -254,13 +285,44 @@ public class VfSchedulerImplTest {
         HostDevice vf = null;
         if (hasFreeVf) {
             vf = createFreeVf(vnic, hostNicVfsConfig);
+            mockVfShareIommuGroup(vf, freeVfShareIommuGroup);
 
-            if (allNetworksAllowed || vnicNetworkInSriovConfig || vnicLabelInSriovConfig) {
+            if (!freeVfShareIommuGroup && (allNetworksAllowed || vnicNetworkInSriovConfig || vnicLabelInSriovConfig)) {
                 expectedVnicToVfMap.put(vnic.getId(), vf.getDeviceName());
             }
         }
 
         return vf;
+    }
+
+    private HostDevice updateVfsConfig(HostNicVfsConfig hostNicVfsConfig, VmNetworkInterface vnic,
+            int numOfVfs,
+            boolean allNetworksAllowed,
+            boolean vnicNetworkInSriovConfig,
+            boolean vnicLabelInSriovConfig,
+            boolean hasFreeVf) {
+        return updateVfsConfig(hostNicVfsConfig,
+                vnic,
+                numOfVfs,
+                allNetworksAllowed,
+                vnicNetworkInSriovConfig,
+                vnicLabelInSriovConfig,
+                hasFreeVf,
+                false);
+    }
+
+    private void mockVfShareIommuGroup(HostDevice vf, boolean share) {
+        vf.setIommuGroup(RandomUtils.instance().nextInt());
+        List<HostDevice> devices = new ArrayList<>();
+        devices.add(vf);
+
+        if (share) {
+            HostDevice extraIommuDevice = new HostDevice();
+            extraIommuDevice.setHostId(vf.getHostId());
+            extraIommuDevice.setIommuGroup(vf.getIommuGroup());
+            devices.add(extraIommuDevice);
+        }
+        when(hostDeviceDao.getHostDevicesByHostIdAndIommuGroup(vf.getHostId(), vf.getIommuGroup())).thenReturn(devices);
     }
 
     private void updateVfsConfigLabels(HostNicVfsConfig hostNicVfsConfig,
@@ -304,6 +366,7 @@ public class VfSchedulerImplTest {
 
     private HostDevice createVf() {
         HostDevice hostDevice = new HostDevice();
+        hostDevice.setHostId(hostId);
         hostDevice.setDeviceName(getRandomString());
         return hostDevice;
     }
