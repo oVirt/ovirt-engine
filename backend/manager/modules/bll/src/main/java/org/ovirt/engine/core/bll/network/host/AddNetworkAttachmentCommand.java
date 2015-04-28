@@ -22,12 +22,14 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 @NonTransactiveCommandAttribute
 public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> extends VdsCommand<T> {
-
     @Inject
     private InterfaceDao interfaceDao;
 
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;
+
+    @Inject
+    private NetworkIdNetworkNameCompleter networkIdNameCompleter;
 
     private List<VdsNetworkInterface> hostNics;
 
@@ -41,7 +43,7 @@ public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> 
         NicNameNicIdCompleter completer = new NicNameNicIdCompleter(getHostInterfaces());
         completer.completeNetworkAttachment(getParameters().getNetworkAttachment());
 
-        //TODO MM: add network completer.
+        this.networkIdNameCompleter.completeNetworkAttachment(getParameters().getNetworkAttachment());
 
         NetworkAttachment networkAttachment = getParameters().getNetworkAttachment();
         if (networkAttachment == null) {

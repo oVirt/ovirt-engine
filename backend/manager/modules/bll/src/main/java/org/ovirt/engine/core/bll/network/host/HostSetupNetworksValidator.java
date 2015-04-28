@@ -449,6 +449,7 @@ public class HostSetupNetworksValidator {
             //TODO MM: complain about unset network id.
             vr = skipValidation(vr) ? vr : validator.networkExists();
             vr = skipValidation(vr) ? vr : validateCoherentNicIdentification(attachment);
+            vr = skipValidation(vr) ? vr : validateCoherentNetworkIdentification(attachment);
             vr = skipValidation(vr) ? vr : modifiedAttachmentExists(attachment.getId());
             vr = skipValidation(vr) ? vr : validator.notExternalNetwork();
             vr = skipValidation(vr) ? vr : validator.networkAttachedToCluster();
@@ -471,6 +472,20 @@ public class HostSetupNetworksValidator {
         }
 
         return vr;
+    }
+
+    private ValidationResult validateCoherentNetworkIdentification(NetworkAttachment attachment) {
+        Guid networkId = attachment.getNetworkId();
+        String networkName = attachment.getNetworkName();
+
+        boolean bothIdentificationSet = networkId != null && networkName != null;
+        String[] replacements = createIncoherentNetworkIdentificationErrorReplacements(attachment.getId(),
+            networkId,
+            networkName);
+        return ValidationResult
+            .failWith(EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NETWORK_INCOHERENTLY,
+                replacements)
+            .when(bothIdentificationSet && networkNameAndNetworkIdIsIncoherent(networkId, networkName));
     }
 
     private ValidationResult validateCoherentNicIdentification(NetworkAttachment attachment) {
@@ -505,9 +520,19 @@ public class HostSetupNetworksValidator {
         Guid nicId,
         String nicName) {
         return new String[] {
-            String.format("ENTITY_ID %s", violatingEntityId),
+            String.format("$ENTITY_ID %s", violatingEntityId),
             String.format("$nicId %s", nicId),
             String.format("$nicName %s", nicName)
+        };
+    }
+
+    private String[] createIncoherentNetworkIdentificationErrorReplacements(Guid violatingEntityId,
+        Guid networkId,
+        String networkName) {
+        return new String[] {
+            String.format("$ENTITY_ID %s", violatingEntityId),
+            String.format("$networkId %s", networkId),
+            String.format("$networkName %s", networkName)
         };
     }
 
@@ -515,6 +540,12 @@ public class HostSetupNetworksValidator {
         VdsNetworkInterface interfaceById = existingInterfacesMap.get(nicId);
         VdsNetworkInterface interfaceByName = existingInterfacesMap.get(nicName);
         return !Objects.equals(interfaceById, interfaceByName);
+    }
+
+    private boolean networkNameAndNetworkIdIsIncoherent(Guid nicId, String nicName) {
+        Network networkById = networkBusinessEntityMap.get(nicId);
+        Network networkByName = networkBusinessEntityMap.get(nicName);
+        return !Objects.equals(networkById, networkByName);
     }
 
     private ValidationResult modifiedAttachmentExists(Guid networkAttachmentId) {

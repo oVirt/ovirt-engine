@@ -11,11 +11,13 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
+import org.ovirt.engine.core.common.validation.annotation.NetworkIdOrNetworkNameIsSet;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
+@NetworkIdOrNetworkNameIsSet(groups = { CreateEntity.class, UpdateEntity.class })
 public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -8052325342869681284L;
@@ -23,8 +25,9 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
     @NotNull(groups = { UpdateEntity.class, RemoveEntity.class })
     private Guid id;
 
-    @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     private Guid networkId;
+
+    private String networkName;
 
     private Guid nicId;
 
@@ -119,6 +122,14 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
         return reportedConfigurations;
     }
 
+    public String getNetworkName() {
+        return networkName;
+    }
+
+    public void setNetworkName(String networkName) {
+        this.networkName = networkName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -140,6 +151,7 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
         return ToStringBuilder.forInstance(this)
                 .append("id", getId())
                 .append("networkId", getNetworkId())
+                .append("networkName", getNetworkName())
                 .append("nicId", getNicId())
                 .append("nicName", getNicName())
                 .append("ipConfiguration", getIpConfiguration())

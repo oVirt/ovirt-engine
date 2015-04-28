@@ -1513,11 +1513,14 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Network attachment must be specified for this request.")
     String NETWORK_ATTACHMENT_NOT_SPECIFIED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${ENTITY_ID}}) does not reference nic coherently. Nic name and id references different nic: nicId ${nicId} nicName ${nicName}}.")
+    @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${ENTITY_ID}) does not reference nic coherently. Nic name and id references different nic: nicId ${nicId} nicName ${nicName}.")
     String NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Bond (id=${ENTITY_ID}}) does not reference nic coherently. Nic name and id references different nic: nicId=${referringId} nicName=${referringName}}.")
+    @DefaultStringValue("Cannot ${action} ${type}. Bond (id ${ENTITY_ID}) does not reference nic coherently. Nic name and id references different nic: nicId ${referringId} nicName ${referringName}.")
     String BOND_REFERENCES_NICS_INCOHERENTLY();
+
+    @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${ENTITY_ID}) does not reference network coherently. Network name and id references different network: networkId ${networkId} networkName ${networkName}.")
+    String NETWORK_ATTACHMENT_REFERENCES_NETWORK_INCOHERENTLY();
 
     @DefaultStringValue("Bond name must be formatted as <bondYYY>.")
     String NETWORK_INVALID_BOND_NAME();
@@ -2470,6 +2473,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("ID is required.")
     String VALIDATION_ID_NULL();
+
+    @DefaultStringValue("Either network id or network name must be provided.")
+    String VALIDATION_NETWORK_ID_OR_NETWORK_NAME_MUST_BE_SET();
 
     @DefaultStringValue("Name is required.")
     String VALIDATION_NAME_NULL();

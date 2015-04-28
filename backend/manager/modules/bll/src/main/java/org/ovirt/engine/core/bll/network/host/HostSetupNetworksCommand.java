@@ -99,6 +99,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     @Inject
     private VdsDao vdsDao;
 
+    @Inject
+    private NetworkIdNetworkNameCompleter networkIdNetworkNameCompleter;
+
     public HostSetupNetworksCommand(T parameters) {
         this(parameters, null);
     }
@@ -123,10 +126,14 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             return validate(hostValidatorResult);
         }
 
-        NicNameNicIdCompleter completer = new NicNameNicIdCompleter(getExistingNics());
-        completer.completeNetworkAttachments(getParameters().getNetworkAttachments());
-        completer.completeBonds(getParameters().getBonds());
-        completer.completeNetworkAttachments(getExistingAttachments());
+        NicNameNicIdCompleter nicNameNicIdCompleter = new NicNameNicIdCompleter(getExistingNics());
+        nicNameNicIdCompleter.completeNetworkAttachments(getParameters().getNetworkAttachments());
+        nicNameNicIdCompleter.completeBonds(getParameters().getBonds());
+        nicNameNicIdCompleter.completeNetworkAttachments(getExistingAttachments());
+
+        networkIdNetworkNameCompleter.completeNetworkAttachments(
+            getParameters().getNetworkAttachments(),
+            getNetworkBusinessEntityMap());
 
         ValidationResult hostSetupNetworkValidatorResult = validateWithHostSetupNetworksValidator(host);
         if (!hostSetupNetworkValidatorResult.isValid()) {
