@@ -25,6 +25,8 @@ public enum TabName {
     SYSTEM_TAB,
     TAB_RNG,
     FIRST_RUN,
-    ICON_TAB;
+    ICON_TAB,
+    PF_TAB,
+    VFS_CONFIG_TAB;
 
 }

@@ -58,7 +58,9 @@ public class BondPanel extends NicPanel {
         for (NetworkInterfaceModel networkInterfaceModel : bonded) {
             NicPanel nicPanel = new NicPanel(networkInterfaceModel, style);
             nicPanel.parentPanel = this;
-            nicPanel.actionButton.setVisible(false);
+            if (!networkInterfaceModel.isSriovEnabled()) {
+                nicPanel.actionButton.setVisible(false);
+            }
             vPanel.add(nicPanel);
         }
 

@@ -9,11 +9,34 @@ import com.google.inject.Inject;
 public class HostNicPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<HostNicModel, HostNicPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<HostNicModel> {
+        void showTabs();
+
+        void showOnlyPf();
+
+        void showOnlyVfsConfig();
     }
 
     @Inject
     public HostNicPopupPresenterWidget(EventBus eventBus, ViewDef view) {
         super(eventBus, view);
+    }
+
+    @Override
+    public void init(HostNicModel model) {
+        super.init(model);
+
+        if (model.getVfsConfigModel() != null) {
+            if (model.getInterface().getBondName() == null) {
+                // sriov nic
+                getView().showTabs();
+            } else {
+                // sriov bond slave
+                getView().showOnlyVfsConfig();
+            }
+        } else {
+            // regular nic
+            getView().showOnlyPf();
+        }
     }
 
 }

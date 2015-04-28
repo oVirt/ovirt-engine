@@ -4290,4 +4290,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Volume snapshots are scheduled.")
     String glusterVolumeSnapshotsScheduledToolTip();
+
+    @DefaultStringValue("Physical Function")
+    String pfTab();
+
+    @DefaultStringValue("Virtual Functions (SR-IOV)")
+    String vfsConfigTab();
 }
