@@ -85,7 +85,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
             throw new VdcBLLException(VdcBllErrors.GlusterVolumeGeoRepSyncFailed, "No volume information");
         }
         VDSGroup cluster = getClusterDao().get(volume.getClusterId());
-        discoverGeoRepDataInCluster(cluster, volume.getName());
+        discoverGeoRepDataInCluster(cluster, volume);
         List<GlusterGeoRepSession> geoRepSessions = getGeoRepDao().getGeoRepSessions(volume.getId());
         refreshGeoRepSessionStatusForSessions(cluster, geoRepSessions);
     }
@@ -130,22 +130,23 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         discoverGeoRepDataInCluster(cluster, null);
     }
 
-    private void discoverGeoRepDataInCluster(VDSGroup cluster, String volumeName) {
+    private void discoverGeoRepDataInCluster(VDSGroup cluster, GlusterVolumeEntity volume) {
         if (!supportsGlusterGeoRepFeature(cluster)) {
             return;
         }
 
-        Map<String, GlusterGeoRepSession> sessionsMap = getSessionsFromCLI(cluster, volumeName);
+        Map<String, GlusterGeoRepSession> sessionsMap = getSessionsFromCLI(cluster, volume);
         if (sessionsMap == null) {
             log.debug("No sessions retrieved for cluster: {} from CLI, nothing to do", cluster.getName());
             return;
         }
 
-        updateDiscoveredSessions(cluster, sessionsMap);
+        updateDiscoveredSessions(cluster, sessionsMap, volume);
     }
 
-    private void updateDiscoveredSessions(VDSGroup cluster, Map<String, GlusterGeoRepSession> sessionsMap) {
-        removeDeletedSessions(cluster.getId(), sessionsMap);
+    private void updateDiscoveredSessions(VDSGroup cluster, Map<String, GlusterGeoRepSession> sessionsMap,
+            GlusterVolumeEntity volume) {
+        removeDeletedSessions(cluster.getId(), sessionsMap, volume);
 
         // for each geo-rep session, find session in database and update details.
         for (GlusterGeoRepSession session : sessionsMap.values()) {
@@ -261,8 +262,17 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         getGeoRepDao().saveOrUpdateDetailsInBatch(session.getSessionDetails());
     }
 
-    private void removeDeletedSessions(Guid clusterId, final Map<String, GlusterGeoRepSession> sessionsMap) {
-        List<GlusterGeoRepSession> sessionsInDb = getGeoRepDao().getGeoRepSessionsInCluster(clusterId);
+    private void removeDeletedSessions(Guid clusterId,
+            final Map<String, GlusterGeoRepSession> sessionsMap,
+            GlusterVolumeEntity volume) {
+        List<GlusterGeoRepSession> sessionsInDb;
+        if (volume != null) {
+            // syncing for a specific volume, so retrieve only that volume's sessions
+            sessionsInDb = getGeoRepDao().getGeoRepSessions(volume.getId());
+        } else {
+            sessionsInDb = getGeoRepDao().getGeoRepSessionsInCluster(clusterId);
+        }
+
         if (CollectionUtils.isEmpty(sessionsInDb)) {
             return;
         }
@@ -370,15 +380,16 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         return GeoRepSessionStatus.UNKNOWN;
     }
 
-    private Map<String, GlusterGeoRepSession> getSessionsFromCLI(VDSGroup cluster, String volumeName) {
+    private Map<String, GlusterGeoRepSession> getSessionsFromCLI(VDSGroup cluster, GlusterVolumeEntity volume) {
         VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No UP server found in cluster '{}' for geo-rep monitoring", cluster.getName());
             return null;
         }
+        String volName = volume != null ? volume.getName() : null;
         // get details of geo-rep sessions in cluster
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterVolumeGeoRepSessionList,
-                new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(), volumeName));
+                new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(), volName));
         if (returnValue.getSucceeded()) {
             List<GlusterGeoRepSession> sessions = (List<GlusterGeoRepSession>) returnValue.getReturnValue();
             HashMap<String, GlusterGeoRepSession> sessionsMap = new HashMap<>();
