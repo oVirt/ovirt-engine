@@ -431,6 +431,11 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             List<Disk> unregisteredDisks = getBackend().runInternalQuery(VdcQueryType.GetUnregisteredDisks,
                     new GetUnregisteredDisksQueryParameters(storageDomainId,
                             storagePoolId)).getReturnValue();
+            if (unregisteredDisks == null) {
+                log.error("An error occurred while fetching unregistered disks from Storage Domain id '{}'",
+                        storageDomainId);
+                return ovfDisks;
+            }
             for (Disk disk : unregisteredDisks) {
                 DiskImage ovfStoreDisk = (DiskImage) disk;
                 String diskDecription = ovfStoreDisk.getDescription();
