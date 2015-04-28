@@ -90,7 +90,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         AddVmToPoolParameters parameters = new AddVmToPoolParameters(getParameters().getPoolId(),
                 vmStatic.getId());
         parameters.setShouldBeLogged(false);
-        setSucceeded(runInternalAction(VdcActionType.AddVmToPool, parameters).getSucceeded());
+        setSucceeded(runInternalActionWithTasksContext(VdcActionType.AddVmToPool, parameters).getSucceeded());
         addVmPermission();
     }
 }
