@@ -113,6 +113,8 @@ public class NicMapper {
             return 3;
         case SPAPR_VLAN:
             return 4;
+        case PCI_PASSTHROUGH:
+            return 5;
         default:
             return -1;
         }
@@ -131,6 +133,8 @@ public class NicMapper {
             return NicInterface.VIRTIO.value();
         case 4:
             return NicInterface.SPAPR_VLAN.value();
+        case 5:
+            return NicInterface.PCI_PASSTHROUGH.value();
         default:
             return null;
         }

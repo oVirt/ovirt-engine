@@ -17,7 +17,7 @@
 package org.ovirt.engine.api.model;
 
 public enum NicInterface {
-    E1000, VIRTIO, RTL8139, RTL8139_VIRTIO, SPAPR_VLAN;
+    E1000, VIRTIO, RTL8139, RTL8139_VIRTIO, SPAPR_VLAN, PCI_PASSTHROUGH;
 
     public String value() {
         return name().toLowerCase();
