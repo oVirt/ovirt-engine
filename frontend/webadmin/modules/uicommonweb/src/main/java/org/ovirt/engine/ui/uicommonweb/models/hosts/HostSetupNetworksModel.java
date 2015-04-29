@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel.AllNetworksSelector;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
@@ -299,6 +300,25 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         NetworkOperation.attachNetworks(ifaceModel, new ArrayList<LogicalNetworkModel>(potentialNetworks), allNics);
     }
 
+    private void commitVfsConfigChanges(final HostNicVfsConfig hostNicVfsConfig,
+            final VfsConfigModel vfsConfigModel) {
+        if (hostNicVfsConfig != null) {
+            hostNicVfsConfig.setNumOfVfs(vfsConfigModel.getNumOfVfs().getEntity());
+
+            hostNicVfsConfig.setAllNetworksAllowed(vfsConfigModel
+                    .getAllNetworksAllowed().getSelectedItem() == AllNetworksSelector.allNetworkAllowed);
+            Set<Guid> networks = new HashSet<>();
+            for (VfsConfigNetwork vfsConfigNetwork : vfsConfigModel.getNetworks().getItems()) {
+                if (vfsConfigNetwork.isAttached() && vfsConfigNetwork.getLabelViaAttached() == null) {
+                    networks.add(vfsConfigNetwork.getEntity().getId());
+                }
+            }
+            hostNicVfsConfig.setNetworks(networks);
+
+            hostNicVfsConfig.setNetworkLabels(new HashSet<>(vfsConfigModel.getLabels().getItems()));
+        }
+    }
+
     public void onEdit(NetworkItemModel<?> item) {
         Model editPopup = null;
         BaseCommandTarget okTarget = null;
@@ -333,8 +353,13 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
              * Interface Dialog
              *******************/
             final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getIface();
+            final boolean isBondSalve = entity.isBondSlave();
+            final HostNicVfsConfig hostNicVfsConfig = nicToVfsConfig.get(entity.getId());
             final HostNicModel interfacePopupModel =
-                    new HostNicModel(entity, getFreeLabels(), labelToIface, nicToVfsConfig.get(entity.getId()),
+                    new HostNicModel(entity,
+                            isBondSalve ? null : getFreeLabels(),
+                            isBondSalve ? null : labelToIface,
+                            nicToVfsConfig.get(entity.getId()),
                             allNetworks);
             editPopup = interfacePopupModel;
 
@@ -346,15 +371,20 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         return;
                     }
                     sourceListModel.setConfirmWindow(null);
-                    Collection<LogicalNetworkModel> potentialNetworks =
-                            computeLabelChanges(interfacePopupModel.getLabelsModel(), nicMap.get(entity.getName())
-                                    .getItems());
-                    if (validateLabelChanges(potentialNetworks)) {
-                        commitLabelChanges(interfacePopupModel.getLabelsModel(), entity, potentialNetworks);
-                        redraw();
+
+                    if (!isBondSalve) {
+                        Collection<LogicalNetworkModel> potentialNetworks =
+                                computeLabelChanges(interfacePopupModel.getLabelsModel(), nicMap.get(entity.getName())
+                                        .getItems());
+                        if (validateLabelChanges(potentialNetworks)) {
+                            commitLabelChanges(interfacePopupModel.getLabelsModel(), entity, potentialNetworks);
+                            redraw();
+                        }
                     }
+
+                    commitVfsConfigChanges(hostNicVfsConfig, interfacePopupModel.getVfsConfigModel());
                 }
-            };
+       };
         } else if (item instanceof LogicalNetworkModel) {
             /*****************
              * Network Dialog

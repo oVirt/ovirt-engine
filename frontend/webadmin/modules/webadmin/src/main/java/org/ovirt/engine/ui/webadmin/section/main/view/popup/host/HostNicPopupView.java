@@ -76,9 +76,10 @@ public class HostNicPopupView extends AbstractTabbedModelBoundPopupView<HostNicM
 
     @Override
     public HostNicModel flush() {
+        HostNicModel hostNicModel = driver.flush();
         labelsWidget.flush();
         vfsConfigWidget.flush();
-        return driver.flush();
+        return hostNicModel;
     }
 
     @Override

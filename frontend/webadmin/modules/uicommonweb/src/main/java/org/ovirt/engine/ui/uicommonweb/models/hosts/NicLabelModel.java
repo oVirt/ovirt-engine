@@ -18,15 +18,18 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NicLabelModel extends ListModel<ListModel<String>> {
 
-    private final Collection<VdsNetworkInterface> srcIfaces; // original interfaces composing this interface (more than one in case this is a bond)
-    private final Set<String> containedIfaces; // names of the original interfaces
-    private final List<String> originalLabels; // union of labels attached originally to original interface(s)
-    private final Collection<String> suggestedLabels; // pre-existing DC labels that aren't yet assigned to an interface
-    private final Map<String, String> labelToIface; // map from each label to the name of the interface that uses it (possibly null)
-    private final Set<String> flushedLabels; // actual labels, as edited in the view
+    private Collection<VdsNetworkInterface> srcIfaces; // original interfaces composing this interface (more than one in case this is a bond)
+    private Set<String> containedIfaces; // names of the original interfaces
+    private List<String> originalLabels; // union of labels attached originally to original interface(s)
+    private Collection<String> suggestedLabels; // pre-existing DC labels that aren't yet assigned to an interface
+    private Map<String, String> labelToIface; // map from each label to the name of the interface that uses it (possibly null)
+    private Set<String> flushedLabels; // actual labels, as edited in the view
 
     public Collection<String> getSuggestedLabels() {
         return suggestedLabels;
+    }
+
+    public NicLabelModel() {
     }
 
     public NicLabelModel(Collection<VdsNetworkInterface> srcIfaces,

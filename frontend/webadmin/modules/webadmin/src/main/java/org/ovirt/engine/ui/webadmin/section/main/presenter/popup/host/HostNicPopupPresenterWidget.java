@@ -23,8 +23,8 @@ public class HostNicPopupPresenterWidget extends AbstractModelBoundPopupPresente
 
     @Override
     public void init(HostNicModel model) {
-        if (model.getVfsConfigModel() != HostNicModel.EMPTY_VFS_CONFIG_MODEL) {
-            if (model.getInterface().getBondName() == null) {
+        if (model.hasVfsConfig()) {
+            if (model.hasLabels()) {
                 // sriov nic
                 getView().showTabs();
             } else {

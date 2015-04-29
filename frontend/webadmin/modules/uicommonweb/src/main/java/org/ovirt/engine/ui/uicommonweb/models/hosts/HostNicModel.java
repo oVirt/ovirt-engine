@@ -13,9 +13,10 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class HostNicModel extends Model {
 
-    public static final VfsConfigModel EMPTY_VFS_CONFIG_MODEL = new VfsConfigModel();
+    private static final VfsConfigModel EMPTY_VFS_CONFIG_MODEL = new VfsConfigModel();
+    private static final NicLabelModel EMPTY_LABELS_MODEL = new NicLabelModel();
 
-    private final NicLabelModel labelsModel;
+    private NicLabelModel labelsModel = EMPTY_LABELS_MODEL;
     private VfsConfigModel vfsConfigModel = EMPTY_VFS_CONFIG_MODEL;
     private VdsNetworkInterface iface;
 
@@ -30,7 +31,10 @@ public class HostNicModel extends Model {
             List<Network> allClusterNetworks) {
         setTitle(ConstantsManager.getInstance().getMessages().editInterfaceTitle(iface.getName()));
         this.iface = iface;
-        labelsModel = new NicLabelModel(Collections.singletonList(iface), suggestedLabels, labelToIface);
+
+        if (labelToIface != null) {
+            labelsModel = new NicLabelModel(Collections.singletonList(iface), suggestedLabels, labelToIface);
+        }
 
         if (vfsConfig != null) {
             vfsConfigModel = new VfsConfigModel(vfsConfig, allClusterNetworks);
@@ -38,7 +42,7 @@ public class HostNicModel extends Model {
     }
 
     public boolean validate() {
-        return labelsModel.validate();
+        return labelsModel == EMPTY_LABELS_MODEL ? true : labelsModel.validate();
     }
 
     public VfsConfigModel getVfsConfigModel() {
@@ -47,5 +51,13 @@ public class HostNicModel extends Model {
 
     public VdsNetworkInterface getInterface() {
         return iface;
+    }
+
+    public boolean hasVfsConfig() {
+        return getVfsConfigModel() != HostNicModel.EMPTY_VFS_CONFIG_MODEL;
+    }
+
+    public boolean hasLabels() {
+        return getLabelsModel() != HostNicModel.EMPTY_LABELS_MODEL;
     }
 }
