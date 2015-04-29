@@ -1808,6 +1808,7 @@
       <xs:element name="automatic_pm_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <xs:element name="kdump_detection" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
+    <!-- TODO: (deprecated) remove 'type' post 4.0 -->
     <xs:attribute name="type" type="xs:string"/>
   </xs:complexType>
 

@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.model.PowerManagement;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -114,6 +115,9 @@ public class DeprecatedPowerManagementMapperTest extends Assert {
         String[] ip = { "1.1.1.111", "1.1.1.112" };
         int i = 0;
         List<FenceAgent> agents = new LinkedList<>();
+        VDS vds = new VDS();
+        vds.setPmEnabled(true);
+        vds.setFenceAgents(agents);
         FenceAgent primaryAgent =
                 createFenceAgent(new Guid("00000000-0000-0000-0000-000000000000"),
                         ip[0],
@@ -134,7 +138,7 @@ public class DeprecatedPowerManagementMapperTest extends Assert {
                         "secure=true",
                         1); // concurrent
         agents.add(secondaryAgent);
-        PowerManagement powerMgmt = DeprecatedPowerManagementMapper.map(agents, null);
+        PowerManagement powerMgmt = DeprecatedPowerManagementMapper.map(vds, null);
         assertEquals(powerMgmt.getAgents().getAgents().size(), 2);
         for (Agent agent : powerMgmt.getAgents().getAgents()) {
             assertEquals(agent.getAddress(), ip[i]);

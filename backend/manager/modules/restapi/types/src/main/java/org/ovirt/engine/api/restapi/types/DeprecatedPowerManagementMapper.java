@@ -9,6 +9,7 @@ import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.restapi.utils.AgentComparator;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -121,14 +122,18 @@ public class DeprecatedPowerManagementMapper {
     /**
      * Map the fence agents from this host into the PowerManagement object in the API.
      */
-    public static PowerManagement map(List<FenceAgent> agents, PowerManagement pm) {
+    public static PowerManagement map(VDS host, PowerManagement pm) {
         if (pm == null) {
             pm = new PowerManagement();
         }
+        List<FenceAgent> agents = host.getFenceAgents();
         if (agents != null && !agents.isEmpty()) {
             Collections.sort(agents, new FenceAgent.FenceAgentOrderComparator());
             // Set agent-related fields directly in PowerManagement object (for backwards compatibility).
             mapAgentToPm(agents.get(0), pm);
+            if (!host.isPmEnabled()) {
+                pm.setType(null);
+            }
             pm.setAgents(new Agents());
             pm.getAgents().getAgents().add(new Agent());
             // map the first agent
