@@ -80,8 +80,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
-import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
-import org.ovirt.engine.core.common.console.ConsoleOptions.WanColorDepth;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -92,6 +90,8 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.console.ConsoleOptions.WanColorDepth;
+import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters;
@@ -1973,6 +1973,25 @@ public class AsyncDataProvider {
                 new GetEntitiesWithPermittedActionParameters();
         getEntitiesWithPermittedActionParameters.setActionGroup(actionGroup);
         Frontend.getInstance().runQuery(VdcQueryType.GetClustersWithPermittedAction, getEntitiesWithPermittedActionParameters, aQuery);
+    }
+
+    public void getClustersHavingHosts(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source != null)
+                {
+                    ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
+                    Collections.sort(list, new NameableComparator());
+                    return list;
+                }
+                return new ArrayList<VDSGroup>();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllClustersHavingHosts,
+                new VdcQueryParametersBase(),
+                aQuery);
     }
 
     public void getAllVmTemplates(AsyncQuery aQuery, final boolean refresh) {

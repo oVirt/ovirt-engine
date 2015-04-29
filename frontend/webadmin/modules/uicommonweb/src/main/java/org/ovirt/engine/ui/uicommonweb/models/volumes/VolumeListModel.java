@@ -1237,7 +1237,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 .configureClusterSnapshotOptionsTitle());
         setWindow(clusterSnapshotConfigModel);
 
-        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClustersHavingHosts(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, final Object returnValue) {
@@ -1252,7 +1252,9 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
                                 @Override
                                 public void onSuccess(Object model, Object returnValue1) {
-                                    clusterSnapshotConfigModel.getClusters().setItems((List<VDSGroup>) returnValue, (VDSGroup) returnValue1);
+                                            clusterSnapshotConfigModel.getClusters()
+                                                    .setItems((List<VDSGroup>) returnValue,
+                                                    (VDSGroup) returnValue1);
                                 }
                             }), volumeEntity.getClusterId());
                         }
