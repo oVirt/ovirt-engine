@@ -248,6 +248,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- This SP returns all clusters which have valid hosts attached to them
+Create or replace FUNCTION GetClustersHavingHosts() RETURNS SETOF vds_groups_view STABLE
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT vds_groups_view.*
+    FROM vds_groups_view
+    WHERE EXISTS (SELECT 1 from vds_static WHERE vds_group_id = vds_groups_view.vds_group_id);
+END; $procedure$
+LANGUAGE plpgsql;
+
 --This SP updates the vds_group emulated machine and the detection mode
 Create or replace FUNCTION UpdateVdsGroupEmulatedMachine(v_vds_group_id UUID, v_emulated_machine varchar(40), v_detect_emulated_machine BOOLEAN) RETURNS VOID
    AS $procedure$

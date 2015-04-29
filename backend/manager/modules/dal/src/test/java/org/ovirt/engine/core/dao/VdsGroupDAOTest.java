@@ -479,4 +479,11 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         assertEquals(1, vdsGroups.size());
         assertEquals(FixturesTool.GLUSTER_CLUSTER_ID, vdsGroups.get(0).getId());
     }
+
+    @Test
+    public void testGetClustersHavingHosts() {
+        List<VDSGroup> clusters = ((VdsGroupDAODbFacadeImpl) dao).getClustersHavingHosts();
+        assertNotNull(clusters);
+        assertEquals(4, clusters.size());
+    }
 }

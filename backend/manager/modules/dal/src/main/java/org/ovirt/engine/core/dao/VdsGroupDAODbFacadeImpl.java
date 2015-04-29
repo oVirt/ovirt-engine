@@ -169,6 +169,15 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
     }
 
     @Override
+    public List<VDSGroup> getClustersHavingHosts() {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+
+        return getCallsHandler().executeReadList("GetClustersHavingHosts",
+                VdsGroupRowMapper.instance,
+                parameterSource);
+    }
+
+    @Override
     public void setEmulatedMachine(Guid vdsGroupId, String emulatedMachine, boolean detectEmulatedMachine) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_group_id", vdsGroupId)

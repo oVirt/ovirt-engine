@@ -157,6 +157,13 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
     List<VDSGroup> getClustersWithPermittedAction(Guid userId, ActionGroup actionGroup);
 
     /**
+     * Retrieves clusters having valid hosts added to them
+     *
+     * @return list of clusters
+     */
+    List<VDSGroup> getClustersHavingHosts();
+
+    /**
      * Sets the cluster's emulated machine value
      * @param vdsGroupId
      * @param emulatedMachine
