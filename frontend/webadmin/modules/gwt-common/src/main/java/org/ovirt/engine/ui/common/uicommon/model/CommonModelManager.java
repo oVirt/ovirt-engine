@@ -20,7 +20,7 @@ public class CommonModelManager {
      * Should be called right after successful user authentication, before redirecting the user to the main section.
      */
     public static void init(final EventBus eventBus) {
-        commonModel = CommonModel.newInstance();
+        commonModel = CommonModel.newInstance(eventBus);
         commonModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {

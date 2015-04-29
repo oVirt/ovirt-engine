@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.presenter.SetDynamicTabAccessibleEvent;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.action.AbstractButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
+import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
 import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityType;
@@ -251,6 +252,18 @@ public class PluginUiFunctions implements HasHandlers {
             @Override
             public void execute() {
                 placeManager.revealPlace(new PlaceRequest.Builder().nameToken(placeToken).build());
+            }
+        });
+    }
+
+    /**
+     * Applies the given search string, which triggers transition to the corresponding application place.
+     */
+    public void setSearchString(final String searchString) {
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                ApplySearchStringEvent.fire(PluginUiFunctions.this, searchString);
             }
         });
     }

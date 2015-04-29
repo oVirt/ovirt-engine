@@ -1,7 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -12,11 +16,16 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
+import org.ovirt.engine.core.searchbackend.SyntaxContainer;
+import org.ovirt.engine.core.searchbackend.SyntaxObject;
+import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent.ApplySearchStringHandler;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
@@ -50,6 +59,8 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
+import com.google.gwt.event.shared.EventBus;
 
 @SuppressWarnings("unused")
 public class CommonModel extends ListModel
@@ -103,8 +114,8 @@ public class CommonModel extends ListModel
 
     private static CommonModel instance = null;
 
-    public static CommonModel newInstance() {
-        instance = new CommonModel();
+    public static CommonModel newInstance(EventBus eventBus) {
+        instance = new CommonModel(eventBus);
         return instance;
     }
 
@@ -112,7 +123,7 @@ public class CommonModel extends ListModel
         return instance;
     }
 
-    private CommonModel()
+    private CommonModel(EventBus eventBus)
     {
         setSignedOutEvent(new Event(signedOutEventDefinition));
 
@@ -147,6 +158,14 @@ public class CommonModel extends ListModel
         initItems();
 
         setLoggedInUser(Frontend.getInstance().getLoggedInUser());
+
+        eventBus.addHandler(ApplySearchStringEvent.getType(), new ApplySearchStringHandler() {
+            @Override
+            public void onApplySearchString(ApplySearchStringEvent event) {
+                setSearchString(event.getSearchString(), false);
+                getSearchCommand().execute();
+            }
+        });
     }
 
     private void initItems()
@@ -208,6 +227,7 @@ public class CommonModel extends ListModel
 
         // Activate the default list model.
         setSelectedItem(getDefaultItem());
+
     }
 
     private void updateHasSelectedTags()
@@ -522,7 +542,7 @@ public class CommonModel extends ListModel
 
     private void clearSearchString()
     {
-        setSearchString(getHasSearchStringPrefix() ? "" : getSelectedItem().getDefaultSearchString(), false); //$NON-NLS-1$
+        setSearchStringImpl(getHasSearchStringPrefix() ? "" : getSelectedItem().getDefaultSearchString(), false); //$NON-NLS-1$
         getSearchCommand().execute();
     }
 
@@ -669,6 +689,10 @@ public class CommonModel extends ListModel
 
             // Setting it now currently only to false, for case-insensitive search
             model.setCaseSensitiveSearch(false);
+
+            // ListModel.setSelectedItem compares values by reference, following code ensures that
+            // "model" will always be selected (even if it's already the currently selected item)
+            selectedItem = null;
 
             // Change active list model as neccesary.
             setSelectedItem(model);
@@ -1238,7 +1262,31 @@ public class CommonModel extends ListModel
         setSearchString(value, true);
     }
 
-    public void setSearchString(String value, boolean checkIfNewValue)
+    public void setSearchString(String value, boolean checkIfNewValue) {
+        if (value == null || !containsTokens(value, SyntaxObjectType.SORTBY, SyntaxObjectType.PAGE,
+                SyntaxObjectType.SORT_DIRECTION)) {
+            setSearchStringImpl(value, checkIfNewValue);
+        }
+    }
+
+    private boolean containsTokens(String searchString, SyntaxObjectType... tokens) {
+        if (tokens == null) {
+            return false;
+        }
+        ISyntaxChecker syntaxChecker = getAutoCompleteModel().getSyntaxChecker();
+        SyntaxContainer syntaxCont = syntaxChecker.analyzeSyntaxState(searchString, true);
+        Set<SyntaxObjectType> searchTokenSet = new HashSet<SyntaxObjectType>();
+        Iterator<SyntaxObject> iterator = syntaxCont.iterator();
+        while (iterator.hasNext()) {
+            searchTokenSet.add(iterator.next().getType());
+        }
+        Set<SyntaxObjectType> tokenSet = new HashSet<SyntaxObjectType>();
+        tokenSet.addAll(Arrays.asList(tokens));
+        searchTokenSet.retainAll(tokenSet);
+        return !searchTokenSet.isEmpty();
+    }
+
+    private void setSearchStringImpl(String value, boolean checkIfNewValue)
     {
         if (!checkIfNewValue || !ObjectUtils.objectsEqual(searchString, value))
         {
