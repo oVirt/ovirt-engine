@@ -1255,7 +1255,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 .configureClusterSnapshotOptionsTitle());
         setWindow(clusterSnapshotConfigModel);
 
-        AsyncDataProvider.getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getClustersHavingHosts(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, final Object returnValue) {
@@ -1270,7 +1270,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
                                 @Override
                                 public void onSuccess(Object model, Object returnValue1) {
-                                    clusterSnapshotConfigModel.getClusters().setItems((List<VDSGroup>) returnValue, (VDSGroup) returnValue1);
+                                            clusterSnapshotConfigModel.getClusters()
+                                                    .setItems((List<VDSGroup>) returnValue,
+                                                    (VDSGroup) returnValue1);
                                 }
                             }), volumeEntity.getClusterId());
                         }

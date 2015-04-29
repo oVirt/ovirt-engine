@@ -1875,6 +1875,25 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetClustersWithPermittedAction, getEntitiesWithPermittedActionParameters, aQuery);
     }
 
+    public static void getClustersHavingHosts(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source != null)
+                {
+                    ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
+                    Collections.sort(list, new NameableComparator());
+                    return list;
+                }
+                return new ArrayList<VDSGroup>();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllClustersHavingHosts,
+                new VdcQueryParametersBase(),
+                aQuery);
+    }
+
     public static void getAllVmTemplates(AsyncQuery aQuery, final boolean refresh) {
         aQuery.converterCallback = new TemplateConverter();
         VdcQueryParametersBase params = new VdcQueryParametersBase();
