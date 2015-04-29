@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
+import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -468,6 +470,18 @@ public class BackendHostResourceTest
         Action action = new Action();
         action.setRootPassword(NAMES[2]);
         verifyActionResponse(resource.install(action));
+    }
+
+    @Test
+    public void testUpgrade() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.UpgradeHost,
+                                           UpgradeHostParameters.class,
+                                           new String[] { "VdsId", "oVirtIsoFile" },
+                                           new Object[] { GUIDS[0], NAMES[0] }));
+
+        Action action = new Action();
+        action.setImage(NAMES[0]);
+        verifyActionResponse(resource.upgrade(action));
     }
 
     @Test

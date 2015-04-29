@@ -30,7 +30,7 @@ import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface HostResource extends UpdatableResource<Host>, MeasurableResource {
 
-    @Path("{action: (approve|install|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin|forceselectspm)}/{oid}")
+    @Path("{action: (approve|install|upgrade|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin|forceselectspm)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
 
     @POST
@@ -42,6 +42,11 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     @Actionable
     @Path("install")
     public Response install(Action action);
+
+    @POST
+    @Actionable
+    @Path("upgrade")
+    public Response upgrade(Action action);
 
     @POST
     @Actionable

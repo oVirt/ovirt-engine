@@ -1840,6 +1840,14 @@ actions:
           action.image: xs:string
           action.host.override_iptables: xs:boolean
         description: install vdsm and other packages required to get the host ready to be used in the engine providing the ssh password
+- name: /hosts/{host:id}/upgrade|rel=upgrade
+  description: upgrade vdsm and other packages of the specified host in the system
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - optionalArguments:
+          action.image: xs:string
 - name: /hosts/{host:id}/iscsidiscover|rel=iscsidiscover
   description: initiate the command to discover the iscsi targets and map the targets to the storage server connections
   request:

@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
+import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -182,6 +183,16 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return doAction(VdcActionType.UpdateVds,
                         params,
                         action);
+    }
+
+    @Override
+    public Response upgrade(Action action) {
+        UpgradeHostParameters params = new UpgradeHostParameters(guid);
+        if (action.isSetImage()) {
+            params.setoVirtIsoFile(action.getImage());
+        }
+
+        return doAction(VdcActionType.UpgradeHost, params, action);
     }
 
     @Override
