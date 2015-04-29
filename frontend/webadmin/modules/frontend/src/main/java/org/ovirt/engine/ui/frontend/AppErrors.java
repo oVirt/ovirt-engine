@@ -304,6 +304,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot install Host. Image file is missing.")
     String VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. There are no available updates for the host.")
+    String NO_AVAILABLE_UPDATES_FOR_HOST();
+
     @DefaultStringValue("The Host Port number cannot be changed without reinstalling the Host.")
     String VDS_PORT_CHANGE_REQUIRE_INSTALL();
 
@@ -1059,6 +1062,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$action register")
     String VAR__ACTION__REGISTER();
+
+    @DefaultStringValue("$action upgrade")
+    String VAR__ACTION__UPGRADE();
 
     @DefaultStringValue("$action start profiling")
     String VAR__ACTION__START_PROFILE();

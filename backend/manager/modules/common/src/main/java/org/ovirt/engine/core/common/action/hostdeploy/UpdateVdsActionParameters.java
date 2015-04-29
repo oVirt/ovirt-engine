@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.action.hostdeploy;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 
@@ -12,6 +13,11 @@ public class UpdateVdsActionParameters extends VdsOperationActionParameters {
     private boolean installHost;
     private boolean reinstallOrUpgrade;
     private String oVirtIsoFile;
+
+    /**
+     * This field is intended for internal use to pass the value of the host prior to its upgrade to the callback
+     */
+    private VDSStatus initialStatus;
 
     public UpdateVdsActionParameters() {
     }
@@ -57,5 +63,13 @@ public class UpdateVdsActionParameters extends VdsOperationActionParameters {
 
     public void setFenceAgents(List<FenceAgent> fenceAgents) {
         this.fenceAgents = fenceAgents;
+    }
+
+    public VDSStatus getInitialStatus() {
+        return initialStatus;
+    }
+
+    public void setInitialStatus(VDSStatus initialStatus) {
+        this.initialStatus = initialStatus;
     }
 }

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.utils.log.LoggedUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HostUpgradeManager implements UpdateAvailable {
+public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     private static Logger log = LoggerFactory.getLogger(HostUpgradeManager.class);
 
@@ -37,6 +37,21 @@ public class HostUpgradeManager implements UpdateAvailable {
             log.error("Exception", e);
 
             throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void update(final VDS host) {
+        final Collection<String> packages = Config.getPackagesForCheckUpdate();
+
+        try (final VdsMgmtPackages hostPackagesManager = createPackagesManager(host, false)) {
+            hostPackagesManager.setPackages(packages);
+            hostPackagesManager.execute();
+        } catch (final Exception e) {
+            log.error("Failed to update host '{}' packages '{}'.", host.getName(), StringUtils.join(packages, ", "));
+            log.error("Exception", e);
+
+            throw new RuntimeException(e);
         }
     }
 
