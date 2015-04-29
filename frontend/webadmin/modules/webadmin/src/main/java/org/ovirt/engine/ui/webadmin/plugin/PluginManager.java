@@ -513,6 +513,11 @@ public class PluginManager {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::revealPlace(Ljava/lang/String;)(placeToken);
                 }
             },
+            setSearchString: function(searchString) {
+                if (canDoPluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setSearchString(Ljava/lang/String;)(searchString);
+                }
+            },
             loginUserName: function() {
                 if (canDoPluginAction(this.pluginName)) {
                     return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getFullUserName()();

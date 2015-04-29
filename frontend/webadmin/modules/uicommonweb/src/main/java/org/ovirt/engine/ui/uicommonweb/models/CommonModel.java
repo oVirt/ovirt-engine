@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent.ApplySearchStringHandler;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
@@ -207,6 +208,13 @@ public class CommonModel extends ListModel<SearchableListModel> {
             }
         });
 
+        eventBus.addHandler(ApplySearchStringEvent.getType(), new ApplySearchStringHandler() {
+            @Override
+            public void onApplySearchString(ApplySearchStringEvent event) {
+                setSearchString(event.getSearchString(), false);
+                getSearchCommand().execute();
+            }
+        });
     }
 
     private void setModelList() {
@@ -538,7 +546,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
     }
 
     private void clearSearchString() {
-        setSearchString(getHasSearchStringPrefix() ? "" : getSelectedItem().getDefaultSearchString(), false); //$NON-NLS-1$
+        setSearchStringImpl(getHasSearchStringPrefix() ? "" : getSelectedItem().getDefaultSearchString(), false); //$NON-NLS-1$
         getSearchCommand().execute();
     }
 
@@ -663,6 +671,10 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
             // Setting it now currently only to false, for case-insensitive search
             model.setCaseSensitiveSearch(false);
+
+            // ListModel.setSelectedItem compares values by reference, following code ensures that
+            // "model" will always be selected (even if it's already the currently selected item)
+            selectedItem = null;
 
             // Change active list model as neccesary.
             setSelectedItem(model);
@@ -1122,11 +1134,14 @@ public class CommonModel extends ListModel<SearchableListModel> {
         return searchString;
     }
 
-    public void setSearchString(String value)
-    {
+    public void setSearchString(String value) {
+        setSearchString(value, true);
+    }
+
+    public void setSearchString(String value, boolean checkIfNewValue) {
         if (value == null || !containsTokens(value, SyntaxObjectType.SORTBY, SyntaxObjectType.PAGE,
                 SyntaxObjectType.SORT_DIRECTION)) {
-            setSearchString(value, true);
+            setSearchStringImpl(value, checkIfNewValue);
         }
     }
 
@@ -1147,7 +1162,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         return !searchTokenSet.isEmpty();
     }
 
-    public void setSearchString(String value, boolean checkIfNewValue) {
+    private void setSearchStringImpl(String value, boolean checkIfNewValue) {
         if (!checkIfNewValue || !ObjectUtils.objectsEqual(searchString, value)) {
             searchString = value;
             searchStringChanged();
