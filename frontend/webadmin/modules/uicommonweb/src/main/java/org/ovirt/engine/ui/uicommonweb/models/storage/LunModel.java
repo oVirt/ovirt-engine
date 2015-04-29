@@ -93,6 +93,38 @@ public class LunModel extends EntityModel<LUNs>
         }
     }
 
+    private int additionalAvailableSize;
+
+    public int getAdditionalAvailableSize()
+    {
+        return additionalAvailableSize;
+    }
+
+    public void setAdditionalAvailableSize(int value)
+    {
+        if (additionalAvailableSize != value)
+        {
+            additionalAvailableSize = value;
+            onPropertyChanged(new PropertyChangedEventArgs("AdditionalSize")); //$NON-NLS-1$
+        }
+    }
+
+    private boolean additionalAvailableSizeSelected;
+
+    public boolean isAdditionalAvailableSizeSelected()
+    {
+        return additionalAvailableSizeSelected;
+    }
+
+    public void setAdditionalAvailableSizeSelected(boolean value)
+    {
+        if (additionalAvailableSizeSelected != value)
+        {
+            additionalAvailableSizeSelected = value;
+            onPropertyChanged(new PropertyChangedEventArgs("AdditionalAvailableSizeSelected")); //$NON-NLS-1$
+        }
+    }
+
     private int multipathing;
 
     public int getMultipathing()

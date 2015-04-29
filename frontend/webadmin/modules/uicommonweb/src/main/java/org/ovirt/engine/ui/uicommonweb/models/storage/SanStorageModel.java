@@ -241,6 +241,8 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 lunModel.setMultipathing(a.getPathCount());
                 lunModel.setTargets(targets);
                 lunModel.setSize(a.getDeviceSize());
+                lunModel.setAdditionalAvailableSize(getAdditionalAvailableSize(a));
+                lunModel.setAdditionalAvailableSizeSelected(false);
                 lunModel.setIsAccessible(a.getAccessible());
                 lunModel.setStatus(a.getStatus());
                 lunModel.setIsIncluded(isIncluded);
@@ -263,6 +265,15 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
         initializeItems(newItems, null);
         proposeDiscover();
+    }
+
+    private int getAdditionalAvailableSize(LUNs lun) {
+        // The PV size is always smaller by 1 GB from the device due to LVM metadata
+        int additionalAvailableSize = lun.getDeviceSize() - lun.getPvSize() - 1;
+        if (additionalAvailableSize < 0) {
+            additionalAvailableSize = 0;
+        }
+        return additionalAvailableSize;
     }
 
     private boolean containsLun(LunModel lunModel, Collection<EntityModel<?>> models, boolean isIncluded) {
@@ -458,6 +469,8 @@ public abstract class SanStorageModel extends SanStorageModelBase
                     currLun.setMultipathing(lun.getMultipathing());
                     currLun.setTargets(createTargetModelList((LUNs) lun.getEntity()));
                     currLun.setSize(lun.getSize());
+                    currLun.setAdditionalAvailableSize(lun.getAdditionalAvailableSize());
+                    currLun.setAdditionalAvailableSizeSelected(lun.isAdditionalAvailableSizeSelected());
                     currLun.setIsAccessible(lun.getIsAccessible());
                     currLun.setStatus(lun.getStatus());
                     currLun.setIsIncluded(lun.getIsIncluded());
@@ -631,6 +644,22 @@ public abstract class SanStorageModel extends SanStorageModelBase
             }
         }
 
+        return luns;
+    }
+
+    public ArrayList<LunModel> getLunsToRefresh() {
+        ArrayList<LunModel> luns = new ArrayList<LunModel>();
+        if (!getIsGrouppedByTarget()) {
+            List<LunModel> items = (List<LunModel>) getItems();
+            for (LunModel lun : items) {
+                if (lun.getIsIncluded()) {
+                    if (lun.isAdditionalAvailableSizeSelected()
+                            && Linq.firstOrDefault(luns, new Linq.LunPredicate(lun)) == null) {
+                        luns.add(lun);
+                    }
+                }
+            }
+        }
         return luns;
     }
 

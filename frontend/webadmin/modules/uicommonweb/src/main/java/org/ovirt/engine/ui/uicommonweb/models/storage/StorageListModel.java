@@ -1609,6 +1609,18 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                             new ExtendSANStorageDomainParameters(storageDomain1.getId(), lunIds, force),
                             null, this);
                     }
+
+                    ArrayList<String> lunToRefreshIds = new ArrayList<String>();
+                    for (LunModel lun : sanStorageModel.getLunsToRefresh()) {
+                        lunToRefreshIds.add(lun.getLunId());
+                    }
+
+                    if (lunToRefreshIds.size() > 0) {
+                        Frontend.getInstance().runAction(VdcActionType.RefreshLunsSize,
+                                new ExtendSANStorageDomainParameters(storageDomain1.getId(), lunToRefreshIds, false),
+                                null, this);
+                    }
+
                     storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
                 }
             }, this);

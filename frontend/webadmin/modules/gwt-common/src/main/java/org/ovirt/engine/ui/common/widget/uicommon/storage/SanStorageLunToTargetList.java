@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLunAvailableSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -219,6 +220,13 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                 return String.valueOf(model.getSize()) + "GB"; //$NON-NLS-1$
             }
         }, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
+
+        table.addColumn(new AbstractLunAvailableSizeColumn() {
+            @Override
+            public LunModel getValue(LunModel object) {
+                return object;
+            }
+        }, constants.devAdditionalSizeSanStorage(), "70px"); //$NON-NLS-1$
 
         table.addColumn(new AbstractLunTextColumn() {
             @Override
