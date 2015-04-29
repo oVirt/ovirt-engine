@@ -62,7 +62,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
                 logSettingVmToDown(getVds().getId(), vm.getId());
             }
 
-            runInternalActionWithTasksContext(VdcActionType.ProcessDownVm, new ProcessDownVmParameters(vm.getId()));
+            runInternalActionWithTasksContext(VdcActionType.ProcessDownVm, new ProcessDownVmParameters(vm.getId(), true));
         }
 
         runVdsCommand(VDSCommandType.UpdateVdsVMsCleared,

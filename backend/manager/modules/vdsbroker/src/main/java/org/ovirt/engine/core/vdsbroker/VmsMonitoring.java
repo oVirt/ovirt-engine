@@ -243,7 +243,7 @@ public class VmsMonitoring {
         getVdsEventListener().runFailedAutoStartVMs(autoVmsToRun);
 
         // process all vms that went down
-        getVdsEventListener().processOnVmStop(movedToDownVms);
+        getVdsEventListener().processOnVmStop(movedToDownVms, vdsManager.getVdsId());
 
         getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
     }

@@ -2,10 +2,13 @@ package org.ovirt.engine.core.bll.network.host;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -183,6 +186,10 @@ public class HostNicVfsConfigHelperImplTest {
     }
 
     private List<HostDevice> mockVfsOnNetDevice(int numOfVfs) {
+        return mockVfsOnNetDevice(numOfVfs, null);
+    }
+
+    private List<HostDevice> mockVfsOnNetDevice(int numOfVfs, Guid vmId) {
         List<HostDevice> vfs = new ArrayList<>();
 
         for (int i = 0; i < numOfVfs; ++i) {
@@ -190,6 +197,7 @@ public class HostNicVfsConfigHelperImplTest {
             vfPciDevice.setParentPhysicalFunction(pciDevice.getDeviceName());
             vfPciDevice.setDeviceName(String.valueOf(i));
             vfPciDevice.setHostId(HOST_ID);
+            vfPciDevice.setVmId(vmId);
             vfs.add(vfPciDevice);
         }
 
@@ -203,6 +211,7 @@ public class HostNicVfsConfigHelperImplTest {
         devices.addAll(extraDevices);
 
         when(hostDeviceDao.getHostDevicesByHostId(HOST_ID)).thenReturn(devices);
+        when(hostDeviceDao.getAll()).thenReturn(devices);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -398,5 +407,81 @@ public class HostNicVfsConfigHelperImplTest {
 
         assertEquals(vf.getId(), capturedDeviceId);
         assertEquals(vmId, capturedVmId);
+    }
+
+    @Test
+    public void removeVmIdFromVfsNoOtherDeviceWithVmIdTest() {
+        removeVmIdFromVfsCommonTest(4, 0);
+    }
+
+    @Test
+    public void removeVmIdFromVfsNoVfsWithVmIdTest() {
+        removeVmIdFromVfsCommonTest(0, 2);
+    }
+
+    @Test
+    public void removeVmIdFromVfsVfsAndOtherDeviceWithVmIdTest() {
+        removeVmIdFromVfsCommonTest(2, 3);
+    }
+
+    @Test
+    public void removeVmIdFromVfsNoVfsAndNoOtherDeviceWithVmIdTest() {
+        removeVmIdFromVfsCommonTest(0, 0);
+    }
+
+    private void removeVmIdFromVfsCommonTest(int numOfVfWithVmId, int numOfOtherDeviceWithVmId) {
+        List<HostDevice> allDevices = new ArrayList<>();
+        List<HostDevice> otherDeviceWithVmId = new ArrayList<>();
+
+        Guid vmId = Guid.newGuid();
+        List<HostDevice> vfs = mockVfsOnNetDevice(numOfVfWithVmId, vmId);
+        allDevices.addAll(vfs);
+
+        for (int i = 0; i <= numOfOtherDeviceWithVmId; ++i) {
+            HostDevice hostDevice = createHostDevice(vmId);
+            otherDeviceWithVmId.add(hostDevice);
+        }
+
+        allDevices.addAll(otherDeviceWithVmId);
+        mockHostDevices(allDevices);
+
+        for (HostDevice vf : vfs) {
+            assertEquals(vmId, vf.getVmId());
+        }
+
+        hostNicVfsConfigHelper.removeVmIdFromVfs(vmId);
+
+        for (HostDevice vf : vfs) {
+            vf.setVmId(null);
+        }
+
+        if (numOfVfWithVmId == 0) {
+            verify(hostDeviceDao, never()).setVmIdOnHostDevice(any(HostDeviceId.class), any(Guid.class));
+        } else {
+            verify(hostDeviceDao, times(numOfVfWithVmId)).setVmIdOnHostDevice(hostDeviceIdCaptor.capture(),
+                    vmIdCaptor.capture());
+
+            List<HostDeviceId> capturedDeviceIds = hostDeviceIdCaptor.getAllValues();
+            List<Guid> capturedVmIds = vmIdCaptor.getAllValues();
+
+            for (HostDevice vf : vfs) {
+                assertTrue(capturedDeviceIds.contains(vf.getId()));
+            }
+
+            for (HostDevice hostDevice : otherDeviceWithVmId) {
+                assertFalse(capturedDeviceIds.contains(hostDevice.getId()));
+            }
+
+            for (Guid capturedVmId : capturedVmIds) {
+                assertEquals(null, capturedVmId);
+            }
+        }
+    }
+
+    private HostDevice createHostDevice(Guid vmId) {
+        HostDevice hostDevice = new HostDevice();
+        hostDevice.setHostId(HOST_ID);
+        hostDevice.setVmId(vmId);
+        return hostDevice;
     }
 }

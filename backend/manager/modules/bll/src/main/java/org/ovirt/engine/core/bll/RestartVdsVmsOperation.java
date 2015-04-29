@@ -117,7 +117,7 @@ public class RestartVdsVmsOperation {
             }
             Backend.getInstance().runInternalAction(
                     VdcActionType.ProcessDownVm,
-                    new ProcessDownVmParameters(vm.getId()),
+                    new ProcessDownVmParameters(vm.getId(), true),
                     ExecutionHandler.createDefaultContextForTasks(commandContext)
             );
 
@@ -126,6 +126,7 @@ public class RestartVdsVmsOperation {
                 autoStartVmIdsToRerun.add(vm.getId());
             }
         }
+
         if (!autoStartVmIdsToRerun.isEmpty()) {
             AutoStartVmsRunner.getInstance().addVmsToRun(autoStartVmIdsToRerun);
         }

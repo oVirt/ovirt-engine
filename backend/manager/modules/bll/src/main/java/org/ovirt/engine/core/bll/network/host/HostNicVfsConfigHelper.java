@@ -92,4 +92,12 @@ public interface HostNicVfsConfigHelper {
      * @param vfsNames
      */
     public void setVmIdOnVfs(Guid hostId, Guid vmId, final Set<String> vfsNames);
+
+    /**
+     * Removes the <code>vmId</code> from all the VFs that were attached to the VM
+     *
+     * @param vmId
+     * @return the id of the affected Host or null if there were no VFs attached to the VM
+     */
+    public Guid removeVmIdFromVfs(final Guid vmId);
 }

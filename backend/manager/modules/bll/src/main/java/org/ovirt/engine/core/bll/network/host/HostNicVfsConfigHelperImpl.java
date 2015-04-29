@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -230,7 +231,7 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
 
             @Override
             public boolean eval(HostDevice device) {
-                return vfsNames.contains(device.getDeviceName());
+                return vfsNames.contains(device.getDeviceName()) && isVf(device);
             }
         });
 
@@ -241,5 +242,29 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
         for (HostDevice vf : vfs) {
             hostDeviceDao.setVmIdOnHostDevice(vf.getId(), vmId);
         }
+    }
+
+    @Override
+    public Guid removeVmIdFromVfs(final Guid vmId) {
+        List<HostDevice> hostDevices = hostDeviceDao.getAll();
+
+        List<HostDevice> vfsUsedByVm = LinqUtils.filter(hostDevices, new Predicate<HostDevice>() {
+
+            @Override
+            public boolean eval(HostDevice device) {
+                return vmId.equals(device.getVmId()) && isVf(device);
+            }
+        });
+
+        Guid hostId = vfsUsedByVm.isEmpty() ? null : vfsUsedByVm.get(0).getHostId();
+        if (hostId != null) {
+            setVmIdOnVfsDevices(hostId, null, new HashSet<HostDevice>(vfsUsedByVm));
+        }
+
+        return hostId;
+    }
+
+    private boolean isVf(HostDevice device) {
+        return StringUtils.isNotBlank(device.getParentPhysicalFunction());
     }
 }

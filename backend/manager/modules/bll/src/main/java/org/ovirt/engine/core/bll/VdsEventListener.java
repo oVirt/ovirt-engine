@@ -182,7 +182,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void processOnVmStop(final Collection<Guid> vmIds) {
+    public void processOnVmStop(final Collection<Guid> vmIds, final Guid hostId) {
         if (vmIds.isEmpty()) {
             return;
         }
@@ -192,8 +192,11 @@ public class VdsEventListener implements IVdsEventListener {
             public void run() {
                 for (Guid vmId : vmIds) {
                     Backend.getInstance().runInternalAction(VdcActionType.ProcessDownVm,
-                            new ProcessDownVmParameters(vmId));
+                            new ProcessDownVmParameters(vmId, true));
                 }
+
+                HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
+                hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
             }
         });
     }

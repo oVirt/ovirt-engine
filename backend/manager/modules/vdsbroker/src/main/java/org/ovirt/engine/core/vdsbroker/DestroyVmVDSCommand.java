@@ -69,7 +69,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             // will not be called from UpdateRunTimeInfo
             if (!parameters.getGracefully()) {
                 ResourceManager.getInstance().getEventListener()
-                        .processOnVmStop(Collections.singleton(curVm.getId()));
+                        .processOnVmStop(Collections.singleton(curVm.getId()), getParameters().getVdsId());
             }
 
             getVDSReturnValue().setReturnValue(curVm.getStatus());

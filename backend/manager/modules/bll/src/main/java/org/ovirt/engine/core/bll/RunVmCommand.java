@@ -537,7 +537,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private void removeVmStatlessImages() {
         runInternalAction(VdcActionType.ProcessDownVm,
-                new ProcessDownVmParameters(getVm().getId()),
+                new ProcessDownVmParameters(getVm().getId(), true),
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
         // setting lock to null in order not to release lock twice
         setLock(null);
