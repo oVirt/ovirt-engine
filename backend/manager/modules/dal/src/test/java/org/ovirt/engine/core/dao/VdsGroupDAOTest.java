@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.dao;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -478,5 +480,12 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         assertNotNull(vdsGroups);
         assertEquals(1, vdsGroups.size());
         assertEquals(FixturesTool.GLUSTER_CLUSTER_ID, vdsGroups.get(0).getId());
+    }
+
+    @Test
+    public void testGetClustersHavingHosts() {
+        List<VDSGroup> clusters = ((VdsGroupDAODbFacadeImpl) dao).getClustersHavingHosts();
+        assertNotNull(clusters);
+        assertThat(clusters, hasSize(4));
     }
 }
