@@ -229,6 +229,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabSto
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageIsoPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStoragePermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageSnapshotPresenter;
@@ -487,6 +488,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageE
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageIsoView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStoragePermissionView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageRegisterDiskView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageRegisterTemplateView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageRegisterVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageSnapshotView;
@@ -754,6 +756,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabStorageDiskPresenter.ViewDef.class,
                 SubTabStorageDiskView.class,
                 SubTabStorageDiskPresenter.ProxyDef.class);
+        bindPresenter(SubTabStorageRegisterDiskPresenter.class,
+                SubTabStorageRegisterDiskPresenter.ViewDef.class,
+                SubTabStorageRegisterDiskView.class,
+                SubTabStorageRegisterDiskPresenter.ProxyDef.class);
         bindPresenter(SubTabStorageSnapshotPresenter.class,
                 SubTabStorageSnapshotPresenter.ViewDef.class,
                 SubTabStorageSnapshotView.class,

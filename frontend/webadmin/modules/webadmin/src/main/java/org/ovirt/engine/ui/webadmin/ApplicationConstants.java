@@ -2971,6 +2971,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Volume Format")
     String volumeFormatDisk();
 
+    @DefaultStringValue("Register")
+    String registerDisk();
+
     // Setup network
     @DefaultStringValue("Drag to make changes")
     String dragToMakeChangesSetupNetwork();

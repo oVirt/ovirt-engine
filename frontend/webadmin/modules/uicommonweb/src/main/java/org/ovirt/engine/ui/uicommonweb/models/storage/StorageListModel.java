@@ -157,6 +157,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             final StorageRegisterTemplateListModel storageRegisterTemplateListModel,
             final StorageVmListModel storageVmListModel, final StorageTemplateListModel storageTemplateListModel,
             final StorageIsoListModel storageIsoListModel, final StorageDiskListModel storageDiskListModel,
+            final StorageRegisterDiskListModel storageRegisterDiskListModel,
             final StorageSnapshotListModel storageSnapshotListModel, final DiskProfileListModel diskProfileListModel,
             final StorageEventListModel storageEventListModel,
             final PermissionListModel<StorageDomain> permissionListModel) {
@@ -170,6 +171,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         templateListModel = storageTemplateListModel;
         isoListModel = storageIsoListModel;
         diskListModel = storageDiskListModel;
+        registerDiskListModel = storageRegisterDiskListModel;
         snapshotListModel = storageSnapshotListModel;
         this.diskProfileListModel = diskProfileListModel;
 
@@ -206,6 +208,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         templateListModel.setIsAvailable(false);
         isoListModel.setIsAvailable(false);
         diskListModel.setIsAvailable(false);
+        registerDiskListModel.setIsAvailable(false);
         snapshotListModel.setIsAvailable(false);
         this.diskProfileListModel.setIsAvailable(false);
 
@@ -220,6 +223,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         list.add(templateListModel);
         list.add(isoListModel);
         list.add(diskListModel);
+        list.add(registerDiskListModel);
         list.add(snapshotListModel);
         list.add(this.diskProfileListModel);
         list.add(storageEventListModel);
@@ -237,6 +241,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     private final StorageTemplateListModel templateListModel;
     private final StorageIsoListModel isoListModel;
     private final StorageDiskListModel diskListModel;
+    private final StorageRegisterDiskListModel registerDiskListModel;
     private final StorageSnapshotListModel snapshotListModel;
     private final DiskProfileListModel diskProfileListModel;
 
@@ -883,6 +888,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             vmRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             templateRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskListModel.setIsAvailable(isDataStorage || isCinderStorage);
+            registerDiskListModel.setIsAvailable(isCinderStorage);
             snapshotListModel.setIsAvailable(isDataStorage);
             diskProfileListModel.setIsAvailable(isDataStorage);
 

@@ -889,10 +889,12 @@ public abstract class AbstractDiskModel extends DiskModel
             getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }
 
-        getCinderVolumeType().validateSelectedItem(new IValidation[]{new NotEmptyValidation()});
+        if (getCinderVolumeType().getIsAvailable()) {
+            getCinderVolumeType().validateSelectedItem(new IValidation[]{new NotEmptyValidation()});
+        }
 
         return getAlias().getIsValid() && getDescription().getIsValid() && getQuota().getIsValid()
-                && getDiskInterface().getIsValid();
+                && getDiskInterface().getIsValid() && getCinderVolumeType().getIsValid();
     }
 
     protected void forceCreationWarning(ArrayList<String> usedLunsMessages) {

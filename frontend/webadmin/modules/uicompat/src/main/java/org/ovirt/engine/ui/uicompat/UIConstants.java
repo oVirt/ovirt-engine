@@ -2706,4 +2706,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Not supported for Cinder disks")
     String notSupportedForCinderDisks();
+
+    @DefaultStringValue("Register Disks")
+    String registerDisksTitle();
 }

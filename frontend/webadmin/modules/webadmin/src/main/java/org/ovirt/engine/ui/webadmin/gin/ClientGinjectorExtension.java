@@ -127,6 +127,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageSnapshotListModel;
@@ -260,6 +261,8 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
     SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> getSubTabStorageIsoModelProvider();
 
     SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> getSubTabStorageDiskModelProvider();
+
+    SearchableDetailModelProvider<Disk, StorageListModel, StorageRegisterDiskListModel> getSubTabStorageRegisterDiskModelProvider();
 
     SearchableDetailModelProvider<Disk, StorageListModel, StorageSnapshotListModel> getSubTabStorageSnapshotModelProvider();
 

@@ -388,6 +388,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Disks")
     String disksLabel();
 
+    @DefaultStringValue("Register Disks")
+    String registerDisksLabel();
+
     @DefaultStringValue("Statistics")
     String statistics();
 
