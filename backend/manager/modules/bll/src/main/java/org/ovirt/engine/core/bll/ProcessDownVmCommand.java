@@ -83,7 +83,7 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
     }
 
     private void releaseUsedHostDevices() {
-        if (hostDeviceManager.checkVmNeedsHostDevices(getVm())) {
+        if (hostDeviceManager.checkVmNeedsDirectPassthrough(getVm())) {
             try {
                 hostDeviceManager.acquireHostDevicesLock(getVm().getDedicatedVmForVds());
                 hostDeviceManager.freeVmHostDevices(getVmId());

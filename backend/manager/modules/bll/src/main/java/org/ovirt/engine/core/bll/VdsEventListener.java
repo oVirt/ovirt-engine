@@ -16,6 +16,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
@@ -65,6 +66,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -476,6 +478,21 @@ public class VdsEventListener implements IVdsEventListener {
             @Override public void run() {
                 resourceManagerProvider.get().GetVdsManager(
                         vdsException.getVdsError().getVdsId()).handleNetworkException(vdsException);
+            }
+        });
+    }
+
+    @Override
+    public void refreshHostIfAnyVmHasHostDevices(final List<Guid> vmIds, final Guid hostId) {
+        if (vmIds.isEmpty()) {
+            return;
+        }
+
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
+                hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
             }
         });
     }

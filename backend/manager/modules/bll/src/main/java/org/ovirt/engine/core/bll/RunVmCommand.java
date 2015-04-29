@@ -147,7 +147,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         super.postConstruct();
 
         if (getVm() != null) {
-            needsHostDevices = hostDeviceManager.checkVmNeedsHostDevices(getVm());
+            needsHostDevices = hostDeviceManager.checkVmNeedsDirectPassthrough(getVm());
         }
         acquireHostDevicesLock();
     }

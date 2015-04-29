@@ -244,6 +244,8 @@ public class VmsMonitoring {
 
         // process all vms that went down
         getVdsEventListener().processOnVmStop(movedToDownVms);
+
+        getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
     }
 
     private void processVmsWithDevicesChange() {

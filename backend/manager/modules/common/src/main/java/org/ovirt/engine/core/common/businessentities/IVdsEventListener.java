@@ -77,4 +77,6 @@ public interface IVdsEventListener {
      * @param vdsId
      */
     void updateSlaPolicies(List<Guid> vmIds, Guid vdsId);
+
+    void refreshHostIfAnyVmHasHostDevices(List<Guid> vmIds, Guid hostId);
 }
