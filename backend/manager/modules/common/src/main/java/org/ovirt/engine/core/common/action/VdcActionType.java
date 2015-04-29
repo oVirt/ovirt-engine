@@ -452,7 +452,7 @@ public enum VdcActionType {
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
-    RefreshHost(4001, QuotaDependency.NONE);
+    RefreshHost(4001, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

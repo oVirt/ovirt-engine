@@ -1875,7 +1875,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             list.add(new VdsActionParameters(vds.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RefreshHostCapabilities, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RefreshHost, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
