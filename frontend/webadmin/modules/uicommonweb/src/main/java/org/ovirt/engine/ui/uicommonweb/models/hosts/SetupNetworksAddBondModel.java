@@ -19,7 +19,7 @@ public class SetupNetworksAddBondModel extends SetupNetworksBondModel {
         getBond().setItems(freeBonds);
         getBond().setSelectedItem(defaultBondName);
 
-        setLabelsModel(new NicLabelModel(ifaces, suggestedLabels, labelToIface));
+        setLabelsModel(new PfNicLabelModel(ifaces, suggestedLabels, labelToIface));
     }
 
 }

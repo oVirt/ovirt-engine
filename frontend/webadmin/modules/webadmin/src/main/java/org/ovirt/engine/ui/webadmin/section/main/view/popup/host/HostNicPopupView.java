@@ -116,6 +116,6 @@ public class HostNicPopupView extends AbstractTabbedModelBoundPopupView<HostNicM
     public void showOnlyVfsConfig() {
         tabPanel.setVisible(false);
         contentPanel.setWidget(vfsConfigTab.getContent());
-        mainPanel.setWidth("400px"); //$NON-NLS-1$
+        mainPanel.setWidth("515px"); //$NON-NLS-1$
     }
 }

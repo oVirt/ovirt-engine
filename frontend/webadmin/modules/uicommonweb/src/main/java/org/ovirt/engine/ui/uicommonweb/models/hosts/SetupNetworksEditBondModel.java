@@ -48,7 +48,7 @@ public class SetupNetworksEditBondModel extends SetupNetworksBondModel {
             getBondingOptions().setSelectedItem(customItem);
         }
 
-        setLabelsModel(new NicLabelModel(Collections.singletonList(bond), suggestedLabels, labelToIface));
+        setLabelsModel(new PfNicLabelModel(Collections.singletonList(bond), suggestedLabels, labelToIface));
     }
 
 }

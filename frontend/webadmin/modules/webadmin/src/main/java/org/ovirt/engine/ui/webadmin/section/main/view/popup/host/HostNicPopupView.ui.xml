@@ -13,7 +13,7 @@
 		}
 	</ui:style>
 
-	<d:SimpleDialogPanel ui:field="mainPanel" width="505px" height="600px" >
+	<d:SimpleDialogPanel ui:field="mainPanel" width="680px" height="600px" >
 		<d:content>
 			<g:SimplePanel ui:field="contentPanel">
 				<t:DialogTabPanel ui:field="tabPanel" height="100%">

@@ -247,7 +247,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return operationCandidateEvent;
     }
 
-    private Set<LogicalNetworkModel> computeLabelChanges(NicLabelModel labelsModel,
+    private Set<LogicalNetworkModel> computeLabelChanges(PfNicLabelModel labelsModel,
             Collection<LogicalNetworkModel> originalNetworks) {
 
         Collection<String> removedLabels = labelsModel.getRemovedLabels();
@@ -290,7 +290,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return valid;
     }
 
-    private void commitLabelChanges(NicLabelModel labelModel,
+    private void commitLabelChanges(PfNicLabelModel labelModel,
             VdsNetworkInterface iface,
             Collection<LogicalNetworkModel> potentialNetworks) {
 
@@ -303,8 +303,10 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     private void commitVfsConfigChanges(final HostNicVfsConfig hostNicVfsConfig,
             final VfsConfigModel vfsConfigModel) {
         if (hostNicVfsConfig != null) {
+            // Num of vfs
             hostNicVfsConfig.setNumOfVfs(vfsConfigModel.getNumOfVfs().getEntity());
 
+            // Networks
             hostNicVfsConfig.setAllNetworksAllowed(vfsConfigModel
                     .getAllNetworksAllowed().getSelectedItem() == AllNetworksSelector.allNetworkAllowed);
             Set<Guid> networks = new HashSet<>();
@@ -315,7 +317,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             }
             hostNicVfsConfig.setNetworks(networks);
 
-            hostNicVfsConfig.setNetworkLabels(new HashSet<>(vfsConfigModel.getLabels().getItems()));
+            // Labels
+            hostNicVfsConfig.setNetworkLabels(vfsConfigModel.getLabelsModel().computeSelecetedLabels());
         }
     }
 
@@ -360,7 +363,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                             isBondSalve ? null : getFreeLabels(),
                             isBondSalve ? null : labelToIface,
                             nicToVfsConfig.get(entity.getId()),
-                            allNetworks);
+                            allNetworks,
+                            dcLabels);
             editPopup = interfacePopupModel;
 
             // OK Target

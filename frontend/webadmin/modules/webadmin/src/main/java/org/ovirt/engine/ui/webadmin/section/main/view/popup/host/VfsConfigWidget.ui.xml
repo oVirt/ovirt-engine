@@ -3,7 +3,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+	xmlns:h="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host">
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.VfsConfigWidget.WidgetStyle">
@@ -32,6 +33,7 @@
 
         .allowedNetworksPanel {
             margin-left: 15px;
+            display: inline-flex;
         }
 
         .allAllowedLabel {
@@ -47,12 +49,46 @@
             float: left;
         }
 
-        .dock {
+        .networksTableScrollPanel {
             height: 50%;
         }
 
         .clear {
             clear: both;
+        }
+
+        .labelWidget {
+            width: auto !important;
+        }
+
+        .networksPanel {
+            height: 100%;
+            width: 265px;
+            margin-right: 15px;
+        }
+
+        .labelsTitle {
+            font-weight: normal !important;
+            margin-top: 10px !important;
+            margin-left: 15px;
+        }
+
+        .labelEditorContent {
+            width: 120px;
+        }
+
+        .labelEditorWrapper {
+            margin-right: 0px !important;
+        }
+
+        .splitter {
+            background-color: grey;
+            width: 1px;
+        }
+
+        .labelEditorsPanel {
+            height: 100% !important;
+            overflow: hidden !important;
         }
 	</ui:style>
 
@@ -66,10 +102,14 @@
 		<e:ListModelRadioGroupEditor ui:field="allNetworksSelectorEditor" addStyleNames="{style.allAllowedSelector}" />
 		<g:SimplePanel addStyleNames="{style.clear}" />
 		<g:FlowPanel ui:field="allowedNetworksPanel" addStyleNames="{style.allowedNetworksPanel}" >
-			<g:Label ui:field="selectNetworksLabel" addStyleNames="{style.selectNetworksLabel}" />
-			<g:ScrollPanel addStyleNames="{style.dock}">
-				<e:EntityModelCellTable ui:field="networks" />
-			</g:ScrollPanel>
+			<g:FlowPanel addStyleNames="{style.networksPanel}" >
+				<g:Label ui:field="selectNetworksLabel" addStyleNames="{style.selectNetworksLabel}" />
+				<g:ScrollPanel addStyleNames="{style.networksTableScrollPanel}">
+					<e:EntityModelCellTable ui:field="networks" />
+				</g:ScrollPanel>
+			</g:FlowPanel>
+			<g:SimplePanel addStyleNames="{style.splitter}" />
+			<h:NicLabelWidget ui:field="labelsWidget" addStyleNames="{style.labelWidget}" />
 		</g:FlowPanel>
 	</g:FlowPanel>
 

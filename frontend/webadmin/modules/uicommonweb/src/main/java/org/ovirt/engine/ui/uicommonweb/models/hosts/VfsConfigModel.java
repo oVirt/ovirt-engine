@@ -2,8 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -17,13 +20,13 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
     private EntityModel<Integer> numOfVfs = new EntityModel<>();
     private ListModel<AllNetworksSelector> allNetworksAllowed = new ListModel<>();
     private ListModel<VfsConfigNetwork> networks = new ListModel<>();
-    private ListModel<String> labels = new ListModel<>();
+    private VfsNicLabelModel labelsModel;
 
     public VfsConfigModel() {
-        this(new HostNicVfsConfig(), new ArrayList<Network>());
+        this(new HostNicVfsConfig(), Collections.<Network> emptyList(), new TreeSet<String>());
     }
 
-    public VfsConfigModel(HostNicVfsConfig vfsConfig, List<Network> allClusterNetworks) {
+    public VfsConfigModel(HostNicVfsConfig vfsConfig, List<Network> allClusterNetworks, SortedSet<String> dcLabels) {
         setEntity(vfsConfig);
         maxNumOfVfs.setEntity(vfsConfig.getMaxNumOfVfs());
         numOfVfs.setEntity(vfsConfig.getNumOfVfs());
@@ -31,7 +34,9 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         allNetworksAllowed.setSelectedItem(vfsConfig.isAllNetworksAllowed() ? AllNetworksSelector.allNetworkAllowed
                 : AllNetworksSelector.specificNetworks);
         initNetworks(allClusterNetworks);
-        labels.setItems(vfsConfig.getNetworkLabels());
+
+        dcLabels.removeAll(vfsConfig.getNetworkLabels());
+        labelsModel = new VfsNicLabelModel(new ArrayList<>(vfsConfig.getNetworkLabels()), dcLabels);
     }
 
     public EntityModel<Integer> getNumOfVfs() {
@@ -58,12 +63,12 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         this.networks = networks;
     }
 
-    public ListModel<String> getLabels() {
-        return labels;
+    public VfsNicLabelModel getLabelsModel() {
+        return labelsModel;
     }
 
-    public void setLabels(ListModel<String> labels) {
-        this.labels = labels;
+    public void setLabelsModel(VfsNicLabelModel labels) {
+        this.labelsModel = labels;
     }
 
     public EntityModel<Integer> getMaxNumOfVfs() {

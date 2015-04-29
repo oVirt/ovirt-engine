@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -14,13 +15,13 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class HostNicModel extends Model {
 
     private static final VfsConfigModel EMPTY_VFS_CONFIG_MODEL = new VfsConfigModel();
-    private static final NicLabelModel EMPTY_LABELS_MODEL = new NicLabelModel();
+    private static final PfNicLabelModel EMPTY_LABELS_MODEL = new PfNicLabelModel();
 
-    private NicLabelModel labelsModel = EMPTY_LABELS_MODEL;
+    private PfNicLabelModel labelsModel = EMPTY_LABELS_MODEL;
     private VfsConfigModel vfsConfigModel = EMPTY_VFS_CONFIG_MODEL;
     private VdsNetworkInterface iface;
 
-    public NicLabelModel getLabelsModel() {
+    public PfNicLabelModel getLabelsModel() {
         return labelsModel;
     }
 
@@ -28,16 +29,17 @@ public class HostNicModel extends Model {
             Collection<String> suggestedLabels,
             Map<String, String> labelToIface,
             HostNicVfsConfig vfsConfig,
-            List<Network> allClusterNetworks) {
+            List<Network> allClusterNetworks,
+            SortedSet<String> dcLabels) {
         setTitle(ConstantsManager.getInstance().getMessages().editInterfaceTitle(iface.getName()));
         this.iface = iface;
 
         if (labelToIface != null) {
-            labelsModel = new NicLabelModel(Collections.singletonList(iface), suggestedLabels, labelToIface);
+            labelsModel = new PfNicLabelModel(Collections.singletonList(iface), suggestedLabels, labelToIface);
         }
 
         if (vfsConfig != null) {
-            vfsConfigModel = new VfsConfigModel(vfsConfig, allClusterNetworks);
+            vfsConfigModel = new VfsConfigModel(vfsConfig, allClusterNetworks, dcLabels);
         }
     }
 

@@ -54,6 +54,14 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
 
     interface WidgetStyle extends CssResource {
         String valueWidth();
+
+        String labelsTitle();
+
+        String labelEditorContent();
+
+        String labelEditorWrapper();
+
+        String labelEditorsPanel();
     }
 
     @UiField
@@ -94,6 +102,10 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
     @UiField
     FlowPanel allowedNetworksPanel;
 
+    @UiField(provided = true)
+    @Ignore
+    NicLabelWidget labelsWidget;
+
     private final static ApplicationConstants constants = AssetProvider.getConstants();
     private final static ApplicationMessages messages = AssetProvider.getMessages();
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
@@ -109,6 +121,16 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
         });
 
         networks = new EntityModelCellTable<ListModel<VfsConfigNetwork>>(SelectionMode.NONE, true);
+
+        labelsWidget = new NicLabelWidget() {
+            @Override
+            protected NicLabelEditor createWidget(ListModel<String> value) {
+                NicLabelEditor editor = super.createWidget(value);
+                editor.suggestBoxEditor.addContentWidgetStyleName(VfsConfigWidget.this.style.labelEditorContent());
+                editor.suggestBoxEditor.addWrapperStyleName(VfsConfigWidget.this.style.labelEditorWrapper());
+                return editor;
+            }
+        };
 
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
@@ -133,6 +155,8 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
 
     protected void addStyles() {
         numOfVfs.addContentWidgetContainerStyleName(style.valueWidth());
+        labelsWidget.titleLabel.addStyleName(style.labelsTitle());
+        labelsWidget.scrollPanel.addStyleName(style.labelEditorsPanel());
     }
 
     interface Style extends CssResource {
@@ -142,6 +166,7 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
     @Override
     public void edit(final VfsConfigModel model) {
         driver.edit(model);
+        labelsWidget.edit(model.getLabelsModel());
         networks.asEditor().edit(model.getNetworks());
         initNetworksTable();
 
@@ -162,6 +187,7 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
 
     @Override
     public VfsConfigModel flush() {
+        labelsWidget.flush();
         networks.asEditor().flush();
         return driver.flush();
     }
@@ -171,21 +197,21 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
 
         networks.addColumn(
                 new AttachedIndicatorCheckboxColumn(),
-                new AttachedIndicatorCheckboxHeader(), "90px"); //$NON-NLS-1$
+                new AttachedIndicatorCheckboxHeader(), "20px"); //$NON-NLS-1$
 
         networks.addColumn(new AbstractTextColumn<VfsConfigNetwork>() {
             @Override
             public String getValue(VfsConfigNetwork object) {
                 return object.getEntity().getName();
             }
-        }, constants.vfsConfigNetworkName(), "85px"); //$NON-NLS-1$
+        }, constants.vfsConfigNetworkName(), "120px"); //$NON-NLS-1$
 
         networks.addColumn(new AbstractTextColumn<VfsConfigNetwork>() {
             @Override
             public String getValue(VfsConfigNetwork object) {
                 return object.getLabelViaAttached();
             }
-        }, constants.vfsConfigViaLabel(), "85px"); //$NON-NLS-1$
+        }, constants.vfsConfigViaLabel(), "120px"); //$NON-NLS-1$
 
     }
 

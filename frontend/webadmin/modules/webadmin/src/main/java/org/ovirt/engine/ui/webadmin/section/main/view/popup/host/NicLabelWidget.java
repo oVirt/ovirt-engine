@@ -8,9 +8,15 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.NicLabelModel;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class NicLabelWidget extends ScrollableAddRemoveRowWidget<NicLabelModel, ListModel<String>, NicLabelEditor> {
+
+    @UiField
+    @Ignore
+    Label titleLabel;
 
     public interface WidgetUiBinder extends UiBinder<Widget, NicLabelWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
