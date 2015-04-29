@@ -1389,6 +1389,12 @@ public class VdsBrokerObjectsBuilder {
                     String appString = (String) ((app instanceof String) ? app : null);
                     if (app == null) {
                         log.warn("Failed to convert app: [null] to string");
+                        continue; // Don't process this
+                    }
+                    if(appString == null) {
+                        // Note: app cannot be null here anymore
+                        log.warn("Failed to convert app: [" + app.getClass().getName() + "] is not a string");
+                        continue; // Don't process this
                     }
                     if (!firstTime) {
                         builder.append(",");
