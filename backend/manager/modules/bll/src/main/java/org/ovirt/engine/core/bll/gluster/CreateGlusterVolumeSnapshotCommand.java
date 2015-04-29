@@ -154,6 +154,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             createdSnapshot.setDescription(snapshot.getDescription());
             createdSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
             getDbFacade().getGlusterVolumeSnapshotDao().save(createdSnapshot);
+            addCustomValue(GlusterConstants.VOLUME_SNAPSHOT_NAME, createdSnapshot.getSnapshotName());
         }
 
         // Resume the snapshot sessions
@@ -176,8 +177,6 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                 }
             }
         }
-
-        setSucceeded(true);
     }
 
     @Override
