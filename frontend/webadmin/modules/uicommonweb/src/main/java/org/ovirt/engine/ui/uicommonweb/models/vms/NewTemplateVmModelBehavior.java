@@ -35,9 +35,12 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 {
+    private final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
     private final VM vm;
 
     public NewTemplateVmModelBehavior(VM vm)
@@ -190,15 +193,35 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     private void postInitTemplate(List<VmTemplate> templates) {
-        List<VmTemplate> baseTemplates = keepBaseTemplates(templates);
+        List<VmTemplate> baseWithoutBlank = filterOutBlank(keepBaseTemplates(templates));
+
+        getModel().getIsSubTemplate().setEntity(false);
+        if (baseWithoutBlank.isEmpty()) {
+            // it is not allowed to create sub-templates of Blank template
+            getModel().getIsSubTemplate().setIsChangeable(false,
+                    constants.someNonDefaultTemplateHasToExistFirst());
+            return;
+        }
+
+        getModel().getIsSubTemplate().setIsChangeable(true);
 
         VmTemplate currentTemplate = Linq.firstOrDefault(templates,
                 new Linq.TemplatePredicate(vm.getVmtGuid()));
 
-        getModel().getBaseTemplate().setItems(baseTemplates);
+        getModel().getBaseTemplate().setItems(baseWithoutBlank);
 
-        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrDefault(baseTemplates,
+        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrDefault(baseWithoutBlank,
                 new Linq.TemplatePredicate(currentTemplate.getBaseTemplateId())));
+    }
+
+    private List<VmTemplate> filterOutBlank(List<VmTemplate> templates) {
+        final List<VmTemplate> result = new ArrayList<>();
+        for (VmTemplate template : templates) {
+            if (!template.isBlank()) {
+                result.add(template);
+            }
+        }
+        return result;
     }
 
     @Override

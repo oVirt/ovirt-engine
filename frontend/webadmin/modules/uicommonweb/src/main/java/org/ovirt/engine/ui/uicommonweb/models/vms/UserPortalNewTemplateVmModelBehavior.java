@@ -19,12 +19,16 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBehavior implements IFrontendMultipleQueryAsyncCallback {
 
     private static final ActionGroup CREATE_VM = ActionGroup.CREATE_VM;
+
+    private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     public UserPortalNewTemplateVmModelBehavior(VM vm) {
         super(vm);
@@ -59,7 +63,6 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
 
         // Filter templates list (include only templates that belong to the selected datacenter)
         List<VmTemplate> templatesList = new ArrayList<>();
-        VmTemplate blankTemplate = null;
         DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool selectedDataCenter = dataCenterWithCluster.getDataCenter();
         Guid selectedDataCenterId = selectedDataCenter.getId();
@@ -71,23 +74,26 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
             Guid datacenterId =
                     template.getStoragePoolId() == null ? Guid.Empty : template.getStoragePoolId();
 
-            if (template.getId().equals(Guid.Empty)) {
-                blankTemplate = template;
-            } else if (!selectedDataCenterId.equals(datacenterId)) {
-                continue;
-            } else if (template.getStatus() == VmTemplateStatus.OK) {
+            if (!template.isBlank()
+                    && selectedDataCenterId.equals(datacenterId)
+                    && template.getStatus() == VmTemplateStatus.OK) {
                 templatesList.add(template);
             }
         }
 
-        // Sort list and position "Blank" template as first
         Collections.sort(templatesList, new NameableComparator());
-        if (blankTemplate != null && rootTemplates.contains(blankTemplate)) {
-            templatesList.add(0, blankTemplate);
-        }
 
         List<VmTemplate> filteredTemplates = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesList,
                 dataCenterWithCluster.getCluster().getArchitecture());
+
+        getModel().getIsSubTemplate().setEntity(false);
+        if (filteredTemplates.isEmpty()) {
+            // it is not allowed to create sub-templates of Blank template
+            getModel().getIsSubTemplate().setIsChangeable(false,
+                    constants.someNonDefaultTemplateHasToExistFirst());
+            return;
+        }
+        getModel().getIsSubTemplate().setIsChangeable(true);
 
         VmTemplate currentTemplate = Linq.firstOrDefault(templates,
                 new Linq.TemplatePredicate(getVm().getVmtGuid()));

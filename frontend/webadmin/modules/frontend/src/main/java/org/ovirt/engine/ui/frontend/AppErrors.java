@@ -3838,4 +3838,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot detach a non empty Cinder provider.\n -Please remove all VMs / Templates / Disks and try again.")
     String ERROR_CANNOT_DETACH_CINDER_PROVIDER_WITH_IMAGES();
+
+    @DefaultStringValue("Blank template can't have sub-templates.")
+    String BLANK_TEMPLATE_CANT_HAVE_SUBTEMPLATES();
 }
