@@ -15,11 +15,13 @@ public class ImportVmData extends ImportEntityData<VM> {
     private String warning;
     private String error;
     private boolean nameExistsInTheSystem;
+    private String vmName;
 
     public ImportVmData(VM vm) {
         setCollapseSnapshots(new EntityModel<>(true));
 
         setEntity(vm);
+        vmName = vm.getName();
         getClone().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
@@ -72,7 +74,7 @@ public class ImportVmData extends ImportEntityData<VM> {
 
     @Override
     public String getName() {
-        return getEntity().getName();
+        return vmName;
     }
 
     public String getWarning() {

@@ -270,7 +270,10 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         AbstractTextColumn<Object> nameColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
-                return ((ImportVmData) object).getVm().getName();
+                String originalName = ((ImportVmData) object).getName();
+                String givenName = ((ImportVmData) object).getVm().getName();
+                return originalName.equals(givenName) ? givenName :
+                    givenName + " (" + originalName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
         table.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$

@@ -16,15 +16,19 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
     private static EnumTranslator translator = EnumTranslator.getInstance();
 
-    private String name;
+    private EntityModel<String> name;
     private String description;
     private String template;
     private String definedMemory;
@@ -56,6 +60,14 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
     private String compatibilityVersion;
 
     public VmImportGeneralModel() {
+        name = new EntityModel<>();
+
+        getName().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                getEntity().getVm().setName(getName().getEntity());
+            }
+        });
     }
 
     @Override
@@ -75,7 +87,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
 
         super.updateProperties(vm.getId());
 
-        setName(vm.getName());
+        getName().setEntity(vm.getName());
         setDescription(vm.getVmDescription());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(vm.getQuotaEnforcementType() != null
@@ -172,18 +184,9 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         }
     }
 
-    public String getName()
+    public EntityModel<String> getName()
     {
         return name;
-    }
-
-    public void setName(String value)
-    {
-        if (!ObjectUtils.objectsEqual(name, value))
-        {
-            name = value;
-            onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
-        }
     }
 
     public String getDescription()

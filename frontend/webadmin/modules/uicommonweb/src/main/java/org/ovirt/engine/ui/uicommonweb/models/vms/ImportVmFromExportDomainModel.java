@@ -47,8 +47,11 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -602,16 +605,71 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
     }
 
     protected boolean validateNames() {
+        boolean valid = true;
         for (ImportVmData importVmData : (Iterable<ImportVmData>) getItems()) {
-            if (importVmData.getClone().getEntity()) {
-                continue;
-            }
-            if (importVmData.getError() != null || (importVmData.isNameExistsInTheSystem() && importVmData.getName().equals(importVmData.getVm().getName()))) {
-                onPropertyChanged(new PropertyChangedEventArgs("InvalidVm")); //$NON-NLS-1$
-                return false;
+            if (!validateName(importVmData)) {
+                valid = false;
             }
         }
-        return true;
+
+        if (!valid) {
+            onPropertyChanged(new PropertyChangedEventArgs("InvalidVm")); //$NON-NLS-1$
+        }
+        return valid;
+    }
+
+    private boolean validateName(final ImportVmData data) {
+        final int maxNameLength = getMaxNameLength(data.getVm());
+        EntityModel<String> tmp = new EntityModel<>(data.getVm().getName());
+        tmp.validateEntity(
+                new IValidation[] {
+                        new NotEmptyValidation(),
+                        new LengthValidation(maxNameLength),
+                        new I18NNameValidation(),
+                        new UniqueNameValidator(data),
+                        new IValidation() {
+                            @Override
+                            public ValidationResult validate(Object value) {
+                                return data.isNameExistsInTheSystem() && data.getName().equals(data.getVm().getName())?
+                                       ValidationResult.fail(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason())
+                                       : ValidationResult.ok();
+                            }
+                        }
+                });
+
+        data.setError(tmp.getIsValid() ? null : ConstantsManager.getInstance().getConstants().invalidName());
+        return tmp.getIsValid();
+    }
+
+    private class UniqueNameValidator implements IValidation {
+        ImportVmData data;
+
+        UniqueNameValidator(ImportVmData data) {
+            this.data = data;
+        }
+
+        @Override
+        public ValidationResult validate(Object value) {
+            return !isVmNameUnique() ?
+                    ValidationResult.fail(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason())
+                    : ValidationResult.ok();
+        }
+
+        private boolean isVmNameUnique() {
+            for (Object item : getItems()) {
+                ImportVmData data = (ImportVmData) item;
+                if (this.data != data && this.data.getVm().getName().equals(data.getVm().getName())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    protected int getMaxNameLength(VM vm) {
+        return AsyncDataProvider.getInstance().isWindowsOsType(vm.getOs()) ?
+                AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
+                : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
     }
 
     private String createSearchPattern(Collection<VM> vms) {
@@ -659,7 +717,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                                 vmData.getClone().setIsChangeable(false);
                             }
 
-                            vmData.setNameExistsInTheSystem(!vmData.getClone().getEntity() && existingNames.contains(vm.getName()));
+                            vmData.setNameExistsInTheSystem(existingNames.contains(vm.getName()));
 
                             vmDataList.add(vmData);
                         }
@@ -690,17 +748,16 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         stopProgress();
     }
 
-    public void importVms(IFrontendMultipleActionAsyncCallback callback,
-            Map<Guid, Object> cloneObjectMap) {
+    public void importVms(IFrontendMultipleActionAsyncCallback callback) {
         startProgress(null);
         Frontend.getInstance().runMultipleAction(
                 VdcActionType.ImportVm,
-                buildImportVmParameters(cloneObjectMap),
+                buildImportVmParameters(),
                 callback,
                 this);
     }
 
-    private List<VdcActionParametersBase> buildImportVmParameters(Map<Guid, Object> cloneObjectMap) {
+    private List<VdcActionParametersBase> buildImportVmParameters() {
         List<VdcActionParametersBase> prms = new ArrayList<>();
 
         for (Object item : getItems()) {
@@ -744,12 +801,8 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
 
             if (((ImportVmData) item).isExistsInSystem() ||
                     ((ImportVmData) item).getClone().getEntity()) {
-                if (!cloneObjectMap.containsKey(vm.getId())) {
-                    continue;
-                }
                 prm.setImportAsNewEntity(true);
                 prm.setCopyCollapse(true);
-                prm.getVm().setName(((ImportVmData) cloneObjectMap.get(vm.getId())).getVm().getName());
             }
 
             prms.add(prm);

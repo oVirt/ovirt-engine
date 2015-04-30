@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
+import org.ovirt.engine.ui.common.widget.editor.TextBoxChanger;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
@@ -17,7 +18,8 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
     interface Driver extends SimpleBeanEditorDriver<VmImportGeneralModel, VmImportGeneralModelForm> {
     }
 
-    TextBoxLabel name = new TextBoxLabel();
+    @Path("name.entity")
+    TextBoxChanger name = new TextBoxChanger();
     TextBoxLabel description = new TextBoxLabel();
     @Path("OS")
     TextBoxLabel os = new TextBoxLabel();
@@ -59,6 +61,8 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
 
     public void initialize() {
         driver.initialize(this);
+
+        name.setWidth("130px"); //$NON-NLS-1$
 
         formBuilder.addFormItem(new FormItem(constants.nameVm(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.osVm(), os, 1, 0));

@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
@@ -49,7 +48,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
@@ -105,7 +103,6 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VncInfoPopupPresenterWidget> vncWindoProvider,
             final Provider<VmNextRunConfigurationPresenterWidget> nextRunProvider,
             final Provider<ImportVmsPopupPresenterWidget> importVmsProvider,
-            final Provider<ImportCloneDialogPresenterWidget> importClonePopupProvider,
             final Provider<CloneVmPopupPresenterWidget> cloneVmProvider,
             final Provider<ImportVmFromExportDomainPopupPresenterWidget> importVmFromExportDomainPopupProvider,
             final Provider<VmListModel<Void>> modelProvider,
@@ -168,8 +165,6 @@ public class VirtualMachineModule extends AbstractGinModule {
                         } else if (lastExecutedCommand == getModel().getStopCommand() ||
                                 lastExecutedCommand == getModel().getShutdownCommand()) {
                             return removeConfirmPopupProvider.get();
-                        } else if (source.getConfirmWindow() instanceof ImportCloneModel) {
-                            return importClonePopupProvider.get();
                         } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
                             return nextRunProvider.get();
                         } else if (lastExecutedCommand == getModel().getEditCommand()) {

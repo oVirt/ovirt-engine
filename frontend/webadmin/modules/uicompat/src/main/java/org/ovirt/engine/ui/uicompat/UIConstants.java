@@ -2722,4 +2722,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Invalid Mount Point.")
     String invalidMountPointMsg();
 
+    @DefaultStringValue("Invalid name")
+    String invalidName();
 }
