@@ -51,7 +51,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class VmBackupModel extends ManageBackupModel {
+public class VmBackupModel extends ManageBackupModel<VM> {
 
     private VmAppListModel privateAppListModel;
     protected List<Object> objectsToClone;
@@ -107,8 +107,7 @@ public class VmBackupModel extends ManageBackupModel {
         model.setHashName("remove_backed_up_vm"); //$NON-NLS-1$
 
         ArrayList<String> items = new ArrayList<String>();
-        for (Object item : getSelectedItems()) {
-            VM vm = (VM) item;
+        for (VM vm : getSelectedItems()) {
             items.add(vm.getName());
         }
         model.setItems(items);
@@ -140,8 +139,7 @@ public class VmBackupModel extends ManageBackupModel {
                     VmBackupModel backupModel = (VmBackupModel) model;
                     ArrayList<VdcActionParametersBase> list =
                             new ArrayList<VdcActionParametersBase>();
-                    for (Object item : backupModel.getSelectedItems()) {
-                        VM vm = (VM) item;
+                    for (VM vm : backupModel.getSelectedItems()) {
                         list.add(new RemoveVmFromImportExportParameters(vm.getId(),
                                 backupModel.getEntity().getId(), pool.getId()));
                     }
@@ -168,9 +166,7 @@ public class VmBackupModel extends ManageBackupModel {
                 getEntity().getId());
     }
 
-    protected ArchitectureType getArchitectureFromItem(Object item) {
-        VM vm = (VM) item;
-
+    protected ArchitectureType getArchitectureFromItem(VM vm) {
         return vm.getClusterArch();
     }
 
@@ -387,8 +383,7 @@ public class VmBackupModel extends ManageBackupModel {
                             StringBuilder importedVms = new StringBuilder();
                             int counter = 0;
                             boolean toShowConfirmWindow = false;
-                            for (Object item : getSelectedItems()) {
-                                VM vm = (VM) item;
+                            for (VM vm : getSelectedItems()) {
                                 if (retVals.get(counter) != null
                                         && retVals.get(counter).getCanDoAction()) {
                                     importedVms.append(vm.getName()).append(", "); //$NON-NLS-1$
@@ -439,7 +434,7 @@ public class VmBackupModel extends ManageBackupModel {
         if (getEntity() == null
                 || getEntity().getStorageDomainType() != StorageDomainType.ImportExport
                 || getEntity().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Active) {
-            setItems(Collections.emptyList());
+            setItems(Collections.<VM>emptyList());
         } else {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);

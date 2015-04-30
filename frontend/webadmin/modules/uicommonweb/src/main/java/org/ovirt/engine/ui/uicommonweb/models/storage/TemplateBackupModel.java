@@ -40,7 +40,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateImportDiskListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
@@ -60,7 +59,7 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class TemplateBackupModel extends ManageBackupModel {
+public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     private ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
     private StoragePool pool;
     protected ImportTemplateModel importModel;
@@ -70,7 +69,7 @@ public class TemplateBackupModel extends ManageBackupModel {
      *  to be created using import in case of choosing multiple VM imports */
     protected Set<String> assignedVmNames = new HashSet<String>();
     protected Map<Guid, Object> cloneObjectMap;
-    protected List<Object> objectsToClone;
+    protected List<ImportTemplateData> objectsToClone;
 
     private static UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static UIMessages messages = ConstantsManager.getInstance().getMessages();
@@ -97,9 +96,7 @@ public class TemplateBackupModel extends ManageBackupModel {
         model.setHelpTag(HelpTag.remove_backed_up_template);
         model.setHashName("remove_backed_up_template"); //$NON-NLS-1$
         ArrayList<String> items = new ArrayList<String>();
-        for (Object a : getSelectedItems())
-        {
-            VmTemplate template = (VmTemplate) a;
+        for (VmTemplate template : getSelectedItems()) {
             items.add(template.getName());
         }
         model.setItems(items);
@@ -140,9 +137,8 @@ public class TemplateBackupModel extends ManageBackupModel {
                     return;
                 }
                 List<VM> vmsInExportDomain = retVal.getReturnValue();
-                List<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
                 HashMap<String, List<String>> problematicVmNames =
-                        getDependentVMsForTemplates(vmsInExportDomain, templates);
+                        getDependentVMsForTemplates(vmsInExportDomain, getSelectedItems());
                 if (!problematicVmNames.isEmpty()) {
                     showRemoveTemplateWithDependentVMConfirmationWindow(problematicVmNames);
                 } else {
@@ -198,8 +194,7 @@ public class TemplateBackupModel extends ManageBackupModel {
 
     private void removeTemplateBackup() {
         ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
-        for (Object selectedItem : getSelectedItems()) {
-            VmTemplate template = (VmTemplate) selectedItem;
+        for (VmTemplate template : getSelectedItems()) {
             prms.add(new VmTemplateImportExportParameters(template.getId(),
                     getEntity().getId(),
                     pool.getId()));
@@ -208,18 +203,17 @@ public class TemplateBackupModel extends ManageBackupModel {
         cancel();
     }
 
-    protected ArchitectureType getArchitectureFromItem(Object item) {
-        VmTemplate template = (VmTemplate) item;
-
+    @Override
+    protected ArchitectureType getArchitectureFromItem(VmTemplate template) {
         return template.getClusterArch();
     }
 
-    protected String getObjectName(Object object) {
-        return ((ImportTemplateData) object).getTemplate().getName();
+    protected String getObjectName(ImportTemplateData templateData) {
+        return templateData.getTemplate().getName();
     }
 
-    protected void setObjectName(Object object, String name) {
-        ((ImportTemplateData) object).getTemplate().setName(name);
+    protected void setObjectName(ImportTemplateData templateData, String name) {
+        templateData.getTemplate().setName(name);
     }
 
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
@@ -232,8 +226,8 @@ public class TemplateBackupModel extends ManageBackupModel {
         return true;
     }
 
-    protected boolean validateName(String newVmName, EntityModel entity, IValidation[] validators) {
-        EntityModel temp = new EntityModel();
+    protected boolean validateName(String newVmName, EntityModel<String> entity, IValidation[] validators) {
+        EntityModel<String> temp = new EntityModel<>();
         temp.setIsValid(true);
         temp.setEntity(newVmName);
         temp.validateEntity(validators);
@@ -331,9 +325,8 @@ public class TemplateBackupModel extends ManageBackupModel {
                             StringBuilder importedTemplates = new StringBuilder();
                             int counter = 0;
                             boolean toShowConfirmWindow = false;
-                            for (Object a : templateBackupModel.getSelectedItems())
+                            for (VmTemplate template : templateBackupModel.getSelectedItems())
                             {
-                                VmTemplate template = (VmTemplate) a;
                                 if (retVals.get(counter) != null && retVals.get(counter).getCanDoAction()) {
                                     importedTemplates.append(template.getName()).append(", "); //$NON-NLS-1$
                                     toShowConfirmWindow = true;
@@ -377,7 +370,7 @@ public class TemplateBackupModel extends ManageBackupModel {
         if (getEntity() == null || getEntity().getStorageDomainType() != StorageDomainType.ImportExport
                 || getEntity().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Active)
         {
-            setItems(Collections.emptyList());
+            setItems(Collections.<VmTemplate>emptyList());
         }
         else
         {
@@ -488,22 +481,22 @@ public class TemplateBackupModel extends ManageBackupModel {
                 if (!validateSuffix(suffix, cloneModel.getSuffix())) {
                     return;
                 }
-                for (Object object : objectsToClone) {
+                for (ImportTemplateData object : objectsToClone) {
                     setObjectName(object, suffix, true);
-                    cloneObjectMap.put((Guid) ((IVdcQueryable) (((ImportEntityData<Object>) object).getEntity())).getQueryableId(),
+                    cloneObjectMap.put((Guid) ((IVdcQueryable) (object.getEntity())).getQueryableId(),
                             object);
                 }
             }
             objectsToClone.clear();
         } else {
-            Object object = cloneModel.getEntity();
+            ImportTemplateData object = (ImportTemplateData) cloneModel.getEntity();
             if (!cloneModel.getNoClone().getEntity()) {
                 String vmName = cloneModel.getName().getEntity();
                 if (!validateName(vmName, cloneModel.getName(), getClonedNameValidators(object))) {
                     return;
                 }
                 setObjectName(object, vmName, false);
-                cloneObjectMap.put((Guid) ((IVdcQueryable) ((ImportEntityData<Object>) object).getEntity()).getQueryableId(),
+                cloneObjectMap.put((Guid) ((IVdcQueryable) object.getEntity()).getQueryableId(),
                         object);
             }
             objectsToClone.remove(object);
@@ -530,9 +523,9 @@ public class TemplateBackupModel extends ManageBackupModel {
         };
     }
 
-    private void setObjectName(Object object, String input, boolean isSuffix) {
-        String nameForTheClonedVm = isSuffix ? getObjectName(object) + input : input;
-        setObjectName(object, nameForTheClonedVm);
+    private void setObjectName(ImportTemplateData templateData, String input, boolean isSuffix) {
+        String nameForTheClonedVm = isSuffix ? getObjectName(templateData) + input : input;
+        setObjectName(templateData, nameForTheClonedVm);
         assignedVmNames.add(nameForTheClonedVm);
     }
 
@@ -557,11 +550,11 @@ public class TemplateBackupModel extends ManageBackupModel {
         }
         cloneObjectMap = new HashMap<Guid, Object>();
 
-        objectsToClone = new ArrayList<Object>();
-        for (Object object : (ArrayList<Object>) importModel.getItems()) {
-            ImportEntityData<Object> item = (ImportEntityData<Object>) object;
+        objectsToClone = new ArrayList<>();
+        for (Object object : importModel.getItems()) {
+            ImportTemplateData item = (ImportTemplateData) object;
             if (item.getClone().getEntity()) {
-                objectsToClone.add(object);
+                objectsToClone.add(item);
             }
         }
         executeImportClone();

@@ -198,10 +198,6 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         setDetailModels(list);
     }
 
-    public void init(List<?> value, final Guid storageDomainId) {
-        setItems(value, storageDomainId);
-    }
-
     protected void doInit(final Guid storageDomainId) {
        // get Storage pool
        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
@@ -634,9 +630,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         return searchPattern.substring(0, searchPattern.length() - orKey.length());
     }
 
-    public void setItems(final Collection<?> value, final Guid storageDomainId) {
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        final List<VM> externalVms = (List<VM>) new ArrayList(value);
+    public void init(final List<VM> externalVms, final Guid storageDomainId) {
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(createSearchPattern(externalVms), SearchType.VM),
                 new AsyncQuery(this, new INewAsyncCallback() {
@@ -672,10 +666,6 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                         doInit(storageDomainId);
                     }
                 }));
-    }
-
-    public void setSuperItems(Collection value) {
-        super.setItems(value);
     }
 
     @Override

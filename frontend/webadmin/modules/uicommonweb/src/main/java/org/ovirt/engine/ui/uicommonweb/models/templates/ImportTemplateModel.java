@@ -70,11 +70,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
         return searchPattern.substring(0, searchPattern.length() - orKey.length());
     }
 
-    @Override
-    public void setItems(final Collection<?> value, final Guid storageDomainId)
-    {
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        final List<VmTemplate> externalTemplates = (List<VmTemplate>) new ArrayList(value);
+    public void init(final Collection<VmTemplate> externalTemplates, final Guid storageDomainId) {
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(createSearchPattern(externalTemplates), SearchType.VmTemplate),
                 new AsyncQuery(this, new INewAsyncCallback() {
@@ -98,7 +94,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
                             }
                             templateDataList.add(templateData);
                         }
-                        ImportTemplateModel.super.setSuperItems(templateDataList);
+                        setItems(templateDataList);
                         doInit(storageDomainId);
                     }
                 }));

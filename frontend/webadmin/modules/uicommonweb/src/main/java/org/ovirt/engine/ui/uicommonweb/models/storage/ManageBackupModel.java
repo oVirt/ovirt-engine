@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -10,7 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public abstract class ManageBackupModel extends SearchableListModel<StorageDomain, Object>
+public abstract class ManageBackupModel<T extends BusinessEntity<?>> extends SearchableListModel<StorageDomain, T>
 {
 
     private UICommand restoreCommand;
@@ -56,7 +57,7 @@ public abstract class ManageBackupModel extends SearchableListModel<StorageDomai
 
     protected abstract void restore();
 
-    protected abstract ArchitectureType getArchitectureFromItem(Object item);
+    protected abstract ArchitectureType getArchitectureFromItem(T item);
 
     protected void cancel() {
         cancelConfirm();
@@ -154,7 +155,7 @@ public abstract class ManageBackupModel extends SearchableListModel<StorageDomai
         ArchitectureType firstArch = null;
         boolean multipleArchs = false;
 
-        for (Object item : getSelectedItems()) {
+        for (T item : getSelectedItems()) {
             ArchitectureType arch = getArchitectureFromItem(item);
 
             if (firstArch == null) {
