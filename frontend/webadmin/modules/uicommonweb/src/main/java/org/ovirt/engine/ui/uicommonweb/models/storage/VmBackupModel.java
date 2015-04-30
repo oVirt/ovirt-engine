@@ -67,10 +67,6 @@ public class VmBackupModel extends ManageBackupModel {
         return privateAppListModel;
     }
 
-    protected void setAppListModel(VmAppListModel value) {
-        privateAppListModel = value;
-    }
-
     protected void setModelProvider(Provider<? extends ImportVmFromExportDomainModel> importModelProvider) {
         this.importModelProvider = importModelProvider;
     }
@@ -86,7 +82,7 @@ public class VmBackupModel extends ManageBackupModel {
         setHelpTag(HelpTag.vm_import);
         setHashName("vm_import"); // //$NON-NLS-1$
 
-        setAppListModel(new VmAppListModel());
+        privateAppListModel = new VmAppListModel();
         setIsTimerDisabled(true);
     }
 
@@ -184,36 +180,7 @@ public class VmBackupModel extends ManageBackupModel {
             return;
         }
 
-        // Checks if there are selected VMs of multiple architectures
-        ArchitectureType firstArch = null;
-        boolean multipleArchs = false;
-
-        for (Object item : getSelectedItems()) {
-            ArchitectureType arch = getArchitectureFromItem(item);
-
-            if (firstArch == null) {
-                firstArch = arch;
-            } else {
-                if (!firstArch.equals(arch)) {
-                    multipleArchs = true;
-                    break;
-                }
-            }
-        }
-
-        if (multipleArchs) {
-            ConfirmationModel confirmModel = new ConfirmationModel();
-            setConfirmWindow(confirmModel);
-            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().invalidImportTitle());
-            confirmModel.setHelpTag(HelpTag.multiple_archs_dialog);
-            confirmModel.setHashName("multiple_archs_dialog"); //$NON-NLS-1$
-            confirmModel.setMessage(ConstantsManager.getInstance().getConstants().invalidImportMsg());
-
-            UICommand command = UICommand.createDefaultOkUiCommand("multipleArchsOK", this); //$NON-NLS-1$
-            confirmModel.getCommands().add(command);
-
-            setConfirmWindow(confirmModel);
-
+        if (!validateSingleArchitecture()) {
             return;
         }
 
@@ -224,7 +191,7 @@ public class VmBackupModel extends ManageBackupModel {
         model.getCommands().add(UICommand.createDefaultOkUiCommand("OnRestore", this)); //$NON-NLS-1$
         model.getCommands().add(UICommand.createCancelUiCommand(CANCEL_COMMAND, this)); //$NON-NLS-1$);
         model.init(getSelectedItems(), getEntity().getId());
-        model.setTargetArchitecture(firstArch);
+        model.setTargetArchitecture(getArchitectureFromItem(getSelectedItems().get(0)));
 
         // Add 'Close' command
         model.setCloseCommand(new UICommand(CANCEL_COMMAND, this) //$NON-NLS-1$

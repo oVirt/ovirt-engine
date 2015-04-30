@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -52,6 +55,8 @@ public abstract class ManageBackupModel extends SearchableListModel<StorageDomai
     protected abstract void remove();
 
     protected abstract void restore();
+
+    protected abstract ArchitectureType getArchitectureFromItem(Object item);
 
     protected void cancel() {
         cancelConfirm();
@@ -142,5 +147,42 @@ public abstract class ManageBackupModel extends SearchableListModel<StorageDomai
             cancelConfirm();
             break;
         }
+    }
+
+    protected boolean validateSingleArchitecture() {
+     // Checks if there are selected VMs of multiple architectures
+        ArchitectureType firstArch = null;
+        boolean multipleArchs = false;
+
+        for (Object item : getSelectedItems()) {
+            ArchitectureType arch = getArchitectureFromItem(item);
+
+            if (firstArch == null) {
+                firstArch = arch;
+            } else {
+                if (!firstArch.equals(arch)) {
+                    multipleArchs = true;
+                    break;
+                }
+            }
+        }
+
+        if (multipleArchs) {
+            ConfirmationModel confirmModel = new ConfirmationModel();
+            setConfirmWindow(confirmModel);
+            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().invalidImportTitle());
+            confirmModel.setHelpTag(HelpTag.multiple_archs_dialog);
+            confirmModel.setHashName("multiple_archs_dialog"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance().getConstants().invalidImportMsg());
+
+            UICommand command = UICommand.createDefaultOkUiCommand("multipleArchsOK", this); //$NON-NLS-1$
+            confirmModel.getCommands().add(command);
+
+            setConfirmWindow(confirmModel);
+
+            return false;
+        }
+
+        return true;
     }
 }
