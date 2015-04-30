@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -95,6 +96,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && validateDestStorage()
                 && checkTemplateInDestStorageDomain()
                 && validateSpaceRequirements()
+                && validateVmSnapshotStatus()
                 && checkCanBeMoveInVm()
                 && checkIfNeedToBeOverride()
                 && setAndValidateDiskProfiles();
@@ -168,6 +170,25 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             return validate(storageDomainValidator.hasSpaceForClonedDisk(getImage()));
         }
         return false;
+    }
+
+    private boolean validateVmSnapshotStatus() {
+        SnapshotsValidator snapshotsValidator = getSnapshotsValidator();
+        for (Pair<VM, VmDevice> pair : getVmsWithVmDeviceInfoForDiskId()) {
+            VmDevice vmDevice = pair.getSecond();
+            if (vmDevice.getSnapshotId() == null) { // Skip check for VMs with connected snapshot
+                VM vm = pair.getFirst();
+                if (!validate(snapshotsValidator.vmNotInPreview(vm.getId()))
+                        || !validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId()))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    protected SnapshotsValidator getSnapshotsValidator() {
+        return new SnapshotsValidator();
     }
 
     protected List<DiskImage> getAllImageSnapshots() {
