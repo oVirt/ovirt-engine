@@ -455,6 +455,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         }
 
+        if (isTemplateVersion() && getBaseTemplate().isBlank()) {
+            return failCanDoAction(VdcBllMessages.BLANK_TEMPLATE_CANT_HAVE_SUBTEMPLATES);
+        }
+
         if (!setAndValidateDiskProfiles()) {
             return false;
         }
