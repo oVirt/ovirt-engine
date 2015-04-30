@@ -264,6 +264,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     private void registerOvfStoreDisks() {
         for (final Guid storageDomainId : getParameters().getStorages()) {
+            resetOvfStoreDisks();
             final List<OvfEntityData> unregisteredEntitiesFromOvfDisk =
                     getEntitiesFromStorageOvfDisk(storageDomainId, getStoragePool().getId());
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {

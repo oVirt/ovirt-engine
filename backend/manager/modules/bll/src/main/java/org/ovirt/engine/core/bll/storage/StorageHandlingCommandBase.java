@@ -668,4 +668,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         }
         return cinderBroker;
     }
+
+    protected void resetOvfStoreDisks() {
+        ovfDisks = null;
+    }
 }
