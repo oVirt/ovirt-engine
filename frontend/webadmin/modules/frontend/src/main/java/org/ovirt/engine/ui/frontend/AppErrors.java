@@ -3029,6 +3029,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume ${volumeName} is up.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_UP();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume ${volumeName} has ${noOfSnapshots} snapshots.\nTo delete the volume, first delete all the snapshots under it.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_HAS_SNAPSHOTS();
+
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is down.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN();
 

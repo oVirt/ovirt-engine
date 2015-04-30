@@ -45,6 +45,14 @@ public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<Gluster
             addCanDoActionMessageVariable("volumeName", volume.getName());
             return false;
         }
+
+        if (volume.getSnapshotsCount() > 0) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_HAS_SNAPSHOTS);
+            addCanDoActionMessageVariable("volumeName", volume.getName());
+            addCanDoActionMessageVariable("noOfSnapshots", volume.getSnapshotsCount());
+            return false;
+        }
+
         return true;
     }
 
