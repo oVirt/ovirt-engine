@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeSnapshotActionParameters;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -290,6 +291,13 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
     protected boolean canDoAction() {
         if (!super.canDoAction()) {
             return false;
+        }
+
+        GlusterVolumeEntity volume = getGlusterVolume();
+        if (volume.getAsyncTask() != null
+                && (volume.getAsyncTask().getType() == GlusterTaskType.REBALANCE
+                || volume.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK)) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS);
         }
 
         for (GlusterGeoRepSession session : georepSessions) {
