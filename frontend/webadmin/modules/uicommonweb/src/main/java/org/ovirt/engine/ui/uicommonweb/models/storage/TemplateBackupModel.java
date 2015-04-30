@@ -43,6 +43,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.inject.Inject;
@@ -53,10 +55,13 @@ public class TemplateBackupModel extends VmBackupModel
     private ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
     private StoragePool pool;
 
+    private static UIConstants constants = ConstantsManager.getInstance().getConstants();
+    private static UIMessages messages = ConstantsManager.getInstance().getMessages();
+
     @Inject
     public TemplateBackupModel(Provider<ImportTemplateModel> importModelProvider) {
         setModelProvider(importModelProvider);
-        setTitle(ConstantsManager.getInstance().getConstants().templateImportTitle());
+        setTitle(constants.templateImportTitle());
         setHelpTag(HelpTag.template_import);
         setHashName("template_import"); //$NON-NLS-1$
     }
@@ -75,7 +80,7 @@ public class TemplateBackupModel extends VmBackupModel
 
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().removeBackedUpTemplatesTitle());
+        model.setTitle(constants.removeBackedUpTemplatesTitle());
         model.setHelpTag(HelpTag.remove_backed_up_template);
         model.setHashName("remove_backed_up_template"); //$NON-NLS-1$
         ArrayList<String> items = new ArrayList<String>();
@@ -86,12 +91,10 @@ public class TemplateBackupModel extends VmBackupModel
         }
         model.setItems(items);
 
-        model.setNote(ConstantsManager.getInstance().getConstants().noteTheDeletedItemsMightStillAppearOntheSubTab());
+        model.setNote(constants.noteTheDeletedItemsMightStillAppearOntheSubTab());
 
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar2);
+        model.getCommands().add(UICommand.createDefaultOkUiCommand("OnRemove", this)); //$NON-NLS-1$
+        model.getCommands().add(UICommand.createCancelUiCommand(CANCEL_COMMAND, this));
     }
 
     private void onRemove() {
@@ -142,31 +145,21 @@ public class TemplateBackupModel extends VmBackupModel
         for (Map.Entry<String, List<String>> templateName : problematicVmNames.entrySet()) {
             List<String> vms = problematicVmNames.get(templateName.getKey());
             String vmsListString = StringUtils.join(vms, ", "); //$NON-NLS-1$
-            missingTemplatesFromVms.add(ConstantsManager.getInstance()
-                    .getMessages()
-                    .templatesWithDependentVMs(templateName.getKey(), vmsListString));
+            missingTemplatesFromVms.add(messages.templatesWithDependentVMs(templateName.getKey(), vmsListString));
         }
 
         setConfirmWindow(null);
         ConfirmationModel confirmModel = new ConfirmationModel();
         setConfirmWindow(confirmModel);
-        confirmModel.setTitle(ConstantsManager.getInstance()
-                .getConstants()
-                .removeBackedUpTemplatesWithDependentsVMTitle());
+        confirmModel.setTitle(constants.removeBackedUpTemplatesWithDependentsVMTitle());
         confirmModel.setHelpTag(HelpTag.remove_backed_up_template);
         confirmModel.setHashName("remove_backed_up_template"); //$NON-NLS-1$
 
-        confirmModel.setMessage(ConstantsManager.getInstance()
-                .getConstants()
-                .theFollowingTemplatesHaveDependentVmsBackupOnExportDomainMsg());
+        confirmModel.setMessage(constants.theFollowingTemplatesHaveDependentVmsBackupOnExportDomainMsg());
         confirmModel.setItems(missingTemplatesFromVms);
 
-        UICommand removeTemplateUiCommand =
-                UICommand.createDefaultOkUiCommand("RemoveVmTemplates", this); //$NON-NLS-1$
-        confirmModel.getCommands().add(removeTemplateUiCommand);
-        UICommand cancelConfirmationUiCommand =
-                UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
-        confirmModel.getCommands().add(cancelConfirmationUiCommand);
+        confirmModel.getCommands().add(UICommand.createDefaultOkUiCommand("RemoveVmTemplates", this)); //$NON-NLS-1$
+        confirmModel.getCommands().add(UICommand.createCancelUiCommand(CANCEL_CONFIRMATION_COMMAND, this));
     }
 
     private HashMap<String, List<String>> getDependentVMsForTemplates(List<VM> vmsInExportDomain,
@@ -188,10 +181,6 @@ public class TemplateBackupModel extends VmBackupModel
             }
         }
         return problematicVmNames;
-    }
-
-    private void cancelConfirmation() {
-        setConfirmWindow(null);
     }
 
     private void removeTemplateBackup() {
@@ -241,16 +230,12 @@ public class TemplateBackupModel extends VmBackupModel
 
     @Override
     protected String getAlreadyAssignedClonedNameMessage() {
-        return ConstantsManager.getInstance()
-                .getMessages()
-                .alreadyAssignedClonedTemplateName();
+        return messages.alreadyAssignedClonedTemplateName();
     }
 
     @Override
     protected String getSuffixCauseToClonedNameCollisionMessage(String existingName) {
-        return ConstantsManager.getInstance()
-                .getMessages()
-                .suffixCauseToClonedTemplateNameCollision(existingName);
+        return messages.suffixCauseToClonedTemplateNameCollision(existingName);
     }
 
     @Override
@@ -340,19 +325,15 @@ public class TemplateBackupModel extends VmBackupModel
                             if (toShowConfirmWindow) {
                                 ConfirmationModel confirmModel = new ConfirmationModel();
                                 templateBackupModel.setConfirmWindow(confirmModel);
-                                confirmModel.setTitle(ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .importTemplatesTitle());
+                                confirmModel.setTitle(constants.importTemplatesTitle());
                                 confirmModel.setHelpTag(HelpTag.import_template);
                                 confirmModel.setHashName("import_template"); //$NON-NLS-1$
-                                confirmModel.setMessage(ConstantsManager.getInstance()
-                                        .getMessages()
-                                        .importProcessHasBegunForTemplates(StringHelper.trimEnd(importedTemplates.toString().trim(), ',')));
-                                UICommand tempVar = new UICommand("CancelConfirm", templateBackupModel); //$NON-NLS-1$
-                                tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-                                tempVar.setIsDefault(true);
-                                tempVar.setIsCancel(true);
-                                confirmModel.getCommands().add(tempVar);
+                                confirmModel.setMessage(messages.importProcessHasBegunForTemplates(StringHelper.trimEnd(importedTemplates.toString().trim(), ',')));
+                                confirmModel.getCommands().add(new UICommand(CANCEL_CONFIRMATION_COMMAND, templateBackupModel) //$NON-NLS-1$
+                                .setTitle(constants.close())
+                                .setIsDefault(true)
+                                .setIsCancel(true)
+                                );
                             }
                         }
 
@@ -416,10 +397,9 @@ public class TemplateBackupModel extends VmBackupModel
                                 TemplateBackupModel.this.extendedItems = items;
                             }
                         };
-                        GetAllFromExportDomainQueryParameters tempVar =
-                                new GetAllFromExportDomainQueryParameters(dataCenter.getId(), backupModel.getEntity()
-                                        .getId());
-                        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, _asyncQuery1);
+                        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain,
+                                new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
+                                        backupModel.getEntity().getId()), _asyncQuery1);
                     }
                 }
             };
@@ -436,21 +416,17 @@ public class TemplateBackupModel extends VmBackupModel
     @Override
     public void executeCommand(UICommand command)
     {
-        if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
-        {
+        switch (command.getName()) {
+        case "OnRemove": //$NON-NLS-1$
             onRemove();
-        }
-        else if ("OnRestore".equals(command.getName())) //$NON-NLS-1$
-        {
+            break;
+        case "OnRestore": //$NON-NLS-1$
             onRestore();
-        }
-        else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
-            cancelConfirmation();
-        }
-        else if ("RemoveVmTemplates".equals(command.getName())) { //$NON-NLS-1$
+            break;
+        case "RemoveVmTemplates": //$NON-NLS-1$
             removeTemplateBackup();
-        }
-        else {
+            break;
+        default:
             super.executeCommand(command);
         }
     }
@@ -462,7 +438,7 @@ public class TemplateBackupModel extends VmBackupModel
 
     @Override
     protected String getImportConflictTitle() {
-        return ConstantsManager.getInstance().getConstants().importTemplateConflictTitle();
+        return constants.importTemplateConflictTitle();
     }
 
 }

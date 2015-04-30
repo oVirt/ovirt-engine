@@ -55,27 +55,28 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
         setDetailModels(list);
     }
 
-    @Override
-    public void setItems(final Collection<?> value, final Guid storageDomainId)
-    {
+    private String createSearchPattern(Collection<VmTemplate> templates) {
         String vmt_guidKey = "_VMT_ID ="; //$NON-NLS-1$
         String orKey = " or "; //$NON-NLS-1$
         StringBuilder searchPattern = new StringBuilder();
         searchPattern.append("Template: "); //$NON-NLS-1$
 
-        final List<VmTemplate> list = (List<VmTemplate>) value;
-        for (int i = 0; i < list.size(); i++) {
-            VmTemplate vmTemplate = list.get(i);
-
+        for (VmTemplate template : templates) {
             searchPattern.append(vmt_guidKey);
-            searchPattern.append(vmTemplate.getId().toString());
-            if (i < list.size() - 1) {
-                searchPattern.append(orKey);
-            }
+            searchPattern.append(template.getId().toString());
+            searchPattern.append(orKey);
         }
 
+        return searchPattern.substring(0, searchPattern.length() - orKey.length());
+    }
+
+    @Override
+    public void setItems(final Collection<?> value, final Guid storageDomainId)
+    {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        final List<VmTemplate> externalTemplates = (List<VmTemplate>) new ArrayList(value);
         Frontend.getInstance().runQuery(VdcQueryType.Search,
-                new SearchParameters(searchPattern.toString(), SearchType.VmTemplate),
+                new SearchParameters(createSearchPattern(externalTemplates), SearchType.VmTemplate),
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
@@ -84,7 +85,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
                                 (List<VmTemplate>) ((VdcQueryReturnValue) returnValue).getReturnValue();
 
                         List<ImportTemplateData> templateDataList = new ArrayList<ImportTemplateData>();
-                        for (VmTemplate template : (Iterable<VmTemplate>) value) {
+                        for (VmTemplate template : externalTemplates) {
                             ImportTemplateData templateData = new ImportTemplateData(template);
                             boolean templateExistsInSystem = vmtList.contains(template);
                             templateData.setExistsInSystem(templateExistsInSystem);

@@ -100,8 +100,6 @@ public class VmBackupModel extends ManageBackupModel {
 
     @Override
     protected void remove() {
-        super.remove();
-
         if (getWindow() != null) {
             return;
         }
@@ -121,10 +119,8 @@ public class VmBackupModel extends ManageBackupModel {
 
         model.setNote(ConstantsManager.getInstance().getConstants().noteTheDeletedItemsMightStillAppearOntheSubTab());
 
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar2);
+        model.getCommands().add(UICommand.createDefaultOkUiCommand("OnRemove", this)); //$NON-NLS-1$
+        model.getCommands().add(UICommand.createCancelUiCommand(CANCEL_COMMAND, this)); //$NON-NLS-1$
     }
 
     private void onRemove() {
@@ -184,8 +180,6 @@ public class VmBackupModel extends ManageBackupModel {
 
     @Override
     protected void restore() {
-        super.restore();
-
         if (getWindow() != null) {
             return;
         }
@@ -227,20 +221,17 @@ public class VmBackupModel extends ManageBackupModel {
         model.setEntity(getEntity().getId());
         setWindow(model);
         model.startProgress(null);
-        UICommand restoreCommand;
-        restoreCommand = UICommand.createDefaultOkUiCommand("OnRestore", this); //$NON-NLS-1$
-        model.getCommands().add(restoreCommand);
-        UICommand tempVar3 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar3);
+        model.getCommands().add(UICommand.createDefaultOkUiCommand("OnRestore", this)); //$NON-NLS-1$
+        model.getCommands().add(UICommand.createCancelUiCommand(CANCEL_COMMAND, this)); //$NON-NLS-1$);
         model.init(getSelectedItems(), getEntity().getId());
         model.setTargetArchitecture(firstArch);
 
         // Add 'Close' command
-        UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        closeCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
-        closeCommand.setIsDefault(true);
-        closeCommand.setIsCancel(true);
-        model.setCloseCommand(closeCommand);
+        model.setCloseCommand(new UICommand(CANCEL_COMMAND, this) //$NON-NLS-1$
+        .setTitle(ConstantsManager.getInstance().getConstants().close())
+        .setIsDefault(true)
+        .setIsCancel(true)
+        );
     }
 
     public void onRestore() {
@@ -451,12 +442,11 @@ public class VmBackupModel extends ManageBackupModel {
                                 confirmModel.setMessage(ConstantsManager.getInstance()
                                         .getMessages()
                                         .importProcessHasBegunForVms(StringHelper.trimEnd(importedVms.toString().trim(), ',')));
-                                UICommand tempVar2 = new UICommand("CancelConfirm", //$NON-NLS-1$
-                                        VmBackupModel.this);
-                                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
-                                tempVar2.setIsDefault(true);
-                                tempVar2.setIsCancel(true);
-                                confirmModel.getCommands().add(tempVar2);
+                                confirmModel.getCommands().add(new UICommand(CANCEL_CONFIRMATION_COMMAND, VmBackupModel.this)
+                                .setTitle(ConstantsManager.getInstance().getConstants().close())
+                                .setIsDefault(true)
+                                .setIsCancel(true)
+                                );
                             }
                         }
 
@@ -504,11 +494,9 @@ public class VmBackupModel extends ManageBackupModel {
                                 setItems((ArrayList) vms);
                             }
                         };
-                        GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(
-                                dataCenter.getId(), backupModel.getEntity()
-                                        .getId());
                         Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
-                                tempVar, _asyncQuery1);
+                                new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
+                                        backupModel.getEntity().getId()), _asyncQuery1);
                     }
                 }
             };

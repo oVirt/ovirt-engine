@@ -7,89 +7,72 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public abstract class ManageBackupModel extends SearchableListModel<StorageDomain, Object>
 {
 
-    private UICommand privateRestoreCommand;
+    private UICommand restoreCommand;
+    private UICommand removeCommand;
+    private boolean refreshing;
 
-    public UICommand getRestoreCommand()
-    {
-        return privateRestoreCommand;
+    protected static final String CANCEL_COMMAND = "Cancel"; //$NON-NLS-1$
+    protected static final String CANCEL_CONFIRMATION_COMMAND = "CancelConfirm"; //$NON-NLS-1$
+
+    public UICommand getRestoreCommand() {
+        return restoreCommand;
     }
 
-    private void setRestoreCommand(UICommand value)
-    {
-        privateRestoreCommand = value;
+    private void setRestoreCommand(UICommand value) {
+        restoreCommand = value;
     }
 
-    private UICommand privateRemoveCommand;
-
-    public UICommand getRemoveCommand()
-    {
-        return privateRemoveCommand;
+    public UICommand getRemoveCommand() {
+        return removeCommand;
     }
 
-    private void setRemoveCommand(UICommand value)
-    {
-        privateRemoveCommand = value;
+    private void setRemoveCommand(UICommand value) {
+        removeCommand = value;
     }
 
-    private boolean isRefreshing;
-
-    public boolean getIsRefreshing()
-    {
-        return isRefreshing;
+    public boolean getIsRefreshing() {
+        return refreshing;
     }
 
-    public void setIsRefreshing(boolean value)
-    {
-        if (isRefreshing != value)
-        {
-            isRefreshing = value;
+    public void setIsRefreshing(boolean value) {
+        if (refreshing != value) {
+            refreshing = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsRefreshing")); //$NON-NLS-1$
         }
     }
 
-    protected ManageBackupModel()
-    {
+    protected ManageBackupModel() {
         setRestoreCommand(new UICommand("Restore", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
     }
 
-    protected void remove()
-    {
-    }
+    protected abstract void remove();
 
-    protected void restore()
-    {
-    }
+    protected abstract void restore();
 
-    protected void cancel()
-    {
+    protected void cancel() {
         cancelConfirm();
         setWindow(null);
     }
 
-    protected void cancelConfirm()
-    {
+    protected void cancelConfirm() {
         setConfirmWindow(null);
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("storage_domain_shared_status")) { //$NON-NLS-1$
             checkStorageStatus();
         }
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
         checkStorageStatus();
@@ -98,46 +81,36 @@ public abstract class ManageBackupModel extends SearchableListModel<StorageDomai
         getSearchCommand().execute();
     }
 
-    private void checkStorageStatus()
-    {
-        if (getEntity() != null)
-        {
-            if (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Inactive
-                    || getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed)
-            {
-                setMessage(ConstantsManager.getInstance().getConstants().theExportDomainIsInactiveMsg());
-            }
-            else if (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
-            {
-                setMessage(ConstantsManager.getInstance().getConstants().ExportDomainIsNotAttachedToAnyDcMsg());
-            }
-            else
-            {
-                setMessage(null);
-            }
+    private void checkStorageStatus() {
+        if (getEntity() == null) {
+            return;
+        }
+
+        if (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Inactive
+                || getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed) {
+            setMessage(ConstantsManager.getInstance().getConstants().theExportDomainIsInactiveMsg());
+        }
+        else if (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
+            setMessage(ConstantsManager.getInstance().getConstants().ExportDomainIsNotAttachedToAnyDcMsg());
+        }
+        else {
+            setMessage(null);
         }
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void selectedItemsChanged()
-    {
+    protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
     }
 
-    protected void updateItems()
-    {
-    }
-
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getRestoreCommand().setIsExecutionAllowed(getEntity() != null && getSelectedItems() != null
                 && getSelectedItems().size() > 0
                 && getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active);
@@ -148,25 +121,26 @@ public abstract class ManageBackupModel extends SearchableListModel<StorageDomai
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getRestoreCommand())
-        {
+        if (command == getRestoreCommand()) {
             restore();
+            return;
         }
-        else if (command == getRemoveCommand())
-        {
+
+        if (command == getRemoveCommand()) {
             remove();
+            return;
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
-        {
+
+        switch (command.getName()) {
+        case CANCEL_COMMAND:
             cancel();
-        }
-        else if ("CancelConfirm".equals(command.getName())) //$NON-NLS-1$
-        {
+            break;
+        case CANCEL_CONFIRMATION_COMMAND:
             cancelConfirm();
+            break;
         }
     }
 }
