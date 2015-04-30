@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -48,6 +49,7 @@ public class MoveOrCopyDiskCommandTest {
     private Guid destStorageId = Guid.newGuid();
     private final Guid srcStorageId = Guid.newGuid();
     private final static int FREE_SPACE_CRITICAL_LOW_IN_GB = 0;
+    private final VmDevice vmDevice = new VmDevice();
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -61,6 +63,8 @@ public class MoveOrCopyDiskCommandTest {
     private VmDAO vmDao;
     @Mock
     private VmDeviceDAO vmDeviceDao;
+    @Mock
+    private SnapshotsValidator snapshotsValidator;
 
     /**
      * The command under test.
@@ -161,6 +165,7 @@ public class MoveOrCopyDiskCommandTest {
     @Test
     public void canDoActionVmIsNotDown() throws Exception {
         initializeCommand(ImageOperation.Move);
+        initSnapshotValidator();
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         initSrcStorageDomain();
@@ -221,12 +226,37 @@ public class MoveOrCopyDiskCommandTest {
     @Test
     public void canDoActionEnoughSpace() throws Exception {
         initializeCommand(ImageOperation.Move);
+        initSnapshotValidator();
         initVmForSpace();
         initVmDiskImage(false);
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void successVmInPreviewForAttachedSnapshot() {
+        initializeCommand(ImageOperation.Move);
+        initSnapshotValidator();
+        initVmForSpace();
+        initVmDiskImage(false);
+        initSrcStorageDomain();
+        initDestStorageDomain(StorageType.NFS);
+        vmDevice.setSnapshotId(Guid.newGuid());
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void canDoActionVmInPreview() {
+        initializeCommand(ImageOperation.Move);
+        initSnapshotValidator();
+        initVmForSpace();
+        initVmDiskImage(false);
+        initSrcStorageDomain();
+        initDestStorageDomain(StorageType.NFS);
+        when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
     }
 
     protected void initVmForSpace() {
@@ -236,8 +266,7 @@ public class MoveOrCopyDiskCommandTest {
         // Re-mock the vmDao to return this specific VM for it to be correlated with the vm list mocked by getVmsWithPlugInfo(..).
         doReturn(vmDao).when(command).getVmDAO();
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
-        VmDevice device = new VmDevice();
-        List<Pair<VM, VmDevice>> vmList = Collections.singletonList(new Pair<>(vm, device));
+        List<Pair<VM, VmDevice>> vmList = Collections.singletonList(new Pair<>(vm, vmDevice));
         when(vmDao.getVmsWithPlugInfo(any(Guid.class))).thenReturn(vmList);
     }
 
@@ -310,6 +339,12 @@ public class MoveOrCopyDiskCommandTest {
         doReturn(false).when(command).acquireLock();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(storageDomainDao).when(command).getStorageDomainDAO();
+    }
+
+    private void initSnapshotValidator() {
+        when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(ValidationResult.VALID);
+        when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
+        when(command.getSnapshotsValidator()).thenReturn(snapshotsValidator);
     }
 
     private void initTemplateDiskImage() {
