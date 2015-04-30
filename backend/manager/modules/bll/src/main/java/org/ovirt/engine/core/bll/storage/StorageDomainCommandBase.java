@@ -88,7 +88,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 && checkStorageDomainStatus(StorageDomainStatus.Inactive, StorageDomainStatus.Maintenance)
                 && (isMaster() || isDestroyStoragePool || checkMasterDomainIsUp())
                 && isNotLocalData(isInternal)
-                && isDetachAllowed(isRemoveLast);
+                && isDetachAllowed(isRemoveLast)
+                && isCinderStorageHasNoDisks();
     }
 
     protected boolean isDetachAllowed(final boolean isRemoveLast) {
@@ -132,6 +133,13 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return getStoragePoolIsoMapDAO()
                 .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getStoragePoolId()));
+    }
+
+    protected boolean isCinderStorageHasNoDisks() {
+        if (getStorageDomain().getStorageType() == StorageType.CINDER) {
+            return validate(CINDERStorageHelper.isCinderHasNoImages(getStorageDomainId()));
+        }
+        return true;
     }
 
     private boolean isMaster() {

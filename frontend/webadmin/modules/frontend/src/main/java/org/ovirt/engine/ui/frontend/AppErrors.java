@@ -3813,4 +3813,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Base64 part of vm icon is malformed.")
     String VM_ICON_BASE64_PART_MALFORMED();
+
+    @DefaultStringValue("Cannot detach a non empty Cinder provider.\n -Please remove all VMs / Templates / Disks and try again.")
+    String ERROR_CANNOT_DETACH_CINDER_PROVIDER_WITH_IMAGES();
 }

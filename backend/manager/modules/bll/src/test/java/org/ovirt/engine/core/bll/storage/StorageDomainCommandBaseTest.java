@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDAO;
@@ -93,6 +94,17 @@ public class StorageDomainCommandBaseTest {
     }
 
     @Test
+    public void checkCinderStorageDomainContainDisks() {
+        setCinderStorageDomainStatus(StorageDomainStatus.Inactive);
+        storagePoolExists();
+        cinderStorageDomainContainsDisks(false);
+        masterDomainIsUp();
+        isNotLocalData();
+        canDetachDomain();
+        assertFalse(cmd.canDetachDomain(false, false, false));
+    }
+
+    @Test
     public void checkStorageDomainNotEqualWithStatusActive() {
         setStorageDomainStatus(StorageDomainStatus.Active);
         assertFalse(cmd.checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
@@ -136,6 +148,10 @@ public class StorageDomainCommandBaseTest {
         doReturn(true).when(cmd).checkMasterDomainIsUp();
     }
 
+    private void cinderStorageDomainContainsDisks(boolean isCinderContainsDisks) {
+        doReturn(isCinderContainsDisks).when(cmd).isCinderStorageHasNoDisks();
+    }
+
     private void isNotLocalData() {
         doReturn(true).when(cmd).isNotLocalData(anyBoolean());
     }
@@ -152,6 +168,13 @@ public class StorageDomainCommandBaseTest {
     private void setStorageDomainStatus(StorageDomainStatus status) {
         StorageDomain domain = new StorageDomain();
         domain.setStatus(status);
+        when(cmd.getStorageDomain()).thenReturn(domain);
+    }
+
+    private void setCinderStorageDomainStatus(StorageDomainStatus status) {
+        StorageDomain domain = new StorageDomain();
+        domain.setStatus(status);
+        domain.setStorageType(StorageType.CINDER);
         when(cmd.getStorageDomain()).thenReturn(domain);
     }
 

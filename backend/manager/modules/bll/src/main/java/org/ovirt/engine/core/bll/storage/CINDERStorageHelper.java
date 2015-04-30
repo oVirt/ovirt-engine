@@ -1,14 +1,18 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -72,6 +76,14 @@ public class CINDERStorageHelper extends StorageHelperBase {
                 return null;
             }
         });
+    }
+
+    public static ValidationResult isCinderHasNoImages(Guid storageDomainId) {
+        List<DiskImage> cinderDisks = getDbFacade().getDiskImageDao().getAllForStorageDomain(storageDomainId);
+        if (!cinderDisks.isEmpty()) {
+            return new ValidationResult(VdcBllMessages.ERROR_CANNOT_DETACH_CINDER_PROVIDER_WITH_IMAGES);
+        }
+        return ValidationResult.VALID;
     }
 
     public void activateCinderDomain(Guid storageDomainId, Guid storagePoolId) {
