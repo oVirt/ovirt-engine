@@ -34,6 +34,9 @@ public class FenceAgentMapper {
         if (model.isSetUsername()) {
             entity.setUser(model.getUsername());
         }
+        if (model.isSetPassword()) {
+            entity.setPassword(model.getPassword());
+        }
         if (model.isSetPort()) {
             entity.setPort(model.getPort());
             addPortToOptions(model);
