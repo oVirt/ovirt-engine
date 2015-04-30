@@ -1074,7 +1074,9 @@ fi
 
 %files setup-plugin-ovirt-engine-common
 
+%{engine_data}/setup/bin/ovirt-engine-provisiondb
 %{engine_data}/setup/ovirt_engine_setup/engine_common/
+%{engine_data}/setup/ovirt_engine_setup/provisiondb/
 %{engine_data}/setup/plugins/*/ovirt-engine-common/
 %{engine_data}/firewalld/ovirt-common/
 

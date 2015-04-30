@@ -90,6 +90,7 @@ class FileLocations(object):
     OVIRT_OVIRT_SETUP_LOG_PREFIX = 'ovirt-engine-setup'
     OVIRT_OVIRT_REMOVE_LOG_PREFIX = 'ovirt-engine-remove'
     OVIRT_OVIRT_RENAME_LOG_PREFIX = 'ovirt-engine-rename'
+    OVIRT_OVIRT_PROVISIONDB_LOG_PREFIX = 'ovirt-engine-provisiondb'
 
     OVIRT_OVIRT_SETUP_CONFIG_FILE = config.ENGINE_SETUP_CONFIG
     OVIRT_SETUP_OSINFO_REPOSITORY_DIR = os.path.join(
@@ -254,6 +255,7 @@ class Const(object):
     ACTION_SETUP = 'setup'
     ACTION_REMOVE = 'cleanup'
     ACTION_RENAME = 'rename'
+    ACTION_PROVISIONDB = 'provisiondb'
     FIREWALL_MANAGER_HUMAN = 'skip'
     FIREWALL_MANAGER_IPTABLES = 'iptables'
     FIREWALL_MANAGER_FIREWALLD = 'firewalld'
@@ -263,6 +265,8 @@ class Const(object):
     REMOTE_ENGINE_SETUP_STYLE_MANUAL_FILES = 'manual_files'
     REMOTE_ENGINE_SETUP_STYLE_MANUAL_INLINE = 'manual_inline'
     EXIT_CODE_REMOVE_WITHOUT_SETUP = 11
+    EXIT_CODE_PROVISIONING_NOT_SUPPORTED = 12
+    EXIT_CODE_PROVISIONING_EXISTING_RESOURCES_FOUND = 13
 
     DWH_DOC_URI = (
         '/docs/manual/en_US/html/Installation_Guide/'
