@@ -32,6 +32,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ImportValidator {
 
@@ -46,6 +48,8 @@ public class ImportValidator {
     public ImportValidator(ImportVmParameters params) {
         this.params = params;
     }
+
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * Used for testings
@@ -67,6 +71,11 @@ public class ImportValidator {
                     image.getStorageIds().get(0), getStoragePool().getId());
             ValidationResult result = new StorageDomainValidator(sd).isDomainExistAndActive();
             if (!result.isValid()) {
+                log.error("Storage Domain '{}' with id '{}', could not be found for disk alias '{}' with image id '{}'",
+                        sd == null ? null : sd.getStorageName(),
+                        image.getStorageIds().get(0),
+                        image.getDiskAlias(),
+                        image.getId());
                 return result;
             }
         }
