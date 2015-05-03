@@ -23,6 +23,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private VDSStatus status;
 
+    private ExternalStatus externalStatus;
+
     private Integer cpuCores;
 
     private Integer cpuThreads;
@@ -185,6 +187,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         libvirtVersion = new RpmVersion();
         glusterVersion = new RpmVersion();
         status = VDSStatus.Unassigned;
+        externalStatus = ExternalStatus.Ok;
         previousStatus = VDSStatus.Unassigned;
         nonOperationalReason = NonOperationalReason.NONE;
         cpuSpeedMh = BigDecimal.valueOf(0.0);
@@ -294,6 +297,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     @Override
     public void setStatus(VDSStatus value) {
         status = value;
+    }
+
+    public ExternalStatus getExternalStatus() {
+        return externalStatus;
+    }
+
+    public void setExternalStatus(ExternalStatus externalStatus) {
+        this.externalStatus = externalStatus;
     }
 
     @Override

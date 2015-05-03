@@ -133,6 +133,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vds.setSshPort(getSshPort());
         vds.setSshUsername(getSshUsername());
         vds.setStatus(getStatus());
+        vds.setExternalStatus(getExternalStatus());
         vds.setHardwareManufacturer(getHardwareManufacturer());
         vds.setHardwareProductName(getHardwareProductName());
         vds.setHardwareVersion(getHardwareVersion());
@@ -373,6 +374,14 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     @Override
     public void setStatus(VDSStatus value) {
         vdsDynamic.setStatus(value);
+    }
+
+    public ExternalStatus getExternalStatus() {
+        return vdsDynamic.getExternalStatus();
+    }
+
+    public  void setExternalStatus(ExternalStatus externalStatus) {
+        vdsDynamic.setExternalStatus(externalStatus);
     }
 
     public Integer getCpuCores() {
