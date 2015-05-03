@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -114,6 +115,7 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
             entity.setMaintenanceReason(rs.getString("maintenance_reason"));
             entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
+            entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
             return entity;
         }
     }
@@ -169,6 +171,14 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
         return getCustomMapSqlParameterSource()
                 .addValue("vds_guid", id)
                 .addValue("status", status);
+    }
+
+    public void updateExternalStatus(Guid id, ExternalStatus status) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vds_guid", id)
+                .addValue("external_status", status);
+
+        getCallsHandler().executeModification("UpdateHostExternalStatus", parameterSource);
     }
 
     @Override

@@ -14,6 +14,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -266,6 +267,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setSshPort(rs.getInt("ssh_port"));
             entity.setSshUsername(rs.getString("ssh_username"));
             entity.setStatus(VDSStatus.forValue(rs.getInt("status")));
+            entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
             entity.setCpuCores((Integer) rs.getObject("cpu_cores"));
             entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
             entity.setCpuModel(rs.getString("cpu_model"));

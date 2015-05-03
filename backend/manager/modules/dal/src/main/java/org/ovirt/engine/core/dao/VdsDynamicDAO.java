@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.compat.Guid;
@@ -11,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface VdsDynamicDAO extends GenericDao<VdsDynamic, Guid>, StatusAwareDao<Guid, VDSStatus>, MassOperationsDao<VdsDynamic, Guid>, CheckedUpdate<VdsDynamic> {
+public interface VdsDynamicDAO extends GenericDao<VdsDynamic, Guid>, StatusAwareDao<Guid, VDSStatus>, ExternalStatusAwareDao<Guid, ExternalStatus>, MassOperationsDao<VdsDynamic, Guid>, CheckedUpdate<VdsDynamic> {
 
    /**
      * Update entity net_config_dirty field

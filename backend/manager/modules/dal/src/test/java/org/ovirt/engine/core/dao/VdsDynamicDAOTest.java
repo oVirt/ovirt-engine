@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
@@ -128,6 +129,15 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         assertEquals(before.getStatus(), after.getStatus());
         assertEquals(before.getNonOperationalReason(), after.getNonOperationalReason());
         assertEquals(before.getMaintenanceReason(), after.getMaintenanceReason());
+    }
+
+    @Test
+    public void testUpdateHostExternalStatus() {
+        VdsDynamic before = dao.get(existingVds.getId());
+        before.setExternalStatus(ExternalStatus.Error);
+        dao.updateExternalStatus(before.getId(), before.getExternalStatus());
+        VdsDynamic after = dao.get(existingVds.getId());
+        assertEquals(before.getExternalStatus(), after.getExternalStatus());
     }
 
     @Test
