@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -51,8 +53,12 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     private Boolean wipeAfterDelete;
 
+    @Min(value = 0, message = "VALIDATION.STORAGE_DOMAIN.WARNING_LOW_SPACE_INDICATOR.RANGE")
+    @Max(value = 100, message = "VALIDATION.STORAGE_DOMAIN.WARNING_LOW_SPACE_INDICATOR.RANGE")
     private Integer warningLowSpaceIndicator;
 
+    @Min(value = 0, message = "VALIDATION.STORAGE_DOMAIN.CRITICAL_SPACE_ACTION_BLOCKER.RANGE")
+    @Max(value = 100, message = "VALIDATION.STORAGE_DOMAIN.CRITICAL_SPACE_ACTION_BLOCKER.RANGE")
     private Integer criticalSpaceActionBlocker;
 
     public StorageDomainStatic() {
