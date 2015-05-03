@@ -14,6 +14,8 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -130,6 +132,8 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     // command
                     throw new VdcBLLException(VdcBllErrors.ENGINE_ERROR_CREATING_STORAGE_POOL);
                 }
+            } else {
+                registerOvfStoreDisks();
             }
         }
 
@@ -254,6 +258,31 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
         }
 
         return returnValue;
+    }
+
+    private void registerOvfStoreDisks() {
+        for (final Guid storageDomainId : getParameters().getStorages()) {
+            resetOvfStoreDisks();
+            final List<OvfEntityData> unregisteredEntitiesFromOvfDisk =
+                    getEntitiesFromStorageOvfDisk(storageDomainId, getStoragePool().getId());
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    List<DiskImage> ovfStoreDiskImages = getAllOVFDisks(storageDomainId, getStoragePool().getId());
+                    registerAllOvfDisks(ovfStoreDiskImages, storageDomainId);
+
+                    // Update unregistered entities
+                    for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
+                        getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(), storageDomainId);
+                        getUnregisteredOVFDataDao().saveOVFData(ovf);
+                        log.infoFormat("Adding OVF data of entity id {0} and entity name {1}",
+                                ovf.getEntityId(),
+                                ovf.getEntityName());
+                    }
+                    return null;
+                }
+            });
+        }
     }
 
     @Override
