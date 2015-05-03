@@ -901,6 +901,20 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION UpdateHostExternalStatus(
+        v_vds_guid UUID,
+        v_external_status INTEGER)
+RETURNS VOID
+
+   AS $procedure$
+BEGIN
+      UPDATE vds_dynamic
+      SET
+      external_status = v_external_status
+      WHERE vds_id = v_vds_guid;
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION UpdateVdsDynamicNetConfigDirty(
         v_vds_guid UUID,
         v_net_config_dirty BOOLEAN)
