@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.inject.Inject;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
@@ -101,6 +100,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ReversibleFlow;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
+
+import com.google.inject.Inject;
 
 @SuppressWarnings("unused")
 public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> implements ISupportSystemTreeContext
@@ -1996,8 +1997,10 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         }
                     }),
                     vds.getId());
+        } else if (vds.getVdsType() == VDSType.VDS) {
+            generalModel.setHasUpgradeAlert(vds.isUpdateAvailable());
+            generalModel.setHasAnyAlert();
         }
-
     }
 
     @Override
