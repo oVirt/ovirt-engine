@@ -93,6 +93,10 @@ load_jasper_reports_db_creds() {
 		REPORTS_DB_PASSWORD dbPassword \
 		REPORTS_DB_DATABASE js.dbName
 	)
+	# TODO Drop this when reports support secured connection/secured host validation.
+	# Currently set only for provisionDB - the rest of the code effectively ignores this
+	REPORTS_DB_SECURED=False
+	REPORTS_DB_SECURED_VALIDATION=False
 }
 
 # Globals
@@ -182,6 +186,7 @@ USAGE:
  --db-restore-jobs=JOBS             Number of restore jobs for the Engine DB, when
                                     using custom dump format and compressor None.
 				    Passed to pg_restore -j. Defaults to 2.
+ --provision-db                     Create a PostgreSQL database for the engine
  --change-db-credentials            activate the following options, to restore
                                     the Engine database to a different location
 				    etc. If used, existing credentials are ignored.
@@ -197,6 +202,7 @@ USAGE:
  --dwh-db-compressor=COMPRESSOR     for DWH, same options as --archive-compressor
  --dwh-db-dump-format=FORMAT        for DWH, same options as --db-dump-format
  --dwh-db-restore-jobs=JOBS         for DWH, same as --db-restore-jobs
+ --provision-dwh-db                 Create a PostgreSQL database for DWH
  --change-dwh-db-credentials        activate the following options, to restore
                                     the DWH database to a different location etc.
                                     If used, existing credentials are ignored.
@@ -212,6 +218,7 @@ USAGE:
  --reports-db-compressor=COMPRESSOR for Reports, same options as --archive-compressor
  --reports-db-dump-format=FORMAT    for Reports, same options as --db-dump-format
  --reports-db-restore-jobs=JOBS     for Reports, same as --db-restore-jobs
+ --provision-reports-db             Create a PostgreSQL database for Reports
  --change-reports-db-credentials    activate the following options, to restore
                                     the Reports database to a different location
 				    etc. If used, existing credentials are ignored.
@@ -244,7 +251,7 @@ USAGE:
  create database <database> owner <user> template template0
  encoding 'UTF8' lc_collate 'en_US.UTF-8' lc_ctype 'en_US.UTF-8';
 
- Open access in the firewall/iptables/etc. to the postgresql port,
+ Open access in the firewall/iptables/etc. to the PostgreSQL port,
  5432/tcp by default.
 
  Locate pg_hba.conf within your distribution,
@@ -278,9 +285,12 @@ FILES_COMPRESS_OPTION=J
 DB_DUMP_COMPRESSOR=
 DB_DUMP_FORMAT=custom
 DB_RESTORE_JOBS=2
+PROVISIONING=
+PROVISION_DB=
+POSTGRESQL_DEFAULT_PORT=5432
 CHANGE_DB_CREDENTIALS=
 MY_DB_HOST=
-MY_DB_PORT=5432
+MY_DB_PORT="${POSTGRESQL_DEFAULT_PORT}"
 MY_DB_USER=
 ORIG_DB_USER=
 MY_DB_PASSWORD="${OVIRT_ENGINE_DATABASE_PASSWORD}"
@@ -291,9 +301,10 @@ MY_DB_CREDS=
 DWH_DB_DUMP_COMPRESSOR=
 DWH_DB_DUMP_FORMAT=custom
 DWH_DB_RESTORE_JOBS=2
+PROVISION_DWH_DB=
 CHANGE_DWH_DB_CREDENTIALS=
 MY_DWH_DB_HOST=
-MY_DWH_DB_PORT=5432
+MY_DWH_DB_PORT="${POSTGRESQL_DEFAULT_PORT}"
 MY_DWH_DB_USER=
 ORIG_DWH_DB_USER=
 MY_DWH_DB_PASSWORD="${OVIRT_DWH_DATABASE_PASSWORD}"
@@ -304,9 +315,10 @@ MY_DWH_DB_CREDS=
 REPORTS_DB_DUMP_COMPRESSOR=
 REPORTS_DB_DUMP_FORMAT=custom
 REPORTS_DB_RESTORE_JOBS=2
+PROVISION_REPORTS_DB=
 CHANGE_REPORTS_DB_CREDENTIALS=
 MY_REPORTS_DB_HOST=
-MY_REPORTS_DB_PORT=5432
+MY_REPORTS_DB_PORT="${POSTGRESQL_DEFAULT_PORT}"
 MY_REPORTS_DB_USER=
 ORIG_REPORTS_DB_USER=
 MY_REPORTS_DB_PASSWORD="${OVIRT_REPORTS_DATABASE_PASSWORD}"
@@ -433,6 +445,10 @@ parseArgs() {
 				DB_RESTORE_JOBS=$(parse_jobs "${v}")
 				[ $? != 0 ] && logdie "failed parsing jobs"
 			;;
+			--provision-db)
+				PROVISION_DB=1
+				PROVISIONING=1
+			;;
 			--change-db-credentials)
 				CHANGE_DB_CREDENTIALS=1
 			;;
@@ -479,6 +495,10 @@ parseArgs() {
 				DWH_DB_RESTORE_JOBS=$(parse_jobs "${v}")
 				[ $? != 0 ] && logdie "failed parsing jobs"
 			;;
+			--provision-dwh-db)
+				PROVISION_DWH_DB=1
+				PROVISIONING=1
+			;;
 			--change-dwh-db-credentials)
 				CHANGE_DWH_DB_CREDENTIALS=1
 			;;
@@ -524,6 +544,10 @@ parseArgs() {
 			--reports-db-restore-jobs=*)
 				REPORTS_DB_RESTORE_JOBS=$(parse_jobs "${v}")
 				[ $? != 0 ] && logdie "failed parsing jobs"
+			;;
+			--provision-reports-db)
+				PROVISION_REPORTS_DB=1
+				PROVISIONING=1
 			;;
 			--change-reports-db-credentials)
 				CHANGE_REPORTS_DB_CREDENTIALS=1
@@ -583,6 +607,7 @@ verifyArgs() {
 		[ -e "${FILE}" ] || die "${FILE} does not exist"
 	fi
 	if [ -n "${CHANGE_DB_CREDENTIALS}" ]; then
+		[ -n "${PROVISION_DB}" ] && die "Cannot change credentials if provisioning a database"
 		[ -n "${MY_DB_HOST}" ] || die "--db-host is missing"
 		[ -n "${MY_DB_USER}" ] || die "--db-user is missing"
 		[ -n "${MY_DB_PASSWORD}" ] || \
@@ -590,6 +615,7 @@ verifyArgs() {
 		[ -n "${MY_DB_DATABASE}" ] || die "--db-name is missing"
 	fi
 	if [ -n "${CHANGE_DWH_DB_CREDENTIALS}" ]; then
+		[ -n "${PROVISION_DWH_DB}" ] && die "Cannot change credentials if provisioning a database"
 		[ -n "${MY_DWH_DB_HOST}" ] || die "--dwh-db-host is missing"
 		[ -n "${MY_DWH_DB_USER}" ] || die "--dwh-db-user is missing"
 		[ -n "${MY_DWH_DB_PASSWORD}" ] || \
@@ -597,6 +623,7 @@ verifyArgs() {
 		[ -n "${MY_DWH_DB_DATABASE}" ] || die "--dwh-db-name is missing"
 	fi
 	if [ -n "${CHANGE_REPORTS_DB_CREDENTIALS}" ]; then
+		[ -n "${PROVISION_REPORTS_DB}" ] && die "Cannot change credentials if provisioning a database"
 		[ -n "${MY_REPORTS_DB_HOST}" ] || die "--reports-db-host is missing"
 		[ -n "${MY_REPORTS_DB_USER}" ] || die "--reports-db-user is missing"
 		[ -n "${MY_REPORTS_DB_PASSWORD}" ] || \
@@ -782,6 +809,21 @@ dorestore() {
 
 	log "Reloading configuration"
 	my_load_config
+
+	if [ -n "${PROVISIONING}" ]; then
+		output "Provisioning PostgreSQL users/databases:"
+		if [ -n "${PROVISION_DB}" -a -n "${SCOPE_ENGINE_DB}" ]; then
+			provisionDB "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_DB_PASSWORD}" "${ENGINE_DB_SECURED}" "${ENGINE_DB_SECURED_VALIDATION}"
+		fi
+		if [ -n "${PROVISION_DWH_DB}" -a -n "${SCOPE_DWH_DB}" ]; then
+			provisionDB "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}" "${DWH_DB_PASSWORD}" "${DWH_DB_SECURED}" "${DWH_DB_SECURED_VALIDATION}"
+		fi
+		if [ -n "${PROVISION_REPORTS_DB}" -a -n "${SCOPE_REPORTS_DB}" ]; then
+			provisionDB "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${REPORTS_DB_PASSWORD}" "${REPORTS_DB_SECURED}" "${REPORTS_DB_SECURED_VALIDATION}"
+		fi
+		output "Restoring:"
+	fi
+
 	[ -n "${CHANGE_DB_CREDENTIALS}" ] && setMyEngineDBCredentials
 	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" ] && setMyDwhDBCredentials
 	[ -n "${CHANGE_REPORTS_DB_CREDENTIALS}" ] && setMyReportsDBCredentials
@@ -868,6 +910,54 @@ bz_cat() {
 	else
 		logdie "${file} and ${file}.bz2 not found"
 	fi
+}
+
+provisionDB() {
+	local user="$1"
+	local host="$2"
+	local port="$3"
+	local database="$4"
+	local password="$5"
+	local secured="$6"
+	local secured_host_validation="$7"
+
+	log "provisionDB: user ${user} host ${host} port ${port} database ${database} secured ${secured} secured_host_validation ${secured_host_validation}"
+	output "- user '${user}', database '${database}'"
+
+	local pgprovisionlog="${TEMP_FOLDER}/pg-provision-log"
+	local answerfile="${TEMP_FOLDER}/pg-provision-answer-file"
+
+	[ "${host}" != 'localhost' ] && logdie "Can provision database only in localhost"
+	[ "${port}" != "${POSTGRESQL_DEFAULT_PORT}" ] && "Can provision database only with the default port of PostgreSQL"
+	[ "${secured}" != 'False' ] && logdie "Cannot provision database with secured connection"
+	[ "${secured_host_validation}" != 'False' ] && logdie "Cannot provision database with secured host validation"
+	[ -z "${user}" -o -z "${database}" -o -z "${password}" ] && logdie "Some database credentials missing - cannot provision database"
+
+	cat << __EOF__ > "${answerfile}"
+[environment:default]
+OVESETUP_PROVISION_DB/host=str:localhost
+OVESETUP_PROVISION_DB/port=int:5432
+OVESETUP_PROVISION_DB/secured=bool:False
+OVESETUP_PROVISION_DB/securedHostValidation=bool:False
+OVESETUP_PROVISION_DB/database=str:${database}
+OVESETUP_PROVISION_DB/user=str:${user}
+OVESETUP_PROVISION_DB/password=str:${password}
+OVESETUP_PROVISION_DB/dumper=str:pg_custom
+OVESETUP_PROVISION_DB/filter=none:None
+OVESETUP_PROVISION_DB/restoreJobs=int:2
+OVESETUP_CORE/engineStop=bool:False
+__EOF__
+
+	/usr/share/ovirt-engine/setup/bin/ovirt-engine-provisiondb --config-append="${answerfile}" < /dev/null > "${pgprovisionlog}" 2>&1
+	provrc=$?
+	cat "${pgprovisionlog}" >> "${LOG}"  2>&1 \
+		|| logdie "Failed to append pg provisioning log to restore log"
+	case "${provrc}" in
+		0) : ;;
+		12) logdie "Provisioning is not supported" ;;
+		13) logdie "Existing database '${database}' or user '${user}' found and temporary ones created - Please clean up everything and try again" ;;
+		*) logdie "Provisioning database '${database}' failed, please check the log for details" ;;
+	esac
 }
 
 restoreDB() {
