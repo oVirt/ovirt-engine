@@ -61,7 +61,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoolParameters> extends
         StorageDomainCommandBase<T> {
     private StoragePoolIsoMap map;
-    private List<DiskImage> ovfDisks;
 
     public AttachStorageDomainToPoolCommand(T parameters) {
         this(parameters, null);
@@ -138,7 +137,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                 // DetachStorageDomainVdsCommand does not use it.
                                 // Storage pool id can be empty
                                 DetachStorageDomainVDSCommandParameters detachParams =
-                                        new DetachStorageDomainVDSCommandParameters(getVds().getStoragePoolId(),
+                                        new DetachStorageDomainVDSCommandParameters(getStoragePoolIdFromVds(),
                                                 getParameters().getStorageDomainId(),
                                                 Guid.Empty,
                                                 0);
@@ -166,7 +165,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     runVdsCommand(VDSCommandType.AttachStorageDomain,
                             new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
                                     getParameters().getStorageDomainId()));
-                    final List<OvfEntityData> unregisteredEntitiesFromOvfDisk = getEntitiesFromStorageOvfDisk();
+                    final List<OvfEntityData> unregisteredEntitiesFromOvfDisk =
+                            getEntitiesFromStorageOvfDisk(getParameters().getStorageDomainId(),
+                                    getStoragePoolIdFromVds());
                     executeInNewTransaction(new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
@@ -183,6 +184,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                 updateStorageDomainFormat(getStorageDomain());
                             }
                             registerAllOvfDisks(getAllOVFDisks());
+                            List<DiskImage> ovfStoreDiskImages =
+                                    getAllOVFDisks(getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
+                            registerAllOvfDisks(ovfStoreDiskImages, getParameters().getStorageDomainId());
+
                             // Update unregistered entities
                             for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
                                 getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(),
@@ -347,51 +352,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         return ovfDisks;
     }
 
-    /**
-     * Returns the best match for OVF disk from all the disks. If no OVF disk was found, it returns null for disk and
-     * size 0. If there are OVF disks, we first match the updated ones, and from them we retrieve the one which was last
-     * updated.
-     *
-     * @param ovfStoreDiskImages
-     *            - A list of OVF_STORE disks
-     * @return A Pair which contains the best OVF disk to retrieve data from and its size.
-     */
-    private Pair<DiskImage, Long> getLatestOVFDisk(List<DiskImage> ovfStoreDiskImages) {
-        Date foundOvfDiskUpdateDate = new Date();
-        boolean isFoundOvfDiskUpdated = false;
-        Long size = 0L;
-        Disk ovfDisk = null;
-        for (DiskImage ovfStoreDisk : ovfStoreDiskImages) {
-            boolean isBetterOvfDiskFound = false;
-            Map<String, Object> diskDescriptionMap;
-            try {
-                diskDescriptionMap = JsonHelper.jsonToMap(ovfStoreDisk.getDescription());
-            } catch (IOException e) {
-                log.warnFormat("Exception while generating json containing ovf store info. Exception: {0}", e);
-                continue;
-            }
-
-            boolean isUpdated = Boolean.valueOf(diskDescriptionMap.get(OvfInfoFileConstants.IsUpdated).toString());
-            Date date = getDateFromDiskDescription(diskDescriptionMap);
-            if (date == null) {
-                continue;
-            }
-            if (isFoundOvfDiskUpdated && !isUpdated) {
-                continue;
-            }
-            if ((isUpdated && !isFoundOvfDiskUpdated) || date.after(foundOvfDiskUpdateDate)) {
-                isBetterOvfDiskFound = true;
-            }
-            if (isBetterOvfDiskFound) {
-                isFoundOvfDiskUpdated = isUpdated;
-                foundOvfDiskUpdateDate = date;
-                ovfDisk = ovfStoreDisk;
-                size = new Long(diskDescriptionMap.get(OvfInfoFileConstants.Size).toString());
-            }
-        }
-        return new Pair<>((DiskImage)ovfDisk, size);
-    }
-
     private Date getDateFromDiskDescription(Map<String, Object> map) {
         try {
             Object lastUpdate = map.get(OvfInfoFileConstants.LastUpdated);
@@ -410,10 +370,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-    }
-
-    private boolean isDomainExistsInDiskDescription(Map<String, Object> map, Guid storageDomainId) {
-        return map.get(OvfInfoFileConstants.Domains).toString().contains(storageDomainId.toString());
     }
 
     protected void attemptToActivateDomain() {
@@ -454,5 +410,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH);
+    }
+
+    protected Guid getStoragePoolIdFromVds() {
+        return getVds().getStoragePoolId();
     }
 }
