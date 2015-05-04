@@ -99,7 +99,8 @@ public class PluginUiFunctions implements HasHandlers {
         // Create and bind tab presenter proxy
         dynamicUrlContentTabProxyFactory.create(
                 requestTabsEventType, changeTabEventType, slot,
-                label, historyToken, isMainTab, contentUrl,
+                label, options.getPriority().floatValue(),
+                historyToken, isMainTab, contentUrl,
                 options.getAlignRight() ? Align.RIGHT : Align.LEFT);
 
         // Redraw the corresponding tab container
