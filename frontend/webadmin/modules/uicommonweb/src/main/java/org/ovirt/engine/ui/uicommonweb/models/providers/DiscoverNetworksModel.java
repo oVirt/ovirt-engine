@@ -21,7 +21,7 @@ public class DiscoverNetworksModel extends ImportNetworksModel {
         this.provider = provider;
         setHelpTag(HelpTag.discover_networks);
         setHashName("discover_networks"); //$NON-NLS-1$
-        getProviders().setIsChangable(false);
+        getProviders().setIsChangeable(false);
     }
 
     public void discoverNetworks() {

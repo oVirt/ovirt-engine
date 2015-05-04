@@ -113,7 +113,7 @@ public class PosixStorageModel extends FileStorageModel {
     }
 
     public void setVfsChangeability(boolean isVfsChangeable) {
-        getVfsType().setIsChangable(isVfsChangeable);
+        getVfsType().setIsChangeable(isVfsChangeable);
     }
 
     protected void prepareConnectionForEditing(StorageServerConnections connection) {
@@ -125,7 +125,7 @@ public class PosixStorageModel extends FileStorageModel {
         super.prepareForEdit(storage);
         boolean isEditable = isEditable(storage);
         setVfsChangeability(isEditable);
-        getMountOptions().setIsChangable(isEditable);
+        getMountOptions().setIsChangeable(isEditable);
     }
 
     @Override

@@ -489,7 +489,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                             model.setHashName("attach_storage_domain_confirmation"); //$NON-NLS-1$
 
                             model.getLatch().setIsAvailable(true);
-                            model.getLatch().setIsChangable(true);
+                            model.getLatch().setIsChangeable(true);
 
                             UICommand onApprove = new UICommand("OnAttachApprove", dataCenterStorageListModel); //$NON-NLS-1$
                             onApprove.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -554,7 +554,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         {
             shouldAddressWarnning = false;
             model.getLatch().setIsAvailable(true);
-            model.getLatch().setIsChangable(true);
+            model.getLatch().setIsChangeable(true);
 
             model.setNote(ConstantsManager.getInstance().getMessages().detachNote(getLocalStoragesFormattedString()));
         }

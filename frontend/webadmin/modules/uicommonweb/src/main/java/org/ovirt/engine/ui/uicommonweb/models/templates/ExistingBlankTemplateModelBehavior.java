@@ -27,7 +27,7 @@ public class ExistingBlankTemplateModelBehavior extends ExistingNonClusterModelB
     protected void postBuild() {
         getModel().getBaseTemplate().setIsAvailable(false);
         getModel().getTemplateVersionName().setIsAvailable(false);
-        getModel().getVmType().setIsChangable(true);
+        getModel().getVmType().setIsChangeable(true);
         getModel().getEmulatedMachine().setIsAvailable(false);
         getModel().getCustomCpu().setIsAvailable(false);
         getModel().getOSType().setIsAvailable(false);

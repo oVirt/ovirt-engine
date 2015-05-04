@@ -38,7 +38,7 @@ public abstract class FileStorageModel extends Model implements IStorageModel{
 
     public void prepareForEdit(StorageDomain storage) {
         boolean isEditable = isEditable(storage);
-        getPath().setIsChangable(isEditable);
+        getPath().setIsChangeable(isEditable);
 
         AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
@@ -55,7 +55,7 @@ public abstract class FileStorageModel extends Model implements IStorageModel{
     protected void setHostChangeability(boolean isPathEditable) {
         //when storage is active, only SPM can perform actions on it, thus it is set above that host is not changeable.
         //If storage is editable but not active (maintenance) - any host can perform the edit so the changeable here is set based on that
-        getContainer().getHost().setIsChangable(isPathEditable);
+        getContainer().getHost().setIsChangeable(isPathEditable);
     }
 
     public boolean isSupportedInVersion(Version dcVersion) {

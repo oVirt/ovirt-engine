@@ -215,7 +215,7 @@ public class DataCenterModel extends Model
 
         setMacPoolListModel(new SortedListModel<>(new Linq.SharedMacPoolComparator()));
         setMacPoolModel(new MacPoolModel());
-        getMacPoolModel().setIsChangable(false);
+        getMacPoolModel().setIsChangeable(false);
         getMacPoolListModel().getItemsChangedEvent().addListener(this);
         getMacPoolListModel().getSelectedItemChangedEvent().addListener(this);
         startProgress(null);

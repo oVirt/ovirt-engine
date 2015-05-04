@@ -55,7 +55,7 @@ public class RemoveStorageModel extends Model
     }
 
     private void format_Changed(Object sender, EventArgs args) {
-        getHostList().setIsChangable(!getFormat().getIsAvailable() || Boolean.TRUE.equals(getFormat().getEntity()));
+        getHostList().setIsChangeable(!getFormat().getIsAvailable() || Boolean.TRUE.equals(getFormat().getEntity()));
     }
 
     public boolean validate()

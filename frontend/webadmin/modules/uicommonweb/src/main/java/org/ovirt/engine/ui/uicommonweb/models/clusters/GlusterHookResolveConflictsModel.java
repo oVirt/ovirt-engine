@@ -157,10 +157,10 @@ public class GlusterHookResolveConflictsModel extends Model {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if(getResolveContentConflict().getEntity() == null) {
-                    getServerHooksList().setIsChangable(false);
+                    getServerHooksList().setIsChangeable(false);
                 }
                 else {
-                    getServerHooksList().setIsChangable(getResolveContentConflict().getEntity());
+                    getServerHooksList().setIsChangeable(getResolveContentConflict().getEntity());
                 }
             }
         });
@@ -169,12 +169,12 @@ public class GlusterHookResolveConflictsModel extends Model {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getResolveStatusConflict().getEntity() == null) {
-                    getResolveStatusConflictEnable().setIsChangable(false);
-                    getResolveStatusConflictDisable().setIsChangable(false);
+                    getResolveStatusConflictEnable().setIsChangeable(false);
+                    getResolveStatusConflictDisable().setIsChangeable(false);
                 }
                 else {
-                    getResolveStatusConflictEnable().setIsChangable(getResolveStatusConflict().getEntity());
-                    getResolveStatusConflictDisable().setIsChangable(getResolveStatusConflict().getEntity());
+                    getResolveStatusConflictEnable().setIsChangeable(getResolveStatusConflict().getEntity());
+                    getResolveStatusConflictDisable().setIsChangeable(getResolveStatusConflict().getEntity());
                 }
             }
         });
@@ -201,12 +201,12 @@ public class GlusterHookResolveConflictsModel extends Model {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getResolveMissingConflict().getEntity() == null) {
-                    getResolveMissingConflictCopy().setIsChangable(false);
-                    getResolveMissingConflictRemove().setIsChangable(false);
+                    getResolveMissingConflictCopy().setIsChangeable(false);
+                    getResolveMissingConflictRemove().setIsChangeable(false);
                 }
                 else {
-                    getResolveMissingConflictCopy().setIsChangable(getResolveMissingConflict().getEntity());
-                    getResolveMissingConflictRemove().setIsChangable(getResolveMissingConflict().getEntity());
+                    getResolveMissingConflictCopy().setIsChangeable(getResolveMissingConflict().getEntity());
+                    getResolveMissingConflictRemove().setIsChangeable(getResolveMissingConflict().getEntity());
                 }
             }
         });
@@ -242,9 +242,9 @@ public class GlusterHookResolveConflictsModel extends Model {
 
     private void updateConflictActionsAvailability(boolean isRemove) {
         getResolveContentConflict().setEntity(!isRemove);
-        getResolveContentConflict().setIsChangable(!isRemove);
+        getResolveContentConflict().setIsChangeable(!isRemove);
         getResolveStatusConflict().setEntity(!isRemove);
-        getResolveStatusConflict().setIsChangable(!isRemove);
+        getResolveStatusConflict().setIsChangeable(!isRemove);
     }
 
     private void onSelectedHookSourceChanged() {

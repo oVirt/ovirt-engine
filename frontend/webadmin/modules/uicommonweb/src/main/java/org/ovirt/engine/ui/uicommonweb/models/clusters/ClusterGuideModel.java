@@ -389,7 +389,7 @@ public class ClusterGuideModel extends GuideModel
         model.setSpmPriorityValue(null);
 
         model.getCluster().setSelectedItem(getEntity());
-        model.getCluster().setIsChangable(false);
+        model.getCluster().setIsChangeable(false);
 
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this,
                                                                          new INewAsyncCallback() {
@@ -405,7 +405,8 @@ public class ClusterGuideModel extends GuideModel
                                                                                                                                                new Linq.DataCenterPredicate(clusterGuideModel.getEntity()
                                                                                                                                                                                     .getStoragePoolId())));
                                                                                  }
-                                                                                 model.getDataCenter().setIsChangable(false);
+                                                                                 model.getDataCenter().setIsChangeable(
+                                                                                         false);
 
                                                                                  UICommand tempVar = UICommand.createDefaultOkUiCommand("OnConfirmPMHost", clusterGuideModel); //$NON-NLS-1$
                                                                                  model.getCommands().add(tempVar);
@@ -424,7 +425,7 @@ public class ClusterGuideModel extends GuideModel
                 model.getProtocol().setEntity(true);
             } else {
                 model.getProtocol().setEntity(false);
-                model.getProtocol().setIsChangable(false);
+                model.getProtocol().setIsChangeable(false);
             }
         }
     }

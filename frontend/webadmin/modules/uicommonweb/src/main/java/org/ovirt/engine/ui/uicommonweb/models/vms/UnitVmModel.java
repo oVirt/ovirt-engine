@@ -222,86 +222,86 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     public void setVmAttachedToPool(boolean value) {
         if (value) {
             // ==General Tab==
-            getDataCenterWithClustersList().setIsChangable(!value);
-            getQuota().setIsChangable(false);
-            getCpuProfiles().setIsChangable(false);
+            getDataCenterWithClustersList().setIsChangeable(!value);
+            getQuota().setIsChangeable(false);
+            getCpuProfiles().setIsChangeable(false);
 
-            getVmId().setIsChangable(false);
+            getVmId().setIsChangeable(false);
 
-            getNumOfDesktops().setIsChangable(false);
-            getPrestartedVms().setIsChangable(false);
-            getMaxAssignedVmsPerUser().setIsChangable(false);
+            getNumOfDesktops().setIsChangeable(false);
+            getPrestartedVms().setIsChangeable(false);
+            getMaxAssignedVmsPerUser().setIsChangeable(false);
 
-            getBaseTemplate().setIsChangable(false);
-            getTemplateWithVersion().setIsChangable(false);
-            getInstanceTypes().setIsChangable(false);
-            getMemSize().setIsChangable(false);
-            getTotalCPUCores().setIsChangable(false);
+            getBaseTemplate().setIsChangeable(false);
+            getTemplateWithVersion().setIsChangeable(false);
+            getInstanceTypes().setIsChangeable(false);
+            getMemSize().setIsChangeable(false);
+            getTotalCPUCores().setIsChangeable(false);
 
-            getCustomCpu().setIsChangable(false);
-            getEmulatedMachine().setIsChangable(false);
+            getCustomCpu().setIsChangeable(false);
+            getEmulatedMachine().setIsChangeable(false);
 
-            getCoresPerSocket().setIsChangable(false);
-            getNumOfSockets().setIsChangable(false);
-            getSerialNumberPolicy().setIsChangable(false);
+            getCoresPerSocket().setIsChangeable(false);
+            getNumOfSockets().setIsChangeable(false);
+            getSerialNumberPolicy().setIsChangeable(false);
 
-            getOSType().setIsChangable(false);
-            getIsStateless().setIsChangable(false);
-            getIsRunAndPause().setIsChangable(false);
-            getIsDeleteProtected().setIsChangable(false);
+            getOSType().setIsChangeable(false);
+            getIsStateless().setIsChangeable(false);
+            getIsRunAndPause().setIsChangeable(false);
+            getIsDeleteProtected().setIsChangeable(false);
 
             // ==Initial run Tab==
-            getTimeZone().setIsChangable(false);
+            getTimeZone().setIsChangeable(false);
 
             // ==Console Tab==
-            getDisplayType().setIsChangable(false);
-            getGraphicsType().setIsChangable(false);
-            getUsbPolicy().setIsChangable(false);
-            getNumOfMonitors().setIsChangable(false);
-            getIsSingleQxlEnabled().setIsChangable(false);
-            getIsSmartcardEnabled().setIsChangable(false);
-            getAllowConsoleReconnect().setIsChangable(false);
-            getVncKeyboardLayout().setIsChangable(false);
-            getSsoMethodNone().setIsChangable(false);
-            getSsoMethodGuestAgent().setIsChangable(false);
+            getDisplayType().setIsChangeable(false);
+            getGraphicsType().setIsChangeable(false);
+            getUsbPolicy().setIsChangeable(false);
+            getNumOfMonitors().setIsChangeable(false);
+            getIsSingleQxlEnabled().setIsChangeable(false);
+            getIsSmartcardEnabled().setIsChangeable(false);
+            getAllowConsoleReconnect().setIsChangeable(false);
+            getVncKeyboardLayout().setIsChangeable(false);
+            getSsoMethodNone().setIsChangeable(false);
+            getSsoMethodGuestAgent().setIsChangeable(false);
 
             // ==Host Tab==
-            getIsAutoAssign().setIsChangable(false);
-            getDefaultHost().setIsChangable(false);
-            getHostCpu().setIsChangable(false);
-            getMigrationMode().setIsChangable(false);
-            getCpuPinning().setIsChangable(false);
-            getMigrationDowntime().setIsChangable(false);
+            getIsAutoAssign().setIsChangeable(false);
+            getDefaultHost().setIsChangeable(false);
+            getHostCpu().setIsChangeable(false);
+            getMigrationMode().setIsChangeable(false);
+            getCpuPinning().setIsChangeable(false);
+            getMigrationDowntime().setIsChangeable(false);
 
             // ==Resource Allocation Tab==
-            getMinAllocatedMemory().setIsChangable(false);
-            getProvisioning().setIsChangable(false);
-            getProvisioningThin_IsSelected().setIsChangable(false);
-            getProvisioningClone_IsSelected().setIsChangable(false);
-            getDisksAllocationModel().setIsChangable(false);
+            getMinAllocatedMemory().setIsChangeable(false);
+            getProvisioning().setIsChangeable(false);
+            getProvisioningThin_IsSelected().setIsChangeable(false);
+            getProvisioningClone_IsSelected().setIsChangeable(false);
+            getDisksAllocationModel().setIsChangeable(false);
 
             // ==Boot Options Tab==
-            getFirstBootDevice().setIsChangable(false);
-            getSecondBootDevice().setIsChangable(false);
-            getCdAttached().setIsChangable(false);
-            getCdImage().setIsChangable(false);
-            getKernel_path().setIsChangable(false);
-            getInitrd_path().setIsChangable(false);
-            getKernel_parameters().setIsChangable(false);
+            getFirstBootDevice().setIsChangeable(false);
+            getSecondBootDevice().setIsChangeable(false);
+            getCdAttached().setIsChangeable(false);
+            getCdImage().setIsChangeable(false);
+            getKernel_path().setIsChangeable(false);
+            getInitrd_path().setIsChangeable(false);
+            getKernel_parameters().setIsChangeable(false);
 
             // ==Random Generator Tab==
-            getIsRngEnabled().setIsChangable(false);
-            getRngPeriod().setIsChangable(false);
-            getRngBytes().setIsChangable(false);
-            getRngSourceRandom().setIsChangable(false);
-            getRngSourceHwrng().setIsChangable(false);
+            getIsRngEnabled().setIsChangeable(false);
+            getRngPeriod().setIsChangeable(false);
+            getRngBytes().setIsChangeable(false);
+            getRngSourceRandom().setIsChangeable(false);
+            getRngSourceHwrng().setIsChangeable(false);
 
             // ==Custom Properties Tab==
-            getCustomProperties().setIsChangable(false);
-            getCustomPropertySheet().setIsChangable(false);
+            getCustomProperties().setIsChangeable(false);
+            getCustomPropertySheet().setIsChangeable(false);
 
             // ==Icon Tab==
-            getIcon().setIsChangable(false);
+            getIcon().setIsChangeable(false);
 
             vmAttachedToPool = true;
         }
@@ -1505,11 +1505,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setVmType(new NotChangableForVmInPoolListModel<VmType>());
         getVmType().setItems(Arrays.asList(VmType.Desktop, VmType.Server));
         getVmType().setSelectedItem(VmType.Server);
-        getVmType().setIsChangable(false);
+        getVmType().setIsChangeable(false);
         getVmType().getSelectedItemChangedEvent().addListener(this);
 
         setCdImage(new NotChangableForVmInPoolListModel<String>());
-        getCdImage().setIsChangable(false);
+        getCdImage().setIsChangeable(false);
 
         setMemoryBalloonDeviceEnabled(new EntityModel<Boolean>());
         getMemoryBalloonDeviceEnabled().setEntity(true);
@@ -1529,7 +1529,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
-                getCdImage().setIsChangable(getCdAttached().getEntity());
+                getCdImage().setIsChangeable(getCdAttached().getEntity());
             }
         });
         getCdAttached().setEntity(false);
@@ -1659,7 +1659,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getAssignedVms().setEntity(0);
         getAssignedVms().setIsAvailable(false);
         // Assigned VMs count is always read-only.
-        getAssignedVms().setIsChangable(false);
+        getAssignedVms().setIsChangeable(false);
 
         setPrestartedVms(new NotChangableForVmInPoolEntityModel<Integer>());
         getPrestartedVms().setEntity(0);
@@ -1683,10 +1683,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setCpuPinning(new NotChangableForVmInPoolEntityModel<String>());
         getCpuPinning().setEntity("");
-        getCpuPinning().setIsChangable(false);
+        getCpuPinning().setIsChangeable(false);
 
         setCpuSharesAmount(new NotChangableForVmInPoolEntityModel<Integer>());
-        getCpuSharesAmount().setIsChangable(false);
+        getCpuSharesAmount().setIsChangeable(false);
 
         setCpuSharesAmountSelection(new NotChangableForVmInPoolListModel<CpuSharesAmount>());
         getCpuSharesAmountSelection().setItems(Arrays.asList(CpuSharesAmount.values()));
@@ -1696,7 +1696,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setIsSoundcardEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsSoundcardEnabled().setEntity(false);
-        getIsSoundcardEnabled().setIsChangable(false);
+        getIsSoundcardEnabled().setIsChangeable(false);
 
         setIsSingleQxlEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         getBehavior().enableSinglePCI(false);
@@ -1756,9 +1756,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         rngSourceRandom.setEntity(true);
 
         getHostCpu().setEntity(false);
-        getMigrationMode().setIsChangable(true);
+        getMigrationMode().setIsChangeable(true);
 
-        getCdImage().setIsChangable(false);
+        getCdImage().setIsChangeable(false);
 
         initGraphicsAndDisplayListeners();
         initFirstBootDevice();
@@ -1902,10 +1902,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
             else if (sender == getHostCpu()) {
                 if(getHostCpu().getEntity() != null && getHostCpu().getEntity()) {
-                    getCustomCpu().setIsChangable(false);
+                    getCustomCpu().setIsChangeable(false);
                     getCustomCpu().setSelectedItem(""); //$NON-NLS-1$
                 } else {
-                    getCustomCpu().setIsChangable(true);
+                    getCustomCpu().setIsChangeable(true);
                 }
             }
 
@@ -1929,10 +1929,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void watchdogModelSelectedItemChanged(Object sender, EventArgs args) {
         if (getWatchdogModel().getSelectedItem() == null) {
-            getWatchdogAction().setIsChangable(false);
+            getWatchdogAction().setIsChangeable(false);
             getWatchdogAction().setSelectedItem(null); //$NON-NLS-1$
         } else {
-            getWatchdogAction().setIsChangable(true);
+            getWatchdogAction().setIsChangeable(true);
         }
     }
 
@@ -1973,7 +1973,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        getUsbPolicy().setIsChangable(true);
+        getUsbPolicy().setIsChangeable(true);
 
         UsbPolicy prevSelectedUsbPolicy = getUsbPolicy().getSelectedItem();
 
@@ -1985,7 +1985,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 ));
             } else {
                 getUsbPolicy().setItems(Arrays.asList(UsbPolicy.DISABLED));
-                getUsbPolicy().setIsChangable(false);
+                getUsbPolicy().setIsChangeable(false);
             }
         }
 
@@ -2006,7 +2006,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         if (!graphicsTypes.getBackingGraphicsTypes().contains(GraphicsType.SPICE)) {
-            getUsbPolicy().setIsChangable(false);
+            getUsbPolicy().setIsChangeable(false);
         }
 
         if (getBehavior().basedOnCustomInstanceType()) {
@@ -2088,7 +2088,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         boolean isBalloonEnabled = AsyncDataProvider.getInstance().isBalloonEnabled(osType,
                         cluster.getCompatibilityVersion());
 
-        getMemoryBalloonDeviceEnabled().setIsChangable(isBalloonEnabled);
+        getMemoryBalloonDeviceEnabled().setIsChangeable(isBalloonEnabled);
 
         if (getBehavior().basedOnCustomInstanceType()) {
             getMemoryBalloonDeviceEnabled().setEntity(isBalloonEnabled);
@@ -2161,7 +2161,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 getBootMenuEnabled().setEntity(false);
                 getBootMenuEnabled().setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().bootMenuNotSupported(version.toString(2)));
             }
-            getBootMenuEnabled().setIsChangable(supported);
+            getBootMenuEnabled().setIsChangeable(supported);
         }
     }
 
@@ -2186,7 +2186,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             if (!spiceFileTransferToggle) {
                 handleQxlChangeProhibitionReason(getSpiceFileTransferEnabled(), getSelectedCluster().getCompatibilityVersion().toString(), isQxl);
             }
-            getSpiceFileTransferEnabled().setIsChangable(spiceFileTransferToggle);
+            getSpiceFileTransferEnabled().setIsChangeable(spiceFileTransferToggle);
 
             GraphicsTypes selectedGraphics = getGraphicsType().getSelectedItem();
             boolean spiceCopyPasteToggle = selectedGraphics != null
@@ -2195,7 +2195,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             if (!spiceCopyPasteToggle) {
                 handleQxlChangeProhibitionReason(getSpiceCopyPasteEnabled(), getSelectedCluster().getCompatibilityVersion().toString(), isQxl);
             }
-            getSpiceCopyPasteEnabled().setIsChangable(spiceCopyPasteToggle);
+            getSpiceCopyPasteEnabled().setIsChangeable(spiceCopyPasteToggle);
         }
 
     }
@@ -2230,13 +2230,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setIsWindowsOS(AsyncDataProvider.getInstance().isWindowsOsType(osType));
         setIsLinuxOS(AsyncDataProvider.getInstance().isLinuxOsType(osType));
 
-        getInitrd_path().setIsChangable(getIsLinuxOS());
+        getInitrd_path().setIsChangeable(getIsLinuxOS());
         getInitrd_path().setIsAvailable(getIsLinuxOS());
 
-        getKernel_path().setIsChangable(getIsLinuxOS());
+        getKernel_path().setIsChangeable(getIsLinuxOS());
         getKernel_path().setIsAvailable(getIsLinuxOS());
 
-        getKernel_parameters().setIsChangable(getIsLinuxOS());
+        getKernel_parameters().setIsChangeable(getIsLinuxOS());
         getKernel_parameters().setIsAvailable(getIsLinuxOS());
 
         getBehavior().updateDefaultTimeZone();
@@ -2364,7 +2364,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void overrideMigrationDowntimeChanged() {
         Boolean entity = getOverrideMigrationDowntime().getEntity();
-        getMigrationDowntime().setIsChangable(Boolean.TRUE.equals(entity));
+        getMigrationDowntime().setIsChangeable(Boolean.TRUE.equals(entity));
     }
 
     private void displayTypeSelectedItemChanged(Object sender, EventArgs args) {
@@ -2419,8 +2419,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         handleQxlClusterLevel();
-        getUsbPolicy().setIsChangable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
-        getIsSmartcardEnabled().setIsChangable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
+        getUsbPolicy().setIsChangeable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
+        getIsSmartcardEnabled().setIsChangeable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
         getVncKeyboardLayout().setIsAvailable(graphics.getBackingGraphicsTypes().contains(GraphicsType.VNC));
         updateNumOfMonitors();
     }
@@ -2455,10 +2455,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void updateNumOfMonitors() {
         if (getDisplayType().getSelectedItem() == DisplayType.qxl) {
-            getNumOfMonitors().setIsChangable(true);
+            getNumOfMonitors().setIsChangeable(true);
         } else {
             getNumOfMonitors().setSelectedItem(1);
-            getNumOfMonitors().setIsChangable(false);
+            getNumOfMonitors().setIsChangeable(false);
         }
     }
 
@@ -2546,7 +2546,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         List<VDSGroup> possibleClusters = getClusterAccordingSystemTree(model, clusters);
         if (dataCenter == null || possibleClusters == null) {
-            getDataCenterWithClustersList().setIsChangable(false);
+            getDataCenterWithClustersList().setIsChangeable(false);
             return;
         }
 
@@ -3015,9 +3015,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private class NotChangableForVmInPoolListModel<T> extends ListModel<T> {
         @Override
-        public ListModel<T> setIsChangable(boolean value) {
+        public ListModel<T> setIsChangeable(boolean value) {
             if (!isVmAttachedToPool()) {
-                super.setIsChangable(value);
+                super.setIsChangeable(value);
             }
             return this;
         }
@@ -3032,9 +3032,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         @Override
-        public EntityModel<T> setIsChangable(boolean value) {
+        public EntityModel<T> setIsChangeable(boolean value) {
             if (!isVmAttachedToPool()) {
-                super.setIsChangable(value);
+                super.setIsChangeable(value);
             }
             return this;
         }
@@ -3042,9 +3042,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private class NotChangableForVmInPoolKeyValueModel extends KeyValueModel {
         @Override
-        public KeyValueModel setIsChangable(boolean value) {
+        public KeyValueModel setIsChangeable(boolean value) {
             if (!isVmAttachedToPool()) {
-                super.setIsChangable(value);
+                super.setIsChangeable(value);
             }
             return this;
         }

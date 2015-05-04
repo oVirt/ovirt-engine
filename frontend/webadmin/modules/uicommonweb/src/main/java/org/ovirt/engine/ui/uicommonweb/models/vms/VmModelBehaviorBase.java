@@ -126,7 +126,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getQuota().setIsAvailable(false);
         }
 
-        getModel().getIsRngEnabled().setIsChangable(isRngDeviceSupported(getModel()));
+        getModel().getIsRngEnabled().setIsChangeable(isRngDeviceSupported(getModel()));
         if (!getModel().getIsRngEnabled().getIsChangable()) {
             getModel().getIsRngEnabled().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
         }
@@ -143,9 +143,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         boolean randomSourceAvailable = requiredRngSources.contains(VmRngDevice.Source.RANDOM);
         boolean hwrngSourceAvailable = requiredRngSources.contains(VmRngDevice.Source.HWRNG);
 
-        model.getIsRngEnabled().setIsChangable(!requiredRngSourcesEmpty);
-        model.getRngPeriod().setIsChangable(!requiredRngSourcesEmpty);
-        model.getRngBytes().setIsChangable(!requiredRngSourcesEmpty);
+        model.getIsRngEnabled().setIsChangeable(!requiredRngSourcesEmpty);
+        model.getRngPeriod().setIsChangeable(!requiredRngSourcesEmpty);
+        model.getRngBytes().setIsChangeable(!requiredRngSourcesEmpty);
 
         if (requiredRngSourcesEmpty) {
             model.getIsRngEnabled().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
@@ -153,12 +153,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             model.getRngBytes().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
         }
 
-        model.getRngSourceRandom().setIsChangable(randomSourceAvailable);
+        model.getRngSourceRandom().setIsChangeable(randomSourceAvailable);
         if (!randomSourceAvailable) {
             model.getRngSourceRandom().setChangeProhibitionReason(messages.rngSourceNotSupportedByCluster(VmRngDevice.Source.RANDOM.toString()));
         }
 
-        model.getRngSourceHwrng().setIsChangable(hwrngSourceAvailable);
+        model.getRngSourceHwrng().setIsChangeable(hwrngSourceAvailable);
         if (!hwrngSourceAvailable) {
             model.getRngSourceHwrng().setChangeProhibitionReason(messages.rngSourceNotSupportedByCluster(VmRngDevice.Source.HWRNG.toString()));
         }
@@ -172,9 +172,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getIsAutoAssign().setEntity(false);
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.PINNED_TO_HOST);
         }
-        getModel().getIsAutoAssign().setIsChangable(!isLocalSD);
-        getModel().getMigrationMode().setIsChangable(!isLocalSD);
-        getModel().getDefaultHost().setIsChangable(!isLocalSD);
+        getModel().getIsAutoAssign().setIsChangeable(!isLocalSD);
+        getModel().getMigrationMode().setIsChangeable(!isLocalSD);
+        getModel().getDefaultHost().setIsChangeable(!isLocalSD);
     }
 
     protected void buildModel(VmBase vmBase,
@@ -478,7 +478,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                     model.getDefaultHost()
                                             .setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] { vds })));
                                     model.getDefaultHost().setSelectedItem(vds);
-                                    model.getDefaultHost().setIsChangable(false);
+                                    model.getDefaultHost().setIsChangeable(false);
                                     model.getDefaultHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
                                     break;
                                 }
@@ -642,7 +642,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         {
             getModel().getStorageDomain().setItems(new ArrayList<StorageDomain>());
             getModel().getStorageDomain().setSelectedItem(null);
-            getModel().getStorageDomain().setIsChangable(false);
+            getModel().getStorageDomain().setIsChangeable(false);
         }
     }
 
@@ -681,7 +681,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                     diskModel.getStorageDomain().setChangeProhibitionReason(
                             constants.noActiveTargetStorageDomainAvailableMsg());
-                    diskModel.getStorageDomain().setIsChangable(!availableDiskStorageDomains.isEmpty());
+                    diskModel.getStorageDomain().setIsChangeable(!availableDiskStorageDomains.isEmpty());
                 }
                 ArrayList<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
                 Collection<StorageDomain> cinderStorageDomains =
@@ -696,8 +696,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             CinderDisk cinderDisk = (CinderDisk) diskModel.getDisk();
             diskModel.getStorageDomain().setItems(Linq.filterStorageDomainById(
                     cinderStorageDomains, cinderDisk.getStorageIds().get(0)));
-            diskModel.getStorageDomain().setIsChangable(false);
-            diskModel.getDiskProfile().setIsChangable(false);
+            diskModel.getStorageDomain().setIsChangeable(false);
+            diskModel.getDiskProfile().setIsChangeable(false);
             diskModel.getDiskProfile().setChangeProhibitionReason(
                     ConstantsManager.getInstance().getConstants().notSupportedForCinderDisks());
         }
@@ -847,7 +847,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void setReadOnlyTemplateWithVersion(TemplateWithVersion templateCouple) {
         getModel().getTemplateWithVersion().setItems(Collections.singleton(templateCouple));
         getModel().getTemplateWithVersion().setSelectedItem(templateCouple);
-        getModel().getTemplateWithVersion().setIsChangable(false);
+        getModel().getTemplateWithVersion().setIsChangeable(false);
 
     }
 
@@ -879,7 +879,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 }
                 getModel().getCpuPinning().setEntity("");
             }
-            getModel().getCpuPinning().setIsChangable(hasCpuPinning);
+            getModel().getCpuPinning().setIsChangeable(hasCpuPinning);
         }
     }
 
@@ -894,11 +894,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         boolean nonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
 
         if (clusterSupportsHostCpu && nonMigratable) {
-            getModel().getHostCpu().setIsChangable(true);
+            getModel().getHostCpu().setIsChangeable(true);
         } else {
             getModel().getHostCpu().setEntity(false);
             getModel().getHostCpu().setChangeProhibitionReason(constants.hosCPUUnavailable());
-            getModel().getHostCpu().setIsChangable(false);
+            getModel().getHostCpu().setIsChangeable(false);
 
         }
     }
@@ -910,7 +910,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getIsHighlyAvailable().setChangeProhibitionReason(constants.hostNonMigratable());
             getModel().getIsHighlyAvailable().setEntity(false);
         }
-        getModel().getIsHighlyAvailable().setIsChangable(automaticMigrationAllowed);
+        getModel().getIsHighlyAvailable().setIsChangeable(automaticMigrationAllowed);
     }
 
     public void updateMigrationAvailability() {
@@ -919,7 +919,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getMigrationMode().setChangeProhibitionReason(constants.hostIsHa());
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
         }
-        getModel().getMigrationMode().setIsChangable(!haHost);
+        getModel().getMigrationMode().setIsChangeable(!haHost);
     }
 
     public void updateCpuSharesAmountChangeability() {
@@ -932,7 +932,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         ? null //$NON-NLS-1$
                         : getModel().getCpuSharesAmountSelection().getSelectedItem().getValue());
 
-        getModel().getCpuSharesAmount().setIsChangable(changeable);
+        getModel().getCpuSharesAmount().setIsChangeable(changeable);
     }
 
     public void updateCpuSharesSelection() {
@@ -987,8 +987,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         int numOfSockets = extractIntFromListModel(getModel().getNumOfSockets());
 
         // if incorrect value put - e.g. not an integer
-        getModel().getCoresPerSocket().setIsChangable(totalCpuCores != 0);
-        getModel().getNumOfSockets().setIsChangable(totalCpuCores != 0);
+        getModel().getCoresPerSocket().setIsChangeable(totalCpuCores != 0);
+        getModel().getNumOfSockets().setIsChangeable(totalCpuCores != 0);
         if (totalCpuCores == 0) {
             return;
         }
@@ -1017,8 +1017,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         boolean isNumOfVcpusCorrect = isNumOfSocketsCorrect(totalCpuCores);
 
-        getModel().getCoresPerSocket().setIsChangable(isNumOfVcpusCorrect);
-        getModel().getNumOfSockets().setIsChangable(isNumOfVcpusCorrect);
+        getModel().getCoresPerSocket().setIsChangeable(isNumOfVcpusCorrect);
+        getModel().getNumOfSockets().setIsChangeable(isNumOfVcpusCorrect);
     }
 
     public boolean isNumOfSocketsCorrect(int totalCpuCores) {
@@ -1199,7 +1199,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateSelectedCdImage(VmBase vmBase) {
         getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
         boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
-        getModel().getCdImage().setIsChangable(hasCd);
+        getModel().getCdImage().setIsChangeable(hasCd);
         getModel().getCdAttached().setEntity(hasCd);
     }
 
@@ -1238,7 +1238,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void enableSinglePCI(boolean enabled) {
-        getModel().getIsSingleQxlEnabled().setIsChangable(enabled);
+        getModel().getIsSingleQxlEnabled().setIsChangeable(enabled);
         if (!enabled) {
             getModel().getIsSingleQxlEnabled().setEntity(false);
         }

@@ -25,8 +25,8 @@ public class StorageQosParametersModel extends QosParametersModel<StorageQos> {
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
                     boolean value = getIsChangable();
-                    getThroughput().setIsChangable(value);
-                    getIops().setIsChangable(value);
+                    getThroughput().setIsChangeable(value);
+                    getIops().setIsChangeable(value);
                 }
             }
         });

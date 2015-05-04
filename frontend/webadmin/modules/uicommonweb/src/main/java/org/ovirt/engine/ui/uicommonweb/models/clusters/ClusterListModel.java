@@ -350,7 +350,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                     final StoragePool selectedDataCenter = Linq.firstOrDefault(dataCenters,
                             new DataCenterPredicate(selectDataCenter.getId()));
                     cModel.getDataCenter().setItems(dataCenters, selectedDataCenter);
-                    cModel.getDataCenter().setIsChangable(false);
+                    cModel.getDataCenter().setIsChangeable(false);
                 }
                 else
                 {
@@ -390,9 +390,9 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         clusterModel.setOriginalName(cluster.getName());
         clusterModel.getName().setEntity(cluster.getName());
         clusterModel.getEnableOvirtService().setEntity(cluster.supportsVirtService());
-        clusterModel.getEnableOvirtService().setIsChangable(true);
+        clusterModel.getEnableOvirtService().setIsChangeable(true);
         clusterModel.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
-        clusterModel.getEnableGlusterService().setIsChangable(true);
+        clusterModel.getEnableGlusterService().setIsChangeable(true);
         clusterModel.getEnableKsm().setEntity(cluster.isEnableKsm());
         clusterModel.getEnableBallooning().setEntity(cluster.isEnableBallooning());
         clusterModel.getArchitecture().setSelectedItem(cluster.getArchitecture());
@@ -401,19 +401,19 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         clusterModel.getAutoConverge().setSelectedItem(cluster.getAutoConverge());
         clusterModel.getMigrateCompressed().setSelectedItem(cluster.getMigrateCompressed());
         clusterModel.getGlusterTunedProfile().setSelectedItem(cluster.getGlusterTunedProfile());
-        clusterModel.getGlusterTunedProfile().setIsChangable(cluster.getGroupHostsAndVms().getHosts() == 0);
+        clusterModel.getGlusterTunedProfile().setIsChangeable(cluster.getGroupHostsAndVms().getHosts() == 0);
 
         if (cluster.supportsTrustedService())
         {
-            clusterModel.getEnableGlusterService().setIsChangable(false);
+            clusterModel.getEnableGlusterService().setIsChangeable(false);
         }
         if (cluster.supportsVirtService()&& !cluster.supportsGlusterService())
         {
-            clusterModel.getEnableTrustedService().setIsChangable(true);
+            clusterModel.getEnableTrustedService().setIsChangeable(true);
         }
         else
         {
-            clusterModel.getEnableTrustedService().setIsChangable(false);
+            clusterModel.getEnableTrustedService().setIsChangeable(false);
         }
 
         clusterModel.getOptimizeForSpeed()
@@ -432,22 +432,22 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                             public void onSuccess(Object model1, Object result) {
                                 ArrayList<GlusterVolumeEntity> volumes = (ArrayList<GlusterVolumeEntity>) result;
                                 if (volumes.size() > 0) {
-                                    clusterModel.getEnableGlusterService().setIsChangable(false);
+                                    clusterModel.getEnableGlusterService().setIsChangeable(false);
                                     if (!isVirtGlusterAllowed) {
-                                        clusterModel.getEnableOvirtService().setIsChangable(false);
+                                        clusterModel.getEnableOvirtService().setIsChangeable(false);
                                     }
                                 }
                             }
                         };
                         AsyncDataProvider.getInstance().getVolumeList(asyncQuery, cluster.getName());
                         if (cluster.getGroupHostsAndVms().getVms() > 0) {
-                            clusterModel.getEnableOvirtService().setIsChangable(false);
+                            clusterModel.getEnableOvirtService().setIsChangeable(false);
                             if (!isVirtGlusterAllowed) {
-                                clusterModel.getEnableGlusterService().setIsChangable(false);
+                                clusterModel.getEnableGlusterService().setIsChangeable(false);
                             }
                         }
                         if (cluster.getGroupHostsAndVms().getHosts() > 0) {
-                            clusterModel.getEnableTrustedService().setIsChangable(false);
+                            clusterModel.getEnableTrustedService().setIsChangeable(false);
                             clusterModel.getEnableTrustedService().setChangeProhibitionReason(
                                     ConstantsManager.getInstance()
                                             .getConstants()
@@ -458,7 +458,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
 
         if (getSystemTreeSelectedItem() != null && (getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster ||
                 getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster_Gluster)) {
-            clusterModel.getName().setIsChangable(false);
+            clusterModel.getName().setIsChangeable(false);
             clusterModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
 

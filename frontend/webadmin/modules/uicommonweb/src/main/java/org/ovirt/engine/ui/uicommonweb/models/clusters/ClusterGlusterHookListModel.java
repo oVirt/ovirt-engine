@@ -336,7 +336,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
                 public void executed(FrontendActionAsyncResult result) {
                     if (result.getReturnValue().getSucceeded()) {
                         resolveConflictsModel.getResolveContentConflict().setEntity(Boolean.FALSE);
-                        resolveConflictsModel.getResolveContentConflict().setIsChangable(Boolean.FALSE);
+                        resolveConflictsModel.getResolveContentConflict().setIsChangeable(Boolean.FALSE);
                     }
                 }
             };
@@ -352,7 +352,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
                 public void executed(FrontendActionAsyncResult result) {
                     if (result.getReturnValue().getSucceeded()) {
                         resolveConflictsModel.getResolveStatusConflict().setEntity(Boolean.FALSE);
-                        resolveConflictsModel.getResolveStatusConflict().setIsChangable(Boolean.FALSE);
+                        resolveConflictsModel.getResolveStatusConflict().setIsChangeable(Boolean.FALSE);
                     }
                 }
             };
@@ -368,7 +368,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
                 public void executed(FrontendActionAsyncResult result) {
                     if (result.getReturnValue().getSucceeded()) {
                         resolveConflictsModel.getResolveMissingConflict().setEntity(Boolean.FALSE);
-                        resolveConflictsModel.getResolveMissingConflict().setIsChangable(Boolean.FALSE);
+                        resolveConflictsModel.getResolveMissingConflict().setIsChangeable(Boolean.FALSE);
                     }
                 }
             };

@@ -89,6 +89,6 @@ public class DataCenterQuotaListModel extends QuotaListModel<StoragePool> {
 
         quotaModel.getDataCenter().setItems(Arrays.asList(getEntity()));
         quotaModel.getDataCenter().setSelectedItem(getEntity());
-        quotaModel.getDataCenter().setIsChangable(false);
+        quotaModel.getDataCenter().setIsChangeable(false);
     }
 }

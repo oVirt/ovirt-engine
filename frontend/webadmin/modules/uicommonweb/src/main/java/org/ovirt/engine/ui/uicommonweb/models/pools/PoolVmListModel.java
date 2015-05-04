@@ -105,7 +105,7 @@ public class PoolVmListModel extends VmListModel<VmPool> {
 
         if (list.size() == getEntity().getAssignedVmsCount()) {
             model.getLatch().setIsAvailable(true);
-            model.getLatch().setIsChangable(true);
+            model.getLatch().setIsChangeable(true);
             model.setNote(ConstantsManager.getInstance().getConstants().detachAllVmsWarning());
         }
 

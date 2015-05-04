@@ -373,7 +373,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         .getMessages()
                         .editNetworkTitle(logicalNetwork.getName()));
                 networkDialogModel.getName().setIsAvailable(false);
-                networkDialogModel.getNetwork().setIsChangable(false);
+                networkDialogModel.getNetwork().setIsChangeable(false);
                 networkDialogModel.getGateway()
                         .setIsAvailable((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MultipleGatewaysSupported,
                                 version));
@@ -432,7 +432,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 customPropertiesModel.deserialize(KeyValueModel.convertProperties(entity.getCustomProperties()));
             }
 
-            networkDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
+            networkDialogModel.getIsToSync().setIsChangeable(!logicalNetwork.isInSync());
             networkDialogModel.getIsToSync()
                     .setEntity(networksToSync.contains(logicalNetwork.getName()));
 

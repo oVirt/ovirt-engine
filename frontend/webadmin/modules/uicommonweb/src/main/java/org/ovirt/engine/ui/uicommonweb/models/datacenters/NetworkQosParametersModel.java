@@ -87,15 +87,15 @@ public class NetworkQosParametersModel extends Model {
         if (getEnabled().equals(sender)) {
             updateChangeability();
         } else if (this.equals(sender)) {
-            getEnabled().setIsChangable(getIsChangable());
+            getEnabled().setIsChangeable(getIsChangable());
         }
     }
 
     private void updateChangeability() {
         boolean enabled = getIsChangable() && getEnabled().getEntity();
-        getAverage().setIsChangable(enabled);
-        getPeak().setIsChangable(enabled);
-        getBurst().setIsChangable(enabled);
+        getAverage().setIsChangeable(enabled);
+        getPeak().setIsChangeable(enabled);
+        getBurst().setIsChangeable(enabled);
     }
 
 }

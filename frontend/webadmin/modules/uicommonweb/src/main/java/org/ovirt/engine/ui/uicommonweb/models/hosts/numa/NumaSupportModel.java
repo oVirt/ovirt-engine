@@ -61,7 +61,7 @@ public class NumaSupportModel extends Model {
             host = hosts.get(0);
         }
         if (getHosts().getItems().size() <= 1) {
-            getHosts().setIsChangable(false);
+            getHosts().setIsChangeable(false);
         }
         getHosts().getSelectedItemChangedEvent().addListener(new IEventListener() {
 

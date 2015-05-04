@@ -40,9 +40,9 @@ public class HostNetworkQosParametersModel extends QosParametersModel<HostNetwor
                     Object sender,
                     PropertyChangedEventArgs args) {
                 boolean value = getIsChangable();
-                getOutAverageLinkshare().setIsChangable(value);
-                getOutAverageUpperlimit().setIsChangable(value);
-                getOutAverageRealtime().setIsChangable(value);
+                getOutAverageLinkshare().setIsChangeable(value);
+                getOutAverageUpperlimit().setIsChangeable(value);
+                getOutAverageRealtime().setIsChangeable(value);
             }
         });
     }

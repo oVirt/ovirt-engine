@@ -197,10 +197,10 @@ public class NfsStorageModel extends FileStorageModel {
         // Advanced options are editable only if override checkbox is enabled
         // and the dialog is not editing existing nfs storage.
         boolean isChangeable = (Boolean) getOverride().getEntity();
-        getVersion().setIsChangable(isChangeable);
-        getRetransmissions().setIsChangable(isChangeable);
-        getTimeout().setIsChangable(isChangeable);
-        getMountOptions().setIsChangable(isChangeable);
+        getVersion().setIsChangeable(isChangeable);
+        getRetransmissions().setIsChangeable(isChangeable);
+        getTimeout().setIsChangeable(isChangeable);
+        getMountOptions().setIsChangeable(isChangeable);
         getMountOptions().setTitle(isChangeable ? ConstantsManager.getInstance().getConstants().mountOptionsHint() : null);
     }
 
@@ -285,6 +285,6 @@ public class NfsStorageModel extends FileStorageModel {
     @Override
     public void prepareForEdit(StorageDomain storage) {
         super.prepareForEdit(storage);
-        getOverride().setIsChangable(isEditable(storage));
+        getOverride().setIsChangeable(isEditable(storage));
     }
 }

@@ -370,7 +370,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                                 .setChangeProhibitionReason(ConstantsManager.getInstance()
                                         .getConstants()
                                         .importSparseDiskToBlockDeviceMustCollapseSnapshots());
-                        ((ImportVmData) item).getCollapseSnapshots().setIsChangable(false);
+                        ((ImportVmData) item).getCollapseSnapshots().setIsChangeable(false);
 
                         onPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
                     }
@@ -659,7 +659,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                                 vmData.getClone().setChangeProhibitionReason(ConstantsManager.getInstance()
                                         .getConstants()
                                         .importVMThatExistsInSystemMustClone());
-                                vmData.getClone().setIsChangable(false);
+                                vmData.getClone().setIsChangeable(false);
                             }
 
                             if (!vmData.getClone().getEntity() && existingNames.contains(vm.getName())) {

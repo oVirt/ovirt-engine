@@ -619,8 +619,8 @@ public abstract class RunOnceModel extends Model
         setSysPrepDomainName(new ListModel<String>());
         setSysPrepSelectedDomainName(new EntityModel<String>());
 
-        setSysPrepUserName(new EntityModel<String>().setIsChangable(false));
-        setSysPrepPassword(new EntityModel<String>().setIsChangable(false));
+        setSysPrepUserName(new EntityModel<String>().setIsChangeable(false));
+        setSysPrepPassword(new EntityModel<String>().setIsChangeable(false));
 
         setIsSysprepEnabled(new EntityModel<Boolean>(false));
         setIsSysprepPossible(new EntityModel<Boolean>());
@@ -657,13 +657,13 @@ public abstract class RunOnceModel extends Model
         setSpiceFileTransferEnabled(new EntityModel<Boolean>());
         getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
         boolean spiceFileTransferToggle = AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(vm.getVdsGroupCompatibilityVersion().toString());
-        getSpiceFileTransferEnabled().setIsChangable(spiceFileTransferToggle);
+        getSpiceFileTransferEnabled().setIsChangeable(spiceFileTransferToggle);
         getSpiceFileTransferEnabled().setIsAvailable(spiceFileTransferToggle);
 
         setSpiceCopyPasteEnabled(new EntityModel<Boolean>());
         getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
         boolean spiceCopyPasteToggle = AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(vm.getVdsGroupCompatibilityVersion().toString());
-        getSpiceCopyPasteEnabled().setIsChangable(spiceCopyPasteToggle);
+        getSpiceCopyPasteEnabled().setIsChangeable(spiceCopyPasteToggle);
         getSpiceCopyPasteEnabled().setIsAvailable(spiceCopyPasteToggle);
 
         // System tab
@@ -890,7 +890,7 @@ public abstract class RunOnceModel extends Model
                         ArrayList<Disk> vmDisks = ((VdcQueryReturnValue) returnValue).getReturnValue();
 
                         if (vmDisks.isEmpty()) {
-                            getRunAsStateless().setIsChangable(false);
+                            getRunAsStateless().setIsChangeable(false);
                             getRunAsStateless()
                                     .setChangeProhibitionReason(ConstantsManager.getInstance()
                                             .getMessages()
@@ -900,7 +900,7 @@ public abstract class RunOnceModel extends Model
 
                         if (!isDisksContainBootableDisk(vmDisks)) {
                             BootSequenceModel bootSequenceModel = getBootSequence();
-                            bootSequenceModel.getHardDiskOption().setIsChangable(false);
+                            bootSequenceModel.getHardDiskOption().setIsChangeable(false);
                             bootSequenceModel.getHardDiskOption()
                                     .setChangeProhibitionReason(ConstantsManager.getInstance()
                                             .getMessages()
@@ -939,7 +939,7 @@ public abstract class RunOnceModel extends Model
 
                         if (!hasPluggedNics) {
                             BootSequenceModel bootSequenceModel = getBootSequence();
-                            bootSequenceModel.getNetworkOption().setIsChangable(false);
+                            bootSequenceModel.getNetworkOption().setIsChangeable(false);
                             bootSequenceModel.getNetworkOption()
                                     .setChangeProhibitionReason(ConstantsManager.getInstance()
                                             .getMessages()
@@ -1136,16 +1136,16 @@ public abstract class RunOnceModel extends Model
             else if (sender == getDisplayConsole_Vnc_IsSelected() && ((EntityModel<Boolean>) sender).getEntity())
             {
                 getDisplayConsole_Spice_IsSelected().setEntity(false);
-                getVncKeyboardLayout().setIsChangable(true);
-                getSpiceFileTransferEnabled().setIsChangable(false);
-                getSpiceCopyPasteEnabled().setIsChangable(false);
+                getVncKeyboardLayout().setIsChangeable(true);
+                getSpiceFileTransferEnabled().setIsChangeable(false);
+                getSpiceCopyPasteEnabled().setIsChangeable(false);
             }
             else if (sender == getDisplayConsole_Spice_IsSelected() && ((EntityModel<Boolean>) sender).getEntity())
             {
                 getDisplayConsole_Vnc_IsSelected().setEntity(false);
-                getVncKeyboardLayout().setIsChangable(false);
-                getSpiceFileTransferEnabled().setIsChangable(true);
-                getSpiceCopyPasteEnabled().setIsChangable(true);
+                getVncKeyboardLayout().setIsChangeable(false);
+                getSpiceFileTransferEnabled().setIsChangeable(true);
+                getSpiceCopyPasteEnabled().setIsChangeable(true);
             }
             else if (sender == getIsAutoAssign())
             {
@@ -1156,14 +1156,14 @@ public abstract class RunOnceModel extends Model
 
     private void attachIso_EntityChanged()
     {
-        getIsoImage().setIsChangable(getAttachIso().getEntity());
-        getBootSequence().getCdromOption().setIsChangable(getAttachIso().getEntity());
+        getIsoImage().setIsChangeable(getAttachIso().getEntity());
+        getBootSequence().getCdromOption().setIsChangeable(getAttachIso().getEntity());
         updateInitialRunFields();
     }
 
     private void attachFloppy_EntityChanged()
     {
-        getFloppyImage().setIsChangable(getAttachFloppy().getEntity());
+        getFloppyImage().setIsChangeable(getAttachFloppy().getEntity());
         updateInitialRunFields();
     }
 
@@ -1171,8 +1171,8 @@ public abstract class RunOnceModel extends Model
     {
         boolean useAlternateCredentials = getUseAlternateCredentials().getEntity();
 
-        getSysPrepUserName().setIsChangable(getUseAlternateCredentials().getEntity());
-        getSysPrepPassword().setIsChangable(getUseAlternateCredentials().getEntity());
+        getSysPrepUserName().setIsChangeable(getUseAlternateCredentials().getEntity());
+        getSysPrepPassword().setIsChangeable(getUseAlternateCredentials().getEntity());
 
         getSysPrepUserName().setEntity(useAlternateCredentials ? "" : null); //$NON-NLS-1$
         getSysPrepPassword().setEntity(useAlternateCredentials ? "" : null); //$NON-NLS-1$
@@ -1195,7 +1195,7 @@ public abstract class RunOnceModel extends Model
 
     private void isAutoAssign_EntityChanged(Object sender, EventArgs args) {
         if (getIsAutoAssign().getEntity() == false) {
-            getDefaultHost().setIsChangable(true);
+            getDefaultHost().setIsChangeable(true);
         }
     }
 
@@ -1301,7 +1301,7 @@ public abstract class RunOnceModel extends Model
         vncKeyboardLayoutItems.addAll(layouts);
         getVncKeyboardLayout().setItems(vncKeyboardLayoutItems);
 
-        getVncKeyboardLayout().setIsChangable(false);
+        getVncKeyboardLayout().setIsChangeable(false);
     }
 
 }

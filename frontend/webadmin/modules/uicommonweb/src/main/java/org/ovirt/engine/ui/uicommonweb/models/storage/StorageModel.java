@@ -332,7 +332,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                         {
                             LocalStorageModel model = (LocalStorageModel) item;
                             model.getPath().setEntity(prefix);
-                            model.getPath().setIsChangable(false);
+                            model.getPath().setIsChangeable(false);
                         }
                     }
                 }
@@ -358,7 +358,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
                 getDataCenter().setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
                 getDataCenter().setSelectedItem(dc);
-                getDataCenter().setIsChangable(false);
+                getDataCenter().setIsChangeable(false);
                 getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
             }
                 break;
@@ -366,7 +366,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
             case Host: {
                 VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
 
-                getHost().setIsChangable(false);
+                getHost().setIsChangeable(false);
                 getHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
                 getHost().setSelectedItem(host);
 
@@ -376,7 +376,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
                 getDataCenter().setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
                 getDataCenter().setSelectedItem(dc);
-                getDataCenter().setIsChangable(false);
+                getDataCenter().setIsChangeable(false);
                 getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
             }
                 break;
@@ -548,7 +548,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         {
             if (!dataCenter.getId().equals(UnassignedDataCenterId))
             {
-                getFormat().setIsChangable(false);
+                getFormat().setIsChangeable(false);
 
                 // If data center has format defined and the selected-item role is Data, choose it.
                 if (dataCenter.getStoragePoolFormatType() != null
@@ -598,7 +598,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                     return;
                 }
 
-                getFormat().setIsChangable(true);
+                getFormat().setIsChangeable(true);
 
                 if (getSelectedItem().getType() != StorageType.POSIXFS && getSelectedItem().getType() != StorageType.GLUSTERFS) {
                     formats.add(StorageFormatType.V1);

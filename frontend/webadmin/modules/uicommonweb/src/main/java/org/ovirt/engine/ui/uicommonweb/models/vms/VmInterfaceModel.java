@@ -103,7 +103,7 @@ public abstract class VmInterfaceModel extends Model
             @Override
             public void setEntity(Boolean enableManualMac) {
                 super.setEntity(enableManualMac);
-                getMAC().setIsChangable(enableManualMac);
+                getMAC().setIsChangeable(enableManualMac);
             }
         });
         getEnableMac().setEntity(false);
@@ -292,10 +292,10 @@ public abstract class VmInterfaceModel extends Model
                 boolean isPlugChangeable = getPlugged().getIsChangable();
 
                 getPlugged_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
-                getPlugged_IsSelected().setIsChangable(isPlugChangeable);
+                getPlugged_IsSelected().setIsChangeable(isPlugChangeable);
 
                 getUnplugged_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
-                getUnplugged_IsSelected().setIsChangable(isPlugChangeable);
+                getUnplugged_IsSelected().setIsChangeable(isPlugChangeable);
             } else if (propArgs.propertyName.equals("IsAvailable")) { //$NON-NLS-1$
                 boolean isPlugAvailable = getPlugged().getIsAvailable();
                 getPlugged_IsSelected().setIsAvailable(isPlugAvailable);
@@ -326,10 +326,10 @@ public abstract class VmInterfaceModel extends Model
                 boolean isLinkedChangeable = getLinked().getIsChangable();
 
                 getLinked_IsSelected().setChangeProhibitionReason(getChangeProhibitionReason());
-                getLinked_IsSelected().setIsChangable(isLinkedChangeable);
+                getLinked_IsSelected().setIsChangeable(isLinkedChangeable);
 
                 getUnlinked_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
-                getUnlinked_IsSelected().setIsChangable(isLinkedChangeable);
+                getUnlinked_IsSelected().setIsChangeable(isLinkedChangeable);
             } else if (propArgs.propertyName.equals("IsAvailable")) { //$NON-NLS-1$
                 boolean isLinkedAvailable = getLinked().getIsAvailable();
                 getLinked_IsSelected().setIsAvailable(isLinkedAvailable);
@@ -503,18 +503,18 @@ public abstract class VmInterfaceModel extends Model
         boolean isNullProfileSelected = getProfile().getSelectedItem() == null;
 
         if (isNullProfileSelected) {
-            getLinked().setIsChangable(false);
+            getLinked().setIsChangeable(false);
             return;
         }
         if (!hotUpdateSupported) {
-            getLinked().setIsChangable(false);
+            getLinked().setIsChangeable(false);
             return;
         }
-        getLinked().setIsChangable(true);
+        getLinked().setIsChangeable(true);
     }
 
     protected void updateProfileChangability() {
-        getProfile().setIsChangable(true);
+        getProfile().setIsChangeable(true);
     }
 
     protected boolean selectedNetworkExternal() {

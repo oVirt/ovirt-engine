@@ -855,7 +855,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         if (!isChangable && changeProhibitionReason != null) {
             model.setChangeProhibitionReason(changeProhibitionReason);
         }
-        model.setIsChangable(isChangable);
+        model.setIsChangeable(isChangable);
     }
 
     private void initRemoveDisksCheckboxes(final Map<Guid, EntityModel> vmsMap) {

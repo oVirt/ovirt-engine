@@ -194,7 +194,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
                                                                                   tagListModel.tagToModel((Tags) returnValue);
                                                                           rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
                                                                           rootTag.setType(TagModelType.Root);
-                                                                          rootTag.setIsChangable(false);
+                                                                          rootTag.setIsChangeable(false);
                                                                           tagListModel.setItems(new ArrayList<TagModel>(Arrays.asList(new TagModel[] {rootTag})));
 
                                                                       }
@@ -256,7 +256,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel>
         SelectionTreeNodeModel node = new SelectionTreeNodeModel();
         node.setDescription(tag.getName().getEntity());
         node.setIsSelectedNullable(tag.getSelection());
-        node.setIsChangable(tag.getIsChangable());
+        node.setIsChangeable(tag.getIsChangable());
         node.setIsSelectedNotificationPrevent(true);
         node.setEntity(tag);
         node.getPropertyChangedEvent().addListener(this);

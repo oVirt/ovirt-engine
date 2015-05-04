@@ -963,8 +963,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         getAuthSshPort().setEntity(Integer.parseInt(constants.defaultHostSSHPort()));
         setUserName(new EntityModel<String>());
         getUserName().setEntity(RootUserName);
-        // TODO: remove setIsChangable when configured ssh username is enabled
-        getUserName().setIsChangable(false);
+        // TODO: remove setIsChangeable when configured ssh username is enabled
+        getUserName().setIsChangeable(false);
         setFetchSshFingerprint(new EntityModel<String>());
         getFetchSshFingerprint().setEntity(""); //$NON-NLS-1$
         setUserPassword(new EntityModel<String>());
@@ -1002,9 +1002,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         getProviderSearchFilterLabel().setIsAvailable(false);
         setExternalDiscoveredHosts(new ListModel());
         setExternalHostGroups(new ListModel());
-        getExternalHostGroups().setIsChangable(true);
+        getExternalHostGroups().setIsChangeable(true);
         setExternalComputeResource(new ListModel());
-        getExternalComputeResource().setIsChangable(true);
+        getExternalComputeResource().setIsChangeable(true);
         getUpdateHostsCommand().setIsExecutionAllowed(false);
 
         // Initialize primary PM fields.
@@ -1286,7 +1286,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private void consoleAddressChanged() {
         boolean enabled = getConsoleAddressEnabled().getEntity();
-        getConsoleAddress().setIsChangable(enabled);
+        getConsoleAddress().setIsChangeable(enabled);
     }
 
     private void dataCenter_SelectedItemChanged()
@@ -1475,25 +1475,25 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         final String ciscoUcsValue = "cisco_ucs"; //$NON-NLS-1$
 
         // Update primary PM fields.
-        getManagementIp().setIsChangable(isPm);
+        getManagementIp().setIsChangeable(isPm);
         getManagementIp().setIsValid(true);
-        getPmUserName().setIsChangable(isPm);
+        getPmUserName().setIsChangeable(isPm);
         getPmUserName().setIsValid(true);
-        getPmPassword().setIsChangable(isPm);
+        getPmPassword().setIsChangeable(isPm);
         getPmPassword().setIsValid(true);
-        getPmType().setIsChangable(isPm);
+        getPmType().setIsChangeable(isPm);
         getPmType().setIsValid(true);
-        getPmPort().setIsChangable(isPm);
+        getPmPort().setIsChangeable(isPm);
         getPmPort().setIsValid(true);
-        getPmProxyPreferencesList().setIsChangable(getIsPm().getEntity());
+        getPmProxyPreferencesList().setIsChangeable(getIsPm().getEntity());
         String proxySelectedItem = getPmProxyPreferencesList().getSelectedItem();
         getTestCommand().setIsExecutionAllowed(isPm);
         getProxyUpCommand().setIsExecutionAllowed(isPm && proxySelectedItem != null);
         getProxyDownCommand().setIsExecutionAllowed(isPm && proxySelectedItem != null);
-        getPmSlot().setIsChangable(isPm);
-        getPmOptions().setIsChangable(isPm);
+        getPmSlot().setIsChangeable(isPm);
+        getPmOptions().setIsChangeable(isPm);
         getPmOptions().setIsValid(true);
-        getPmSecure().setIsChangable(isPm);
+        getPmSecure().setIsChangeable(isPm);
         VDSGroup cluster = getCluster().getSelectedItem();
         String version = AsyncDataProvider.getInstance().getDefaultConfigurationVersion();
         if (cluster != null) {
@@ -1522,22 +1522,22 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         }
 
         // Update secondary PM fields.
-        getPmSecondaryIp().setIsChangable(isPm);
+        getPmSecondaryIp().setIsChangeable(isPm);
         getPmSecondaryIp().setIsValid(true);
-        getPmSecondaryUserName().setIsChangable(isPm);
+        getPmSecondaryUserName().setIsChangeable(isPm);
         getPmSecondaryUserName().setIsValid(true);
-        getPmSecondaryPassword().setIsChangable(isPm);
+        getPmSecondaryPassword().setIsChangeable(isPm);
         getPmSecondaryPassword().setIsValid(true);
-        getPmSecondaryType().setIsChangable(isPm);
+        getPmSecondaryType().setIsChangeable(isPm);
         getPmSecondaryType().setIsValid(true);
-        getPmSecondaryPort().setIsChangable(isPm);
+        getPmSecondaryPort().setIsChangeable(isPm);
         getPmSecondaryPort().setIsValid(true);
-        getPmSecondarySlot().setIsChangable(isPm);
-        getPmSecondaryOptions().setIsChangable(isPm);
+        getPmSecondarySlot().setIsChangeable(isPm);
+        getPmSecondaryOptions().setIsChangeable(isPm);
         getPmSecondaryOptions().setIsValid(true);
-        getPmSecondarySecure().setIsChangable(isPm);
+        getPmSecondarySecure().setIsChangeable(isPm);
         getDisableAutomaticPowerManagement().setIsValid(true);
-        getDisableAutomaticPowerManagement().setIsChangable(isPm);
+        getDisableAutomaticPowerManagement().setIsChangeable(isPm);
 
         String pmSecondaryType = getPmSecondaryType().getSelectedItem();
         if (!StringHelper.isNullOrEmpty(pmSecondaryType)) {
@@ -1563,9 +1563,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         }
 
         // Update other PM fields.
-        getPmVariants().setIsChangable(isPm);
-        getPmSecondaryConcurrent().setIsChangable(isPm);
-        getPmKdumpDetection().setIsChangable(isPm);
+        getPmVariants().setIsChangeable(isPm);
+        getPmSecondaryConcurrent().setIsChangeable(isPm);
+        getPmKdumpDetection().setIsChangeable(isPm);
         getTestCommand().setIsExecutionAllowed(isPm);
     }
 
@@ -1797,7 +1797,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         setHostId(vds.getId());
         getOverrideIpTables().setIsAvailable(showInstallationProperties());
         getProtocol().setEntity(VdsProtocol.STOMP == vds.getProtocol());
-        getProtocol().setIsChangable(editTransportProperties(vds));
+        getProtocol().setIsChangeable(editTransportProperties(vds));
         setSpmPriorityValue(vds.getVdsSpmPriority());
         setOriginalName(vds.getName());
         getName().setEntity(vds.getName());
@@ -1810,10 +1810,10 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         boolean consoleAddressEnabled = vds.getConsoleAddress() != null;
         getConsoleAddressEnabled().setEntity(consoleAddressEnabled);
         getConsoleAddress().setEntity(vds.getConsoleAddress());
-        getConsoleAddress().setIsChangable(consoleAddressEnabled);
+        getConsoleAddress().setIsChangeable(consoleAddressEnabled);
 
         if (!showInstallationProperties()) {
-            getPkSection().setIsChangable(false);
+            getPkSection().setIsChangeable(false);
             getPkSection().setIsAvailable(false);
 
             // Use public key when edit or approve host
@@ -1857,7 +1857,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         if (isEditWithPMemphasis) {
             setIsPowerManagementTabSelected(true);
             getIsPm().setEntity(true);
-            getIsPm().setIsChangable(false);
+            getIsPm().setIsChangeable(false);
         } else {
             getIsPm().setEntity(vds.isPmEnabled());
         }
@@ -1892,22 +1892,22 @@ public abstract class HostModel extends Model implements HasValidatedTabs
             switch (selectedSystemTreeItem.getType())
             {
             case Host:
-                getName().setIsChangable(false);
+                getName().setIsChangeable(false);
                 getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
                 break;
             case Hosts:
             case Cluster:
             case Cluster_Gluster:
-                getCluster().setIsChangable(false);
+                getCluster().setIsChangeable(false);
                 getCluster().setChangeProhibitionReason(constants.cannotChangeClusterInTreeContext());
-                getDataCenter().setIsChangable(false);
+                getDataCenter().setIsChangeable(false);
                 break;
             case DataCenter:
                 StoragePool selectDataCenter = (StoragePool) selectedSystemTreeItem.getEntity();
                 getDataCenter()
                         .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
                 getDataCenter().setSelectedItem(selectDataCenter);
-                getDataCenter().setIsChangable(false);
+                getDataCenter().setIsChangeable(false);
                 break;
             default:
                 break;

@@ -52,7 +52,7 @@ public class EditQuotaStorageModel extends EntityModel<QuotaStorage> {
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getUnlimitedStorage().getEntity()) {
                     getSpecificStorage().setEntity(false);
-                    getSpecificStorageValue().setIsChangable(false);
+                    getSpecificStorageValue().setIsChangeable(false);
                 }
             }
         });
@@ -63,7 +63,7 @@ public class EditQuotaStorageModel extends EntityModel<QuotaStorage> {
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getSpecificStorage().getEntity()) {
                     getUnlimitedStorage().setEntity(false);
-                    getSpecificStorageValue().setIsChangable(true);
+                    getSpecificStorageValue().setIsChangeable(true);
                 }
             }
         });

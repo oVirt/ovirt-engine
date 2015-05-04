@@ -351,7 +351,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         if (getSystemTreeSelectedItem() != null
                 && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
         {
-            model.getName().setIsChangable(false);
+            model.getName().setIsChangeable(false);
             model.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
 
@@ -368,7 +368,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
                         if (storageDomainList.size() != 0) {
                             model.getStoragePoolType().setChangeProhibitionReason(
                                     constants.cannotChangeRepositoryTypeWithSDAttached());
-                            model.getStoragePoolType().setIsChangable(false);
+                            model.getStoragePoolType().setIsChangeable(false);
                         }
 
                     }
@@ -445,7 +445,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         model.setHelpTag(HelpTag.force_remove_data_center);
         model.setHashName("force_remove_data_center"); //$NON-NLS-1$
         model.getLatch().setIsAvailable(true);
-        model.getLatch().setIsChangable(true);
+        model.getLatch().setIsChangeable(true);
 
         ArrayList<String> list = new ArrayList<>();
         for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
@@ -468,7 +468,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         windowModel.setHelpTag(HelpTag.data_center_re_initialize);
         windowModel.setHashName("data_center_re-initialize"); //$NON-NLS-1$
         windowModel.getLatch().setIsAvailable(true);
-        windowModel.getLatch().setIsChangable(true);
+        windowModel.getLatch().setIsChangeable(true);
 
         windowModel.startProgress(null);
 

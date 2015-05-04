@@ -68,9 +68,9 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
 
         }
 
-        getNicType().setIsChangable(!plug);
-        getEnableMac().setIsChangable(!plug);
-        getMAC().setIsChangable((Boolean) getEnableMac().getEntity() && !plug);
+        getNicType().setIsChangeable(!plug);
+        getEnableMac().setIsChangeable(!plug);
+        getMAC().setIsChangeable((Boolean) getEnableMac().getEntity() && !plug);
 
         updateProfileChangability();
         updateLinkChangability();
@@ -89,7 +89,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
             getLinked().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getConstants()
                     .hotLinkStateUpdateNotSupportedExternalNetworks());
-            getLinked().setIsChangable(false);
+            getLinked().setIsChangeable(false);
             initLinked();
         }
     }
@@ -116,7 +116,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
                 return;
             }
 
-            getProfile().setIsChangable(false);
+            getProfile().setIsChangeable(false);
             getProfileBehavior().initSelectedProfile(getProfile(), getNic());
         }
     }

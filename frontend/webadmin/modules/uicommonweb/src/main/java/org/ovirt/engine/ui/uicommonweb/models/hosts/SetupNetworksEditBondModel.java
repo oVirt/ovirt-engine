@@ -21,7 +21,7 @@ public class SetupNetworksEditBondModel extends SetupNetworksBondModel {
                 .editBondInterfaceTitle(bond.getName()));
 
         // bond name
-        getBond().setIsChangable(false);
+        getBond().setIsChangeable(false);
         List<String> bondName = Arrays.asList(bond.getName());
         getBond().setItems(bondName);
         getBond().setSelectedItem(bond.getName());

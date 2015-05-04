@@ -60,9 +60,9 @@ public class NewClusterPolicyModel extends Model {
 
     private void initModels() {
         getName().setEntity(clusterPolicy.getName());
-        getName().setIsChangable(!clusterPolicy.isLocked());
+        getName().setIsChangeable(!clusterPolicy.isLocked());
         getDescription().setEntity(clusterPolicy.getDescription());
-        getDescription().setIsChangable(!clusterPolicy.isLocked());
+        getDescription().setIsChangeable(!clusterPolicy.isLocked());
 
         initFilters();
         initFunctions();
@@ -75,7 +75,7 @@ public class NewClusterPolicyModel extends Model {
         if (clusterPolicy.getParameterMap() != null) {
             getCustomProperties().putAll(clusterPolicy.getParameterMap());
         }
-        getCustomPropertySheet().setIsChangable(!clusterPolicy.isLocked());
+        getCustomPropertySheet().setIsChangeable(!clusterPolicy.isLocked());
         customPropertiesInitialized = true;
         refreshCustomProperties(null, false);
 
@@ -167,7 +167,7 @@ public class NewClusterPolicyModel extends Model {
         } else {
             currentLoadBalance = policyUnitsMap.get(NONE_POLICY_UNIT);
         }
-        getLoadBalanceList().setIsChangable(!clusterPolicy.isLocked());
+        getLoadBalanceList().setIsChangeable(!clusterPolicy.isLocked());
         getLoadBalanceList().setSelectedItem(currentLoadBalance);
         getLoadBalanceList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 

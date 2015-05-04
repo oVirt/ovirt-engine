@@ -137,7 +137,7 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
     private void markLoggedinTargets(List<SanTargetModel> targets) {
         for (SanTargetModel targetModel : targets) {
             targetModel.setIsLoggedIn(true);
-            targetModel.setIsChangable(false);
+            targetModel.setIsChangeable(false);
         }
         getTargets().setSelectedItems(new ArrayList<SanTargetModel>());
     }

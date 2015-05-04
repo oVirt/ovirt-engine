@@ -26,8 +26,8 @@ public class ExistingVmInstanceTypeManager extends VmInstanceTypeManager {
         super.doUpdateManagedFieldsFrom(vmBase);
 
         deactivate();
-        getModel().getNumOfSockets().setIsChangable(numOfSocketsChangable);
-        getModel().getCoresPerSocket().setIsChangable(coresPerSocket);
+        getModel().getNumOfSockets().setIsChangeable(numOfSocketsChangable);
+        getModel().getCoresPerSocket().setIsChangeable(coresPerSocket);
         activate();
     }
 

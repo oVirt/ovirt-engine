@@ -142,7 +142,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
             Network network = (Network) treeSelectedNetwork.getEntity();
             profileModel.getNetwork().setItems(Arrays.asList(network));
             profileModel.getNetwork().setSelectedItem(network);
-            profileModel.getNetwork().setIsChangable(false);
+            profileModel.getNetwork().setIsChangeable(false);
             return;
         }
 
@@ -167,7 +167,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
                         Network currentNetwork =
                                 findNetwork(profileModel.getProfile().getNetworkId(), networks);
                         profileModel.getNetwork().setSelectedItem(currentNetwork);
-                        profileModel.getNetwork().setIsChangable(false);
+                        profileModel.getNetwork().setIsChangeable(false);
                     } else {
                         profileModel.getNetwork().setSelectedItem(Linq.firstOrDefault(networks));
                     }

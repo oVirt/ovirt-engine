@@ -35,7 +35,7 @@ public class MultipleHostsModel extends Model {
         getUseCommonPassword().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getCommonPassword().setIsChangable(getUseCommonPassword().getEntity());
+                getCommonPassword().setIsChangeable(getUseCommonPassword().getEntity());
                 getApplyPasswordCommand().setIsExecutionAllowed(getUseCommonPassword().getEntity());
             }
         });

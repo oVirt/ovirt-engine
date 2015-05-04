@@ -563,11 +563,11 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             VdsNetworkInterface vdsNetworkInterface = managementNetworkModel.getInterface().getSelectedItem();
             if (vdsNetworkInterface.getBonded() != null && vdsNetworkInterface.getBonded().equals(true))
             {
-                managementNetworkModel.getBondingOptions().setIsChangable(true);
+                managementNetworkModel.getBondingOptions().setIsChangeable(true);
             }
             else
             {
-                managementNetworkModel.getBondingOptions().setIsChangable(false);
+                managementNetworkModel.getBondingOptions().setIsChangeable(false);
             }
         }
     }
@@ -936,7 +936,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 hostInterfaceModel.getCheckConnectivity()
                         .setIsAvailable(!StringHelper.isNullOrEmpty(item.getNetworkName()) && item.getIsManagement());
                 hostInterfaceModel.getCheckConnectivity()
-                        .setIsChangable(!StringHelper.isNullOrEmpty(item.getNetworkName()) && item.getIsManagement());
+                        .setIsChangeable(!StringHelper.isNullOrEmpty(item.getNetworkName()) && item.getIsManagement());
                 hostInterfaceModel.getCheckConnectivity().setEntity(item.getIsManagement());
 
                 if (networksToAdd.isEmpty())
@@ -1023,7 +1023,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                                     .addListener(hostInterfaceListModel);
                         }
                         managementModel.getCheckConnectivity().setIsAvailable(true);
-                        managementModel.getCheckConnectivity().setIsChangable(true);
+                        managementModel.getCheckConnectivity().setIsChangeable(true);
                         managementModel.getCheckConnectivity().setEntity(item.getIsManagement()); // currently, always
                                                                                                   // should be
                                                                                                   // true
@@ -1120,7 +1120,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
         confirmModel.setTitle(ConstantsManager.getInstance().getConstants().confirmTitle());
         confirmModel.getLatch().setEntity(true);
         confirmModel.getLatch().setIsAvailable(true);
-        confirmModel.getLatch().setIsChangable(true);
+        confirmModel.getLatch().setIsChangeable(true);
 
         if (!isBond)
         {
@@ -1361,7 +1361,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                     innerBondModel.getBond()
                             .setItems(new ArrayList<String>(Arrays.asList(new String[] { bond.getName() })));
                     innerBondModel.getBond().setSelectedItem(bond.getName());
-                    innerBondModel.getBond().setIsChangable(false);
+                    innerBondModel.getBond().setIsChangeable(false);
                     hostInterfaceListModel.postBond(hostInterfaceListModel,
                             innerBondModel,
                             networksToAdd,
@@ -1424,7 +1424,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
         VdsNetworkInterface interfaceWithNetwork =
                 Linq.findInterfaceNetworkNameNotEmpty(getSelectedItemsWithVlans());
 
-        innerBondModel.getCheckConnectivity().setIsChangable(interfaceWithNetwork != null);
+        innerBondModel.getCheckConnectivity().setIsChangeable(interfaceWithNetwork != null);
         innerBondModel.getCheckConnectivity().setIsAvailable(interfaceWithNetwork != null
                 && interfaceWithNetwork.getIsManagement());
 

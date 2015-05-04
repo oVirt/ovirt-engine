@@ -889,7 +889,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         updatePmPanelsVisibility(true);
         initExternalHostProviderWidgets(object.showExternalProviderPanel());
-        // TODO: remove setIsChangable when configured ssh username is enabled
+        // TODO: remove setIsChangeable when configured ssh username is enabled
         userNameEditor.setEnabled(false);
 
         networkProviderTab.setVisible(object.showNetworkProviderTab());

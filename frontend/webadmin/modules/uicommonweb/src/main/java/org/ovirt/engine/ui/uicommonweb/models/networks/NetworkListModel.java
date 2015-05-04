@@ -136,7 +136,7 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
 
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Network)
         {
-            networkModel.getName().setIsChangable(false);
+            networkModel.getName().setIsChangeable(false);
             networkModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
     }
@@ -157,7 +157,7 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
             StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
             networkModel.getDataCenters().setItems(Arrays.asList(dc));
             networkModel.getDataCenters().setSelectedItem(dc);
-            networkModel.getDataCenters().setIsChangable(false);
+            networkModel.getDataCenters().setIsChangeable(false);
             return;
         }
 

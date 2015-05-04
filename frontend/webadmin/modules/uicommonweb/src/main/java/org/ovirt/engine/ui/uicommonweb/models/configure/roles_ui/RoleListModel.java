@@ -391,8 +391,8 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         model.getDescription().setEntity(role.getDescription());
         if (commandType == CommandType.Edit)
         {
-            model.getName().setIsChangable(!role.isReadonly());
-            model.getDescription().setIsChangable(!role.isReadonly());
+            model.getName().setIsChangeable(!role.isReadonly());
+            model.getDescription().setIsChangeable(!role.isReadonly());
         }
         switch (commandType)
         {
@@ -405,13 +405,13 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
                 model.setTitle(ConstantsManager.getInstance().getConstants().editRoleTitle());
                 model.setHelpTag(HelpTag.edit_role);
                 model.setHashName("edit_role"); //$NON-NLS-1$
-                model.getIsAdminRole().setIsChangable(false);
+                model.getIsAdminRole().setIsChangeable(false);
                 break;
             case Clone:
                 model.setTitle(ConstantsManager.getInstance().getConstants().copyRoleTitle());
                 model.setHelpTag(HelpTag.copy_role);
                 model.setHashName("copy_role"); //$NON-NLS-1$
-                model.getIsAdminRole().setIsChangable(false);
+                model.getIsAdminRole().setIsChangeable(false);
                 break;
         }
 

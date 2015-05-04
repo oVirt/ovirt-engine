@@ -256,8 +256,8 @@ public class DisksAllocationModel extends EntityModel
             diskModel.getSourceStorageDomain().setIsAvailable(isSourceStorageDomainAvailable);
             diskModel.getSourceStorageDomainName().setIsAvailable(isSourceStorageDomainNameAvailable);
             diskModel.getVolumeType().setIsAvailable(isVolumeFormatAvailable);
-            diskModel.getVolumeType().setIsChangable(isVolumeFormatChangable);
-            diskModel.getAlias().setIsChangable(isAliasChangable);
+            diskModel.getVolumeType().setIsChangeable(isVolumeFormatChangable);
+            diskModel.getAlias().setIsChangeable(isAliasChangable);
         }
     }
 

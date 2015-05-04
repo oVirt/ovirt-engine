@@ -76,7 +76,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
                     .getMessages()
                     .nicHotPlugNotSupported(getClusterCompatibilityVersion().toString()));
         }
-        getPlugged().setIsChangable(allowPlug());
+        getPlugged().setIsChangeable(allowPlug());
         getPlugged().setEntity(allowPlug());
 
         initLinked();
@@ -107,7 +107,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initMAC() {
-        getMAC().setIsChangable(false);
+        getMAC().setIsChangeable(false);
 
     }
 

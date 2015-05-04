@@ -307,7 +307,7 @@ public class HostInterfaceModel extends EntityModel
                     }
                     setBootProtocolsAvailable(value);
                     updateQosChangeability();
-                    getCustomPropertiesModel().setIsChangable(value);
+                    getCustomPropertiesModel().setIsChangeable(value);
                 }
             }
 
@@ -319,9 +319,9 @@ public class HostInterfaceModel extends EntityModel
         getInterface().setIsAvailable(false);
         setBootProtocolsAvailable(true);
         getGateway().setIsAvailable(false);
-        getAddress().setIsChangable(false);
-        getSubnet().setIsChangable(false);
-        getGateway().setIsChangable(false);
+        getAddress().setIsChangeable(false);
+        getSubnet().setIsChangeable(false);
+        getGateway().setIsChangeable(false);
         getQosOverridden().setIsAvailable(false);
         getQosModel().setIsAvailable(false);
         getCustomPropertiesModel().setIsAvailable(false);
@@ -381,7 +381,7 @@ public class HostInterfaceModel extends EntityModel
     }
 
     private void updateQosChangeability() {
-        getQosModel().setIsChangable(getQosOverridden().getIsAvailable() && getQosOverridden().getIsChangable()
+        getQosModel().setIsChangeable(getQosOverridden().getIsAvailable() && getQosOverridden().getIsChangable()
                 && getQosOverridden().getEntity());
     }
 
@@ -399,9 +399,9 @@ public class HostInterfaceModel extends EntityModel
         boolean isChangable = bootProtocolsAvailable && getIsStaticAddress();
         getAddress().setChangeProhibitionReason(isChangable && !staticIpChangeAllowed
                 ? ConstantsManager.getInstance().getConstants().staticIpAddressSameAsHostname() : null);
-        getAddress().setIsChangable(isChangable && staticIpChangeAllowed);
-        getSubnet().setIsChangable(isChangable);
-        getGateway().setIsChangable(isChangable);
+        getAddress().setIsChangeable(isChangable && staticIpChangeAllowed);
+        getSubnet().setIsChangeable(isChangable);
+        getGateway().setIsChangeable(isChangable);
     }
 
     public boolean validate()

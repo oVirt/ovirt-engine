@@ -106,7 +106,7 @@ public class NetworkProfileListModel extends SearchableListModel<NetworkView, Vn
     private void initProfileNetwork(VnicProfileModel model) {
         model.getNetwork().setItems(Arrays.<Network>asList(getEntity()));
         model.getNetwork().setSelectedItem(getEntity());
-        model.getNetwork().setIsChangable(false);
+        model.getNetwork().setIsChangeable(false);
     }
 
     public void cancel() {

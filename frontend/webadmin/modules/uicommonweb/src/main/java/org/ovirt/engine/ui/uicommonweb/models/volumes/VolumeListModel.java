@@ -354,12 +354,12 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                                 break;
                             }
                         }
-                        innerVolumeModel.getDataCenter().setIsChangable(false);
+                        innerVolumeModel.getDataCenter().setIsChangeable(false);
                         innerVolumeModel.getDataCenter().setChangeProhibitionReason(
                                 constants.cannotChangeDCInTreeContext());
                         innerVolumeModel.getCluster().setItems(Arrays.asList(cluster));
                         innerVolumeModel.getCluster().setSelectedItem(cluster);
-                        innerVolumeModel.getCluster().setIsChangable(false);
+                        innerVolumeModel.getCluster().setIsChangeable(false);
                         innerVolumeModel.getCluster().setChangeProhibitionReason(
                                 constants.cannotChangeClusterInTreeContext());
                         break;
@@ -370,7 +370,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                         innerVolumeModel.getDataCenter()
                                 .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
                         innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
-                        innerVolumeModel.getDataCenter().setIsChangable(false);
+                        innerVolumeModel.getDataCenter().setIsChangeable(false);
                         innerVolumeModel.getDataCenter().setChangeProhibitionReason(
                                 constants.cannotChangeDCInTreeContext());
                         break;

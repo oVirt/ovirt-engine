@@ -133,7 +133,7 @@ public class EditProviderModel extends ProviderModel {
 
     @Override
     protected void updateDatacentersForVolumeProvider() {
-        getDataCenter().setIsChangable(false);
+        getDataCenter().setIsChangeable(false);
         AsyncDataProvider.getInstance().getStorageDomainByName(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {

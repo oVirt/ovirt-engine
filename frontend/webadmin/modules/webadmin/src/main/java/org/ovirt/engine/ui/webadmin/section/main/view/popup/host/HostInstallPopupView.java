@@ -206,7 +206,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
                 displayPasswordField(false);
             }
         });
-        // TODO: remove setIsChangable when configured ssh username is enabled
+        // TODO: remove setIsChangeable when configured ssh username is enabled
         userNameEditor.setEnabled(false);
 
         networkProviderWidget.edit(model.getNetworkProviderModel());

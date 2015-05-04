@@ -1242,7 +1242,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             model.getDataCenterWithClustersList().setSelectedItem(selectedDataCenterWithCluster);
         }
 
-        model.getDataCenterWithClustersList().setIsChangable(vm.getStatus() == VMStatus.Down);
+        model.getDataCenterWithClustersList().setIsChangeable(vm.getStatus() == VMStatus.Down);
     }
 
     private void vmModel_DefaultHost_ItemsChanged()

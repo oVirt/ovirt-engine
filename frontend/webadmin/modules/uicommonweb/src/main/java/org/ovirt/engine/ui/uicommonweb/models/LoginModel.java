@@ -174,12 +174,12 @@ public class LoginModel extends Model
         getCommands().add(tempVar);
 
         setProfile(new ListModel<String>());
-        getProfile().setIsChangable(false);
+        getProfile().setIsChangeable(false);
         setUserName(new EntityModel<String>());
-        getUserName().setIsChangable(false);
+        getUserName().setIsChangeable(false);
         getUserName().getEntityChangedEvent().addListener(this);
         setPassword(new EntityModel<String>());
-        getPassword().setIsChangable(false);
+        getPassword().setIsChangeable(false);
         setCreateInstanceOnly(new EntityModel<Boolean>(false));
 
         setIsConnecting(true);
@@ -209,9 +209,9 @@ public class LoginModel extends Model
                     // If this happens to be executed before the AutoLogin() is executed,
                     // it is not a problem, as the AutoLogin() will disable the screen by itself.
                     loginModel.getLoginCommand().setIsExecutionAllowed(true);
-                    loginModel.getUserName().setIsChangable(true);
-                    loginModel.getPassword().setIsChangable(true);
-                    loginModel.getProfile().setIsChangable(true);
+                    loginModel.getUserName().setIsChangeable(true);
+                    loginModel.getPassword().setIsChangeable(true);
+                    loginModel.getProfile().setIsChangeable(true);
                 }
 
                 List<String> domains = (List<String>) ReturnValue;
@@ -254,9 +254,9 @@ public class LoginModel extends Model
                     {
                         loginModel.getPassword().setEntity(""); //$NON-NLS-1$
                         loginModel.setMessages(returnValue.getCanDoActionMessages());
-                        loginModel.getUserName().setIsChangable(true);
-                        loginModel.getPassword().setIsChangable(true);
-                        loginModel.getProfile().setIsChangable(true);
+                        loginModel.getUserName().setIsChangeable(true);
+                        loginModel.getPassword().setIsChangeable(true);
+                        loginModel.getProfile().setIsChangeable(true);
                         loginModel.getLoginCommand().setIsExecutionAllowed(true);
                         loginModel.getLoginFailedEvent().raise(this, EventArgs.EMPTY);
                     }
@@ -291,9 +291,9 @@ public class LoginModel extends Model
     }
 
     protected void disableLoginScreen() {
-        getUserName().setIsChangable(false);
-        getPassword().setIsChangable(false);
-        getProfile().setIsChangable(false);
+        getUserName().setIsChangeable(false);
+        getPassword().setIsChangeable(false);
+        getProfile().setIsChangeable(false);
         getLoginCommand().setIsExecutionAllowed(false);
     }
 

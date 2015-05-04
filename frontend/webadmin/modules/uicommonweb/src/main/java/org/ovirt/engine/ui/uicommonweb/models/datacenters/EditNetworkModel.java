@@ -23,7 +23,7 @@ public class EditNetworkModel extends NetworkModel {
     public EditNetworkModel(Network network, ListModel sourceListModel) {
         super(network, sourceListModel);
         originallyVmNetwork = network.isVmNetwork();
-        getDataCenters().setIsChangable(false);
+        getDataCenters().setIsChangeable(false);
         init();
         initManagement();
     }
@@ -41,8 +41,8 @@ public class EditNetworkModel extends NetworkModel {
         initMtu();
         initIsVm();
         getExport().setEntity(getNetwork().isExternal());
-        getExport().setIsChangable(false);
-        getExternalProviders().setIsChangable(false);
+        getExport().setIsChangeable(false);
+        getExternalProviders().setIsChangeable(false);
 
         if (getNetwork().isExternal()) {
             getNeutronPhysicalNetwork().setEntity(getNetwork().getLabel());
@@ -86,11 +86,11 @@ public class EditNetworkModel extends NetworkModel {
     protected void onExportChanged() {
         super.onExportChanged();
         if (getExport().getEntity()) {
-            getHasVLanTag().setIsChangable(false);
-            getVLanTag().setIsChangable(false);
-            getIsVmNetwork().setIsChangable(false);
-            getNetworkLabel().setIsChangable(false);
-            getNeutronPhysicalNetwork().setIsChangable(false);
+            getHasVLanTag().setIsChangeable(false);
+            getVLanTag().setIsChangeable(false);
+            getIsVmNetwork().setIsChangeable(false);
+            getNetworkLabel().setIsChangeable(false);
+            getNeutronPhysicalNetwork().setIsChangeable(false);
         }
     }
 

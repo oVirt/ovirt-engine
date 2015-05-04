@@ -38,14 +38,14 @@ public class GlusterSwiftServiceModel extends EntityModel<GlusterServerService> 
         super.onEntityChanged();
         GlusterServerService service = getEntity();
         if (service == null || service.getStatus() == GlusterServiceStatus.NOT_AVAILABLE) {
-            getStartSwift().setIsChangable(false);
-            getStopSwift().setIsChangable(false);
-            getRestartSwift().setIsChangable(false);
+            getStartSwift().setIsChangeable(false);
+            getStopSwift().setIsChangeable(false);
+            getRestartSwift().setIsChangeable(false);
         }
         else {
-            getStartSwift().setIsChangable(service.getStatus() != GlusterServiceStatus.RUNNING);
-            getStopSwift().setIsChangable(service.getStatus() != GlusterServiceStatus.STOPPED);
-            getRestartSwift().setIsChangable(true);
+            getStartSwift().setIsChangeable(service.getStatus() != GlusterServiceStatus.RUNNING);
+            getStopSwift().setIsChangeable(service.getStatus() != GlusterServiceStatus.STOPPED);
+            getRestartSwift().setIsChangeable(true);
         }
     }
 

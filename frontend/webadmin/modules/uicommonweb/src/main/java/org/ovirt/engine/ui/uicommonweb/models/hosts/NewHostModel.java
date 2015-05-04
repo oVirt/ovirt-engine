@@ -48,7 +48,7 @@ public class NewHostModel extends HostModel {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 // While load don't let user to change provider
-                getProviders().setIsChangable(false);
+                getProviders().setIsChangeable(false);
                 providers_SelectedItemChanged();
                 updateHostList();
             }
@@ -132,9 +132,9 @@ public class NewHostModel extends HostModel {
                 ArrayList<VDS> hosts = (ArrayList<VDS>) result;
                 ListModel<VDS> hostNameListModel = getExternalHostName();
                 hostNameListModel.setItems(hosts);
-                hostNameListModel.setIsChangable(true);
+                hostNameListModel.setIsChangeable(true);
                 setEnableSearchHost(true);
-                getProviders().setIsChangable(true);
+                getProviders().setIsChangeable(true);
             }
         };
         AsyncDataProvider.getInstance().getExternalProviderHostList(getHostsQuery,
@@ -149,7 +149,7 @@ public class NewHostModel extends HostModel {
                 ArrayList<ExternalHostGroup> hostGroups = (ArrayList<ExternalHostGroup>) result;
                 ListModel externalHostGroupsListModel = getExternalHostGroups();
                 externalHostGroupsListModel.setItems(hostGroups);
-                externalHostGroupsListModel.setIsChangable(true);
+                externalHostGroupsListModel.setIsChangeable(true);
 
                 AsyncQuery getDiscoveredHostsQuery = new AsyncQuery();
                 getDiscoveredHostsQuery.asyncCallback = new INewAsyncCallback() {
@@ -158,7 +158,7 @@ public class NewHostModel extends HostModel {
                         ArrayList<ExternalDiscoveredHost> hosts = (ArrayList<ExternalDiscoveredHost>) result;
                         ListModel externalDiscoveredHostsListModel = getExternalDiscoveredHosts();
                         externalDiscoveredHostsListModel.setItems(hosts);
-                        externalDiscoveredHostsListModel.setIsChangable(true);
+                        externalDiscoveredHostsListModel.setIsChangeable(true);
                     }
                 };
                 AsyncDataProvider.getInstance().getExternalProviderDiscoveredHostList(getDiscoveredHostsQuery,
@@ -174,7 +174,7 @@ public class NewHostModel extends HostModel {
                 ArrayList<ExternalComputeResource> computeResources = (ArrayList<ExternalComputeResource>) result;
                 ListModel externalComputeResourceListModel = getExternalComputeResource();
                 externalComputeResourceListModel.setItems(computeResources);
-                externalComputeResourceListModel.setIsChangable(true);
+                externalComputeResourceListModel.setIsChangeable(true);
             }
         };
         AsyncDataProvider.getInstance().getExternalProviderComputeResourceList(getComputeResourceQuery, provider);
@@ -191,14 +191,14 @@ public class NewHostModel extends HostModel {
                     ArrayList<VDS> hosts = (ArrayList<VDS>) result;
                     ListModel<VDS> hostNameListModel = getExternalHostName();
                     hostNameListModel.setItems(hosts);
-                    hostNameListModel.setIsChangable(true);
+                    hostNameListModel.setIsChangeable(true);
                     setEnableSearchHost(true);
                 }
             };
             AsyncDataProvider.getInstance().getExternalProviderHostList(getHostsQuery, provider.getId(), true, searchFilter);
         } else {
             getExternalHostName().setItems(null);
-            getExternalHostName().setIsChangable(false);
+            getExternalHostName().setIsChangeable(false);
             setEnableSearchHost(false);
         }
     }
@@ -212,7 +212,7 @@ public class NewHostModel extends HostModel {
                 ArrayList<Provider> providers = (ArrayList<Provider>) result;
                 ListModel<Provider> providersListModel = getProviders();
                 providersListModel.setItems(providers, Linq.firstOrDefault(providers));
-                providersListModel.setIsChangable(true);
+                providersListModel.setIsChangeable(true);
                 getIsDiscoveredHosts().setEntity(null);
                 getIsDiscoveredHosts().setEntity(true);
             }
@@ -232,16 +232,16 @@ public class NewHostModel extends HostModel {
     @Override
     protected void setAllowChangeHost(VDS vds) {
         if (getHost().getEntity() != null) {
-            getHost().setIsChangable(false);
+            getHost().setIsChangeable(false);
         } else {
-            getHost().setIsChangable(true);
+            getHost().setIsChangeable(true);
         }
     }
 
     @Override
     protected void setAllowChangeHostPlacementPropertiesWhenNotInMaintenance() {
-        getDataCenter().setIsChangable(true);
-        getCluster().setIsChangable(true);
+        getDataCenter().setIsChangeable(true);
+        getCluster().setIsChangeable(true);
     }
 
     @Override
@@ -272,8 +272,8 @@ public class NewHostModel extends HostModel {
     }
 
     private void setEnableSearchHost(boolean value) {
-        getProviderSearchFilter().setIsChangable(value);
-        getProviderSearchFilterLabel().setIsChangable(value);
+        getProviderSearchFilter().setIsChangeable(value);
+        getProviderSearchFilterLabel().setIsChangeable(value);
         getUpdateHostsCommand().setIsExecutionAllowed(value);
     }
 

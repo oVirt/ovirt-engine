@@ -49,7 +49,7 @@ public class EditTemplateInterfaceModel extends BaseEditVmInterfaceModel {
     @Override
     protected void init() {
         super.init();
-        getPlugged().setIsChangable(false);
+        getPlugged().setIsChangeable(false);
     }
 
     @Override

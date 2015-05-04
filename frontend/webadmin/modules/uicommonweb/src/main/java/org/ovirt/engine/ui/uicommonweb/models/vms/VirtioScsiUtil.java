@@ -40,7 +40,7 @@ public class VirtioScsiUtil {
                         boolean isOsSupportVirtioScsi = diskInterfaces.contains(DiskInterface.VirtIO_SCSI);
 
                         callBeforeUpdates();
-                        model.getIsVirtioScsiEnabled().setIsChangable(isOsSupportVirtioScsi);
+                        model.getIsVirtioScsiEnabled().setIsChangeable(isOsSupportVirtioScsi);
 
                         if (!isOsSupportVirtioScsi) {
                             model.getIsVirtioScsiEnabled().setEntity(false);

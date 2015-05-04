@@ -37,11 +37,11 @@ public class EditHostModel extends HostModel {
     @Override
     protected void setAllowChangeHost(VDS vds) {
         if (vds.getStatus() != VDSStatus.InstallFailed) {
-            getHost().setIsChangable(false);
-            getAuthSshPort().setIsChangable(false);
+            getHost().setIsChangeable(false);
+            getAuthSshPort().setIsChangeable(false);
         } else {
-            getHost().setIsChangable(true);
-            getAuthSshPort().setIsChangable(true);
+            getHost().setIsChangeable(true);
+            getAuthSshPort().setIsChangeable(true);
         }
     }
 
@@ -49,9 +49,9 @@ public class EditHostModel extends HostModel {
     protected void setAllowChangeHostPlacementPropertiesWhenNotInMaintenance() {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
         getDataCenter().setChangeProhibitionReason(constants.dcCanOnlyBeChangedWhenHostInMaintMode());
-        getDataCenter().setIsChangable(false);
+        getDataCenter().setIsChangeable(false);
         getCluster().setChangeProhibitionReason(constants.clusterCanOnlyBeChangedWhenHostInMaintMode());
-        getCluster().setIsChangable(false);
+        getCluster().setIsChangeable(false);
     }
 
     @Override

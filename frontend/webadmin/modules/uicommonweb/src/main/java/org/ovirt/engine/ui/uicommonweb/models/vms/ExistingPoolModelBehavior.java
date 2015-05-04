@@ -41,13 +41,13 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         if (!StringHelper.isNullOrEmpty(pool.getVmPoolSpiceProxy())) {
             getModel().getSpiceProxyEnabled().setEntity(true);
             getModel().getSpiceProxy().setEntity(pool.getVmPoolSpiceProxy());
-            getModel().getSpiceProxy().setIsChangable(true);
+            getModel().getSpiceProxy().setIsChangeable(true);
         }
 
         instanceTypeManager = new ExistingPoolInstanceTypeManager(getModel(), pool);
         instanceTypeManager.setAlwaysEnabledFieldUpdate(true);
-        getModel().getCustomProperties().setIsChangable(false);
-        getModel().getCustomPropertySheet().setIsChangable(false);
+        getModel().getCustomProperties().setIsChangeable(false);
+        getModel().getCustomPropertySheet().setIsChangeable(false);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                 for (DiskModel diskModel : disks) {
                     // Setting Quota
                     diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
-                    diskModel.getQuota().setIsChangable(false);
+                    diskModel.getQuota().setIsChangeable(false);
 
                     ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
                     // We only have one storage ID, as the object is a VM, not a template
@@ -128,7 +128,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                     List<StorageDomain> diskStorageDomains = new ArrayList<StorageDomain>();
                     diskStorageDomains.add(storageDomain);
                     diskModel.getStorageDomain().setItems(diskStorageDomains);
-                    diskModel.getStorageDomain().setIsChangable(false);
+                    diskModel.getStorageDomain().setIsChangeable(false);
                 }
             }
         }), dataCenter.getId(), actionGroup);

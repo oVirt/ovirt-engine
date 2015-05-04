@@ -33,7 +33,7 @@ public abstract class NetworkQoSModel extends BaseNetworkQosModel {
         setName(new EntityModel<String>());
         setDataCenters(new ListModel<StoragePool>());
         getDataCenters().setSelectedItem(dataCenter);
-        getDataCenters().setIsChangable(false);
+        getDataCenters().setIsChangeable(false);
         getInbound().getAverage()
                 .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSInboundAverageDefaultValue));
         getInbound().getPeak()

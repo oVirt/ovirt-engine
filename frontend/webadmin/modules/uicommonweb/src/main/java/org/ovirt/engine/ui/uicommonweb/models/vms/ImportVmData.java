@@ -28,10 +28,10 @@ public class ImportVmData extends ImportEntityData<VM> {
                         getCollapseSnapshots().setChangeProhibitionReason(ConstantsManager.getInstance()
                                 .getConstants()
                                 .importCloneVMMustCollapseSnapshots());
-                        getCollapseSnapshots().setIsChangable(false);
+                        getCollapseSnapshots().setIsChangeable(false);
                     }
                     else {
-                        getCollapseSnapshots().setIsChangable(true);
+                        getCollapseSnapshots().setIsChangeable(true);
                     }
                 }
             }
@@ -47,7 +47,7 @@ public class ImportVmData extends ImportEntityData<VM> {
             getCollapseSnapshots().setEntity(true);
             getCollapseSnapshots().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getConstants().importVMWithTemplateNotInSystemMustCollapseSnapshots());
-            getCollapseSnapshots().setIsChangable(false);
+            getCollapseSnapshots().setIsChangeable(false);
         }
         this.templateExistsInSetup = templateExistsInSetup;
     }

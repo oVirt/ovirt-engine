@@ -468,10 +468,10 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     private void updateUserAuthFields()
     {
         getUserName().setIsValid(true);
-        getUserName().setIsChangable(getUseUserAuth().getEntity());
+        getUserName().setIsChangeable(getUseUserAuth().getEntity());
 
         getPassword().setIsValid(true);
-        getPassword().setIsChangable(getUseUserAuth().getEntity());
+        getPassword().setIsChangeable(getUseUserAuth().getEntity());
     }
 
     @Override

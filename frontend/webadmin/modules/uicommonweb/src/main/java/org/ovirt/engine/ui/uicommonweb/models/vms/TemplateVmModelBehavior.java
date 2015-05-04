@@ -36,15 +36,15 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
         super.initialize(systemTreeSelectedItem);
-        getModel().getTemplateWithVersion().setIsChangable(false);
-        getModel().getBaseTemplate().setIsChangable(false);
-        getModel().getTemplateWithVersion().setIsChangable(false);
-        getModel().getProvisioning().setIsChangable(false);
-        getModel().getStorageDomain().setIsChangable(false);
-        getModel().getIsSoundcardEnabled().setIsChangable(true);
-        getModel().getVmType().setIsChangable(true);
-        getModel().getTemplateVersionName().setIsChangable(!template.isBaseTemplate());
-        getModel().getName().setIsChangable(template.isBaseTemplate());
+        getModel().getTemplateWithVersion().setIsChangeable(false);
+        getModel().getBaseTemplate().setIsChangeable(false);
+        getModel().getTemplateWithVersion().setIsChangeable(false);
+        getModel().getProvisioning().setIsChangeable(false);
+        getModel().getStorageDomain().setIsChangeable(false);
+        getModel().getIsSoundcardEnabled().setIsChangeable(true);
+        getModel().getVmType().setIsChangeable(true);
+        getModel().getTemplateVersionName().setIsChangeable(!template.isBaseTemplate());
+        getModel().getName().setIsChangeable(template.isBaseTemplate());
 
         if (template.getStoragePoolId() != null && !template.getStoragePoolId().equals(Guid.Empty))
         {
@@ -128,7 +128,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
                                 model.getBaseTemplate().setItems(Collections.singletonList(template));
                                 model.getBaseTemplate().setSelectedItem(template);
-                                model.getBaseTemplate().setIsChangable(false);
+                                model.getBaseTemplate().setIsChangeable(false);
                             }
                         }),
                 baseTemplateId);
@@ -189,12 +189,12 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         buildModel(template, new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
             @Override
             public void finished(VmBase source, UnitVmModel destination) {
-                getModel().getMinAllocatedMemory().setIsChangable(false);
+                getModel().getMinAllocatedMemory().setIsChangeable(false);
 
                 updateTimeZone(template.getTimeZone());
 
                 // Storage domain and provisioning are not available for an existing VM.
-                getModel().getStorageDomain().setIsChangable(false);
+                getModel().getStorageDomain().setIsChangeable(false);
                 getModel().getProvisioning().setIsAvailable(false);
 
                 // Select display protocol.

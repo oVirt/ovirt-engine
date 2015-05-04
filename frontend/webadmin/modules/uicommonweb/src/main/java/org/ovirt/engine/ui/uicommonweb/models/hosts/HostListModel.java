@@ -607,7 +607,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.setItems(items);
 
         model.getLatch().setIsAvailable(true);
-        model.getLatch().setIsChangable(true);
+        model.getLatch().setIsChangeable(true);
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnManualFence", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
@@ -673,7 +673,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         hostModel.getOverrideIpTables().setIsAvailable(false);
         hostModel.setSpmPriorityValue(null);
         hostModel.getConsoleAddressEnabled().setEntity(false);
-        hostModel.getConsoleAddress().setIsChangable(false);
+        hostModel.getConsoleAddress().setIsChangeable(false);
 
         AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
@@ -729,10 +729,10 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                                     cluster.getCompatibilityVersion().toString());
                     if (jsonSupported) {
                         hostModel.getProtocol().setEntity(true);
-                        hostModel.getProtocol().setIsChangable(true);
+                        hostModel.getProtocol().setIsChangeable(true);
                     } else {
                         hostModel.getProtocol().setEntity(false);
-                        hostModel.getProtocol().setIsChangable(false);
+                        hostModel.getProtocol().setIsChangeable(false);
                     }
                 }
             }
@@ -754,7 +754,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                     switch (hostListModel.getSystemTreeSelectedItem().getType())
                     {
                     case Host:
-                        innerHostModel.getName().setIsChangable(false);
+                        innerHostModel.getName().setIsChangeable(false);
                         innerHostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
                         break;
                     case Hosts:
@@ -771,11 +771,11 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                                 break;
                             }
                         }
-                        innerHostModel.getDataCenter().setIsChangable(false);
+                        innerHostModel.getDataCenter().setIsChangeable(false);
                         innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
                         innerHostModel.getCluster().setItems(Arrays.asList(cluster));
                         innerHostModel.getCluster().setSelectedItem(cluster);
-                        innerHostModel.getCluster().setIsChangable(false);
+                        innerHostModel.getCluster().setIsChangeable(false);
                         innerHostModel.getCluster().setChangeProhibitionReason(constants.cannotChangeClusterInTreeContext());
                         break;
                     case DataCenter:
@@ -784,7 +784,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         innerHostModel.getDataCenter()
                                 .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
                         innerHostModel.getDataCenter().setSelectedItem(selectDataCenter);
-                        innerHostModel.getDataCenter().setIsChangable(false);
+                        innerHostModel.getDataCenter().setIsChangeable(false);
                         innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
                         break;
                     default:
@@ -860,7 +860,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 hostModel.getCommands().add(cancelCommand);
 
                 if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
-                    hostModel.getName().setIsChangable(false);
+                    hostModel.getName().setIsChangeable(false);
                     hostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
                 }
 
@@ -1409,7 +1409,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
         getWindow().startProgress(null);
         model.getUserPassword().setIsAvailable(true);
-        model.getUserPassword().setIsChangable(true);
+        model.getUserPassword().setIsChangeable(true);
 
         Version v3 = new Version(3, 0);
         boolean isLessThan3 = host.getVdsGroupCompatibilityVersion().compareTo(v3) < 0;
@@ -1530,7 +1530,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                             model.getOVirtISO().setItems(isos);
                             model.getOVirtISO().setSelectedItem(Linq.firstOrDefault(isos));
                             model.getOVirtISO().setIsAvailable(true);
-                            model.getOVirtISO().setIsChangable(!isos.isEmpty());
+                            model.getOVirtISO().setIsChangeable(!isos.isEmpty());
                             model.getHostVersion().setIsAvailable(true);
 
                             if (isos.isEmpty()) {
@@ -1782,7 +1782,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         if (!StringHelper.isNullOrEmpty(prefix)) {
             EntityModel pathModel = model.getStorage().getPath();
             pathModel.setEntity(prefix);
-            pathModel.setIsChangable(false);
+            pathModel.setIsChangeable(false);
         }
 
         configureLocalStorage3(model);

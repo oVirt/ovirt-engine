@@ -104,8 +104,8 @@ public class NewNetworkModel extends NetworkModel {
     @Override
     protected void onExportChanged() {
         boolean externalNetwork = (Boolean) getExport().getEntity();
-        getExternalProviders().setIsChangable(externalNetwork);
-        getIsVmNetwork().setIsChangable(!externalNetwork && isSupportBridgesReportByVDSM());
+        getExternalProviders().setIsChangeable(externalNetwork);
+        getIsVmNetwork().setIsChangeable(!externalNetwork && isSupportBridgesReportByVDSM());
         if (externalNetwork) {
             getIsVmNetwork().setEntity(true);
         }
@@ -115,7 +115,7 @@ public class NewNetworkModel extends NetworkModel {
             for (NetworkClusterModel networkCluster : networkClusters) {
                 if (!(Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
                         networkCluster.getEntity().getCompatibilityVersion().getValue())) {
-                    networkCluster.setIsChangable(!externalNetwork);
+                    networkCluster.setIsChangeable(!externalNetwork);
                     networkCluster.setAttached(!externalNetwork);
                 }
                 networkCluster.setRequired(!externalNetwork);

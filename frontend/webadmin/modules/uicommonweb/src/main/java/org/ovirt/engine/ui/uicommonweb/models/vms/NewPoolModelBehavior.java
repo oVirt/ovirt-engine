@@ -25,7 +25,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
         super.initialize(systemTreeSelectedItem);
 
-        getModel().getVmType().setIsChangable(true);
+        getModel().getVmType().setIsChangeable(true);
 
         templateValidate();
 

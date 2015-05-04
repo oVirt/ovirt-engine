@@ -332,19 +332,19 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.getComment().setEntity(storage.getComment());
         model.setOriginalName(storage.getStorageName());
 
-        model.getDataCenter().setIsChangable(false);
-        model.getFormat().setIsChangable(false);
+        model.getDataCenter().setIsChangeable(false);
+        model.getFormat().setIsChangeable(false);
 
         boolean isStorageNameEditable = model.isStorageActive() || model.isNewStorage();
         boolean isStoragePropertiesEditable = model.isStorageNotLocked() || model.isNewStorage();
-        model.getHost().setIsChangable(false);
-        model.getName().setIsChangable(isStorageNameEditable);
-        model.getDescription().setIsChangable(isStoragePropertiesEditable);
-        model.getComment().setIsChangable(isStoragePropertiesEditable);
-        model.getWipeAfterDelete().setIsChangable(isStoragePropertiesEditable);
+        model.getHost().setIsChangeable(false);
+        model.getName().setIsChangeable(isStorageNameEditable);
+        model.getDescription().setIsChangeable(isStoragePropertiesEditable);
+        model.getComment().setIsChangeable(isStoragePropertiesEditable);
+        model.getWipeAfterDelete().setIsChangeable(isStoragePropertiesEditable);
         //set the field domain type to non editable
-        model.getAvailableStorageItems().setIsChangable(false);
-        model.setIsChangable(isStorageNameEditable || isStoragePropertiesEditable);
+        model.getAvailableStorageItems().setIsChangeable(false);
+        model.setIsChangeable(isStorageNameEditable || isStoragePropertiesEditable);
 
         boolean isPathEditable = isPathEditable(storage);
         isStorageNameEditable = isStorageNameEditable || isPathEditable;
@@ -358,7 +358,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
         {
-            model.getName().setIsChangable(false);
+            model.getName().setIsChangeable(false);
             model.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
 
@@ -644,7 +644,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.setItems(items);
 
         model.getLatch().setIsAvailable(true);
-        model.getLatch().setIsChangable(true);
+        model.getLatch().setIsChangeable(true);
 
 
         UICommand command;

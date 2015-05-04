@@ -185,10 +185,10 @@ public class ProviderModel extends Model {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean authenticationRequired = requiresAuthentication.getEntity();
-                getUsername().setIsChangable(authenticationRequired);
-                getPassword().setIsChangable(authenticationRequired);
-                getTenantName().setIsChangable(authenticationRequired);
-                getAuthUrl().setIsChangable(authenticationRequired);
+                getUsername().setIsChangeable(authenticationRequired);
+                getPassword().setIsChangeable(authenticationRequired);
+                getTenantName().setIsChangeable(authenticationRequired);
+                getAuthUrl().setIsChangeable(authenticationRequired);
             }
         });
         setType(new ListModel<ProviderType>() {
@@ -221,7 +221,7 @@ public class ProviderModel extends Model {
 
                 boolean requiresAuth = isTypeRequiresAuthentication();
                 getRequiresAuthentication().setEntity(Boolean.valueOf(requiresAuth));
-                getRequiresAuthentication().setIsChangable(!requiresAuth);
+                getRequiresAuthentication().setIsChangeable(!requiresAuth);
 
                 boolean isCinder = isTypeOpenStackVolume();
                 getDataCenter().setIsAvailable(isCinder);

@@ -153,8 +153,8 @@ public class InstallModel extends Model {
         getActivateHostAfterInstall().setEntity(false);
         setUserName(new EntityModel<String>());
         getUserName().setEntity(HostModel.RootUserName);
-        // TODO: remove setIsChangable when configured ssh username is enabled
-        getUserName().setIsChangable(false);
+        // TODO: remove setIsChangeable when configured ssh username is enabled
+        getUserName().setIsChangeable(false);
         setPublicKey(new EntityModel<String>());
         getPublicKey().setEntity(""); //$NON-NLS-1$
         setValidationFailed(new EntityModel<Boolean>());

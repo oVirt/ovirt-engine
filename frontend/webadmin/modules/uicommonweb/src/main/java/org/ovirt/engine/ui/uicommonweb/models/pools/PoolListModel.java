@@ -252,7 +252,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                                             .getItems(),
                                             new Linq.DataCenterWithClusterPredicate(vm.getStoragePoolId(), vm.getVdsGroupId())));
 
-                                    model.getTemplateWithVersion().setIsChangable(false);
+                                    model.getTemplateWithVersion().setIsChangeable(false);
                                     cdImage = vm.getIsoPath();
                                     model.getVmType().setSelectedItem(vm.getVmType());
                                 }
@@ -262,17 +262,17 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                                             .setSelectedItem(Linq.firstOrDefault(model.getDataCenterWithClustersList().getItems()));
                                 }
 
-                                model.getDataCenterWithClustersList().setIsChangable(vm == null);
+                                model.getDataCenterWithClustersList().setIsChangeable(vm == null);
 
                                 boolean hasCd = !StringHelper.isNullOrEmpty(cdImage);
-                                model.getCdImage().setIsChangable(hasCd);
+                                model.getCdImage().setIsChangeable(hasCd);
                                 model.getCdAttached().setEntity(hasCd);
                                 if (hasCd) {
                                     model.getCdImage().setSelectedItem(cdImage);
                                 }
 
-                                model.getProvisioning().setIsChangable(false);
-                                model.getStorageDomain().setIsChangable(false);
+                                model.getProvisioning().setIsChangeable(false);
+                                model.getStorageDomain().setIsChangeable(false);
                             }
                         });
 

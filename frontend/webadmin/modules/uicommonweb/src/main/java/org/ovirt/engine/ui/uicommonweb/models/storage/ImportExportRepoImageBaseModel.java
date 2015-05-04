@@ -171,11 +171,11 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     }
 
     protected void updateControlsAvailability() {
-        getDataCenter().setIsChangable(!getDataCenter().getIsEmpty());
-        getStorageDomain().setIsChangable(!getStorageDomain().getIsEmpty());
+        getDataCenter().setIsChangeable(!getDataCenter().getIsEmpty());
+        getStorageDomain().setIsChangeable(!getStorageDomain().getIsEmpty());
         getCluster().setIsAvailable(getImportAsTemplate().getEntity());
-        getCluster().setIsChangable(!getCluster().getIsEmpty());
-        getQuota().setIsChangable(!getQuota().getIsEmpty());
+        getCluster().setIsChangeable(!getCluster().getIsEmpty());
+        getQuota().setIsChangeable(!getQuota().getIsEmpty());
         getOkCommand().setIsExecutionAllowed(!getStorageDomain().getIsEmpty());
         setMessage(getStorageDomain().getIsEmpty() ? constants.noStorageDomainAvailableMsg() : null);
     }

@@ -155,8 +155,8 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
         }
 
         if (entitiesSelectedOnDifferentDataCenters()) {
-            model.getCollapseSnapshots().setIsChangable(false);
-            model.getForceOverride().setIsChangable(false);
+            model.getCollapseSnapshots().setIsChangeable(false);
+            model.getForceOverride().setIsChangeable(false);
 
             model.setMessage(entityResideOnSeveralDCsMakeSureTheExportedVMResideOnSameDcMsg());
 
@@ -168,8 +168,8 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
             model.stopProgress();
         }
         else if (storageDomains.isEmpty()) {
-            model.getCollapseSnapshots().setIsChangable(false);
-            model.getForceOverride().setIsChangable(false);
+            model.getCollapseSnapshots().setIsChangeable(false);
+            model.getForceOverride().setIsChangeable(false);
 
             model.setMessage(thereIsNoExportDomainBackupEntityAttachExportDomainToVmsDcMsg());
 
@@ -181,8 +181,8 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
             model.stopProgress();
         }
         else if (noActiveStorage) {
-            model.getCollapseSnapshots().setIsChangable(false);
-            model.getForceOverride().setIsChangable(false);
+            model.getCollapseSnapshots().setIsChangeable(false);
+            model.getForceOverride().setIsChangeable(false);
 
             model.setMessage(ConstantsManager.getInstance()
                     .getConstants()

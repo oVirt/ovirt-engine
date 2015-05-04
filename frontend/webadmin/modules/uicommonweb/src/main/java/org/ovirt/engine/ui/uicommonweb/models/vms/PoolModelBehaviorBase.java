@@ -43,7 +43,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     {
         super.initialize(systemTreeSelectedItem);
 
-        getModel().getIsSoundcardEnabled().setIsChangable(true);
+        getModel().getIsSoundcardEnabled().setIsChangeable(true);
 
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(false);
         getModel().getDisksAllocationModel().setIsAliasChangable(true);
@@ -73,12 +73,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         }), true, false);
 
         getModel().getSpiceProxyEnabled().setEntity(false);
-        getModel().getSpiceProxy().setIsChangable(false);
+        getModel().getSpiceProxy().setIsChangeable(false);
 
         getModel().getSpiceProxyEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getModel().getSpiceProxy().setIsChangable(getModel().getSpiceProxyEnabled().getEntity());
+                getModel().getSpiceProxy().setIsChangeable(getModel().getSpiceProxyEnabled().getEntity());
             }
         });
     }
@@ -118,7 +118,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
                     boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
 
-                    getModel().getCdImage().setIsChangable(hasCd);
+                    getModel().getCdImage().setIsChangeable(hasCd);
                     getModel().getCdAttached().setEntity(hasCd);
                     if (hasCd) {
                         getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
@@ -128,13 +128,13 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
                     if (!vmBase.getId().equals(Guid.Empty))
                     {
-                        getModel().getStorageDomain().setIsChangable(true);
+                        getModel().getStorageDomain().setIsChangeable(true);
 
                         initDisks();
                     }
                     else
                     {
-                        getModel().getStorageDomain().setIsChangable(false);
+                        getModel().getStorageDomain().setIsChangeable(false);
 
                         getModel().setIsDisksAvailable(false);
                         getModel().setDisks(null);

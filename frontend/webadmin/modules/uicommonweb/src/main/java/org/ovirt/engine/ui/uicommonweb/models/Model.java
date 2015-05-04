@@ -336,7 +336,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         return isChangable;
     }
 
-    public Model setIsChangable(boolean value)
+    public Model setIsChangeable(boolean value)
     {
         if (isChangable != value)
         {
@@ -347,6 +347,18 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
             {
                 setChangeProhibitionReason(null);
             }
+        }
+        return this;
+    }
+
+    /**
+     * If {@code value} parameter is true, {@code reason} parameter is ignored and prohibition reason is set to
+     * {@code null}.
+     */
+    public Model setIsChangeable(boolean value, String reason) {
+        setIsChangeable(value);
+        if (!value) {
+            setChangeProhibitionReason(reason);
         }
         return this;
     }
@@ -375,7 +387,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     public void updateChangeability(ConfigurationValues feature, Version version) {
         boolean featureSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(feature, version.getValue());
 
-        setIsChangable(featureSupported);
+        setIsChangeable(featureSupported);
         setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().optionNotSupportedClusterVersionTooOld(version.getValue()));
     }
 
@@ -486,7 +498,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         setInvalidityReasons(new ObservableCollection<String>());
         setIsValid(true);
 
-        setIsChangable(true);
+        setIsChangeable(true);
         setAvailableInModes(ApplicationMode.AllModes);
         setIsAvailable(true);
 

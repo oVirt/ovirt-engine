@@ -38,8 +38,8 @@ public class BaseNetworkQosModel extends Model {
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
                     boolean value = getIsChangable();
-                    getInbound().setIsChangable(value);
-                    getOutbound().setIsChangable(value);
+                    getInbound().setIsChangeable(value);
+                    getOutbound().setIsChangeable(value);
                 }
             }
         });

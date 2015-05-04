@@ -34,7 +34,7 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
         setDescription(new EntityModel<String>());
         setDataCenters(new ListModel<StoragePool>());
         getDataCenters().setSelectedItem(dataCenter);
-        getDataCenters().setIsChangable(false);
+        getDataCenters().setIsChangeable(false);
 
         setTitle(getTitle());
         setHelpTag(getHelpTag());

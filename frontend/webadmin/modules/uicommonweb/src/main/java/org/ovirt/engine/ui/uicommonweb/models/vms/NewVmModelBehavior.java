@@ -35,8 +35,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     {
         super.initialize(systemTreeSelectedItem);
 
-        getModel().getIsSoundcardEnabled().setIsChangable(true);
-        getModel().getVmType().setIsChangable(true);
+        getModel().getIsSoundcardEnabled().setIsChangeable(true);
+        getModel().getVmType().setIsChangeable(true);
         getModel().getVmId().setIsAvailable(true);
 
         loadDataCenters();
@@ -108,7 +108,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
                 boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
 
-                getModel().getCdImage().setIsChangable(hasCd);
+                getModel().getCdImage().setIsChangeable(hasCd);
                 getModel().getCdAttached().setEntity(hasCd);
                 if (hasCd) {
                     getModel().getCdImage().setSelectedItem(template.getIsoPath());
@@ -117,14 +117,14 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 updateTimeZone(template.getTimeZone());
 
                 if (!template.getId().equals(Guid.Empty)) {
-                    getModel().getStorageDomain().setIsChangable(true);
-                    getModel().getProvisioning().setIsChangable(true);
+                    getModel().getStorageDomain().setIsChangeable(true);
+                    getModel().getProvisioning().setIsChangeable(true);
 
                     getModel().getCopyPermissions().setIsAvailable(true);
                     initDisks();
                 } else {
-                    getModel().getStorageDomain().setIsChangable(false);
-                    getModel().getProvisioning().setIsChangable(false);
+                    getModel().getStorageDomain().setIsChangeable(false);
+                    getModel().getProvisioning().setIsChangeable(false);
 
                     getModel().setIsDisksAvailable(false);
                     getModel().getCopyPermissions().setIsAvailable(false);

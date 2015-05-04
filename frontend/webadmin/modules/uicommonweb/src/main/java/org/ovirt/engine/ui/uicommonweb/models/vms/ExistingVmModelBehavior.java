@@ -62,12 +62,12 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
         getModel().getVmInitEnabled().setEntity(getVm().getVmInit() != null);
         getModel().getVmInitModel().init(getVm().getStaticData());
-        getModel().getVmType().setIsChangable(true);
-        getModel().getIsSoundcardEnabled().setIsChangable(true);
-        getModel().getInstanceTypes().setIsChangable(!vm.isRunning());
+        getModel().getVmType().setIsChangeable(true);
+        getModel().getIsSoundcardEnabled().setIsChangeable(true);
+        getModel().getInstanceTypes().setIsChangeable(!vm.isRunning());
 
         getModel().getVmId().setIsAvailable(true);
-        getModel().getVmId().setIsChangable(false);
+        getModel().getVmId().setIsChangeable(false);
 
         loadDataCenter();
         instanceTypeManager = new ExistingVmInstanceTypeManager(getModel(), vm);
@@ -170,7 +170,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());
 
                 // Storage domain and provisioning are not available for an existing VM.
-                getModel().getStorageDomain().setIsChangable(false);
+                getModel().getStorageDomain().setIsChangeable(false);
                 getModel().getProvisioning().setIsAvailable(false);
                 getModel().getProvisioning().setEntity(Guid.Empty.equals(vm.getVmtGuid()));
 
@@ -347,7 +347,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getCdImage().setSelectedItem(vm.getIsoPath());
 
         boolean hasCd = !StringHelper.isNullOrEmpty(vm.getIsoPath());
-        getModel().getCdImage().setIsChangable(hasCd);
+        getModel().getCdImage().setIsChangeable(hasCd);
         getModel().getCdAttached().setEntity(hasCd);
 
         updateCdImage();

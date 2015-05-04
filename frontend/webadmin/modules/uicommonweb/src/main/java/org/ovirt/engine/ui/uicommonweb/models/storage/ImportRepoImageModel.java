@@ -122,7 +122,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
     public void updateClusterEnabled() {
         boolean importAsTemplate = getImportAsTemplate().getEntity();
         getCluster().setIsAvailable(importAsTemplate);
-        getCluster().setIsChangable(!getCluster().getIsEmpty());
+        getCluster().setIsChangeable(!getCluster().getIsEmpty());
     }
 
 }

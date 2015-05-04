@@ -53,7 +53,7 @@ public class EditDiskModel extends AbstractDiskModel
 
                 boolean isExtendImageSizeEnabled = getVm() != null && !diskImage.isDiskSnapshot() &&
                         VdcActionUtils.canExecute(Arrays.asList(getVm()), VM.class, VdcActionType.ExtendImageSize);
-                getSizeExtend().setIsChangable(isExtendImageSizeEnabled);
+                getSizeExtend().setIsChangeable(isExtendImageSizeEnabled);
                 break;
             case LUN:
                 LunDisk lunDisk = (LunDisk) getDisk();
@@ -65,7 +65,7 @@ public class EditDiskModel extends AbstractDiskModel
                 CinderDisk cinderDisk = (CinderDisk) getDisk();
                 getDiskStorageType().setEntity(DiskStorageType.CINDER);
                 getSize().setEntity((int) cinderDisk.getSizeInGigabytes());
-                getSizeExtend().setIsChangable(true);
+                getSizeExtend().setIsChangeable(true);
                 break;
         }
 
@@ -156,19 +156,19 @@ public class EditDiskModel extends AbstractDiskModel
     }
 
     private void disableNonChangeableEntities() {
-        getStorageDomain().setIsChangable(false);
-        getHost().setIsChangable(false);
-        getStorageType().setIsChangable(false);
-        getDataCenter().setIsChangable(false);
-        getVolumeType().setIsChangable(false);
-        getSize().setIsChangable(false);
-        getCinderVolumeType().setIsChangable(false);
+        getStorageDomain().setIsChangeable(false);
+        getHost().setIsChangeable(false);
+        getStorageType().setIsChangeable(false);
+        getDataCenter().setIsChangeable(false);
+        getVolumeType().setIsChangeable(false);
+        getSize().setIsChangeable(false);
+        getCinderVolumeType().setIsChangeable(false);
 
         if (!isEditEnabled()) {
-            getIsShareable().setIsChangable(false);
-            getIsBootable().setIsChangable(false);
-            getDiskInterface().setIsChangable(false);
-            getIsReadOnly().setIsChangable(false);
+            getIsShareable().setIsChangeable(false);
+            getIsBootable().setIsChangeable(false);
+            getDiskInterface().setIsChangeable(false);
+            getIsReadOnly().setIsChangeable(false);
         }
     }
 

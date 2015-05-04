@@ -196,7 +196,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
 
                         quotaModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenterList,
                                 new Linq.DataCenterPredicate(selectDataCenter.getId())));
-                        quotaModel.getDataCenter().setIsChangable(false);
+                        quotaModel.getDataCenter().setIsChangeable(false);
                     }
                 }
             }));
@@ -552,7 +552,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
                 dataCenterList.add(dataCenter);
                 qModel.getDataCenter().setItems(dataCenterList);
                 qModel.getDataCenter().setSelectedItem(dataCenter);
-                qModel.getDataCenter().setIsChangable(false);
+                qModel.getDataCenter().setIsChangeable(false);
 
             }
         };

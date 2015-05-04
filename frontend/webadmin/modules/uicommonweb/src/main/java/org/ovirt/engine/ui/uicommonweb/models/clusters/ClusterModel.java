@@ -917,7 +917,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         getSpiceProxyEnabled().getEntityChangedEvent().addListener(this);
 
         setSpiceProxy(new EntityModel<String>());
-        getSpiceProxy().setIsChangable(false);
+        getSpiceProxy().setIsChangeable(false);
 
         setFencingEnabledModel(new EntityModel<Boolean>());
         getFencingEnabledModel().setEntity(true);
@@ -950,7 +950,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 if (!getAllowClusterWithVirtGlusterEnabled() && getEnableOvirtService().getEntity()) {
                     getEnableGlusterService().setEntity(Boolean.FALSE);
                 }
-                getEnableGlusterService().setIsChangable(true);
+                getEnableGlusterService().setIsChangeable(true);
                 getEnableTrustedService().setEntity(false);
                 if (getEnableOvirtService().getEntity() != null
                         && getEnableOvirtService().getEntity())
@@ -958,17 +958,17 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                     if (getEnableGlusterService().getEntity() != null
                             && !getEnableGlusterService().getEntity())
                     {
-                        getEnableTrustedService().setIsChangable(true);
+                        getEnableTrustedService().setIsChangeable(true);
                     }
                     else
                     {
-                        getEnableTrustedService().setIsChangable(false);
+                        getEnableTrustedService().setIsChangeable(false);
                     }
 
                 }
                 else
                 {
-                    getEnableTrustedService().setIsChangable(false);
+                    getEnableTrustedService().setIsChangeable(false);
                 }
             }
         });
@@ -1014,18 +1014,18 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                         && getEnableGlusterService().getEntity())
                 {
                     getEnableTrustedService().setEntity(false);
-                    getEnableTrustedService().setIsChangable(false);
+                    getEnableTrustedService().setIsChangeable(false);
                 }
                 else
                 {
                     if (getEnableOvirtService().getEntity() != null
                             && getEnableOvirtService().getEntity())
                     {
-                        getEnableTrustedService().setIsChangable(true);
+                        getEnableTrustedService().setIsChangeable(true);
                     }
                     else
                     {
-                        getEnableTrustedService().setIsChangable(false);
+                        getEnableTrustedService().setIsChangeable(false);
                     }
                 }
 
@@ -1043,11 +1043,11 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                         && getEnableTrustedService().getEntity())
                 {
                     getEnableGlusterService().setEntity(false);
-                    getEnableGlusterService().setIsChangable(false);
+                    getEnableGlusterService().setIsChangeable(false);
                 }
                 else
                 {
-                    getEnableGlusterService().setIsChangable(true);
+                    getEnableGlusterService().setIsChangeable(true);
                 }
             }
         });
@@ -1129,7 +1129,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                     if (entity) {
                         getGuarantyResources().setEntity(true);
                     }
-                    getAllowOverbooking().setIsChangable(!entity);
+                    getAllowOverbooking().setIsChangeable(!entity);
                 }
             });
             getAllowOverbooking().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -1139,7 +1139,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                     if (entity) {
                         getOptimizeForUtilization().setEntity(true);
                     }
-                    getOptimizeForSpeed().setIsChangable(!entity);
+                    getOptimizeForSpeed().setIsChangeable(!entity);
                 }
             });
         }
@@ -1190,7 +1190,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
                         temp = clusterModel1.getOptimizationCustom();
                         temp.setIsAvailable(false);
-                        temp.setIsChangable(false);
+                        temp.setIsChangeable(false);
 
                         if (clusterModel1.getIsEdit())
                         {
@@ -1216,7 +1216,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             getManagementNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getConstants()
                     .prohibitManagementNetworkChangeInEditClusterInfoMessage());
-            getManagementNetwork().setIsChangable(false);
+            getManagementNetwork().setIsChangeable(false);
         }
 
         setCPU(new FilteredListModel<ServerCpu>());
@@ -1295,7 +1295,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         String proxy = getEntity().getSpiceProxy();
         boolean isProxyAvailable = !StringHelper.isNullOrEmpty(proxy);
         getSpiceProxyEnabled().setEntity(isProxyAvailable);
-        getSpiceProxy().setIsChangable(isProxyAvailable);
+        getSpiceProxy().setIsChangeable(isProxyAvailable);
         getSpiceProxy().setEntity(proxy);
     }
 
@@ -1328,13 +1328,13 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 if (getIsImportGlusterConfiguration().getEntity() != null
                         && getIsImportGlusterConfiguration().getEntity())
                 {
-                    getGlusterHostAddress().setIsChangable(true);
-                    getGlusterHostPassword().setIsChangable(true);
+                    getGlusterHostAddress().setIsChangeable(true);
+                    getGlusterHostPassword().setIsChangeable(true);
                 }
                 else
                 {
-                    getGlusterHostAddress().setIsChangable(false);
-                    getGlusterHostPassword().setIsChangable(false);
+                    getGlusterHostAddress().setIsChangeable(false);
+                    getGlusterHostPassword().setIsChangeable(false);
                 }
             }
         });
@@ -1411,7 +1411,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                     }
                 }
                 final StoragePool selectedDataCenter = clusterModel.getDataCenter().getSelectedItem();
-                clusterModel.getDataCenter().setIsChangable(selectedDataCenter == null);
+                clusterModel.getDataCenter().setIsChangeable(selectedDataCenter == null);
 
                 clusterModel.setMigrateOnErrorOption(clusterModel.getEntity().getMigrateOnError());
 
@@ -1504,7 +1504,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             EntityModel senderEntityModel = (EntityModel) sender;
 
             if (senderEntityModel == getSpiceProxyEnabled()) {
-                getSpiceProxy().setIsChangable(getSpiceProxyEnabled().getEntity());
+                getSpiceProxy().setIsChangeable(getSpiceProxyEnabled().getEntity());
             } else if ((Boolean) senderEntityModel.getEntity()) {
                 if (senderEntityModel == getOptimizationNone_IsSelected())
                 {
@@ -1645,14 +1645,14 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         // CPU Thread support is only available for clusters of version 3.2 or greater
         getVersionSupportsCpuThreads().setEntity(version.compareTo(Version.v3_2) >= 0);
         getEnableBallooning().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ballooningNotAvailable());
-        getEnableBallooning().setIsChangable(version.compareTo(Version.v3_3) >= 0);
+        getEnableBallooning().setIsChangeable(version.compareTo(Version.v3_3) >= 0);
 
         setRngSourcesCheckboxes(version);
 
         updateFencingPolicyContent(version);
 
         boolean isSmallerThanVersion3_4 = version.compareTo(Version.v3_4) < 0;
-        getEnableKsm().setIsChangable(!isSmallerThanVersion3_4);
+        getEnableKsm().setIsChangeable(!isSmallerThanVersion3_4);
         getEnableKsm().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ksmNotAvailable());
         if (isSmallerThanVersion3_4) {
             getEnableKsm().setEntity(true);
@@ -1701,8 +1701,8 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
     private void setRngSourcesCheckboxes(Version ver) {
         boolean rngSupported = isRngSupportedForClusterVersion(ver);
-        getRngRandomSourceRequired().setIsChangable(rngSupported);
-        getRngHwrngSourceRequired().setIsChangable(rngSupported);
+        getRngRandomSourceRequired().setIsChangeable(rngSupported);
+        getRngHwrngSourceRequired().setIsChangeable(rngSupported);
 
         String defaultRequiredRngSourcesCsv = defaultClusterRngSourcesCsv(ver);
 
@@ -1723,18 +1723,18 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
     private void updateFencingPolicyContent(Version ver) {
         // skipFencingIfConnectivityBroken option is enabled when fencing is enabled for all cluster versions
-        getSkipFencingIfConnectivityBrokenEnabled().setIsChangable(getFencingEnabledModel().getEntity());
-        getHostsWithBrokenConnectivityThreshold().setIsChangable(getFencingEnabledModel().getEntity());
+        getSkipFencingIfConnectivityBrokenEnabled().setIsChangeable(getFencingEnabledModel().getEntity());
+        getHostsWithBrokenConnectivityThreshold().setIsChangeable(getFencingEnabledModel().getEntity());
 
         if (ver == null) {
             if (!getFencingEnabledModel().getEntity()) {
                 // fencing is disabled and cluster version not selected yet, so disable skipFencingIfSDActive
-                getSkipFencingIfSDActiveEnabled().setIsChangable(false);
+                getSkipFencingIfSDActiveEnabled().setIsChangeable(false);
             }
         } else {
             // skipFencingIfSDActive is enabled for supported cluster level if fencing is not disabled
             boolean supported = AsyncDataProvider.getInstance().isSkipFencingIfSDActiveSupported(ver.getValue());
-            getSkipFencingIfSDActiveEnabled().setIsChangable(
+            getSkipFencingIfSDActiveEnabled().setIsChangeable(
                     supported && getFencingEnabledModel().getEntity());
             if (supported) {
                 if (getEntity() == null) {

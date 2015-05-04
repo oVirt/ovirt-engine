@@ -29,5 +29,5 @@ public interface IModel extends IProvidePropertyChangedEvent {
 
     boolean getIsAvailable();
 
-    IModel setIsChangable(boolean value);
+    IModel setIsChangeable(boolean value);
 }

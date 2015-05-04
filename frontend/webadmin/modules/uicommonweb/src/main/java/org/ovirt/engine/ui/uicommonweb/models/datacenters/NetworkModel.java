@@ -370,12 +370,12 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
             getIsVmNetwork().setEntity(true);
             getIsVmNetwork().setChangeProhibitionReason(ConstantsManager.getInstance().getMessages()
                     .bridlessNetworkNotSupported(getSelectedDc().getCompatibilityVersion().toString()));
-            getIsVmNetwork().setIsChangable(false);
+            getIsVmNetwork().setIsChangeable(false);
         } else {
             if (this.isSupportBridgesReportByVDSM != isSupportBridgesReportByVDSM) {
                 initIsVm();
             }
-            getIsVmNetwork().setIsChangable(true);
+            getIsVmNetwork().setIsChangeable(true);
         }
         this.isSupportBridgesReportByVDSM = isSupportBridgesReportByVDSM;
     }
@@ -677,7 +677,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
                 sourceListModel.setConfirmWindow(null);
             }
         };
-        qosModel.getDataCenters().setIsChangable(false);
+        qosModel.getDataCenters().setIsChangeable(false);
         sourceListModel.setConfirmWindow(qosModel);
     }
 
@@ -743,9 +743,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     protected void onExportChanged() {
         boolean externalNetwork = getExport().getEntity();
 
-        getNetworkLabel().setIsChangable(!externalNetwork);
-        getNeutronPhysicalNetwork().setIsChangable(externalNetwork);
-        getQos().setIsChangable(!externalNetwork);
+        getNetworkLabel().setIsChangeable(!externalNetwork);
+        getNeutronPhysicalNetwork().setIsChangeable(externalNetwork);
+        getQos().setIsChangeable(!externalNetwork);
         getAddQosCommand().setIsExecutionAllowed(!externalNetwork);
 
         updateMtuSelectorsChangeability();
@@ -766,7 +766,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     }
 
     private void updateVlanTagChangeability() {
-        getVLanTag().setIsChangable(getHasVLanTag().getEntity());
+        getVLanTag().setIsChangeable(getHasVLanTag().getEntity());
     }
 
     private void setMtuSelectorsChangeability(boolean isChangeable, String prohibitionReason) {
@@ -775,8 +775,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
             getMtu().setChangeProhibitionReason(prohibitionReason);
         }
 
-        getMtuSelector().setIsChangable(isChangeable);
-        getMtu().setIsChangable(isChangeable && isCustomMtu());
+        getMtuSelector().setIsChangeable(isChangeable);
+        getMtu().setIsChangeable(isChangeable && isCustomMtu());
     }
 
     protected void updateMtuSelectorsChangeability() {

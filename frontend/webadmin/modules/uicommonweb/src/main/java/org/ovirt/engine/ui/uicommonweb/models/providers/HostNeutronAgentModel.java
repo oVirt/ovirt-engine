@@ -3,12 +3,12 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 public class HostNeutronAgentModel extends NeutronAgentModel {
 
     public HostNeutronAgentModel() {
-        getPluginType().setIsChangable(false);
-        getBrokerType().setIsChangable(false);
-        getMessagingServer().setIsChangable(false);
-        getMessagingServerPort().setIsChangable(false);
-        getMessagingServerUsername().setIsChangable(false);
-        getMessagingServerPassword().setIsChangable(false);
+        getPluginType().setIsChangeable(false);
+        getBrokerType().setIsChangeable(false);
+        getMessagingServer().setIsChangeable(false);
+        getMessagingServerPort().setIsChangeable(false);
+        getMessagingServerUsername().setIsChangeable(false);
+        getMessagingServerPassword().setIsChangeable(false);
     }
 
 }

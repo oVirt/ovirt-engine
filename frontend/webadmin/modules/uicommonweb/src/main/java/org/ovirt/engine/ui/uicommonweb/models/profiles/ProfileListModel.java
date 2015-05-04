@@ -103,7 +103,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
     private void initProfileParentList(ProfileBaseModel<P, Q, R> model) {
         model.getParentListModel().setItems(Arrays.<R> asList(getEntity()));
         model.getParentListModel().setSelectedItem(getEntity());
-        model.getParentListModel().setIsChangable(false);
+        model.getParentListModel().setIsChangeable(false);
     }
 
     public void cancel() {

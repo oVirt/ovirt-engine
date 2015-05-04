@@ -85,12 +85,12 @@ public class MigrateModel extends Model
         if (isAutoSelect != value)
         {
             isAutoSelect = value;
-            getHosts().setIsChangable(!isAutoSelect);
+            getHosts().setIsChangeable(!isAutoSelect);
             onPropertyChanged(new PropertyChangedEventArgs("IsAutoSelect")); //$NON-NLS-1$
             setIsSameVdsMessageVisible(!value);
             privateSelectHostAutomatically_IsSelected.setEntity(value);
             privateSelectDestinationHost_IsSelected.setEntity(!value);
-            privateHosts.setIsChangable(!value);
+            privateHosts.setIsChangeable(!value);
         }
     }
 

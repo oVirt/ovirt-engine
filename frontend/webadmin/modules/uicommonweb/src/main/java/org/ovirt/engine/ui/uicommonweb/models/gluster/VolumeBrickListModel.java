@@ -327,11 +327,11 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         final VolumeBrickModel volumeBrickModel = new VolumeBrickModel();
 
         volumeBrickModel.getReplicaCount().setEntity(volumeEntity.getReplicaCount());
-        volumeBrickModel.getReplicaCount().setIsChangable(true);
+        volumeBrickModel.getReplicaCount().setIsChangeable(true);
         volumeBrickModel.getReplicaCount().setIsAvailable(volumeEntity.getVolumeType().isReplicatedType());
 
         volumeBrickModel.getStripeCount().setEntity(volumeEntity.getStripeCount());
-        volumeBrickModel.getStripeCount().setIsChangable(true);
+        volumeBrickModel.getStripeCount().setIsChangeable(true);
         volumeBrickModel.getStripeCount().setIsAvailable(volumeEntity.getVolumeType().isStripedType());
 
         volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());

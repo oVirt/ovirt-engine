@@ -275,13 +275,13 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
 
         glusterSwiftModel.startProgress(null);
         glusterSwiftModel.getSwiftStatus().setEntity(getGlusterSwiftStatus());
-        glusterSwiftModel.getStartSwift().setIsChangable(getGlusterSwiftStatus() == GlusterServiceStatus.STOPPED
+        glusterSwiftModel.getStartSwift().setIsChangeable(getGlusterSwiftStatus() == GlusterServiceStatus.STOPPED
                 || getGlusterSwiftStatus() == GlusterServiceStatus.MIXED
                 || getGlusterSwiftStatus() == GlusterServiceStatus.UNKNOWN);
-        glusterSwiftModel.getStopSwift().setIsChangable(getGlusterSwiftStatus() == GlusterServiceStatus.RUNNING
+        glusterSwiftModel.getStopSwift().setIsChangeable(getGlusterSwiftStatus() == GlusterServiceStatus.RUNNING
                 || getGlusterSwiftStatus() == GlusterServiceStatus.MIXED
                 || getGlusterSwiftStatus() == GlusterServiceStatus.UNKNOWN);
-        glusterSwiftModel.getRestartSwift().setIsChangable(getGlusterSwiftStatus() == GlusterServiceStatus.RUNNING
+        glusterSwiftModel.getRestartSwift().setIsChangeable(getGlusterSwiftStatus() == GlusterServiceStatus.RUNNING
                 || getGlusterSwiftStatus() == GlusterServiceStatus.STOPPED
                 || getGlusterSwiftStatus() == GlusterServiceStatus.MIXED
                 || getGlusterSwiftStatus() == GlusterServiceStatus.UNKNOWN);

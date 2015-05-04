@@ -329,11 +329,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                         disableWidget(getWidget());
                         enableWidget(diskTypePanel);
                         disk.getDefaultCommand().setIsExecutionAllowed(false);
-                        disk.setIsChangable(false);
+                        disk.setIsChangeable(false);
                     } else {
                         enableWidget(getWidget());
                         disk.getDefaultCommand().setIsExecutionAllowed(true);
-                        disk.setIsChangable(true);
+                        disk.setIsChangeable(true);
                     }
                 }
             }

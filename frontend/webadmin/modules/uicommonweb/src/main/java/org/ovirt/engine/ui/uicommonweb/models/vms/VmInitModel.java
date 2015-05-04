@@ -525,9 +525,9 @@ public class VmInitModel extends Model {
         getAttachmentEnabled().setEntity(false);
 
         getCloudInitPasswordSet().setEntity(false);
-        getCloudInitPasswordSet().setIsChangable(false);
+        getCloudInitPasswordSet().setIsChangeable(false);
         getSysprepPasswordSet().setEntity(false);
-        getSysprepPasswordSet().setIsChangable(false);
+        getSysprepPasswordSet().setIsChangeable(false);
 
         getWindowsHostname().setEntity("");
         getSysprepOrgName().setEntity("");
@@ -617,9 +617,9 @@ public class VmInitModel extends Model {
                 getSysprepAdminPasswordVerification().setEntity(vmInit.getRootPassword());
             }
             getCloudInitPasswordSet().setEntity(vmInit.isPasswordAlreadyStored());
-            getCloudInitPasswordSet().setIsChangable(vmInit.isPasswordAlreadyStored());
+            getCloudInitPasswordSet().setIsChangeable(vmInit.isPasswordAlreadyStored());
             getSysprepPasswordSet().setEntity(vmInit.isPasswordAlreadyStored());
-            getSysprepPasswordSet().setIsChangable(vmInit.isPasswordAlreadyStored());
+            getSysprepPasswordSet().setIsChangeable(vmInit.isPasswordAlreadyStored());
 
 
             if (!StringHelper.isNullOrEmpty(vmInit.getAuthorizedKeys())) {
@@ -950,14 +950,14 @@ public class VmInitModel extends Model {
 
     private void cloudInitPasswordSetChanged() {
         Boolean passwordChangable = !getCloudInitPasswordSet().getEntity();
-        getCloudInitRootPassword().setIsChangable(passwordChangable);
-        getCloudInitRootPasswordVerification().setIsChangable(passwordChangable);
+        getCloudInitRootPassword().setIsChangeable(passwordChangable);
+        getCloudInitRootPasswordVerification().setIsChangeable(passwordChangable);
     }
 
     private void sysprepPasswordSetChanged() {
         Boolean passwordChangable = !getSysprepPasswordSet().getEntity();
-        getSysprepAdminPassword().setIsChangable(passwordChangable);
-        getSysprepAdminPasswordVerification().setIsChangable(passwordChangable);
+        getSysprepAdminPassword().setIsChangeable(passwordChangable);
+        getSysprepAdminPasswordVerification().setIsChangeable(passwordChangable);
     }
 
     @Override

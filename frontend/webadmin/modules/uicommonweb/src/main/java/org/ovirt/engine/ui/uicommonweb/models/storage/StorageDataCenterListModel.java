@@ -439,7 +439,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                             model.setHelpTag(HelpTag.attach_storage_domain_confirmation);
                             model.setHashName("attach_storage_domain_confirmation"); //$NON-NLS-1$
                             model.getLatch().setIsAvailable(true);
-                            model.getLatch().setIsChangable(true);
+                            model.getLatch().setIsChangeable(true);
 
                             UICommand onApprove = new UICommand("OnAttachApprove", storageDataCenterListModel); //$NON-NLS-1$
                             onApprove.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -514,7 +514,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         if (containsLocalStorage(model))
         {
             model.getLatch().setIsAvailable(true);
-            model.getLatch().setIsChangable(true);
+            model.getLatch().setIsChangeable(true);
             shouldAddressWarnning = false;
             model.setNote(ConstantsManager.getInstance().getMessages().detachNote(getLocalStoragesFormattedString()));
         }

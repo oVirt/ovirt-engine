@@ -42,7 +42,7 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
         updateNumOfSockets();
         getModel().getUsbPolicy().setItems(Arrays.asList(UsbPolicy.values()));
 
-        getModel().getIsSoundcardEnabled().setIsChangable(true);
+        getModel().getIsSoundcardEnabled().setIsChangeable(true);
 
         Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(entity.getId()), new AsyncQuery(
             this,

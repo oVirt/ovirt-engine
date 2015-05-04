@@ -220,8 +220,8 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         volumeParameterModel.setIsNew(false);
         setWindow(volumeParameterModel);
 
-        volumeParameterModel.getKeyList().setIsChangable(false);
-        volumeParameterModel.getSelectedKey().setIsChangable(false);
+        volumeParameterModel.getKeyList().setIsChangeable(false);
+        volumeParameterModel.getSelectedKey().setIsChangeable(false);
         volumeParameterModel.startProgress(null);
 
         AsyncQuery _asyncQuery = new AsyncQuery();

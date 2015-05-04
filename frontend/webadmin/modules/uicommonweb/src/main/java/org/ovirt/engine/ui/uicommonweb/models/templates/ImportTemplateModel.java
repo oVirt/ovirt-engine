@@ -93,7 +93,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
                                 templateData.getClone().setChangeProhibitionReason(ConstantsManager.getInstance()
                                         .getConstants()
                                         .importTemplateThatExistsInSystemMustClone());
-                                templateData.getClone().setIsChangable(false);
+                                templateData.getClone().setIsChangeable(false);
                             }
                             templateDataList.add(templateData);
                         }

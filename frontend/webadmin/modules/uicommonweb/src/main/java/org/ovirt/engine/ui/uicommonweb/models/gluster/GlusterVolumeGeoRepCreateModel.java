@@ -108,7 +108,10 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 String slaveUser = getSlaveUserName().getEntity();
-                getSlaveUserGroupName().setIsChangable(slaveUser != null && !slaveUser.equalsIgnoreCase(ConstantsManager.getInstance().getConstants().rootUser()));
+                getSlaveUserGroupName().setIsChangeable(
+                        slaveUser != null && !slaveUser.equalsIgnoreCase(ConstantsManager.getInstance()
+                                .getConstants()
+                                .rootUser()));
             }
         });
     }

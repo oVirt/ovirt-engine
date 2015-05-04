@@ -51,7 +51,7 @@ public class SerialNumberPolicyModel extends Model {
         getCustomSerialNumber().setIsAvailable(false);
 
         // grey out the custom serial number by default
-        getCustomSerialNumber().setIsChangable(false);
+        getCustomSerialNumber().setIsChangeable(false);
     }
 
     public SerialNumberPolicy getSelectedSerialNumberPolicy() {
@@ -98,6 +98,6 @@ public class SerialNumberPolicyModel extends Model {
     }
 
     private void serialNumberPolicyChanged() {
-        customSerialNumber.setIsChangable(getSerialNumberPolicy().getEntity() == SerialNumberPolicy.CUSTOM);
+        customSerialNumber.setIsChangeable(getSerialNumberPolicy().getEntity() == SerialNumberPolicy.CUSTOM);
     }
 }

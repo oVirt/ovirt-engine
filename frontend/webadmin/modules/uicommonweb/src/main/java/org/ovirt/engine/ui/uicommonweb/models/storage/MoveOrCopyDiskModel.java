@@ -268,9 +268,9 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     private void updateChangeability(DiskModel disk, boolean isDiskBasedOnTemplate, boolean noSources, boolean noTargets) {
-        disk.getStorageDomain().setIsChangable(!noTargets);
-        disk.getSourceStorageDomain().setIsChangable(!noSources);
-        disk.getSourceStorageDomainName().setIsChangable(!noSources);
+        disk.getStorageDomain().setIsChangeable(!noTargets);
+        disk.getSourceStorageDomain().setIsChangeable(!noSources);
+        disk.getSourceStorageDomainName().setIsChangeable(!noSources);
         disk.getStorageDomain().setChangeProhibitionReason(isDiskBasedOnTemplate ?
                 constants.noActiveStorageDomainWithTemplateMsg() : getNoActiveTargetDomainMessage());
         disk.getSourceStorageDomain().setChangeProhibitionReason(getNoActiveSourceDomainMessage());

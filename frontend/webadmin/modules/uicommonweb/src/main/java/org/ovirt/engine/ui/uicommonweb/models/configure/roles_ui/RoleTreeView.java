@@ -62,7 +62,7 @@ public class RoleTreeView {
         nodeModel = new SelectionTreeNodeModel();
         nodeModel.setTitle(roleNode.getName());
         nodeModel.setDescription(roleNode.getName());
-        nodeModel.setIsChangable(!isReadOnly);
+        nodeModel.setIsChangeable(!isReadOnly);
         return nodeModel;
     }
 

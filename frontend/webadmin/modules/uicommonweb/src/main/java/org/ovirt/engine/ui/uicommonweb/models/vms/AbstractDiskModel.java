@@ -477,14 +477,14 @@ public abstract class AbstractDiskModel extends DiskModel
 
     public void updateBootableFrom(List<Disk> vmDisks) {
         getIsBootable().setEntity(true);
-        getIsBootable().setIsChangable(true);
+        getIsBootable().setIsChangeable(true);
         if (getDisk() == null || !getDisk().isDiskSnapshot()) {
             for (Disk disk : vmDisks) {
                 if (disk.isBoot() && !disk.equals(getDisk())) {
                     getIsBootable().setEntity(false);
                     if (!disk.isDiskSnapshot()) {
                         getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
-                        getIsBootable().setIsChangable(false);
+                        getIsBootable().setIsChangeable(false);
                         break;
                     }
                 }
@@ -501,7 +501,7 @@ public abstract class AbstractDiskModel extends DiskModel
                 ConfigurationValues.ShareableDiskEnabled, datacenter.getCompatibilityVersion().getValue());
 
         getIsShareable().setChangeProhibitionReason(constants.shareableDiskNotSupported());
-        getIsShareable().setIsChangable(isShareableDiskEnabled && isEditEnabled());
+        getIsShareable().setIsChangeable(isShareableDiskEnabled && isEditEnabled());
     }
 
     private void updateDirectLunDiskEnabled(StoragePool datacenter) {
@@ -519,11 +519,11 @@ public abstract class AbstractDiskModel extends DiskModel
     private void updateShareable(VolumeType volumeType, StorageType storageType) {
         if (storageType.isBlockDomain() && volumeType == VolumeType.Sparse) {
             getIsShareable().setChangeProhibitionReason(constants.shareableDiskNotSupportedByConfiguration());
-            getIsShareable().setIsChangable(false);
+            getIsShareable().setIsChangeable(false);
             getIsShareable().setEntity(false);
         }
         else {
-            getIsShareable().setIsChangable(isEditEnabled());
+            getIsShareable().setIsChangeable(isEditEnabled());
         }
     }
 
@@ -700,7 +700,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
         getQuota().setIsAvailable(isDiskImage ? previousIsQuotaAvailable : false);
 
-        setIsChangable(true);
+        setIsChangeable(true);
         updateDatacenters();
     }
 
@@ -730,7 +730,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     protected void updateScsiPassthroguhChangeability() {
-        getIsScsiPassthrough().setIsChangable(!getIsReadOnly().getEntity() && isEditEnabled());
+        getIsScsiPassthrough().setIsChangeable(!getIsReadOnly().getEntity() && isEditEnabled());
         getIsScsiPassthrough().setChangeProhibitionReason(constants.cannotEnableScsiPassthroughForLunReadOnlyDisk());
 
         updateSgIoUnfilteredChangeability();
@@ -739,26 +739,26 @@ public abstract class AbstractDiskModel extends DiskModel
     protected void updateSgIoUnfilteredChangeability() {
         if (!getIsScsiPassthrough().getEntity()) {
             getIsSgIoUnfiltered().setChangeProhibitionReason(constants.cannotEnableSgioWhenScsiPassthroughDisabled());
-            getIsSgIoUnfiltered().setIsChangable(false);
+            getIsSgIoUnfiltered().setIsChangeable(false);
             getIsSgIoUnfiltered().setEntity(false);
             return;
         }
-        getIsSgIoUnfiltered().setIsChangable(isEditEnabled());
+        getIsSgIoUnfiltered().setIsChangeable(isEditEnabled());
     }
 
     protected void updateScsiReservationChangeability() {
         boolean isSgioUnfiltered = getIsSgIoUnfiltered().getEntity();
         if (getVm() != null) {
             if (isSgioUnfiltered) {
-                getIsUsingScsiReservation().setIsChangable(true);
+                getIsUsingScsiReservation().setIsChangeable(true);
             } else {
-                getIsUsingScsiReservation().setIsChangable(false);
+                getIsUsingScsiReservation().setIsChangeable(false);
                 getIsUsingScsiReservation().setEntity(false);
             }
         } else {
             getIsUsingScsiReservation().setIsAvailable(false);
             getIsUsingScsiReservation().setEntity(false);
-            getIsUsingScsiReservation().setIsChangable(false);
+            getIsUsingScsiReservation().setIsChangeable(false);
         }
     }
 
@@ -767,7 +767,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
         if (diskInterface == DiskInterface.IDE) {
             getIsReadOnly().setChangeProhibitionReason(constants.cannotEnableIdeInterfaceForReadOnlyDisk());
-            getIsReadOnly().setIsChangable(false);
+            getIsReadOnly().setIsChangeable(false);
             getIsReadOnly().setEntity(false);
             return;
         }
@@ -776,24 +776,24 @@ public abstract class AbstractDiskModel extends DiskModel
         boolean isScsiPassthrough = getIsScsiPassthrough().getEntity();
         if (diskInterface == DiskInterface.VirtIO_SCSI && isDirectLUN && isScsiPassthrough) {
             getIsReadOnly().setChangeProhibitionReason(constants.cannotEnableReadonlyWhenScsiPassthroughEnabled());
-            getIsReadOnly().setIsChangable(false);
+            getIsReadOnly().setIsChangeable(false);
             getIsReadOnly().setEntity(false);
             return;
         }
 
         if (isVmAttachedToPool() && !getIsNew()) {
-            getIsReadOnly().setIsChangable(false);
+            getIsReadOnly().setIsChangeable(false);
         } else {
-            getIsReadOnly().setIsChangable(isEditEnabled());
+            getIsReadOnly().setIsChangeable(isEditEnabled());
         }
         getIsReadOnly().setEntity(getIsNew() ? Boolean.FALSE : getDisk().getReadOnly());
     }
 
     protected void updateWipeAfterDeleteChangeability() {
         if (isVmAttachedToPool()) {
-            getIsWipeAfterDelete().setIsChangable(false);
+            getIsWipeAfterDelete().setIsChangeable(false);
         } else {
-            getIsWipeAfterDelete().setIsChangable(isEditEnabled());
+            getIsWipeAfterDelete().setIsChangeable(isEditEnabled());
         }
     }
 
@@ -807,17 +807,17 @@ public abstract class AbstractDiskModel extends DiskModel
 
         if (DiskInterface.IDE.equals(diskInterface) && isVmRunning) {
             getIsPlugged().setChangeProhibitionReason(constants.cannotHotPlugDiskWithIdeInterface());
-            getIsPlugged().setIsChangable(false);
+            getIsPlugged().setIsChangeable(false);
             getIsPlugged().setEntity(false);
         }
         else {
             if (!canDiskBePlugged(getVm())) {
                 getIsPlugged().setChangeProhibitionReason(constants.cannotPlugDiskIncorrectVmStatus());
-                getIsPlugged().setIsChangable(false);
+                getIsPlugged().setIsChangeable(false);
                 getIsPlugged().setEntity(false);
             }
             else {
-                getIsPlugged().setIsChangable(isEditEnabled());
+                getIsPlugged().setIsChangeable(isEditEnabled());
                 getIsPlugged().setEntity(true);
             }
         }

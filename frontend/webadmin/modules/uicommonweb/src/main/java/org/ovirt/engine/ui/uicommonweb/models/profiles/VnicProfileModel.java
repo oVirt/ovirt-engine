@@ -150,7 +150,7 @@ public abstract class VnicProfileModel extends Model {
                             .getConstants()
                             .portMirroringNotSupportedExternalNetworks());
                 }
-                getPortMirroring().setIsChangable(portMirroringAllowed);
+                getPortMirroring().setIsChangeable(portMirroringAllowed);
             }
         });
 
@@ -263,7 +263,7 @@ public abstract class VnicProfileModel extends Model {
                                             ((VdcQueryReturnValue) returnValue).getReturnValue();
 
                                     getCustomPropertySheet().setKeyValueMap(customPropertiesList);
-                                    getCustomPropertySheet().setIsChangable(!customPropertiesList.isEmpty());
+                                    getCustomPropertySheet().setIsChangeable(!customPropertiesList.isEmpty());
 
                                     initCustomProperties();
                                 }

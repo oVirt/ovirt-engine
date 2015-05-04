@@ -112,11 +112,11 @@ public class VolumeModel extends Model {
 
         setReplicaCount(new EntityModel<Integer>());
         getReplicaCount().setEntity(VolumeListModel.REPLICATE_COUNT_DEFAULT);
-        getReplicaCount().setIsChangable(false);
+        getReplicaCount().setIsChangeable(false);
 
         setStripeCount(new EntityModel<Integer>());
         getStripeCount().setEntity(VolumeListModel.STRIPE_COUNT_DEFAULT);
-        getStripeCount().setIsChangable(false);
+        getStripeCount().setIsChangeable(false);
 
         setTcpTransportType(new EntityModel<Boolean>());
         getTcpTransportType().setEntity(true);
@@ -149,7 +149,7 @@ public class VolumeModel extends Model {
 
         setGluster_accecssProtocol(new EntityModel<Boolean>());
         getGluster_accecssProtocol().setEntity(true);
-        getGluster_accecssProtocol().setIsChangable(false);
+        getGluster_accecssProtocol().setIsChangeable(false);
 
         setNfs_accecssProtocol(new EntityModel<Boolean>());
         getNfs_accecssProtocol().setEntity(true);
@@ -289,11 +289,11 @@ public class VolumeModel extends Model {
         volumeBrickModel.getVolumeType().setEntity(getTypeList().getSelectedItem());
 
         volumeBrickModel.getReplicaCount().setEntity(getReplicaCount().getEntity());
-        volumeBrickModel.getReplicaCount().setIsChangable(true);
+        volumeBrickModel.getReplicaCount().setIsChangeable(true);
         volumeBrickModel.getReplicaCount().setIsAvailable(getReplicaCount().getIsAvailable());
 
         volumeBrickModel.getStripeCount().setEntity(getStripeCount().getEntity());
-        volumeBrickModel.getStripeCount().setIsChangable(true);
+        volumeBrickModel.getStripeCount().setIsChangeable(true);
         volumeBrickModel.getStripeCount().setIsAvailable(getStripeCount().getIsAvailable());
 
         VDSGroup cluster = getCluster().getSelectedItem();

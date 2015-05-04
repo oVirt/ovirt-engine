@@ -70,7 +70,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
                     getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
                             .getConstants()
                             .portMirroringNotChangedIfUsedByVms());
-                    getPortMirroring().setIsChangable(false);
+                    getPortMirroring().setIsChangeable(false);
                 }
                 stopProgress();
             }

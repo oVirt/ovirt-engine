@@ -54,7 +54,7 @@ public class HostNetworkProviderModel extends EntityModel {
             }
         });
 
-        getNetworkProviderType().setIsChangable(false);
+        getNetworkProviderType().setIsChangeable(false);
         getNetworkProviderType().setIsAvailable(false);
         getNeutronAgentModel().setIsAvailable(false);
 

@@ -57,7 +57,7 @@ public class RemoveDiskModel extends ConfirmationModel {
 
             // A shared disk or a disk snapshot can only be detached
             if (disk.getNumberOfVms() > 1) {
-                getLatch().setIsChangable(false);
+                getLatch().setIsChangeable(false);
             }
         }
         setItems(items);

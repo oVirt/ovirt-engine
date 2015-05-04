@@ -17,7 +17,7 @@ public class ClusterNewNetworkModel extends NewNetworkModel{
             NetworkClusterModel networkClusterModel = new NetworkClusterModel(cluster);
             networkClusterModel.setAttached(true);
             networkClusterModel.setRequired(!(Boolean) getExport().getEntity());
-            networkClusterModel.setIsChangable(false);
+            networkClusterModel.setIsChangeable(false);
 
             return networkClusterModel;
          }else{

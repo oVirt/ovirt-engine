@@ -78,7 +78,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
                     .getMessages()
                     .nicHotPlugNotSupported(getClusterCompatibilityVersion().toString()));
         }
-        getPlugged().setIsChangable(allowPlug());
+        getPlugged().setIsChangeable(allowPlug());
 
         initCommands();
     }
@@ -114,7 +114,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initMAC() {
-        getMAC().setIsChangable(false);
+        getMAC().setIsChangeable(false);
         getMAC().setEntity(getNic().getMacAddress());
     }
 

@@ -23,7 +23,7 @@ public class NewInstanceTypeModelBehavior extends NonClusterModelBehaviorBase {
         getModel().getIsAutoAssign().setEntity(true);
         getModel().getUsbPolicy().setItems(Arrays.asList(UsbPolicy.values()));
 
-        getModel().getIsSoundcardEnabled().setIsChangable(true);
+        getModel().getIsSoundcardEnabled().setIsChangeable(true);
         getModel().setSelectedMigrationDowntime(null);
         updateMemoryBalloon(latestCluster());
         initPriority(0);

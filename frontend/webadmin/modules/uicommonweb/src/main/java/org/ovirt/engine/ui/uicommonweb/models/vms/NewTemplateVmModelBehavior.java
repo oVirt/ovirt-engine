@@ -56,7 +56,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getVmInitEnabled().setEntity(vm.getVmInit() != null);
         getModel().getVmInitModel().init(vm.getStaticData());
 
-        getModel().getVmType().setIsChangable(true);
+        getModel().getVmType().setIsChangeable(true);
         getModel().getCopyPermissions().setIsAvailable(true);
 
         DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
@@ -312,7 +312,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 updateTimeZone(vm.getTimeZone());
                 updateConsoleDevice(vm.getId());
 
-                getModel().getStorageDomain().setIsChangable(true);
+                getModel().getStorageDomain().setIsChangeable(true);
                 getModel().getProvisioning().setIsAvailable(false);
 
                 // Select display protocol.
@@ -386,13 +386,13 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                         new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { s }));
 
                                 behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
-                                behavior.getModel().getStorageDomain().setIsChangable(false);
+                                behavior.getModel().getStorageDomain().setIsChangeable(false);
                                 behavior.getModel().getStorageDomain().setSelectedItem(s);
                             }
                             else
                             {
                                 behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
-                                behavior.getModel().getStorageDomain().setIsChangable(true);
+                                behavior.getModel().getStorageDomain().setIsChangeable(true);
                             }
                         }
                         else
@@ -431,7 +431,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             diskModel.getStorageDomain().setItems(Linq.filterStorageDomainById(
                     cinderStorageDomains, cinderDisk.getStorageIds().get(0)));
 
-            diskModel.getDiskProfile().setIsChangable(false);
+            diskModel.getDiskProfile().setIsChangeable(false);
             diskModel.getDiskProfile().setChangeProhibitionReason(
                     ConstantsManager.getInstance().getConstants().notSupportedForCinderDisks());
         }
@@ -441,12 +441,12 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     {
         getModel().setIsValid(false);
         getModel().setMessage(errMessage);
-        getModel().getName().setIsChangable(false);
-        getModel().getDescription().setIsChangable(false);
-        getModel().getDataCenterWithClustersList().setIsChangable(false);
-        getModel().getComment().setIsChangable(false);
-        getModel().getStorageDomain().setIsChangable(false);
-        getModel().getIsTemplatePublic().setIsChangable(false);
+        getModel().getName().setIsChangeable(false);
+        getModel().getDescription().setIsChangeable(false);
+        getModel().getDataCenterWithClustersList().setIsChangeable(false);
+        getModel().getComment().setIsChangeable(false);
+        getModel().getStorageDomain().setIsChangeable(false);
+        getModel().getIsTemplatePublic().setIsChangeable(false);
         getModel().getDefaultCommand().setIsAvailable(false);
     }
 
@@ -467,7 +467,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
     @Override
     protected void isSubTemplateEntityChanged() {
-        getModel().getName().setIsChangable(!getModel().getIsSubTemplate().getEntity());
+        getModel().getName().setIsChangeable(!getModel().getIsSubTemplate().getEntity());
         if (!getModel().getIsSubTemplate().getEntity()) {
             getModel().getName().setEntity(""); //$NON-NLS-1$
         } else {

@@ -128,9 +128,9 @@ public class StorageQosMetricParametersModel extends Model {
         super.eventRaised(ev, sender, args);
 
         if (this.equals(sender)) {
-            getChoiceGroupNone().setIsChangable(getIsChangable());
-            getChoiceGroupTotal().setIsChangable(getIsChangable());
-            getChoiceGroupReadWrite().setIsChangable(getIsChangable());
+            getChoiceGroupNone().setIsChangeable(getIsChangable());
+            getChoiceGroupTotal().setIsChangeable(getIsChangable());
+            getChoiceGroupReadWrite().setIsChangeable(getIsChangable());
         }
     else if ((sender instanceof EntityModel) && (Boolean.TRUE.equals(((EntityModel) sender).getEntity()))) {
             if (!getChoiceGroupNone().equals(sender)) {
@@ -166,8 +166,8 @@ public class StorageQosMetricParametersModel extends Model {
         boolean total_available = getIsChangable() && getChoiceGroupTotal().getEntity();
         boolean read_write_available = getIsChangable() && getChoiceGroupReadWrite().getEntity();
 
-        getTotal().setIsChangable(total_available);
-        getRead().setIsChangable(read_write_available);
-        getWrite().setIsChangable(read_write_available);
+        getTotal().setIsChangeable(total_available);
+        getRead().setIsChangeable(read_write_available);
+        getWrite().setIsChangeable(read_write_available);
     }
 }

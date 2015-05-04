@@ -90,11 +90,11 @@ public class ExternalSubnetModel extends Model {
     }
 
     public void toggleChangeability(boolean value) {
-        getName().setIsChangable(value);
-        getCidr().setIsChangable(value);
-        getIpVersion().setIsChangable(value);
-        getGateway().setIsChangable(value);
-        getDnsServers().setIsChangable(value);
+        getName().setIsChangeable(value);
+        getCidr().setIsChangeable(value);
+        getIpVersion().setIsChangeable(value);
+        getGateway().setIsChangeable(value);
+        getDnsServers().setIsChangeable(value);
     }
 
     public void flush() {

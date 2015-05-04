@@ -46,7 +46,7 @@ public class NewTemplateInterfaceModel extends NewVmInterfaceModel {
     @Override
     protected void init() {
         super.init();
-        getPlugged().setIsChangable(false);
+        getPlugged().setIsChangeable(false);
     }
 
     @Override

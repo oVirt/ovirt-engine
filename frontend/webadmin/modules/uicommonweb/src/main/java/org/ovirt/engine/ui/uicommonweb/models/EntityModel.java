@@ -49,8 +49,14 @@ public class EntityModel<T> extends Model implements HasHandlers, HasEntity<T> {
     }
 
     @Override
-    public EntityModel<T> setIsChangable(boolean value) {
-        super.setIsChangable(value);
+    public EntityModel<T> setIsChangeable(boolean value) {
+        super.setIsChangeable(value);
+        return this;
+    }
+
+    @Override
+    public EntityModel<T> setIsChangeable(boolean value, String reason) {
+        super.setIsChangeable(value, reason);
         return this;
     }
 

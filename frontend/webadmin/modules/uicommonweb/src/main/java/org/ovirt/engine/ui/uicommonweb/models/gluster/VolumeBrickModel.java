@@ -57,11 +57,11 @@ public class VolumeBrickModel extends Model {
 
         setReplicaCount(new EntityModel<Integer>());
         getReplicaCount().setEntity(VolumeListModel.REPLICATE_COUNT_DEFAULT);
-        getReplicaCount().setIsChangable(false);
+        getReplicaCount().setIsChangeable(false);
 
         setStripeCount(new EntityModel<Integer>());
         getStripeCount().setEntity(VolumeListModel.STRIPE_COUNT_DEFAULT);
-        getStripeCount().setIsChangable(false);
+        getStripeCount().setIsChangeable(false);
 
         setServers(new ListModel<VDS>());
         setBrickDirectory(new EntityModel<String>());

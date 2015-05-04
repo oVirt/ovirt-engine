@@ -264,6 +264,6 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
             model.setEnabled(clusterSelected && osSelected);
         }
 
-        setIsChangable(clusterSelected && osSelected);
+        setIsChangeable(clusterSelected && osSelected);
     }
 }

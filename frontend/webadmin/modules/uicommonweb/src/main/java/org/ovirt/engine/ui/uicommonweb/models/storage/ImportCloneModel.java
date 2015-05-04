@@ -74,7 +74,7 @@ public class ImportCloneModel extends ConfirmationModel {
         setApplyToAll(new EntityModel<Boolean>());
         getApplyToAll().setEntity(false);
         setSuffix(new EntityModel<String>());
-        getSuffix().setIsChangable(false);
+        getSuffix().setIsChangeable(false);
         getSuffix().setEntity("_Copy"); //$NON-NLS-1$
         getClone().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
@@ -84,9 +84,9 @@ public class ImportCloneModel extends ConfirmationModel {
                 if (value) {
                     getNoClone().setEntity(false);
                     if (getApplyToAll().getEntity()) {
-                        getSuffix().setIsChangable(true);
+                        getSuffix().setIsChangeable(true);
                     } else {
-                        getName().setIsChangable(true);
+                        getName().setIsChangeable(true);
                     }
                 }
             }
@@ -98,8 +98,8 @@ public class ImportCloneModel extends ConfirmationModel {
                 boolean value = getNoClone().getEntity();
                 if (value) {
                     getClone().setEntity(false);
-                    getName().setIsChangable(false);
-                    getSuffix().setIsChangable(false);
+                    getName().setIsChangeable(false);
+                    getSuffix().setIsChangeable(false);
                 }
             }
         });
@@ -109,8 +109,8 @@ public class ImportCloneModel extends ConfirmationModel {
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (!getNoClone().getEntity()) {
                     Boolean value = getApplyToAll().getEntity();
-                    getSuffix().setIsChangable(value);
-                    getName().setIsChangable(!value);
+                    getSuffix().setIsChangeable(value);
+                    getName().setIsChangeable(!value);
                 }
             }
         });

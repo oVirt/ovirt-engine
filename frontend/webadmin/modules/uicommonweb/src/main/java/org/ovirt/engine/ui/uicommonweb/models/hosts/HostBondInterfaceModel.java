@@ -244,9 +244,9 @@ public class HostBondInterfaceModel extends Model
     {
         Network network = getNetwork().getSelectedItem();
         boolean isChangeble = getIsStaticAddress() && network != null && !network.getId().equals(Guid.Empty);
-        getAddress().setIsChangable(isChangeble);
-        getSubnet().setIsChangable(isChangeble);
-        getGateway().setIsChangable(isChangeble);
+        getAddress().setIsChangeable(isChangeble);
+        getSubnet().setIsChangeable(isChangeble);
+        getGateway().setIsChangeable(isChangeble);
     }
 
     public boolean validate()

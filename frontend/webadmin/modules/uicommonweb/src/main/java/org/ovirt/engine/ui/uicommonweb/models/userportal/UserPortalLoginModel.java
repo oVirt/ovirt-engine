@@ -123,11 +123,11 @@ public class UserPortalLoginModel extends LoginModel
 
         startProgress(null);
 
-        getUserName().setIsChangable(false);
-        getPassword().setIsChangable(false);
-        getProfile().setIsChangable(false);
+        getUserName().setIsChangeable(false);
+        getPassword().setIsChangeable(false);
+        getProfile().setIsChangeable(false);
         getLoginCommand().setIsExecutionAllowed(false);
-        getIsAutoConnect().setIsChangable(false);
+        getIsAutoConnect().setIsChangeable(false);
 
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.setModel(this);
@@ -145,11 +145,11 @@ public class UserPortalLoginModel extends LoginModel
                     if (returnValue != null) {
                         loginModel.setMessages(returnValue.getCanDoActionMessages());
                     }
-                    loginModel.getUserName().setIsChangable(true);
-                    loginModel.getPassword().setIsChangable(true);
-                    loginModel.getProfile().setIsChangable(true);
+                    loginModel.getUserName().setIsChangeable(true);
+                    loginModel.getPassword().setIsChangeable(true);
+                    loginModel.getProfile().setIsChangeable(true);
                     loginModel.getLoginCommand().setIsExecutionAllowed(true);
-                    getIsAutoConnect().setIsChangable(true);
+                    getIsAutoConnect().setIsChangeable(true);
                     loginModel.getLoginFailedEvent().raise(this, EventArgs.EMPTY);
                 }
                 stopProgress();

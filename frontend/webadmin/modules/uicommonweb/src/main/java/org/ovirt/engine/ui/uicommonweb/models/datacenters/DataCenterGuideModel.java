@@ -325,7 +325,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         UICommand selectHostAction = new UICommand("SelectHost", this); //$NON-NLS-1$
 
         // If now compatible hosts are found - disable the select host button
-        selectHostAction.setIsChangable(availableHosts.size() > 0);
+        selectHostAction.setIsChangeable(availableHosts.size() > 0);
         selectHostAction.setIsExecutionAllowed(availableHosts.size() > 0);
 
         if (clusters.size() > 0) {
@@ -615,7 +615,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
         dataCenters.add(getEntity());
         model.getDataCenter().setItems(dataCenters, getEntity());
-        model.getDataCenter().setIsChangable(false);
+        model.getDataCenter().setIsChangeable(false);
 
         List<IStorageModel> items = null;
 
@@ -1294,7 +1294,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
         dataCenters.add(getEntity());
         model.getDataCenter().setItems(dataCenters, getEntity());
-        model.getDataCenter().setIsChangable(false);
+        model.getDataCenter().setIsChangeable(false);
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAddCluster", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
@@ -1493,7 +1493,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.setSpmPriorityValue(null);
 
         model.getDataCenter().setItems(Collections.singletonList(getEntity()), getEntity());
-        model.getDataCenter().setIsChangable(false);
+        model.getDataCenter().setIsChangeable(false);
 
         model.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
@@ -1509,7 +1509,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         model.getProtocol().setEntity(true);
                     } else {
                         model.getProtocol().setEntity(false);
-                        model.getProtocol().setIsChangable(false);
+                        model.getProtocol().setIsChangeable(false);
                     }
                 }
             }

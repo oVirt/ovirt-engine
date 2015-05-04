@@ -79,7 +79,7 @@ public class EditQuotaClusterModel extends EntityModel<QuotaVdsGroup> {
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getUnlimitedMem().getEntity()) {
                     getSpecificMem().setEntity(false);
-                    getSpecificMemValue().setIsChangable(false);
+                    getSpecificMemValue().setIsChangeable(false);
                 }
             }
         });
@@ -90,7 +90,7 @@ public class EditQuotaClusterModel extends EntityModel<QuotaVdsGroup> {
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getSpecificMem().getEntity()) {
                     getUnlimitedMem().setEntity(false);
-                    getSpecificMemValue().setIsChangable(true);
+                    getSpecificMemValue().setIsChangeable(true);
                 }
             }
         });
@@ -104,7 +104,7 @@ public class EditQuotaClusterModel extends EntityModel<QuotaVdsGroup> {
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getUnlimitedCpu().getEntity()) {
                     getSpecificCpu().setEntity(false);
-                    getSpecificCpuValue().setIsChangable(false);
+                    getSpecificCpuValue().setIsChangeable(false);
                 }
             }
         });
@@ -115,7 +115,7 @@ public class EditQuotaClusterModel extends EntityModel<QuotaVdsGroup> {
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getSpecificCpu().getEntity()) {
                     getUnlimitedCpu().setEntity(false);
-                    getSpecificCpuValue().setIsChangable(true);
+                    getSpecificCpuValue().setIsChangeable(true);
                 }
             }
         });

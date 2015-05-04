@@ -21,9 +21,9 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
         getModel().getComment().setEntity(""); //$NON-NLS-1$
         getModel().getProvisioning().setEntity(true);
         getModel().getProvisioning().setIsAvailable(true);
-        getModel().getProvisioning().setIsChangable(false);
+        getModel().getProvisioning().setIsChangeable(false);
         getModel().getVmId().setIsAvailable(true);
-        getModel().getVmId().setIsChangable(true);
+        getModel().getVmId().setIsChangeable(true);
         getModel().getVmId().setEntity("");
 
         initDisks();

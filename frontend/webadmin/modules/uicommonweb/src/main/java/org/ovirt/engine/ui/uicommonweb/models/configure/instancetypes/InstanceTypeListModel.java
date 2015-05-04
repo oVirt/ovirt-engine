@@ -158,7 +158,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
                     window.setItems(attachedVmsNames);
 
                     window.getLatch().setIsAvailable(true);
-                    window.getLatch().setIsChangable(true);
+                    window.getLatch().setIsChangeable(true);
                     window.setNote(ConstantsManager.getInstance().getConstants().vmsAttachedToInstanceTypeNote());
 
                     window.setMessage(ConstantsManager.getInstance().getConstants().vmsAttachedToInstanceTypeWarningMessage());

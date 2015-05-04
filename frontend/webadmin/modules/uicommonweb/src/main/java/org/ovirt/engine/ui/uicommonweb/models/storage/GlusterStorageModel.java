@@ -17,7 +17,7 @@ public class GlusterStorageModel extends PosixStorageModel {
     public GlusterStorageModel() {
         getVfsType().setTitle(""); //$NON-NLS-1$
         getVfsType().setEntity("glusterfs"); //$NON-NLS-1$
-        getVfsType().setIsChangable(false);
+        getVfsType().setIsChangeable(false);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class GlusterStorageModel extends PosixStorageModel {
 
     @Override
     public void setVfsChangeability(boolean isVfsChangeable) {
-        getVfsType().setIsChangable(false);
+        getVfsType().setIsChangeable(false);
     }
 
     @Override
