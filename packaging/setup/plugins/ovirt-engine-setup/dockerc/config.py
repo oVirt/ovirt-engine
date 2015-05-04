@@ -20,7 +20,6 @@
 
 
 import base64
-import docker
 import gettext
 import json
 import uuid
@@ -66,7 +65,7 @@ class Plugin(plugin.PluginBase):
         self._enabled = True
         self._dimages = []
         self._already_deployed_by_me = []
-        self._dcli = docker.Client(base_url='unix://var/run/docker.sock')
+        self._dcli = None
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -229,6 +228,9 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _validation(self):
+        import docker
+        self._dcli = docker.Client(base_url='unix://var/run/docker.sock')
+
         already_existing = set(
             [
                 d['name']
@@ -285,6 +287,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _misc_deploy(self):
+        import docker
         fqdn = self.environment[osetupcons.ConfigEnv.FQDN]
 
         envdict = {

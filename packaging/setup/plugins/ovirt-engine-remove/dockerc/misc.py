@@ -19,7 +19,6 @@
 """Dockerc plugin."""
 
 
-import docker
 import gettext
 
 from otopi import plugin, util
@@ -45,7 +44,6 @@ class Plugin(plugin.PluginBase):
             odockerccons.RemoveEnv.REMOVE_DOCKERC,
             None
         )
-        self._dcli = docker.Client(base_url='unix://var/run/docker.sock')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -91,6 +89,9 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _misc(self):
+        import docker
+        dcli = docker.Client(base_url='unix://var/run/docker.sock')
+
         if self.environment[
             odockerccons.RemoveEnv.REMOVE_DCLIST
         ]:
@@ -107,7 +108,7 @@ class Plugin(plugin.PluginBase):
         for cont in rlist:
             self.logger.info(_('Stopping {cname}').format(cname=cont))
             try:
-                self._dcli.stop(
+                dcli.stop(
                     container=cont,
                     timeout=60,
                 )
@@ -124,7 +125,7 @@ class Plugin(plugin.PluginBase):
                     raise ex
             self.logger.info(_('Removing {cname}').format(cname=cont))
             try:
-                self._dcli.remove_container(
+                dcli.remove_container(
                     container=cont,
                 )
             except docker.errors.APIError as ex:
@@ -141,7 +142,7 @@ class Plugin(plugin.PluginBase):
 
         still_deployed = [
             str(name).lstrip('/')
-            for d in self._dcli.containers(all=True)
+            for d in dcli.containers(all=True)
             for name in d['Names']
         ]
 
