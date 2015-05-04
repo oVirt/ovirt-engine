@@ -178,6 +178,16 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         this.warningLowSpaceIndicator = warningLowSpaceIndicator;
     }
 
+    private EntityModel<String> warningLowSpaceSize;
+
+    public EntityModel<String> getWarningLowSpaceSize() {
+        return warningLowSpaceSize;
+    }
+
+    public void setWarningLowSpaceSize(EntityModel<String> warningLowSpaceSize) {
+        this.warningLowSpaceSize = warningLowSpaceSize;
+    }
+
     private EntityModel<Integer> criticalSpaceActionBlocker;
 
     public EntityModel<Integer> getCriticalSpaceActionBlocker() {
@@ -227,6 +237,8 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
         setWarningLowSpaceIndicator(new EntityModel<Integer>());
         getWarningLowSpaceIndicator().setEntity(getWarningLowSpaceIndicatorValue());
+        setWarningLowSpaceSize(new EntityModel<String>());
+        getWarningLowSpaceSize().setIsAvailable(false);
         setCriticalSpaceActionBlocker(new EntityModel<Integer>());
         getCriticalSpaceActionBlocker().setEntity(getCriticalSpaceThresholdValue());
         setActivateDomain(new EntityModel<Boolean>(true));

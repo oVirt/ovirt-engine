@@ -347,6 +347,9 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.setIsChangeable(isStorageNameEditable || isStoragePropertiesEditable);
 
         model.getWarningLowSpaceIndicator().setEntity(storage.getWarningLowSpaceIndicator());
+        model.getWarningLowSpaceSize().setEntity(
+                ConstantsManager.getInstance().getMessages().bracketsWithGB(storage.getWarningLowSpaceSize()));
+        model.getWarningLowSpaceSize().setIsAvailable(true);
         model.getCriticalSpaceActionBlocker().setEntity(storage.getCriticalSpaceActionBlocker());
 
         boolean isPathEditable = isPathEditable(storage);

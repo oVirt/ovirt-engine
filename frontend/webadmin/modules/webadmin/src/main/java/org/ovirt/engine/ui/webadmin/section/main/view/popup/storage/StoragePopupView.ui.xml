@@ -35,11 +35,18 @@
 		}
 
         .wipeAfterDeleteEditor {
-            width: 437px;
+            width: 481px;
         }
 
-        .storageTextBoxEditor {
-            width: 20%;
+        .warningTextBoxEditor {
+            width: 23%;
+            line-height: 26px !important;
+        }
+
+        .blockerTextBoxEditor {
+            width: 60px;
+            margin-left: 6px;
+            line-height: 26px !important;
         }
 
 		.nameEditor,
@@ -98,6 +105,14 @@
             margin-top: 10px;
         }
 
+        .warningLowSpaceIndicatorEditor {
+            width: 320px;
+        }
+
+        .warningLowSpaceSizeLabel {
+            line-height: 26px;
+        }
+
 	</ui:style>
 
 	<d:SimpleDialogPanel width="760px" height="665px">
@@ -121,8 +136,11 @@
 				<g:FlowPanel ui:field="specificStorageTypePanel" addStyleNames="{style.specificStorageTypePanel}"></g:FlowPanel>
                 <d:AdvancedParametersExpander ui:field="advancedParametersExpander"/>
                 <g:VerticalPanel ui:field="advancedParametersExpanderContent">
-                    <ge:IntegerEntityModelTextBoxEditor ui:field="warningLowSpaceIndicatorEditor" addStyleNames="table_contentWidget_pfly_fix"/>
-                    <ge:IntegerEntityModelTextBoxEditor ui:field="criticalSpaceActionBlockerEditor" />
+                    <g:HorizontalPanel>
+                        <ge:IntegerEntityModelTextBoxEditor ui:field="warningLowSpaceIndicatorEditor" addStyleNames="table_contentWidget_pfly_fix {style.warningLowSpaceIndicatorEditor}"/>
+                        <g:Label ui:field="warningLowSpaceSizeLabel" addStyleNames="{style.warningLowSpaceSizeLabel}"/>
+                    </g:HorizontalPanel>
+                    <ge:IntegerEntityModelTextBoxEditor ui:field="criticalSpaceActionBlockerEditor"/>
                     <ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.wipeAfterDeleteEditor}"/>
                 </g:VerticalPanel>
 			</g:FlowPanel>

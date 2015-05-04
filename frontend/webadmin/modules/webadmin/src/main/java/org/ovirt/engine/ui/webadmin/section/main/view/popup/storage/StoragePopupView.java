@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -25,10 +26,12 @@ import org.ovirt.engine.ui.common.widget.uicommon.storage.ImportIscsiStorageView
 import org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 
@@ -41,6 +44,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
@@ -106,6 +111,11 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     IntegerEntityModelTextBoxEditor warningLowSpaceIndicatorEditor;
 
     @UiField
+    @Path(value = "warningLowSpaceSize.entity")
+    @WithElementId("warningLowSpaceSizeLabel")
+    Label warningLowSpaceSizeLabel;
+
+    @UiField
     @Path(value = "criticalSpaceActionBlocker.entity")
     @WithElementId("criticalSpaceActionBlockerEditor")
     IntegerEntityModelTextBoxEditor criticalSpaceActionBlockerEditor;
@@ -138,6 +148,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     private final Driver driver = GWT.create(Driver.class);
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public StoragePopupView(EventBus eventBus) {
@@ -217,8 +228,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         formatListEditor.addContentWidgetContainerStyleName(style.formatContentWidget());
         activateDomainEditor.addContentWidgetContainerStyleName(style.activateDomainEditor());
         advancedParametersExpanderContent.setStyleName(style.advancedParametersExpanderContent());
-        warningLowSpaceIndicatorEditor.addContentWidgetStyleName(style.storageTextBoxEditor());
-        criticalSpaceActionBlockerEditor.addContentWidgetStyleName(style.storageTextBoxEditor());
+        warningLowSpaceIndicatorEditor.addContentWidgetContainerStyleName(style.warningTextBoxEditor());
+        criticalSpaceActionBlockerEditor.addContentWidgetStyleName(style.blockerTextBoxEditor());
     }
 
     void localize() {
@@ -256,6 +267,21 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                 datacenterAlertIcon.setTitle(storageModel.getDataCenterAlert().getEntity());
             }
         });
+
+        warningLowSpaceIndicatorEditor.addKeyUpHandler(new KeyUpHandler() {
+            @Override
+            public void onKeyUp(KeyUpEvent event) {
+                if (!storageModel.isNewStorage()) {
+                    storageModel.getWarningLowSpaceSize().setEntity(
+                            ConstantsManager.getInstance().getMessages().bracketsWithGB(getWarningLowSpaceSize(storageModel)));
+                }
+            }
+        });
+    }
+
+    private Integer getWarningLowSpaceSize(StorageModel storageModel) {
+            Integer percentageValue = warningLowSpaceIndicatorEditor.asValueBox().getValue();
+            return percentageValue == null ? 0 : storageModel.getStorage().getTotalDiskSize() * percentageValue / 100;
     }
 
     private void initAdvancedParametersExpander() {
@@ -346,7 +372,9 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
         String advancedParametersExpanderContent();
 
-        String storageTextBoxEditor();
+        String warningTextBoxEditor();
+
+        String blockerTextBoxEditor();
     }
 
 }

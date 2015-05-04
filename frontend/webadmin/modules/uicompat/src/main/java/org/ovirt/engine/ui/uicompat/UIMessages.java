@@ -543,4 +543,8 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     String positiveTimezoneOffset(String name, String hours, String minutes);
 
     @DefaultMessage("{0} (UTC-{1}:{2})")
-    String negativeTimezoneOffset(String name, String hours, String minutes);}
+    String negativeTimezoneOffset(String name, String hours, String minutes);
+
+    @DefaultMessage("({0} GB)")
+    String bracketsWithGB(int value);
+}
