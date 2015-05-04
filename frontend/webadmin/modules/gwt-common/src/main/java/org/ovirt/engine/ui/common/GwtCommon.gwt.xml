@@ -14,6 +14,9 @@
     <!-- Inherit GWTP MVP module with automatic EntryPoint support -->
     <inherits name="com.gwtplatform.mvp.MvpWithEntryPoint" />
 
+    <!-- Disable GWTP version checking -->
+    <set-configuration-property name="verifyNewerVersion" value="false"/>
+
     <!-- Inherit oVirt UiCommon Web modules and GWT deRPC module -->
     <inherits name="org.ovirt.engine.ui.GwtExtension" />
     <inherits name="org.ovirt.engine.ui.UICommonWeb" />
