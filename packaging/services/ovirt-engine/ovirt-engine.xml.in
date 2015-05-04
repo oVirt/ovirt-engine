@@ -1,7 +1,6 @@
-<?xml version="1.0" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 
 <server xmlns="urn:jboss:domain:1.1">
-
   <extensions>
     <extension module="org.jboss.as.clustering.infinispan"/>
     <extension module="org.jboss.as.connector"/>
@@ -15,10 +14,11 @@
     <extension module="org.jboss.as.naming"/>
     <extension module="org.jboss.as.remoting"/>
     <extension module="org.jboss.as.security"/>
-    <extension module="org.jboss.as.threads"/>
     <extension module="org.jboss.as.transactions"/>
-    <extension module="org.jboss.as.web"/>
     <extension module="org.jboss.as.weld"/>
+
+    <extension module="org.jboss.as.threads"/>
+    <extension module="org.jboss.as.web"/>
   </extensions>
 
   <system-properties>
@@ -31,26 +31,29 @@
     <property name="org.quartz.jobStore.misfireThreshold" value="60000"/>
     <property name="org.quartz.jobStore.class" value="org.quartz.simpl.RAMJobStore"/>
 
+    <!-- Coyote properties can be removed when we drop EAP 6 support -->
     <!-- Enable compression for html content and REST api -->
     <property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION" value="on"/>
-    <property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION_MIME_TYPES" value="text/javascript,text/css,text/html,text/xml,text/json,application/x-yaml,application/xml,application/json"/>
+    <property
+        name="org.apache.coyote.http11.Http11Protocol.COMPRESSION_MIME_TYPES"
+        value="text/javascript,text/css,text/html,text/xml,text/json,application/x-yaml,application/xml,application/json"/>
 
   </system-properties>
 
-  <!-- We need to enable the management subsystem because it is an
-       indirect dependency of the Infinispan subsystem (since version
-       7.2 of the application server) but at the same time we don't
-       want anyone (other than the root and ovirt users) to be able
-       to connect to the management port, so we just use an empty
-       users file: -->
   <management>
     <security-realms>
+      <!-- We need to enable the management subsystem because it is an indirect
+           dependency of the Infinispan subsystem (since version 7.2 of the
+           application server) but at the same time we don't want anyone (other
+           than the root and ovirt users) to be able to connect to the
+           management port, so we just use an empty users file: -->
       <security-realm name="management">
         <authentication>
           <properties path="/dev/null"/>
         </authentication>
       </security-realm>
     </security-realms>
+
     <management-interfaces>
       <native-interface security-realm="management">
         <socket-binding native="management"/>
@@ -59,10 +62,11 @@
   </management>
 
   <profile>
-
     <subsystem xmlns="urn:jboss:domain:logging:1.1">
-
-      <custom-handler name="ovirt-logger" class="org.ovirt.engine.core.logger.LoggerHandler" module="org.ovirt.engine.core.logger">
+      <custom-handler
+          name="ovirt-logger"
+          class="org.ovirt.engine.core.logger.LoggerHandler"
+          module="org.ovirt.engine.core.logger">
         <level name="ALL"/>
       </custom-handler>
 
@@ -115,7 +119,7 @@
           <handler name="ENGINE"/>
           <handler name="ovirt-logger"/>
           #if $getboolean('ENGINE_LOG_TO_CONSOLE')
-              <handler name="CONSOLE"/>
+          <handler name="CONSOLE"/>
           #end if
         </handlers>
       </logger>
@@ -136,13 +140,10 @@
           <handler name="SERVER"/>
         </handlers>
       </root-logger>
-
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:datasources:1.0">
-
       <datasources>
-
         <datasource jndi-name="java:/ENGINEDataSource" pool-name="ENGINEDataSource" enabled="true" use-ccm="false">
           <connection-url><![CDATA[$getstring('ENGINE_DB_URL')]]></connection-url>
           <driver>postgresql</driver>
@@ -166,7 +167,12 @@
           </validation>
         </datasource>
 
-        <datasource jndi-name="java:/ENGINEDataSourceNoJTA" pool-name="ENGINEDataSourceNoJTA" enabled="true" use-ccm="false" jta="false">
+        <datasource
+            jndi-name="java:/ENGINEDataSourceNoJTA"
+            pool-name="ENGINEDataSourceNoJTA"
+            enabled="true"
+            use-ccm="false"
+            jta="false">
           <connection-url><![CDATA[$getstring('ENGINE_DB_URL')]]></connection-url>
           <driver>postgresql</driver>
           <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
@@ -194,18 +200,16 @@
             <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
           </driver>
         </drivers>
-
       </datasources>
-
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:deployment-scanner:1.1">
       <deployment-scanner path="$jboss_runtime/deployments" deployment-timeout="1200"
-        #if $getboolean('ENGINE_DEPLOYMENT_SCANNER')
-            scan-interval="5000"
-        #else
-            scan-interval="0"
-        #end if
+          #if $getboolean('ENGINE_DEPLOYMENT_SCANNER')
+          scan-interval="5000"
+          #else
+          scan-interval="0"
+          #end if
       />
     </subsystem>
 
@@ -225,8 +229,16 @@
       </mdb>
       <pools>
         <bean-instance-pools>
-          <strict-max-pool name="slsb-strict-max-pool" max-pool-size="20" instance-acquisition-timeout="5" instance-acquisition-timeout-unit="MINUTES"/>
-          <strict-max-pool name="mdb-strict-max-pool" max-pool-size="20" instance-acquisition-timeout="5" instance-acquisition-timeout-unit="MINUTES"/>
+          <strict-max-pool
+              name="slsb-strict-max-pool"
+              max-pool-size="20"
+              instance-acquisition-timeout="5"
+              instance-acquisition-timeout-unit="MINUTES"/>
+          <strict-max-pool
+              name="mdb-strict-max-pool"
+              max-pool-size="20"
+              instance-acquisition-timeout="5"
+              instance-acquisition-timeout-unit="MINUTES"/>
         </bean-instance-pools>
       </pools>
       <caches>
@@ -246,7 +258,11 @@
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:infinispan:1.1" default-cache-container="ovirt-engine">
-        <cache-container name="ovirt-engine" default-cache="timeout-base" jndi-name="java:jboss/infinispan/ovirt-engine" start="EAGER">
+        <cache-container
+           name="ovirt-engine"
+           default-cache="timeout-base"
+           jndi-name="java:jboss/infinispan/ovirt-engine"
+           start="EAGER">
          <local-cache name="timeout-base">
            <transaction mode="NONE"/>
            <eviction max-entries="10000"/>
@@ -328,13 +344,11 @@
             <policy-module code="Delegating" flag="required"/>
           </authorization>
         </security-domain>
-
         <security-domain name="oVirtKerb">
           <authentication>
             <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required"/>
           </authentication>
         </security-domain>
-
         <security-domain name="oVirtKerbDebug">
           <authentication>
             <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required">
@@ -342,7 +356,6 @@
             </login-module>
           </authentication>
         </security-domain>
-
       </security-domains>
     </subsystem>
 
@@ -356,19 +369,39 @@
       <coordinator-environment default-timeout="600"/>
     </subsystem>
 
-    <subsystem xmlns="urn:jboss:domain:threads:1.1"/>
-
     <subsystem xmlns="urn:jboss:domain:web:1.1" native="false" default-virtual-server="default-host">
       #if $getboolean('ENGINE_HTTP_ENABLED')
-        <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http" redirect-port="$getinteger('ENGINE_HTTPS_PORT')"/>
+      <connector
+          name="http"
+          protocol="HTTP/1.1"
+          scheme="http"
+          socket-binding="http"
+          redirect-port="$getinteger('ENGINE_HTTPS_PORT')"/>
       #end if
       #if $getboolean('ENGINE_HTTPS_ENABLED')
-        <connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true">
-          <ssl name="ssl" password="mypass" certificate-key-file="$getstring('ENGINE_PKI')/keys/jboss.p12" keystore-type="PKCS12" key-alias="1" protocol="$getstring('ENGINE_HTTPS_PROTOCOLS')" verify-client="false"/>
-        </connector>
+      <connector
+          name="https"
+          protocol="HTTP/1.1"
+          scheme="https"
+          socket-binding="https"
+          secure="true">
+        <ssl
+            name="ssl"
+            password="mypass"
+            certificate-key-file="$getstring('ENGINE_PKI')/keys/jboss.p12"
+            keystore-type="PKCS12"
+            key-alias="1"
+            protocol="$getstring('ENGINE_HTTPS_PROTOCOLS')"
+            verify-client="false"/>
+      </connector>
       #end if
       #if $getboolean('ENGINE_AJP_ENABLED')
-        <connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp" redirect-port="$getinteger('ENGINE_PROXY_HTTPS_PORT')"/>
+      <connector
+          name="ajp"
+          protocol="AJP/1.3"
+          scheme="http"
+          socket-binding="ajp"
+          redirect-port="$getinteger('ENGINE_PROXY_HTTPS_PORT')"/>
       #end if
       <virtual-server name="default-host" enable-welcome-root="false">
         <alias name="localhost"/>
@@ -377,6 +410,8 @@
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:weld:1.0"/>
+
+    <subsystem xmlns="urn:jboss:domain:threads:1.1"/>
   </profile>
 
   <interfaces>
@@ -390,18 +425,29 @@
 
   <socket-binding-group name="standard-sockets" default-interface="loopback">
     #if $getboolean('ENGINE_HTTP_ENABLED')
-      <socket-binding name="http" port="$getinteger('ENGINE_HTTP_PORT')" interface="public"/>
+    <socket-binding
+        name="http"
+        port="$getinteger('ENGINE_HTTP_PORT')"
+        interface="public"/>
     #end if
     #if $getboolean('ENGINE_HTTPS_ENABLED')
-      <socket-binding name="https" port="$getinteger('ENGINE_HTTPS_PORT')" interface="public"/>
+    <socket-binding
+        name="https"
+        port="$getinteger('ENGINE_HTTPS_PORT')"
+        interface="public"/>
     #end if
     #if $getboolean('ENGINE_AJP_ENABLED')
-      <socket-binding name="ajp" port="$getinteger('ENGINE_AJP_PORT')"/>
+    <socket-binding
+        name="ajp"
+        port="$getinteger('ENGINE_AJP_PORT')"/>
     #end if
-    <socket-binding name="remoting" port="8703"/>
+
+    <socket-binding
+        name="remoting"
+        port="8703"/>
+
     <socket-binding name="txn-recovery-environment" port="8704"/>
     <socket-binding name="txn-status-manager" port="8705"/>
     <socket-binding name="management" port="8706"/>
   </socket-binding-group>
-
 </server>
