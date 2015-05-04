@@ -2183,6 +2183,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     DataCenterWithoutSpm,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("16")
+    MaxMemorySlots,
+
     Invalid
 
 }

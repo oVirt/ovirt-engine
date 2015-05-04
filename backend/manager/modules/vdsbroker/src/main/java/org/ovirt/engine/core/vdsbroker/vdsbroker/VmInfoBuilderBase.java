@@ -68,6 +68,15 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.vm_guid, vm.getId().toString());
         createInfo.put(VdsProperties.vm_name, vm.getName());
         createInfo.put(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
+
+        if (osRepository.get64bitOss().contains(vm.getOs())) {
+            createInfo.put(VdsProperties.maxMemSize, Config.getValue(ConfigValues.VM64BitMaxMemorySizeInMB,
+                            vm.getVdsGroupCompatibilityVersion().getValue()));
+        } else {
+            createInfo.put(VdsProperties.maxMemSize, Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB));
+        }
+        createInfo.put(VdsProperties.maxMemSlots, Config.getValue(ConfigValues.MaxMemorySlots));
+
         createInfo.put(VdsProperties.mem_guaranteed_size_mb, vm.getMinAllocatedMem());
         createInfo.put(VdsProperties.smartcardEnabled, Boolean.toString(vm.isSmartcardEnabled()));
         createInfo.put(VdsProperties.num_of_cpus, String.valueOf(vm.getNumOfCpus()));

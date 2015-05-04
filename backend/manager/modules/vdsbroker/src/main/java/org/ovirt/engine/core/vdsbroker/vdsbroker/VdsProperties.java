@@ -224,6 +224,8 @@ public final class VdsProperties {
 
     // vm configuration (i.e. VmStatic)
     public static final String mem_size_mb = "memSize";
+    public static final String maxMemSize = "maxMemSize";
+    public static final String maxMemSlots = "maxMemSlots";
     public static final String mem_guaranteed_size_mb = "memGuaranteedSize";
     public static final String num_of_monitors = "spiceMonitors";
     public static final String num_of_cpus = "smp";
