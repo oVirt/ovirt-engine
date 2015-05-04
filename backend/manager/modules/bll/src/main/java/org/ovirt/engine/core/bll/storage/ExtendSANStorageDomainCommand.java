@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -78,7 +77,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             return false;
         }
 
-        if ((getStorageDomain().getStorageType() == StorageType.NFS || getStorageDomain().getStorageType() == StorageType.UNKNOWN)) {
+        if (!getStorageDomain().getStorageType().isBlockDomain()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             return false;
         }
