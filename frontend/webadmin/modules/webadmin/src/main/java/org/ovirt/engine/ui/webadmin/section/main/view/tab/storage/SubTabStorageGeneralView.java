@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
@@ -55,7 +56,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     PercentLabel<Integer> overAllocationRatio = new PercentLabel<Integer>();
 
     @Ignore
-    PercentLabel<Integer> warningLowSpaceIndicator = new PercentLabel<Integer>();
+    TextBoxLabel warningLowSpaceIndicator = new TextBoxLabel();
 
     @Ignore
     StorageSizeLabel<Integer> criticalSpaceActionBlocker = new StorageSizeLabel<Integer>();
@@ -87,6 +88,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     private final Driver driver = GWT.create(Driver.class);
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public SubTabStorageGeneralView(DetailModelProvider<StorageListModel, StorageGeneralModel> modelProvider) {
@@ -177,7 +179,8 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
             usedSize.setValue(entity.getUsedDiskSize());
             allocatedSize.setValue(entity.getCommittedDiskSize());
             overAllocationRatio.setValue(entity.getStorageDomainOverCommitPercent());
-            warningLowSpaceIndicator.setValue(entity.getWarningLowSpaceIndicator());
+            warningLowSpaceIndicator.setValue(messages.percentWithValueInGB(
+                    entity.getWarningLowSpaceIndicator(), entity.getWarningLowSpaceSize()));
             criticalSpaceActionBlocker.setValue(entity.getCriticalSpaceActionBlocker());
         }
 

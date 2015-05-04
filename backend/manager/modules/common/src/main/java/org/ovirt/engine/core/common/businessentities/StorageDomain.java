@@ -147,6 +147,10 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
         staticData.setWarningLowSpaceIndicator(warningLowSpaceIndicator);
     }
 
+    public int getWarningLowSpaceSize() {
+        return getWarningLowSpaceIndicator() == null ? 0 : getTotalDiskSize() * getWarningLowSpaceIndicator() / 100;
+    }
+
     public Integer getCriticalSpaceActionBlocker() {
         return staticData.getCriticalSpaceActionBlocker();
     }

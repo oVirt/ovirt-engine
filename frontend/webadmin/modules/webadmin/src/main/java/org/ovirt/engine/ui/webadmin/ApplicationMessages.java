@@ -112,4 +112,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("{0} ({1})")
     String nameId(String name, String id);
+
+    @DefaultMessage("{0}% ({1} GB)")
+    String percentWithValueInGB(int percent, int value);
 }
