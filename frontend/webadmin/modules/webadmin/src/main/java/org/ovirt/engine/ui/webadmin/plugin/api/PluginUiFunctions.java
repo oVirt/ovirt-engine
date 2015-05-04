@@ -245,13 +245,13 @@ public class PluginUiFunctions implements HasHandlers {
     }
 
     /**
-     * Reveals the given application place.
+     * Reveals the application place denoted by {@code historyToken}.
      */
-    public void revealPlace(final String placeToken) {
+    public void revealPlace(final String historyToken) {
         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
             @Override
             public void execute() {
-                placeManager.revealPlace(new PlaceRequest.Builder().nameToken(placeToken).build());
+                placeManager.revealPlace(new PlaceRequest.Builder().nameToken(historyToken).build());
             }
         });
     }
