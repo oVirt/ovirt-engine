@@ -127,4 +127,9 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
     public SearchableListModel getImportDiskListModel() {
         return templateImportDiskListModel;
     }
+
+    @Override
+    protected boolean validateNames() {
+        return true;
+    }
 }

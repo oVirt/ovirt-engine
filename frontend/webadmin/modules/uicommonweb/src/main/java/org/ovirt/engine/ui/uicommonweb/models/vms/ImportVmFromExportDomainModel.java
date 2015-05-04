@@ -601,7 +601,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                 && getClusterQuota().getIsValid();
     }
 
-    private boolean validateNames() {
+    protected boolean validateNames() {
         for (ImportVmData importVmData : (Iterable<ImportVmData>) getItems()) {
             if (!importVmData.getClone().getEntity() && importVmData.getError() != null) {
                 onPropertyChanged(new PropertyChangedEventArgs("InvalidVm")); //$NON-NLS-1$
