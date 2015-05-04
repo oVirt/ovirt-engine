@@ -12,6 +12,7 @@ import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -610,6 +611,15 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             return false;
         }
         return map.get(OvfInfoFileConstants.Domains).toString().contains(storageDomainId.toString());
+    }
+
+    protected String getJsonDiskDescription(String diskAlias, String diskDescription) {
+        try {
+            return ImagesHandler.getJsonDiskDescription(diskAlias, diskDescription);
+        } catch (IOException e) {
+            log.error("Exception while generating json for disk. ERROR: '{}'", e);
+            return StringUtils.EMPTY;
+        }
     }
 
     @Override

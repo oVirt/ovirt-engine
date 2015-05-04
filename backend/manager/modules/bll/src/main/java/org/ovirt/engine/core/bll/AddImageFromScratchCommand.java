@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
@@ -92,7 +90,10 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                         new CreateImageVDSCommandParameters(getParameters().getStoragePoolId(), getParameters()
                                 .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getSize(),
                                 getParameters().getDiskInfo().getVolumeType(), getParameters().getDiskInfo()
-                                        .getVolumeFormat(), getDestinationImageId(), getJsonDiskDescription()));
+                                        .getVolumeFormat(), getDestinationImageId(),
+                                getJsonDiskDescription(getParameters().getDiskInfo().getDiskAlias(),
+                                        getParameters().getDiskInfo().getDiskDescription())
+                        ));
         if (vdsReturnValue.getSucceeded()) {
             getParameters().setVdsmTaskIds(new ArrayList<Guid>());
             getParameters().getVdsmTaskIds().add(
@@ -107,16 +108,6 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         }
 
         return false;
-    }
-
-    private String getJsonDiskDescription() {
-        try {
-            return ImagesHandler.getJsonDiskDescription(getParameters().getDiskInfo().getDiskAlias(),
-                    getParameters().getDiskInfo().getDiskDescription());
-        } catch (IOException e) {
-            log.error("Exception while generating json for disk. ERROR: '{}'", e);
-            return StringUtils.EMPTY;
-        }
     }
 
     @Override
