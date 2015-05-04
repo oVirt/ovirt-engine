@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
+import org.ovirt.engine.ui.common.utils.FloatingPointHelper;
 
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -38,7 +39,9 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
 
         int beforeIndex;
         for (beforeIndex = 0; beforeIndex < tabList.size(); ++beforeIndex) {
-            if (newTab.getPriority() < tabList.get(beforeIndex).getPriority()) {
+            TabDefinition currentTab = tabList.get(beforeIndex);
+
+            if (FloatingPointHelper.epsCompare(newTab.getPriority(), currentTab.getPriority()) < 0) {
                 break;
             }
         }

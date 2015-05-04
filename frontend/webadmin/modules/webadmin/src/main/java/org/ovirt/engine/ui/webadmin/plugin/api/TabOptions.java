@@ -19,4 +19,16 @@ public final class TabOptions extends JsObjectWithProperties {
         return getValueAsBoolean("alignRight", false); //$NON-NLS-1$
     }
 
+    /**
+     * Returns the priority of the tab, denoting its relative position within the tab panel.
+     * <p>
+     * Standard main and sub tabs typically have their priority starting at 0 (left-most tab)
+     * and incremented by 1 for each next tab.
+     * <p>
+     * Default return value: {@code Double.MAX_VALUE}
+     */
+    public Double getPriority() {
+        return getValueAsDouble("priority", Double.MAX_VALUE); //$NON-NLS-1$
+    }
+
 }

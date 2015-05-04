@@ -34,13 +34,13 @@ public class DynamicUrlContentTabProxyFactory {
             Type<RequestTabsHandler> requestTabsEventType,
             Type<ChangeTabHandler> changeTabEventType,
             Type<RevealContentHandler<?>> slot,
-            String label, String historyToken, boolean isMainTab,
-            String contentUrl, Align align) {
+            String label, float priority, String historyToken,
+            boolean isMainTab, String contentUrl, Align align) {
         return new DynamicUrlContentTabProxy(
                 placeManager, eventBus, gatekeeper,
                 requestTabsEventType, changeTabEventType,
                 slot, viewProvider,
-                label, Float.MAX_VALUE, historyToken,
+                label, priority, historyToken,
                 isMainTab, contentUrl, align);
     }
 
