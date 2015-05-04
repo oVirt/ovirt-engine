@@ -508,9 +508,9 @@ public class PluginManager {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::closeDialog(Ljava/lang/String;)(dialogToken);
                 }
             },
-            revealPlace: function(placeToken) {
+            revealPlace: function(historyToken) {
                 if (canDoPluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::revealPlace(Ljava/lang/String;)(placeToken);
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::revealPlace(Ljava/lang/String;)(historyToken);
                 }
             },
             setSearchString: function(searchString) {
