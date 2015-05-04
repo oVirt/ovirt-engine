@@ -657,11 +657,19 @@ public class VmMapper extends VmBaseMapper {
         }
     }
 
-    public static VM map(String configuration, ConfigurationType type, VM vm) {
-        vm.setInitialization(new Initialization());
-        vm.getInitialization().setConfiguration(new Configuration());
-        vm.getInitialization().getConfiguration().setData(configuration);
-        vm.getInitialization().getConfiguration().setType(type.value());
+    public static VM map(String data, ConfigurationType type, VM vm) {
+        Initialization initialization = vm.getInitialization();
+        if (initialization == null) {
+            initialization = new Initialization();
+            vm.setInitialization(initialization);
+        }
+        Configuration configuration = initialization.getConfiguration();
+        if (configuration == null) {
+            configuration = new Configuration();
+            initialization.setConfiguration(configuration);
+        }
+        configuration.setData(data);
+        configuration.setType(type.value());
         return vm;
     }
 
