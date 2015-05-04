@@ -183,7 +183,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                             if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {
                                 updateStorageDomainFormat(getStorageDomain());
                             }
-                            registerAllOvfDisks(getAllOVFDisks());
                             List<DiskImage> ovfStoreDiskImages =
                                     getAllOVFDisks(getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
                             registerAllOvfDisks(ovfStoreDiskImages, getParameters().getStorageDomainId());
