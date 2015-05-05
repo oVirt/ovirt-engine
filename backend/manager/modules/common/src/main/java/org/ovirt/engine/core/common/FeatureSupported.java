@@ -541,4 +541,13 @@ public class FeatureSupported {
     public static boolean migrateDowntime(Version version) {
         return supportedInConfig(ConfigValues.MigrateDowntimeSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if live storage migration between different storage types is supported for given version.
+     */
+    public static boolean liveStorageMigrationBetweenDifferentStorageTypesSupported(Version version) {
+        return supportedInConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, version);
+    }
 }

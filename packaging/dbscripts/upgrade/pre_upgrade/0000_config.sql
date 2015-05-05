@@ -274,6 +274,8 @@ select fn_db_add_config_value('UserPackageNamesForCheckUpdate','','general');
 -- The internal between checking for new updates availability for the host
 select fn_db_add_config_value('HostPackagesUpdateTimeInHours','24','general');
 
+select fn_db_add_config_value_for_versions_up_to('LiveStorageMigrationBetweenDifferentStorageTypes', 'false', '3.5');
+
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
 

@@ -63,9 +63,14 @@ public class LiveMigrateVmDisksCommandTest {
     private final Guid storagePoolId = Guid.newGuid();
     private final Guid diskProfileId = Guid.newGuid();
 
+    private StoragePool storagePool;
+
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.LiveSnapshotEnabled, Version.v3_1.toString(), true)
+            mockConfig(ConfigValues.LiveSnapshotEnabled, Version.v3_1.toString(), true),
+            mockConfig(ConfigValues.LiveSnapshotEnabled, Version.v3_6.toString(), true),
+            mockConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, Version.v3_1.toString(), false),
+            mockConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, Version.v3_6.toString(), true)
     );
 
     @Mock
@@ -247,6 +252,18 @@ public class LiveMigrateVmDisksCommandTest {
     }
 
     @Test
+    public void canDoActionFileToBlockSupported() {
+        storagePool.setCompatibilityVersion(Version.v3_6);
+        canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.NFS, StorageType.ISCSI, true);
+    }
+
+    @Test
+    public void canDoActionBlockToFileSupported() {
+        storagePool.setCompatibilityVersion(Version.v3_6);
+        canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.NFS, true);
+    }
+
+    @Test
     public void canDoActionBlockToBlock() {
         canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.ISCSI, true);
     }
@@ -265,7 +282,7 @@ public class LiveMigrateVmDisksCommandTest {
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        assertEquals(command.canDoAction(), shouldSucceed);
+        assertEquals(shouldSucceed, command.canDoAction());
         if (!shouldSucceed) {
             assertTrue(command.getReturnValue()
                     .getCanDoActionMessages()
@@ -369,7 +386,7 @@ public class LiveMigrateVmDisksCommandTest {
     }
 
     private void initStoragePool() {
-        StoragePool storagePool = new StoragePool();
+        storagePool = new StoragePool();
         storagePool.setCompatibilityVersion(Version.v3_1);
 
         when(storagePoolDao.get(any(Guid.class))).thenReturn(storagePool);

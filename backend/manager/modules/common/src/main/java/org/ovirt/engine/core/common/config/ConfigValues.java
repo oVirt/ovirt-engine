@@ -2163,6 +2163,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("24")
     HostPackagesUpdateTimeInHours,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    LiveStorageMigrationBetweenDifferentStorageTypes,
+
     Invalid
 
 }

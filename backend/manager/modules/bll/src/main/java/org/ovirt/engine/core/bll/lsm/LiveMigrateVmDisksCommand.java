@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
@@ -330,13 +331,18 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
         return validateSourceStorageDomain(sourceDomain)
                 && validateDestStorage(destDomain)
-                && validateDestStorageAndSourceStorageOfSameTypes(destDomain, sourceDomain);
+                && (liveStorageMigrationSupportedBetweenDifferentStorageTypes() ||
+                validateDestStorageAndSourceStorageOfSameTypes(destDomain, sourceDomain));
     }
 
     private StorageDomain getImageSourceDomain(Guid imageId) {
         DiskImage diskImage = getDiskImageByImageId(imageId);
         Guid domainId = diskImage.getStorageIds().get(0);
         return getStorageDomainById(domainId, getStoragePoolId());
+    }
+
+    private boolean liveStorageMigrationSupportedBetweenDifferentStorageTypes() {
+        return FeatureSupported.liveStorageMigrationBetweenDifferentStorageTypesSupported(getStoragePool().getCompatibilityVersion());
     }
 
     private boolean validateDestStorageAndSourceStorageOfSameTypes(StorageDomain destDomain, StorageDomain sourceDomain) {
