@@ -26,6 +26,7 @@ Install the following system components:
  - pyflakes (optional)
  - python-pep8 / pep8 (optional)
  - patternfly1 (optional)
+ - python-docker-py (optional)
 
 Maven-3 is required, download and extract if not installed using
 distribution package management, and add to PATH.
