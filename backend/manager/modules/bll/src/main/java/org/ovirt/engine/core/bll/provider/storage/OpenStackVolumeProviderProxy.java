@@ -5,6 +5,8 @@ import com.woorea.openstack.cinder.Cinder;
 import com.woorea.openstack.cinder.model.ConnectionForInitialize;
 import com.woorea.openstack.cinder.model.ConnectionInfo;
 import com.woorea.openstack.cinder.model.Limits;
+import com.woorea.openstack.cinder.model.SnapshotForCreate;
+import com.woorea.openstack.cinder.model.Snapshot;
 import com.woorea.openstack.cinder.model.Volume;
 import com.woorea.openstack.cinder.model.VolumeForCreate;
 import com.woorea.openstack.cinder.model.VolumeForUpdate;
@@ -65,6 +67,11 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
             client.setTokenProvider(getTokenProvider());
         }
         return client;
+    }
+
+    public String createSnapshot(SnapshotForCreate snapshotForCreate) {
+        Snapshot retCinderSnapshot = getClient(getTenantId()).snapshots().create(snapshotForCreate).execute();
+        return retCinderSnapshot.getId();
     }
 
     public String createVolume(VolumeForCreate volumeForCreate) {
