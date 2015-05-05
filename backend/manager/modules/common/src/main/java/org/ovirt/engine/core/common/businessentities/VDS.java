@@ -1082,10 +1082,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         return vdsDynamic.getVersion();
     }
 
-    public String getPartialVersion() {
-        return vdsDynamic.getVersion().getValue().substring(0, 2);
-    }
-
     public ServerCpu getCpuName() {
         return cpuName;
     }
