@@ -15,7 +15,9 @@ import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -543,5 +545,17 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         return getVm().getMemSizeMb();
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        Set<PermissionSubject> permissionSet = new HashSet<>();
+        // Destination domains
+        for (Guid storageId : imageToDestinationDomainMap.values()) {
+            permissionSet.add(new PermissionSubject(storageId,
+                    VdcObjectType.Storage,
+                    getActionType().getActionGroup()));
+        }
+        return new ArrayList<>(permissionSet);
     }
 }

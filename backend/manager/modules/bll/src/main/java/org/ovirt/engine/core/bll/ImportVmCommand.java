@@ -1042,7 +1042,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
-
+        // Source domain
+        permissionList.add(new PermissionSubject(getParameters().getSourceDomainId(),
+                VdcObjectType.Storage,
+                getActionType().getActionGroup()));
         // special permission is needed to use custom properties
         if (getVm() != null && !StringUtils.isEmpty(getVm().getCustomProperties())) {
             permissionList.add(new PermissionSubject(getVdsGroupId(),
