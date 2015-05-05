@@ -427,18 +427,22 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     // TaskHandlerCommand Implementation //
     ///////////////////////////////////////
 
+    @Override
     public T getParameters() {
         return super.getParameters();
     }
 
+    @Override
     public VdcActionType getActionType() {
         return super.getActionType();
     }
 
+    @Override
     public VdcReturnValueBase getReturnValue() {
         return super.getReturnValue();
     }
 
+    @Override
     public Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
@@ -447,12 +451,14 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         return super.createTaskInCurrentTransaction(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
     }
 
+    @Override
     public Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
     }
 
+    @Override
     public ArrayList<Guid> getTaskIdList() {
         return super.getTaskIdList();
     }
@@ -462,14 +468,17 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         // Not implemented
     }
 
+    @Override
     public void preventRollback() {
         throw new NotImplementedException();
     }
 
+    @Override
     public Guid persistAsyncTaskPlaceHolder() {
         return super.persistAsyncTaskPlaceHolder(getActionType());
     }
 
+    @Override
     public Guid persistAsyncTaskPlaceHolder(String taskKey) {
         return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
