@@ -11,7 +11,7 @@ public class CinderDisk extends DiskImage {
 
     @Override
     public boolean isAllowSnapshot() {
-        return false; // todo: implement snapshots support
+        return true;
     }
 
     public CinderConnectionInfo getCinderConnectionInfo() {
