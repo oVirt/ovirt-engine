@@ -1,4 +1,5 @@
 -- The following SP is used by engine-backup to report engine-backup activity
+-- v_scope is one of {db,dwhdb,reportsdb,files}
 -- v_status can be :
 -- -1 backup failed
 -- 0 backup started

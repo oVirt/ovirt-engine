@@ -25,8 +25,23 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public class EngineBackupAwarenessManager {
+
+    private enum BackupScope {
+        DB("db"),
+        FILES("files");
+
+        String name;
+
+        BackupScope(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
     private static final Logger log = LoggerFactory.getLogger(EngineBackupAwarenessManager.class);
-    private static final String SCOPE = "db";
     private volatile boolean active;
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -73,19 +88,29 @@ public class EngineBackupAwarenessManager {
         AuditLogableBase alert = new AuditLogableBase();
 
         //try to get last backup record
-        EngineBackupLog lastBackup = engineBackupLogDao.getLastSuccessfulEngineBackup(SCOPE);
-        if (lastBackup == null) {
-            auditLogDirector.log(alert, AuditLogType.ENGINE_NO_BACKUP);
+        EngineBackupLog lastDbBackup = getLastBackupByScope(BackupScope.DB);
+        EngineBackupLog lastFilesBackup = getLastBackupByScope(BackupScope.FILES);
+        if (lastDbBackup == null || lastFilesBackup == null) {
+            auditLogDirector.log(alert, AuditLogType.ENGINE_NO_FULL_BACKUP);
         } else {
-            //check time elapsed from last backup
+            //check time elapsed from last full (db and files) backup
             Integer backupAlertPeriodInDays = Config.<Integer>getValue(ConfigValues.BackupAlertPeriodInDays);
-            Date lastBackupDate = lastBackup.getDoneAt();
-            long diffInDays = (Calendar.getInstance().getTimeInMillis() - lastBackupDate.getTime()) / TimeUnit.DAYS.toMillis(1);
+            Date lastDbBackupDate = lastDbBackup.getDoneAt();
+            Date lastFilesBackupDate = lastFilesBackup.getDoneAt();
+            Date lastFullBackupDate = lastDbBackupDate.compareTo(lastFilesBackupDate) < 0
+                    ? lastDbBackupDate
+                    : lastFilesBackupDate;
+            long diffInDays = (Calendar.getInstance().getTimeInMillis() - lastFullBackupDate.getTime())
+                              / TimeUnit.DAYS.toMillis(1);
             if (diffInDays > backupAlertPeriodInDays) {
-                alert.addCustomValue("Date", lastBackupDate.toString());
+                alert.addCustomValue("Date", lastFullBackupDate.toString());
                 auditLogDirector.log(alert, AuditLogType.ENGINE_NO_WARM_BACKUP);
             }
         }
 
+    }
+
+    private EngineBackupLog getLastBackupByScope(BackupScope scope) {
+        return engineBackupLogDao.getLastSuccessfulEngineBackup(scope.getName());
     }
 }

@@ -6372,7 +6372,7 @@
             <null />
             <null />
             <value>2008-04-02 13:11:29</value>
-            <value>ENGINE_NO_BACKUP</value>
+            <value>ENGINE_NO_FULL_BACKUP</value>
             <value>9022</value>
             <value>10</value>
             <value>There is no backup available, please run engine-backup to prevent data loss in case of corruption.</value>
