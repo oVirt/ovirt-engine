@@ -5,9 +5,9 @@ import org.ovirt.engine.core.common.errors.VDSError;
 
 public class VDSReturnValue {
 
+    protected Object returnValue;
     private boolean succeeded;
     private String exceptionString;
-    private Object returnValue;
     private RuntimeException exceptionObject;
     private AsyncTaskCreationInfo creationInfo;
     private VDSError vdsError;

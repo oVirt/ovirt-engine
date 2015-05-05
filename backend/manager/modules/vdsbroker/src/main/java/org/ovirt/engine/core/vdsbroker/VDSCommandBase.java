@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -8,6 +9,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 
 public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCommandBase {
     private P _parameters;
+    private boolean async;
 
     public P getParameters() {
         return _parameters;
@@ -48,6 +50,10 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
     @Override
     protected void executeCommand() {
         try {
+            if (isAsync()) {
+                executeCommandAsynchronously();
+                return;
+            }
             // creating ReturnValue object since execute can be called more than once (failover)
             // and we want returnValue clean from last run.
             _returnValue = new VDSReturnValue();
@@ -87,4 +93,20 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
     }
 
     protected abstract void executeVDSCommand();
+
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+
+    public boolean isAsync() {
+        return this.async;
+    }
+
+    /**
+     * When providing asynchronous execution of vds command this method need to
+     * be overridden.
+     */
+    protected void executeCommandAsynchronously() {
+        throw new NotImplementedException(this.getClass().getName() + " does not provide setAsyncResult implementation");
+    }
 }

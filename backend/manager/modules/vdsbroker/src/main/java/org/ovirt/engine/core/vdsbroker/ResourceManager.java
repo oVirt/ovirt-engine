@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSAsyncReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -469,6 +470,23 @@ public class ResourceManager {
         if (command != null) {
             command.execute();
             return command.getVDSReturnValue();
+        }
+
+        return null;
+    }
+
+    public <P extends VDSParametersBase> VDSAsyncReturnValue runAsyncVdsCommand(VDSCommandType commandType, P parameters) {
+        VDSCommandBase<P> command = CreateCommand(commandType, parameters);
+
+        if (command != null) {
+            command.setAsync(true);
+            command.execute();
+
+            VDSReturnValue value = command.getVDSReturnValue();
+            if (!VDSAsyncReturnValue.class.isInstance(value)) {
+                throw new IllegalStateException("Wrong return value type");
+            }
+            return (VDSAsyncReturnValue) value;
         }
 
         return null;
