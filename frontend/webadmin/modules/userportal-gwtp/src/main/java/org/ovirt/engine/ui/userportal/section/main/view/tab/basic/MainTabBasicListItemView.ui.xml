@@ -137,7 +137,7 @@
         <g:center>
             <g:LayoutPanel ui:field="mainContainer" addStyleNames="{style.basicVmViewBoxStyle}">
                 <g:layer>
-                    <i:OsTypeImage ui:field="osTypeImage" addStyleNames="{style.osTypeImage}" nameUniquePart="Large" />
+                    <i:IconImage ui:field="largeIconImage" addStyleNames="{style.osTypeImage}" />
                 </g:layer>
 
                 <g:layer top='5px' height='120px' left='5px' width='150px'>

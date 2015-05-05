@@ -29,9 +29,15 @@ public class PoolItemBehavior extends ItemBehavior
     // this has to be static because in every request a new instance of this class is created
     private static Map<Guid, Integer> poolToOsType = new HashMap<Guid, Integer>();
 
-    public PoolItemBehavior(UserPortalItemModel item)
+    private VM poolRepresentant;
+
+    /**
+     * @see UserPortalItemModel#UserPortalItemModel(Object, VmConsoles, VM)
+     */
+    public PoolItemBehavior(UserPortalItemModel item, VM poolRepresentant)
     {
         super(item);
+        this.poolRepresentant = poolRepresentant;
     }
 
     @Override
@@ -95,26 +101,34 @@ public class PoolItemBehavior extends ItemBehavior
             getItem().setOsId(poolToOsType.get(entity.getVmPoolId()));
         }
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
-                new IdQueryParameters(entity.getVmPoolId()),
-                new AsyncQuery(this,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object target, Object returnValue) {
+        if (poolRepresentant != null) {
+            updatePropertiesFromPoolRepresentant(poolRepresentant);
+            poolRepresentant = null;
+        } else {
+            Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
+                    new IdQueryParameters(entity.getVmPoolId()),
+                    new AsyncQuery(this, new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target, Object returnValue) {
 
-                                PoolItemBehavior behavior = (PoolItemBehavior) target;
-                                if (returnValue != null)
-                                {
-                                    VM vm = (VM) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                                    if (vm == null) {
-                                        return;
-                                    }
-                                    UserPortalItemModel model = behavior.getItem();
-                                    model.setOsId(vm.getVmOsId());
-                                    poolToOsType.put(((VmPool) model.getEntity()).getVmPoolId(), vm.getVmOsId());
+                            if (returnValue != null) {
+                                VM vm = (VM) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                if (vm == null) {
+                                    return;
                                 }
+                                updatePropertiesFromPoolRepresentant(vm);
                             }
-                        }));
+                        }
+                    }));
+        }
+    }
+
+    private void updatePropertiesFromPoolRepresentant(VM poolRepresentant) {
+        UserPortalItemModel model = getItem();
+        model.setOsId(poolRepresentant.getVmOsId());
+        model.setSmallIconId(poolRepresentant.getStaticData().getSmallIconId());
+        model.setLargeIconId(poolRepresentant.getStaticData().getLargeIconId());
+        poolToOsType.put(((VmPool) model.getEntity()).getVmPoolId(), poolRepresentant.getVmOsId());
     }
 
     private void updateActionAvailability()

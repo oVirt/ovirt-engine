@@ -56,6 +56,7 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -799,6 +800,7 @@ public final class Linq
         return result;
     }
 
+    @SafeVarargs
     public static <T> List<T> concat(List<T>... lists) {
         return concatUnsafe(lists);
     }
@@ -826,6 +828,25 @@ public final class Linq
             }
         }
 
+        return result;
+    }
+
+    public static <U, V> List<Pair<U, V>> zip(List<U> objects, List<V> vms) {
+        if (objects.size() != vms.size()) {
+            throw new RuntimeException("Zip called on lists of different lengths"); //$NON-NLS-1$
+        }
+        final List<Pair<U, V>> result = new ArrayList<>();
+        for (int i = 0; i < objects.size(); i++) {
+            result.add(new Pair<>(objects.get(i), vms.get(i)));
+        }
+        return result;
+    }
+
+    public static <U, V> List<Pair<U, V>> wrapAsFirst(List<U> list, Class<V> secondComponentClass) {
+        final List<Pair<U, V>> result = new ArrayList<>();
+        for (U object : list) {
+            result.add(new Pair<>(object, (V) null));
+        }
         return result;
     }
 

@@ -11,9 +11,9 @@ import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListItemPresenterWidget;
+import org.ovirt.engine.ui.userportal.widget.basic.IconImage;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemActionButton;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
-import org.ovirt.engine.ui.userportal.widget.basic.OsTypeImage;
 import org.ovirt.engine.ui.userportal.widget.basic.VmPausedImage;
 import org.ovirt.engine.ui.userportal.widget.basic.VmUpMaskImage;
 
@@ -82,8 +82,8 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     private final Driver driver = GWT.create(Driver.class);
 
     @UiField
-    @Path("osId")
-    OsTypeImage osTypeImage;
+    @Path("largeIconId")
+    IconImage largeIconImage;
 
     @UiField
     @Path("isVmUp")

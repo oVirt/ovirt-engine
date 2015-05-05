@@ -6,11 +6,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -22,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalTemplateVmModelBehavior;
 
@@ -53,9 +56,27 @@ public class UserPortalTemplateListModel extends TemplateListModel {
         AsyncDataProvider.getInstance().getAllVmTemplates(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                ((UserPortalTemplateListModel) model).setItems((Collection) returnValue);
+                Collection<VmTemplate> vmTemplates = (Collection<VmTemplate>) returnValue;
+                prefetchIcons(vmTemplates);
             }
         }), getIsQueryFirstTime());
+    }
+
+    private void prefetchIcons(final Collection<VmTemplate> vmTemplates) {
+        final List<Guid> iconIds = extractSmallIconIds(vmTemplates);
+        IconCache.getInstance().getOrFetchIcons(iconIds, new IconCache.IconsCallback() {
+            @Override public void onSuccess(Map<Guid, String> idToIconMap) {
+                setItems(vmTemplates);
+            }
+        });
+    }
+
+    private List<Guid> extractSmallIconIds(Collection<VmTemplate> vmTemplates) {
+        final List<Guid> result = new ArrayList<>();
+        for (VmTemplate template: vmTemplates) {
+            result.add(template.getSmallIconId());
+        }
+        return result;
     }
 
     @Override

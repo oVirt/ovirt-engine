@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class UserPortalItemModel extends EntityModel {
     private UICommand runCommand;
     private final VmConsoles vmConsoles;
+    private VM poolRepresentant;
 
     public UICommand getRunCommand()
     {
@@ -262,9 +263,43 @@ public class UserPortalItemModel extends EntityModel {
         }
     }
 
+    private Guid smallIconId;
+
+    public Guid getSmallIconId() {
+        return smallIconId;
+    }
+
+    public void setSmallIconId(Guid smallIconId) {
+        if (!Objects.equals(this.smallIconId, smallIconId)) {
+            this.smallIconId = smallIconId;
+            onPropertyChanged(new PropertyChangedEventArgs("SmallIconId")); //$NON-NLS-1$
+        }
+    }
+
+    private Guid largeIconId;
+
+    public Guid getLargeIconId() {
+        return largeIconId;
+    }
+
+    public void setLargeIconId(Guid largeIconId) {
+        if (!Objects.equals(this.largeIconId, largeIconId)) {
+            this.largeIconId = largeIconId;
+            onPropertyChanged(new PropertyChangedEventArgs("LargeIconId")); //$NON-NLS-1$
+        }
+    }
+
+
     private ItemBehavior behavior;
 
-    public UserPortalItemModel(Object vmOrPool, VmConsoles consoles) {
+    /**
+     *
+     * @param vmOrPool instance of either {@link VM} or {@link VmPool} - the wrapped entity
+     * @param poolRepresentant used if {@code vmOrPool} argument is instance of {@link VmPool};
+     *                         a pre-resolved pool representant for one-time use. Introduced to reduce
+     *                         number of queries for pool representants.
+     */
+    public UserPortalItemModel(Object vmOrPool, VmConsoles consoles, VM poolRepresentant) {
         setRunCommand(new UICommand("Run", this)); //$NON-NLS-1$
         setPauseCommand(new UICommand("Pause", this)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
@@ -278,6 +313,7 @@ public class UserPortalItemModel extends EntityModel {
         setCdImages(new ArrayList<ChangeCDModel>(Arrays.asList(new ChangeCDModel[] { tempVar })));
 
         this.vmConsoles = consoles;
+        this.poolRepresentant = poolRepresentant;
 
         setEntity(vmOrPool);
     }
@@ -292,7 +328,8 @@ public class UserPortalItemModel extends EntityModel {
         }
         else if (getEntity() instanceof VmPool)
         {
-            behavior = new PoolItemBehavior(this);
+            behavior = new PoolItemBehavior(this, poolRepresentant);
+            poolRepresentant = null;
         }
         else
         {

@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListMode
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
 import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
 import org.ovirt.engine.ui.userportal.widget.basic.DisksImageWidget;
-import org.ovirt.engine.ui.userportal.widget.basic.OsTypeImage;
+import org.ovirt.engine.ui.userportal.widget.basic.IconImage;
 import org.ovirt.engine.ui.userportal.widget.basic.VmTypeImage;
 
 import com.google.gwt.core.client.GWT;
@@ -47,8 +47,8 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     }
 
     @UiField
-    @Path("selectedItem.osId")
-    OsTypeImage osImage;
+    @Path("selectedItem.smallIconId")
+    IconImage smallIconImage;
 
     @UiField
     @Path("selectedItem")
@@ -165,7 +165,7 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
 
     @Override
     public void displayVmOsImages(boolean dispaly) {
-        osImage.setVisible(dispaly);
+        smallIconImage.setVisible(dispaly);
         vmImage.setVisible(dispaly);
     }
 

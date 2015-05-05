@@ -145,6 +145,8 @@ public class VmItemBehavior extends ItemBehavior {
         getItem().setIsServer(entity.getVmType() == VmType.Server);
         getItem().setOsId(entity.getVmOsId());
         getItem().setIsFromPool(entity.getVmPoolId() != null);
+        getItem().setSmallIconId(entity.getStaticData().getSmallIconId());
+        getItem().setLargeIconId(entity.getStaticData().getLargeIconId());
     }
 
     private void updateActionAvailability() {

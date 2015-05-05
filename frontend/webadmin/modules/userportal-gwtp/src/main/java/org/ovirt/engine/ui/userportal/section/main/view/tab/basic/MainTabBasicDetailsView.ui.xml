@@ -178,7 +178,7 @@
         <g:north size='80'>
             <g:SimpleLayoutPanel addStyleNames="{style.detailsHeaderPanel}">
                 <g:FlowPanel>
-                    <e:OsTypeImage ui:field="osImage" addStyleNames="{style.osImage}" nameUniquePart="Small" />
+                    <e:IconImage ui:field="smallIconImage" addStyleNames="{style.osImage}" />
                     <e:VmTypeImage ui:field="vmImage" addStyleNames="{style.vmImage}"/>
 
                     <g:FlowPanel>

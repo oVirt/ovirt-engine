@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
@@ -12,7 +13,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
@@ -33,9 +33,7 @@ import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleEditButtonCell;
 import org.ovirt.engine.ui.userportal.widget.refresh.UserPortalRefreshManager;
 import org.ovirt.engine.ui.userportal.widget.table.UserPortalSimpleActionTable;
 import org.ovirt.engine.ui.userportal.widget.table.cell.VmButtonsImageButtonCell;
-import org.ovirt.engine.ui.userportal.widget.table.column.AbstractMaskedVmImageColumn;
-import org.ovirt.engine.ui.userportal.widget.table.column.AbstractMaskedVmImageColumn.ShowMask;
-import org.ovirt.engine.ui.userportal.widget.table.column.OsTypeExtractor;
+import org.ovirt.engine.ui.userportal.widget.table.column.AbstractUserportalMaskedDataurlImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
 
 import com.google.gwt.cell.client.CompositeCell;
@@ -120,31 +118,16 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
     void initTable() {
         final String elementIdPrefix = getTable().getContentTableElementId();
 
-        OsTypeExtractor<UserPortalItemModel> extractor = new OsTypeExtractor<UserPortalItemModel>() {
-            @Override
-            public int extractOsType(UserPortalItemModel item) {
-                return item.getOsId();
-            }
-        };
-
-        ShowMask<UserPortalItemModel> upMask = new ShowMask<UserPortalItemModel>() {
-            @Override
-            public boolean showMask(UserPortalItemModel value) {
-                return !value.isVmUp();
-            }
-        };
-
         ImageResource mask = resources.disabledSmallMask();
 
-        AbstractMaskedVmImageColumn<UserPortalItemModel> maskedVmImageColumn =
-                new AbstractMaskedVmImageColumn<UserPortalItemModel>(extractor, upMask, mask) {
+        AbstractUserportalMaskedDataurlImageColumn maskedVmImageColumn =
+                new AbstractUserportalMaskedDataurlImageColumn(mask) {
 
                     @Override
-                    public SafeHtml getTooltip(UserPortalItemModel object) {
-                        String osId = AsyncDataProvider.getInstance().getOsName(object.getOsId());
-                        return SafeHtmlUtils.fromString(osId);
+                    public Guid getIconId(UserPortalItemModel itemModel) {
+                        return itemModel.getSmallIconId();
                     }
-        };
+                };
 
         getTable().addColumn(maskedVmImageColumn, constants.empty(), "77px"); //$NON-NLS-1$
 
