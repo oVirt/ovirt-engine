@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -23,6 +25,9 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicyCRUDParameters> {
     private ClusterPolicy clusterPolicy;
 
+    @Inject
+    protected SchedulingManager schedulingManager;
+
     public ClusterPolicyCRUDCommand(ClusterPolicyCRUDParameters parameters) {
         super(parameters);
         setClusterPolicy(getParameters().getClusterPolicy());
@@ -31,7 +36,7 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
     }
 
     protected boolean checkAddEditValidations() {
-        List<ClusterPolicy> clusterPolicies = SchedulingManager.getInstance().getClusterPolicies();
+        List<ClusterPolicy> clusterPolicies = schedulingManager.getClusterPolicies();
         if (getClusterPolicy() == null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID);
         }
@@ -41,7 +46,7 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
                 return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_NAME_INUSE);
             }
         }
-        Map<Guid, PolicyUnitImpl> map = SchedulingManager.getInstance().getPolicyUnitsMap();
+        Map<Guid, PolicyUnitImpl> map = schedulingManager.getPolicyUnitsMap();
         Set<Guid> existingPolicyUnits = new HashSet<>();
         // check filter policy units
         if (getClusterPolicy().getFilters() != null) {
@@ -108,7 +113,7 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
         }
 
         List<ValidationError> validationErrors =
-                SimpleCustomPropertiesUtil.getInstance().validateProperties(SchedulingManager.getInstance()
+                SimpleCustomPropertiesUtil.getInstance().validateProperties(schedulingManager
                 .getCustomPropertiesRegexMap(getClusterPolicy()),
                 getClusterPolicy().getParameterMap());
         if (!validationErrors.isEmpty()) {
@@ -128,7 +133,7 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
         if (clusterPolicyId == null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID);
         }
-        ClusterPolicy clusterPolicy = SchedulingManager.getInstance().getClusterPolicy(clusterPolicyId);
+        ClusterPolicy clusterPolicy = schedulingManager.getClusterPolicy(clusterPolicyId);
         if (clusterPolicy == null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID);
         }

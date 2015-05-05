@@ -55,6 +55,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class RunVmValidator {
@@ -113,8 +114,8 @@ public class RunVmValidator {
                    validate(vmDuringInitialization(vm), messages) &&
                    validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
                    validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
-                   SchedulingManager.getInstance().canSchedule(
-                            vdsGroup, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
+                   getSchedulingManager().canSchedule(
+                           vdsGroup, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
         }
 
         return
@@ -132,8 +133,12 @@ public class RunVmValidator {
                 validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                 validate(validateMemorySize(vm), messages) &&
-                SchedulingManager.getInstance().canSchedule(
+                getSchedulingManager().canSchedule(
                         vdsGroup, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
+    }
+
+    private SchedulingManager getSchedulingManager() {
+        return Injector.get(SchedulingManager.class);
     }
 
     protected ValidationResult validateMemorySize(VM vm) {

@@ -106,10 +106,12 @@ public class VdsEventListener implements IVdsEventListener {
     private BackendInternal backend;
     @Inject
     private Instance<HostedEngineImporter> hostedEngineImporterProvider;
+    @Inject
+    private SchedulingManager schedulingManager;
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
-
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     @Override
     public void vdsMovedToMaintenance(VDS vds) {
@@ -495,7 +497,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void updateSchedulingStats(VDS vds) {
-        SchedulingManager.getInstance().updateHostSchedulingStats(vds);
+        schedulingManager.updateHostSchedulingStats(vds);
     }
 
     @Override

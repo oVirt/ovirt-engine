@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
@@ -14,22 +11,17 @@ import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
 import org.ovirt.engine.core.bll.scheduling.AffinityRulesEnforcementManager;
-import org.ovirt.engine.core.bll.scheduling.MigrationHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.BackendService;
-import org.ovirt.engine.core.common.action.MigrateVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -50,6 +42,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     @Inject
     private Instance<BackendService> services;
 
+    @Inject
+    private Instance<SchedulingManager> schedulingManagerProvider;
+
     /**
      * This method is called upon the bean creation as part
      * of the management Service bean life cycle.
@@ -65,18 +60,6 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             CommandCoordinatorUtil.initAsyncTaskManager();
             loadService(ResourceManager.class);
             OvfDataUpdater.getInstance().initOvfDataUpdater();
-            SchedulingManager.getInstance().setMigrationHandler(new MigrationHandler() {
-
-                @Override
-                public void migrateVM(List<Guid> initialHosts, Guid vmToMigrate) {
-                    MigrateVmParameters parameters = new MigrateVmParameters(false, vmToMigrate);
-                    parameters.setInitialHosts(new ArrayList<>(initialHosts));
-                    Backend.getInstance().runInternalAction(VdcActionType.MigrateVm,
-                            parameters,
-                            ExecutionHandler.createInternalJobContext());
-                }
-            });
-
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -101,7 +84,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
                 log.error("Initialization of device custom properties failed.", e);
             }
 
-            SchedulingManager.getInstance().init();
+            loadService(SchedulingManager.class);
 
             SessionDataContainer.getInstance().cleanupEngineSessionsOnStartup();
 

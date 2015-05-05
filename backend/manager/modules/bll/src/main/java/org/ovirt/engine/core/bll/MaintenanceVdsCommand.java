@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -38,6 +40,8 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     private final boolean _isInternal;
     private List<VM> vms;
     private boolean haMaintenanceFailed;
+    @Inject
+    private SchedulingManager schedulingManager;
 
     public MaintenanceVdsCommand(T parameters) {
         this(parameters, null);
@@ -107,14 +111,14 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         if (getVdsId() != null) {
             blacklist.add(getVdsId());
         }
-        return SchedulingManager.getInstance().canSchedule(
-                        getVdsGroup(),
-                        vm,
-                        blacklist, //blacklist only contains the host we're putting to maintenance
-                        Collections.<Guid> emptyList(), //no whitelist
-                        vm.getDedicatedVmForVdsList(),
-                        new ArrayList<String>()
-                        );
+        return schedulingManager.canSchedule(
+                getVdsGroup(),
+                vm,
+                blacklist, //blacklist only contains the host we're putting to maintenance
+                Collections.<Guid>emptyList(), //no whitelist
+                vm.getDedicatedVmForVdsList(),
+                new ArrayList<String>()
+        );
     }
     /**
      * Note: you must call {@link #orderListOfRunningVmsOnVds(Guid)} before calling this method

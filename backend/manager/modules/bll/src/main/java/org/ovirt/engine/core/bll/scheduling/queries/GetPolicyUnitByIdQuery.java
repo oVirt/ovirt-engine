@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.queries;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -10,9 +12,12 @@ public class GetPolicyUnitByIdQuery extends QueriesCommandBase<IdQueryParameters
         super(parameters);
     }
 
+    @Inject
+    private SchedulingManager schedulingManager;
+
     @Override
     protected void executeQueryCommand() {
-        PolicyUnitImpl value = SchedulingManager.getInstance()
+        PolicyUnitImpl value = schedulingManager
                 .getPolicyUnitsMap()
                 .get(getParameters().getId());
         if (value != null) {

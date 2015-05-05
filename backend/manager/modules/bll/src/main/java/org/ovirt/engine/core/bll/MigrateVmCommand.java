@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -114,7 +113,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     protected boolean initVdss() {
         setVdsIdRef(getVm().getRunOnVds());
         Guid vdsToRunOn =
-                SchedulingManager.getInstance().schedule(getVdsGroup(),
+                schedulingManager.schedule(getVdsGroup(),
                         getVm(),
                         getVdsBlackList(),
                         getVdsWhiteList(),
@@ -445,7 +444,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
                 && validate(new DiskImagesValidator(ImagesHandler.getPluggedActiveImagesForVm(vm.getId())).diskImagesNotLocked())
-                && SchedulingManager.getInstance().canSchedule(getVdsGroup(),
+                && schedulingManager.canSchedule(getVdsGroup(),
                         getVm(),
                         getVdsBlackList(),
                         getParameters().getInitialHosts(),

@@ -1,10 +1,15 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
@@ -31,6 +36,7 @@ public class ClusterPolicyCRUDCommandTest {
                     protected void executeCommand() {
                     }
                 };
+        command.schedulingManager = mockScheduler();
         Assert.assertTrue(command.checkAddEditValidations());
     }
 
@@ -50,7 +56,14 @@ public class ClusterPolicyCRUDCommandTest {
                     protected void executeCommand() {
                     }
                 };
+        command.schedulingManager = mockScheduler();
         Assert.assertFalse(command.checkAddEditValidations());
+    }
+
+    private SchedulingManager mockScheduler() {
+        SchedulingManager mock = mock(SchedulingManager.class);
+        when(mock.getClusterPolicies()).thenReturn(Collections.<ClusterPolicy>emptyList());
+        return mock;
     }
 
 }

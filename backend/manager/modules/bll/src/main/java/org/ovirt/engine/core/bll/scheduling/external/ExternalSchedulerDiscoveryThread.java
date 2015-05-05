@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -21,7 +23,12 @@ import org.slf4j.LoggerFactory;
 
 public class ExternalSchedulerDiscoveryThread extends Thread {
 
+    @Inject
+    private SchedulingManager schedulingManager;
+
     private final static Logger log = LoggerFactory.getLogger(ExternalSchedulerDiscoveryThread.class);
+
+    private ExternalSchedulerDiscoveryThread() {}
 
     @Override
     public void run() {
@@ -63,7 +70,7 @@ public class ExternalSchedulerDiscoveryThread extends Thread {
         // found in the db but not found in discovery, mark as such
         markExternalPoliciesAsDisabled(allPolicyUnits);
 
-        SchedulingManager.getInstance().reloadPolicyUnits();
+        schedulingManager.reloadPolicyUnits();
     }
 
     private void markExternalPoliciesAsDisabled(List<PolicyUnit> units) {

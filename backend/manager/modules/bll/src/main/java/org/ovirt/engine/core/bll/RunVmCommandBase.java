@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -44,6 +46,7 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.woorea.openstack.base.client.OpenStackResponseException;
 
 /**
@@ -56,6 +59,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected boolean _isRerun;
     private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
     private final List<Guid> runVdsList = new ArrayList<>();
+    @Inject
+    protected SchedulingManager schedulingManager;
 
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
@@ -293,7 +298,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     protected final void decreasePendingVm(VmStatic vm) {
         Guid vdsId = getCurrentVdsId();
-        SchedulingManager.getInstance().clearPendingVm(vm);
+        schedulingManager.clearPendingVm(vm);
         getBlockingQueue(vdsId).offer(Boolean.TRUE);
     }
 

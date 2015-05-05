@@ -49,8 +49,8 @@ public class AffinityRulesEnforcementPerCluster {
     protected VdsDao vdsDao;
     @Inject
     protected VdsGroupDao vdsGroupDao;
-
-    protected SchedulingManager schedulingManager = SchedulingManager.getInstance();
+    @Inject
+    protected SchedulingManager schedulingManager;
 
     protected enum FailMode {
         IMMEDIATELY, // Fail when first violation is detected

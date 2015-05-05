@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
-import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
@@ -20,7 +19,7 @@ public class AddClusterPolicyCommand extends ClusterPolicyCRUDCommand {
     @Override
     protected void executeCommand() {
         getClusterPolicy().setId(Guid.newGuid());
-        SchedulingManager.getInstance().addClusterPolicy(getClusterPolicy());
+        schedulingManager.addClusterPolicy(getClusterPolicy());
         getReturnValue().setActionReturnValue(getClusterPolicy().getId());
         setSucceeded(true);
     }

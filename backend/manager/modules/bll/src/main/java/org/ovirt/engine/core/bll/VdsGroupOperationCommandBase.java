@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -30,6 +32,9 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
 
     // If the CPU thresholds are set to -1 then we should get the value from the configuration
     public static final int GET_CPU_THRESHOLDS_FROM_CONFIGURATION = -1;
+
+    @Inject
+    private SchedulingManager schedulingManager;
 
     public VdsGroupOperationCommandBase(T parameters) {
         this(parameters, null);
@@ -102,17 +107,17 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
         ClusterPolicy clusterPolicy = null;
         if (getVdsGroup().getClusterPolicyId() != null) {
             clusterPolicy =
-                SchedulingManager.getInstance().getClusterPolicy(getVdsGroup().getClusterPolicyId());
+                schedulingManager.getClusterPolicy(getVdsGroup().getClusterPolicyId());
         }
         if (clusterPolicy == null) {
-            clusterPolicy = SchedulingManager.getInstance().getClusterPolicy(getVdsGroup().getClusterPolicyName());
+            clusterPolicy = schedulingManager.getClusterPolicy(getVdsGroup().getClusterPolicyName());
             if (clusterPolicy == null) {
                 return false;
             }
             getVdsGroup().setClusterPolicyId(clusterPolicy.getId());
         }
-        Map<String, String> customPropertiesRegexMap = SchedulingManager.getInstance()
-                .getCustomPropertiesRegexMap(clusterPolicy);
+        Map<String, String> customPropertiesRegexMap =
+                schedulingManager.getCustomPropertiesRegexMap(clusterPolicy);
         updateClusterPolicyProperties(getVdsGroup(), clusterPolicy, customPropertiesRegexMap);
         List<ValidationError> validationErrors =
                 SimpleCustomPropertiesUtil.getInstance().validateProperties(customPropertiesRegexMap,

@@ -18,6 +18,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
@@ -29,6 +34,7 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -61,32 +67,24 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SchedulingManager {
+@Singleton
+public class SchedulingManager implements BackendService {
+
     private static final Logger log = LoggerFactory.getLogger(SchedulingManager.class);
-    private AuditLogDirector auditLogDirector = new AuditLogDirector();
-    private ResourceManager resourceManager = ResourceManager.getInstance();
-    private PendingResourceManager pendingResourceManager = new PendingResourceManager(resourceManager);
-
-    /**
-     * singleton
-     */
-    private static volatile SchedulingManager instance = null;
-
-    public static SchedulingManager getInstance() {
-        if (instance == null) {
-            synchronized (SchedulingManager.class) {
-                if (instance == null) {
-                    instance = new SchedulingManager();
-                    enableLoadBalancer();
-                    enableHaReservationCheck();
-                }
-            }
-        }
-        return instance;
-    }
-
     private static final String HIGH_UTILIZATION = "HighUtilization";
     private static final String LOW_UTILIZATION = "LowUtilization";
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
+    @Inject
+    private ResourceManager resourceManager;
+    @Inject
+    private MigrationHandler migrationHandler;
+    @Inject
+    private Instance<ExternalSchedulerDiscoveryThread> exSchedulerDiscoveryProvider;
+    @Inject
+    private DbFacade dbFacade;
+    private PendingResourceManager pendingResourceManager;
 
     /**
      * <policy id, policy> map
@@ -102,31 +100,35 @@ public class SchedulingManager {
     private final ConcurrentHashMap<Guid, Semaphore> clusterLockMap = new ConcurrentHashMap<>();
 
     private final VdsFreeMemoryChecker noWaitingMemoryChecker = new VdsFreeMemoryChecker(new NonWaitingDelayer());
-    private MigrationHandler migrationHandler;
 
     private final Map<Guid, Boolean> clusterId2isHaReservationSafe = new HashMap<>();
-
-    private SchedulingManager() {
-        policyMap = new ConcurrentHashMap<>();
-        policyUnits = new ConcurrentHashMap<>();
-    }
 
     private PendingResourceManager getPendingResourceManager() {
         return pendingResourceManager;
     }
 
+    @Inject
+    private SchedulingManager() {
+        pendingResourceManager = new PendingResourceManager(resourceManager);
+        policyMap = new ConcurrentHashMap<>();
+        policyUnits = new ConcurrentHashMap<>();
+    }
+
+    @PostConstruct
     public void init() {
         log.info("Initializing Scheduling manager");
         loadPolicyUnits();
         loadClusterPolicies();
-        ExternalSchedulerDiscoveryThread discoveryThread = new ExternalSchedulerDiscoveryThread();
-        if(Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled)) {
-            log.info("Starting external scheduler dicovery thread");
+        ExternalSchedulerDiscoveryThread discoveryThread = exSchedulerDiscoveryProvider.get();
+        if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)) {
+            log.info("Starting external scheduler discovery thread");
             discoveryThread.start();
         } else {
             discoveryThread.markAllExternalPoliciesAsDisabled();
             log.info("External scheduler disabled, discovery skipped");
         }
+        enableLoadBalancer();
+        enableHaReservationCheck();
         log.info("Initialized Scheduling manager");
     }
 
@@ -166,10 +168,6 @@ public class SchedulingManager {
         return null;
     }
 
-    public List<VDSGroup> getClustersByClusterPolicyId(Guid clusterPolicyId) {
-        return getVdsGroupDao().getClustersByClusterPolicyId(clusterPolicyId);
-    }
-
     public Map<Guid, PolicyUnitImpl> getPolicyUnitsMap() {
         synchronized (policyUnitsLock) {
             return policyUnits;
@@ -181,13 +179,6 @@ public class SchedulingManager {
         for (ClusterPolicy clusterPolicy : allClusterPolicies) {
             policyMap.put(clusterPolicy.getId(), clusterPolicy);
         }
-    }
-
-    public void setMigrationHandler(MigrationHandler migrationHandler) {
-        if (this.migrationHandler != null) {
-            throw new RuntimeException("Load balance migration handler should be set only once");
-        }
-        this.migrationHandler = migrationHandler;
     }
 
     protected void loadPolicyUnits() {
@@ -423,9 +414,9 @@ public class SchedulingManager {
      */
     protected void checkAllowOverbooking(VDSGroup cluster) {
         if (OptimizationType.ALLOW_OVERBOOKING == cluster.getOptimizationType()
-                && Config.<Boolean> getValue(ConfigValues.SchedulerAllowOverBooking)
+                && Config.<Boolean>getValue(ConfigValues.SchedulerAllowOverBooking)
                 && clusterLockMap.get(cluster.getId()).getQueueLength() >=
-                Config.<Integer> getValue(ConfigValues.SchedulerOverBookingThreshold)) {
+                Config.<Integer>getValue(ConfigValues.SchedulerOverBookingThreshold)) {
             log.info("Scheduler: cluster '{}' lock is skipped (cluster is allowed to overbook)",
                     cluster.getName());
             // release pending threads (requests) and current one (+1)
@@ -445,14 +436,15 @@ public class SchedulingManager {
      * @return
      */
     protected boolean shouldWeighClusterHosts(VDSGroup cluster, List<VDS> vdsList) {
-        Integer threshold = Config.<Integer> getValue(ConfigValues.SpeedOptimizationSchedulingThreshold);
+        Integer threshold = Config.<Integer>getValue(ConfigValues.SpeedOptimizationSchedulingThreshold);
         // threshold is crossed only when cluster is configured for optimized for speed
         boolean crossedThreshold =
                 OptimizationType.OPTIMIZE_FOR_SPEED == cluster.getOptimizationType()
                         && clusterLockMap.get(cluster.getId()).getQueueLength() >
                         threshold;
         if (crossedThreshold) {
-            log.info("Scheduler: skipping whinging hosts in cluster '{}', since there are more than '{}' parallel requests",
+            log.info(
+                    "Scheduler: skipping whinging hosts in cluster '{}', since there are more than '{}' parallel requests",
                     cluster.getName(),
                     threshold);
         }
@@ -555,7 +547,7 @@ public class SchedulingManager {
                         memoryChecker, correlationId, result);
 
         if (shouldRunExternalFilters
-                && Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled)
+                && Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)
                 && !externalFilters.isEmpty()
                 && hostList != null
                 && !hostList.isEmpty()) {
@@ -570,12 +562,12 @@ public class SchedulingManager {
     }
 
     private List<VDS> runInternalFilters(ArrayList<PolicyUnitImpl> filters,
-                                         List<VDS> hostList,
-                                         VM vm,
-                                         Map<String, String> parameters,
-                                         Map<Guid, Integer> filterPositionMap,
-                                         VdsFreeMemoryChecker memoryChecker,
-                                         String correlationId, SchedulingResult result) {
+            List<VDS> hostList,
+            VM vm,
+            Map<String, String> parameters,
+            Map<Guid, Integer> filterPositionMap,
+            VdsFreeMemoryChecker memoryChecker,
+            String correlationId, SchedulingResult result) {
         if (filters != null) {
             for (PolicyUnitImpl filterPolicyUnit : filters) {
                 if (hostList == null || hostList.isEmpty()) {
@@ -710,7 +702,7 @@ public class SchedulingManager {
 
         Map<Guid, Integer> hostCostTable = runInternalFunctions(internalScoreFunctions, hostList, vm, parameters);
 
-        if (Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled) && !externalScoreFunctions.isEmpty()) {
+        if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled) && !externalScoreFunctions.isEmpty()) {
             runExternalFunctions(externalScoreFunctions, hostList, vm, parameters, hostCostTable);
         }
         Entry<Guid, Integer> bestHostEntry = null;
@@ -822,29 +814,30 @@ public class SchedulingManager {
     }
 
     protected VdsDao getVdsDao() {
-        return DbFacade.getInstance().getVdsDao();
+        return dbFacade.getVdsDao();
     }
 
     protected VdsGroupDao getVdsGroupDao() {
-        return DbFacade.getInstance().getVdsGroupDao();
+        return dbFacade.getVdsGroupDao();
     }
 
     protected VdsDynamicDao getVdsDynamicDao() {
-        return DbFacade.getInstance().getVdsDynamicDao();
+        return dbFacade.getVdsDynamicDao();
     }
 
     protected PolicyUnitDao getPolicyUnitDao() {
-        return DbFacade.getInstance().getPolicyUnitDao();
+        return dbFacade.getPolicyUnitDao();
     }
 
     protected ClusterPolicyDao getClusterPolicyDao() {
-        return DbFacade.getInstance().getClusterPolicyDao();
+        return dbFacade.getClusterPolicyDao();
     }
 
-    public static void enableLoadBalancer() {
-        if (Config.<Boolean> getValue(ConfigValues.EnableVdsLoadBalancing)) {
+    public void enableLoadBalancer() {
+        if (Config.<Boolean>getValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start scheduling to enable vds load balancer");
-            Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(instance,
+            Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(
+                    this,
                     "performLoadBalancing",
                     new Class[] {},
                     new Object[] {},
@@ -855,12 +848,13 @@ public class SchedulingManager {
         }
     }
 
-    public static void enableHaReservationCheck() {
+    public void enableHaReservationCheck() {
 
-        if (Config.<Boolean> getValue(ConfigValues.EnableVdsLoadBalancing)) {
+        if (Config.<Boolean>getValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start HA Reservation check");
             Integer interval = Config.<Integer> getValue(ConfigValues.VdsHaReservationIntervalInMinutes);
-            Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(instance,
+            Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(
+                    this,
                     "performHaResevationCheck",
                     new Class[] {},
                     new Object[] {},
@@ -876,7 +870,7 @@ public class SchedulingManager {
     public void performHaResevationCheck() {
 
         log.debug("HA Reservation check timer entered.");
-        List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAll();
+        List<VDSGroup> clusters = getVdsGroupDao().getAll();
         if (clusters != null) {
             HaReservationHandling haReservationHandling = new HaReservationHandling(getPendingResourceManager());
             for (VDSGroup cluster : clusters) {
@@ -917,11 +911,10 @@ public class SchedulingManager {
         log.debug("HA Reservation check timer finished.");
     }
 
-
     @OnTimerMethodAnnotation("performLoadBalancing")
     public void performLoadBalancing() {
         log.debug("Load Balancer timer entered.");
-        List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAll();
+        List<VDSGroup> clusters = getVdsGroupDao().getAll();
         for (VDSGroup cluster : clusters) {
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             PolicyUnitImpl policyUnit = policyUnits.get(policy.getBalance());

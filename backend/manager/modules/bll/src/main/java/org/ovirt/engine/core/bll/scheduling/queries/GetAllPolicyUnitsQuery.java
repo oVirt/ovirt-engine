@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -16,9 +18,12 @@ public class GetAllPolicyUnitsQuery extends QueriesCommandBase<VdcQueryParameter
         super(parameters);
     }
 
+    @Inject
+    private SchedulingManager schedulingManager;
+
     @Override
     protected void executeQueryCommand() {
-        Map<Guid, PolicyUnitImpl> map = SchedulingManager.getInstance().getPolicyUnitsMap();
+        Map<Guid, PolicyUnitImpl> map = schedulingManager.getPolicyUnitsMap();
         List<PolicyUnit> retList = new ArrayList<>();
         for (PolicyUnitImpl policyUnitImpl : map.values()) {
             retList.add(policyUnitImpl.getPolicyUnit());

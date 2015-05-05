@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.queries;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -9,8 +11,11 @@ public class GetClusterPoliciesQuery extends QueriesCommandBase<VdcQueryParamete
         super(parameters);
     }
 
+    @Inject
+    private SchedulingManager schedulingManager;
+
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(SchedulingManager.getInstance().getClusterPolicies());
+        getQueryReturnValue().setReturnValue(schedulingManager.getClusterPolicies());
     }
 }
