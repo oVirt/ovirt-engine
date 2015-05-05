@@ -74,6 +74,10 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
         return retCinderSnapshot.getId();
     }
 
+    public void deleteSnapshot(String snapshotId) {
+        getClient(getTenantId()).snapshots().delete(snapshotId).execute();
+    }
+
     public String createVolume(VolumeForCreate volumeForCreate) {
         Volume retCinderVolume = getClient(getTenantId()).volumes().create(volumeForCreate).execute();
         return retCinderVolume.getId();
