@@ -13,8 +13,8 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -178,13 +178,6 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
                 case Reboot:
                     setVdsStatus(VDSStatus.Reboot);
                     runSleepOnReboot(getStatusOnReboot());
-                break;
-                case Complete:
-                    if (!getParameters().getActivateHost() && VDSStatus.Maintenance.equals(vdsInitialStatus)) {
-                        setVdsStatus(VDSStatus.Maintenance);
-                    } else {
-                        setVdsStatus(VDSStatus.Initializing);
-                    }
                 break;
             }
 

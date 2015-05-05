@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
 
-    public static enum DeployStatus {Complete, Failed, Reboot};
+    public static enum DeployStatus {Failed, Reboot};
 
     private static final int BUFFER_SIZE = 10 * 1024;
     private static final int THREAD_JOIN_TIMEOUT = 20 * 1000;
