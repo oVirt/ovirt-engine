@@ -603,7 +603,10 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
 
     protected boolean validateNames() {
         for (ImportVmData importVmData : (Iterable<ImportVmData>) getItems()) {
-            if (!importVmData.getClone().getEntity() && importVmData.getError() != null) {
+            if (importVmData.getClone().getEntity()) {
+                continue;
+            }
+            if (importVmData.getError() != null || (importVmData.isNameExistsInTheSystem() && importVmData.getName().equals(importVmData.getVm().getName()))) {
                 onPropertyChanged(new PropertyChangedEventArgs("InvalidVm")); //$NON-NLS-1$
                 return false;
             }
@@ -656,9 +659,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                                 vmData.getClone().setIsChangeable(false);
                             }
 
-                            if (!vmData.getClone().getEntity() && existingNames.contains(vm.getName())) {
-                                vmData.setError(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
-                            }
+                            vmData.setNameExistsInTheSystem(!vmData.getClone().getEntity() && existingNames.contains(vm.getName()));
 
                             vmDataList.add(vmData);
                         }

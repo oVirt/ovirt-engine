@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -241,7 +242,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             @Override
             public ImageResource getValue(Object object) {
                 ImportVmData importVmData = ((ImportVmData) object);
-                if (!importVmData.getClone().getEntity() && importVmData.getError() != null) {
+                if (importVmData.getError() != null || importVmData.isNameExistsInTheSystem()) {
                     return resources.errorImage();
                 }
                 if (importVmData.getWarning() != null) {
@@ -253,7 +254,14 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             @Override
             public SafeHtml getTooltip(Object object) {
                 ImportVmData importVmData = ((ImportVmData) object);
-                String problem = !importVmData.getClone().getEntity() && importVmData.getError() != null ? importVmData.getError() : importVmData.getWarning();
+                String problem = null;
+                if (importVmData.getError() != null) {
+                    problem = importVmData.getError();
+                } else {
+                    problem = importVmData.isNameExistsInTheSystem() ?
+                            ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason()
+                            : importVmData.getWarning();
+                }
                 return problem != null ? SafeHtmlUtils.fromSafeConstant(problem) : null;
             }
         };

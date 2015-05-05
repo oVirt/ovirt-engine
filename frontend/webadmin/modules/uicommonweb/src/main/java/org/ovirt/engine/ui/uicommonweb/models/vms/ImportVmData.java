@@ -14,6 +14,7 @@ public class ImportVmData extends ImportEntityData<VM> {
     private EntityModel<Boolean> collapseSnapshots;
     private String warning;
     private String error;
+    private boolean nameExistsInTheSystem;
 
     public ImportVmData(VM vm) {
         setCollapseSnapshots(new EntityModel<>(true));
@@ -88,5 +89,13 @@ public class ImportVmData extends ImportEntityData<VM> {
 
     public void setError(String error) {
         this.error = error;
+    }
+
+    public boolean isNameExistsInTheSystem() {
+        return nameExistsInTheSystem;
+    }
+
+    public void setNameExistsInTheSystem(boolean nameExistsInTheSystem) {
+        this.nameExistsInTheSystem = nameExistsInTheSystem;
     }
 }
