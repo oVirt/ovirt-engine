@@ -240,9 +240,15 @@ public class SyntaxCheckerTest {
     }
 
     @Test
-    public void testTemplateUsers() {
+    public void testTemplateUsersUserName() {
         testValidSql("Templates: Users.usrname = *",
                 "SELECT * FROM ((SELECT distinct vm_templates_view.* FROM  vm_templates_view   LEFT OUTER JOIN vms_with_tags ON vm_templates_view.vmt_guid=vms_with_tags.vmt_guid    LEFT OUTER JOIN vdc_users_with_tags ON vms_with_tags.vm_guid=vdc_users_with_tags.vm_guid    WHERE  vdc_users_with_tags.username LIKE % )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+    }
+
+    @Test
+    public void testTemplateUsersAnyField() {
+        testValidSql("Templates: Users = *",
+                "SELECT * FROM (SELECT * FROM vm_templates_view WHERE ( vmt_guid IN (SELECT distinct vm_templates_storage_domain.vmt_guid FROM  vm_templates_storage_domain   LEFT OUTER JOIN vms_with_tags ON vm_templates_storage_domain.vmt_guid=vms_with_tags.vmt_guid    LEFT OUTER JOIN vdc_users_with_tags ON vms_with_tags.vm_guid=vdc_users_with_tags.vm_guid    WHERE  (  vdc_users_with_tags.department LIKE '%%%' OR  vdc_users_with_tags.domain LIKE '%%%' OR  vdc_users_with_tags.mla_role LIKE '%%%' OR  vdc_users_with_tags.name LIKE '%%%' OR  vdc_users_with_tags.surname LIKE '%%%' OR  vdc_users_with_tags.tag_name LIKE '%%%' OR  vdc_users_with_tags.user_group LIKE '%%%' OR  vdc_users_with_tags.username LIKE '%%%' OR  vdc_users_with_tags.vm_pool_name LIKE '%%%' ) ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test

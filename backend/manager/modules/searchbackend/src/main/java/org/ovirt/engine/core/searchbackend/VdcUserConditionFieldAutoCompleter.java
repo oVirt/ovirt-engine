@@ -55,8 +55,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         columnNameDict.put("LOGIN", "username");
         columnNameDict.put("DIRECTORY", "domain");
         columnNameDict.put("DEPARTMENT", "department");
-        columnNameDict.put("TITLE", "role");
-        columnNameDict.put(GROUP, "groups");
+        columnNameDict.put(GROUP, "user_group");
         columnNameDict.put("ACTIVE", "active");
         columnNameDict.put("ROLE", "mla_role");
         columnNameDict.put("TAG", "tag_name");
