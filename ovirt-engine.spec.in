@@ -229,7 +229,8 @@ Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	fop
 Requires:	java
 # rhbz#1028966
-Requires:	java-openjdk > 1:1.7.0.45-2.4.3.3.el6
+# Remove 1.8 blocking when we will move to WildFly
+Requires:	java-openjdk > 1:1.7.0.45-2.4.3.3.el6, java-openjdk < 1:1.8.0.0
 Requires:	jpackage-utils
 Requires:	ovirt-image-uploader >= 3.6.0
 Requires:	ovirt-iso-uploader >= 3.6.0
