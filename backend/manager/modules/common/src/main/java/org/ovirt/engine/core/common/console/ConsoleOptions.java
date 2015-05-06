@@ -201,6 +201,10 @@ public class ConsoleOptions implements Serializable{
         this.securePort = securePort;
     }
 
+    public int getRawSecurePort() {
+        return securePort;
+    }
+
     public String getSslChanels() {
         return sslChanels;
     }
