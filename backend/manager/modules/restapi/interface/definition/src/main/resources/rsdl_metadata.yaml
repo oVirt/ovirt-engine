@@ -1112,8 +1112,8 @@ actions:
   request:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-- name: /storagedomains/{storagedomain:id}/images/{images:id}|rel=get
-- name: /storagedomains/{storagedomain:id}/images/{images:id}/import|rel=import
+- name: /storagedomains/{storagedomain:id}/images/{image:id}|rel=get
+- name: /storagedomains/{storagedomain:id}/images/{image:id}/import|rel=import
   request:
     body:
       parameterType: Action
@@ -3973,7 +3973,7 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {}
-- name: /openstackimageproviders/{openstackimageprovider:id}/images/{images:id}/import|rel=import
+- name: /openstackimageproviders/{openstackimageprovider:id}/images/{image:id}/import|rel=import
   description: imports the OpenStack image
   request:
     body:
