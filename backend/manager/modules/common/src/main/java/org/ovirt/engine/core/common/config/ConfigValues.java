@@ -1827,6 +1827,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("{\"x86_64\":\"false\",\"ppc64\":\"false\"}")
     HotUnplugCpuSupported,
 
+    @TypeConverterAttribute(Map.class)
+    @DefaultValueAttribute("{\"x86_64\":\"true\",\"ppc64\":\"false\"}")
+    HotPlugMemorySupported,
+
+    @TypeConverterAttribute(Map.class)
+    @DefaultValueAttribute("{\"x86_64\":\"false\",\"ppc64\":\"false\"}")
+    HotUnplugMemorySupported,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ChangePasswordMsg,

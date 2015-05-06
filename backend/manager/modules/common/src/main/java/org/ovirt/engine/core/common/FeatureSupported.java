@@ -266,6 +266,14 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.HotUnplugCpuSupported, version, arch);
     }
 
+    public static boolean hotPlugMemory(Version version, ArchitectureType arch) {
+        return supportedInConfig(ConfigValues.HotPlugMemorySupported, version, arch);
+    }
+
+    public static boolean hotUnplugMemory(Version version, ArchitectureType arch) {
+        return supportedInConfig(ConfigValues.HotUnplugMemorySupported, version, arch);
+    }
+
     /**
      * @param version
      *            Compatibility version to check for.
