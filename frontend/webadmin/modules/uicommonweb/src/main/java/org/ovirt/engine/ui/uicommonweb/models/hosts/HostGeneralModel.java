@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -639,7 +640,11 @@ public class HostGeneralModel extends EntityModel<VDS>
         }
     }
 
-    protected static boolean shouldAlertUpgrade(ArrayList<RpmVersion> isos, String[] hostOs)
+    protected void setHasUpgradeAlert(List<RpmVersion> isos, String[] hostOs) {
+        setHasUpgradeAlert(shouldAlertUpgrade(isos, hostOs));
+    }
+
+    private boolean shouldAlertUpgrade(List<RpmVersion> isos, String[] hostOs)
     {
         // HhostOs holds the following components:
         // hostOs[0] holds prefix

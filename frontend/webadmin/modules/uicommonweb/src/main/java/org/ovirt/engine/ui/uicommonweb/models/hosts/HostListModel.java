@@ -1965,18 +1965,15 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
-                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
-                            if (isos.size() > 0) {
+                            @SuppressWarnings("unchecked")
+                            List<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
+                            if (!isos.isEmpty()) {
                                 String [] hostOsInfo = vds.getHostOs().split("-"); //$NON-NLS-1$
                                 for (int counter = 0; counter < hostOsInfo.length; counter++) {
                                     hostOsInfo[counter] = hostOsInfo[counter].trim();
                                 }
-                                generalModel.setHasUpgradeAlert(
-                                        generalModel.shouldAlertUpgrade(
-                                                isos,
-                                                hostOsInfo
-                                        )
-                                );
+
+                                generalModel.setHasUpgradeAlert(isos, hostOsInfo);
                                 boolean executionAllowed = vds.getStatus() != VDSStatus.Up
                                         && vds.getStatus() != VDSStatus.Installing
                                         && vds.getStatus() != VDSStatus.PreparingForMaintenance
@@ -1984,10 +1981,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                                         && vds.getStatus() != VDSStatus.PendingApproval;
 
                                 if (!executionAllowed) {
-                                    getUpgradeCommand()
-                                            .getExecuteProhibitionReasons()
-                                            .add(constants
-                                                    .switchToMaintenanceModeToEnableUpgradeReason());
+                                    getUpgradeCommand().getExecuteProhibitionReasons()
+                                            .add(constants.switchToMaintenanceModeToEnableUpgradeReason());
                                 }
                                 getUpgradeCommand().setIsExecutionAllowed(executionAllowed);
                             }
