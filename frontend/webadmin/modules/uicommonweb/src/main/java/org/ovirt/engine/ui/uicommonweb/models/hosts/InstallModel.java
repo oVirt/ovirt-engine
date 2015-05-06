@@ -12,13 +12,9 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.providers.HostNetworkProviderModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class InstallModel extends Model {
-
-    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private EntityModel<String> privateUserPassword;
     private VDS vds;
