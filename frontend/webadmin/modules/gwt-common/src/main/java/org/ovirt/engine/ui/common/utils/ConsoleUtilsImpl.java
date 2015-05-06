@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.utils;
 
-import com.google.gwt.regexp.shared.MatchResult;
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -21,17 +19,6 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     public ConsoleUtilsImpl(Configurator configurator, ClientAgentType clientAgentType) {
         this.configurator = configurator;
         this.clientAgentType = clientAgentType;
-    }
-
-    private float extractNtVersion(String userAgentType) {
-        RegExp pattern = RegExp.compile(".*windows nt (\\d+\\.\\d+).*"); //$NON-NLS-1$
-        MatchResult matcher = pattern.exec(userAgentType.toLowerCase());
-        boolean matchFound = (matcher != null);
-        if (matchFound) {
-            return Float.parseFloat(matcher.getGroup(1));
-        }
-
-        return -1;
     }
 
     @Override
@@ -82,10 +69,5 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     public boolean isIE11() {
         return clientAgentType.isIE11();
     }
-
-    private native String getUserAgentString() /*-{
-                                              var userAgent = navigator.userAgent;
-                                              return userAgent;
-                                              }-*/;
 
 }
