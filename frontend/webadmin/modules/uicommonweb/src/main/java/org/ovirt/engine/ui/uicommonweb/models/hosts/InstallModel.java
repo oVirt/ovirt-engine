@@ -111,11 +111,11 @@ public class InstallModel extends Model {
         networkProviderModel = value;
     }
 
-    public ListModel getNetworkProviders() {
+    public ListModel<?> getNetworkProviders() {
         return getNetworkProviderModel().getNetworkProviders();
     }
 
-    public EntityModel getInterfaceMappings() {
+    public EntityModel<?> getInterfaceMappings() {
         return getNetworkProviderModel().getInterfaceMappings();
     }
 
