@@ -171,6 +171,10 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         case ResourceTimeout:
         case HOT_PLUG_UNPLUG_CPU_ERROR:
         case DEVICE_BLOCK_SIZE_NOT_SUPPORTED:
+        case V2V_JOB_DOESNT_EXIST:
+        case V2V_NO_SUCH_OVF:
+        case V2V_JOB_NOT_DONE:
+        case V2V_JOB_ALREADY_EXIST:
             if (this instanceof IrsBrokerCommand) {
                 outEx = new IrsOperationFailedNoFailoverException(getReturnStatus().mMessage);
             } else {

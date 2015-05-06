@@ -932,4 +932,16 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("An error occurred on Cinder - '${cinderException}'")
     String CINDER_ERROR();
+
+    @DefaultStringValue("Job Id does not exists")
+    String V2V_JOB_DOESNT_EXIST();
+
+    @DefaultStringValue("OVF file does not exists")
+    String V2V_NO_SUCH_OVF();
+
+    @DefaultStringValue("Job status is not done")
+    String V2V_JOB_NOT_DONE();
+
+    @DefaultStringValue("Job id already exists")
+    String V2V_JOB_ALREADY_EXIST();
 }

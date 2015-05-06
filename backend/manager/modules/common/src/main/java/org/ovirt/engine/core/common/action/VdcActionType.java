@@ -57,6 +57,7 @@ public enum VdcActionType {
     UpdateVmVersion(44, QuotaDependency.NONE),
     ImportVmTemplateFromConfiguration(45, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     ProcessDownVm(46, QuotaDependency.NONE),
+    ConvertVm(47, QuotaDependency.NONE),
     // VdsCommands
     AddVds(101, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
     UpdateVds(102, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),

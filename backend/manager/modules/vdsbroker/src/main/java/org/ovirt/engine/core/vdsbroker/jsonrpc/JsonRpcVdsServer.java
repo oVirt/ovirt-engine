@@ -50,6 +50,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainInfoReturnForXm
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVGReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVmReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.OvfReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ServerConnectionListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ServerConnectionStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.SpmStatusReturnForXmlRpc;
@@ -1874,6 +1875,46 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new RequestBuilder("Host.hostdevChangeNumvfs").withParameter("deviceName", deviceName)
                         .withParameter("numvfs", numOfVfs)
                         .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    public StatusOnlyReturnForXmlRpc convertVmFromExternalSystem(String uri,
+            String username,
+            String password,
+            Map<String, Object> vm,
+            String jobUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.convertExternalVm")
+        .withParameter("uri", uri)
+        .withParameter("username", username)
+        .withParameter("password", password)
+        .withParameter("vminfo", vm)
+        .withParameter("jobid", jobUUID)
+        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public OvfReturnForXmlRpc getConvertedVm(String jobUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.getConvertedVm")
+        .withParameter("jobid", jobUUID)
+        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request)
+        .withResponseKey("ovf")
+        .withResponseType(String.class);
+        return new OvfReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc deleteV2VJob(String jobUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.deleteV2VJob")
+        .withParameter("jobid", jobUUID)
+        .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }

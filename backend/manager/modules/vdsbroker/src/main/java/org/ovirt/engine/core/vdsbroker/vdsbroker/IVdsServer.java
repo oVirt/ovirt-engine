@@ -438,4 +438,10 @@ public interface IVdsServer {
     StorageDeviceListReturnForXmlRpc glusterStorageDeviceList();
 
     StatusOnlyReturnForXmlRpc hostdevChangeNumvfs(String deviceName, int numOfVfs);
+
+    StatusOnlyReturnForXmlRpc convertVmFromExternalSystem(String url, String user, String password, Map<String, Object> vm, String jobUUID);
+
+    OvfReturnForXmlRpc getConvertedVm(String jobUUID);
+
+    StatusOnlyReturnForXmlRpc deleteV2VJob(String jobUUID);
 }

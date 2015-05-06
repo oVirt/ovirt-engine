@@ -1859,4 +1859,37 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    public StatusOnlyReturnForXmlRpc convertVmFromExternalSystem(String url,
+            String user,
+            String password,
+            Map<String, Object> vm,
+            String jobUUID) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.convertExternalVm(
+                    url, user, password, vm, jobUUID);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    public OvfReturnForXmlRpc getConvertedVm(String jobUUID) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getConvertedVm(jobUUID);
+            return new OvfReturnForXmlRpc(xmlRpcReturnValue);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc deleteV2VJob(String jobUUID) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.deleteV2VJob(jobUUID));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
 }
