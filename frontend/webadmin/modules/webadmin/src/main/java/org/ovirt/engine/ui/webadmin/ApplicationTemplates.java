@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.webadmin;
 
-import com.google.gwt.safehtml.shared.SafeUri;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeUri;
 
 public interface ApplicationTemplates extends CommonApplicationTemplates {
 
@@ -202,4 +202,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<span style='position: relative; margin-right: 3px; white-space: nowrap; height: 14px; line-height: 14px;'>{0}</span>"
             + "<span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{1}</span>")
     SafeHtml textImageLabels(String text, SafeHtml image);
+
+    @Template("<div id=\"{0}\" style='text-align: center;'>{1}</div>")
+    SafeHtml hostAdditionalStatusIcon(String id, SafeHtml statusImage);
 }

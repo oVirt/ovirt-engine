@@ -2137,4 +2137,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Pin to another host")
     String repinVmHost();
+
+    @DefaultStringValue("Update available")
+    String updateAvailable();
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -39,6 +38,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.HostAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmCountColumn;
@@ -47,6 +47,7 @@ import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.inject.Inject;
 
 public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, HostListModel<Void>> implements MainTabHostPresenter.ViewDef {
@@ -104,6 +105,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         getTable().enableColumnResizing();
 
         getTable().addColumn(new HostStatusColumn<VDS>(), constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(new HostAdditionalStatusColumn<VDS>(), constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<VDS> nameColumn = new AbstractTextColumn<VDS>() {
             @Override

@@ -145,6 +145,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/log_warning.gif")
     ImageResource alertImage();
 
+    @Source("images/update_available.png")
+    ImageResource updateAvailableImage();
+
     @Source("images/tag_locked.png")
     ImageResource readOnlyTagImage();
 
