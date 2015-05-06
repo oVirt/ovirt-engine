@@ -19,14 +19,10 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.eventqueue.Event;
-import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 
 @NonTransactiveCommandAttribute
 public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<ReconstructMasterParameters> {
@@ -105,10 +101,10 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
         if (StorageHelperDirector.getInstance().getItem(newMasterDomain.getStorageType())
                 .connectStorageToDomainByVdsId(newMasterDomain, getVds().getId())) {
 
-            ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getParameters().getStoragePoolId(),
-                    getParameters().getNewMasterDomainId(),
-                    null,
-                    EventType.RECOVERY, ""),
+            getEventQueue().submitEventSync(new Event(getParameters().getStoragePoolId(),
+                            getParameters().getNewMasterDomainId(),
+                            null,
+                            EventType.RECOVERY, ""),
                     new Callable<EventResult>() {
                         @Override
                         public EventResult call() {

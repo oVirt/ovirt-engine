@@ -65,13 +65,12 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationService;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationValue;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+
+import javax.inject.Inject;
 
 /**
  * Initialize Vds on its loading. For storages: First connect all storage
@@ -88,6 +87,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private boolean connectPoolSucceeded;
     private boolean glusterHostUuidFound, glusterPeerListSucceeded, glusterPeerProbeSucceeded;
     private static Integer MAX_RETRIES_GLUSTER_PROBE_STATUS;
+    @Inject
+    private EventQueue eventQueue;
 
     public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters) {
         super(parameters);
@@ -242,8 +243,12 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private EventResult connectHostToPool() {
         final VDS vds = getVds();
         EventResult result =
-                ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getStoragePool().getId(),
-                        null, vds.getId(), EventType.VDSCONNECTTOPOOL, "Trying to connect host " + vds.getHostName() + " with id " + vds.getId() + " to the pool " + getStoragePool().getId()),
+                eventQueue.submitEventSync(new Event(getStoragePool().getId(),
+                                null,
+                                vds.getId(),
+                                EventType.VDSCONNECTTOPOOL,
+                                "Trying to connect host " + vds.getHostName() + " with id " + vds.getId()
+                                        + " to the pool " + getStoragePool().getId()),
                         new Callable<EventResult>() {
                             @Override
                             public EventResult call() {

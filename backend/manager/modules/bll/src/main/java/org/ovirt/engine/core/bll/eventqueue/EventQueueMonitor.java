@@ -10,13 +10,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Local;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
@@ -27,10 +20,9 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Singleton(name = "EventQueue")
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Local(EventQueue.class)
+import javax.inject.Singleton;
+
+@Singleton
 public class EventQueueMonitor implements EventQueue {
 
     private static final Logger log = LoggerFactory.getLogger(EventQueueMonitor.class);

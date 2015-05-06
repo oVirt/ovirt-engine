@@ -77,6 +77,8 @@ public class DeactivateStorageDomainCommandTest {
     private VmStaticDAO vmStaticDAO;
     @Mock
     private VmDynamicDAO vmDynamicDAO;
+    @Mock
+    private EventQueue eventQueue;
 
     StoragePoolIsoMap map = new StoragePoolIsoMap();
 
@@ -94,6 +96,7 @@ public class DeactivateStorageDomainCommandTest {
         CommandMocks.mockDbFacade(cmd, dbFacade);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDAO);
         when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDAO);
+        doReturn(eventQueue).when(cmd).getEventQueue();
     }
 
     @Test

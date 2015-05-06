@@ -27,9 +27,6 @@ import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
@@ -40,13 +37,17 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 @Logged(errorLevel = LogLevel.ERROR)
 public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> extends BrokerCommandBase<P> {
 
-    private static final Logger log = LoggerFactory.getLogger(IrsBrokerCommand.class);
-
+    @Inject
+    private EventQueue eventQueue;
     private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<Guid, IrsProxyData>();
     static final VDSStatus reportingVdsStatus = VDSStatus.Up;
+
+    private static final Logger log = LoggerFactory.getLogger(IrsBrokerCommand.class);
 
     /**
      * process received domain monitoring information from a given vds if necessary (according to it's status
@@ -263,8 +264,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         if (masterDomain != null) {
             final Guid masterDomainId = masterDomain.getId();
-            ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventAsync(new Event(getParameters().getStoragePoolId(),
-                    masterDomainId, null, EventType.RECONSTRUCT, "IrsBrokerCommand.startReconstruct()"),
+            eventQueue.submitEventAsync(new Event(getParameters().getStoragePoolId(),
+                            masterDomainId, null, EventType.RECONSTRUCT, "IrsBrokerCommand.startReconstruct()"),
                     new Callable<EventResult>() {
                         @Override
                         public EventResult call() {
@@ -272,7 +273,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                     .getEventListener().masterDomainNotOperational(
                                             masterDomainId, getParameters().getStoragePoolId(), true,
                                             getVDSReturnValue().getVdsError() != null
-                                                && getVDSReturnValue().getVdsError().getCode() == VdcBllErrors.StoragePoolWrongMaster);
+                                                    && getVDSReturnValue().getVdsError().getCode()
+                                                    == VdcBllErrors.StoragePoolWrongMaster);
                         }
                     });
         } else {

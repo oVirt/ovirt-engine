@@ -63,9 +63,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -331,7 +329,7 @@ public class IrsProxyData {
     }
 
     public void queueDomainMaintenanceCheck(final StorageDomain domain) {
-        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL))
+        getEventQueue()
                 .submitEventAsync(new Event(_storagePoolId, domain.getId(), null, EventType.DOMAINFAILOVER, ""),
                         new Callable<EventResult>() {
                             @Override
@@ -349,6 +347,10 @@ public class IrsProxyData {
                                 return null;
                             }
                         });
+    }
+
+    private EventQueue getEventQueue() {
+        return Injector.get(EventQueue.class);
     }
 
     public Guid getPreferredHostId() {
@@ -501,7 +503,7 @@ public class IrsProxyData {
             final String exceptionMessage,
             final String logMessage) {
 
-        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(_storagePoolId,
+        getEventQueue().submitEventSync(new Event(_storagePoolId,
                 masterDomainId, null, EventType.RECONSTRUCT, "Reconstruct caused by failure to execute spm command"),
                 new Callable<EventResult>() {
                     @Override
@@ -1159,7 +1161,7 @@ public class IrsProxyData {
 
     private void updateDomainInProblem(final Guid vdsId, final String vdsName, final Map<Guid, DomainMonitoringResult> domainsInProblem,
                                        final Set<Guid> domainsInMaintenance) {
-        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(_storagePoolId,
+        getEventQueue().submitEventSync(new Event(_storagePoolId,
                 null, vdsId, EventType.DOMAINMONITORING, ""),
                 new Callable<EventResult>() {
                     @Override
@@ -1376,7 +1378,7 @@ public class IrsProxyData {
 
     @OnTimerMethodAnnotation("onTimer")
     public void onTimer(final Guid domainId) {
-        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventAsync(new Event(_storagePoolId,
+        getEventQueue().submitEventAsync(new Event(_storagePoolId,
                 domainId, null, EventType.DOMAINFAILOVER, ""),
                 new Callable<EventResult>() {
                     @Override
@@ -1497,11 +1499,11 @@ public class IrsProxyData {
             ThreadPoolUtil.invokeAll(connectStorageTasks);
 
             log.info("Submitting to the event queue pool refresh for hosts '{}'", handledHosts);
-            ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(_storagePoolId,
-                    null,
-                    null,
-                    EventType.POOLREFRESH,
-                    ""),
+            getEventQueue().submitEventSync(new Event(_storagePoolId,
+                            null,
+                            null,
+                            EventType.POOLREFRESH,
+                            ""),
                     new Callable<EventResult>() {
                         @Override
                         public EventResult call() {

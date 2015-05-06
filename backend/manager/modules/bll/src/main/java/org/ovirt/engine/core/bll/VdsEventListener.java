@@ -68,9 +68,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -87,6 +84,8 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Inject
     Instance<ResourceManager> resourceManagerProvider;
+    @Inject
+    EventQueue eventQueue;
 
     @Inject
     private AvailableUpdatesFinder availableUpdatesFinder;
@@ -144,7 +143,7 @@ public class VdsEventListener implements IVdsEventListener {
      * @param vds
      */
     private void clearDomainCache(final VDS vds) {
-        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(vds.getStoragePoolId(),
+        eventQueue.submitEventSync(new Event(vds.getStoragePoolId(),
                 null, vds.getId(), EventType.VDSCLEARCACHE, ""),
                 new Callable<EventResult>() {
                     @Override
@@ -241,7 +240,9 @@ public class VdsEventListener implements IVdsEventListener {
             new SetNonOperationalVdsParameters(vdsId, reason, customLogValues);
         tempVar.setStorageDomainId(domainId);
         tempVar.setShouldBeLogged(logCommand);
-        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar, ExecutionHandler.createInternalJobContext());
+        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
+                tempVar,
+                ExecutionHandler.createInternalJobContext());
     }
 
     @Override
@@ -314,16 +315,16 @@ public class VdsEventListener implements IVdsEventListener {
     private List<VdcActionParametersBase> createMigrateVmToServerParametersList(List<VmStatic> vmsToMigrate, final VDS vds) {
         return LinqUtils.transformToList(vmsToMigrate,
                 new Function<VmStatic, VdcActionParametersBase>() {
-            @Override
-            public VdcActionParametersBase eval(VmStatic vm) {
-                MigrateVmToServerParameters parameters =
-                        new MigrateVmToServerParameters(false,
-                                vm.getId(),
-                                vds.getId());
-                parameters.setShouldBeLogged(false);
-                return parameters;
-            }
-        });
+                    @Override
+                    public VdcActionParametersBase eval(VmStatic vm) {
+                        MigrateVmToServerParameters parameters =
+                                new MigrateVmToServerParameters(false,
+                                        vm.getId(),
+                                        vds.getId());
+                        parameters.setShouldBeLogged(false);
+                        return parameters;
+                    }
+                });
     }
 
     @Override

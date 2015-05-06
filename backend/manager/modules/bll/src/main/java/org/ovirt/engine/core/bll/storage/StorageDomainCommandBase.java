@@ -46,17 +46,19 @@ import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+import javax.inject.Inject;
+
 public abstract class StorageDomainCommandBase<T extends StorageDomainParametersBase> extends
         StorageHandlingCommandBase<T> {
+
+    @Inject
+    protected EventQueue eventQueue;
 
     protected StorageDomainCommandBase(T parameters) {
         this(parameters, null);
@@ -333,15 +335,19 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected void disconnectAllHostsInPool() {
-        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(
-                new Event(getParameters().getStoragePoolId(), getParameters().getStorageDomainId(), null, EventType.POOLREFRESH, ""),
+        getEventQueue().submitEventSync(
+                new Event(getParameters().getStoragePoolId(),
+                        getParameters().getStorageDomainId(),
+                        null,
+                        EventType.POOLREFRESH,
+                        ""),
                 new Callable<EventResult>() {
                     @Override
                     public EventResult call() {
                         runSynchronizeOperation(new RefreshStoragePoolAndDisconnectAsyncOperationFactory());
                         return null;
                     }
-        });
+                });
     }
 
     /**
@@ -495,5 +501,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean isCinderStorageDomain() {
         return getStorageDomain().getStorageType().isCinderDomain();
+    }
+
+    protected EventQueue getEventQueue() {
+        return eventQueue;
     }
 }
