@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
@@ -174,12 +173,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     }
 
     private void refreshHostDeviceList() {
-        if (FeatureSupported.hostDevicePassthrough(getVds().getVdsGroupCompatibilityVersion())) {
-            try {
-                runInternalAction(VdcActionType.RefreshHostDevices, new VdsActionParameters(getVdsId()));
-            } catch (VdcBLLException e) {
-                log.error("Could not refresh host devices for host '{}'", getVds().getName());
-            }
+        try {
+            runInternalAction(VdcActionType.RefreshHostDevices, new VdsActionParameters(getVdsId()));
+        } catch (VdcBLLException e) {
+            log.error("Could not refresh host devices for host '{}'", getVds().getName());
         }
     }
 

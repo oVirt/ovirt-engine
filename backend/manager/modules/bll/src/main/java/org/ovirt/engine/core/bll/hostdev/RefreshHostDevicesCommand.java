@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RefreshHostInfoCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
@@ -65,6 +66,12 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
     @Override
     protected void executeCommand() {
+        if (!FeatureSupported.hostDevicePassthrough(getVds().getVdsGroupCompatibilityVersion())) {
+            // Do nothing if the host doesn't support the HostDevListByCaps verb
+            setSucceeded(true);
+            return;
+        }
+
         VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.HostDevListByCaps, new VdsIdAndVdsVDSCommandParametersBase(getVds()));
 
         if (!vdsReturnValue.getSucceeded()) {
