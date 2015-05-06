@@ -97,7 +97,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 new DisplayNetworkIndicatorCheckboxColumn(multiCluster,
                         new DisplayNetworkIndicatorFieldUpdater()),
                 new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(constants.displayNetwork()),
-                        SafeHtmlUtils.fromSafeConstant(constants.changeDisplayNetworkWarning())),
+                        SafeHtmlUtils.fromSafeConstant(constants.changeDisplayNetworkWarning()), true),
                 "100px"); //$NON-NLS-1$
 
         networks.addColumn(

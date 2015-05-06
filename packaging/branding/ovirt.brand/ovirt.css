@@ -47,3 +47,12 @@ TODO: use SASS, break into tooltips.sass
 .tooltip-w620 .tooltip-inner {
     max-width: 620px !important;
 }
+
+/***************************************
+Widgets -- cells and columns
+TODO: use SASS, break into columns.scss
+****************************************/
+
+.underlinedHeader {
+    border-bottom: 1px dotted #000;
+}

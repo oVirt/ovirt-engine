@@ -20,7 +20,7 @@ public class ResizeableCheckboxHeader<T> extends ResizableHeader<T> {
 
     public ResizeableCheckboxHeader(AbstractCheckboxHeader checkboxHeader,
             Column<T, ?> column, HasResizableColumns<T> table) {
-        super(new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(""), checkboxHeader.getTooltip(), //$NON-NLS-1$
+        super(new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(""), checkboxHeader.getTooltip(), false, //$NON-NLS-1$
                 createSafeHtmlCell()), column, table, true);
         this.checkboxHeaderDelegate = checkboxHeader;
     }
