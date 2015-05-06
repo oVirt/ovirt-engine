@@ -178,8 +178,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             VmDevice vmDevice = pair.getSecond();
             if (vmDevice.getSnapshotId() == null) { // Skip check for VMs with connected snapshot
                 VM vm = pair.getFirst();
-                if (!validate(snapshotsValidator.vmNotInPreview(vm.getId()))
-                        || !validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId()))) {
+                if (!validate(snapshotsValidator.vmNotInPreview(vm.getId()))) {
                     return false;
                 }
             }
