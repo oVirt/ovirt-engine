@@ -434,6 +434,7 @@ public final class VdsProperties {
     public static final String PHYSICAL_FUNCTION = "physfn";
     public static final String TOTAL_VFS = "totalvfs";
     public static final String NET_INTERFACE_NAME = "interface";
+    public static final String HOST_DEVICE_PASSTHROUGH = "hostdevPassthrough";
 
     // fencing policy parameters
     public static final String STORAGE_DOMAIN_HOST_ID_MAP = "storageDomainHostIdMap";

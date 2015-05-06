@@ -196,6 +196,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vds.setFenceAgents(getFenceAgents());
         vds.setVdsGroupCompatibilityVersion(getVdsGroupCompatibilityVersion());
         vds.setUpdateAvailable(isUpdateAvailable());
+        vds.setHostDevicePassthroughEnabled(isHostDevicePassthroughEnabled());
         return vds;
     }
 
@@ -1391,4 +1392,11 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vdsStatistics.setV2VJobs(v2vJobs);
     }
 
+    public void setHostDevicePassthroughEnabled(boolean value) {
+        vdsDynamic.setHostDevicePassthroughEnabled(value);
+    }
+
+    public boolean isHostDevicePassthroughEnabled() {
+        return vdsDynamic.isHostDevicePassthroughEnabled();
+    }
 }

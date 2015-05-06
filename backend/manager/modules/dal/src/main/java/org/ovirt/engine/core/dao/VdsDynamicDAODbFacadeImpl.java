@@ -116,6 +116,7 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setMaintenanceReason(rs.getString("maintenance_reason"));
             entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
             entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
+            entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
             return entity;
         }
     }
@@ -273,7 +274,8 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("is_live_snapshot_supported", vds.getLiveSnapshotSupport())
                 .addValue("is_live_merge_supported", vds.getLiveMergeSupport())
                 .addValue("maintenance_reason", vds.getMaintenanceReason())
-                .addValue("is_update_available", vds.isUpdateAvailable());
+                .addValue("is_update_available", vds.isUpdateAvailable())
+                .addValue("is_hostdev_enabled", vds.isHostDevicePassthroughEnabled());
 
         return parameterSource;
     }

@@ -729,6 +729,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setHBAs(hbas);
         vds.setBootTime(AssignLongValue(xmlRpcStruct, VdsProperties.bootTime));
         vds.setKdumpStatus(KdumpStatus.valueOfNumber(AssignIntValue(xmlRpcStruct, VdsProperties.KDUMP_STATUS)));
+        vds.setHostDevicePassthroughEnabled(AssignBoolValue(xmlRpcStruct, VdsProperties.HOST_DEVICE_PASSTHROUGH));
 
         Map<String, Object> selinux = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.selinux);
         if (selinux != null) {

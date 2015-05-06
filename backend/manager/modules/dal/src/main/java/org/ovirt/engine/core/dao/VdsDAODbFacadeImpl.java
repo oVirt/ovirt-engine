@@ -409,6 +409,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                 entity.getFenceAgents().add(agent);
             }
             entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
+            entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
             return entity;
         }
     }

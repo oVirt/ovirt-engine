@@ -182,6 +182,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     // Set of additional features supported by the VDSM.
     private Set<String> additionalFeatures;
 
+    private boolean hostDevicePassthroughEnabled;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -745,6 +747,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.additionalFeatures = additionalFeatures;
     }
 
+    public void setHostDevicePassthroughEnabled(boolean hostDevicePassthroughEnabled) {
+        this.hostDevicePassthroughEnabled = hostDevicePassthroughEnabled;
+    }
+
+    public boolean isHostDevicePassthroughEnabled() {
+        return hostDevicePassthroughEnabled;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -811,6 +821,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + (additionalFeatures == null ? 0 : additionalFeatures.hashCode());
         result = prime * result + (maintenanceReason == null ? 0 : maintenanceReason.hashCode());
         result = prime * result + (updateAvailable ? 0 : 1);
+        result = prime * result + (hostDevicePassthroughEnabled ? 0 : 1);
 
         return result;
     }
@@ -887,6 +898,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && liveMergeSupport == other.liveMergeSupport
                 && ObjectUtils.objectsEqual(maintenanceReason, other.maintenanceReason)
                 && updateAvailable == other.updateAvailable
-                && ObjectUtils.objectsEqual(additionalFeatures, other.additionalFeatures);
+                && ObjectUtils.objectsEqual(additionalFeatures, other.additionalFeatures)
+                && ObjectUtils.objectsEqual(hostDevicePassthroughEnabled, other.hostDevicePassthroughEnabled);
     }
 }
