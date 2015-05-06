@@ -586,7 +586,7 @@ select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','
 -- AutoRecoveryConfiguration
 select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"true\",\"hosts\":\"true\"}','general');
 -- SPICE client mode default settings (Auto, Native, Plugin)
-select fn_db_add_config_value('ClientModeSpiceDefault','Auto','general');
+select fn_db_add_config_value('ClientModeSpiceDefault','Native','general');
 -- VNC client mode default settings (Native, NoVnc)
 select fn_db_add_config_value('ClientModeVncDefault','Native','general');
 -- RDP client mode default settings (Auto, Native, Plugin)
