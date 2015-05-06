@@ -832,7 +832,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 ClusterModel.this.stopProgress();
-                List<String> glusterTunedProfiles = new ArrayList<>();
+                List<String> glusterTunedProfiles = new ArrayList<String>();
                 if (((VdcQueryReturnValue) returnValue).getSucceeded()) {
                     glusterTunedProfiles.addAll((List<String>)(((VdcQueryReturnValue) returnValue).getReturnValue()));
                 }
