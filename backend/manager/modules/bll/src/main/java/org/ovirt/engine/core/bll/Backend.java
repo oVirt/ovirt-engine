@@ -71,9 +71,6 @@ import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ErrorTranslatorImpl;
 import org.ovirt.engine.core.utils.OsRepositoryImpl;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 import org.ovirt.engine.core.utils.osinfo.OsInfoPreferencesLoader;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -108,7 +105,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private DbFacade dbFacade;
 
     public static BackendInternal getInstance() {
-        return EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
+        return Injector.get(BackendInternal.class);
     }
 
     private void initHandlers() {
