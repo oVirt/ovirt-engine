@@ -6,6 +6,8 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -19,10 +21,12 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(Theories.class)
@@ -43,6 +47,8 @@ public class VmsListFetcherTest {
     VdsDAO vdsDAO;
     @Mock
     private VmDAO vmDAO;
+    @Captor
+    ArgumentCaptor<List<VM>> vdsManagerArgumentCaptor;
 
     @Before
     public void setup() {
@@ -80,6 +86,37 @@ public class VmsListFetcherTest {
         //then
         vmsListFetcher.fetch();
         Assert.assertTrue(vmsListFetcher.getChangedVms().isEmpty());
+    }
+
+    @Theory
+    public void lastVmListNotIncludingExternalVm(VmTestPairs data) {
+        //given
+        stubCalls(data);
+        //when
+        vmsListFetcher.fetch();
+        /* assume non external VM */
+        assumeTrue(data.vdsmVm() != null);
+        assumeTrue(data.dbVm() != null);
+        //then
+        verify(vdsManager).setLastVmsList(vdsManagerArgumentCaptor.capture());
+        Assert.assertEquals(
+                data.vdsmVm().getVmDynamic(),
+                vdsManagerArgumentCaptor.getValue().get(0).getDynamicData()
+        );
+    }
+
+    @Theory
+    public void externalVmAreNotSavedAsLastVm(VmTestPairs data) {
+     //given
+        stubCalls(data);
+        //when
+        vmsListFetcher.fetch();
+        /* assume external VM */
+        assumeTrue(data.vdsmVm() != null);
+        assumeTrue(data.dbVm() == null);
+        //then
+        verify(vdsManager).setLastVmsList(vdsManagerArgumentCaptor.capture());
+        Assert.assertTrue(vdsManagerArgumentCaptor.getValue().size() == 0);
     }
 
     private void stubCalls(VmTestPairs data) {

@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -44,7 +43,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -727,7 +725,9 @@ public class HostMonitoring {
 
     /**
      * calculate the memory and cpus used by vms based on the number of the running VMs. only DB vms counted currently as
-     * we know their provisioned memory value. TODO external VMs should count as well
+     * we know their provisioned memory value.
+     * only vms we know their memory definition are calculated, thus
+     * external VMs are added to db on the 1st cycle they appear, and then being added to this calculation
      * @param dbToVdsmVm consume a pair of DB vms to running VMs to calculate metrics. TODO - FUTURE - get this straight from
      *                  getVdsCaps
      */
@@ -738,18 +738,14 @@ public class HostMonitoring {
         int memCommited = vds.getGuestOverhead();
         int vmsCoresCount = 0;
 
-        for (Pair<VM, VmInternalData> pair : vdsManager.getLastVmsList()) {
-            VmInternalData vdsmVm = pair.getSecond();
+        for (VM vm : vdsManager.getLastVmsList()) {
             // VMs' pending resources are cleared in powering up, so in launch state
             // we shouldn't include them as committed.
-            if (vdsmVm != null && vdsmVm.getVmDynamic().getStatus() != VMStatus.WaitForLaunch &&
-                    vdsmVm.getVmDynamic().getStatus() != VMStatus.Down) {
-                VM vm = pair.getFirst();
-                if (vm != null) {
-                    memCommited += vm.getVmMemSizeMb();
-                    memCommited += vds.getGuestOverhead();
-                    vmsCoresCount += vm.getNumOfCpus();
-                }
+            if (vm != null && vm.getStatus() != VMStatus.WaitForLaunch &&
+                    vm.getStatus() != VMStatus.Down) {
+                memCommited += vm.getVmMemSizeMb();
+                memCommited += vds.getGuestOverhead();
+                vmsCoresCount += vm.getNumOfCpus();
             }
         }
 

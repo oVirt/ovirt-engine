@@ -57,7 +57,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +85,7 @@ public class VdsManager {
     private boolean mBeforeFirstRefresh = true;
     private HostMonitoring hostMonitoring;
     private boolean monitoringNeeded;
-    private List<Pair<VM, VmInternalData>> lastVmsList = Collections.emptyList();
+    private List<VM> lastVmsList = Collections.emptyList();
 
     public VdsManager(VDS vds, AuditLogDirector auditLogDirector) {
         this.auditLogDirector = auditLogDirector;
@@ -934,7 +933,7 @@ public class VdsManager {
         mBeforeFirstRefresh = value;
     }
 
-    public List<Pair<VM, VmInternalData>> getLastVmsList() {
+    public List<VM> getLastVmsList() {
         return lastVmsList;
     }
 
@@ -943,7 +942,7 @@ public class VdsManager {
      * This method is not thread safe
      * @param lastVmsList
      */
-    public void setLastVmsList(List<Pair<VM, VmInternalData>> lastVmsList) {
+    public void setLastVmsList(List<VM> lastVmsList) {
         this.lastVmsList = lastVmsList;
     }
 

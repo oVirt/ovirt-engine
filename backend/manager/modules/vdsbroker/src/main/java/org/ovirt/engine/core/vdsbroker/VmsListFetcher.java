@@ -70,7 +70,22 @@ public class VmsListFetcher {
         devicesChangedVms = new ArrayList<>();
         filterVms();
         gatherNonRunningVms(dbVms);
-        vdsManager.setLastVmsList(changedVms);
+        saveLastVmsList(vdsmVms);
+    }
+
+    private void saveLastVmsList(Map<Guid, VmInternalData> vdsmVms) {
+        ArrayList<VM> vms = new ArrayList<>(vdsmVms.size());
+        for (VmInternalData vmInternalData : this.vdsmVms.values()) {
+            if (dbVms.containsKey(vmInternalData.getVmDynamic().getId())) {
+                VM vm = new VM(
+                        dbVms.get(vmInternalData.getVmDynamic().getId()).getStaticData(),
+                        vmInternalData.getVmDynamic(),
+                        vmInternalData.getVmStatistics());
+                vm.setDynamicData(vmInternalData.getVmDynamic());
+                vms.add(vm);
+            }
+        }
+        vdsManager.setLastVmsList(vms);
     }
 
     protected void onError() {
