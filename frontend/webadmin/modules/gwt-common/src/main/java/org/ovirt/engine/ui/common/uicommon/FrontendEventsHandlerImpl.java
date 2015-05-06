@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.uicommon;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -59,7 +61,34 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
+    public void runMultipleActionsFailed(Map<VdcActionType, List<VdcReturnValueBase>> failedActionsMap,
+            MessageFormatter messageFormatter) {
+        List<VdcActionType> actions = new ArrayList<>();
+        List<VdcReturnValueBase> returnValues = new ArrayList<>();
+
+        for (Entry<VdcActionType, List<VdcReturnValueBase>> entry : failedActionsMap.entrySet()) {
+            for (int i = 0; i < entry.getValue().size(); ++i) {
+                actions.add(entry.getKey());
+            }
+            returnValues.addAll(entry.getValue());
+        }
+
+        runMultipleActionsFailed(actions, returnValues, messageFormatter);
+    }
+
+    @Override
     public void runMultipleActionsFailed(List<VdcActionType> actions, List<VdcReturnValueBase> returnValues) {
+        runMultipleActionsFailed(actions, returnValues, new MessageFormatter() {
+            @Override
+            public String format(String innerMessage) {
+                return messages.uiCommonRunActionFailed(innerMessage);
+            }
+        });
+    }
+
+    public void runMultipleActionsFailed(List<VdcActionType> actions,
+            List<VdcReturnValueBase> returnValues,
+            MessageFormatter messageFormatter) {
 
         List<Message> errors = new ArrayList<Message>();
 
@@ -78,7 +107,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
             }
         }
 
-        errorPopupManager.show(messages.uiCommonRunActionFailed(ErrorMessageFormatter.formatMessages(errors)));
+        errorPopupManager.show(messageFormatter.format(ErrorMessageFormatter.formatMessages(errors)));
     }
 
     @Override
@@ -93,5 +122,4 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
         errorPopupManager.show(
                 messages.uiCommonPublicConnectionClosed(ex.getLocalizedMessage()));
     }
-
 }

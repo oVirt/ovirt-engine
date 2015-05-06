@@ -2,9 +2,11 @@ package org.ovirt.engine.ui.frontend;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +19,7 @@ import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.frontend.IFrontendEventsHandler.MessageFormatter;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent.AsyncOperationCompleteHandler;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
@@ -1127,9 +1130,14 @@ public class Frontend implements HasHandlers {
      * Translate application errors and store the translated messages back in return values.
      * @param errors A list of {@code VdcReturnValueBase}s.
      */
-    private void translateErrors(final List<VdcReturnValueBase> errors) {
+    private void translateErrors(final Collection<VdcReturnValueBase> errors) {
         for (VdcReturnValueBase retVal : errors) {
-            retVal.setCanDoActionMessages((ArrayList<String>) translateError(retVal));
+            if (!retVal.getCanDoAction()) {
+                retVal.setCanDoActionMessages((ArrayList<String>) translateError(retVal));
+            } else if (!retVal.getSucceeded()) {
+                VdcFault fault = retVal.getFault();
+                fault.setMessage(translateVdcFault(fault));
+            }
         }
     }
 
@@ -1219,4 +1227,15 @@ public class Frontend implements HasHandlers {
         parameters.setFiltered(filterQueries);
     }
 
+    /**
+     * Translate and show popup for the actions errors
+     */
+    public void runMultipleActionsFailed(Map<VdcActionType, List<VdcReturnValueBase>> failedActionsMap, MessageFormatter messageFormatter) {
+        Collection<VdcReturnValueBase> failedResults = new ArrayList<>();
+        for (List<VdcReturnValueBase> vdcActionTypeResults : failedActionsMap.values()) {
+            failedResults.addAll(vdcActionTypeResults);
+        }
+        translateErrors(failedResults);
+        getEventsHandler().runMultipleActionsFailed(failedActionsMap, messageFormatter);
+    }
 }

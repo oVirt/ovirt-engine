@@ -494,4 +494,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Test failed: {0}")
     String testFailedWithErrorMsg(String errorMessage);
+
+    @DefaultMessage("Error while executing at least some of the action tasks: {0}")
+    String uiCommonRunActionPartitialyFailed(String reason);
 }
