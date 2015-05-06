@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -475,6 +476,7 @@ public class HostMonitoring {
                     vds.getName(), vds.getId(), statsReturnValue.getExceptionString());
             throw statsReturnValue.getExceptionObject();
         }
+        updateV2VJobs();
         // save also dynamic because vm_count data and image_check getting with
         // statistics data
         // TODO: omer- one day remove dynamic save when possible please check if vdsDynamic changed before save
@@ -486,6 +488,13 @@ public class HostMonitoring {
 
         if (Config.<Boolean> getValue(ConfigValues.DebugTimerLogging)) {
             log.debug("vds::refreshVdsStats\n{}", this);
+        }
+    }
+
+    protected void updateV2VJobs() {
+        List<V2VJobInfo> v2vJobInfos = vds.getV2VJobs();
+        if (v2vJobInfos != null) {
+            vdsManager.updateV2VJobInfos(v2vJobInfos);
         }
     }
 

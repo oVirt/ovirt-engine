@@ -41,6 +41,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private Date cpuOverCommitTimeStamp;
 
     private List<CpuStatistics> cpuCoreStatistics;
+    private List<V2VJobInfo> v2vJobs;
 
     public VdsStatistics() {
         cpuIdle = BigDecimal.ZERO;
@@ -341,5 +342,13 @@ public class VdsStatistics implements BusinessEntity<Guid> {
 
     public void setCpuOverCommitTimeStamp(Date value) {
         cpuOverCommitTimeStamp = value;
+    }
+
+    public List<V2VJobInfo> getV2VJobs() {
+        return v2vJobs;
+    }
+
+    public void setV2VJobs(List<V2VJobInfo> v2vJobs) {
+        this.v2vJobs = v2vJobs;
     }
 }

@@ -1347,4 +1347,13 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     public boolean isOvirtNode() {
         return getVdsType() == VDSType.oVirtNode;
     }
+
+    public List<V2VJobInfo> getV2VJobs() {
+        return vdsStatistics.getV2VJobs();
+    }
+
+    public void setV2VJobs(List<V2VJobInfo> v2vJobs) {
+        vdsStatistics.setV2VJobs(v2vJobs);
+    }
+
 }

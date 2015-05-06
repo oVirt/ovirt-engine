@@ -459,6 +459,12 @@ public final class VdsProperties {
     public static final String serverType = "serverType";
     public static final String target = "target";
 
+    // V2V Jobs
+    public static final String v2vJobs = "v2vJobs";
+    public static final String v2vJobStatus = "status";
+    public static final String v2vDescription = "description";
+    public static final String v2vProgress = "progress";
+
     // VM Jobs
     public static final String vmJobs = "vmJobs";
     public static final String vmJobId = "id";

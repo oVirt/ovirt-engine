@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -1023,7 +1024,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setBootTime(AssignLongValue(xmlRpcStruct, VdsProperties.bootTime));
 
         updateNumaStatisticsData(vds, xmlRpcStruct);
-
+        updateV2VJobs(vds, xmlRpcStruct);
     }
 
     private static void extractInterfaceStatistics(Map<String, Object> dict, NetworkInterface<?> iface) {
@@ -2050,5 +2051,36 @@ public class VdsBrokerObjectsBuilder {
         }
 
         return devices;
+    }
+
+    private static void updateV2VJobs(VDS vds, Map<String, Object> xmlRpcStruct) {
+        if (!xmlRpcStruct.containsKey(VdsProperties.v2vJobs)) {
+            return;
+        }
+
+        List<V2VJobInfo> v2vJobs = new ArrayList<>();
+        for (Entry<String, Object> job : ((Map<String, Object>) xmlRpcStruct.get(VdsProperties.v2vJobs)).entrySet()) {
+            v2vJobs.add(buildV2VJobData(job.getKey(), (Map<String, Object>) job.getValue()));
+        }
+        vds.getStatisticsData().setV2VJobs(v2vJobs);
+    }
+
+    private static V2VJobInfo buildV2VJobData(String jobId, Map<String, Object> xmlRpcStruct) {
+        V2VJobInfo job = new V2VJobInfo();
+        job.setId(Guid.createGuidFromString(jobId));
+        job.setStatus(getV2VJobStatusValue(xmlRpcStruct));
+        job.setDescription(AssignStringValue(xmlRpcStruct, VdsProperties.v2vDescription));
+        job.setProgress(AssignIntValue(xmlRpcStruct, VdsProperties.v2vProgress));
+        return job;
+    }
+
+    private static V2VJobInfo.JobStatus getV2VJobStatusValue(Map<String, Object> input) {
+        String status = (String) input.get(VdsProperties.v2vJobStatus);
+        try {
+            return V2VJobInfo.JobStatus.valueOf(status.toUpperCase());
+        } catch (Exception e) {
+            log.warn("Got invalid status for virt-v2v job: {}", status);
+            return V2VJobInfo.JobStatus.UNKNOWN;
+        }
     }
 }

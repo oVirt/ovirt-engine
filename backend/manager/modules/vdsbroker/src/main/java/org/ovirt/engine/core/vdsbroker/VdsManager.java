@@ -16,6 +16,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SELinuxMode;
+import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
+import org.ovirt.engine.core.common.businessentities.V2VJobInfo.JobStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -89,6 +91,7 @@ public class VdsManager {
     private List<VM> lastVmsList = Collections.emptyList();
     private final ResourceManager resourceManager;
     private final DbFacade dbFacade;
+    private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
 
     public VdsManager(VDS vds, AuditLogDirector auditLogDirector, ResourceManager resourceManager, DbFacade dbFacade) {
         this.resourceManager = resourceManager;
@@ -1009,6 +1012,48 @@ public class VdsManager {
             log.info("VMs initialization finished for Host: '{}:{}'", cachedVds.getName(), cachedVds.getId());
             resourceManager.handleVmsFinishedInitOnVds(cachedVds.getId());
             setInitialized(true);
+        }
+    }
+
+    public V2VJobInfo getV2VJobInfoForVm(Guid vmId) {
+        return vmIdToV2VJob.get(vmId);
+    }
+
+    public V2VJobInfo removeV2VJobInfoForVm(Guid vmId) {
+        synchronized (vmIdToV2VJob) {
+            return vmIdToV2VJob.remove(vmId);
+        }
+    }
+
+    public void addV2VJobInfoForVm(Guid vmId, JobStatus jobStatus) {
+        vmIdToV2VJob.put(vmId, new V2VJobInfo(vmId, jobStatus));
+    }
+
+    /**
+     * Update the status for V2V jobs according to the latest reports from VDSM
+     * @param v2vJobInfos - jobs we got from VDSM
+     */
+    void updateV2VJobInfos(List<V2VJobInfo> v2vJobInfos) {
+        // Set the status of jobs that we expect to get from VDSM but
+        // didn't arrive in the latest report to non-exist
+        for (V2VJobInfo existingJobInfo : vmIdToV2VJob.values()) {
+            if (existingJobInfo.isMonitored() && !v2vJobInfos.contains(existingJobInfo)) {
+                existingJobInfo.setStatus(JobStatus.NOT_EXIST);
+            }
+        }
+
+        if (v2vJobInfos.isEmpty()) {
+            return;
+        }
+
+        // We don't want that by mistake a job that we tried to remove
+        // will be added again in case VDSM reports it at the same time
+        synchronized (vmIdToV2VJob) {
+            for (V2VJobInfo jobInfo : v2vJobInfos) {
+                if (vmIdToV2VJob.containsKey(jobInfo.getId())) {
+                    vmIdToV2VJob.put(jobInfo.getId(), jobInfo);
+                }
+            }
         }
     }
 }
