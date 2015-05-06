@@ -301,7 +301,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot upgrade Host. Host version is not compatible with selected ISO version. Please select an ISO with major version ${IsoVersion}.x.")
     String VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION();
 
-    @DefaultStringValue("Cannot install Host. Image file is missing.")
+    @DefaultStringValue("Cannot ${action} ${type}. Image file is missing.")
     String VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE();
 
     @DefaultStringValue("Cannot ${action} ${type}. There are no available updates for the host.")
@@ -1065,6 +1065,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$action upgrade")
     String VAR__ACTION__UPGRADE();
+
+    @DefaultStringValue("$action install")
+    String VAR__ACTION__INSTALL();
 
     @DefaultStringValue("$action start profiling")
     String VAR__ACTION__START_PROFILE();

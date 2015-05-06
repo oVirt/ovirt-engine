@@ -55,6 +55,12 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
         return lockProperties.withScope(Scope.Execution);
     }
 
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__INSTALL);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+    }
+
     private boolean isISOCompatible(
         File iso,
         RpmVersion ovirtHostOsVersion

@@ -131,6 +131,7 @@ public enum VdcBllMessages {
     VAR__ACTION__WRITE_PUB_KEYS,
     VAR__ACTION__REGISTER,
     VAR__ACTION__UPGRADE,
+    VAR__ACTION__INSTALL,
 
     // Host statuses replacements
     VAR__HOST_STATUS__UP,
