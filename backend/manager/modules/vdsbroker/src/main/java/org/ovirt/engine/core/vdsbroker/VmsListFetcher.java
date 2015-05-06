@@ -77,12 +77,10 @@ public class VmsListFetcher {
         ArrayList<VM> vms = new ArrayList<>(vdsmVms.size());
         for (VmInternalData vmInternalData : this.vdsmVms.values()) {
             if (dbVms.containsKey(vmInternalData.getVmDynamic().getId())) {
-                VM vm = new VM(
+                vms.add(new VM(
                         dbVms.get(vmInternalData.getVmDynamic().getId()).getStaticData(),
                         vmInternalData.getVmDynamic(),
-                        vmInternalData.getVmStatistics());
-                vm.setDynamicData(vmInternalData.getVmDynamic());
-                vms.add(vm);
+                        vmInternalData.getVmStatistics()));
             }
         }
         vdsManager.setLastVmsList(vms);

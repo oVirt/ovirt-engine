@@ -136,13 +136,6 @@ public class VmsListFetcherTest {
         }
     }
 
-    private void stubVmMigratingTo(VmTestPairs data) {
-        if (data.dbVm() == null) {
-            when(vmDAO.get(data.vdsmVm().getVmDynamic().getId())).
-                    thenReturn(new VM());
-        }
-    }
-
     private VDSReturnValue getVdsReturnValue(VmInternalData vdsmVm) {
         VDSReturnValue value = new VDSReturnValue();
         value.setSucceeded(true);
