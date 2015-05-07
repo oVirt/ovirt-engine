@@ -406,13 +406,13 @@ public interface IVdsServer {
             String userName,
             boolean force);
 
-    GlusterVolumeSnapshotInfoReturnForXmlRpc glusterSnapshotInfo(Guid clusterId, String volumeName);
+    GlusterVolumeSnapshotInfoReturnForXmlRpc glusterVolumeSnapshotList(Guid clusterId, String volumeName);
 
     GlusterVolumeSnapshotConfigReturnForXmlRpc glusterSnapshotConfigList(Guid clusterId);
 
     StatusOnlyReturnForXmlRpc glusterSnapshotDelete(String snapshotName);
 
-    StatusOnlyReturnForXmlRpc glusterVolumeSnapshotDelete(String volumeName);
+    StatusOnlyReturnForXmlRpc glusterVolumeSnapshotDeleteAll(String volumeName);
 
     StatusOnlyReturnForXmlRpc glusterSnapshotActivate(String snapshotName, boolean force);
 
@@ -420,7 +420,7 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc glusterSnapshotRestore(String snapshotName);
 
-    GlusterVolumeSnapshotCreateReturnForXmlRpc glusterSnapshotCreate(String volumeName,
+    GlusterVolumeSnapshotCreateReturnForXmlRpc glusterVolumeSnapshotCreate(String volumeName,
             String snapshotName,
             String description,
             boolean force);

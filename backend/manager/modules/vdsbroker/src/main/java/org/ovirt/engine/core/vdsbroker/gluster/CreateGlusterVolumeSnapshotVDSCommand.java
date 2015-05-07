@@ -21,7 +21,7 @@ public class CreateGlusterVolumeSnapshotVDSCommand<P extends CreateGlusterVolume
         String snapshotName = getParameters().getSnapshotName();
         String description = getParameters().getDescription() == null ? "" : getParameters().getDescription();
         boolean force = getParameters().getForce();
-        xmlRpcReturnValue = getBroker().glusterSnapshotCreate(volumeName, snapshotName, description, force);
+        xmlRpcReturnValue = getBroker().glusterVolumeSnapshotCreate(volumeName, snapshotName, description, force);
         proceedProxyReturnValue();
 
         if (getVDSReturnValue().getSucceeded()) {

@@ -1706,10 +1706,11 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public GlusterVolumeSnapshotInfoReturnForXmlRpc glusterSnapshotInfo(Guid clusterId,
+    public GlusterVolumeSnapshotInfoReturnForXmlRpc glusterVolumeSnapshotList(Guid clusterId,
             String volumeName) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterSnapshotInfo("", volumeName);
+            Map<String, Object> xmlRpcReturnValue =
+                    vdsServer.glusterVolumeSnapshotList(volumeName == null ? "" : volumeName);
             GlusterVolumeSnapshotInfoReturnForXmlRpc wrapper =
                     new GlusterVolumeSnapshotInfoReturnForXmlRpc(clusterId, xmlRpcReturnValue);
             return wrapper;
@@ -1732,12 +1733,12 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public GlusterVolumeSnapshotCreateReturnForXmlRpc glusterSnapshotCreate(String volumeName,
+    public GlusterVolumeSnapshotCreateReturnForXmlRpc glusterVolumeSnapshotCreate(String volumeName,
             String snapshotName,
             String description,
             boolean force) {
         try {
-            return new GlusterVolumeSnapshotCreateReturnForXmlRpc(vdsServer.glusterSnapshotCreate(volumeName,
+            return new GlusterVolumeSnapshotCreateReturnForXmlRpc(vdsServer.glusterVolumeSnapshotCreate(volumeName,
                     snapshotName,
                     description,
                     force));
@@ -1758,9 +1759,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeSnapshotDelete(String volumeName) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeSnapshotDeleteAll(String volumeName) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeSnapshotDelete(volumeName);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeSnapshotDeleteAll(volumeName);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
