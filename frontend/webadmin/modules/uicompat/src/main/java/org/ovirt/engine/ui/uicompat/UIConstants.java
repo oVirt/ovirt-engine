@@ -2804,8 +2804,20 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Register Disks")
     String registerDisksTitle();
 
+    @DefaultStringValue("Create Authentication Key")
+    String createSecretTitle();
+
+    @DefaultStringValue("Edit Authentication Key")
+    String editSecretTitle();
+
+    @DefaultStringValue("Remove Authentication Key(s)")
+    String removeSecretTitle();
+
     @DefaultStringValue("Icon file is not parsable.")
     String iconIsNotParsable();
+
+    @DefaultStringValue("Authentication Key value must be encoded in Base64.")
+    String secretValueMustBeInBase64();
 
     @DefaultStringValue("Please select a storage device to create brick.")
     String selectStorageDevice();

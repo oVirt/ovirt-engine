@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.PairQueryable;
@@ -114,6 +115,7 @@ import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderSecretListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
@@ -451,6 +453,8 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
     DetailModelProvider<ProviderListModel, ProviderGeneralModel> getSubTabProviderGeneralModelProvider();
 
     SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> getSubTabProviderNetworkModelProvider();
+
+    SearchableDetailModelProvider<LibvirtSecret, ProviderListModel, ProviderSecretListModel> getSubTabProviderSecretModelProvider();
 
     // Profile
     SearchableDetailModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel> getSubTabVnicProfileVmModelProvider();

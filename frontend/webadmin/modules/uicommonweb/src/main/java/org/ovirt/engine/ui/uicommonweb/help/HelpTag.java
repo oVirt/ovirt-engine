@@ -272,6 +272,14 @@ public enum HelpTag {
 
     move_disks("move_disks", HelpTagType.WEBADMIN, "Disks Tab > Move Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    libvirt_secrets("libvirt_secrets", HelpTagType.WEBADMIN), //$NON-NLS-1$
+
+    create_secret("create_secret", HelpTagType.WEBADMIN, "Providers main-tab > Authentication Keys sub-tab > New"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    edit_secret("create_secret", HelpTagType.WEBADMIN, "Providers main-tab > Authentication Keys sub-tab > Edit"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    remove_secret("remove_secret", HelpTagType.WEBADMIN, "Providers main-tab > Authentication Keys sub-tab > Remove"), //$NON-NLS-1$ //$NON-NLS-2$
+
     multiple_archs_dialog("multiple_archs_dialog", HelpTagType.WEBADMIN, "Storage main tab -> VM Import sub-tab -> Import -> warning dialog for VMs with non-mathcing architectures"), //$NON-NLS-1$ //$NON-NLS-2$
 
     network_interfaces("network_interfaces", HelpTagType.UNKNOWN), //$NON-NLS-1$

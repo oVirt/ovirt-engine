@@ -3010,6 +3010,30 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Register")
     String registerDisk();
 
+    @DefaultStringValue("New")
+    String newLibvirtSecret();
+
+    @DefaultStringValue("Edit")
+    String editLibvirtSecret();
+
+    @DefaultStringValue("Remove")
+    String removeLibvirtSecret();
+
+    @DefaultStringValue("UUID")
+    String idLibvirtSecret();
+
+    @DefaultStringValue("Value")
+    String valueLibvirtSecret();
+
+    @DefaultStringValue("Type")
+    String usageTypeLibvirtSecret();
+
+    @DefaultStringValue("Description")
+    String descriptionLibvirtSecret();
+
+    @DefaultStringValue("Creation Date")
+    String creationDateLibvirtSecret();
+
     // Setup network
     @DefaultStringValue("Drag to make changes")
     String dragToMakeChangesSetupNetwork();
@@ -3488,6 +3512,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Networks")
     String providerNetworksSubTabLabel();
+
+    @DefaultStringValue("Authentication Keys")
+    String providerSecretsSubTabLabel();
 
     @DefaultStringValue("Messaging Broker Configuration")
     String messagingConfiguration();

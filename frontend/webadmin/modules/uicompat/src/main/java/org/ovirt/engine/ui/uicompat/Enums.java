@@ -370,4 +370,6 @@ public interface Enums extends LocalizedEnums {
     String OpenstackNetworkProviderProperties$BrokerType___QPID();
 
     String OpenstackNetworkProviderProperties$BrokerType___RABBIT_MQ();
+
+    String LibvirtSecretUsageType___CEPH();
 }

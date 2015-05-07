@@ -378,6 +378,9 @@ public class WebAdminApplicationPlaces {
     public static final String providerNetworkSubTabPlace = providerMainTabPlace + SUB_TAB_PREFIX
             + "networks"; //$NON-NLS-1$
 
+    public static final String providerSecretSubTabPlace = providerMainTabPlace + SUB_TAB_PREFIX
+            + "secrets"; //$NON-NLS-1$
+
     // Vnic Profile
     public static final String vnicProfilePermissionSubTabPlace = vnicProfileMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$

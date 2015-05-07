@@ -950,6 +950,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcObjectType___DiskProfile();
 
+    String VdcActionType___AddLibvirtSecret();
+
+    String VdcActionType___UpdateLibvirtSecret();
+
     String VdsSelectionAlgorithm___None();
 
     String VdsSelectionAlgorithm___EvenlyDistribute();

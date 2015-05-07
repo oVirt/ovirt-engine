@@ -88,6 +88,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicPro
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ExternalSubnetPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderSecretPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaStoragePopupPresenterWidget;
@@ -220,6 +221,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile.VnicProfi
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.ProviderSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderNetworkPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderSecretPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.QuotaSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaEventPresenter;
@@ -351,6 +353,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.VnicProfileP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ExternalSubnetPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ImportNetworksPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderSecretPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.CpuQosPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.HostNetworkQosPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.StorageQosPopupView;
@@ -490,6 +493,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.profile.VnicProfileSub
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.provider.ProviderSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.provider.SubTabProviderGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.provider.SubTabProviderNetworkView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.provider.SubTabProviderSecretView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.QuotaSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaEventView;
@@ -1155,6 +1159,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabProviderNetworkPresenter.ViewDef.class,
                 SubTabProviderNetworkView.class,
                 SubTabProviderNetworkPresenter.ProxyDef.class);
+        bindPresenter(SubTabProviderSecretPresenter.class,
+                SubTabProviderSecretPresenter.ViewDef.class,
+                SubTabProviderSecretView.class,
+                SubTabProviderSecretPresenter.ProxyDef.class);
 
         // Profile
         bindPresenter(VnicProfileSubTabPanelPresenter.class,
@@ -1644,6 +1652,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ImportNetworksPopupPresenterWidget.class,
                 ImportNetworksPopupPresenterWidget.ViewDef.class,
                 ImportNetworksPopupView.class);
+
+        bindPresenterWidget(ProviderSecretPopupPresenterWidget.class,
+                ProviderSecretPopupPresenterWidget.ViewDef.class,
+                ProviderSecretPopupView.class);
 
         // Profile
         bindPresenterWidget(VnicProfilePopupPresenterWidget.class,

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -34,14 +35,17 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
     private UICommand removeCommand;
 
     private final ProviderNetworkListModel providerNetworkListModel;
+    private final ProviderSecretListModel providerSecretListModel;
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Inject
     public ProviderListModel(final ProviderGeneralModel providerGeneralModel,
-            ProviderNetworkListModel providerNetworkListModel) {
+            ProviderNetworkListModel providerNetworkListModel,
+            ProviderSecretListModel providerSecretListModel) {
         this.providerNetworkListModel = providerNetworkListModel;
-        setModelList(providerGeneralModel, providerNetworkListModel);
+        this.providerSecretListModel = providerSecretListModel;
+        setModelList(providerGeneralModel, providerNetworkListModel, providerSecretListModel);
 
         setTitle(ConstantsManager.getInstance().getConstants().providersTitle());
         setHelpTag(HelpTag.providers);
@@ -64,10 +68,12 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
     }
 
     private void setModelList(final ProviderGeneralModel providerGeneralModel,
-            final ProviderNetworkListModel providerNetworkListModel) {
+            final ProviderNetworkListModel providerNetworkListModel,
+            final ProviderSecretListModel providerSecretListModel) {
         List<HasEntity<Provider>> list = new ArrayList<>();
         list.add(providerGeneralModel);
         list.add(providerNetworkListModel);
+        list.add(providerSecretListModel);
         setDetailModels(list);
     }
 
@@ -104,6 +110,7 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
             providerNetworkListModel.setIsAvailable(provider.getType()
                     .getProvidedTypes()
                     .contains(VdcObjectType.Network));
+            providerSecretListModel.setIsAvailable(provider.getType() == ProviderType.OPENSTACK_VOLUME);
         }
     }
 

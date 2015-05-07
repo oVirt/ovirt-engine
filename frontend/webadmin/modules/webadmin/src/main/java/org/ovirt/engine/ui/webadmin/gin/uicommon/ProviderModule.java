@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -17,8 +18,10 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderSecretListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderSecretPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -44,7 +47,8 @@ public class ProviderModule extends AbstractGinModule {
                         eventBus, defaultConfirmPopupProvider, commonModelProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ProviderListModel source,
-                            UICommand lastExecutedCommand, Model windowModel) {
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
 
                         if (lastExecutedCommand == getModel().getAddCommand()
                                 || lastExecutedCommand == getModel().getEditCommand()) {
@@ -60,7 +64,8 @@ public class ProviderModule extends AbstractGinModule {
 
                         if (lastExecutedCommand == getModel().getRemoveCommand()) {
                             return removeConfirmPopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getAddCommand() || lastExecutedCommand == getModel().getEditCommand()) {
+                        } else if (lastExecutedCommand == getModel().getAddCommand()
+                                || lastExecutedCommand == getModel().getEditCommand()) {
                             return defaultConfirmPopupProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
@@ -100,15 +105,56 @@ public class ProviderModule extends AbstractGinModule {
         return result;
     }
 
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<LibvirtSecret, ProviderListModel, ProviderSecretListModel> getProviderSecretListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<ProviderSecretPopupPresenterWidget> popupProvider,
+            final Provider<ProviderListModel> mainModelProvider,
+            final Provider<ProviderSecretListModel> modelProvider) {
+        SearchableDetailTabModelProvider<LibvirtSecret, ProviderListModel, ProviderSecretListModel> result =
+                new SearchableDetailTabModelProvider<LibvirtSecret, ProviderListModel, ProviderSecretListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ProviderSecretListModel source,
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
+                        if (lastExecutedCommand == getModel().getNewCommand() ||
+                                lastExecutedCommand == getModel().getEditCommand()) {
+                            return popupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(
+                            ProviderSecretListModel source, UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
+    }
+
     @Override
     protected void configure() {
         bind(ProviderListModel.class).in(Singleton.class);
         bind(ProviderGeneralModel.class).in(Singleton.class);
         bind(ProviderNetworkListModel.class).in(Singleton.class);
+        bind(ProviderSecretListModel.class).in(Singleton.class);
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<ProviderListModel, ProviderGeneralModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<ProviderListModel, ProviderGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<ProviderListModel, ProviderGeneralModel>>() {
+        })
+                .to(new TypeLiteral<DetailTabModelProvider<ProviderListModel, ProviderGeneralModel>>() {
+                }).in(Singleton.class);
 
     }
 

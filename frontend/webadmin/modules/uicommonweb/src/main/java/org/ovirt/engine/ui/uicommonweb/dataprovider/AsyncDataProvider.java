@@ -82,6 +82,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
+import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -4322,4 +4323,9 @@ public class AsyncDataProvider {
                 new GetVmTemplateParameters(baseTemplate),
                 asyncQuery);
     }
+
+    public ArrayList<LibvirtSecretUsageType> getLibvirtSecretUsageTypeList() {
+        return new ArrayList<>(Arrays.asList(LibvirtSecretUsageType.values()));
+    }
+
 }

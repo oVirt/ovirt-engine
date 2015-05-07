@@ -250,6 +250,7 @@
         <include name="common/businessentities/storage/CinderConnectionInfo.java" />
         <include name="common/businessentities/storage/LibvirtSecretUsageType.java" />
         <include name="common/businessentities/storage/LibvirtSecret.java" />
+        <include name="common/businessentities/storage/LibvirtSecretUsageType.java" />
 
         <!-- Misc -->
         <include name="common/AuditLogType.java" />

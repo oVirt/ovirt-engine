@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -1621,6 +1622,13 @@ public final class Linq
         @Override
         public int compare(ImportEntityData<T> entity1, ImportEntityData<T> entity2) {
             return lexoNumeric.compare(entity1.getName(), entity2.getName());
+        }
+    }
+
+    public final static class SecretComparator implements Comparator<LibvirtSecret>, Serializable {
+        @Override
+        public int compare(LibvirtSecret s1, LibvirtSecret s2) {
+            return LexoNumericComparator.comp(s1.getId().toString(), s2.getId().toString());
         }
     }
 
