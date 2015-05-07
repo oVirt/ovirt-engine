@@ -37,12 +37,15 @@ import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.gwtbootstrap3.client.ui.constants.Trigger;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
@@ -102,6 +105,8 @@ public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
 
     private Widget widget;
     private String id;
+
+    HandlerRegistration clickHandler;
 
     /**
      * Creates the empty Tooltip
@@ -417,6 +422,14 @@ public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
         // First destroy the old tooltip
         destroy();
 
+        // add RootPanel click handler
+        clickHandler = RootPanel.get().addDomHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Tooltip.this.hide();
+            }
+        }, ClickEvent.getType());
+
         // prepare template
         String template = null;
         if (alternateTemplate == null) {
@@ -472,6 +485,11 @@ public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
      */
     public void destroy() {
         call(widget.getElement(), DESTROY);
+
+        if (clickHandler != null) {
+            clickHandler.removeHandler();
+            clickHandler = null;
+        }
     }
 
     /**
