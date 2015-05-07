@@ -10,14 +10,7 @@
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.VnicProfilePopupView.Style">
 
-	@external .gwt-CheckBox;
-
-		.portMirroringEditor .gwt-CheckBox {
-			padding: 0px !important;
-			border-width: 0px !important;
-		}
-
-		.portMirroringEditor {
+		.checkboxEditor {
 			width: 235px;
 		}
 
@@ -34,16 +27,17 @@
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="470px" height="320px">
+	<d:SimpleDialogPanel width="470px" height="325px">
 		<d:content>
 			<g:FlowPanel>
 				<e:ListModelListBoxEditor ui:field="networkEditor" />
 				<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
 				<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
 				<e:ListModelListBoxEditor ui:field="networkQoSEditor"/>
-				<g:SimplePanel width="100%">
+				<g:FlowPanel width="100%">
+					<ge:EntityModelCheckBoxEditor ui:field="passthroughEditor" />
 					<ge:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />
-				</g:SimplePanel>
+				</g:FlowPanel>
 				<g:FlowPanel>
 					<k:KeyValueWidget ui:field="customPropertiesSheetEditor"/>
 				</g:FlowPanel>

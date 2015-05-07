@@ -42,6 +42,7 @@ public abstract class VnicProfileModel extends Model {
 
     private EntityModel<String> name;
     private EntityModel<Boolean> portMirroring;
+    private EntityModel<Boolean> passthrough;
     private KeyValueModel customPropertySheet;
     private EntityModel<Boolean> publicUse;
     private EntityModel<String> description;
@@ -51,6 +52,7 @@ public abstract class VnicProfileModel extends Model {
     private VnicProfile vnicProfile = null;
     private final boolean customPropertiesVisible;
     private final Guid defaultQosId;
+    private NetworkQoS defaultQos;
 
     public EntityModel<String> getName()
     {
@@ -70,6 +72,14 @@ public abstract class VnicProfileModel extends Model {
     public void setPortMirroring(EntityModel<Boolean> value)
     {
         portMirroring = value;
+    }
+
+    public EntityModel<Boolean> getPassthrough() {
+        return passthrough;
+    }
+
+    public void setPassthrough(EntityModel<Boolean> value) {
+        passthrough = value;
     }
 
     public KeyValueModel getCustomPropertySheet() {
@@ -133,6 +143,7 @@ public abstract class VnicProfileModel extends Model {
         setNetwork(new ListModel<Network>());
         setNetworkQoS(new ListModel<NetworkQoS>());
         setPortMirroring(new EntityModel<Boolean>());
+        setPassthrough(new EntityModel<Boolean>());
         setCustomPropertySheet(new KeyValueModel());
         EntityModel<Boolean> publicUse = new EntityModel<Boolean>();
         publicUse.setEntity(true);
@@ -153,6 +164,8 @@ public abstract class VnicProfileModel extends Model {
                 getPortMirroring().setIsChangeable(portMirroringAllowed);
             }
         });
+
+        initPassthroughChangeListener();
 
         initCustomPropertySheet(dcCompatibilityVersion);
         initNetworkQoSList(dcId);
@@ -213,6 +226,7 @@ public abstract class VnicProfileModel extends Model {
                 && !networkQoS.getId().equals(Guid.Empty)
                 ? networkQoS.getId() : null);
         vnicProfile.setPortMirroring(getPortMirroring().getEntity());
+        vnicProfile.setPassthrough(getPassthrough().getEntity());
 
         if (customPropertiesVisible) {
             vnicProfile.setCustomProperties(KeyValueModel.convertProperties(getCustomPropertySheet().serialize()));
@@ -285,11 +299,37 @@ public abstract class VnicProfileModel extends Model {
             {
                 List<NetworkQoS> networkQoSes = (List<NetworkQoS>) ReturnValue;
                 getNetworkQoS().setItems(networkQoSes);
-                getNetworkQoS().setSelectedItem(Linq.findNetworkQosById(networkQoSes, defaultQosId));
+                defaultQos = Linq.findNetworkQosById(networkQoSes, defaultQosId);
+                getNetworkQoS().setSelectedItem(defaultQos);
             }
         };
 
         AsyncDataProvider.getInstance().getAllNetworkQos(dcId, _asyncQuery);
+    }
+
+    private void initPassthroughChangeListener() {
+        getPassthrough().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                if (getPassthrough().getEntity()) {
+                    getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
+                            .getConstants()
+                            .portMirroringNotChangedIfPassthrough());
+                    getPortMirroring().setIsChangeable(false);
+                    getPortMirroring().setEntity(false);
+
+                    getNetworkQoS().setChangeProhibitionReason(ConstantsManager.getInstance()
+                            .getConstants()
+                            .networkQosNotChangedIfPassthrough());
+                    getNetworkQoS().setIsChangeable(false);
+                    getNetworkQoS().setSelectedItem(defaultQos);
+                } else {
+                    getPortMirroring().setIsChangeable(true);
+                    getNetworkQoS().setIsChangeable(true);
+                }
+            }
+        });
     }
 
     public boolean validate()

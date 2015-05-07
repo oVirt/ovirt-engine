@@ -34,10 +34,11 @@ public class EditVnicProfileModel extends VnicProfileModel {
 
         getName().setEntity(profile.getName());
         getDescription().setEntity(profile.getDescription());
+        getPassthrough().setEntity(getProfile().isPassthrough());
         getPortMirroring().setEntity(getProfile().isPortMirroring());
         getPublicUse().setIsAvailable(false);
 
-        updatePortMirroringChangability();
+        updateChangabilityIfVmsUsingTheProfile();
     }
 
     public EditVnicProfileModel(IModel sourceModel, Version dcCompatibilityVersion, VnicProfile profile, Guid dcId) {
@@ -59,7 +60,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
         return VdcActionType.UpdateVnicProfile;
     }
 
-    private void updatePortMirroringChangability() {
+    private void updateChangabilityIfVmsUsingTheProfile() {
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
@@ -71,6 +72,11 @@ public class EditVnicProfileModel extends VnicProfileModel {
                             .getConstants()
                             .portMirroringNotChangedIfUsedByVms());
                     getPortMirroring().setIsChangeable(false);
+
+                    getPassthrough().setChangeProhibitionReason(ConstantsManager.getInstance()
+                            .getConstants()
+                            .passthroughNotChangedIfUsedByVms());
+                    getPassthrough().setIsChangeable(false);
                 }
                 stopProgress();
             }

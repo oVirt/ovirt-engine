@@ -2140,6 +2140,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("'Port Mirroring' cannot be changed if the vNIC Profile is used by a VM")
     String portMirroringNotChangedIfUsedByVms();
 
+    @DefaultStringValue("'Port Mirroring' cannot be set if the vNIC Profile is 'Passthrough'")
+    String portMirroringNotChangedIfPassthrough();
+
+    @DefaultStringValue("'Network QoS' cannot be set if the vNIC Profile is 'Passthrough'")
+    String networkQosNotChangedIfPassthrough();
+
+    @DefaultStringValue("'Passthrough' cannot be changed if the vNIC Profile is used by a VM")
+    String passthroughNotChangedIfUsedByVms();
+
     @DefaultStringValue("Low")
     String vmLowPriority();
 

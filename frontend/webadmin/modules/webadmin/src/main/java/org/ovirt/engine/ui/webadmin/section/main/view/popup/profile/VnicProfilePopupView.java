@@ -40,7 +40,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     }
 
     protected interface Style extends CssResource {
-        String portMirroringEditor();
+        String checkboxEditor();
 
         String checkBox();
 
@@ -64,6 +64,11 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     @Path(value = "networkQoS.selectedItem")
     @WithElementId("networkQoS")
     public ListModelListBoxEditor<NetworkQoS> networkQoSEditor;
+
+    @UiField
+    @Path("passthrough.entity")
+    @WithElementId("passthrough")
+    protected EntityModelCheckBoxEditor passthroughEditor;
 
     @UiField
     @Path("portMirroring.entity")
@@ -104,6 +109,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
         networkEditor.setLabel(constants.networkVnicProfile());
         nameEditor.setLabel(constants.nameVnicProfile());
         descriptionEditor.setLabel(constants.descriptionVnicProfile());
+        passthroughEditor.setLabel(constants.passthorughVnicProfile());
         portMirroringEditor.setLabel(constants.portMirroringVnicProfile());
         publicUseEditor.setLabel(constants.publicUseVnicProfile());
         networkQoSEditor.setLabel(constants.profileQoSInstanceTypeLabel());
@@ -126,7 +132,8 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     }
 
     private void applyStyles() {
-        portMirroringEditor.addContentWidgetContainerStyleName(style.portMirroringEditor());
+        portMirroringEditor.addContentWidgetContainerStyleName(style.checkboxEditor());
+        passthroughEditor.addContentWidgetContainerStyleName(style.checkboxEditor());
         publicUseEditor.addContentWidgetContainerStyleName(style.publicUseEditor());
         publicUseEditor.asCheckBox().addStyleName(style.checkBox());
     }

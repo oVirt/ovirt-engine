@@ -1359,6 +1359,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("QoS Name")
     String qosNameVnicProfile();
 
+    @DefaultStringValue("Passthrough")
+    String passthorughVnicProfile();
+
     @DefaultStringValue("Port Mirroring")
     String portMirroringVnicProfile();
 
