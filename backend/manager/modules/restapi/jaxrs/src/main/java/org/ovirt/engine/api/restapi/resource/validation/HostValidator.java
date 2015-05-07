@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource.validation;
 
 import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
+import org.ovirt.engine.api.model.EntityExternalStatus;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.PmProxy;
 import org.ovirt.engine.api.model.PmProxyType;
@@ -25,6 +26,9 @@ public class HostValidator implements Validator<Host> {
         }
         if (host.isSetProtocol()) {
             validateEnum(HostProtocol.class, host.getProtocol(), true);
+        }
+        if (host.isSetExternalStatus()) {
+            validateEnum(EntityExternalStatus.class, host.getExternalStatus().getState().toUpperCase());
         }
     }
 }

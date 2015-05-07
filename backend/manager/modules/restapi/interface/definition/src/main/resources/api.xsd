@@ -621,6 +621,7 @@
           <xs:element ref="creation_states" minOccurs="0"/>
           <xs:element ref="power_management_states" minOccurs="0"/>
           <xs:element ref="host_states" minOccurs="0"/>
+          <xs:element ref="external_statuses" minOccurs="0"/>
           <xs:element ref="host_protocols" minOccurs="0"/>
           <xs:element ref="host_non_operational_details" minOccurs="0"/>
           <xs:element ref="network_states" minOccurs="0"/>
@@ -1950,6 +1951,7 @@
           <xs:element name="address" type="xs:string" minOccurs="0"/>
           <xs:element ref="certificate" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="external_status" type="Status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="cluster" type="Cluster" minOccurs="0"/>
           <!-- unsigned to avoid issues with port values greater than 32767,
                e.g. the standard VDSM port 54321 -->
@@ -2045,6 +2047,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="HostStates"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="external_statuses" type="ExternalStatuses"/>
+
+  <xs:complexType name="ExternalStatuses">
+    <xs:sequence>
+      <xs:element name="external_status" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="ExternalStatus"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>

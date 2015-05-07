@@ -35,6 +35,8 @@ import org.ovirt.engine.api.model.DiskStorageType;
 import org.ovirt.engine.api.model.DiskStorageTypes;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.DisplayTypes;
+import org.ovirt.engine.api.model.EntityExternalStatus;
+import org.ovirt.engine.api.model.ExternalStatuses;
 import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.FenceTypes;
 import org.ovirt.engine.api.model.GlusterState;
@@ -133,6 +135,8 @@ import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogActions;
 import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.api.model.WatchdogModels;
+
+
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
@@ -268,6 +272,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addStorageDomaintStates(version, StorageDomainStatus.values());
         addPowerManagementStateses(version, PowerManagementStatus.values());
         addHostStates(version, HostStatus.values());
+        addExternalStates(version, EntityExternalStatus.values());
         addHostProtocols(version, HostProtocol.values());
         addHostNonOperationalDetails(version, NonOperationalReason.values());
         addNetworkStates(version, NetworkStatus.values());
@@ -664,12 +669,12 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     private List<CustomProperty> getVmHooksEnvs(Version version) {
         List<CustomProperty> ret = new ArrayList<CustomProperty>();
         ret.addAll(CustomPropertiesParser.parse(getConfigurationValue(String.class,
-                ConfigurationValues.PredefinedVMProperties,
-                version),
+                        ConfigurationValues.PredefinedVMProperties,
+                        version),
                 true));
         ret.addAll(CustomPropertiesParser.parse(getConfigurationValue(String.class,
-                ConfigurationValues.UserDefinedVMProperties,
-                version),
+                        ConfigurationValues.UserDefinedVMProperties,
+                        version),
                 true));
         return ret;
     }
@@ -790,6 +795,13 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.setHostStates(new HostStates());
         for (HostStatus status : values) {
             version.getHostStates().getHostStates().add(status.value());
+        }
+    }
+
+    private void addExternalStates(VersionCaps version, EntityExternalStatus[] values) {
+        version.setExternalStatuses(new ExternalStatuses());
+        for (EntityExternalStatus status : values) {
+            version.getExternalStatuses().getExternalStatus().add(status.value());
         }
     }
 

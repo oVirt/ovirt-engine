@@ -5,10 +5,12 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.EntityExternalStatus;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.Events;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
+import org.ovirt.engine.api.restapi.types.HostMapper;
 import org.ovirt.engine.core.common.action.AddExternalEventParameters;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -75,9 +77,18 @@ EventsResource {
     public Response add(Event event) {
         validateParameters(event, "origin", "severity", "customId", "description");
         validateEnums(Event.class, event);
+        boolean isExternalStateDefined = event.isSetHost() &&
+                event.getHost().isSetExternalStatus() &&
+                event.getHost().getExternalStatus().isSetState();
+        AddExternalEventParameters parameters = isExternalStateDefined
+                ? new AddExternalEventParameters(map(event),
+                      HostMapper.map(EntityExternalStatus.fromValue(
+                              event.getHost().getExternalStatus().getState()), null))
+                : new AddExternalEventParameters(map(event), null);
+
         return performCreate(VdcActionType.AddExternalEvent,
-                               new AddExternalEventParameters(map(event)),
-                               new QueryIdResolver<Long>(VdcQueryType.GetAuditLogById, GetAuditLogByIdParameters.class));
+                parameters,
+                new QueryIdResolver<Long>(VdcQueryType.GetAuditLogById, GetAuditLogByIdParameters.class));
     }
 
     @Override

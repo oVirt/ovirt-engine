@@ -1613,7 +1613,7 @@ actions:
       parameterType: Event
       signatures:
       - mandatoryArguments: {event.description: 'xs:string', event.severity: 'xs:string', event.origin: 'xs:string', event.custom_id: 'xs:int'}
-        optionalArguments:  {event.flood_rate: 'xs:int', event.host.id: 'xs:string',event.user.id: 'xs:string',
+        optionalArguments:  {event.flood_rate: 'xs:int', event.host.id: 'xs:string',event.host.external_status.state: 'xs:string',event.user.id: 'xs:string',
                            event.vm.id: 'xs:string',event.storage_domain.id: 'xs:string',event.template.id: 'xs:string',
                            event.cluster.id: 'xs:string',event.data_center.id: 'xs:string'}
         description: add a new event to the system
