@@ -551,7 +551,7 @@ install -dm 755 "%{buildroot}/%{engine_run}/notifier"
 # Force TLS/SSL for selected applications.
 #
 for war in \
-	"%{buildroot}%{engine_ear}"/{userportal,webadmin,enginesso}.war \
+	"%{buildroot}%{engine_ear}"/{userportal,webadmin,enginesso,welcome}.war \
 	"%{buildroot}%{engine_restapi_war}" \
 	; do
 	sed -i \

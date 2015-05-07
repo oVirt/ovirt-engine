@@ -9,13 +9,18 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -37,12 +42,18 @@ import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 public class WelcomeServletTest {
     @ClassRule
     public static MockConfigRule mcr =
-    new MockConfigRule(mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, new ArrayList<String>()));
+            new MockConfigRule(mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, new ArrayList<String>()));
 
     WelcomeServlet testServlet;
 
     @Mock
     HttpServletRequest mockRequest;
+
+    @Mock
+    HttpSession mockSession;
+
+    @Mock
+    ServletContext mockContext;
 
     @Mock
     HttpServletResponse mockResponse;
@@ -67,9 +78,26 @@ public class WelcomeServletTest {
 
     @Before
     public void setUp() throws Exception {
-        testServlet = new WelcomeServlet();
+        testServlet = new WelcomeServlet() {
+
+            private static final long serialVersionUID = 1446616158991683162L;
+            @Override
+            public String getCurrentSsoSessionUser(HttpServletRequest request, HttpServletResponse response, String token) {
+                return "admin@internal";
+            }
+
+            @Override
+            public boolean isSessionValid(HttpServletRequest request, String token) {
+                return true;
+            }
+
+            @Override
+            public Map<String, Object> isSsoWebappDeployed() {
+                return Collections.emptyMap();
+            }
+        };
         testServlet.setBackend(mockBackend);
-        testServlet.init(mockBrandingManager);
+        testServlet.init(mockBrandingManager, "/ovirt-engine");
         mockBackendQuery(VdcQueryType.GetConfigurationValue, "oVirtVersion");
         when(mockBrandingManager.getBrandingThemes()).thenReturn(new ArrayList<BrandingTheme>());
         when(mockBrandingManager.getWelcomeSections(any(Locale.class))).thenReturn("Welcome Section HTML");
@@ -78,7 +106,18 @@ public class WelcomeServletTest {
     @Test
     public void testDoGetHttpServletRequestHttpServletResponseNoDispatcher() throws IOException, ServletException {
         when(mockRequest.getAttribute(LocaleFilter.LOCALE)).thenReturn(Locale.JAPANESE);
-        when(mockRequest.getParameter("user")).thenReturn("");
+        when(mockRequest.getParameterMap()).thenReturn(new HashMap<String, String[]>());
+        when(mockRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080/ovirt-engine/"));
+        when(mockRequest.getServletContext()).thenReturn(mockContext);
+        when(mockRequest.getSession(true)).thenReturn(mockSession);
+        when(mockSession.getAttribute("authCode")).thenReturn("aU1KZG1OUytQSktnd29SQ3NIOVhWckls");
+        when(mockSession.getAttribute("token")).thenReturn("aU1KZG1OUytQSktnd29SQ3NIOVhWckls");
+        when(mockSession.getAttribute("error")).thenReturn("");
+        when(mockSession.getAttribute("error_code")).thenReturn("");
+        when(mockRequest.getServletContext().getAttribute("sso_logout_url")).thenReturn(
+                new StringBuffer("http://localhost:8080/ovirt-engine/logout"));
+        when(mockRequest.getServletContext().getAttribute("sso_switch_user_url")).thenReturn(
+                new StringBuffer("http://localhost:8080/ovirt-engine/login"));
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute("localeKeys", localeKeys);
         //Make sure the content type contains UTF-8 so the characters display properly.
@@ -89,7 +128,18 @@ public class WelcomeServletTest {
     public void testDoGetHttpServletRequestHttpServletResponseWithDispatcher() throws IOException, ServletException {
         when(mockRequest.getAttribute(LocaleFilter.LOCALE)).thenReturn(Locale.JAPANESE);
         when(mockRequest.getRequestDispatcher("/WEB-INF/ovirt-engine.jsp")).thenReturn(mockDispatcher);
-        when(mockRequest.getParameter("user")).thenReturn("");
+        when(mockRequest.getParameterMap()).thenReturn(new HashMap<String, String[]>());
+        when(mockRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080/ovirt-engine/"));
+        when(mockRequest.getServletContext()).thenReturn(mockContext);
+        when(mockRequest.getSession(true)).thenReturn(mockSession);
+        when(mockSession.getAttribute("authCode")).thenReturn("aU1KZG1OUytQSktnd29SQ3NIOVhWckls");
+        when(mockSession.getAttribute("token")).thenReturn("aU1KZG1OUytQSktnd29SQ3NIOVhWckls");
+        when(mockSession.getAttribute("error")).thenReturn("");
+        when(mockSession.getAttribute("error_code")).thenReturn("");
+        when(mockRequest.getServletContext().getAttribute("sso_logout_url")).thenReturn(
+                new StringBuffer("http://localhost:8080/ovirt-engine/logout"));
+        when(mockRequest.getServletContext().getAttribute("sso_switch_user_url")).thenReturn(
+                new StringBuffer("http://localhost:8080/ovirt-engine/login"));
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute("localeKeys", localeKeys);
         //Make sure the content type contains UTF-8 so the characters display properly.

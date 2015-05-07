@@ -1,7 +1,8 @@
-<%@ page pageEncoding="UTF-8" session="false" %>
+<%@ page pageEncoding="UTF-8" session="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="obrand" uri="obrand" %>
+<fmt:setLocale value="${locale}" />
 <fmt:setBundle basename="languages" var="lang" />
 <!DOCTYPE html>
 <html>
@@ -19,6 +20,7 @@
              <span class="obrand_loginPageLogoImage"></span>
         </a>
         <div class="login-pf">
+            <obrand:header />
             <div class="container">
                 <div class="row">
 
@@ -42,14 +44,6 @@
                         <script type="text/JavaScript">
                         <!--
                         document.write('<span class="version-text"><fmt:message key="obrand.welcome.version"><fmt:param value="${requestScope[\'version\']}" /> </fmt:message></span>')
-                        //-->
-                        </script>
-                    </div>
-
-                    <div class="col-sm-12">
-                        <script type="text/JavaScript">
-                        <!--
-                        document.write('<span class="label"><a href=${requestScope["sso_switch_user_url"]}>Switch User</a></span>')
                         //-->
                         </script>
                     </div>

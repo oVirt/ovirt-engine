@@ -297,6 +297,9 @@ ENGINE_SSO_AUTH_SEQUENCE_webadmin=~
 # User Portal auth sequence
 ENGINE_SSO_AUTH_SEQUENCE_userportal=~
 
+# Welcome auth sequence
+ENGINE_SSO_AUTH_SEQUENCE_welcome=~
+
 #
 # SSO Configuration
 #
