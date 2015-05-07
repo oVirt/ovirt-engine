@@ -148,11 +148,11 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             return false;
         }
 
-        if (!checkCanDisableVirtIoScsi()) {
+        if (!super.canDoAction()) {
             return false;
         }
 
-        if (!super.canDoAction()) {
+        if (!checkCanDisableVirtIoScsi()) {
             return false;
         }
 
