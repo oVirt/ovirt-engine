@@ -1,15 +1,20 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -132,6 +137,15 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     public void deactivateCinderDomain(Guid storageDomainId, Guid storagePoolId) {
         updateCinderDomainStatus(storageDomainId, storagePoolId, StorageDomainStatus.Maintenance);
+    }
+
+    public static SubjectEntity[] getStorageEntities(List<CinderDisk> cinderDisks) {
+        Set<SubjectEntity> storageSubjects = new HashSet<>();
+        for (CinderDisk cinderDisk : cinderDisks) {
+            SubjectEntity se = new SubjectEntity(VdcObjectType.Storage, cinderDisk.getStorageIds().get(0));
+            storageSubjects.add(se);
+        }
+        return storageSubjects.toArray(new SubjectEntity[storageSubjects.size()]);
     }
 
     private StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
