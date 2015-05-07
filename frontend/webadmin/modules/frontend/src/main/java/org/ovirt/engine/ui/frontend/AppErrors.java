@@ -913,6 +913,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type CPU Profile")
     String VAR__TYPE__CPU_PROFILE();
 
+    @DefaultStringValue("$type Authentication Key")
+    String VAR__TYPE__AUTHENTICATION_KEY();
+
     @DefaultStringValue("$type Gluster Volume Snapshot")
     String VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT();
 
@@ -3859,4 +3862,19 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Blank template can't have sub-templates.")
     String BLANK_TEMPLATE_CANT_HAVE_SUBTEMPLATES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Authentication Key UUID cannot be empty.")
+    String LIBVIRT_SECRET_UUID_CANNOT_BE_EMPTY();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Authentication Key value cannot be empty.")
+    String LIBVIRT_SECRET_VALUE_CANNOT_BE_EMPTY();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Authentication Key value should be encoded in Base64.")
+    String LIBVIRT_SECRET_VALUE_ILLEGAL_FORMAT();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Authentication Key UUID already exists.")
+    String LIBVIRT_SECRET_UUID_ALREADY_EXISTS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Authentication Key UUID does not exist.")
+    String LIBVIRT_SECRET_UUID_NOT_EXISTS();
 }

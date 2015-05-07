@@ -29,6 +29,8 @@ public class ValidationUtils {
     public static final String CIDR_FORMAT_PATTERN = "^" + IP_PATTERN_NON_EMPTY + "/" + SUBNET_PREFIX_PATTERN + "$";
     public static final String ISO_SUFFIX = ".iso";
     public static final String ISO_SUFFIX_PATTERN = "^$|^.+\\.iso$";
+    public static final String BASE_64_PATTERN =
+            "^([A-Za-z0-9+/]{4})*(()|[A-Za-z0-9+/][AQgw]==|[A-Za-z0-9+/]{2}[AEIMQUYcgkosw048]=)$";
 
     /**
      * the mask will be replaced with zero-padded number in the generated names of the VMs in the pool, see

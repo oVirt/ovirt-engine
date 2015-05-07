@@ -2,13 +2,16 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 public class LibvirtSecret implements IVdcQueryable, BusinessEntity<Guid> {
 
     private Guid id;
+    @Pattern(regexp = ValidationUtils.BASE_64_PATTERN, message = "LIBVIRT_SECRET_VALUE_ILLEGAL_FORMAT")
     private String value;
     private LibvirtSecretUsageType usageType;
     private String description;
