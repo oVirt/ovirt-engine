@@ -26,8 +26,9 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
-import org.ovirt.engine.core.bll.utils.IconUtils;
+import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
@@ -1132,10 +1133,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected void addVmCinderDisks(List<CinderDisk> templateDisks) {
         List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(templateDisks);
+
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.CloneCinderDisks,
                 buildCinderChildCommandParameters(cinderDisks, getVmSnapshotId()),
-                cloneContextAndDetachFromParent());
+                cloneContextAndDetachFromParent(),
+                CINDERStorageHelper.getStorageEntities(cinderDisks));
         try {
             Map<Guid, Guid> diskImageMap = future.get().getActionReturnValue();
             srcDiskIdToTargetDiskIdMapping.putAll(diskImageMap);

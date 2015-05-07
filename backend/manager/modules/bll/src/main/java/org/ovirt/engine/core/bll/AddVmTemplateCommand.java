@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -712,7 +713,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.CloneCinderDisks,
                 buildCinderChildCommandParameters(cinderDisks, getVmSnapshotId()),
-                cloneContextAndDetachFromParent());
+                cloneContextAndDetachFromParent(),
+                CINDERStorageHelper.getStorageEntities(cinderDisks));
         try {
             VdcReturnValueBase vdcReturnValueBase = future.get();
             if (vdcReturnValueBase.getSucceeded()) {

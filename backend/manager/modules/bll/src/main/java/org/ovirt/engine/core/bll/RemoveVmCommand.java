@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -360,7 +361,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.RemoveAllVmCinderDisks,
                     withRootCommandInfo(param, getActionType()),
-                    cloneContextAndDetachFromParent());
+                    cloneContextAndDetachFromParent(),
+                    CINDERStorageHelper.getStorageEntities(cinderDisks));
             try {
                 failedRemoveCinderDisks = future.get().getActionReturnValue();
             } catch (InterruptedException | ExecutionException e) {

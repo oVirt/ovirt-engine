@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -308,7 +309,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                         VdcActionType.RemoveCinderDisk,
                         new RemoveDiskParameters(getParameters().getDiskId()),
-                        cloneContextAndDetachFromParent());
+                        cloneContextAndDetachFromParent(),
+                        new SubjectEntity(VdcObjectType.Storage, getParameters().getStorageDomainId()));
                 try {
                     setReturnValue(future.get());
                     setSucceeded(getReturnValue().getSucceeded());

@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -555,7 +556,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.ExtendCinderDisk,
                 buildExtendCinderDiskParameters(newCinderDisk),
-                cloneContextAndDetachFromParent());
+                cloneContextAndDetachFromParent(),
+                new SubjectEntity(VdcObjectType.Storage, newCinderDisk.getStorageIds().get(0)));
         addCustomValue("NewSize", String.valueOf(getNewDiskSizeInGB()));
         try {
             setReturnValue(future.get());

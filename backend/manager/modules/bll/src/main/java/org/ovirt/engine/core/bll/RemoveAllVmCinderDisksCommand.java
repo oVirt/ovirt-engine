@@ -10,10 +10,12 @@ import java.util.concurrent.Future;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -54,7 +56,8 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.RemoveCinderDisk,
                 buildChildCommandParameters(cinderDisk),
-                cloneContextAndDetachFromParent());
+                cloneContextAndDetachFromParent(),
+                new SubjectEntity(VdcObjectType.Storage, cinderDisk.getStorageIds().get(0)));
         try {
             return future.get();
         } catch (InterruptedException | ExecutionException e) {
