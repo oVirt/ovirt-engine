@@ -151,6 +151,10 @@ public class VfSchedulerImpl implements VfScheduler {
     }
 
     private boolean isSharingIommuGroup(HostDevice device) {
+        if (device.getIommuGroup() == null) {
+            return false;
+        }
+
         // Check that the device doesn't share iommu group with other devices
         List<HostDevice> iommoGroupDevices =
                 hostDeviceDao.getHostDevicesByHostIdAndIommuGroup(device.getHostId(), device.getIommuGroup());
