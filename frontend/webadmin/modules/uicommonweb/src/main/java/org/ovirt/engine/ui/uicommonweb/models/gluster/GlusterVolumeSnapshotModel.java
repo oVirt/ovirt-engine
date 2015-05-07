@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,10 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class GlusterVolumeSnapshotModel extends Model {
     private EntityModel<String> dataCenter;
@@ -37,6 +42,8 @@ public class GlusterVolumeSnapshotModel extends Model {
     private EntityModel<Date> executionTime;
     private ListModel<List<DayOfWeek>> daysOfWeek;
     private ListModel<String> daysOfMonth;
+    //Listeners should be registered only once and not initially itself but only after a first validation occurs after user clicks on ok.
+    private boolean listenersRegistered = false;
 
     public GlusterVolumeSnapshotModel(boolean generalTabVisible, boolean scheduleTabVisible) {
         init();
@@ -74,6 +81,70 @@ public class GlusterVolumeSnapshotModel extends Model {
         List<List<DayOfWeek>> list = new ArrayList<List<DayOfWeek>>();
         list.add(daysList);
         daysOfWeek.setItems(list, new ArrayList<DayOfWeek>());
+    }
+
+    private void initValueChangeListeners() {
+        IEventListener onPropertyChangeValidate = new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                validate(true);
+            }
+        };
+        getSnapshotName().getEntityChangedEvent().addListener(onPropertyChangeValidate);
+
+        getDaysOfTheWeek().getSelectedItemChangedEvent().addListener(onPropertyChangeValidate);
+
+        getDaysOfMonth().getSelectedItemChangedEvent().addListener(onPropertyChangeValidate);
+
+        getEndDate().getEntityChangedEvent().addListener(onPropertyChangeValidate);
+    }
+
+    private void validateSnapshotName() {
+        getSnapshotName().validateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(128),
+                new AsciiNameValidation() });
+    }
+
+    private void validateEndDate() {
+        if (getRecurrence().getSelectedItem() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN
+                && getEndByOptions().getSelectedItem() == EndDateOptions.HasEndDate
+                && getEndDate().getEntity().compareTo(getStartAt().getEntity()) <= 0) {
+            String message = ConstantsManager.getInstance().getConstants().endDateBeforeStartDate();
+            getEndDate().setInvalidityReasons(Collections.singletonList(message));
+            getEndDate().setIsValid(false);
+        } else {
+            getEndDate().setInvalidityReasons(new ArrayList<String>());
+            getEndDate().setIsValid(true);
+        }
+    }
+
+    private void validateDaysOfMonth() {
+        if (getRecurrence().getSelectedItem() == GlusterVolumeSnapshotScheduleRecurrence.MONTHLY) {
+            if (getDaysOfMonth().getSelectedItem() == null || getDaysOfMonth().getSelectedItem().equals("")) {//$NON-NLS-1$
+                String message = ConstantsManager.getInstance().getConstants().noMonthDaysSelectedMessage();
+                getDaysOfMonth().setInvalidityReasons(Collections.singletonList(message));
+                getDaysOfMonth().setIsValid(false);
+            } else if (getDaysOfMonth().getSelectedItem().contains(",L") || getDaysOfMonth().getSelectedItem().contains("L,")) {//$NON-NLS-1$//$NON-NLS-2$
+                String message = ConstantsManager.getInstance().getConstants().lastDayMonthCanBeSelectedAlone();
+                getDaysOfMonth().setInvalidityReasons(Collections.singletonList(message));
+                getDaysOfMonth().setIsValid(false);
+            } else {
+                getDaysOfMonth().setInvalidityReasons(new ArrayList<String>());
+                getDaysOfMonth().setIsValid(true);
+            }
+        }
+    }
+
+    private void validateDaysOfWeek() {
+        if (getRecurrence().getSelectedItem() == GlusterVolumeSnapshotScheduleRecurrence.WEEKLY) {
+            if (getDaysOfTheWeek().getSelectedItem() == null || getDaysOfTheWeek().getSelectedItem().isEmpty()) {
+                String message = ConstantsManager.getInstance().getConstants().noWeekDaysSelectedMessage();
+                getDaysOfTheWeek().setInvalidityReasons(Collections.singletonList(message));
+                getDaysOfTheWeek().setIsValid(false);
+            } else {
+                getDaysOfTheWeek().setInvalidityReasons(new ArrayList<String>());
+                getDaysOfTheWeek().setIsValid(true);
+            }
+        }
     }
 
     private void initIntervals() {
@@ -226,38 +297,31 @@ public class GlusterVolumeSnapshotModel extends Model {
         this.daysOfMonth = daysOfMonth;
     }
 
-    public boolean validate() {
-        boolean validWeekDays = true;
-        boolean validMonthDays = true;
-        boolean validEndDate = true;
-        getSnapshotName().validateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(128),
-                new AsciiNameValidation() });
+    public boolean validate(boolean inplaceValidate) {
+        String propName;
 
-        if (getRecurrence().getSelectedItem() == GlusterVolumeSnapshotScheduleRecurrence.WEEKLY
-                && (getDaysOfTheWeek().getSelectedItem() == null || getDaysOfTheWeek().getSelectedItem().isEmpty())) {
-            setMessage(ConstantsManager.getInstance().getConstants().noWeekDaysSelectedMessage());
-            validWeekDays = false;
+        validateSnapshotName();
+
+        validateDaysOfWeek();
+
+        validateDaysOfMonth();
+
+        validateEndDate();
+
+        if (!listenersRegistered) {
+            initValueChangeListeners();
+            listenersRegistered = true;
         }
 
-        if (getRecurrence().getSelectedItem() == GlusterVolumeSnapshotScheduleRecurrence.MONTHLY) {
-            if (getDaysOfMonth().getSelectedItem() == null || getDaysOfMonth().getSelectedItem().equals("")) {//$NON-NLS-1$
-                setMessage(ConstantsManager.getInstance().getConstants().noMonthDaysSelectedMessage());
-                validMonthDays = false;
-            } else if (getDaysOfMonth().getSelectedItem().contains(",L") || getDaysOfMonth().getSelectedItem().contains("L,")) {//$NON-NLS-1$//$NON-NLS-2$
-                setMessage(ConstantsManager.getInstance().getConstants().lastDayMonthCanBeSelectedAlone());
-                validMonthDays = false;
-            }
+        if(inplaceValidate) {
+            propName = "modelPropertiesChanged";//$NON-NLS-1$
+        } else {
+            propName = "validateAndSwitchAppropriateTab";//$NON-NLS-1$
         }
-
-        if (getRecurrence().getSelectedItem() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN
-                && getEndByOptions().getSelectedItem() == EndDateOptions.HasEndDate
-                && getEndDate().getEntity().compareTo(getStartAt().getEntity()) <= 0) {
-                setMessage(ConstantsManager.getInstance().getConstants().endDateBeforeStartDate());
-                validEndDate = false;
-        }
+        onPropertyChanged(new PropertyChangedEventArgs(propName));
 
         return getSnapshotName().getIsValid() && getDaysOfTheWeek().getIsValid() && getDaysOfMonth().getIsValid()
-                && validWeekDays && validMonthDays && validEndDate;
+                && getDaysOfTheWeek().getIsValid() && getDaysOfMonth().getIsValid() && getEndDate().getIsValid();
     }
 
     public enum EndDateOptions {

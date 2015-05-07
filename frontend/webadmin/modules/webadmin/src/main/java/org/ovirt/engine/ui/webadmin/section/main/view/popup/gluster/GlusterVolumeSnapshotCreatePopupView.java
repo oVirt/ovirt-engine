@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
 import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.compat.DayOfWeek;
@@ -10,6 +12,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelDateTimeBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelCheckBoxGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelDaysOfMonthSelectorEditor;
@@ -54,6 +57,9 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     }
 
     @UiField
+    DialogTabPanel tabContainer;
+
+    @UiField
     WidgetStyle style;
 
     @UiField
@@ -81,6 +87,11 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     @Path(value = "description.entity")
     @WithElementId
     StringEntityModelTextBoxEditor snapshotDescriptionEditor;
+
+    @UiField
+    @Ignore
+    @WithElementId
+    Label generalTabErrorMsgLabel;
 
     @UiField
     DialogTab scheduleTab;
@@ -138,7 +149,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     @UiField
     @Ignore
     @WithElementId
-    Label errorMsgLabel;
+    Label scheduleTabErrorMessageLabel;
 
     private final ApplicationConstants constants;
 
@@ -249,10 +260,60 @@ public class GlusterVolumeSnapshotCreatePopupView extends
         }
     }
 
+    public void setMessage(String msg, Label errorLabel) {
+        errorLabel.setText(msg);
+        errorLabel.setVisible(!msg.isEmpty());
+    }
+
     @Override
-    public void setMessage(String msg) {
-        super.setMessage(msg);
-        errorMsgLabel.setText(msg);
+    public void handleValidationErrors(GlusterVolumeSnapshotModel object) {
+        String generalTabErrors = collectGeneralTabErrors(object);
+        setMessage(generalTabErrors, generalTabErrorMsgLabel);
+
+        String scheduleTabErrors = collectScheduleTabErrors(object);
+        setMessage(scheduleTabErrors, scheduleTabErrorMessageLabel);
+    }
+
+    private String collectScheduleTabErrors(GlusterVolumeSnapshotModel object) {
+        StringBuilder scheduleTabErrors = new StringBuilder();
+        if (!daysOfWeekEditor.isValid()) {
+            appendErrors(object.getDaysOfTheWeek().getInvalidityReasons(), scheduleTabErrors);
+        }
+        if (!daysOfMonthEditor.isValid()) {
+            appendErrors(object.getDaysOfMonth().getInvalidityReasons(), scheduleTabErrors);
+        }
+        if (!endDate.isValid()) {
+            appendErrors(object.getEndDate().getInvalidityReasons(), scheduleTabErrors);
+        }
+        return scheduleTabErrors.toString();
+    }
+
+    private String collectGeneralTabErrors(GlusterVolumeSnapshotModel object) {
+        StringBuilder generalTabErrorBuilder = new StringBuilder();
+        if (!snapshotNameEditor.isValid()){
+            appendErrors(Collections.singletonList(constants.volumeSnapshotNamePrefixLabel()), generalTabErrorBuilder);
+            appendErrors(object.getSnapshotName().getInvalidityReasons(), generalTabErrorBuilder);
+        }
+        return generalTabErrorBuilder.toString();
+    }
+
+    @Override
+    public void switchTabBasedOnEditorInvalidity() {
+        if (!clusterNameEditor.isValid() || !volumeNameEditor.isValid() || !snapshotNameEditor.isValid()
+                || !snapshotDescriptionEditor.isValid()) {
+            tabContainer.switchTab(generalTab);
+        } else if (!recurrenceEditor.isValid() || !intervalEditor.isValid() || !timeZoneEditor.isValid()
+                || !startAtEditor.isValid() || !executionTimeEditor.isValid() || !daysOfWeekEditor.isValid()
+                || !daysOfMonthEditor.isValid() || !endByOptionsEditor.isValid() || !endDate.isValid()) {
+            tabContainer.switchTab(scheduleTab);
+        }
+    }
+
+    private void appendErrors(List<String> errors, StringBuilder sBuilder) {
+        for(String currentError : errors) {
+            sBuilder.append(currentError);
+            sBuilder.append("\n");//$NON-NLS-1$
+        }
     }
 
     private void updateTabVisibilities(GlusterVolumeSnapshotModel object) {
