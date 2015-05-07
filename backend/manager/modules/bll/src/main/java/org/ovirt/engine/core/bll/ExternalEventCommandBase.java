@@ -50,6 +50,10 @@ public abstract class ExternalEventCommandBase<T extends VdcActionParametersBase
             permissionList.add(new PermissionSubject(new Guid(event.getVmTemplateId().toString()),
                 VdcObjectType.VmTemplate, ActionGroup.INJECT_EXTERNAL_EVENTS));
         }
+        if (event.getVdsId() != null) {
+            permissionList.add(new PermissionSubject(new Guid(event.getVdsId().toString()),
+                    VdcObjectType.VDS, ActionGroup.INJECT_EXTERNAL_EVENTS));
+        }
         if (permissionList.isEmpty()) { // Global Event
             permissionList.add(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
                 VdcObjectType.System,
