@@ -110,17 +110,21 @@ public class BackendVmResource extends
         } else {
             vm = performGet(VdcQueryType.GetVmByVmId, new IdQueryParameters(guid));
         }
-        DisplayHelper.adjustDisplayData(this, vm);
-        return removeRestrictedInfo(vm);
+
+        if (vm != null) {
+            DisplayHelper.adjustDisplayData(this, vm);
+            removeRestrictedInfo(vm);
+        }
+
+        return vm;
     }
 
-    private VM removeRestrictedInfo(VM vm) {
+    private void removeRestrictedInfo(VM vm) {
         // Filtered users are not allowed to view host related information
-        if (vm != null && isFiltered()) {
+        if (isFiltered()) {
             vm.setHost(null);
             vm.setPlacementPolicy(null);
         }
-        return vm;
     }
 
     @Override
@@ -145,11 +149,19 @@ public class BackendVmResource extends
             incoming.setPlacementPolicy(null);
         }
 
-        return removeRestrictedInfo(
-                performUpdate(incoming,
-                             new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class),
-                             VdcActionType.UpdateVm,
-                             new UpdateParametersProvider()));
+        VM vm = performUpdate(
+            incoming,
+            new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class),
+            VdcActionType.UpdateVm,
+            new UpdateParametersProvider()
+        );
+
+        if (vm != null) {
+            DisplayHelper.adjustDisplayData(this, vm);
+            removeRestrictedInfo(vm);
+        }
+
+        return vm;
     }
 
     private void validateParameters(VM incoming) {

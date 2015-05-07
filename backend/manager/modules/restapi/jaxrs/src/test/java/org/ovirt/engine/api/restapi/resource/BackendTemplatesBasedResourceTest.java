@@ -217,8 +217,8 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
                     IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[i] },
+                    new String[] {},
+                    new Object[] {},
                     Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
         }
     }

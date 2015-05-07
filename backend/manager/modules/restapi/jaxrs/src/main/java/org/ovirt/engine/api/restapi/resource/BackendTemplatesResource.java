@@ -122,15 +122,23 @@ public class BackendTemplatesResource
             isDomainSet = true;
         }
         params.setDiskInfoDestinationMap(getDestinationTemplateDiskMap(template.getVm(),
-                params.getDestinationStorageDomainId(),
-                isDomainSet));
+            params.getDestinationStorageDomainId(),
+            isDomainSet));
 
         setupCloneVmPermissions(template, params);
 
-        return performCreate(VdcActionType.AddVmTemplate,
-                               params,
-                               new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate,
-                                                   GetVmTemplateParameters.class));
+        Response response = performCreate(
+            VdcActionType.AddVmTemplate,
+            params,
+            new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class)
+        );
+
+        Template result = (Template) response.getEntity();
+        if (result != null) {
+            DisplayHelper.adjustDisplayData(this, result);
+        }
+
+        return response;
     }
 
     void setupCloneVmPermissions(Template template, AddVmTemplateParameters params) {

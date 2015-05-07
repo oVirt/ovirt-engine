@@ -178,7 +178,14 @@ public class BackendVmsResource extends
                 }
             }
         }
-        return removeRestrictedInfoFromResponse(response);
+
+        VM result = (VM) response.getEntity();
+        if (result != null) {
+            DisplayHelper.adjustDisplayData(this, result);
+            removeRestrictedInfo(result);
+        }
+
+        return response;
     }
 
     private boolean shouldMakeCreatorExplicitOwner() {
@@ -211,16 +218,8 @@ public class BackendVmsResource extends
                 diskImagesByImageId);
     }
 
-    private Response removeRestrictedInfoFromResponse(Response response) {
+    private VM removeRestrictedInfo(VM vm) {
         if (isFiltered()) {
-            VM vm = (VM) response.getEntity();
-            removeRestrictedInfoFromVM(vm);
-        }
-        return response;
-    }
-
-    private VM removeRestrictedInfoFromVM(VM vm) {
-        if (vm != null) {
             vm.setHost(null);
             vm.setPlacementPolicy(null);
         }
@@ -582,10 +581,7 @@ public class BackendVmsResource extends
             for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
                 VM vm = map(entity);
                 DisplayHelper.adjustDisplayData(this, vm);
-                // Filtered users are not allowed to view host related information
-                if (isFiltered) {
-                    removeRestrictedInfoFromVM(vm);
-                }
+                removeRestrictedInfo(vm);
                 collection.getVMs().add(addLinks(populate(vm, entity)));
             }
         }

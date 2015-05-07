@@ -145,8 +145,8 @@ public class BackendVmsResourceTest
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
                     IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[i] },
+                    new String[] {},
+                    new Object[] {},
                     Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
         }
     }
@@ -277,6 +277,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 0);
         setUpGetBallooningExpectations(1, 0);
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[]{0});
         setUpGetSoundcardExpectations(new int[]{0});
@@ -334,6 +335,7 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(new int[]{0, 0});
         setUpGetRngDeviceExpectations(new int[]{0, 0});
         setUpGetBallooningExpectations(2, 0);
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(2, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
                                      IdQueryParameters.class,
@@ -383,6 +385,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(2, 0);
         setUpGetBallooningExpectations(2, 0);
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{0, 0});
         setUpGetVmOvfExpectations(new int[]{0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
@@ -486,6 +489,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
@@ -532,6 +536,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(2, 2);
         setUpGetVmOvfExpectations(2);
@@ -569,6 +574,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
@@ -609,6 +615,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
@@ -658,6 +665,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[] { 2 });
         setUpGetVirtioScsiExpectations(new int[]{2});
@@ -697,6 +705,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 3);
         setUpGetBallooningExpectations(1, 3);
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 3);
         setUpGetConsoleExpectations(new int[] { 3 });
         setUpGetVmOvfExpectations(new int[] { 3 });
@@ -742,6 +751,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
@@ -782,6 +792,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
@@ -882,6 +893,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
@@ -938,6 +950,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
@@ -981,6 +994,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
@@ -1041,6 +1055,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
@@ -1094,6 +1109,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
 
         setUpGetConsoleExpectations(new int[]{2});

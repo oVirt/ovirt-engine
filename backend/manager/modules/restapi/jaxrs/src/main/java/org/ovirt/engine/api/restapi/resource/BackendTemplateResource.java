@@ -53,17 +53,25 @@ public class BackendTemplateResource
     @Override
     public Template get() {
         Template template = performGet(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
-        DisplayHelper.adjustDisplayData(this, template);
+        if (template != null) {
+            DisplayHelper.adjustDisplayData(this, template);
+        }
         return template;
     }
 
     @Override
     public Template update(Template incoming) {
         validateEnums(Template.class, incoming);
-        return performUpdate(incoming,
-                new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
-                VdcActionType.UpdateVmTemplate,
-                new UpdateParametersProvider());
+        Template result = performUpdate(
+            incoming,
+            new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
+            VdcActionType.UpdateVmTemplate,
+            new UpdateParametersProvider()
+        );
+        if (result != null) {
+            DisplayHelper.adjustDisplayData(this, result);
+        }
+        return result;
     }
 
     @Override

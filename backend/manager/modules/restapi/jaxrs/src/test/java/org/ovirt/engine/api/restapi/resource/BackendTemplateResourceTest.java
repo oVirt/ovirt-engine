@@ -34,10 +34,11 @@ public class BackendTemplateResourceTest
     }
 
     public void testUpdate() throws Exception {
+        setUpGetGraphicsExpectations(1);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
+            IdQueryParameters.class,
+            new String[]{"Id"},
+            new Object[]{GUIDS[2] },
                 getVdsGroupEntity());
 
         super.testUpdate();

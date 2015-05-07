@@ -66,6 +66,7 @@ public class BackendTemplatesResourceTest
                 new Object[] { GUIDS[1] },
                 setUpVm(GUIDS[1]));
         setUpGetEntityExpectations(0);
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
         setUpGetSoundcardExpectations(new int[]{0, 0, 0});
@@ -125,7 +126,7 @@ public class BackendTemplatesResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
 
-
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0});
         setUpGetSoundcardExpectations(new int[]{0, 0});
@@ -161,6 +162,7 @@ public class BackendTemplatesResourceTest
     }
 
     public void testAdd() throws Exception {
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{0, 0, 0});
         setUpGetSoundcardExpectations(new int[]{0});
 
@@ -224,6 +226,7 @@ public class BackendTemplatesResourceTest
             setUriInfo(setUpBasicUriExpectations());
             setUpHttpHeaderExpectations("Expect", "201-created");
 
+            setUpGetGraphicsExpectations(1);
             setUpGetConsoleExpectations(new int[]{2, 0, 2});
             setUpGetVirtioScsiExpectations(new int[]{2, 2});
             setUpGetSoundcardExpectations(new int[]{2, 2, 0});
@@ -281,6 +284,7 @@ public class BackendTemplatesResourceTest
                 setUpVm(GUIDS[1]));
 
         setUpGetEntityExpectations(0);
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
         setUpGetSoundcardExpectations(new int[] {0, 0, 0});
@@ -331,6 +335,7 @@ public class BackendTemplatesResourceTest
                                    setUpVm(GUIDS[1]));
 
         setUpGetEntityExpectations(0);
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
         setUpGetSoundcardExpectations(new int[] {0, 0, 0});
@@ -379,6 +384,7 @@ public class BackendTemplatesResourceTest
                                    setUpVm(GUIDS[1]));
         setUpGetEntityExpectations(0);
 
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
         setUpGetSoundcardExpectations(new int[] {0, 0, 0});
@@ -427,6 +433,7 @@ public class BackendTemplatesResourceTest
                                    setUpVm(GUIDS[1]));
         setUpGetEntityExpectations(0);
 
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
         setUpGetSoundcardExpectations(new int[] {0, 0, 0});

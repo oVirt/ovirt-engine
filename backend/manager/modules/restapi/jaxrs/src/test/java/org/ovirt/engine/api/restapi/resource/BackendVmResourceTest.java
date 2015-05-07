@@ -237,7 +237,7 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
-        setUpGetGraphicsExpectations(1);
+        setUpGetGraphicsExpectations(2);
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
@@ -267,12 +267,13 @@ public class BackendVmResourceTest
 
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
-        setUpGetGraphicsExpectations(1);
+        setUpGetGraphicsExpectations(2);
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
         setUpGetSoundcardExpectations(new int[] {0});
         setUpGetRngDeviceExpectations(new int[]{0});
+
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
@@ -304,9 +305,9 @@ public class BackendVmResourceTest
     public void testUpdateVmPolicy() throws Exception {
         setUpGetEntityExpectations(3);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
+            IdQueryParameters.class,
+            new String[]{"Id"},
+            new Object[]{GUIDS[2] },
                 getVdsGroupEntity());
 
         setUpGetPayloadExpectations(0, 2);
@@ -318,6 +319,7 @@ public class BackendVmResourceTest
         setUpGetVirtioScsiExpectations(new int[] {0});
         setUpGetSoundcardExpectations(new int[] {0});
         setUpGetRngDeviceExpectations(new int[]{0});
+        setUpGetGraphicsExpectations(1);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsStaticByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
@@ -360,7 +362,7 @@ public class BackendVmResourceTest
         setUpGetVirtioScsiExpectations(0);
         setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
-        setUpGetGraphicsExpectations(1);
+        setUpGetGraphicsExpectations(2);
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVMCluster,
                 ChangeVMClusterParameters.class,
                 new String[]{"ClusterId", "VmId"},
@@ -1141,8 +1143,8 @@ public class BackendVmResourceTest
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
                     IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[i] },
+                    new String[] {},
+                    new Object[] {},
                     Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
         }
     }
