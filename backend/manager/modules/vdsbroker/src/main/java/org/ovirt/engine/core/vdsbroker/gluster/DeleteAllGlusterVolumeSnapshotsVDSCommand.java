@@ -10,7 +10,7 @@ public class DeleteAllGlusterVolumeSnapshotsVDSCommand<P extends GlusterVolumeVD
     @Override
     protected void executeVdsBrokerCommand() {
         String volumeName = getParameters().getVolumeName();
-        status = getBroker().glusterVolumeSnapshotDelete(volumeName);
+        status = getBroker().glusterVolumeSnapshotDeleteAll(volumeName);
         proceedProxyReturnValue();
     }
 }

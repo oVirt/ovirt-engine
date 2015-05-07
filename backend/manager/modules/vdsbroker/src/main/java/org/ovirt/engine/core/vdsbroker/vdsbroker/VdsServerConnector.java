@@ -373,13 +373,13 @@ public interface VdsServerConnector {
 
     public Map<String, Object> updateVmPolicy(Map info);
 
-    public Map<String, Object> glusterSnapshotInfo(String snapshotName, String volumeName);
+    public Map<String, Object> glusterVolumeSnapshotList(String volumeName);
 
     public Map<String, Object> glusterSnapshotConfigList();
 
     public Map<String, Object> glusterSnapshotDelete(String snapshotName);
 
-    public Map<String, Object> glusterVolumeSnapshotDelete(String volumeName);
+    public Map<String, Object> glusterVolumeSnapshotDeleteAll(String volumeName);
 
     public Map<String, Object> glusterSnapshotActivate(String snapshotName, boolean force);
 
@@ -387,7 +387,10 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterSnapshotRestore(String snapshotName);
 
-    public Map<String, Object> glusterSnapshotCreate(String volumeName, String snapshotName, String description, boolean force);
+    public Map<String, Object> glusterVolumeSnapshotCreate(String volumeName,
+            String snapshotName,
+            String description,
+            boolean force);
 
     public Map<String, Object> glusterVolumeSnapshotConfigSet(String volumeName, String cfgName, String cfgValue);
 

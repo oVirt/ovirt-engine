@@ -1713,7 +1713,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public GlusterVolumeSnapshotInfoReturnForXmlRpc glusterSnapshotInfo(Guid clusterId, String volumeName) {
+    public GlusterVolumeSnapshotInfoReturnForXmlRpc glusterVolumeSnapshotList(Guid clusterId, String volumeName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.snapshotList").withOptionalParameter("volumeName", volumeName)
                         .build();
@@ -1740,7 +1740,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeSnapshotDelete(String volumeName) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeSnapshotDeleteAll(String volumeName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.snapshotDeleteAll").withParameter("volumeName", volumeName)
                     .build();
@@ -1779,7 +1779,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public GlusterVolumeSnapshotCreateReturnForXmlRpc glusterSnapshotCreate(String volumeName,
+    public GlusterVolumeSnapshotCreateReturnForXmlRpc glusterVolumeSnapshotCreate(String volumeName,
             String snapshotName,
             String description,
             boolean force) {
