@@ -46,7 +46,7 @@ public class AddCinderDiskCommandCallback extends AbstractCinderDiskCommandCallb
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
         super.onSucceeded(cmdId, childCmdIds);
 
-        log.error("Disk has been successfully added to Cinder. ID: {}", getDiskId());
+        log.info("Disk has been successfully added to Cinder. ID: {}", getDiskId());
         getCommand().endAction();
         CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
