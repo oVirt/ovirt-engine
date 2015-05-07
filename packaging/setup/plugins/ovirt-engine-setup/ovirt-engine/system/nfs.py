@@ -282,29 +282,39 @@ class Plugin(plugin.PluginBase):
     def _closeup(self):
         self.logger.info(_('Restarting nfs services'))
 
-        if not self.services.supportsDependency:
-            self.services.startup(
-                name='rpcbind',
-                state=True,
-            )
-            self.services.state(
-                name='rpcbind',
-                state=True,
-            )
+        try:
+            if not self.services.supportsDependency:
+                self.services.startup(
+                    name='rpcbind',
+                    state=True,
+                )
+                self.services.state(
+                    name='rpcbind',
+                    state=True,
+                )
 
-        self.services.startup(
-            name=self.environment[
-                oenginecons.SystemEnv.NFS_SERVICE_NAME
-            ],
-            state=True,
-        )
-        for state in (False, True):
-            self.services.state(
+            self.services.startup(
                 name=self.environment[
                     oenginecons.SystemEnv.NFS_SERVICE_NAME
                 ],
-                state=state,
+                state=True,
             )
+            for state in (False, True):
+                self.services.state(
+                    name=self.environment[
+                        oenginecons.SystemEnv.NFS_SERVICE_NAME
+                    ],
+                    state=state,
+                )
+        except RuntimeError as ex:
+            self.logger.debug('exception', exc_info=True)
+            msg = _(
+                'Unable to start NFS service or its dependencies: {error}\n'
+                'Please check their configuration and manually restart'
+            ).format(
+                error=ex,
+            )
+            self.logger.warning(msg)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
