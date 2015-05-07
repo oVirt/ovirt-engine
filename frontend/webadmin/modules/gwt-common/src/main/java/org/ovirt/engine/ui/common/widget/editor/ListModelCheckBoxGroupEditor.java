@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 
 import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.text.shared.Renderer;
 
@@ -45,6 +46,7 @@ public class ListModelCheckBoxGroupEditor<T> extends AbstractValidatedWidgetWith
     @Override
     public void markAsInvalid(List<String> validationHints) {
         super.markAsInvalid(validationHints);
+        getValidatedWidgetStyle().setDisplay(Display.INLINE_BLOCK);
     }
 
     @Override

@@ -442,7 +442,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
     private void onCreateSnapshot() {
         final GlusterVolumeSnapshotModel snapshotModel = (GlusterVolumeSnapshotModel) getWindow();
 
-        if (!snapshotModel.validate()) {
+        if (!snapshotModel.validate(false)) {
             return;
         }
 
@@ -677,7 +677,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
     public void onEditSnapshotSchedule() {
         final GlusterVolumeSnapshotModel snapshotModel = (GlusterVolumeSnapshotModel) getWindow();
 
-        if (!snapshotModel.validate()) {
+        if (!snapshotModel.validate(false)) {
             return;
         }
 

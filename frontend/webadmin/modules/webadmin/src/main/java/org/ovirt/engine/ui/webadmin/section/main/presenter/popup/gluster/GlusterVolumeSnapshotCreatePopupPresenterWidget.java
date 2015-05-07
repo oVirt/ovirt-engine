@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -49,6 +50,18 @@ public class GlusterVolumeSnapshotCreatePopupPresenterWidget extends AbstractMod
                 getView().setEndDateVisibility(model);
             }
         });
+
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if(args.propertyName.equalsIgnoreCase("validateAndSwitchAppropriateTab")) {//$NON-NLS-1$
+                    getView().handleValidationErrors(model);
+                    getView().switchTabBasedOnEditorInvalidity();
+                } else if(args.propertyName.equalsIgnoreCase("modelPropertiesChanged")) {//$NON-NLS-1$
+                    getView().handleValidationErrors(model);
+                }
+            }
+        });
     }
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<GlusterVolumeSnapshotModel> {
@@ -57,5 +70,9 @@ public class GlusterVolumeSnapshotCreatePopupPresenterWidget extends AbstractMod
         public void setEndDateVisibility(GlusterVolumeSnapshotModel object);
 
         public void setCriticalIntervalLabelVisibility(GlusterVolumeSnapshotModel object, int value);
+
+        public void handleValidationErrors(GlusterVolumeSnapshotModel object);
+
+        public void switchTabBasedOnEditorInvalidity();
     }
 }
