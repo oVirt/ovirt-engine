@@ -123,6 +123,11 @@ public class InstanceImageLineModel extends EntityModel {
             }
 
             @Override
+            public void updateInterface(Version clusterVersion) {
+                InstanceImageLineModel.this.updateInterface(clusterVersion, this);
+            }
+
+            @Override
             protected void updateBootableDiskAvailable() {
                 updateBootableFrom(parentModel.getAllCurrentDisks());
             }
@@ -177,6 +182,11 @@ public class InstanceImageLineModel extends EntityModel {
 
                     fillData();
                 }
+            }
+
+            @Override
+            public void updateInterface(Version clusterVersion) {
+                InstanceImageLineModel.this.updateInterface(clusterVersion, this);
             }
 
             @Override
@@ -255,6 +265,11 @@ public class InstanceImageLineModel extends EntityModel {
                         ((DiskImage) disk).setActive(true);
                     }
                 }
+            }
+
+            @Override
+            public void updateInterface(Version clusterVersion) {
+                InstanceImageLineModel.this.updateInterface(clusterVersion, this);
             }
 
             @Override
@@ -400,5 +415,10 @@ public class InstanceImageLineModel extends EntityModel {
 
     public void deactivate() {
         active = false;
+    }
+
+    public void updateInterface(Version clusterVersion, AbstractDiskModel model) {
+        model.getIsVirtioScsiEnabled().setEntity(Boolean.TRUE.equals(parentModel.getUnitVmModel().getIsVirtioScsiEnabled().getEntity()));
+        model.updateInterfaceList(clusterVersion);
     }
 }

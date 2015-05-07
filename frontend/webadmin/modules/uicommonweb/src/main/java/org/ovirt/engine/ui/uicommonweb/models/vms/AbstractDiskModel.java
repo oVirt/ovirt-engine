@@ -534,26 +534,30 @@ public abstract class AbstractDiskModel extends DiskModel
                 public void onSuccess(Object model, Object returnValue1) {
                     getIsVirtioScsiEnabled().setEntity(Boolean.TRUE.equals(returnValue1));
 
-                    AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object model, Object returnValue2) {
-                            ArrayList<DiskInterface> diskInterfaces = (ArrayList<DiskInterface>) returnValue2;
-
-                            if (Boolean.FALSE.equals(getIsVirtioScsiEnabled().getEntity())) {
-                                diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
-                            }
-
-                            setInterfaces(diskInterfaces);
-                        }
-                    });
-
-                    AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getOs(), clusterVersion, asyncQuery);
+                    updateInterfaceList(clusterVersion);
 
                 }
             }), getVm().getId());
         } else {
             setInterfaces(AsyncDataProvider.getInstance().getDiskInterfaceList());
         }
+    }
+
+    public void updateInterfaceList(final Version clusterVersion) {
+        AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue2) {
+                ArrayList<DiskInterface> diskInterfaces = (ArrayList<DiskInterface>) returnValue2;
+
+                if (Boolean.FALSE.equals(getIsVirtioScsiEnabled().getEntity())) {
+                    diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
+                }
+
+                setInterfaces(diskInterfaces);
+            }
+        });
+
+        AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getOs(), clusterVersion, asyncQuery);
     }
 
     private void setInterfaces(ArrayList<DiskInterface> diskInterfaces) {
