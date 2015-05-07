@@ -458,6 +458,9 @@ public enum VdcActionType {
     RegisterCinderDisk(3206, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
     CreateCinderSnapshot(3207, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
     RemoveCinderSnapshotDisk(3208, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
+    AddLibvirtSecret(3209, false, QuotaDependency.NONE),
+    UpdateLibvirtSecret(3210, false, QuotaDependency.NONE),
+    RemoveLibvirtSecret(3211, false, QuotaDependency.NONE),
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
