@@ -64,6 +64,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
+import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
@@ -94,6 +95,7 @@ import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.IscsiBondDao;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
+import org.ovirt.engine.core.dao.LibvirtSecretDao;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.PermissionDAO;
@@ -241,6 +243,7 @@ public class DbFacade {
             put(UserProfile.class, UserProfileDAO.class);
             put(VmIcon.class, VmIconDao.class);
             put(VmIconDefault.class, VmIconDefaultDao.class);
+            put(LibvirtSecret.class, LibvirtSecretDao.class);
         }
     };
 
@@ -1325,4 +1328,9 @@ public class DbFacade {
     public NetworkAttachmentDao getNetworkAttachmentDao() {
         return getDao(NetworkAttachmentDao.class);
     }
+
+    public LibvirtSecretDao getLibvirtSecretDao() {
+        return getDao(LibvirtSecretDao.class);
+    }
+
 }
