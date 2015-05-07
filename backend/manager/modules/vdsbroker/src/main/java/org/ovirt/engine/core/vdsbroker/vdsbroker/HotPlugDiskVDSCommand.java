@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -44,7 +45,8 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         VmDevice vmDevice = getParameters().getVmDevice();
 
         drive.put(VdsProperties.Type, VmDeviceType.DISK.getName());
-        drive.put(VdsProperties.Address, getParameters().getAddressMap());
+        drive.put(VdsProperties.Address, getParameters().getAddressMap() != null ?
+                getParameters().getAddressMap() : StringUtils.EMPTY);
         drive.put(VdsProperties.INTERFACE, disk.getDiskInterface().getName());
 
         int numOfIoThreads = getParameters().getVm().getNumOfIoThreads();
