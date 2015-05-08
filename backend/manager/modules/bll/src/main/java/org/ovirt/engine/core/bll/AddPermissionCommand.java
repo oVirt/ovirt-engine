@@ -47,13 +47,30 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             return false;
         }
 
-        Role role = getRoleDao().get(perm.getRoleId());
-        Guid adElementId = perm.getAdElementId();
-
+        // Try to find the requested role, first by id and then by name:
+        Role role = null;
+        Guid roleId = perm.getRoleId();
+        String roleName = perm.getRoleName();
+        if (!Guid.isNullOrEmpty(roleId)) {
+            role = getRoleDao().get(roleId);
+            if (role != null) {
+                roleName = role.getName();
+                perm.setRoleName(roleName);
+            }
+        }
+        else if (roleName != null) {
+            role = getRoleDao().getByName(roleName);
+            if (role != null) {
+                roleId = role.getId();
+                perm.setRoleId(roleId);
+            }
+        }
         if (role == null) {
             addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_INVALID_ROLE_ID);
             return false;
         }
+
+        Guid adElementId = perm.getAdElementId();
 
         if (perm.getObjectType() == null
                 || getVdcObjectName() == null) {

@@ -723,11 +723,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission for a given virtual machine
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.group.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new group level permission for a given virtual machine
 - name: /vms/{vm:id}/statistics|rel=get
   description: get the memory and cpu statistics for a given virtual machine
@@ -1122,11 +1124,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission on the storage domain
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.group.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new group level permission on the storage domain
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}|rel=delete
   description: delete the specified template from the export or data domain
@@ -1308,11 +1312,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission on the cluster
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.group.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new group level permission on the cluster
 - name: /macpools|rel=get
   description: get a list of mac pools in the system
@@ -1429,11 +1435,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission on the data center
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+         permission.group.id: xs:string
+         permission.role.id|name: xs:string
         description: add a new role permission on the data center
 - name: /datacenters/{datacenter:id}/storagedomains|rel=get
   description: get the list of storage domains in a data center
@@ -1543,11 +1551,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission on the cluster in the specified data center.
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.group.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new group level permission on the cluster in the specified data center.
 - name: /domains|rel=get
   description: get a list of domains in the system
@@ -1630,26 +1640,33 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.data_center.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.data_center.id: xs:string
         description: add a new permission on the data center to the group in the system
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.cluster.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.cluster.id: xs:string
         description: add a new permission on the cluster to the group in the system
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.host.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.host.id: xs:string
         description: add a new permission on the host to the group in the system
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.storage_domain.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.storage_domain.id: xs:string
         description: add a new permission on the storage domain to the group in the system
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.vm.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.vm.id: xs:string
         description: add a new permission on the vm to the group in the system
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.vmpool.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.vmpool.id: xs:string
         description: add a new permission on the vm pool to the group in the system
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.template.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.template.id: xs:string
         description: add a new permission on the template to the group in the system
 - name: /groups/{group:id}/roles|rel=get
   description: get the list of roles assigned to the specified group
@@ -2016,11 +2033,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission for the host
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.group.id: xs:string
         description: add a new group level permission for the host
 - name: /hosts/{host:id}/statistics|rel=get
   description: get the statistics for the host
@@ -2121,11 +2140,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission on a network in the system
-      - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.group.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new group level permission on a network in the system
 - name: /networks/{network:id}/vnicprofiles|rel=get
   description: get the list of all virtual network interface card profiles for the network
@@ -2195,11 +2216,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission on the virtual network interface card profile in the system
-      - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.group.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new group level permission on the virtual network interface card profile in the system
 - name: /roles|rel=get
   description: get the list of all roles in the system
@@ -2543,11 +2566,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission on the template
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.group.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new role permission on the template
 - name: /templates/{template:id}/tags|rel=get
   description: get the list of tags added to the template
@@ -2598,27 +2623,34 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.data_center.id: 'xs:string'}
-        optionalArguments: {}
-        description: add a new tole permission for the user on the data center
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.cluster.id: 'xs:string'}
-        optionalArguments: {}
-        description: add a new tole permission for the user on the cluster
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.host.id: 'xs:string'}
-        optionalArguments: {}
-        description: add a new tole permission for the user on the host
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.storage_domain.id: 'xs:string'}
-        optionalArguments: {}
-        description: add a new tole permission for the user on the storage domain
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.vm.id: 'xs:string'}
-        optionalArguments: {}
-        description: add a new tole permission for the user on the vm
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.vmpool.id: 'xs:string'}
-        optionalArguments: {}
-        description: add a new tole permission for the user on the vm pool
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.template.id: 'xs:string'}
-        optionalArguments: {}
-        description: add a new tole permission for the user on the template
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.data_center.id: xs:string
+        description: add a new role permission for the user on the data center
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.cluster.id: xs:string
+        description: add a new role permission for the user on the cluster
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.host.id: xs:string
+        description: add a new role permission for the user on the host
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.storage_domain.id: xs:string
+        description: add a new role permission for the user on the storage domain
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.vm.id: xs:string
+        description: add a new role permission for the user on the vm
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.vmpool.id: xs:string
+        description: add a new role permission for the user on the vm pool
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.template.id: xs:string
+        description: add a new role permission for the user on the template
 - name: /users/{user:id}/roles|rel=get
   description: get the list of roles assigned to the user
 - name: /users/{user:id}/roles/{role:id}|rel=get
@@ -2708,11 +2740,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id|name: xs:string
+          permission.role.id: xs:string
         description: add a new user level permission on the vm pool
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.role.id|name: xs:string
+          permission.group.id: xs:string
         description: add a new group level permission on the vm pool
 - name: /clusters/{cluster:id}/glustervolumes|rel=get
   description: get the list of gluster volumes attached to the cluster
@@ -3177,11 +3211,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission on the system
-      - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.group.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new group level permission on the system
 
 - name: /instancetypes|rel=get
@@ -3523,11 +3559,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission on the disk profile in the system
-      - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.group.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new group level permission on the disk profile in the system
 - name: /storagedomains/{storagedomain:id}/diskprofiles|rel=get
   description: get the list of all disk profiles for the storage domain
@@ -3584,11 +3622,13 @@ actions:
     body:
       parameterType: Permission
       signatures:
-      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.user.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new user level permission on the cpu profile in the system
-      - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments:
+          permission.group.id: xs:string
+          permission.role.id|name: xs:string
         description: add a new group level permission on the cpu profile in the system
 - name: /clusters/{cluster:id}/cpuprofiles|rel=get
   description: get the list of all cpu profiles for the cluster
