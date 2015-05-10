@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -16,6 +17,10 @@ public class GetUnregisteredCinderDisksByStorageDomainIdQuery<P extends IdQueryP
 
     public GetUnregisteredCinderDisksByStorageDomainIdQuery(P parameters) {
         super(parameters);
+    }
+
+    public GetUnregisteredCinderDisksByStorageDomainIdQuery(P parameters, EngineContext context) {
+        super(parameters, context);
     }
 
     @Override

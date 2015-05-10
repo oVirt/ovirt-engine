@@ -3,12 +3,14 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
@@ -25,9 +27,17 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
     @Override
     protected void executeQueryCommand() {
         VDSBrokerFrontend vdsBroker = getVdsBroker();
-        if (getDbFacade().getStorageDomainDao().get(getStorageDomainId()) == null) {
+        StorageDomain storageDomain = getDbFacade().getStorageDomainDao().get(getStorageDomainId());
+        if (storageDomain == null) {
             getQueryReturnValue().setExceptionString(VdcBllMessages.STORAGE_DOMAIN_DOES_NOT_EXIST.toString());
             getQueryReturnValue().setSucceeded(false);
+            return;
+        }
+
+        if (storageDomain.getStorageType().isCinderDomain()) {
+            VdcQueryReturnValue returnValue = runInternalQuery(VdcQueryType.GetUnregisteredCinderDisksByStorageDomainId,
+                    new IdQueryParameters(getStorageDomainId()));
+            setReturnValue(returnValue.getReturnValue());
             return;
         }
 

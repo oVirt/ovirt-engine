@@ -12,8 +12,13 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.RegisterCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -39,8 +44,9 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     @Override
     protected boolean canDoAction() {
-        // Currently this only supports importing images and does not work with luns.
-        if (getParameters().getDiskImage().getDiskStorageType() != DiskStorageType.IMAGE) {
+        // Currently this only supports importing DiskImages or CinderDisks and does not work with LunDisks.
+        if (getParameters().getDiskImage().getDiskStorageType() != DiskStorageType.IMAGE &&
+                getParameters().getDiskImage().getDiskStorageType() != DiskStorageType.CINDER) {
             addCanDoActionMessageVariable("diskId", getParameters().getDiskImage().getId());
             addCanDoActionMessageVariable("storageType", getParameters().getDiskImage().getDiskStorageType());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_DISK_STORAGE_TYPE);
@@ -54,14 +60,16 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
             return false;
         }
 
-        if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
+        if (!getStorageDomain().getStorageDomainType().isDataDomain() &&
+                !(getStorageDomain().getStorageDomainType() == StorageDomainType.Volume)) {
             addCanDoActionMessageVariable("domainId", getParameters().getStorageDomainId());
             addCanDoActionMessageVariable("domainType", getStorageDomain().getStorageDomainType());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
             return false;
         }
 
-        if (!setAndValidateDiskProfiles()) {
+        if (getParameters().getDiskImage().getDiskStorageType() == DiskStorageType.IMAGE &&
+                !setAndValidateDiskProfiles()) {
             return false;
         }
 
@@ -70,15 +78,21 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     @Override
     protected void executeCommand() {
-        final DiskImage newDiskImage = getParameters().getDiskImage();
-        newDiskImage.setDiskAlias(ImagesHandler.getDiskAliasWithDefault(newDiskImage,
-                generateDefaultAliasForRegiteredDisk(Calendar.getInstance())));
-        ArrayList<Guid> storageIds = new ArrayList<>();
-        storageIds.add(getParameters().getStorageDomainId());
-        newDiskImage.setStorageIds(storageIds);
-        addDiskImageToDb(newDiskImage, getCompensationContext());
-        getReturnValue().setActionReturnValue(newDiskImage.getId());
-        getReturnValue().setSucceeded(true);
+        if (getParameters().getDiskImage().getDiskStorageType() == DiskStorageType.IMAGE) {
+            final DiskImage newDiskImage = getParameters().getDiskImage();
+            newDiskImage.setDiskAlias(ImagesHandler.getDiskAliasWithDefault(newDiskImage,
+                    generateDefaultAliasForRegiteredDisk(Calendar.getInstance())));
+            ArrayList<Guid> storageIds = new ArrayList<>();
+            storageIds.add(getParameters().getStorageDomainId());
+            newDiskImage.setStorageIds(storageIds);
+            addDiskImageToDb(newDiskImage, getCompensationContext());
+            getReturnValue().setActionReturnValue(newDiskImage.getId());
+            getReturnValue().setSucceeded(true);
+        } else if (getParameters().getDiskImage().getDiskStorageType() == DiskStorageType.CINDER) {
+            VdcReturnValueBase returnValue = runInternalAction(VdcActionType.RegisterCinderDisk, new RegisterCinderDiskParameters(
+                    (CinderDisk) getParameters().getDiskImage(), getParameters().getStorageDomainId()));
+            setReturnValue(returnValue);
+        }
     }
 
     protected static String generateDefaultAliasForRegiteredDisk(Calendar time) {

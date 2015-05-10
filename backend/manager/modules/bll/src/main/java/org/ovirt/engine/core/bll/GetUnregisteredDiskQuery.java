@@ -6,10 +6,14 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.action.GetCinderEntityByStorageDomainIdParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -32,9 +36,17 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         Guid storagePoolId = getParameters().getStoragePoolId();
         Guid storageDomainId = getParameters().getStorageDomainId();
         Guid diskId = getParameters().getDiskId();
-        if (getDbFacade().getStorageDomainDao().get(storageDomainId) == null) {
+        StorageDomain storageDomain = getDbFacade().getStorageDomainDao().get(storageDomainId);
+        if (storageDomain == null) {
             getQueryReturnValue().setExceptionString(VdcBllMessages.STORAGE_DOMAIN_DOES_NOT_EXIST.toString());
             getQueryReturnValue().setSucceeded(false);
+            return;
+        }
+
+        if (storageDomain.getStorageType().isCinderDomain()) {
+            VdcQueryReturnValue returnValue = runInternalQuery(VdcQueryType.GetUnregisteredCinderDiskByIdAndStorageDomainId,
+                    new GetCinderEntityByStorageDomainIdParameters(diskId, getParameters().getStorageDomainId()));
+            setReturnValue(returnValue.getReturnValue());
             return;
         }
 
