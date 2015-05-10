@@ -99,6 +99,7 @@ actions:
           vm.cpu_profile.id: xs:string
           vm.migration.auto_converge: xs:string
           vm.migration.compressed: xs:string
+          vm.external_host_provider.id: xs:string
         description: update the virtual machine in the system for the given virtual machine id with the values specified in the request
 - name: /vms/{vm:id}/applications|rel=get
   description: get all the applications installed on the vm identified by the given id

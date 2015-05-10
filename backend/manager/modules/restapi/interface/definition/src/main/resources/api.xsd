@@ -3346,6 +3346,7 @@
           <xs:element name="next_run_configuration_exists" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="numa_tune_mode" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="external_host_provider" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.AuthorizedKey;
@@ -22,6 +23,7 @@ import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Domain;
+import org.ovirt.engine.api.model.ExternalHostProvider;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.GuestInfo;
@@ -237,6 +239,11 @@ public class VmMapper extends VmBaseMapper {
             }
         }
 
+        if (vm.isSetExternalHostProvider()) {
+            String providerId = vm.getExternalHostProvider().getId();
+            staticVm.setProviderId(providerId == null ? null : GuidUtils.asGuid(providerId));
+        }
+
         return staticVm;
     }
 
@@ -448,6 +455,12 @@ public class VmMapper extends VmBaseMapper {
         }
         model.setNextRunConfigurationExists(entity.isNextRunConfigurationExists());
         model.setNumaTuneMode(map(entity.getNumaTuneMode(), null));
+
+        if (entity.getProviderId() != null) {
+            model.setExternalHostProvider(new ExternalHostProvider());
+            model.getExternalHostProvider().setId(entity.getProviderId().toString());
+        }
+
         return model;
     }
 
