@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ObjectUtils;
@@ -43,6 +45,8 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -78,6 +82,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmNumaNodeDAO;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -85,6 +90,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
 
     private static final Base64 BASE_64 = new Base64(0, null);
+
+    @Inject
+    private ProviderDao providerDao;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -717,6 +725,17 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 IconValidator.DimensionsType.LARGE_CUSTOM_ICON,
                 getParameters().getVmLargeIcon()))) {
             return false;
+        }
+
+        if (vmFromParams.getProviderId() != null) {
+            Provider<?> provider = providerDao.get(vmFromParams.getProviderId());
+            if (provider == null) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST);
+            }
+
+            if (provider.getType() != ProviderType.FOREMAN) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH);
+            }
         }
 
         return true;
