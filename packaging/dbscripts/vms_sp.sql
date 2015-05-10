@@ -849,7 +849,8 @@ v_is_migrate_compressed BOOLEAN,
 v_custom_emulated_machine VARCHAR(40),
 v_custom_cpu_name VARCHAR(40),
 v_small_icon_id UUID,
-v_large_icon_id UUID)
+v_large_icon_id UUID,
+v_provider_id UUID)
 
 RETURNS VOID
 
@@ -889,7 +890,8 @@ BEGIN
       custom_emulated_machine = v_custom_emulated_machine,
       custom_cpu_name = v_custom_cpu_name,
       small_icon_id = v_small_icon_id,
-      large_icon_id = v_large_icon_id
+      large_icon_id = v_large_icon_id,
+      provider_id = v_provider_id
       WHERE vm_guid = v_vm_guid
       AND   entity_type = 'VM';
 END; $procedure$

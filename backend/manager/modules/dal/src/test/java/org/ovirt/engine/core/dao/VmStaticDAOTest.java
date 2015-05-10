@@ -34,6 +34,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
     private static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
     private static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
+    private static final Guid EXISTING_PROVIDER_ID = new Guid("1115c1c6-cb15-4832-b2a4-023770607111");
     protected Logger log = LoggerFactory.getLogger(getClass());
     private static final String STATIC_VM_NAME = "rhel5-pool-50";
     private static final int NUM_OF_VM_STATIC_IN_FIXTURES = 3;
@@ -172,12 +173,15 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testUpdate() {
+        assertEquals(existingVmStatic.getProviderId(), EXISTING_PROVIDER_ID);
         existingVmStatic.setDescription("updated");
         existingVmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
+        existingVmStatic.setProviderId(null);
         dao.update(existingVmStatic);
         VmStatic result = dao.get(EXISTING_VM_ID);
         assertNotNull(result);
         assertEquals(existingVmStatic, result);
+        assertNull(result.getProviderId());
     }
 
     @Test

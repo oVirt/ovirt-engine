@@ -1106,7 +1106,8 @@ SELECT
 	vm_dynamic.guest_mem_cached as guest_mem_cached,
 	vm_dynamic.guest_mem_free as guest_mem_free,
     vm_static.small_icon_id as small_icon_id,
-    vm_static.large_icon_id as large_icon_id
+    vm_static.large_icon_id as large_icon_id,
+    vm_static.provider_id as provider_id
 FROM
     vm_static
 INNER JOIN vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid

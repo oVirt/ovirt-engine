@@ -43,7 +43,8 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
                 .addValue("original_template_name", vm.getOriginalTemplateName())
                 .addValue("original_template_id", vm.getOriginalTemplateGuid())
                 .addValue("template_version_number", vm.isUseLatestVersion() ?
-                        USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR);
+                        USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR)
+                .addValue("provider_id", vm.getProviderId());
     }
 
     @Override
@@ -197,7 +198,7 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
             entity.setOriginalTemplateGuid(getGuid(rs, "original_template_id"));
             // if template_version_number is null it means use latest version
             entity.setUseLatestVersion(rs.getObject("template_version_number") == USE_LATEST_VERSION_NUMBER_INDICATOR);
-
+            entity.setProviderId(getGuid(rs, "provider_id"));
             return entity;
         }
     }

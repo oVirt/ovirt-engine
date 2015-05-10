@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
@@ -36,6 +38,9 @@ public class VmStatic extends VmBase {
 
     @EditableField
     private boolean useLatestVersion;
+
+    @EditableField
+    private Guid providerId;
 
     public VmStatic() {
         setNumOfMonitors(1);
@@ -114,7 +119,7 @@ public class VmStatic extends VmBase {
         result = prime * result + ((originalTemplateGuid == null) ? 0 : originalTemplateGuid.hashCode());
         result = prime * result + ((originalTemplateName == null) ? 0 : originalTemplateName.hashCode());
         result = prime * result + (useLatestVersion ? 1249 : 1259);
-
+        result = prime * result + Objects.hashCode(providerId);
         return result;
     }
 
@@ -139,7 +144,7 @@ public class VmStatic extends VmBase {
                 && ObjectUtils.objectsEqual(originalTemplateGuid, other.originalTemplateGuid)
                 && ObjectUtils.objectsEqual(originalTemplateName, other.originalTemplateName)
                 && useLatestVersion == other.useLatestVersion
-         );
+                && Objects.equals(providerId, other.providerId));
     }
 
     public boolean isUseHostCpuFlags() {
@@ -198,4 +203,11 @@ public class VmStatic extends VmBase {
         this.useLatestVersion = useLatestVersion;
     }
 
+    public Guid getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(Guid providerId) {
+        this.providerId = providerId;
+    }
 }

@@ -1,0 +1,2 @@
+select fn_db_add_column('vm_static', 'provider_id', 'UUID');
+SELECT fn_db_create_constraint('vm_static', 'fk_vm_static_provider_id', 'FOREIGN KEY (provider_id) REFERENCES providers(id) ON DELETE SET NULL');
