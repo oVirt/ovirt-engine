@@ -1,12 +1,15 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -179,10 +182,10 @@ public class CommandExecutor {
         if (subjectEntities.length == 0) {
             return Collections.emptyList();
         }
-        List<CommandAssociatedEntity> results = new ArrayList<>(subjectEntities.length);
-        for (SubjectEntity subjectEntity : subjectEntities) {
+        Set<SubjectEntity> entities = new HashSet<>(Arrays.asList(subjectEntities));
+        List<CommandAssociatedEntity> results = new ArrayList<>(entities.size());
+        for (SubjectEntity subjectEntity : entities) {
             results.add(new CommandAssociatedEntity(cmdId, subjectEntity.getEntityType(), subjectEntity.getEntityId()));
-
         }
         return results;
     }
