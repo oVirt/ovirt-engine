@@ -299,6 +299,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getMigrationMode().setIsChangeable(false);
             getCpuPinning().setIsChangeable(false);
             getMigrationDowntime().setIsChangeable(false);
+            getCustomCompatibilityVersion().setIsChangeable(false);
 
             // ==Resource Allocation Tab==
             getMinAllocatedMemory().setIsChangeable(false);
@@ -465,6 +466,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void setEmulatedMachine(NotChangableForVmInPoolListModel<String> emulatedMachine) {
         this.emulatedMachine = emulatedMachine;
+    }
+
+    private ListModel<Version> customCompatibilityVersion;
+
+    public ListModel<Version> getCustomCompatibilityVersion() {
+        return customCompatibilityVersion;
+    }
+
+    private void setCustomCompatibilityVersion(ListModel<Version> value) {
+        customCompatibilityVersion = value;
     }
 
     private NotChangableForVmInPoolListModel<String> customCpu;
@@ -1519,6 +1530,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setCustomCpu(new NotChangableForVmInPoolListModel<String>());
 
+        setCustomCompatibilityVersion(new NotChangableForVmInPoolListModel<Version>());
+        getCustomCompatibilityVersion().getSelectedItemChangedEvent().addListener(this);
+
         setTimeZone(new NotChangableForVmInPoolListModel<TimeZoneModel>());
         getTimeZone().getSelectedItemChangedEvent().addListener(this);
 
@@ -1774,10 +1788,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             if (sender == getVmType()) {
                 vmTypeChanged();
             } else if (sender == getDataCenterWithClustersList()) {
-                dataCenterWithClusterSelectedItemChanged(sender, args);
-                updateDisplayAndGraphics();
-                behavior.updateNumOfIoThreads();
-                initUsbPolicy();
+                behavior.updateCompatibilityVersion(); // needs to be first because it affects compatibility version
+                compatibilityVersionChanged(sender, args);
                 behavior.updateEmulatedMachines();
                 behavior.updateCustomCpu();
             }
@@ -1846,6 +1858,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             else if (sender == getWatchdogModel()) {
                 watchdogModelSelectedItemChanged(sender, args);
             }
+            else if (sender == getCustomCompatibilityVersion()) {
+                // window must be updated as if a cluster change occurred because feature availability should be reconsidered
+                compatibilityVersionChanged(sender, args);
+            }
         }
         else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getVmInitEnabled()) {
@@ -1894,6 +1910,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 }
             }
         }
+    }
+
+    private void compatibilityVersionChanged(Object sender, EventArgs args) {
+        dataCenterWithClusterSelectedItemChanged(sender, args);
+        updateDisplayAndGraphics();
+        behavior.updateNumOfIoThreads();
+        initUsbPolicy();
     }
 
     private void vmInitEnabledChanged() {
@@ -1950,12 +1973,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void initUsbPolicy() {
-        VDSGroup cluster = getSelectedCluster();
         Integer osType = getOSType().getSelectedItem();
         DisplayType displayType = getDisplayType().getSelectedItem();
         GraphicsTypes graphicsTypes = getGraphicsType().getSelectedItem();
 
-        if (osType == null || cluster == null || displayType == null || graphicsTypes == null) {
+        if (osType == null || displayType == null || graphicsTypes == null) {
             return;
         }
 
@@ -1963,7 +1985,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         UsbPolicy prevSelectedUsbPolicy = getUsbPolicy().getSelectedItem();
 
-        if (Version.v3_1.compareTo(cluster.getCompatibilityVersion()) > 0) {
+        if (Version.v3_1.compareTo(getCompatibilityVersion()) > 0) {
             if (AsyncDataProvider.getInstance().isWindowsOsType(osType)) {
                 getUsbPolicy().setItems(Arrays.asList(
                         UsbPolicy.DISABLED,
@@ -1975,7 +1997,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
         }
 
-        if (Version.v3_1.compareTo(cluster.getCompatibilityVersion()) <= 0) {
+        if (Version.v3_1.compareTo(getCompatibilityVersion()) <= 0) {
             if (AsyncDataProvider.getInstance().isLinuxOsType(osType)) {
                 getUsbPolicy().setItems(Arrays.asList(
                         UsbPolicy.DISABLED,
@@ -2013,8 +2035,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         VDSGroup cluster = dataCenterWithCluster.getCluster();
-        Version version = cluster.getCompatibilityVersion();
+        Version version = getCompatibilityVersion();
 
+        // test migration support for VM/cluster level along with the cluster architecture
         Boolean isMigrationSupported =
                 AsyncDataProvider.getInstance().isMigrationSupported(cluster.getArchitecture(), version);
 
@@ -2043,7 +2066,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(
                 osType,
-                cluster.getCompatibilityVersion());
+                getCompatibilityVersion());
         initDisplayModels(graphicsAndDisplays);
     }
 
@@ -2124,11 +2147,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void updateBootMenu() {
         if (getSelectedCluster() != null) {
-            Version version = getSelectedCluster().getCompatibilityVersion();
+            Version version = getCompatibilityVersion();
             final boolean supported = AsyncDataProvider.getInstance().isBootMenuSupported(version.toString());
             if (!supported) {
                 getBootMenuEnabled().setEntity(false);
-                getBootMenuEnabled().setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().bootMenuNotSupported(version.toString(2)));
+                getBootMenuEnabled().setChangeProhibitionReason(
+                        ConstantsManager.getInstance().getMessages().bootMenuNotSupported(version.toString(2)));
             }
             getBootMenuEnabled().setIsChangeable(supported);
         }
@@ -2139,8 +2163,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         boolean isLinux = getIsLinuxOS();
         boolean isQxl = getDisplayType().getSelectedItem() == DisplayType.qxl;
         boolean isSpice = getGraphicsType().getSelectedItem() == GraphicsTypes.SPICE;
-        boolean clusterSupportsSinglePci = getSelectedCluster() != null &&
-        Version.v3_3.compareTo(getSelectedCluster().getCompatibilityVersion()) <= 0;
+        boolean clusterSupportsSinglePci = Version.v3_3.compareTo(getCompatibilityVersion()) <= 0;
 
         return isLinux && isQxl && isSpice && clusterSupportsSinglePci;
     }
@@ -2151,18 +2174,24 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (getSelectedCluster() != null) {
             boolean isQxl = getDisplayType().getSelectedItem() == DisplayType.qxl;
             boolean spiceFileTransferToggle = isQxl
-                    && AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(getSelectedCluster().getCompatibilityVersion().toString());
+                    && AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(getCompatibilityVersion().toString());
             if (!spiceFileTransferToggle) {
-                handleQxlChangeProhibitionReason(getSpiceFileTransferEnabled(), getSelectedCluster().getCompatibilityVersion().toString(), isQxl);
+                handleQxlChangeProhibitionReason(
+                        getSpiceFileTransferEnabled(),
+                        getCompatibilityVersion().toString(),
+                        isQxl);
             }
             getSpiceFileTransferEnabled().setIsChangeable(spiceFileTransferToggle);
 
             GraphicsTypes selectedGraphics = getGraphicsType().getSelectedItem();
             boolean spiceCopyPasteToggle = selectedGraphics != null
                     && selectedGraphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE)
-                    && AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(getSelectedCluster().getCompatibilityVersion().toString());
+                    && AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(getCompatibilityVersion().toString());
             if (!spiceCopyPasteToggle) {
-                handleQxlChangeProhibitionReason(getSpiceCopyPasteEnabled(), getSelectedCluster().getCompatibilityVersion().toString(), isQxl);
+                handleQxlChangeProhibitionReason(
+                        getSpiceCopyPasteEnabled(),
+                        getCompatibilityVersion().toString(),
+                        isQxl);
             }
             getSpiceCopyPasteEnabled().setIsChangeable(spiceCopyPasteToggle);
         }
@@ -2262,8 +2291,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
                 }
             };
-            AsyncDataProvider.getInstance().getVmWatchdogTypes(osType,
-                    cluster.getCompatibilityVersion(), asyncQuery);
+            AsyncDataProvider.getInstance().getVmWatchdogTypes(osType, getCompatibilityVersion(), asyncQuery);
         }
     }
 
@@ -2341,7 +2369,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        initGraphicsConsoles(osType, cluster.getCompatibilityVersion());
+        initGraphicsConsoles(osType, getCompatibilityVersion());
     }
 
     protected void initGraphicsConsoles(int osType, Version compatibilityVersion) {
@@ -3139,4 +3167,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     protected void setProviders(NotChangableForVmInPoolListModel<Provider<OpenstackNetworkProviderProperties>> value) {
         providers = value;
     }
+
+    public Version getCompatibilityVersion() {
+        ListModel<Version> customCompatibilityVersion = getCustomCompatibilityVersion();
+        if (customCompatibilityVersion != null && customCompatibilityVersion.getSelectedItem() != null) {
+            return customCompatibilityVersion.getSelectedItem();
+        }
+
+        VDSGroup vdsGroup = getSelectedCluster();
+        if (vdsGroup != null) {
+            return vdsGroup.getCompatibilityVersion();
+        }
+
+        return null;
+    }
+
 }

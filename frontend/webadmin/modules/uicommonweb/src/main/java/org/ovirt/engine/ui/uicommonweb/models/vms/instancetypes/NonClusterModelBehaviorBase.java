@@ -68,7 +68,7 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
     }
 
     @Override
-    protected Version getClusterCompatibilityVersion() {
+    protected Version getCompatibilityVersion() {
         return latestCluster();
     }
 

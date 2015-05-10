@@ -56,6 +56,7 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
         }
 
         model.getConsoleDisconnectAction().setSelectedItem(vm.getConsoleDisconnectAction());
+        model.getCustomCompatibilityVersion().setSelectedItem(vm.getCustomCompatibilityVersion());
     }
 
     protected boolean supported(ConfigurationValues feature, UnitVmModel model) {

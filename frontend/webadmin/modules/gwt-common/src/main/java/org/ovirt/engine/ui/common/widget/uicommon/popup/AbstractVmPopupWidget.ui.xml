@@ -539,6 +539,7 @@
                                 <w:EntityModelDetachableWidgetWithInfo ui:field="threadsPerCoreEditorWithInfoIcon"/>
                                 <e:ListModelTypeAheadChangeableListBoxEditor ui:field="emulatedMachine" label="{constants.emulatedMachineLabel}" />
                                 <e:ListModelTypeAheadChangeableListBoxEditor ui:field="customCpu" label="{constants.cpuModelLabel}" />
+                                <e:ListModelListBoxEditor ui:field="customCompatibilityVersionEditor" label="{constants.customCompatibilityVersionLabel}"/>
                             </g:FlowPanel>
                         </g:FlowPanel>
                             <g:Label ui:field="generalLabel" addStyleNames="{style.sectionLabel}" text="{constants.initialRunGeneral}" />

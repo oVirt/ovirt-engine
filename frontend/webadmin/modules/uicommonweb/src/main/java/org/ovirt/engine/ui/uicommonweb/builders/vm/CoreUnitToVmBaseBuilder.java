@@ -49,5 +49,6 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         if (model.getCpuSharesAmount().getIsAvailable() && model.getCpuSharesAmount().getEntity() != null) {
             vm.setCpuShares(model.getCpuSharesAmount().getEntity());
         }
+        vm.setCustomCompatibilityVersion(model.getCustomCompatibilityVersion().getSelectedItem());
     }
 }

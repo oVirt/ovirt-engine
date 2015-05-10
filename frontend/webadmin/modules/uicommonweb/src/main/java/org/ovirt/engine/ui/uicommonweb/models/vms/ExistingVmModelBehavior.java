@@ -102,6 +102,14 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     private void loadDataCenter() {
+        // Preinitialize the VM compatibility version because it's needed during init
+        Version newCustomCompatibilityVersion =
+                ((ExistingVmModelBehavior) getModel().getBehavior()).getVm().getStaticData().getCustomCompatibilityVersion();
+        if (newCustomCompatibilityVersion != null) {
+            getModel().getCustomCompatibilityVersion().setItems(
+                    Collections.singletonList(newCustomCompatibilityVersion), newCustomCompatibilityVersion);
+        }
+
         AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
                         new INewAsyncCallback() {
                             @Override
@@ -152,6 +160,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                         model.setDataCentersAndClusters(model,
                                 dataCenters,
                                 filteredClusters, vm.getVdsGroupId());
+                        updateCompatibilityVersion();
                         initTemplate();
                         initCdImage();
                     }
@@ -256,7 +265,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         super.dataCenterWithClusterSelectedItemChanged();
         if (getModel().getSelectedCluster() != null) {
             updateCpuProfile(getModel().getSelectedCluster().getId(),
-                             getClusterCompatibilityVersion(),
+                             getCompatibilityVersion(),
                              vm.getCpuProfileId());
         }
     }
@@ -419,10 +428,16 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     public boolean isHotSetCpuSupported() {
         VDSGroup selectedCluster = getModel().getSelectedCluster();
-        Version clusterVersion = selectedCluster.getCompatibilityVersion();
-        Boolean hotplugEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HotPlugEnabled, clusterVersion.getValue());
-        boolean hotplugCpuSupported = Boolean.parseBoolean(((Map<String, String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HotPlugCpuSupported,
-                clusterVersion.getValue())).get(selectedCluster.getArchitecture().name()));
+        Version compatibilityVersion = getModel().getCompatibilityVersion();
+        Boolean hotplugEnabled = (Boolean)
+                    AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                            ConfigurationValues.HotPlugEnabled,
+                            compatibilityVersion.getValue());
+        boolean hotplugCpuSupported = Boolean.parseBoolean(
+                    ((Map<String, String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                            ConfigurationValues.HotPlugCpuSupported,
+                            compatibilityVersion.getValue()))
+                    .get(selectedCluster.getArchitecture().name()));
 
         return getVm().getStatus() == VMStatus.Up && hotplugEnabled && hotplugCpuSupported;
     }

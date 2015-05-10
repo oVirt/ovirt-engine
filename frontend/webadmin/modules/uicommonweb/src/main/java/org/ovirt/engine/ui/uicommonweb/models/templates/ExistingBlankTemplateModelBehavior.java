@@ -39,7 +39,7 @@ public class ExistingBlankTemplateModelBehavior extends ExistingNonClusterModelB
     }
 
     @Override
-    protected Version getClusterCompatibilityVersion() {
+    protected Version getCompatibilityVersion() {
         return latestCluster();
     }
 

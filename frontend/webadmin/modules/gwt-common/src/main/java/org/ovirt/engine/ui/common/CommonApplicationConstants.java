@@ -586,6 +586,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Custom CPU Type")
     String cpuModelLabel();
 
+    @DefaultStringValue("Custom Compatibility Version")
+    String customCompatibilityVersionLabel();
+
     @DefaultStringValue("Use cluster default")
     String clusterDefaultOption();
 

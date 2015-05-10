@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
@@ -107,6 +108,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getNumOfIoThreads().getEntity()).thenReturn(NUM_OF_IO_THREADS);
         when(model.getIoThreadsEnabled().getEntity()).thenReturn(true);
         when(model.getConsoleDisconnectAction().getSelectedItem()).thenReturn(ConsoleDisconnectAction.REBOOT);
+        when(model.getCustomCompatibilityVersion().getSelectedItem()).thenReturn(Version.v3_6);
     }
 
     protected void setUpOrigVm(VM origVm) {

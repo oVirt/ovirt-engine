@@ -545,11 +545,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateCustomPropertySheet() {
-        if (getModel().getSelectedCluster() == null) {
-            return;
+        if (getModel().getCompatibilityVersion() != null) {
+            updateCustomPropertySheet(getModel().getCompatibilityVersion());
         }
-        VDSGroup cluster = getModel().getSelectedCluster();
-        updateCustomPropertySheet(cluster.getCompatibilityVersion());
     }
 
     protected void updateCustomPropertySheet(Version clusterVersion) {
@@ -572,7 +570,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void updateMaxNumOfVmCpus() {
-        String version = getClusterCompatibilityVersion().toString();
+        String version = getCompatibilityVersion().toString();
 
         AsyncDataProvider.getInstance().getMaxNumOfVmCpus(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
@@ -587,7 +585,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void postUpdateNumOfSockets2() {
-        String version = getClusterCompatibilityVersion().toString();
+        String version = getCompatibilityVersion().toString();
 
         AsyncDataProvider.getInstance().getMaxNumOfCPUsPerSocket(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
@@ -602,7 +600,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void postUpdateNumOfSockets3() {
-        String version = getClusterCompatibilityVersion().toString();
+        String version = getCompatibilityVersion().toString();
 
         AsyncDataProvider.getInstance().getMaxNumOfThreadsPerCpu(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
@@ -807,7 +805,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Integer osType = getModel().getOSType().getSelectedItem();
 
         if (cluster != null && osType != null) {
-            updateMemoryBalloon(cluster.getCompatibilityVersion(), osType);
+            updateMemoryBalloon(getModel().getCompatibilityVersion(), osType);
         }
     }
 
@@ -823,25 +821,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     private boolean isRngDeviceSupported(UnitVmModel model) {
-        Version clusterVersion = clusterVersionOrNull(model);
+        Version clusterVersion = model.getCompatibilityVersion();
         return clusterVersion == null ? false : (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                 ConfigurationValues.VirtIoRngDeviceSupported, clusterVersion.getValue());
     }
 
-    private Version clusterVersionOrNull(UnitVmModel model) {
-        VDSGroup vdsGroup = model.getSelectedCluster();
-
-        if (vdsGroup == null || vdsGroup.getCompatibilityVersion() == null) {
-            return null;
-        }
-
-        return vdsGroup.getCompatibilityVersion();
-    }
-
     protected void updateCpuSharesAvailability() {
         if (getModel().getSelectedCluster() != null) {
-            VDSGroup cluster = getModel().getSelectedCluster();
-            boolean availableCpuShares = cluster.getCompatibilityVersion()
+            boolean availableCpuShares = getModel().getCompatibilityVersion()
                     .compareTo(Version.v3_3) >= 0;
             getModel().getCpuSharesAmountSelection().setIsAvailable(availableCpuShares);
             getModel().getCpuSharesAmount().setIsAvailable(availableCpuShares);
@@ -849,9 +836,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateVirtioScsiAvailability() {
-        VDSGroup cluster = getModel().getSelectedCluster();
         boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.VirtIoScsiEnabled, cluster.getCompatibilityVersion().getValue());
+                ConfigurationValues.VirtIoScsiEnabled, getModel().getCompatibilityVersion().getValue());
         getModel().getIsVirtioScsiEnabled().setIsAvailable(isVirtioScsiEnabled);
     }
 
@@ -912,8 +898,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateCpuPinningVisibility() {
         if (getModel().getSelectedCluster() != null) {
-            VDSGroup cluster = getModel().getSelectedCluster();
-            String compatibilityVersion = cluster.getCompatibilityVersion().toString();
+            String compatibilityVersion = getModel().getCompatibilityVersion().toString();
             boolean isLocalSD = getModel().getSelectedDataCenter() != null
                     && getModel().getSelectedDataCenter().isLocal();
 
@@ -948,8 +933,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void updateUseHostCpuAvailability() {
 
         boolean clusterSupportsHostCpu =
-                getClusterCompatibilityVersion() != null
-                        && (getClusterCompatibilityVersion().compareTo(Version.v3_2) >= 0);
+                    getCompatibilityVersion() != null && getCompatibilityVersion().compareTo(Version.v3_2) >= 0;
         boolean nonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
 
         if (clusterSupportsHostCpu && nonMigratable) {
@@ -1212,7 +1196,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateNumOfSockets() {
-        Version version = getClusterCompatibilityVersion();
+        Version version = getCompatibilityVersion();
         if (version == null) {
             return;
         }
@@ -1350,13 +1334,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateConsoleDevice(Guid vmId) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmId), new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<String> consoleDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
-            }
-        }));
+        Frontend.getInstance().runQuery(
+                VdcQueryType.GetConsoleDevices,
+                new IdQueryParameters(vmId),
+                new AsyncQuery(this, new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        List<String> consoleDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
+                    }
+                }));
     }
 
     protected void updateVirtioScsiEnabledWithoutDetach(final Guid vmId, int osId) {
@@ -1395,17 +1382,50 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(templateId), new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        @SuppressWarnings("unchecked")
-                        List<VmRngDevice> devs = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        getModel().getIsRngEnabled().setEntity(!devs.isEmpty());
-                        getModel().setRngDevice(devs.isEmpty() ? new VmRngDevice() : devs.get(0));
-                    }
+        Frontend.getInstance().runQuery(
+                VdcQueryType.GetRngDevice,
+                new IdQueryParameters(templateId),
+                new AsyncQuery(this,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object model, Object returnValue) {
+                                @SuppressWarnings("unchecked")
+                                List<VmRngDevice> devs = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                getModel().getIsRngEnabled().setEntity(!devs.isEmpty());
+                                getModel().setRngDevice(devs.isEmpty() ? new VmRngDevice() : devs.get(0));
+                            }
+                        }
+                ));
+    }
+
+    /*
+    * Updates the custom compatibility version combo box options on init/DC-change
+    */
+    protected void updateCompatibilityVersion() {
+        DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
+        if (dataCenterWithCluster == null) {
+            return;
+        }
+        final StoragePool dataCenter = dataCenterWithCluster.getDataCenter();
+        if (dataCenter == null) {
+            return;
+        }
+
+        AsyncQuery asyncQuery = new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                List<Version> versions = (List<Version>) result;
+                versions.add(0, null);
+                Version selectedVersion;
+                selectedVersion = getModel().getCustomCompatibilityVersion().getSelectedItem();
+                if (selectedVersion != null && versions.contains(selectedVersion)) {
+                    getModel().getCustomCompatibilityVersion().setItems(versions, selectedVersion);
+                } else {
+                    getModel().getCustomCompatibilityVersion().setItems(versions);
                 }
-        ));
+            }
+        });
+        AsyncDataProvider.getInstance().getDataCenterVersions(asyncQuery, dataCenter.getId());
     }
 
     /**
@@ -1433,15 +1453,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void updateNumOfIoThreads() {
-        Version clusterVersion = getClusterCompatibilityVersion();
-        if (clusterVersion == null) {
+        Version compatibilityVersion = getCompatibilityVersion();
+        if (compatibilityVersion == null) {
             return;
         }
 
-        getModel().getIoThreadsEnabled().updateChangeability(ConfigurationValues.IoThreadsSupported, getClusterCompatibilityVersion());
-        getModel().getNumOfIoThreads().updateChangeability(ConfigurationValues.IoThreadsSupported, getClusterCompatibilityVersion());
+        getModel().getIoThreadsEnabled().updateChangeability(ConfigurationValues.IoThreadsSupported, compatibilityVersion);
+        getModel().getNumOfIoThreads().updateChangeability(ConfigurationValues.IoThreadsSupported, compatibilityVersion);
 
-        if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.IoThreadsSupported, clusterVersion.getValue())) {
+        if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                ConfigurationValues.IoThreadsSupported, compatibilityVersion.getValue())) {
             getModel().getNumOfIoThreads().setIsAvailable(getModel().getIoThreadsEnabled().getEntity());
             if (getModel().getIoThreadsEnabled().getEntity() && getModel().getNumOfIoThreads().getEntity() == 0) {
                 getModel().getNumOfIoThreads().setEntity(DEFAULT_NUM_OF_IOTHREADS);
@@ -1449,13 +1470,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    protected Version getClusterCompatibilityVersion() {
-        VDSGroup cluster = getModel().getSelectedCluster();
-        if (cluster == null) {
-            return null;
-        }
-
-        return cluster.getCompatibilityVersion();
+    protected Version getCompatibilityVersion() {
+        return getModel().getCompatibilityVersion();
     }
 
     protected Version latestCluster() {

@@ -25,6 +25,6 @@ public class BalloonEnabled {
 
         return deviceEnabled
                 && AsyncDataProvider.getInstance().isBalloonEnabled(osType,
-                cluster.getCompatibilityVersion());
+                model.getCompatibilityVersion());
     }
 }

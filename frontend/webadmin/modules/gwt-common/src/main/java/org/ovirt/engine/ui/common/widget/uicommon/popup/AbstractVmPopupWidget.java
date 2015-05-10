@@ -715,6 +715,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("cpuSharesAmount")
     public IntegerEntityModelTextBoxOnlyEditor cpuSharesAmountEditor;
 
+    @UiField
+    @Path(value = "customCompatibilityVersion.selectedItem")
+    @WithElementId("customCompatibilityVersion")
+    public ListModelListBoxEditor<Version> customCompatibilityVersionEditor;
+
     // ==High Availability Tab==
     @UiField
     protected DialogTab highAvailabilityTab;
@@ -1673,9 +1678,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getDataCenterWithClustersList().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                VDSGroup vdsGroup = object.getSelectedCluster();
-                if (vdsGroup != null && vdsGroup.getCompatibilityVersion() != null) {
-                    boolean enabled = AsyncDataProvider.getInstance().isSerialNumberPolicySupported(vdsGroup.getCompatibilityVersion().getValue());
+                Version compatibilityVersion = object.getCompatibilityVersion();
+                if (compatibilityVersion != null) {
+                    boolean enabled = AsyncDataProvider.getInstance()
+                            .isSerialNumberPolicySupported(compatibilityVersion.getValue());
                     changeApplicationLevelVisibility(serialNumberPolicyEditor, enabled);
                 }
             }
@@ -1722,22 +1728,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
      * certain, configurable cluster version.
      */
     protected void updateUsbNativeMessageVisibility(final UnitVmModel object) {
-        Version vdsGroupVersion = clusterVersionOrNull(object);
-        changeApplicationLevelVisibility(nativeUsbWarningMessage,
+        Version compatibilityVersion = object.getCompatibilityVersion();
+        changeApplicationLevelVisibility(
+                nativeUsbWarningMessage,
                 object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE
-                        && vdsGroupVersion != null
-                        && !(Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MigrationSupportForNativeUsb,
-                                vdsGroupVersion.getValue()));
-    }
-
-    private Version clusterVersionOrNull(UnitVmModel model) {
-        VDSGroup vdsGroup = model.getSelectedCluster();
-
-        if (vdsGroup == null || vdsGroup.getCompatibilityVersion() == null) {
-            return null;
-        }
-
-        return vdsGroup.getCompatibilityVersion();
+                        && compatibilityVersion != null
+                        && !(Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                                ConfigurationValues.MigrationSupportForNativeUsb,
+                                compatibilityVersion.getValue()));
     }
 
     private void addDiskAllocation(UnitVmModel model) {
@@ -1983,6 +1981,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         autoConvergeEditor.setTabIndex(nextTabIndex++);
         migrateCompressedEditor.setTabIndex(nextTabIndex++);
         hostCpuEditor.setTabIndex(nextTabIndex++);
+        customCompatibilityVersionEditor.setTabIndex(nextTabIndex++);
 
         numaNodeCount.setTabIndex(nextTabIndex++);
         numaTuneMode.setTabIndex(nextTabIndex++);

@@ -165,6 +165,7 @@ public final class Cloner {
         vm.setComment(instance.getComment());
         vm.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
         vm.setCustomCpuName(instance.getCustomCpuName());
+        vm.setCustomCompatibilityVersion(instance.getCustomCompatibilityVersion());
         vm.setId(instance.getId());
         vm.setVmHost(instance.getVmHost());
         vm.setVmIp(instance.getVmIp());
@@ -419,6 +420,7 @@ public final class Cloner {
         obj.setComment(instance.getComment());
         obj.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
         obj.setCustomCpuName(instance.getCustomCpuName());
+        obj.setCustomCompatibilityVersion(instance.getCustomCompatibilityVersion());
         obj.setFailBack(instance.isFailBack());
         obj.setStateless(instance.isStateless());
         obj.setMemSizeMb(instance.getMemSizeMb());
@@ -478,6 +480,7 @@ public final class Cloner {
         obj.setComment(instance.getComment());
         obj.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
         obj.setCustomCpuName(instance.getCustomCpuName());
+        obj.setCustomCompatibilityVersion(instance.getCustomCompatibilityVersion());
         obj.setInitialized(instance.isInitialized());
         obj.setStateless(instance.isStateless());
         obj.setRunAndPause(instance.isRunAndPause());

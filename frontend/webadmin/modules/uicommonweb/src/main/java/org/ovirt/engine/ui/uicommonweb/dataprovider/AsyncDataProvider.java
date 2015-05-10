@@ -2787,12 +2787,13 @@ public class AsyncDataProvider {
 
 
     public boolean supportedForUnitVmModel(ConfigurationValues feature, UnitVmModel model) {
-        if (model.getSelectedCluster() == null || model.getSelectedCluster().getCompatibilityVersion() == null) {
-            return false;
-        }
+        Version version = model.getCompatibilityVersion();
 
-        String version = model.getSelectedCluster().getCompatibilityVersion().getValue();
-        return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(feature, version);
+        if (version == null) {
+            return false;
+        } else {
+            return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(feature, version.getValue());
+        }
     }
 
     /**
