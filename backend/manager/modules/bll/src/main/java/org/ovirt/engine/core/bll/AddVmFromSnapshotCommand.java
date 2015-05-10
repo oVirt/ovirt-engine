@@ -148,9 +148,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             return false;
         }
 
-        VmValidator vmValidator = createVmValidator(vmFromConfiguration);
-        if (Boolean.FALSE.equals(getParameters().isVirtioScsiEnabled()) &&
-                !validate(vmValidator.canDisableVirtioScsi(getAdjustedDiskImagesFromConfiguration()))) {
+        if (!checkCanDisableVirtIoScsi()) {
             return false;
         }
 
@@ -159,6 +157,16 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         }
 
         return true;
+    }
+
+    protected boolean checkCanDisableVirtIoScsi() {
+        VmValidator vmValidator = createVmValidator(vmFromConfiguration);
+        if (Boolean.FALSE.equals(getParameters().isVirtioScsiEnabled()) &&
+                !validate(vmValidator.canDisableVirtioScsi(getAdjustedDiskImagesFromConfiguration()))) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     protected SnapshotsValidator createSnapshotsValidator() {
