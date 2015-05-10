@@ -67,6 +67,8 @@ public enum VdcQueryType implements Serializable {
     GetErrataForSystem,
     GetErratumByIdForSystem,
     GetErrataCountsForHost,
+    GetErrataForVm,
+    GetErratumByIdForVm,
 
     // VdsStatic Queries
     GetVdsStaticByName,
