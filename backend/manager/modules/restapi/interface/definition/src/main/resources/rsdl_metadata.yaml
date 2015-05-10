@@ -797,6 +797,10 @@ actions:
       signatures:
       - mandatoryArguments: {action.maintenance_enabled: 'xs:boolean'}
         description: enable or disable maintenance mode for this virtual machine
+- name: /vms/{vm:id}/katelloerrata|rel=get
+  description: get the list of errata available for the vm
+- name: /vms/{vm:id}/katelloerrata/{katelloerratum:id}|rel=get
+  description: get the details of the specific erratum available for the vm
 - name: /disks|rel=get
   description: get a list of disks in the system
   request:

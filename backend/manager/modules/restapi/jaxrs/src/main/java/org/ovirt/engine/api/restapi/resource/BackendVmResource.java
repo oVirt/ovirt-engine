@@ -5,9 +5,11 @@ import static org.ovirt.engine.core.utils.Ticketing.generateOTP;
 
 import java.util.List;
 import java.util.Set;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
@@ -38,7 +40,9 @@ import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmSessionsResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
+import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendVmKatelloErrataResource;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
@@ -658,5 +662,10 @@ public class BackendVmResource extends
     @Override
     public VmNumaNodesResource getVirtualNumaNodesResource() {
         return inject(new BackendVmNumaNodesResource(guid));
+    }
+
+    @Override
+    public KatelloErrataResource getKatelloErrataResource() {
+        return inject(new BackendVmKatelloErrataResource(id));
     }
 }

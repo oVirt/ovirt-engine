@@ -3347,6 +3347,7 @@
           <xs:element name="numa_tune_mode" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="external_host_provider" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="katello_errata"  minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -5552,6 +5553,7 @@
           <xs:element name="summary" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="packages" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

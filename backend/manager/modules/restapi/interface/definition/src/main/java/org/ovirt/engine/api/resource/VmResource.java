@@ -28,6 +28,7 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreatedResource, MeasurableResource {
@@ -171,4 +172,6 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     @Path("sessions")
     public VmSessionsResource getVmSessionsResource();
 
+    @Path("katelloerrata")
+    public KatelloErrataResource getKatelloErrataResource();
 }

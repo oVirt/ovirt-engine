@@ -586,6 +586,7 @@ public class LinkHelper {
         TYPES.put(Agent.class, map);
 
         map = new ParentToCollectionMap(KatelloErratumResource.class, KatelloErrataResource.class, Host.class);
+        map.add(KatelloErratumResource.class, KatelloErrataResource.class, VM.class);
         map.add(KatelloErratumResource.class, SystemKatelloErrataResource.class, NO_PARENT);
         TYPES.put(KatelloErratum.class, map);
     }
