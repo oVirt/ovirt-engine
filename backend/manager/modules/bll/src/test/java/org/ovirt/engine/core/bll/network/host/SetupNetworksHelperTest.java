@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -29,10 +30,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
+import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
+import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
+import org.ovirt.engine.core.bll.validator.network.NetworkType;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -67,6 +72,8 @@ public class SetupNetworksHelperTest {
     private static final int DEFAULT_MTU = 1500;
     private static final int DEFAULT_SPEED = 1000;
     private static final String LIST_SUFFIX = "_LIST";
+    private static final EngineMessage NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_MSG =
+            EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -117,6 +124,12 @@ public class SetupNetworksHelperTest {
 
     @Mock
     private CalculateBaseNic calculateBaseNic;
+
+    @Mock
+    private NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver;
+
+    @Mock
+    private NetworkExclusivenessValidator networkExclusivenessValidator;
 
     /* --- Tests for networks functionality --- */
 
@@ -812,6 +825,9 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, vlanNic));
 
+        final List<NetworkType> networksOnIface = Arrays.asList(NetworkType.VM, NetworkType.VLAN);
+        when(networkExclusivenessValidator.isNetworkExclusive(networksOnIface)).thenReturn(false);
+
         validateAndExpectViolation(helper,
             EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
             nic.getName());
@@ -832,6 +848,9 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(vlanNic, nic));
 
+        final List<NetworkType> networksOnIface = Arrays.asList(NetworkType.VLAN, NetworkType.VM);
+        when(networkExclusivenessValidator.isNetworkExclusive(networksOnIface)).thenReturn(false);
+
         validateAndExpectViolation(helper,
             EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
             nic.getName());
@@ -851,6 +870,9 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, vlanNic));
 
+        final List<NetworkType> networksOnIface = Arrays.asList(NetworkType.VM, NetworkType.VLAN);
+        when(networkExclusivenessValidator.isNetworkExclusive(networksOnIface)).thenReturn(false);
+
         validateAndExpectViolation(helper,
             EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
             nic.getName());
@@ -869,6 +891,9 @@ public class SetupNetworksHelperTest {
         VdsNetworkInterface fakeVlanNic = createVlan(nic, 100, net2.getName());
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, fakeVlanNic));
+
+        final List<NetworkType> networksOnIface = Arrays.asList(NetworkType.VM, NetworkType.VLAN);
+        when(networkExclusivenessValidator.isNetworkExclusive(networksOnIface)).thenReturn(false);
 
         validateAndExpectViolation(helper,
             EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
@@ -2138,8 +2163,16 @@ public class SetupNetworksHelperTest {
     @SuppressWarnings("deprecation")
     private SetupNetworksHelper createHelper(SetupNetworksParameters params, VDS vds, Version compatibilityVersion) {
         when(vds.getVdsGroupCompatibilityVersion()).thenReturn(compatibilityVersion);
+        final HashSet<Version> supportedClusterVersions = new HashSet<>();
+        when(vds.getSupportedClusterVersionsSet()).thenReturn(supportedClusterVersions);
+        when(networkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator(same(supportedClusterVersions)))
+                .thenReturn(networkExclusivenessValidator);
+        when(networkExclusivenessValidator.isNetworkExclusive(Mockito.anyListOf(NetworkType.class))).thenReturn(true);
+        when(networkExclusivenessValidator.getViolationMessage()).thenReturn(
+                NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_MSG);
 
-        SetupNetworksHelper helper = spy(new SetupNetworksHelper(params, vds, managementNetworkUtil));
+        SetupNetworksHelper helper = spy(
+                new SetupNetworksHelper(params, vds, managementNetworkUtil, networkExclusivenessValidatorResolver));
 
         when(helper.getVmInterfaceManager()).thenReturn(vmInterfaceManager);
         doReturn(null).when(helper).translateErrorMessages(Matchers.<List<String>> any());

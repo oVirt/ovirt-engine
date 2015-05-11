@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -51,6 +52,9 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
     @Inject
     private HostNetworkTopologyPersister hostNetworkTopologyPersister;
+
+    @Inject
+    private NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver;
 
     public static enum SETUP_NETWORKS_RESOLUTION {
         NO_CHANGES_DETECTED;
@@ -95,7 +99,12 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             return false;
         }
 
-        helper = new SetupNetworksHelper(getParameters(), vds, managementNetworkUtil);
+        helper = new SetupNetworksHelper(
+                getParameters(),
+                vds,
+                managementNetworkUtil,
+                networkExclusivenessValidatorResolver);
+
         List<String> validationMessages = helper.validate();
 
         if (!validationMessages.isEmpty()) {

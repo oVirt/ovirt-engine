@@ -2,8 +2,11 @@ package org.ovirt.engine.core.bll.validator;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
+import static org.ovirt.engine.core.common.errors.EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +18,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
+import org.ovirt.engine.core.bll.validator.network.NetworkType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -24,6 +34,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
+@RunWith(MockitoJUnitRunner.class)
 public class NetworkAttachmentsValidatorTest {
 
     private Network vlanNetwork;
@@ -37,6 +48,12 @@ public class NetworkAttachmentsValidatorTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
     private BusinessEntityMap<Network> networkMap;
+
+    @Mock
+    private NetworkExclusivenessValidator networkExclusivenessValidator;
+
+    @Captor
+    private ArgumentCaptor<List<NetworkType>> networkTypeCaptor;
 
     @Before
     public void setUp() throws Exception {
@@ -61,6 +78,9 @@ public class NetworkAttachmentsValidatorTest {
 
         networkMap = new BusinessEntityMap<>(
                 Arrays.asList(vlanNetwork, vmNetwork1, vmNetwork2, nonVmNetwork1, nonVmNetwork2));
+
+        when(networkExclusivenessValidator.getViolationMessage())
+                .thenReturn(NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK);
     }
 
     private Network createNetworkWithId() {
@@ -75,15 +95,30 @@ public class NetworkAttachmentsValidatorTest {
         return network;
     }
 
-    private void checkVmNetworkIsSoleAssignedInterface(Matcher<ValidationResult> matcher, Network... networks) {
+    private void checkVmNetworkIsSoleAssignedInterface(boolean valid,
+            List<NetworkType> expectedNetworksTypes,
+            Network... networks) {
 
         List<NetworkAttachment> attachmentsToConfigure = new ArrayList<>(networks.length);
         for (Network network : networks) {
             attachmentsToConfigure.add(createNetworkAttachment(nic.getName(), network));
         }
 
-        NetworkAttachmentsValidator validator = new NetworkAttachmentsValidator(attachmentsToConfigure, networkMap);
-        assertThat(validator.validateNetworkExclusiveOnNics(), matcher);
+        when(networkExclusivenessValidator.isNetworkExclusive(expectedNetworksTypes)).thenReturn(valid);
+
+        NetworkAttachmentsValidator validator = new NetworkAttachmentsValidator(
+                attachmentsToConfigure,
+                networkMap,
+                networkExclusivenessValidator);
+
+        final ValidationResult actual = validator.validateNetworkExclusiveOnNics();
+
+        verify(networkExclusivenessValidator).isNetworkExclusive(networkTypeCaptor.capture());
+
+        assertThat(networkTypeCaptor.getValue(), is(expectedNetworksTypes));
+        final Matcher<? super ValidationResult> matcher =
+                valid ? isValid() : failsWith(NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK);
+        assertThat(actual, matcher);
     }
 
     private NetworkAttachment createNetworkAttachment(String nicName, Network network) {
@@ -98,66 +133,69 @@ public class NetworkAttachmentsValidatorTest {
         return result;
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testValidateNetworkExclusiveOnNicsAllAttachmentsMustHaveNicNameSet() throws Exception {
-        NetworkAttachment networkAttachment = createNetworkAttachment(vmNetwork1);
+        NetworkAttachment networkAttachment = new NetworkAttachment();
+        networkAttachment.setNetworkId(vmNetwork1.getId());
         List<NetworkAttachment> attachmentsToConfigure = Collections.singletonList(networkAttachment);
 
-        expectedException.expect(IllegalArgumentException.class);
-        new NetworkAttachmentsValidator(attachmentsToConfigure, networkMap).validateNetworkExclusiveOnNics();
+        new NetworkAttachmentsValidator(attachmentsToConfigure,
+                networkMap,
+                networkExclusivenessValidator).validateNetworkExclusiveOnNics();
     }
 
-
     @Test
-    public void testValidateNetworkExclusiveOnNicsVmNetworkIsSoleAttachedInterface() throws Exception {
-        checkVmNetworkIsSoleAssignedInterface(isValid(), vmNetwork1);
+    public void testValidateNetworkExclusiveOnNicsVmNetworkMustBeSoleAttachedInterface() throws Exception {
+        checkVmNetworkIsSoleAssignedInterface(false, Arrays.asList(NetworkType.VM), vmNetwork1);
     }
 
     @Test
     public void testValidateNetworkExclusiveOnNicsTwoVmNetworksAttachedToInterface() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-            failsWithNetworkInterfacesNotExclusivelyUsedByNetwork(),
-            vmNetwork1, vmNetwork2);
+                false,
+                Arrays.asList(NetworkType.VM, NetworkType.VM),
+                vmNetwork1, vmNetwork2);
     }
 
     @Test
     public void testValidateNetworkExclusiveOnNicsVmAndNonVmAttachedToInterface() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-            failsWithNetworkInterfacesNotExclusivelyUsedByNetwork(),
-            vmNetwork1, nonVmNetwork1);
+                false,
+                Arrays.asList(NetworkType.VM, NetworkType.NON_VM),
+                vmNetwork1, nonVmNetwork1);
     }
 
     @Test
     public void testValidateNetworkExclusiveOnNicsVmAndVlanAttachedToInterface() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-            failsWithNetworkInterfacesNotExclusivelyUsedByNetwork(),
-            vmNetwork1, vlanNetwork);
+                true,
+                Arrays.asList(NetworkType.VM, NetworkType.VLAN),
+                vmNetwork1, vlanNetwork);
     }
 
     @Test
     public void testValidateNetworkExclusiveOnNicAtMostOneNonVmNetwork() throws Exception {
-        checkVmNetworkIsSoleAssignedInterface(isValid(), vlanNetwork, nonVmNetwork1);
+        checkVmNetworkIsSoleAssignedInterface(
+                true,
+                Arrays.asList(NetworkType.VLAN, NetworkType.NON_VM),
+                vlanNetwork, nonVmNetwork1);
     }
 
     @Test
     public void testValidateNetworkExclusiveOnNicAtMostOneNonVmNetworkViolated() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-            failsWithNetworkInterfacesNotExclusivelyUsedByNetwork(),
-            nonVmNetwork1, nonVmNetwork2);
-    }
-
-    private Matcher<ValidationResult> failsWithNetworkInterfacesNotExclusivelyUsedByNetwork() {
-        return failsWith(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
-            ReplacementUtils.replaceWith(NetworkAttachmentsValidator.VAR_NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST,
-                Collections.singletonList(nic.getName())));
+                false,
+                Arrays.asList(NetworkType.NON_VM, NetworkType.NON_VM),
+                nonVmNetwork1, nonVmNetwork2);
     }
 
     @Test
     public void testDetermineNetworkType() throws Exception {
-        NetworkAttachmentsValidator validator = new NetworkAttachmentsValidator(null, null);
-        assertThat(validator.determineNetworkType(vlanNetwork), is(NetworkAttachmentsValidator.NetworkType.VLAN));
-        assertThat(validator.determineNetworkType(vmNetwork1), is(NetworkAttachmentsValidator.NetworkType.VM));
-        assertThat(validator.determineNetworkType(nonVmNetwork1), is(NetworkAttachmentsValidator.NetworkType.NON_VM));
+        NetworkAttachmentsValidator validator = new NetworkAttachmentsValidator(null, null,
+                networkExclusivenessValidator);
+        assertThat(validator.determineNetworkType(vlanNetwork), is(NetworkType.VLAN));
+        assertThat(validator.determineNetworkType(vmNetwork1), is(NetworkType.VM));
+        assertThat(validator.determineNetworkType(nonVmNetwork1), is(NetworkType.NON_VM));
     }
 
     @Test
@@ -170,7 +208,8 @@ public class NetworkAttachmentsValidatorTest {
 
         List<NetworkAttachment> attachments = Arrays.asList(networkAttachmentA, networkAttachmentB);
         BusinessEntityMap<Network> networksMap = new BusinessEntityMap<>(Arrays.asList(networkA, networkB));
-        NetworkAttachmentsValidator validator = new NetworkAttachmentsValidator(attachments, networksMap);
+        NetworkAttachmentsValidator validator =
+                new NetworkAttachmentsValidator(attachments, networksMap, networkExclusivenessValidator);
         assertThat(validator.verifyUserAttachmentsDoesNotReferenceSameNetworkDuplicately(), isValid());
     }
 
@@ -185,7 +224,8 @@ public class NetworkAttachmentsValidatorTest {
         List<NetworkAttachment> attachments = Arrays.asList(networkAttachmentA, networkAttachmentB);
         BusinessEntityMap<Network> networksMap = new BusinessEntityMap<>(Collections.singletonList(
             duplicatelyReferencedNetwork));
-        NetworkAttachmentsValidator validator = new NetworkAttachmentsValidator(attachments, networksMap);
+        NetworkAttachmentsValidator validator =
+                new NetworkAttachmentsValidator(attachments, networksMap, networkExclusivenessValidator);
 
         List<String> replacements = new ArrayList<>();
         replacements.addAll(ReplacementUtils.replaceWith(

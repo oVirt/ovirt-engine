@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
-import org.apache.commons.collections.Bag;
-import org.apache.commons.collections.bag.HashBag;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
+import org.ovirt.engine.core.bll.validator.network.NetworkType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -26,14 +27,20 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
  */
 public class NetworkAttachmentsValidator {
 
-    public static final String VAR_NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST = "NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST";
+    private static final String LIST_SUFFIX = "_LIST";
+
     private final Collection<NetworkAttachment> attachmentsToConfigure;
     private final BusinessEntityMap<Network> networkBusinessEntityMap;
+    private final NetworkExclusivenessValidator networkExclusivenessValidator;
 
     public NetworkAttachmentsValidator(Collection<NetworkAttachment> attachmentsToConfigure,
-            BusinessEntityMap<Network> networkBusinessEntityMap) {
+            BusinessEntityMap<Network> networkBusinessEntityMap,
+            NetworkExclusivenessValidator networkExclusivenessValidator) {
+        Objects.requireNonNull(networkExclusivenessValidator, "networkExclusivenessValidator cannot be null");
+
         this.attachmentsToConfigure = attachmentsToConfigure;
         this.networkBusinessEntityMap = networkBusinessEntityMap;
+        this.networkExclusivenessValidator = networkExclusivenessValidator;
     }
 
     public ValidationResult validateNetworkExclusiveOnNics() {
@@ -43,9 +50,9 @@ public class NetworkAttachmentsValidator {
         if (violatedNics.isEmpty()) {
             return ValidationResult.VALID;
         } else {
-            return new ValidationResult(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
-                ReplacementUtils.replaceWith(VAR_NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST,
-                    violatedNics));
+            final EngineMessage violationMessage = networkExclusivenessValidator.getViolationMessage();
+            return new ValidationResult(violationMessage,
+                ReplacementUtils.replaceWith(violationMessage + LIST_SUFFIX, violatedNics));
         }
     }
 
@@ -54,7 +61,7 @@ public class NetworkAttachmentsValidator {
         for (Entry<String, List<NetworkType>> nicNameToNetworkTypes : nicNameToNetworkTypesMap.entrySet()) {
             String nicName = nicNameToNetworkTypes.getKey();
             List<NetworkType> networkTypes = nicNameToNetworkTypes.getValue();
-            if (!validateNetworkTypesOnNic(networkTypes)) {
+            if (!networkExclusivenessValidator.isNetworkExclusive(networkTypes)) {
                 violatedNics.add(nicName);
             }
         }
@@ -83,27 +90,6 @@ public class NetworkAttachmentsValidator {
         return NetworkUtils.isVlan(network)
                 ? NetworkType.VLAN
                 : network.isVmNetwork() ? NetworkType.VM : NetworkType.NON_VM;
-    }
-
-    /**
-     * Make sure that if the given interface has a VM network on it then there is nothing else on the interface, or if
-     * the given interface is a VLAN network, than there is no VM network on the interface.<br>
-     * Other combinations are either legal or illegal but are not a concern of this method.
-     *
-     * @return true if for given nic there's either nothing, sole VM network,
-     * or at most one NON-VM network with any number of VLANs.
-     */
-    private boolean validateNetworkTypesOnNic(List<NetworkType> networksOnInterface) {
-        if (networksOnInterface.size() <= 1) {
-            return true;
-        }
-
-        Bag networkTypes = new HashBag(networksOnInterface);
-        boolean vmNetworkIsNotSoleNetworkAssigned = networkTypes.contains(NetworkType.VM);
-        boolean moreThanOneNonVmNetworkAssigned =
-            networkTypes.contains(NetworkType.NON_VM) && networkTypes.getCount(NetworkType.NON_VM) > 1;
-
-        return !(vmNetworkIsNotSoleNetworkAssigned || moreThanOneNonVmNetworkAssigned);
     }
 
     public ValidationResult verifyUserAttachmentsDoesNotReferenceSameNetworkDuplicately() {
@@ -137,11 +123,5 @@ public class NetworkAttachmentsValidator {
         }
 
         return ValidationResult.VALID;
-    }
-
-    enum NetworkType {
-        VM,
-        NON_VM,
-        VLAN
     }
 }

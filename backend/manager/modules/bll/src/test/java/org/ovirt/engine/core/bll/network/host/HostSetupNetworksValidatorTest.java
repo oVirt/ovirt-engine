@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -26,8 +27,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -35,7 +36,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -43,9 +43,12 @@ import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.bll.validator.ValidationResultMatchers;
+import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
+import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -72,8 +75,10 @@ import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 @RunWith(MockitoJUnitRunner.class)
 public class HostSetupNetworksValidatorTest {
 
+    private static final String TEST_VERSION = "123.456";
+    private static final Set<Version> TEST_SUPPORTED_VERSIONS = Collections.singleton(new Version(TEST_VERSION));
+
     private VDS host;
-    private ManagementNetworkUtil managementNetworkUtil;
 
     @Mock
     private NetworkDao networkDaoMock;
@@ -104,16 +109,27 @@ public class HostSetupNetworksValidatorTest {
         mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_5.toString(), false),
         mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_6.toString(), true));
 
+    @Mock
+    private ManagementNetworkUtil managementNetworkUtil;
+    @Mock
+    private NetworkExclusivenessValidatorResolver mockNetworkExclusivenessValidatorResolver;
+    @Mock
+    private NetworkExclusivenessValidator mockNetworkExclusivenessValidator;
+
     @Before
     public void setUp() throws Exception {
         host = new VDS();
         host.setId(Guid.newGuid());
         host.setVdsGroupCompatibilityVersion(Version.v3_5);
-
-        managementNetworkUtil = Mockito.mock(ManagementNetworkUtil.class);
+        final VdsDynamic vdsDynamic = new VdsDynamic();
+        vdsDynamic.setSupportedClusterLevels(TEST_VERSION);
+        host.setDynamicData(vdsDynamic);
 
         bond = new Bond();
         bond.setId(Guid.newGuid());
+
+        when(mockNetworkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator(TEST_SUPPORTED_VERSIONS))
+                .thenReturn(mockNetworkExclusivenessValidator);
     }
 
     public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk() throws Exception {
@@ -168,9 +184,9 @@ public class HostSetupNetworksValidatorTest {
             Collections.singletonList(labeledNetwork));
 
         assertThat(validator.notRemovingLabeledNetworks(networkAttachment),
-            failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST,
-                    labeledNetwork.getName())));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
+                        ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST,
+                                labeledNetwork.getName())));
 
     }
 
@@ -417,12 +433,12 @@ public class HostSetupNetworksValidatorTest {
         params.setRemovedBonds(Collections.singleton(notABond.getId()));
 
         HostSetupNetworksValidator validator = createHostSetupNetworksValidator(params,
-            Collections.singletonList(notABond));
+                Collections.singletonList(notABond));
 
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()),
             failsWith(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND,
                 ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NETWORK_INTERFACE_IS_NOT_BOND_ENTITY,
-                    notABond.getName())));
+                        notABond.getName())));
 
     }
 
@@ -467,7 +483,7 @@ public class HostSetupNetworksValidatorTest {
 
         assertThat(validator.validRemovedBonds(Collections.singletonList(requiredNetworkAttachment)),
             failsWith(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS,
-                replacements));
+                    replacements));
 
     }
 
@@ -482,7 +498,7 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksValidator validator = createHostSetupNetworksValidator(params,
             Collections.<VdsNetworkInterface> singletonList(bond));
 
-        assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()), isValid());
+        assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment>emptyList()), isValid());
     }
 
     @SuppressWarnings("unchecked")
@@ -717,10 +733,10 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksValidator validator = createHostSetupNetworksValidator(Collections.singletonList(networkA));
 
         assertThat(validator.networksUniquelyConfiguredOnHost(Arrays.asList(networkAttachment,
-                networkAttachmentReferencingSameNetwork)),
-            failsWith(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
-                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST,
-                    networkName)));
+                        networkAttachmentReferencingSameNetwork)),
+                failsWith(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
+                        ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST,
+                                networkName)));
 
     }
 
@@ -930,13 +946,13 @@ public class HostSetupNetworksValidatorTest {
         params.setBonds(Arrays.asList(bond, differentBond));
 
         doTestValidateModifiedBondSlaves(
-            params,
-            Arrays.asList(bond, differentBond, slaveA, slaveB, slaveC, slaveD),
-            Collections.<NetworkAttachment> emptyList(),
-            Collections.<Network> emptyList(),
-            ValidationResult.VALID,
-            ValidationResult.VALID,
-            ValidationResult.VALID);
+                params,
+                Arrays.asList(bond, differentBond, slaveA, slaveB, slaveC, slaveD),
+                Collections.<NetworkAttachment>emptyList(),
+                Collections.<Network>emptyList(),
+                ValidationResult.VALID,
+                ValidationResult.VALID,
+                ValidationResult.VALID);
     }
 
     public Bond createBond(String bondName) {
@@ -1198,7 +1214,7 @@ public class HostSetupNetworksValidatorTest {
 
         ValidationResult validate = validator.validate();
 
-        assertThat(validate, CoreMatchers.not(isValid()));
+        assertThat(validate, not(isValid()));
 
         assertThat(validate,
             failsWith(EngineMessage.NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME,
@@ -1636,10 +1652,11 @@ public class HostSetupNetworksValidatorTest {
                 new BusinessEntityMap<>(networks),
                 managementNetworkUtil,
                 networkClusterDaoMock,
-                    networkDaoMock,
+                networkDaoMock,
                 vdsDaoMock,
                 new HostSetupNetworksValidatorHelper(),
-                vmDao);
+                vmDao,
+                mockNetworkExclusivenessValidatorResolver);
         }
     }
 }

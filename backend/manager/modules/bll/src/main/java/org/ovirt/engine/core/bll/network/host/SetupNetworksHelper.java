@@ -16,6 +16,9 @@ import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
+import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
+import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
+import org.ovirt.engine.core.bll.validator.network.NetworkType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -49,7 +52,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SetupNetworksHelper {
-    protected static final String VIOLATING_ENTITIES_LIST_FORMAT = "${0}_LIST {1}";
     private static final Logger log = LoggerFactory.getLogger(SetupNetworksHelper.class);
     private final NetworkDao networkDao;
     private final NetworkAttachmentDao networkAttachmentDao;
@@ -85,15 +87,21 @@ public class SetupNetworksHelper {
     private final ManagementNetworkUtil managementNetworkUtil;
     private EffectiveHostNetworkQos effectiveHostNetworkQos;
     private final NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
+    private final NetworkExclusivenessValidator networkExclusivenessValidator;
 
     public SetupNetworksHelper(SetupNetworksParameters parameters,
                                VDS vds,
-                               ManagementNetworkUtil managementNetworkUtil) {
+                               ManagementNetworkUtil managementNetworkUtil,
+                               NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver) {
         Validate.notNull(managementNetworkUtil, "managementNetworkUtil can not be null");
+        Validate.notNull(networkExclusivenessValidatorResolver, "networkExclusivenessValidatorResolver can not be null");
 
         this.managementNetworkUtil = managementNetworkUtil;
         this.params = parameters;
         this.vds = vds;
+
+        networkExclusivenessValidator =
+                networkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator(vds.getSupportedClusterVersionsSet());
 
         setSupportedFeatures();
         networkDao = Injector.get(NetworkDao.class);
@@ -190,7 +198,7 @@ public class SetupNetworksHelper {
             }
             List<GlusterBrickEntity> bricks =
                     glusterBrickDao.getAllByClusterAndNetworkId(vds.getVdsGroupId(),
-                        removedNetwork.getId());
+                            removedNetwork.getId());
             if (!bricks.isEmpty()) {
                 addViolation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK, network);
             }
@@ -654,12 +662,10 @@ public class SetupNetworksHelper {
             ifacesWithExclusiveNetwork.put(ifaceName, networksOnIface);
         }
 
-        if ((networkType == NetworkType.VLAN && networksOnIface.contains(NetworkType.VM))
-                || (networkType == NetworkType.VM && !networksOnIface.isEmpty())) {
-            addViolation(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK, ifaceName);
-        }
-
         networksOnIface.add(networkType);
+        if (!networkExclusivenessValidator.isNetworkExclusive(networksOnIface)) {
+            addViolation(networkExclusivenessValidator.getViolationMessage(), ifaceName);
+        }
     }
 
     /**
@@ -891,9 +897,4 @@ public class SetupNetworksHelper {
         return new VmInterfaceManager();
     }
 
-    private enum NetworkType {
-        VM,
-        NON_VM,
-        VLAN
-    }
 }
