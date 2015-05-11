@@ -7,14 +7,19 @@
     <ui:style type="org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBox.Style">
         .mainStyle,.enabledMainPanel,.disabledMainPanel {
             display: inline-block;
-            height: 17px;
             border: 1px solid black;
             vertical-align: middle;
         }
 
+        .maxWidth {
+            width: 100%;
+        }
+
         .suggestBoxStyle {
             border-width: 0px;
-            width: 100%;
+        }
+
+        .suggestBoxStyle_legacy {
             vertical-align: top;
             height: 15px;
             padding-left: 4px;
@@ -28,8 +33,11 @@
             vertical-align: top;
         }
 
-        .suggestBoxWrapperStyle {
+        .suggestBoxWrapperStyle_legacy {
             height: 17px;
+        }
+
+        .suggestBoxWrapperStyle {
             margin-right: 15px;
         }
 
@@ -47,8 +55,8 @@
             <g:Image ui:field="dropDownImage" addStyleNames="{style.dropDownStyle}" resource='{resources.comboBoxDropDownIcon}' />
         </g:FlowPanel>
 
-        <g:FlowPanel addStyleNames="{style.suggestBoxWrapperStyle} lmtalb_suggestboxWrapper_pfly_fix">
-            <g:SuggestBox addStyleNames="{style.suggestBoxStyle} lmtalb_suggestbox_pfly_fix gwt-ListBox" ui:field="suggestBox" />
+        <g:FlowPanel addStyleNames="{style.suggestBoxWrapperStyle} {style.suggestBoxWrapperStyle_legacy} lmtalb_suggestboxWrapper_pfly_fix">
+            <g:SuggestBox addStyleNames="{style.suggestBoxStyle} {style.maxWidth} {style.suggestBoxStyle_legacy} lmtalb_suggestbox_pfly_fix gwt-ListBox" ui:field="suggestBox" />
         </g:FlowPanel>
     </g:FlowPanel>
 

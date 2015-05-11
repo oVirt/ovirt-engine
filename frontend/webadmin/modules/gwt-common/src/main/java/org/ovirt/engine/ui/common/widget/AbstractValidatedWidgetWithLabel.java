@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.FormLabel;
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
@@ -168,6 +169,14 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
             addWrapperStyleName(style.wrapper_legacy());
             addWrapperStyleName("avw_wrapper_pfly_fix"); //$NON-NLS-1$
         }
+    }
+
+    public void setLabelColSize(ColumnSize size) {
+        addLabelStyleName(size.getCssName());
+    }
+
+    public void setWidgetColSize(ColumnSize size) {
+        addContentWidgetContainerStyleName(size.getCssName());
     }
 
     /**

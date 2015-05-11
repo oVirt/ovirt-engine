@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor.SuggestBoxRenderer;
@@ -49,6 +50,13 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
  */
 public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
+    private static final String LMTALB_LISTBOX_PFLY_FIX = "lmtalb_listbox_pfly_fix"; //$NON-NLS-1$
+    private static final String LMTALB_WRAPPER_LISTBOX_PFLY_FIX = "lmtalb_suggestboxWrapper_pfly_fix"; //$NON-NLS-1$
+    private static final String LMTALB_SUGGESTBOX_PFLY_FIX = "lmtalb_suggestbox_pfly_fix"; //$NON-NLS-1$
+    private static final String PATTERNFLY_IMAGE_HEIGHT = "23px"; //$NON-NLS-1$
+
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
     @UiField(provided = true)
     SuggestBox suggestBox;
 
@@ -79,13 +87,17 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         String enabledMainPanel();
 
         String disabledMainPanel();
+
+        String suggestBoxStyle_legacy();
+
+        String suggestBoxWrapperStyle_legacy();
+
+        String maxWidth();
     }
 
-    interface ViewUiBinder extends UiBinder<FlowPanel, ListModelTypeAheadListBox> {
+    interface ViewUiBinder extends UiBinder<FlowPanel, ListModelTypeAheadListBox<?>> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public ListModelTypeAheadListBox(SuggestBoxRenderer<T> renderer, boolean autoAddToValidValues,
                                      SuggestionMatcher suggestionMatcher) {
@@ -99,9 +111,22 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         setAutoHideEnabled(false);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        mainPanel.getElement().addClassName("lmtalb_listbox_pfly_fix"); //$NON-NLS-1$
+        mainPanel.getElement().addClassName(LMTALB_LISTBOX_PFLY_FIX);
 
         registerListeners();
+    }
+
+    public void setUsePatternFly(final boolean usePatternFly) {
+        if (usePatternFly) {
+            mainPanel.removeStyleName(LMTALB_LISTBOX_PFLY_FIX);
+            mainPanel.removeStyleName(Styles.FORM_CONTROL);
+            mainPanel.addStyleName(style.maxWidth());
+            suggestBox.removeStyleName(style.suggestBoxStyle_legacy());
+            suggestBox.removeStyleName(LMTALB_SUGGESTBOX_PFLY_FIX);
+            suggestBox.getParent().removeStyleName(LMTALB_WRAPPER_LISTBOX_PFLY_FIX);
+            suggestBox.getParent().removeStyleName(style.suggestBoxWrapperStyle_legacy());
+            dropDownImage.setHeight(PATTERNFLY_IMAGE_HEIGHT);
+        }
     }
 
     private void registerListeners() {

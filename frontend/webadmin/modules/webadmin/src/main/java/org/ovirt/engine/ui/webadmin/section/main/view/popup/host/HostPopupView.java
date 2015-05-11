@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
@@ -73,7 +75,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -161,6 +162,12 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @WithElementId("providers")
     ListModelListBoxEditor<Provider> providersEditor;
 
+    @UiField
+    Row searchProviderRow;
+
+    @UiField
+    Row discoveredHostsRow;
+
     @UiField(provided = true)
     @Path(value = "externalDiscoveredHosts.selectedItem")
     @WithElementId("externalDiscoveredHosts")
@@ -196,12 +203,12 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @WithElementId("publicKey")
     StringEntityModelTextAreaLabelEditor publicKeyEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "overrideIpTables.entity")
     @WithElementId("overrideIpTables")
     EntityModelCheckBoxEditor overrideIpTablesEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "protocol.entity")
     @WithElementId("protocol")
     EntityModelCheckBoxEditor protocolEditor;
@@ -386,22 +393,22 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @UiField
     @Path(value = "pkSection.entity")
     @WithElementId("pkSection")
-    HorizontalPanel pkSection;
+    Row pkSection;
 
     @UiField
     @Path(value = "passwordSection.entity")
     @WithElementId("passwordSection")
-    HorizontalPanel passwordSection;
+    Row passwordSection;
 
     @UiField
     @Path(value = "provisionedHostSection.entity")
     @WithElementId
-    HorizontalPanel provisionedHostSection;
+    Column provisionedHostSection;
 
     @UiField
     @Path(value = "discoveredHostSection.entity")
     @WithElementId
-    HorizontalPanel discoveredHostSection;
+    Column discoveredHostSection;
 
     @UiField(provided = true)
     @Ignore
@@ -426,6 +433,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @UiField
     @Ignore
     Label authLabel;
+
+    @UiField
+    @Ignore
+    Label rootPasswordLabel;
 
     @UiField
     @Ignore
@@ -475,12 +486,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Ignore
     FlowPanel expanderContent;
 
-    @UiField
-    FlowPanel searchProviderPanel;
-
-    @UiField
-    FlowPanel discoveredHostsPanel;
-
     private final Driver driver = GWT.create(Driver.class);
 
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
@@ -495,12 +500,19 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         initEditors();
         initInfoIcon();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        hideEditorLabels();
         initExpander();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize();
         addStyles();
         driver.initialize(this);
         applyModeCustomizations();
+    }
+
+    private void hideEditorLabels() {
+        providersEditor.hideLabel();
+        passwordEditor.hideLabel();
+        publicKeyEditor.hideLabel();
     }
 
     private void initInfoIcon() {
@@ -515,14 +527,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     }
 
     private void addStyles() {
-        overrideIpTablesEditor.addContentWidgetContainerStyleName(style.overrideIpStyle());
-        protocolEditor.addContentWidgetContainerStyleName(style.protocolStyle());
         externalHostProviderEnabledEditor.addContentWidgetContainerStyleName(style.externalHostProviderEnabledEditorContent());
         providerSearchFilterEditor.addContentWidgetContainerStyleName(style.searchFilter());
-        providerSearchFilterEditor.setStyleName(style.searchFilterLabel());
         providerSearchFilterEditor.setLabelStyleName(style.emptyEditor());
         providerSearchFilterLabel.addContentWidgetContainerStyleName(style.emptyEditor());
-        providerSearchFilterLabel.setStyleName(style.searchFilterLabel());
         fetchSshFingerprint.addContentWidgetContainerStyleName(style.fingerprintEditor());
         expanderContent.setStyleName(style.expanderContent());
         publicKeyEditor.setCustomStyle(style.pkStyle());
@@ -554,6 +562,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         externalHostProviderEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        overrideIpTablesEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        protocolEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         rbPassword = new RadioButton("1"); //$NON-NLS-1$
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
@@ -597,6 +607,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         hostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
         authSshPortEditor.setLabel(constants.hostPopupPortLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
+        rootPasswordLabel.setText(constants.hostPopupAuthLabelForExternalHost());
         rbPassword.setText(constants.hostPopupPasswordLabel());
         rbPublicKey.setText(constants.hostPopupPublicKeyLable());
         rbProvisionedHost.setText(constants.provisionedHostsLabel());
@@ -676,7 +687,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void edit(final HostModel object) {
         driver.edit(object);
         setTabIndexes(0);
@@ -902,13 +912,13 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     private void showDiscoveredHostsWidgets(boolean enabled) {
         usualFormToDiscover(enabled);
         showExternalDiscoveredHost(enabled);
-        showExternalProvisionedHosts(!enabled);
+        setHostProviderVisibility(!enabled);
     }
 
     private void showProvisionedHostsWidgets(boolean enabled) {
         usualFormToDiscover(!enabled);
         showExternalDiscoveredHost(!enabled);
-        showExternalProvisionedHosts(enabled);
+        setHostProviderVisibility(enabled);
     }
 
     private void hideProviderWidgets(final HostModel object) {
@@ -916,7 +926,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         rbDiscoveredHost.setValue(false);
         usualFormToDiscover(false);
         showExternalDiscoveredHost(false);
-        showExternalProvisionedHosts(false);
+        setHostProviderVisibility(false);
         object.getIsDiscoveredHosts().setEntity(null);
     }
 
@@ -928,7 +938,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         discoveredHostSection.setVisible(false);
         providersEditor.setVisible(false);
         showExternalDiscoveredHost(false);
-        showExternalProvisionedHosts(false);
+        setHostProviderVisibility(false);
     }
 
     private void displayPassPkWindow(boolean isPasswordVisible) {
@@ -952,17 +962,16 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     }
 
     private void showExternalDiscoveredHost(boolean enabled) {
-        discoveredHostsPanel.setVisible(enabled);
-    }
-    private void showExternalProvisionedHosts(boolean enabled) {
-        searchProviderPanel.setVisible(enabled);
+        discoveredHostsRow.setVisible(enabled);
     }
 
     private void usualFormToDiscover(boolean isDiscovered) {
         if (isDiscovered) {
-            authLabel.setText(constants.hostPopupAuthLabelForExternalHost());
+            authLabel.setVisible(false);
+            rootPasswordLabel.setVisible(true);
         } else {
-            authLabel.setText(constants.hostPopupAuthLabel());
+            rootPasswordLabel.setVisible(false);
+            authLabel.setVisible(true);
             displayPassPkWindow(true);
         }
         rbPublicKey.setVisible(!isDiscovered);
@@ -1089,15 +1098,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         String radioButton();
 
-        String overrideIpStyle();
-
-        String protocolStyle();
-
         String checkBox();
 
         String searchFilter();
-
-        String searchFilterLabel();
 
         String emptyEditor();
 
@@ -1144,7 +1147,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @Override
     public void setHostProviderVisibility(boolean visible) {
-        searchProviderPanel.setVisible(visible);
+        searchProviderRow.setVisible(visible);
     }
 
     @Override

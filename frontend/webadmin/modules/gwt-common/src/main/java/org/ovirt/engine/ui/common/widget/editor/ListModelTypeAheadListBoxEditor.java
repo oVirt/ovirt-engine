@@ -53,6 +53,11 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
         return editor;
     }
 
+    public void setUsePatternFly(final boolean usePatternFly) {
+        super.setUsePatternFly(usePatternFly);
+        getContentWidget().setUsePatternFly(usePatternFly);
+    }
+
     /**
      * A renderer for the suggest box. Receives an instance of the EntityModel and returns two kinds of the rendering.
      */

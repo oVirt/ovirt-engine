@@ -7,17 +7,17 @@
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
              xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-             xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider">
+             xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView.Style">
         .generalTabTopDecorator {
             background-color: #D3D3D3;
-            margin-bottom: 8px;
-            margin-top: 4px;
-            margin-right: 3px;
-            padding-top: 6px;
-            padding-bottom: 6px;
+        }
+
+        .topElement {
+            padding-top: 15px;
         }
 
         .powerManagementTabInputDecorator {
@@ -29,15 +29,6 @@
             margin: 10px 5px;
         }
 
-        .filterLabel {
-            padding: 0 5px;
-            padding-top: 10px;
-        }
-
-        .filterIcon {
-            display: inline-block;
-        }
-
         .headerLabel {
             font-weight: bold;
             margin-top: 10px;
@@ -47,6 +38,10 @@
         .headerAuthLabel {
             font-weight: bold;
             margin-top: 10px;
+        }
+
+        .rootPasswordLabel {
+            line-height: 5px;
         }
 
         .headerFp {
@@ -71,9 +66,17 @@
             font-style: italic;
         }
 
+        .icon {
+            display: inline-block;
+        }
+
         .sourceLabel {
             font-size: 13px;
             padding: 0 5px;
+        }
+
+        .container {
+            width: 100%;
         }
 
         .testPanel {
@@ -120,18 +123,14 @@
             margin-left: 30px;
         }
 
-        .overrideIpStyle {
-            width: 200px;
-        }
-
-        .protocolStyle {
-            width: 200px;
-        }
-
         .consoleAddressStyle {
             line-height: 30px;
-	    padding: 0 5px;
-	    padding-bottom: 35px;
+            padding: 0 5px;
+            padding-bottom: 35px;
+        }
+
+        .floatLeft {
+            float: left;
         }
 
         .consoleAddressWithHelp {
@@ -163,14 +162,18 @@
         }
 
         .searchButton {
-            padding-bottom: 5px;
-            display: inline-block;
+            float: right;
+            top: -40px;
+            position: relative;
+            line-height: 30px;
         }
 
         .searchFilter {
-            width: 202px;
-            display: inline-block;
-            padding-left: 0px;
+            width: 99%;
+        }
+
+        .searchFilterHelpIcon {
+            margin-top: 2px;
         }
 
         .searchPanel {
@@ -179,12 +182,8 @@
             line-height: 30px;
             padding-bottom: 0;
             padding-top: 0;
-            width: 232px;
+            width: 100%;
             height: 30px;
-        }
-
-        .searchFilterLabel {
-            display: inline-block;
         }
 
         .emptyEditor {
@@ -257,71 +256,114 @@
                 <t:tab>
                     <t:DialogTab ui:field="generalTab">
                         <t:content>
-                            <g:FlowPanel>
-                                <g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
-                                    <e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
-                                    <e:ListModelListBoxEditor ui:field="clusterEditor"/>
-                                    <g:HorizontalPanel width="100%">
-                                      <ge:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor" addStyleNames="{style.externalHostProviderEnabledEditor}"/>
-                                      <e:ListModelListBoxEditor ui:field="providersEditor"/>
-                                    </g:HorizontalPanel>
-                                    <g:FlowPanel>
-                                        <g:HorizontalPanel ui:field="discoveredHostSection" addStyleNames="{style.radioButtonProvider}">
-                                            <g:RadioButton ui:field="rbDiscoveredHost" />
-                                            <d:InfoIcon ui:field="discoveredHostInfoIcon" addStyleNames="{style.filterIcon}"/>
-                                        </g:HorizontalPanel>
-                                        <g:HorizontalPanel ui:field="provisionedHostSection" addStyleNames="{style.radioButtonProvider}">
-                                            <g:RadioButton ui:field="rbProvisionedHost" />
-                                            <d:InfoIcon ui:field="provisionedHostInfoIcon" addStyleNames="{style.filterIcon}"/>
-                                        </g:HorizontalPanel>
-                                    </g:FlowPanel>
-                                    <g:FlowPanel ui:field="searchProviderPanel" width="100%">
-                                        <e:ListModelListBoxEditor ui:field="externalHostNameEditor"/>
-                                        <g:FlowPanel addStyleNames="{style.filterIcon}">
-                                          <ge:StringEntityModelTextBoxEditor ui:field="providerSearchFilterLabel"/>
-                                          <d:InfoIcon ui:field="providerSearchInfoIcon" addStyleNames="{style.filterIcon}"/>
-                                        </g:FlowPanel>
-                                        <g:FlowPanel addStyleNames="{style.searchPanel}">
-                                           <g:HorizontalPanel verticalAlignment="middle">
-                                             <ge:StringEntityModelTextBoxEditor ui:field="providerSearchFilterEditor"/>
-                                             <g:Image ui:field="updateHostsButton"/>
-                                           </g:HorizontalPanel>
-                                        </g:FlowPanel>
-                                    </g:FlowPanel>
-                                    <g:FlowPanel ui:field="discoveredHostsPanel">
-                                        <e:ListModelTypeAheadListBoxEditor ui:field="externalDiscoveredHostsEditor"/>
-                                        <e:ListModelTypeAheadListBoxEditor ui:field="externalHostGroupsEditor"/>
-                                        <e:ListModelTypeAheadListBoxEditor ui:field="externalComputeResourceEditor"/>
-                                    </g:FlowPanel>
-                                </g:FlowPanel>
-                                <g:FlowPanel>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor"/>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="commentEditor"/>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="hostAddressEditor" />
-                                    <ge:IntegerEntityModelTextBoxEditor ui:field="authSshPortEditor"/>
-                                    <g:VerticalPanel addStyleNames="{style.content}">
+                            <b:Container addStyleNames="{style.container}">
+                                <b:Row addStyleNames="{style.generalTabTopDecorator} {style.topElement}">
+                                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7"/>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                    <e:ListModelListBoxEditor ui:field="clusterEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7"/>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                    <b:Column size="LG_5">
+                                        <ge:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor" addStyleNames="{style.externalHostProviderEnabledEditor}" usePatternFly="true"/>
+                                    </b:Column>
+                                    <b:Column size="LG_7">
+                                        <e:ListModelListBoxEditor ui:field="providersEditor" usePatternFly="true"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                    <b:Column size="LG_11" offset="LG_1" ui:field="discoveredHostSection" >
+                                        <g:RadioButton ui:field="rbDiscoveredHost" />
+                                        <d:InfoIcon ui:field="discoveredHostInfoIcon" addStyleNames="{style.icon}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                    <b:Column size="LG_11" offset="LG_1" ui:field="provisionedHostSection" >
+                                        <g:RadioButton ui:field="rbProvisionedHost" />
+                                        <d:InfoIcon ui:field="provisionedHostInfoIcon" addStyleNames="{style.icon}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.generalTabTopDecorator}" ui:field="searchProviderRow">
+                                    <b:Column size="LG_12">
+                                        <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                            <e:ListModelListBoxEditor ui:field="externalHostNameEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7"/>
+                                        </b:Row>
+                                        <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                            <b:Column size="LG_5">
+                                                <ge:StringEntityModelTextBoxEditor ui:field="providerSearchFilterLabel" addStyleNames="{style.floatLeft}"/>
+                                                <d:InfoIcon ui:field="providerSearchInfoIcon" addStyleNames="{style.icon} {style.floatLeft} {style.searchFilterHelpIcon}" />
+                                            </b:Column>
+                                            <b:Column size="LG_7">
+                                                <g:FlowPanel addStyleNames="{style.searchPanel}">
+                                                     <ge:StringEntityModelTextBoxEditor ui:field="providerSearchFilterEditor" usePatternFly="true"/>
+                                                     <g:Image ui:field="updateHostsButton" addStyleNames="{style.icon} {style.searchButton}" />
+                                                </g:FlowPanel>
+                                            </b:Column>
+                                        </b:Row>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.generalTabTopDecorator}" ui:field="discoveredHostsRow">
+                                    <b:Column size="LG_12">
+                                        <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                            <e:ListModelTypeAheadListBoxEditor ui:field="externalDiscoveredHostsEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7" />
+                                        </b:Row>
+                                        <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                            <e:ListModelTypeAheadListBoxEditor ui:field="externalHostGroupsEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7" />
+                                        </b:Row>
+                                        <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                            <e:ListModelTypeAheadListBoxEditor ui:field="externalComputeResourceEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7" />
+                                        </b:Row>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.topElement}">
+                                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7"/>
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7"/>
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="hostAddressEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7"/>
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelTextBoxEditor ui:field="authSshPortEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7"/>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
                                         <g:Label ui:field="authLabel" addStyleNames="{style.headerAuthLabel}"/>
-                                        <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor"/>
-                                        <g:HorizontalPanel ui:field="passwordSection" width="100%" verticalAlignment="middle" addStyleNames="hpv_radio_pfly_fix">
-                                            <g:RadioButton ui:field="rbPassword" />
-                                            <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor"/>
-                                        </g:HorizontalPanel>
-                                        <g:HorizontalPanel ui:field="pkSection" width="100%" verticalAlignment="middle" addStyleNames="hpv_radio_pfly_fix">
-                                            <g:RadioButton ui:field="rbPublicKey" addStyleNames="{style.radioButton}" />
-                                            <ge:StringEntityModelTextAreaLabelEditor ui:field="publicKeyEditor" />
-                                        </g:HorizontalPanel>
-                                        <d:AdvancedParametersExpander ui:field="expander"/>
-                                        <g:FlowPanel ui:field="expanderContent">
-                                            <ge:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor"/>
-                                            <ge:EntityModelCheckBoxEditor ui:field="protocolEditor" />
-                                            <g:Label ui:field="fingerprintLabel" addStyleNames="{style.headerFp}" />
-                                            <ge:StringEntityModelTextBoxEditor ui:field="fetchSshFingerprint"/>
-                                            <g:SimplePanel ui:field="fetchPanel" addStyleNames="{style.fetchLink}, generalDialogComment" />
-                                            <g:Label ui:field="fetchResult" addStyleNames="{style.fetchResultLabel}"/>
-                                        </g:FlowPanel>
-                                    </g:VerticalPanel>
-                                </g:FlowPanel>
-                            </g:FlowPanel>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7"/>
+                                </b:Row>
+                                <b:Row ui:field="passwordSection">
+                                    <b:Column size="LG_5">
+                                        <g:RadioButton ui:field="rbPassword" />
+                                        <g:Label ui:field="rootPasswordLabel" addStyleNames="{style.headerAuthLabel} {style.rootPasswordLabel}" visible="false"/>
+                                    </b:Column>
+                                    <b:Column size="LG_7">
+                                        <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row ui:field="pkSection">
+                                    <b:Column size="LG_5">
+                                        <g:RadioButton ui:field="rbPublicKey" />
+                                    </b:Column>
+                                    <b:Column size="LG_7">
+                                        <ge:StringEntityModelTextAreaLabelEditor ui:field="publicKeyEditor" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <d:AdvancedParametersExpander ui:field="expander"/>
+                                    <g:FlowPanel ui:field="expanderContent">
+                                        <ge:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor" usePatternFly="true" />
+                                        <ge:EntityModelCheckBoxEditor ui:field="protocolEditor" usePatternFly="true" />
+                                        <g:Label ui:field="fingerprintLabel" addStyleNames="{style.headerFp}" />
+                                        <ge:StringEntityModelTextBoxEditor ui:field="fetchSshFingerprint" usePatternFly="true" />
+                                        <g:SimplePanel ui:field="fetchPanel" addStyleNames="{style.fetchLink}, generalDialogComment" />
+                                        <g:Label ui:field="fetchResult" addStyleNames="{style.fetchResultLabel}"/>
+                                    </g:FlowPanel>
+                                </b:Row>
+                            </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
