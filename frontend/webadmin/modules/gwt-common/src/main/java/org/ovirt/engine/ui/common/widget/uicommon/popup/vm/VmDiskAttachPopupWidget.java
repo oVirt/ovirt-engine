@@ -282,7 +282,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(idColumn, constants.idVmDiskTable(), "60px"); //$NON-NLS-1$
 
-        AbstractDiskSizeColumn<EntityModel> sizeColumn = new AbstractDiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GB) {
+        AbstractDiskSizeColumn<EntityModel> sizeColumn = new AbstractDiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GiB) {
             @Override
             protected Long getRawValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
@@ -401,7 +401,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         cinderDiskTable.addColumn(descriptionColumn, constants.descriptionVmDiskTable(), "100px"); //$NON-NLS-1$
 
-        AbstractDiskSizeColumn<EntityModel> sizeColumn = new AbstractDiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GB) {
+        AbstractDiskSizeColumn<EntityModel> sizeColumn = new AbstractDiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GiB) {
             @Override
             protected Long getRawValue(EntityModel object) {
                 CinderDisk disk = (CinderDisk) (((DiskModel) (object.getEntity())).getDisk());

@@ -41,7 +41,7 @@ public class StorageLogicalUnitMapper {
             model.setStatus(map(entity.getStatus(), null).value());
         }
         model.setSize(SizeConverter.convert((long)entity.getDeviceSize(),
-                SizeConverter.SizeUnit.GB, SizeConverter.SizeUnit.BYTES).longValue());
+                SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
 
         model.setPaths(entity.getPathCount());
         return model;

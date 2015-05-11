@@ -63,7 +63,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     private static final String MIN_COLOR = "#AFBF27"; //$NON-NLS-1$
 
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<>(SizeConverter.SizeUnit.GB);
+            new DiskSizeRenderer<>(SizeConverter.SizeUnit.GiB);
 
     @UiField
     WidgetStyle style;

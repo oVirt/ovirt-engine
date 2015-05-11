@@ -18,6 +18,8 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.CreateBrickModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.CreateBrickPopupPresenterWidget;
@@ -100,6 +102,7 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     Label messageLabel;
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -138,8 +141,8 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
         deviceTable.addColumnAndSetWidth(new AbstractTextColumn<StorageDevice>() {
             @Override
             public String getValue(StorageDevice entity) {
-                Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(entity.getSize(), SizeUnit.MB);
-                return formatSize(convertedSize.getSecond()) + " " + convertedSize.getFirst().toString(); //$NON-NLS-1$
+                Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(entity.getSize(), SizeUnit.MiB);
+                return messages.sizeUnitString(formatSize(convertedSize.getSecond()), convertedSize.getFirst()); //$NON-NLS-1$
             }
         }, constants.size(), "100px"); //$NON-NLS-1$
     }

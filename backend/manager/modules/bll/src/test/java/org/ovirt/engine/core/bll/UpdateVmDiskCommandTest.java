@@ -685,12 +685,12 @@ public class UpdateVmDiskCommandTest {
 
         DiskImage oldDiskImage = createDiskImage();
         oldDiskImage.setQuotaId(quotaId);
-        oldDiskImage.setSize(SizeConverter.convert(3, SizeConverter.SizeUnit.GB,
+        oldDiskImage.setSize(SizeConverter.convert(3, SizeConverter.SizeUnit.GiB,
                 SizeConverter.SizeUnit.BYTES).longValue());
 
         DiskImage newDiskImage = createDiskImage();
         newDiskImage.setQuotaId(quotaId);
-        newDiskImage.setSize(SizeConverter.convert(5, SizeConverter.SizeUnit.GB,
+        newDiskImage.setSize(SizeConverter.convert(5, SizeConverter.SizeUnit.GiB,
                 SizeConverter.SizeUnit.BYTES).longValue());
 
         UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(vmId, diskImageGuid, newDiskImage);

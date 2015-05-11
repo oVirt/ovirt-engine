@@ -218,7 +218,7 @@ public class DisksViewColumns {
     }
 
     public static final AbstractDiskSizeColumn<Disk> getActualSizeColumn(String sortBy) {
-        AbstractDiskSizeColumn<Disk> column = new AbstractDiskSizeColumn<Disk>(SizeConverter.SizeUnit.GB) {
+        AbstractDiskSizeColumn<Disk> column = new AbstractDiskSizeColumn<Disk>(SizeConverter.SizeUnit.GiB) {
             @Override
             protected Long getRawValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ||

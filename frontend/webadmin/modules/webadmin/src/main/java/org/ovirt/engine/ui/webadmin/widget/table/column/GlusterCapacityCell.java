@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -31,7 +32,7 @@ public abstract class GlusterCapacityCell<P extends Serializable> extends Abstra
             return constants.notAvailableLabel();
         } else {
             Pair<SizeUnit, Double> sizeWithUnits = SizeConverter.autoConvert(size.longValue(), inUnit);
-            return formatSize(sizeWithUnits.getSecond()) + " " + sizeWithUnits.getFirst().toString();//$NON-NLS-1$
+            return ConstantsManager.getInstance().getMessages().sizeUnitString(formatSize(sizeWithUnits.getSecond()), sizeWithUnits.getFirst());//$NON-NLS-1$
         }
     }
 

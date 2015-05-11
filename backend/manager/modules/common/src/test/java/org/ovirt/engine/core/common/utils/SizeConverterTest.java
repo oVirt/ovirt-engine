@@ -28,7 +28,7 @@ public class SizeConverterTest {
     @Test
     public void testConvertMBToBytes() {
         long megabytes = 3L;
-        long bytes = SizeConverter.convert(megabytes, SizeConverter.SizeUnit.MB,
+        long bytes = SizeConverter.convert(megabytes, SizeConverter.SizeUnit.MiB,
                 SizeConverter.SizeUnit.BYTES).longValue();
         assertEquals(bytes, 3145728);
     }
@@ -36,7 +36,7 @@ public class SizeConverterTest {
     @Test
     public void testCobvertGBToBytes() {
         long gigabytes = 3L;
-        long bytes = SizeConverter.convert(gigabytes, SizeConverter.SizeUnit.GB,
+        long bytes = SizeConverter.convert(gigabytes, SizeConverter.SizeUnit.GiB,
                 SizeConverter.SizeUnit.BYTES).longValue();
         assertEquals(bytes, 3221225472L);
     }
@@ -45,7 +45,7 @@ public class SizeConverterTest {
     public void testConvertBytestoGB() {
         long bytes = 3221228000L;
         int gigabytes = SizeConverter.convert(bytes, SizeConverter.SizeUnit.BYTES,
-                SizeConverter.SizeUnit.GB).intValue();
+                SizeConverter.SizeUnit.GiB).intValue();
         assertEquals(gigabytes, 3);
     }
 
@@ -53,14 +53,14 @@ public class SizeConverterTest {
     public void testConvertBytestoMB() {
         long bytes = 3160000L;
         int megabytes = SizeConverter.convert(bytes, SizeConverter.SizeUnit.BYTES,
-                SizeConverter.SizeUnit.MB).intValue();
+                SizeConverter.SizeUnit.MiB).intValue();
         assertEquals(megabytes, 3);
     }
 
     @Test
     public void testConvertMegaBytesToTB() {
         long mb = 5 * 1024 * 1024;
-        int tbs = SizeConverter.convert(mb, SizeUnit.MB, SizeUnit.TB).intValue();
+        int tbs = SizeConverter.convert(mb, SizeUnit.MiB, SizeUnit.TiB).intValue();
         assertEquals(tbs, 5);
     }
 
@@ -70,17 +70,17 @@ public class SizeConverterTest {
             private static final long serialVersionUID = 1L;
 
             {
-                add(new Pair<SizeUnit, Double>(SizeUnit.KB, 1D));
-                add(new Pair<SizeUnit, Double>(SizeUnit.KB, 1D));
-                add(new Pair<SizeUnit, Double>(SizeUnit.KB, 1024D));
-                add(new Pair<SizeUnit, Double>(SizeUnit.KB, 1024D * 1024D));
+                add(new Pair<SizeUnit, Double>(SizeUnit.KiB, 1D));
+                add(new Pair<SizeUnit, Double>(SizeUnit.KiB, 1D));
+                add(new Pair<SizeUnit, Double>(SizeUnit.KiB, 1024D));
+                add(new Pair<SizeUnit, Double>(SizeUnit.KiB, 1024D * 1024D));
             }
         };
         List<Pair<SizeUnit, Double>> actual = SizeConverter.getMathOperationSafeOperands(
                 new Pair<SizeUnit, Double>(SizeUnit.BYTES, 1024D),
-                new Pair<SizeUnit, Double>(SizeUnit.KB, 1D),
-                new Pair<SizeUnit, Double>(SizeUnit.MB, 1D),
-                new Pair<SizeUnit, Double>(SizeUnit.GB, 1D)
+                new Pair<SizeUnit, Double>(SizeUnit.KiB, 1D),
+                new Pair<SizeUnit, Double>(SizeUnit.MiB, 1D),
+                new Pair<SizeUnit, Double>(SizeUnit.GiB, 1D)
                 );
         assertEquals(expected, actual);
     }

@@ -71,7 +71,7 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
                 new AbstractTextColumn<StorageDevice>() {
             @Override
             public String getValue(StorageDevice object) {
-                    Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(object.getSize(), SizeUnit.MB);
+                    Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(object.getSize(), SizeUnit.MiB);
                     return formatSize(convertedSize.getSecond()) + " " + convertedSize.getFirst().toString(); //$NON-NLS-1$
 
             }

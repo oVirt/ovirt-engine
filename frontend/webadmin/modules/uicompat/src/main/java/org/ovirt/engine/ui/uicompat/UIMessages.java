@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEligibilityReason;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
+import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 
 public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
@@ -471,6 +472,16 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
         "MONTHLY", "Monthly"
     })
     String recurrenceType(@Select GlusterVolumeSnapshotScheduleRecurrence recurrence);
+
+    @DefaultMessage("{0} TiB")
+    @AlternateMessage({
+        "BYTES", "{0} B",
+        "KiB", "{0} KiB",
+        "MiB", "{0} MiB",
+        "GiB", "{0} GiB",
+        "TiB", "{0} TiB"
+    })
+    String sizeUnitString(String size, @Select SizeUnit sizeUnit);
 
     @DefaultMessage("Session DB Id:{0}, User:{1}")
     String userSessionRow(long sessionId, String UserName);

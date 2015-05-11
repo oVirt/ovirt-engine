@@ -50,7 +50,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
         };
         getTable().addColumn(provisionedSizeColumn, constants.provisionedSizeDisk(), "150px"); //$NON-NLS-1$
 
-        AbstractDiskSizeColumn<DiskImage> actualSizeColumn = new AbstractDiskSizeColumn<DiskImage>(SizeConverter.SizeUnit.GB) {
+        AbstractDiskSizeColumn<DiskImage> actualSizeColumn = new AbstractDiskSizeColumn<DiskImage>(SizeConverter.SizeUnit.GiB) {
             @Override
             protected Long getRawValue(DiskImage object) {
                        return Math.round((object.getActualDiskWithSnapshotsSize()));

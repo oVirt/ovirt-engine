@@ -77,7 +77,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusStorage(), "160px"); //$NON-NLS-1$
 
-        AbstractDiskSizeColumn<StorageDomain> freeColumn = new AbstractDiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
+        AbstractDiskSizeColumn<StorageDomain> freeColumn = new AbstractDiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GiB) {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long availableDiskSize = object.getAvailableDiskSize() != null ? object.getAvailableDiskSize() : 0;
@@ -87,7 +87,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         freeColumn.makeSortable();
         getTable().addColumn(freeColumn, constants.freeSpaceStorage(), "160px"); //$NON-NLS-1$
 
-        AbstractDiskSizeColumn<StorageDomain> usedColumn = new AbstractDiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
+        AbstractDiskSizeColumn<StorageDomain> usedColumn = new AbstractDiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GiB) {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long usedDiskSize = object.getUsedDiskSize() != null ? object.getUsedDiskSize() : 0;
@@ -97,7 +97,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         usedColumn.makeSortable();
         getTable().addColumn(usedColumn, constants.usedSpaceStorage(), "160px"); //$NON-NLS-1$
 
-        AbstractDiskSizeColumn<StorageDomain> totalColumn = new AbstractDiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
+        AbstractDiskSizeColumn<StorageDomain> totalColumn = new AbstractDiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GiB) {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long totalDiskSize = object.getTotalDiskSize() != null ? object.getTotalDiskSize() : 0;

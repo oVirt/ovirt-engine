@@ -150,14 +150,14 @@ public class StorageDomainMapper {
         }
         if (entity.getAvailableDiskSize()!= null) {
             model.setAvailable(SizeConverter.convert(entity.getAvailableDiskSize().longValue(),
-                    SizeConverter.SizeUnit.GB, SizeConverter.SizeUnit.BYTES).longValue());
+                    SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
         }
         if (entity.getUsedDiskSize()!= null) {
             model.setUsed(SizeConverter.convert(entity.getUsedDiskSize().longValue(),
-                    SizeConverter.SizeUnit.GB, SizeConverter.SizeUnit.BYTES).longValue());
+                    SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
         }
         model.setCommitted(SizeConverter.convert(entity.getCommittedDiskSize(),
-                SizeConverter.SizeUnit.GB, SizeConverter.SizeUnit.BYTES).longValue());
+                SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
         if (entity.getStorageFormat()!= null) {
             String storageFormat = StorageFormatMapper.map(entity.getStorageFormat(), null).value();
             if (storageFormat != null) {

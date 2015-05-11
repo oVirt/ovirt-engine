@@ -27,7 +27,7 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
         implements SubTabQuotaStoragePresenter.ViewDef {
 
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GB);
+            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GiB);
 
     interface ViewIdHandler extends ElementIdHandler<SubTabQuotaStorageView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
