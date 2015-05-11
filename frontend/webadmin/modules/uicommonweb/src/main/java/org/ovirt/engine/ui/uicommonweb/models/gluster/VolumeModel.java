@@ -108,6 +108,8 @@ public class VolumeModel extends Model {
 
         setTypeList(new ListModel<GlusterVolumeType>());
         ArrayList<GlusterVolumeType> list = new ArrayList<GlusterVolumeType>(Arrays.asList(GlusterVolumeType.values()));
+        list.remove(GlusterVolumeType.DISPERSE);
+        list.remove(GlusterVolumeType.DISTRIBUTED_DISPERSE);
         getTypeList().setItems(list);
 
         setReplicaCount(new EntityModel<Integer>());
