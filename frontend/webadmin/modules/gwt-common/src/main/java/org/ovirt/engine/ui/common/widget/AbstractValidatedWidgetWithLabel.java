@@ -425,7 +425,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     private void addStateUpdateHandler() {
-        ((Widget) this.getContentWidget()).addHandler(new EditorStateUpdateEvent.EditorStateUpdateHandler() {
+        ((IsWidget) this.getContentWidget()).asWidget().addHandler(new EditorStateUpdateEvent.EditorStateUpdateHandler() {
             @Override
             public void onEditorStateUpdate(EditorStateUpdateEvent event) {
                 if (event.isValid()) {

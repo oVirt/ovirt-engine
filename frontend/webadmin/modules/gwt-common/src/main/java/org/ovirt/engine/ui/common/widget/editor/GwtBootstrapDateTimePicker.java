@@ -18,9 +18,10 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.TakesValue;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
-public class GwtBootstrapDateTimePicker implements TakesValue<Date> {
+public class GwtBootstrapDateTimePicker implements IsWidget, TakesValue<Date> {
     public static final String DEFAULT_DATE_TIME_FORMAT = "mm/dd/yyyy hh:ii";//$NON-NLS-1$
     public static final String DEFAULT_TIME_FORMAT = "hh:ii P";//$NON-NLS-1$
     public static final String DEFAULT_DATE_FORMAT = "mm/dd/yyyy";//$NON-NLS-1$
