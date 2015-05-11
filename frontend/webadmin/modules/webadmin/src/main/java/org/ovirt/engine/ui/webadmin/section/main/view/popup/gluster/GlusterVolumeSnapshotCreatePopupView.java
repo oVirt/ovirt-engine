@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.compat.DayOfWeek;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -91,7 +93,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     @UiField
     @Path(value = "timeZones.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<String> timeZoneEditor;
+    ListModelListBoxEditor<Map.Entry<String, String>> timeZoneEditor;
 
     @UiField(provided = true)
     @Path(value = "daysOfTheWeek.selectedItem")

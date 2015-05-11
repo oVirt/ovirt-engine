@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.compat.DayOfWeek;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -30,7 +32,7 @@ public class GlusterVolumeSnapshotModel extends Model {
     private EntityModel<Date> endDate;
     private boolean generalTabVisible;
     private boolean scheduleTabVisible;
-    private ListModel<String> timeZones;
+    private ListModel<Map.Entry<String, String>> timeZones;
     private EntityModel<Date> startAt;
     private EntityModel<Date> executionTime;
     private ListModel<List<DayOfWeek>> daysOfWeek;
@@ -51,7 +53,7 @@ public class GlusterVolumeSnapshotModel extends Model {
         setRecurrence(new ListModel<GlusterVolumeSnapshotScheduleRecurrence>());
         setInterval(new ListModel<String>());
         setEndByOptions(new ListModel<EndDateOptions>());
-        setTimeZones(new ListModel<String>());
+        setTimeZones(new ListModel<Map.Entry<String, String>>());
         setDaysOfMonth(new ListModel<String>());
         setStartAt(new EntityModel<Date>(new Date()));
         setEndDate(new EntityModel<Date>(new Date()));
@@ -85,8 +87,15 @@ public class GlusterVolumeSnapshotModel extends Model {
     }
 
     private void initTimeZones() {
-        Set<String> timeZoneTypes = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList().keySet();
-        getTimeZones().setItems(timeZoneTypes);
+        Map<String, String> timeZones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
+        getTimeZones().setItems(timeZones.entrySet());
+        getTimeZones().setSelectedItem(Linq.firstOrDefault(timeZones.entrySet(),
+                new IPredicate<Map.Entry<String, String>>() {
+                    @Override
+                    public boolean match(Map.Entry<String, String> item) {
+                        return item.getValue().startsWith("(GMT) Greenwich"); //$NON-NLS-1$
+                    }
+                }));
     }
 
     public EntityModel<String> getDataCenter() {
@@ -177,11 +186,11 @@ public class GlusterVolumeSnapshotModel extends Model {
         this.scheduleTabVisible = scheduleTabVisible;
     }
 
-    public ListModel<String> getTimeZones() {
+    public ListModel<Map.Entry<String, String>> getTimeZones() {
         return timeZones;
     }
 
-    public void setTimeZones(ListModel<String> timeZones) {
+    public void setTimeZones(ListModel<Map.Entry<String, String>> timeZones) {
         this.timeZones = timeZones;
     }
 
