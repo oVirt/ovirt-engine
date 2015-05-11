@@ -90,6 +90,14 @@ public class VmStatusCell extends AbstractCell<VM> {
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
 
+        if (vm.getLockInfo() != null && vm.getLockInfo().isExclusive()) {
+            ImageResource lockImageResource = resources.vmLocked();
+            // Get the image html
+            AbstractImagePrototype imagePrototype = AbstractImagePrototype.create(lockImageResource);
+            SafeHtml lockImageHtml = SafeHtmlUtils.fromTrustedString(imagePrototype.getHTML());
+            statusImageHtml = templates.lockedStatusTemplate(lockImageHtml, statusImageHtml);
+        }
+
         // Find the image corresponding to the alert
         SafeHtml alertImageHtml = getResourceImage(vm);
 
@@ -122,4 +130,5 @@ public class VmStatusCell extends AbstractCell<VM> {
             return SafeHtmlUtils.fromTrustedString(html);
         }
     }
+
 }
