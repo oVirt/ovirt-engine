@@ -154,83 +154,86 @@ trap cleanup 0
 
 usage() {
 	cat << __EOF__
-engine-backup: backup and restore ovirt-engine environment
+engine-backup: back up and restore ovirt-engine environment
 USAGE:
     $0 [--mode=MODE] [--scope=SCOPE] [--file=FILE] [--log=FILE]
  MODE is one of the following:
-    backup                          backup system into FILE
+    backup                          back up system into FILE
     restore                         restore system from FILE
  SCOPE is one of the following:
     all                             If MODE=backup: backup everything below.
                                     If MODE=restore: restore everything found in FILE.
-    files                           files only
-    db                              engine database only
-    dwhdb                           dwh database only
-    reportsdb                       reports database only
+    files                           product files only
+    db                              Engine database only
+    dwhdb                           Data Warehouse database only
+    reportsdb                       Reports database only
     The option --scope can be passed more than once, with different scopes.
  --file=FILE                        file to use during backup or restore
- --log=FILE                         log file to use
+ --log=FILE                         log file to use during backup or restore
  --archive-compressor=COMPRESSOR
     Use COMPRESSOR to compress the backup file, can be one of:
     gzip
     bzip2
     xz
     None
- --files-compressor=COMPRESSOR      for the files, same options as --archive-compressor
- --keep-temporary-data              Do not cleanup temporary data on restore
- --db-compressor=COMPRESSOR         for the Engine, same options as --archive-compressor
+ --files-compressor=COMPRESSOR      compress the product files, same options as --archive-compressor
+ --keep-temporary-data              do not clean up temporary data on restore
+ --db-compressor=COMPRESSOR         compress the Engine database, same options as --archive-compressor
  --db-dump-format=FORMAT
-    Engine DB dump format, see pg_dump(1) for details. Can be one of:
+    Engine database dump format; see pg_dump(1) for details. Can be one of:
     plain
     custom
- --db-restore-jobs=JOBS             Number of restore jobs for the Engine DB, when
-                                    using custom dump format and compressor None.
-				    Passed to pg_restore -j. Defaults to 2.
- --provision-db                     Create a PostgreSQL database for the engine
+ --db-restore-jobs=JOBS             number of restore jobs for the Engine database,
+                                    when using custom dump format and compressor None.
+                                    Passed to pg_restore -j. Defaults to 2.
+ --provision-db                     create a PostgreSQL database for the Engine on restore
  --change-db-credentials            activate the following options, to restore
-                                    the Engine database to a different location
-				    etc. If used, existing credentials are ignored.
- --db-host=host                     set database host
- --db-port=port                     set database port
- --db-user=user                     set database user
- --db-passfile=file                 set database password - read from file
- --db-password=pass                 set database password
- --db-password                      set database password - interactively
- --db-name=name                     set database name
- --db-secured                       set a secured connection
- --db-secured-validation            validate host
- --dwh-db-compressor=COMPRESSOR     for DWH, same options as --archive-compressor
- --dwh-db-dump-format=FORMAT        for DWH, same options as --db-dump-format
- --dwh-db-restore-jobs=JOBS         for DWH, same as --db-restore-jobs
- --provision-dwh-db                 Create a PostgreSQL database for DWH
- --change-dwh-db-credentials        activate the following options, to restore
-                                    the DWH database to a different location etc.
+                                    the Engine database using credentials other
+                                    than those stored in the backup itself.
                                     If used, existing credentials are ignored.
- --dwh-db-host=host                 set dwh database host
- --dwh-db-port=port                 set dwh database port
- --dwh-db-user=user                 set dwh database user
- --dwh-db-passfile=file             set dwh database password - read from file
- --dwh-db-password=pass             set dwh database password
- --dwh-db-password                  set dwh database password - interactively
- --dwh-db-name=name                 set dwh database name
- --dwh-db-secured                   set a secured connection for dwh
- --dwh-db-secured-validation        validate host for dwh
- --reports-db-compressor=COMPRESSOR for Reports, same options as --archive-compressor
- --reports-db-dump-format=FORMAT    for Reports, same options as --db-dump-format
- --reports-db-restore-jobs=JOBS     for Reports, same as --db-restore-jobs
- --provision-reports-db             Create a PostgreSQL database for Reports
+ --db-host=host                     set Engine database host
+ --db-port=port                     set Engine database port
+ --db-user=user                     set Engine database user
+ --db-passfile=file                 set Engine database password - read from file
+ --db-password=pass                 set Engine database password
+ --db-password                      set Engine database password - interactively
+ --db-name=name                     set Engine database name
+ --db-secured                       set a secured connection for the Engine database
+ --db-secured-validation            validate host for Engine database
+ --dwh-db-compressor=COMPRESSOR     compress the Data Warehouse database, same options as --archive-compressor
+ --dwh-db-dump-format=FORMAT        Data Warehouse database dump format, same options as --db-dump-format
+ --dwh-db-restore-jobs=JOBS         for Data Warehouse database, same as --db-restore-jobs
+ --provision-dwh-db                 create a PostgreSQL database for Data Warehouse on restore
+ --change-dwh-db-credentials        activate the following options, to restore
+                                    the Data Warehouse database using credentials other
+                                    than those stored in the backup itself.
+                                    If used, existing credentials are ignored.
+ --dwh-db-host=host                 set Data Warehouse database host
+ --dwh-db-port=port                 set Data Warehouse database port
+ --dwh-db-user=user                 set Data Warehouse database user
+ --dwh-db-passfile=file             set Data Warehouse database password - read from file
+ --dwh-db-password=pass             set Data Warehouse database password
+ --dwh-db-password                  set Data Warehouse database password - interactively
+ --dwh-db-name=name                 set Data Warehouse database name
+ --dwh-db-secured                   set a secured connection for the Data Warehouse database
+ --dwh-db-secured-validation        validate host for Data Warehouse database
+ --reports-db-compressor=COMPRESSOR compress the Reports database, same options as --archive-compressor
+ --reports-db-dump-format=FORMAT    Reports database dump format, same options as --db-dump-format
+ --reports-db-restore-jobs=JOBS     for Reports database, same as --db-restore-jobs
+ --provision-reports-db             create a PostgreSQL database for Reports on restore
  --change-reports-db-credentials    activate the following options, to restore
-                                    the Reports database to a different location
-				    etc. If used, existing credentials are ignored.
- --reports-db-host=host             set reports database host
- --reports-db-port=port             set reports database port
- --reports-db-user=user             set reports database user
- --reports-db-passfile=file         set reports database password - read from file
- --reports-db-password=pass         set reports database password
- --reports-db-password              set reports database password - interactively
- --reports-db-name=name             set reports database name
- --reports-db-secured               set a secured connection for reports
- --reports-db-secured-validation    validate host for reports
+                                    the Reports database using credentials other
+                                    than those stored in the backup itself.
+                                    If used, existing credentials are ignored.
+ --reports-db-host=host             set Reports database host
+ --reports-db-port=port             set Reports database port
+ --reports-db-user=user             set Reports database user
+ --reports-db-passfile=file         set Reports database password - read from file
+ --reports-db-password=pass         set Reports database password
+ --reports-db-password              set Reports database password - interactively
+ --reports-db-name=name             set Reports database name
+ --reports-db-secured               set a secured connection for the Reports database
+ --reports-db-secured-validation    validate host for Reports database
 
  ENVIRONMENT VARIABLES
 
@@ -266,7 +269,7 @@ USAGE:
  host    <database>      <user>          ::0/0                   md5
 
  Replace <user>, <password>, <database> with appropriate values.
- Repeat for engine, dwh, reports as required.
+ Repeat for Engine, Data Warehouse, Reports as required.
 
 __EOF__
 	return 0
