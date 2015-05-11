@@ -30,6 +30,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
