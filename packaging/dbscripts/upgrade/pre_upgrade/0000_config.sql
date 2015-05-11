@@ -217,7 +217,13 @@ select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks',
 
 
 -- Gluster Network Role --
-select fn_db_add_config_value_for_versions_up_to('GlusterNetworkRoleSupported', 'false', '3.5');
+select fn_db_add_config_value('GlusterNetworkRoleSupported', 'false', '3.0');
+select fn_db_add_config_value('GlusterNetworkRoleSupported', 'false', '3.1');
+select fn_db_add_config_value('GlusterNetworkRoleSupported', 'false', '3.2');
+select fn_db_add_config_value('GlusterNetworkRoleSupported', 'false', '3.3');
+select fn_db_add_config_value('GlusterNetworkRoleSupported', 'false', '3.4');
+select fn_db_add_config_value('GlusterNetworkRoleSupported', 'false', '3.5');
+
 
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');
