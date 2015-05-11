@@ -2262,6 +2262,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("127")
     MaxIoThreadsPerVm,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    NetworkExclusivenessPermissiveValidation,
+
     Invalid
 
 }

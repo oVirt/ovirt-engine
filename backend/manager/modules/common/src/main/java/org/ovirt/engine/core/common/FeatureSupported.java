@@ -614,4 +614,13 @@ public class FeatureSupported {
     public static boolean changeNetworkUsedByVmSupported(Version version) {
         return supportedInConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if trunk and VLAN tagged VM network is supported on a single NIC.
+     */
+    public static boolean networkExclusivenessPermissiveValidation(Version version) {
+        return supportedInConfig(ConfigValues.NetworkExclusivenessPermissiveValidation, version);
+    }
 }

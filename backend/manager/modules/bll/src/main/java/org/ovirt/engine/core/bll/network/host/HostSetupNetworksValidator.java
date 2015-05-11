@@ -20,6 +20,8 @@ import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentsValidator;
+import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
+import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -91,14 +93,14 @@ public class HostSetupNetworksValidator {
             EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT + LIST_SUFFIX;
     static final String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST =
         EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED + LIST_SUFFIX;
-    static final String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED_LIST =
-        EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED + LIST_SUFFIX;
-
 
     static final String VAR_BOND_NAME = "BondName";
     static final String VAR_NETWORK_NAME = "networkName";
     static final String VAR_NETWORK_NAMES = "networkNames";
     static final String VAR_ATTACHMENT_IDS = "attachmentIds";
+
+
+    private final NetworkExclusivenessValidator networkExclusivenessValidator;
 
     private HostSetupNetworksParameters params;
     private VDS host;
@@ -122,16 +124,17 @@ public class HostSetupNetworksValidator {
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
 
     public HostSetupNetworksValidator(VDS host,
-        HostSetupNetworksParameters params,
-        List<VdsNetworkInterface> existingInterfaces,
-        List<NetworkAttachment> existingAttachments,
-        BusinessEntityMap<Network> networkBusinessEntityMap,
-        ManagementNetworkUtil managementNetworkUtil,
-        NetworkClusterDao networkClusterDao,
-        NetworkDao networkDao,
-        VdsDao vdsDao,
-        HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
-        VmDao vmDao) {
+            HostSetupNetworksParameters params,
+            List<VdsNetworkInterface> existingInterfaces,
+            List<NetworkAttachment> existingAttachments,
+            BusinessEntityMap<Network> networkBusinessEntityMap,
+            ManagementNetworkUtil managementNetworkUtil,
+            NetworkClusterDao networkClusterDao,
+            NetworkDao networkDao,
+            VdsDao vdsDao,
+            HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
+            VmDao vmDao,
+            NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver) {
 
         this.host = host;
         this.params = params;
@@ -151,6 +154,9 @@ public class HostSetupNetworksValidator {
             existingAttachments);
 
         setSupportedFeatures();
+
+        networkExclusivenessValidator =
+                networkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator(host.getSupportedClusterVersionsSet());
 
         attachmentsById = Entities.businessEntitiesById(existingAttachments);
         bondsMap = new BusinessEntityMap<>(params.getBonds());
@@ -201,7 +207,7 @@ public class HostSetupNetworksValidator {
     }
 
     private ValidationResult attachmentsDontReferenceSameNetworkDuplicately(Collection<NetworkAttachment> attachments) {
-        return new NetworkAttachmentsValidator(attachments, networkBusinessEntityMap)
+        return new NetworkAttachmentsValidator(attachments, networkBusinessEntityMap, networkExclusivenessValidator)
             .verifyUserAttachmentsDoesNotReferenceSameNetworkDuplicately();
     }
 
@@ -285,7 +291,7 @@ public class HostSetupNetworksValidator {
 
     private ValidationResult validateNetworkExclusiveOnNics(Collection<NetworkAttachment> attachmentsToConfigure) {
         NetworkAttachmentsValidator validator =
-            new NetworkAttachmentsValidator(attachmentsToConfigure, networkBusinessEntityMap);
+            new NetworkAttachmentsValidator(attachmentsToConfigure, networkBusinessEntityMap, networkExclusivenessValidator);
         return validator.validateNetworkExclusiveOnNics();
     }
 
