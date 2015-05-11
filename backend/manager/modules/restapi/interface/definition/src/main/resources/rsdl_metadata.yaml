@@ -1857,13 +1857,13 @@ actions:
       - mandatoryArguments: {action.iscsi.address: 'xs:string', action.iscsi.target: 'xs:string'}
         description: login to the specified iscsi target at the specified address
 - name: /hosts/{host:id}/unregisteredstoragedomainsdiscover|rel=unregisteredstoragedomainsdiscover
-  description: Discover the Storage Domains which are candidiates to be imported to the setup
+  description: Discover the block Storage Domains which are candidates to be imported to the setup. For FCP no arguments are needed.
   request:
     body:
       parameterType: Action
       signatures:
       - optionalArguments: {action.iscsi.address: 'xs:string', action.iscsi_target: 'xs:string'}
-        description: Discover the Storage Domains which are candidiates to be imported to the setup
+        description: Discover the block Storage Domains which are candidates to be imported to the setup. For FCP no arguments are needed.
 - name: /hosts/{host:id}/refreshcapabilities|rel=refreshcapabilities
   description: refresh the capabilities of the host
   request:
