@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.stub;
@@ -49,7 +50,7 @@ public class FenceValidatorTest {
         validator = new FenceValidator();
         validator = spy(validator);
         stub(validator.getProxyLocator(any(VDS.class))).toReturn(proxyLocator);
-        stub(validator.getBackend()).toReturn(backend);
+        doReturn(backend).when(validator).getBackend();
         Config.setConfigUtils(configUtils);
     }
 
