@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -24,6 +26,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -500,7 +503,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
         Date startAt = snapshotModel.getStartAt().getEntity();
         schedule.setStartDate(startAt);
-        schedule.setTimeZone(snapshotModel.getTimeZones().getSelectedItem());
+        schedule.setTimeZone(snapshotModel.getTimeZones().getSelectedItem().getKey());
 
         if (snapshotModel.getEndByOptions().getSelectedItem() == EndDateOptions.NoEndDate) {
             schedule.setEndByDate(null);
@@ -526,7 +529,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
                     public void executed(FrontendActionAsyncResult result) {
                         GlusterVolumeSnapshotListModel localModel =
                                 (GlusterVolumeSnapshotListModel) result.getState();
-                        localModel.stopProgress();
+                        snapshotModel.stopProgress();
                         localModel.postSnapshotAction(result.getReturnValue());
                     }
                 },
@@ -553,7 +556,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
                     public void executed(FrontendActionAsyncResult result) {
                         GlusterVolumeSnapshotListModel localModel =
                                 (GlusterVolumeSnapshotListModel) result.getState();
-                        localModel.stopProgress();
+                        snapshotModel.stopProgress();
                         localModel.postSnapshotAction(result.getReturnValue());
                     }
                 },
@@ -592,7 +595,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
                             .unableToFetchVolumeSnapshotSchedule());
                     return;
                 }
-                GlusterVolumeSnapshotSchedule schedule = (GlusterVolumeSnapshotSchedule) returnValue;
+                final GlusterVolumeSnapshotSchedule schedule = (GlusterVolumeSnapshotSchedule) returnValue;
                 snapshotModel.getSnapshotName().setEntity(schedule.getSnapshotNamePrefix());
                 snapshotModel.getDescription().setEntity(schedule.getSnapshotDescription());
                 snapshotModel.getRecurrence().setSelectedItem(schedule.getRecurrence());
@@ -604,7 +607,14 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
                 }
 
                 if (schedule.getRecurrence() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN) {
-                    snapshotModel.getTimeZones().setSelectedItem(schedule.getTimeZone());
+                    Map<String, String> timeZones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
+                    snapshotModel.getTimeZones().setSelectedItem(Linq.firstOrDefault(timeZones.entrySet(),
+                            new IPredicate<Map.Entry<String, String>>() {
+                                @Override
+                                public boolean match(Map.Entry<String, String> item) {
+                                    return item.getKey().startsWith(schedule.getTimeZone()); //$NON-NLS-1$
+                                }
+                            }));
                 }
                 switch (schedule.getRecurrence()) {
                 case INTERVAL:
