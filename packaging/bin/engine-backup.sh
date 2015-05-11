@@ -694,7 +694,7 @@ dobackup() {
 createtar() {
 	local dir="$1"
 	local file="$2"
-	tar -C "${dir}" -cpSsjf "${file}" . || logdie "Cannot create '${file}'"
+	tar -C "${dir}" -cpSs"${ARCHIVE_COMPRESS_OPTION}"f "${file}" . || logdie "Cannot create '${file}'"
 }
 
 createmd5() {
