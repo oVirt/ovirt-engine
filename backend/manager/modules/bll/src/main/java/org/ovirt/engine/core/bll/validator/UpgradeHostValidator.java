@@ -39,4 +39,9 @@ public class UpgradeHostValidator extends HostValidator {
         return ValidationResult.failWith(VdcBllMessages.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE)
                 .when(getHost().getVdsType() == VDSType.oVirtNode && StringUtils.isBlank(image));
     }
+
+    public ValidationResult hostWasInstalled() {
+        return ValidationResult.failWith(VdcBllMessages.CANNOT_UPGRADE_HOST_WITHOUT_OS)
+                .when(getHost().getHostOs() == null);
+    }
 }

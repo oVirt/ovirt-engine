@@ -307,6 +307,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. There are no available updates for the host.")
     String NO_AVAILABLE_UPDATES_FOR_HOST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The host has not completed a successul installation before.")
+    String CANNOT_UPGRADE_HOST_WITHOUT_OS();
+
     @DefaultStringValue("The Host Port number cannot be changed without reinstalling the Host.")
     String VDS_PORT_CHANGE_REQUIRE_INSTALL();
 
