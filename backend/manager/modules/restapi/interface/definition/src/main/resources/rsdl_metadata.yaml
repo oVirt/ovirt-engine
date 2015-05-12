@@ -3602,7 +3602,6 @@ actions:
           external_host_provider.requires_authentication: xs:boolean
           external_host_provider.username: xs:string
           external_host_provider.password: xs:string
-          external_host_provider.authentication_url: xs:string
         description: update the specified external host provider in the system
 - name: /externalhostproviders|rel=add
   description: add a new external host provider to the system
@@ -3618,7 +3617,6 @@ actions:
           external_host_provider.requires_authentication: xs:boolean
           external_host_provider.username: xs:string
           external_host_provider.password: xs:string
-          external_host_provider.authentication_url: xs:string
         description: add a new external host provider to the system
 - name: /externalhostproviders/{externalhostprovider:id}/testconnectivity|rel=testconnectivity
   description: test the connectivity to the external external host provider
@@ -3676,6 +3674,7 @@ actions:
           openstack_image_provider.requires_authentication: xs:boolean
           openstack_image_provider.username: xs:string
           openstack_image_provider.password: xs:string
+          openstack_image_provider.authentication_url: xs:string
           openstack_image_provider.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
@@ -3694,6 +3693,7 @@ actions:
           openstack_image_provider.requires_authentication: xs:boolean
           openstack_image_provider.username: xs:string
           openstack_image_provider.password: xs:string
+          openstack_image_provider.authentication_url: xs:string
           openstack_image_provider.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
@@ -3805,6 +3805,7 @@ actions:
           openstack_network_provider.requires_authentication: xs:boolean
           openstack_network_provider.username: xs:string
           openstack_network_provider.password: xs:string
+          openstack_network_provider.authentication_url: xs:string
           openstack_network_provider.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
@@ -3823,6 +3824,7 @@ actions:
           openstack_network_provider.requires_authentication: xs:boolean
           openstack_network_provider.username: xs:string
           openstack_network_provider.password: xs:string
+          openstack_network_provider.authentication_url: xs:string
           openstack_network_provider.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
