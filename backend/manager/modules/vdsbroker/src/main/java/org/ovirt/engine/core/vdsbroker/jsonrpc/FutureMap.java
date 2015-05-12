@@ -135,13 +135,13 @@ public class FutureMap implements Map<String, Object> {
      *
      * This method waits for a response or error for specified amount of time.
      *
-     * @param wait - time in seconds how long we want to wait for response.
+     * @param wait - time in milliseconds how long we want to wait for response.
      */
     private void lazyEval(long wait) {
         try (LockWrapper wrapper = new LockWrapper(this.lock)) {
             if (this.responseMap.isEmpty()) {
                 try {
-                    populate(this.response.get(wait, TimeUnit.SECONDS));
+                    populate(this.response.get(wait, TimeUnit.MILLISECONDS));
                 } catch (InterruptedException | ExecutionException | TimeoutException e) {
                     log.debug("Response not arrived yet");
                 }
