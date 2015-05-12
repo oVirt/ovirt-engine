@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import org.junit.rules.TestWatcher;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.di.Injector;
 
 import java.lang.reflect.Field;
