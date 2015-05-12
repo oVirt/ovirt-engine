@@ -136,17 +136,18 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
      */
     private List<GlusterBrickEntity> getBricks(Guid volumeId, Object[] brickList, boolean withUuid) throws Exception {
         List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
-
+        GlusterBrickEntity fetchedBrick;
         int brickOrder = 0;
 
         try {
-            if (withUuid) {
-                for (Object brick : brickList) {
-                    bricks.add(getBrick(clusterId, volumeId, (Map<String, Object>) brick, brickOrder++));
+            for (Object brick : brickList) {
+                if (withUuid) {
+                    fetchedBrick = getBrick(clusterId, volumeId, (Map<String, Object>) brick, brickOrder++);
+                } else {
+                    fetchedBrick = getBrick(clusterId, volumeId, (String) brick, brickOrder++);
                 }
-            } else {
-                for (Object brick : brickList) {
-                    bricks.add(getBrick(clusterId, volumeId, (String) brick, brickOrder++));
+                if (fetchedBrick != null) {
+                    bricks.add(fetchedBrick);
                 }
             }
         } catch (Exception e) {
