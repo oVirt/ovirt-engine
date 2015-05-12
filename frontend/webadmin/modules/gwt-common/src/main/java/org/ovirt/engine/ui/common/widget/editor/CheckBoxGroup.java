@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.ovirt.engine.core.common.utils.ListUtils;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -145,6 +147,15 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
      */
     @Override
     public void setValue(List<T> value, boolean fireEvents) {
+        List<T> selectedItems = getValue();
+        if (value == selectedItems
+                || (selectedItems != null && value != null && ListUtils.listsEqual(selectedItems, value))) {
+            return;
+        }
+        clearAllSelections();
+        if(value == null){
+            return;
+        }
         for (T currentvalue : value) {
             if (checkBoxes.containsKey(currentvalue)) {
                 checkBoxes.get(currentvalue).setValue(true);
@@ -168,6 +179,9 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
      */
     @Override
     public void setAcceptableValues(Collection<List<T>> values) {
+        List<T> seletedItems = getValue();
+        wrapperPanel.clear();
+        checkBoxes.clear();
         if (values.isEmpty()) {
             throw new IllegalArgumentException("Widget has nothing to do");//$NON-NLS-1$
         }
@@ -177,12 +191,15 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
                 addCheckBox(currentValue);
             }
         }
-        showCheckBoxes();
+        showCheckBoxes(seletedItems);
     }
 
-    private void showCheckBoxes() {
+    private void showCheckBoxes(List<T> seletedItems) {
         for (Entry<T, CheckBox> currentEntry : checkBoxes.entrySet()) {
             wrapperPanel.add(currentEntry.getValue());
+            if (seletedItems.contains(currentEntry.getKey())) {
+                currentEntry.getValue().setValue(true);
+            }
         }
     }
 
