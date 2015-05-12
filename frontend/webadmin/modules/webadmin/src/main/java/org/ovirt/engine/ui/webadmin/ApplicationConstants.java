@@ -1528,7 +1528,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String reinstallHost();
 
     @DefaultStringValue("Upgrade")
-    String upgradeOVirtNode();
+    String upgradeHost();
 
     @DefaultStringValue("Configure Local Storage")
     String configureLocalStorageHost();

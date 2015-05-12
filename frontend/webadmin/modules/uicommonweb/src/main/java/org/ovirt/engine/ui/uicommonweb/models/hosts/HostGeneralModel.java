@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -14,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -638,52 +636,6 @@ public class HostGeneralModel extends EntityModel<VDS>
             hasUpgradeAlert = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasUpgradeAlert")); //$NON-NLS-1$
         }
-    }
-
-    protected void setHasUpgradeAlert(List<RpmVersion> isos, String[] hostOs) {
-        setHasUpgradeAlert(shouldAlertUpgrade(isos, hostOs));
-    }
-
-    private boolean shouldAlertUpgrade(List<RpmVersion> isos, String[] hostOs)
-    {
-        // HhostOs holds the following components:
-        // hostOs[0] holds prefix
-        // hostOs[1] holds version
-        // hostOs[2] holds release
-        final int VERSION_FIELDS_NUMBER = 4;
-        boolean alert = false;
-        // Fix hostOs[1] to be format of major.minor.build.revision
-        // Add ".0" for missing parts
-        String[] hostOsVersionParts = hostOs[1].split("\\."); //$NON-NLS-1$
-        for (int counter = 0; counter < VERSION_FIELDS_NUMBER - hostOsVersionParts.length; counter++) {
-            hostOs[1] = hostOs[1].trim() + ".0"; //$NON-NLS-1$
-        }
-        Version hostVersion = new Version(hostOs[1].trim());
-        String releaseHost = hostOs[2].trim();
-
-        for (RpmVersion iso : isos) {
-            // Major check
-            if (hostVersion.getMajor() == iso.getMajor()) {
-                // Minor and Buildiso.getRpmName()
-                if (iso.getMinor() > hostVersion.getMinor() ||
-                        iso.getBuild() > hostVersion.getBuild()) {
-                    alert = true;
-                    break;
-                }
-
-                String rpmFromIso = iso.getRpmName();
-                // Removes the ".iso" file extension , and get the release part from it
-                int isoIndex = rpmFromIso.indexOf(".iso"); //$NON-NLS-1$
-                if (isoIndex != -1) {
-                    rpmFromIso = iso.getRpmName().substring(0, isoIndex);
-                }
-                if (RpmVersionUtils.compareRpmParts(RpmVersionUtils.splitRpmToParts(rpmFromIso)[2], releaseHost) > 0) {
-                    alert = true;
-                    break;
-                }
-            }
-        }
-        return alert;
     }
 
     private boolean hasManualFenceAlert;

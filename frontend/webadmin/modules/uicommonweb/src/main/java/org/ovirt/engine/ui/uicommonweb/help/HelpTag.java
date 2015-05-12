@@ -242,6 +242,8 @@ public enum HelpTag {
 
     install_host("install_host", HelpTagType.WEBADMIN, "Host Tab > General Sub-Tab > Install Host"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    upgrade_host("upgrade_host", HelpTagType.WEBADMIN, "Host Tab > General Sub-Tab > Upgrade Host"), //$NON-NLS-1$ //$NON-NLS-2$
+
     iscsi_bundles("iscsi_bundles", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     logical_networks("logical_networks", HelpTagType.UNKNOWN), //$NON-NLS-1$

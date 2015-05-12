@@ -530,6 +530,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Install Host")
     String installHostTitle();
 
+    @DefaultStringValue("Upgrade Host")
+    String upgradeHostsTitle();
+
     @DefaultStringValue("Are you sure?")
     String areYouSureTitle();
 
@@ -923,6 +926,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Host must be installed before upgrade.")
     String hostMustBeInstalledBeforeUpgrade();
+
+    @DefaultStringValue("There are running VMs on this host. Are you sure you want to continue the upgrade process? Running VM(s) will be migrated to another host.")
+    String areYouSureYouWantToUpgradeTheFollowingHostWithRunningVmsMsg();
+
+    @DefaultStringValue("Are you sure you want to Upgrade this Host?")
+    String areYouSureYouWantToUpgradeTheFollowingHostMsg();
 
     @DefaultStringValue("Testing in progress. It will take a few seconds. Please wait...")
     String testingInProgressItWillTakeFewSecondsPleaseWaitMsg();

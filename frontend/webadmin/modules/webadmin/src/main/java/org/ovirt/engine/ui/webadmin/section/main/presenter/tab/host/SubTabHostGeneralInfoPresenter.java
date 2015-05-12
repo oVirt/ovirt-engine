@@ -1,7 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
+import java.util.Arrays;
+
+import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
@@ -20,6 +23,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
+import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget.AlertType;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -63,6 +67,17 @@ public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS,
          *            a link to an action embedded
          */
         void addAlert(Widget widget);
+
+        /**
+         * Displays a new alert in the alerts panel of the host.
+         *
+         * @param widget
+         *            the widget used to display the alert, usually just a text label, but can also be a text label with
+         *            a link to an action embedded
+         * @param type
+         *            the type of the alert
+         */
+        void addAlert(Widget widget, AlertType type);
     }
 
 
@@ -114,13 +129,13 @@ public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS,
 
         // Review the alerts and add those that are active:
         if (model.getHasUpgradeAlert()) {
-            if (model.getEntity().getStatus() == VDSStatus.Maintenance) {
-                addTextAlert(view, messages.hostInMaintenanceHasUpgradeAlert());
-            }
-            else {
-                addTextAlert(view, messages.hostHasUpgradeAlert());
+            if (VdcActionUtils.canExecute(Arrays.asList(model.getEntity()), VDS.class, VdcActionType.UpgradeHost)) {
+                addTextAlert(view, messages.hostInSupportedStatusHasUpgradeAlert(), AlertType.UPDATE_AVAILABLE);
+            } else {
+                addTextAlert(view, messages.hostHasUpgradeAlert(), AlertType.UPDATE_AVAILABLE);
             }
         }
+
         if (model.getHasReinstallAlertNonResponsive()) {
             addTextAlert(view, messages.hostHasReinstallAlertNonResponsive());
         }
@@ -138,6 +153,11 @@ public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS,
         }
     }
 
+    private void addTextAlert(final ViewDef view, final String text, AlertType type) {
+        final Label label = new Label(text);
+        view.addAlert(label, type);
+    }
+
     /**
      * Create a widget containing text and add it to the alerts panel of the host.
      *
@@ -147,8 +167,7 @@ public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS,
      *            the text content of the alert
      */
     private void addTextAlert(final ViewDef view, final String text) {
-        final Label label = new Label(text);
-        view.addAlert(label);
+        addTextAlert(view, text, AlertType.ALERT);
     }
 
     /**

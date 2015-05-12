@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralInfoPresenter;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
+import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget.AlertType;
 import org.ovirt.engine.ui.webadmin.widget.label.DetailsTextBoxLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
@@ -195,8 +196,13 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
 
     @Override
     public void addAlert(Widget alertWidget) {
+        addAlert(alertWidget, AlertType.ALERT);
+    }
+
+    @Override
+    public void addAlert(Widget alertWidget, AlertType type) {
         // Add the composite panel to the alerts panel:
-        alertsList.add(new InLineAlertWidget(alertWidget));
+        alertsList.add(new InLineAlertWidget(alertWidget, type));
 
         // Make the panel visible if it wasn't:
         if (!alertsPanel.isVisible()) {

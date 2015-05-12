@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
+import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
@@ -437,10 +438,19 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         setNumaSupportCommand(new UICommand("NumaSupport", this)); //$NON-NLS-1$
         getConfigureLocalStorageCommand().setAvailableInModes(ApplicationMode.VirtOnly);
         getSelectAsSpmCommand().setAvailableInModes(ApplicationMode.VirtOnly);
+
         updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
+
+        getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                updateAvailableOvirtNodeUpgrades();
+            }
+        });
+
     }
 
     private void setDetailList(final HostInterfaceListModel hostInterfaceListModel,
@@ -1497,15 +1507,46 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
     }
 
-    public void upgrade()
-    {
+    public void upgrade() {
         final VDS host = getSelectedItem();
+        if (host.getVdsType() == VDSType.oVirtNode) {
+            upgradeOvirtNode(host);
+        } else {
+            upgradeHost(host);
+        }
+    }
+
+    private void upgradeHost(VDS host) {
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
+        ConfirmationModel model = new ConfirmationModel();
+        setConfirmWindow(model);
+        model.setTitle(constants.upgradeHostsTitle());
+        model.setHelpTag(HelpTag.upgrade_host);
+        model.setHashName(HelpTag.upgrade_host.name);
+
+        if (host.getVmCount() > 0) {
+            model.setMessage(constants.areYouSureYouWantToUpgradeTheFollowingHostWithRunningVmsMsg());
+        } else {
+            model.setMessage(constants.areYouSureYouWantToUpgradeTheFollowingHostMsg());
+        }
+
+        UICommand tempVar = new UICommand("OnUpgrade", this); //$NON-NLS-1$
+        tempVar.setTitle(constants.ok());
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(constants.cancel());
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
+
+    private void upgradeOvirtNode(final VDS host) {
         InstallModel model = new InstallModel();
         model.setVds(host);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().installHostTitle());
-        model.setHelpTag(HelpTag.install_host);
-        model.setHashName("install_host"); //$NON-NLS-1$
+        model.setHelpTag(HelpTag.upgrade_host);
+        model.setHashName(HelpTag.upgrade_host.name);
         model.getOVirtISO().setIsAvailable(false);
 
         model.getOverrideIpTables().setIsAvailable(false);
@@ -1568,59 +1609,49 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getCommands().add(command);
     }
 
-    public void onUpgrade()
-    {
+    public void onUpgrade() {
         final VDS host = getSelectedItem();
-        InstallModel model = (InstallModel) getWindow();
-        final boolean isOVirt = host.getVdsType() == VDSType.oVirtNode;
+        if (host.getVdsType() == VDSType.oVirtNode) {
+            onUpgradeOvirtNode(host);
+        } else {
+            onUpgradeHost(host);
+        }
 
-        if (!model.validate(isOVirt))
-        {
+    }
+
+    private void onUpgradeOvirtNode(final VDS host) {
+        InstallModel model = (InstallModel) getWindow();
+        if (!model.validate(true)) {
             return;
         }
 
-        UpdateVdsActionParameters param = new UpdateVdsActionParameters();
-        param.setvds(host);
-        param.setVdsId(host.getId());
-        param.setPassword(model.getUserPassword().getEntity());
-        param.setReinstallOrUpgrade(true);
-        param.setInstallHost(true);
-        param.setoVirtIsoFile(isOVirt ? model.getOVirtISO().getSelectedItem().getRpmName() : null);
-        param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
-        param.setActivateHost(model.getActivateHostAfterInstall().getEntity());
-        param.setAuthMethod(model.getAuthenticationMethod());
+        UpgradeHostParameters params = new UpgradeHostParameters(host.getId());
+        params.setoVirtIsoFile(model.getOVirtISO().getSelectedItem().getRpmName());
+        invokeHostUpgrade(params);
+    }
 
-        Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();
-        if (networkProvider != null) {
-            param.setNetworkProviderId(networkProvider.getId());
-            param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
+    private void onUpgradeHost(final VDS host) {
+        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
+        if (model.getProgress() != null) {
+            return;
         }
 
-        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
+        model.startProgress(null);
+        setConfirmWindow(null);
+        UpgradeHostParameters params = new UpgradeHostParameters(host.getId());
+        invokeHostUpgrade(params);
+    }
 
+    private void invokeHostUpgrade(UpgradeHostParameters params) {
+        Frontend.getInstance().runAction(VdcActionType.UpgradeHost, params, new IFrontendActionAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VDSGroup cluster = (VDSGroup) returnValue;
-                UpdateVdsActionParameters internalParam = (UpdateVdsActionParameters) model;
-
-                internalParam.setRebootAfterInstallation(cluster.supportsVirtService());
-                Frontend.getInstance().runAction(
-                        VdcActionType.UpgradeOvirtNode,
-                        internalParam,
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
-                                VdcReturnValueBase returnValue = result.getReturnValue();
-                                if (returnValue != null && returnValue.getSucceeded()) {
-                                    cancel();
-                                }
-                            }
-                        }
-                );
+            public void executed(FrontendActionAsyncResult result) {
+                VdcReturnValueBase returnValue = result.getReturnValue();
+                if (returnValue != null && returnValue.getSucceeded()) {
+                    cancel();
+                }
             }
-        }), host.getVdsGroupId());
-
-
+        });
     }
 
     public void restart()
@@ -1950,52 +1981,48 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     {
         super.onSelectedItemChanged();
         updateActionAvailability();
-
-        if (getSelectedItem() != null) {
-            updateAlerts();
-        }
+        updateAlerts();
     }
 
     private void updateAlerts() {
-        final VDS vds = getSelectedItem();
-        final UIConstants constants = ConstantsManager.getInstance().getConstants();
-        if (vds.getVdsType() == VDSType.oVirtNode) {
-            AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
-                            @SuppressWarnings("unchecked")
-                            List<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
-                            if (!isos.isEmpty()) {
-                                String [] hostOsInfo = vds.getHostOs().split("-"); //$NON-NLS-1$
-                                for (int counter = 0; counter < hostOsInfo.length; counter++) {
-                                    hostOsInfo[counter] = hostOsInfo[counter].trim();
-                                }
-
-                                generalModel.setHasUpgradeAlert(isos, hostOsInfo);
-                                boolean executionAllowed = vds.getStatus() != VDSStatus.Up
-                                        && vds.getStatus() != VDSStatus.Installing
-                                        && vds.getStatus() != VDSStatus.PreparingForMaintenance
-                                        && vds.getStatus() != VDSStatus.Reboot
-                                        && vds.getStatus() != VDSStatus.PendingApproval;
-
-                                if (!executionAllowed) {
-                                    getUpgradeCommand().getExecuteProhibitionReasons()
-                                            .add(constants.switchToMaintenanceModeToEnableUpgradeReason());
-                                }
-                                getUpgradeCommand().setIsExecutionAllowed(executionAllowed);
-                            }
-
-                            generalModel.setHasAnyAlert();
-
-                        }
-                    }),
-                    vds.getId());
-        } else if (vds.getVdsType() == VDSType.VDS) {
-            generalModel.setHasUpgradeAlert(vds.isUpdateAvailable());
-            generalModel.setHasAnyAlert();
+        final VDS host = getSelectedItem();
+        if (host == null) {
+            return;
         }
+
+        setUpgradeActionStatus(host);
+        generalModel.setHasUpgradeAlert(host.isUpdateAvailable());
+        generalModel.setHasAnyAlert();
+    }
+
+    private void updateAvailableOvirtNodeUpgrades() {
+        final VDS host = getSelectedItem();
+        if (host == null) {
+            return;
+        }
+
+        if (host.getVdsType() != VDSType.oVirtNode) {
+            return;
+        }
+
+        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                    }
+                }),
+                host.getId());
+    }
+
+    private void setUpgradeActionStatus(final VDS vds) {
+        final boolean executionAllowed = canUpgradeHost(vds);
+        if (!executionAllowed) {
+            final UIConstants constants = ConstantsManager.getInstance().getConstants();
+            getUpgradeCommand().getExecuteProhibitionReasons()
+                    .add(constants.switchToMaintenanceModeToEnableUpgradeReason());
+        }
+
+        getUpgradeCommand().setIsExecutionAllowed(executionAllowed);
     }
 
     @Override
@@ -2057,7 +2084,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         getApproveCommand().setIsExecutionAllowed(approveAvailability);
 
         boolean installAvailability = false;
-        if (items.size() == 1 && items.get(0) instanceof VDS) {
+        if (singleHostSelected(items)) {
             VDS host = items.get(0);
             installAvailability = host.getStatus() == VDSStatus.InstallFailed ||
                     host.getStatus() == VDSStatus.Maintenance;
@@ -2065,11 +2092,9 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         getInstallCommand().setIsExecutionAllowed(installAvailability);
 
         boolean upgradeAvailability = false;
-        if (installAvailability) {
+        if (singleHostSelected(items)) {
             VDS host = items.get(0);
-            if (host.getVdsType() == VDSType.oVirtNode) {
-                upgradeAvailability = true;
-            }
+            upgradeAvailability = canUpgradeHost(host);
         }
         getUpgradeCommand().setIsExecutionAllowed(upgradeAvailability);
 
@@ -2106,6 +2131,15 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
         getNumaSupportCommand().setIsVisible(numaVisible);
 
+    }
+
+    private boolean canUpgradeHost(VDS host) {
+        return host.isUpdateAvailable()
+                && VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, VdcActionType.UpgradeHost);
+    }
+
+    private boolean singleHostSelected(List<VDS> items) {
+        return items.size() == 1 && items.get(0) instanceof VDS;
     }
 
     private Boolean hasAdminSystemPermission = null;

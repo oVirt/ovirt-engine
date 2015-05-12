@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.util.List;
+
+import org.ovirt.engine.core.compat.RpmVersion;
+import org.ovirt.engine.core.compat.Version;
+
 public class RpmVersionUtils {
 
     private static final String INVALID_RPM_NAME_FORMAT = "RPM name should be in format of Prefix-Version-Release";
@@ -176,5 +181,62 @@ public class RpmVersionUtils {
         parts[1] = rpmName.substring(beforeLastDashIndex + 1, lastDashIndex);
         parts[2] = rpmName.substring(lastDashIndex + 1);
         return parts;
+    }
+
+    /**
+     * Checks if an update is available for host OS
+     *
+     * @param isos
+     *            an images which may upgrade the given host
+     * @param hostOs
+     *            the examined host OS
+     * @return {@code true} if an update is available, else {@code false}
+     */
+    public static boolean isUpdateAvailable(List<RpmVersion> isos, String hostOs) {
+
+        String[] hostOsParts = hostOs.split("-");
+        for (int i = 0; i < hostOsParts.length; i++) {
+            hostOsParts[i] = hostOsParts[i].trim();
+        }
+
+        // hostOs holds the following components:
+        // hostOs[0] holds prefix
+        // hostOs[1] holds version
+        // hostOs[2] holds release
+        final int VERSION_FIELDS_NUMBER = 4;
+
+        // Fix hostOs[1] to be format of major.minor.build.revision
+        // Add ".0" for missing parts
+        String[] hostOsVersionParts = hostOsParts[1].split("\\.");
+        for (int i = 0; i < VERSION_FIELDS_NUMBER - hostOsVersionParts.length; i++) {
+            hostOsParts[1] = hostOsParts[1].trim() + ".0";
+        }
+
+        Version hostVersion = new Version(hostOsParts[1].trim());
+        String releaseHost = hostOsParts[2].trim();
+
+        for (RpmVersion iso : isos) {
+            // Major check
+            if (hostVersion.getMajor() == iso.getMajor()) {
+                // Minor and Buildiso.getRpmName()
+                if (iso.getMinor() > hostVersion.getMinor() || iso.getBuild() > hostVersion.getBuild()) {
+                    return true;
+                }
+
+                String rpmFromIso = iso.getRpmName();
+
+                // Removes the ".iso" file extension , and get the release part from it
+                int isoIndex = rpmFromIso.indexOf(".iso");
+                if (isoIndex != -1) {
+                    rpmFromIso = iso.getRpmName().substring(0, isoIndex);
+                }
+
+                if (RpmVersionUtils.compareRpmParts(RpmVersionUtils.splitRpmToParts(rpmFromIso)[2], releaseHost) > 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

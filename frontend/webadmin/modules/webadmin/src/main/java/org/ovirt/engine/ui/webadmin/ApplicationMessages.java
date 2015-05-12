@@ -8,8 +8,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("A new version is available; an upgrade option will appear once the Host is moved to maintenance mode.")
     String hostHasUpgradeAlert();
 
-    @DefaultMessage("If you wish to upgrade or reinstall the host click here.")
-    String hostInMaintenanceHasUpgradeAlert();
+    @DefaultMessage("A new version is available.")
+    String hostInSupportedStatusHasUpgradeAlert();
 
     @DefaultMessage("This host is in non responding state. Try to Activate it; If the problem persists, switch Host to Maintenance mode and try to reinstall it.")
     String hostHasReinstallAlertNonResponsive();
