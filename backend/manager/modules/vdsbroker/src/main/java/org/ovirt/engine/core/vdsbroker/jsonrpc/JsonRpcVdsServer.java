@@ -1950,4 +1950,12 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
+
+    public StatusOnlyReturnForXmlRpc registerSecrets(Map<String, String>[] libvirtSecrets) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.registerSecrets").withParameter("secrets", libvirtSecrets)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
 }

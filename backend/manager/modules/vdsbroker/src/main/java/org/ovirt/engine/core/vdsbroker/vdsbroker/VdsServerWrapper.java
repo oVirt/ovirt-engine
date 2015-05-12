@@ -1918,4 +1918,13 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    public StatusOnlyReturnForXmlRpc registerSecrets(Map<String, String>[] libvirtSecrets) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.registerSecrets(libvirtSecrets);
+            return new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

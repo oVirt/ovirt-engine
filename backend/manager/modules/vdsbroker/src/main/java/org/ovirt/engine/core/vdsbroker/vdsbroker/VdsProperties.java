@@ -372,6 +372,7 @@ public final class VdsProperties {
     public static final String CinderSecretType = "secret_type";
     public static final String CinderAuthUsername = "auth_username";
     public static final String CinderSecretUuid = "secret_uuid";
+    public static final String Ovirt = "ovirt";
 
     // iotune
     public static final String Iotune = "ioTune";

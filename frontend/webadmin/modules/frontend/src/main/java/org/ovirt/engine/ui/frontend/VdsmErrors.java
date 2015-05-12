@@ -955,4 +955,10 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Job id already exists")
     String V2V_JOB_ALREADY_EXIST();
+
+    @DefaultStringValue("Bad secret request")
+    String SecretBadRequestError();
+
+    @DefaultStringValue("Error registering Libvirt secret")
+    String SecretRegisterError();
 }
