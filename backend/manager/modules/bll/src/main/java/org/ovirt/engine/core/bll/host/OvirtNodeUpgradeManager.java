@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
 
 public class OvirtNodeUpgradeManager implements UpdateAvailable {
@@ -17,6 +18,6 @@ public class OvirtNodeUpgradeManager implements UpdateAvailable {
                 Backend.getInstance().runInternalQuery(VdcQueryType.GetoVirtISOs,
                         new VdsIdParametersBase(host.getId()));
         List<RpmVersion> isos = returnValue.getReturnValue();
-        return !isos.isEmpty();
+        return RpmVersionUtils.isUpdateAvailable(isos, host.getHostOs());
     }
 }
