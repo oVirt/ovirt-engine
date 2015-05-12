@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.StorageQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.SystemPermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.AddDataCenterClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookContentPopupPresenterWidget;
@@ -282,7 +281,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.NewNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.SystemPermissionsRemoveConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark.BookmarkPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.AddDataCenterClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterManageNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.GlusterHookContentPopupView;
@@ -1271,11 +1269,6 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VolumeProfileStatisticsPopupPresenterWidget.class,
                 VolumeProfileStatisticsPopupPresenterWidget.ViewDef.class,
                 VolumeProfileStatisticsPopupView.class);
-
-        bindPresenterWidget(AddDataCenterClusterPopupPresenterWidget.class,
-                AddDataCenterClusterPopupPresenterWidget.ViewDef.class,
-                AddDataCenterClusterPopupView.class);
-
         // Host
         bindPresenterWidget(HostPopupPresenterWidget.class,
                 HostPopupPresenterWidget.ViewDef.class,

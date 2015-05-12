@@ -223,12 +223,11 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                     return;
                 }
 
-                getListModel().setSelectedItems(null);
-                getListModel().setSelectedItem(null);
                 // Clear "IsSelected"
                 for (EntityModel entity : (List<EntityModel>) getListModel().getItems()) {
                     entity.setIsSelected(false);
                 }
+                getListModel().setSelectedItems(null);
 
                 // Set "IsSelected"
                 SelectionModel<? super EntityModel> selectionModel = EntityModelCellTable.this.getSelectionModel();

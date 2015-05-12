@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import com.google.gwt.i18n.client.Constants;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 import com.google.gwt.i18n.client.Constants;
@@ -1068,12 +1067,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Configure Host")
     String configureHostClusterGuide();
-
-    @DefaultStringValue("No actions available on cluster.")
-    String guidePopupNoActionsLabel();
-
-    @DefaultStringValue("Attach Cluster to Data Center")
-    String addDataCenter();
 
     @DefaultStringValue("Add another Host")
     String addAnotherHostClusterGuide();
