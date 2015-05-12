@@ -47,7 +47,7 @@ public class StorageDeviceSyncJob extends GlusterJob {
         }
     }
 
-    public void refreshStorageDevicesFromServers(List<VDS> upServers) {
+    private void refreshStorageDevicesFromServers(List<VDS> upServers) {
         List<Callable<Pair<VDS, List<StorageDevice>>>> storageDevicesListCalls = new ArrayList<>();
 
         for (final VDS server : upServers) {
@@ -90,7 +90,7 @@ public class StorageDeviceSyncJob extends GlusterJob {
 
     }
 
-    private void updateStorageDevices(VDS vds, List<StorageDevice> storageDevicesFromVdsm) {
+    public void updateStorageDevices(VDS vds, List<StorageDevice> storageDevicesFromVdsm) {
         Set<String> deviceUuidsFromVdsm = new HashSet<>();
         Set<String> deviceNamesFromVdsm = new HashSet<>();
 
