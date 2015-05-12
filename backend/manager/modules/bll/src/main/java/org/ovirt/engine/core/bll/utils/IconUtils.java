@@ -128,16 +128,22 @@ public class IconUtils {
             }
         }
         List<Guid> unusedIconIds = new ArrayList<>(2);
-        if (!newVmBase.getSmallIconId().equals(originalVmBase.getSmallIconId())) {
+        if (newVmBase.getSmallIconId() != null && originalVmBase.getSmallIconId() != null &&
+                !newVmBase.getSmallIconId().equals(originalVmBase.getSmallIconId())) {
             unusedIconIds.add(originalVmBase.getSmallIconId());
         }
-        if (!newVmBase.getLargeIconId().equals(originalVmBase.getLargeIconId())) {
+        if (newVmBase.getLargeIconId() != null && originalVmBase.getLargeIconId() != null &&
+                !newVmBase.getLargeIconId().equals(originalVmBase.getLargeIconId())) {
             unusedIconIds.add(originalVmBase.getLargeIconId());
         }
         return unusedIconIds;
     }
 
     private static void computeSmallByLargeIconId(VmBase vmBase) {
+        if (vmBase.getLargeIconId() == null) {
+            return;
+        }
+
         final List<VmIconDefault> iconDefaultsByLargeIconId = DbFacade.getInstance().getVmIconsDefaultDao()
                 .getByLargeIconId(vmBase.getLargeIconId());
         if (!iconDefaultsByLargeIconId.isEmpty()) {
