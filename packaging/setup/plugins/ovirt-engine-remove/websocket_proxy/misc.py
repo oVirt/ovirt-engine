@@ -47,7 +47,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
+        after=(
+            osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
+        ),
         condition=lambda self: not self.environment[
             osetupcons.RemoveEnv.REMOVE_ALL
         ],
