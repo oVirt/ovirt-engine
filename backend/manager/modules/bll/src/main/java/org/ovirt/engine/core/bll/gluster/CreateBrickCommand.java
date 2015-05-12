@@ -91,11 +91,11 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
     protected void executeCommand() {
 
         Map<String, Object> raidParams = new HashMap<>();
-        if (!getParameters().getRaidType().equals(RaidType.None)
-                && !getParameters().getRaidType().equals(RaidType.Raid0)) {
+        if (!getParameters().getRaidType().equals(RaidType.NONE)
+                && !getParameters().getRaidType().equals(RaidType.RAID0)) {
             raidParams.put("type", getParameters().getRaidType().getValue()); //$NON-NLS-1$
             raidParams.put("pdCount", getParameters().getNoOfPhysicalDisksInRaidVolume()); //$NON-NLS-1$
-            raidParams.put("stripSize", getParameters().getStripeSize()); //$NON-NLS-1$
+            raidParams.put("stripeSize", getParameters().getStripeSize()); //$NON-NLS-1$
         }
 
         VDSReturnValue returnValue = runVdsCommand(
