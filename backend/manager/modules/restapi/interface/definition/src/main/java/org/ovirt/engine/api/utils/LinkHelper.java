@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
@@ -310,6 +312,11 @@ public class LinkHelper {
      * A map describing every possible collection
      */
     private static ModelToCollectionsMap TYPES = new ModelToCollectionsMap();
+
+    /**
+     * A map for caching relevant resource methods for each class
+     */
+    private static ConcurrentMap<Class<?>, List<Method>> methodCache = new ConcurrentHashMap<>();
 
     static {
         ParentToCollectionMap map;
@@ -679,26 +686,21 @@ public class LinkHelper {
     private static List<BaseResource> getInlineResources(Object obj) {
         ArrayList<BaseResource> ret = new ArrayList<BaseResource>();
 
-        for (Method method : obj.getClass().getMethods()) {
-            if (method.getName().startsWith("get")) {
-                // We need to recursively scan everything that is in the model package, as there may be references
-                // to resources deeply nested:
-                if (method.getReturnType().getPackage() == BaseResource.class.getPackage()) {
-                    Object inline = null;
-                    try {
-                        inline = method.invoke(obj);
-                    }
-                    catch (Exception e) {
-                        // invocation target exception should not occur on simple getter
-                    }
-                    if (inline != null) {
-                        if (inline instanceof BaseResource) {
-                            ret.add((BaseResource) inline);
-                        }
-                        else {
-                            ret.addAll(getInlineResources(inline));
-                        }
-                    }
+        for (Method method : getRelevantMethods(obj.getClass())) {
+            // We need to recursively scan everything that is in the model package, as there may be references
+            // to resources deeply nested:
+            Object inline = null;
+            try {
+                inline = method.invoke(obj);
+            } catch (Exception e) {
+                // invocation target exception should not occur on simple getter
+            }
+            if (inline != null) {
+                if (inline instanceof BaseResource) {
+                    ret.add((BaseResource) inline);
+                }
+                else {
+                    ret.addAll(getInlineResources(inline));
                 }
             }
         }
@@ -706,6 +708,28 @@ public class LinkHelper {
         return ret;
     }
 
+    /**
+     * Gets all the relevant possible inline resources methods of a class. Data is cached for future use.
+     * @param clz
+     *            The class to examine
+     * @return The list of relevant methods.
+     */
+    private static List<Method> getRelevantMethods(Class<?> clz) {
+        List<Method> methods = methodCache.get(clz);
+        if (methods == null) {
+            methods = new ArrayList<Method>();
+            for (Method method : clz.getMethods()) {
+                if (method.getName().startsWith("get")) {
+                    if (method.getReturnType().getPackage() == BaseResource.class.getPackage()) {
+                        methods.add(method);
+                    }
+                }
+            }
+            methodCache.put(clz, methods);
+        }
+
+        return methods;
+    }
     /**
      * Unset the property on @model of type @type
      *
