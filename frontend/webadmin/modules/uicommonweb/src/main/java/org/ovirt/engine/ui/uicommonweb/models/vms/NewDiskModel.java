@@ -150,6 +150,9 @@ public class NewDiskModel extends AbstractDiskModel
 
     @Override
     public void flush() {
+        if (!validate()) {
+            return;
+        }
         super.flush();
         switch (getDiskStorageType().getEntity()) {
             case LUN:
