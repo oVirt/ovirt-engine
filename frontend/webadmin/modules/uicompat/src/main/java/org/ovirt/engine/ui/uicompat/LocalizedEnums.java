@@ -996,13 +996,13 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String GlusterServiceStatus___UNKNOWN();
 
-    String RaidType___None();
+    String RaidType___NONE();
 
-    String RaidType___Raid0();
+    String RaidType___RAID0();
 
-    String RaidType___Raid6();
+    String RaidType___RAID6();
 
-    String RaidType___Raid10();
+    String RaidType___RAID10();
 
     String VmWatchdogType___i6300esb();
 

@@ -46,7 +46,7 @@ public class CreateBrickModel extends Model {
         setDefaultMountFolder(new EntityModel<String>());
         List<RaidType> list = Arrays.asList(RaidType.values());
         getRaidTypeList().setItems(list);
-        getRaidTypeList().setSelectedItem(RaidType.None);
+        getRaidTypeList().setSelectedItem(RaidType.NONE);
         getNoOfPhysicalDisksInRaidVolume().setIsAvailable(false);
         getStripeSize().setIsAvailable(false);
         initSize();
@@ -71,8 +71,8 @@ public class CreateBrickModel extends Model {
         getRaidTypeList().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (getRaidTypeList().getSelectedItem() != RaidType.None
-                        && getRaidTypeList().getSelectedItem() != RaidType.Raid0) {
+                if (getRaidTypeList().getSelectedItem() != RaidType.NONE
+                        && getRaidTypeList().getSelectedItem() != RaidType.RAID0) {
                     getNoOfPhysicalDisksInRaidVolume().setIsAvailable(true);
                     getStripeSize().setIsAvailable(true);
                 } else {

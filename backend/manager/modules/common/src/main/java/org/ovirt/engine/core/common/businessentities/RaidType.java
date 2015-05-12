@@ -3,13 +3,13 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.HashMap;
 
 public enum RaidType {
-    None(-1),
-    Raid0(0),
-    Raid6(6),
-    Raid10(10);
+    NONE("-1"),
+    RAID0("0"),
+    RAID6("6"),
+    RAID10("10");
 
-    private int intValue;
-    private static final HashMap<Integer, RaidType> mappings = new HashMap<Integer, RaidType>();
+    private String value;
+    private static final HashMap<String, RaidType> mappings = new HashMap<String, RaidType>();
 
     static {
         for (RaidType raidType : values()) {
@@ -17,15 +17,15 @@ public enum RaidType {
         }
     }
 
-    private RaidType(int value) {
-        intValue = value;
+    private RaidType(String value) {
+        this.value = value;
     }
 
-    public int getValue() {
-        return intValue;
+    public String getValue() {
+        return value;
     }
 
-    public static RaidType forValue(int value) {
+    public static RaidType forValue(String value) {
         return mappings.get(value);
     }
 

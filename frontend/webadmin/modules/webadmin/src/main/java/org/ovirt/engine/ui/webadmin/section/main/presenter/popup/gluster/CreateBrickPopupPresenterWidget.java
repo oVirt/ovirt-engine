@@ -33,8 +33,8 @@ public class CreateBrickPopupPresenterWidget extends AbstractModelBoundPopupPres
                     EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("raidTypeChanged".equals(propName)) { //$NON-NLS-1$
-                    if (model.getRaidTypeList().getSelectedItem() != RaidType.None
-                            && model.getRaidTypeList().getSelectedItem() != RaidType.Raid0) {
+                    if (model.getRaidTypeList().getSelectedItem() != RaidType.NONE
+                            && model.getRaidTypeList().getSelectedItem() != RaidType.RAID0) {
                         getView().setDeviceInfoText(model.getRaidTypeList().getSelectedItem().name());
                         getView().setDeviceInfoVisibility(true);
                     } else {

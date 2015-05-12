@@ -60,7 +60,7 @@ public class CreateBrickCommandTest {
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
                 "brick1",
                 "/gluster-bricks/brick1",
-                RaidType.Raid0,
+                RaidType.RAID0,
                 null,
                 null, Arrays.asList(getStorageDevice("sda", null)))));
         prepareMocks(cmd, VDSStatus.Up);
@@ -97,7 +97,7 @@ public class CreateBrickCommandTest {
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
                 "brick1",
                 "/gluster-bricks/brick1",
-                RaidType.Raid0,
+                RaidType.RAID0,
                 null,
                 null, Collections.EMPTY_LIST)));
         prepareMocks(cmd, VDSStatus.Up);
@@ -111,7 +111,7 @@ public class CreateBrickCommandTest {
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
                 "brick1",
                 "/gluster-bricks/brick1",
-                RaidType.Raid0,
+                RaidType.RAID0,
                 null,
                 null, Arrays.asList(storageDevice))));
         prepareMocks(cmd, VDSStatus.Up);
@@ -127,7 +127,7 @@ public class CreateBrickCommandTest {
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
                 "brick1",
                 "/gluster-bricks/brick1",
-                RaidType.Raid0,
+                RaidType.RAID0,
                 null,
                 null, Arrays.asList(storageDevice1, storageDevice2))));
         prepareMocks(cmd, VDSStatus.Up);
