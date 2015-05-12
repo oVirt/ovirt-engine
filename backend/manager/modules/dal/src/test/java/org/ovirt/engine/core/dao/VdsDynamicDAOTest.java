@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -172,5 +173,15 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
 
         hostIds = dao.getIdsOfHostsWithStatus(VDSStatus.Maintenance);
         assertEquals(0, hostIds.size());
+    }
+
+    @Test
+    public void testUpdateAvailableUpdates() {
+        VdsDynamic before = dao.get(existingVds.getId());
+        assertFalse(before.isUpdateAvailable());
+        before.setUpdateAvailable(true);
+        dao.updateUpdateAvailable(before.getId(), before.isUpdateAvailable());
+        VdsDynamic after = dao.get(existingVds.getId());
+        assertEquals(before.isUpdateAvailable(), after.isUpdateAvailable());
     }
 }

@@ -311,4 +311,12 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                         .addValue("status", status.getValue()));
     }
 
+    @Override
+    public void updateUpdateAvailable(Guid id, boolean updateAvailable) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vds_guid", id)
+                .addValue("is_update_available", updateAvailable);
+
+        getCallsHandler().executeModification("UpdateVdsDynamicIsUpdateAvailable", parameterSource);
+    }
 }

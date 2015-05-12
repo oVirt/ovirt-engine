@@ -896,6 +896,20 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION UpdateVdsDynamicIsUpdateAvailable(
+        v_vds_guid UUID,
+        v_is_update_available BOOLEAN)
+RETURNS VOID
+
+   AS $procedure$
+BEGIN
+      UPDATE vds_dynamic
+      SET
+      is_update_available = v_is_update_available
+      WHERE vds_id = v_vds_guid;
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION UpdatePartialVdsDynamicCalc(
         v_vds_guid UUID,
         v_vmCount INTEGER,
