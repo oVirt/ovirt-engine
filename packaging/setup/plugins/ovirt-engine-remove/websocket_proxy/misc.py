@@ -62,7 +62,7 @@ class Plugin(plugin.PluginBase):
                 owspcons.RemoveEnv.REMOVE_WSP
             ] = dialog.queryBoolean(
                 dialog=self.dialog,
-                name='OVESETUP_REMOVE_ENGINE',
+                name='OVESETUP_REMOVE_WEBSOCKET_PROXY',
                 note=_(
                     'Do you want to remove the WebSocket proxy? '
                     '(@VALUES@) [@DEFAULT@]: '
