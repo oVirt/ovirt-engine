@@ -64,13 +64,20 @@ public class BackendVmDisksResource
                            .build();
         }else {
             validateDiskForCreation(disk);
-            org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain = getStorageDomainById(getStorageDomainId(disk));
-            if (storageDomain != null) {
-                disk.setStorageType(DiskMapper.map(storageDomain.getStorageDomainType()).value());
-            }
+            updateStorageTypeForDisk(disk);
             return performCreate(addAction,
                     getAddParameters(map(disk), disk),
                     getEntityIdResolver(disk.getName()));
+        }
+    }
+
+    protected void updateStorageTypeForDisk(Disk disk) {
+        Guid storageDomainId = getStorageDomainId(disk);
+        if (storageDomainId != null) {
+            org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain = getStorageDomainById(storageDomainId);
+            if (storageDomain != null) {
+                disk.setStorageType(DiskMapper.map(storageDomain.getStorageDomainType()).value());
+            }
         }
     }
 
