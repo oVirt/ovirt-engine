@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -313,6 +316,12 @@ public class GlusterUtil {
         return retStr;
     }
 
+    /**
+     * Converts the input time to engine's time zone from the provided time zone
+     * @param inTime input time
+     * @param fromTimeZone time zone from which to convert to engine time zone
+     * @return converted time
+     */
     public Time convertTime(Time inTime, String fromTimeZone) {
         Calendar calFrom = new GregorianCalendar(TimeZone.getTimeZone(fromTimeZone));
         calFrom.set(Calendar.HOUR, inTime.getHours());
@@ -358,6 +367,29 @@ public class GlusterUtil {
     public void checkAndRemoveVolumeSnapshotSoftLimitAlert(final GlusterVolumeEntity volume) {
         if (!GlusterDBUtils.getInstance().isSoftLimitReached(volume.getId())) {
             AlertDirector.removeVolumeAlert(volume.getId(), AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED);
+        }
+    }
+
+    /**
+     * Converts the given date from the given time zone to engine time zone
+     * @param inDate input date
+     * @param tZone from time zone
+     * @return converted date
+     */
+    public Date convertDate(Date inDate, String tZone) {
+        if (inDate == null) {
+            return null;
+        }
+
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        String formattedStartDate = format.format(inDate);
+
+        format.setTimeZone(TimeZone.getTimeZone(tZone));
+        try {
+            return format.parse(formattedStartDate);
+        } catch (Exception ex) {
+            log.error("Error while converting the date to engine time zone");
+            return null;
         }
     }
 }

@@ -515,6 +515,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___CREATE_GLUSTER_BRICK_FAILED();
 
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_SCHEDULE_DELETED();
+
     String VdcActionType___ActivateVds();
 
     String VdcActionType___RecoveryStoragePool();

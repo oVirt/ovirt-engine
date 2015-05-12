@@ -5,6 +5,7 @@ import java.sql.Time;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.timer.DBSchedulerUtilQuartzImpl;
@@ -66,7 +67,11 @@ public class RescheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolum
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getSucceeded()) {
-            return AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESCHEDULED;
+            if (getSchedule().getRecurrence().equals(GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN)) {
+                return AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SCHEDULE_DELETED;
+            } else {
+                return AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESCHEDULED;
+            }
         } else {
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESCHEDULE_FAILED : errorType;
         }

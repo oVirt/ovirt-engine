@@ -1,10 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.sql.Time;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshotParameters;
@@ -53,8 +50,8 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
         }
 
         // Validate the scheduling dates (start and end by dates)
-        Date convertedStartDate = convertDate(schedule.getStartDate(), schedule.getTimeZone());
-        Date convertedEndByDate = convertDate(schedule.getEndByDate(), schedule.getTimeZone());
+        Date convertedStartDate = getGlusterUtil().convertDate(schedule.getStartDate(), schedule.getTimeZone());
+        Date convertedEndByDate = getGlusterUtil().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
 
         if (schedule.getRecurrence() != null
                 && schedule.getRecurrence() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN
@@ -76,8 +73,8 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
         }
 
         // convert the start date and end by date to the given timezone
-        Date convertedStartDate = convertDate(schedule.getStartDate(), schedule.getTimeZone());
-        Date convertedEndByDate = convertDate(schedule.getEndByDate(), schedule.getTimeZone());
+        Date convertedStartDate = getGlusterUtil().convertDate(schedule.getStartDate(), schedule.getTimeZone());
+        Date convertedEndByDate = getGlusterUtil().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
 
         String cronExpression = GlusterUtil.getInstance().getCronExpression(schedule);
         if (cronExpression == null)
@@ -104,20 +101,7 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
         return force;
     }
 
-    private Date convertDate(Date inDate, String tZone) {
-        if (inDate == null) {
-            return null;
-        }
-
-        DateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        String formattedStartDate = format.format(inDate);
-
-        format.setTimeZone(TimeZone.getTimeZone(tZone));
-        try {
-            return format.parse(formattedStartDate);
-        } catch (Exception ex) {
-            log.error("Error while converting the date to engine time zone");
-            return null;
-        }
+    protected GlusterUtil getGlusterUtil() {
+        return GlusterUtil.getInstance();
     }
 }
