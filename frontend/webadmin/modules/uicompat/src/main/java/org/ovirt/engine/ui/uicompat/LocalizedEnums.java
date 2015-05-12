@@ -1000,12 +1000,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String RaidType___Raid0();
 
-    String RaidType___Raid1();
-
-    String RaidType___Raid2();
-
-    String RaidType___Raid5();
-
     String RaidType___Raid6();
 
     String RaidType___Raid10();

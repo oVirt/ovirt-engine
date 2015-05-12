@@ -5,9 +5,6 @@ import java.util.HashMap;
 public enum RaidType {
     None(-1),
     Raid0(0),
-    Raid1(1),
-    Raid2(4),
-    Raid5(5),
     Raid6(6),
     Raid10(10);
 
