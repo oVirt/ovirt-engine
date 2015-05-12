@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.Arrays;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -20,9 +24,7 @@ public class UpgradeHostValidator extends HostValidator {
 
     public ValidationResult statusSupportedForHostUpgrade() {
         return ValidationResult.failWith(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL)
-                .when(getHost().getStatus() != VDSStatus.Maintenance
-                        && getHost().getStatus() != VDSStatus.InstallFailed
-                        && getHost().getStatus() != VDSStatus.Up);
+                .unless(VdcActionUtils.canExecute(Arrays.asList(getHost()), VDS.class, VdcActionType.UpgradeHost));
     }
 
     public ValidationResult statusSupportedForHostUpgradeInternal() {
