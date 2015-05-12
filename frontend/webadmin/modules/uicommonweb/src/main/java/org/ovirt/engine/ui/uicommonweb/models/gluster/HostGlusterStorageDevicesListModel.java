@@ -162,7 +162,11 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
 
     private void syncStorageDevices() {
         Frontend.getInstance()
-                .runAction(VdcActionType.SyncStorageDevices, new VdsActionParameters(getEntity().getId()));
+                .runAction(VdcActionType.SyncStorageDevices,
+                        new VdsActionParameters(getEntity().getId()),
+                        null,
+                        true,
+                        true);
     }
 
     @Override

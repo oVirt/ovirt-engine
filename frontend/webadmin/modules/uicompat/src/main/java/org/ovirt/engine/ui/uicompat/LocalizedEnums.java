@@ -882,6 +882,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___RestoreGlusterVolumeSnapshot();
 
+    String VdcActionType___SyncStorageDevices();
+
     String VdcActionType___CreateBrick();
 
     String VdcObjectType___AdElements();

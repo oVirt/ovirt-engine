@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsValidator;
@@ -8,7 +8,11 @@ import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.di.Injector;
 
 public class SyncStorageDevicesCommand<T extends VdsActionParameters> extends VdsCommand<T> {
@@ -40,9 +44,17 @@ public class SyncStorageDevicesCommand<T extends VdsActionParameters> extends Vd
 
     @Override
     protected void executeCommand() {
+        VDSReturnValue returnValue =
+                runVdsCommand(VDSCommandType.GetStorageDeviceList, new VdsIdVDSCommandParametersBase(getVds().getId()));
+        if (returnValue.getSucceeded()){
+            List<StorageDevice> storageDevices = (List<StorageDevice>) returnValue.getReturnValue();
+            getStorageDeviceSyncJobInstance().updateStorageDevices(getVds(), storageDevices);
+            setSucceeded(true);
+        } else {
+            handleVdsError(returnValue);
+            setSucceeded(false);
+        }
 
-        getStorageDeviceSyncJobInstance().refreshStorageDevicesFromServers(Arrays.asList(getVds()));
-        setSucceeded(true);
     }
 
     private StorageDeviceSyncJob getStorageDeviceSyncJobInstance() {
