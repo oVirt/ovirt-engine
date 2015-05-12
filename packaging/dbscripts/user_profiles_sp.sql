@@ -67,11 +67,12 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromUserProfiles() RETURNS SETOF user_profiles STABLE
+Create or replace FUNCTION GetAllFromUserProfiles()
+RETURNS SETOF user_profiles_view STABLE
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT user_profiles.*
-      FROM user_profiles;
+      RETURN QUERY SELECT user_profiles_view.*
+      FROM user_profiles_view;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -80,12 +81,12 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetUserProfileByUserId(v_user_id UUID)
-RETURNS SETOF user_profiles STABLE
+RETURNS SETOF user_profiles_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM   user_profiles
+    FROM   user_profiles_view
     WHERE  user_id = v_user_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -95,12 +96,12 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetUserProfileByProfileId(v_profile_id UUID)
-RETURNS SETOF user_profiles STABLE
+RETURNS SETOF user_profiles_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM   user_profiles
+    FROM   user_profiles_view
     WHERE  profile_id = v_profile_id;
 END; $procedure$
 LANGUAGE plpgsql;

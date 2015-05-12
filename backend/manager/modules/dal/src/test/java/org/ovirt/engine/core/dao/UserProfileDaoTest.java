@@ -33,6 +33,7 @@ public class UserProfileDaoTest extends BaseDaoTestCase {
         newProfile.setId(Guid.newGuid());
         newProfile.setUserId(new Guid("81940459-2ec4-4afa-bbaa-22549555293c"));
         newProfile.setSshPublicKey("key3");
+        newProfile.setLoginName("userportal4");
     }
 
     /**

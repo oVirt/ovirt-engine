@@ -26,6 +26,7 @@ public class UserProfileDaoImpl extends BaseDaoDbFacade implements UserProfileDa
             entity.setId(getGuidDefaultEmpty(rs, "profile_id"));
             entity.setUserId(getGuidDefaultEmpty(rs, "user_id"));
             entity.setSshPublicKey(rs.getString("ssh_public_key"));
+            entity.setLoginName(rs.getString("login_name"));
             return entity;
         }
     }

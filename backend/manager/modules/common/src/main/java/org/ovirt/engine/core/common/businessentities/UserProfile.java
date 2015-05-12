@@ -12,6 +12,8 @@ public class UserProfile  implements IVdcQueryable {
 
     private String sshPublicKey;
 
+    private String loginName;
+
     public UserProfile() {
         sshPublicKey = "";
     }
@@ -45,11 +47,20 @@ public class UserProfile  implements IVdcQueryable {
         this.sshPublicKey = sshPublicKey;
     }
 
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
+
+    public String getLoginName() {
+        return loginName;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((sshPublicKey == null) ? 0 : sshPublicKey.hashCode());
+        result = prime * result + ((loginName == null) ? 0 : loginName.hashCode());
         return result;
     }
 
@@ -65,6 +76,7 @@ public class UserProfile  implements IVdcQueryable {
             return false;
         }
         UserProfile other = (UserProfile) obj;
-        return  ObjectUtils.objectsEqual(sshPublicKey, other.sshPublicKey);
+        return  ObjectUtils.objectsEqual(sshPublicKey, other.sshPublicKey)
+             && ObjectUtils.objectsEqual(loginName, other.loginName);
     }
 }

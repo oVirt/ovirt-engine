@@ -3310,3 +3310,8 @@ INNER JOIN host_device
     ON host_device.device_name = vm_device.device
     AND vm_static.dedicated_vm_for_vds::text LIKE '%'||host_device.host_id::text||'%'
 WHERE vm_device.type = 'hostdev';
+
+CREATE OR REPLACE VIEW user_profiles_view AS
+SELECT user_profiles.*, users.name AS login_name
+FROM user_profiles
+INNER JOIN users ON user_profiles.user_id = users.user_id;

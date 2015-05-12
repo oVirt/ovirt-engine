@@ -6,7 +6,6 @@ import org.codehaus.jackson.map.type.TypeFactory;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -58,18 +57,11 @@ public class VMConsoleProxyServlet extends HttpServlet {
 
             for (UserProfile profile : profiles) {
                 if (StringUtils.isNotEmpty(profile.getSshPublicKey())) {
-                    IdQueryParameters userparams = new IdQueryParameters(profile.getUserId());
-
-                    // TODO: avoid one query per loop. Bulk query?
-                    VdcQueryReturnValue ret = backend.runInternalQuery(VdcQueryType.GetDbUserByUserId, userparams);
-                    DbUser user = ret.getReturnValue();
-
                     Map<String, String> jsonUser = new HashMap<String, String>();
+
                     jsonUser.put("entityid", profile.getUserId().toString());
                     jsonUser.put("entity", "user-id");
-                    if (user != null) {
-                        jsonUser.put("username", user.getLoginName());
-                    }
+                    jsonUser.put("username", profile.getLoginName());
                     jsonUser.put("key", profile.getSshPublicKey());
 
                     jsonUsers.add(jsonUser);
