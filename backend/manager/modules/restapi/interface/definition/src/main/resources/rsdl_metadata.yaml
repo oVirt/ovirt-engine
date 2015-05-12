@@ -2954,13 +2954,13 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /hosts/{host:id}/unregisteredstoragedomainsdiscover|rel=unregisteredstoragedomainsdiscover
-  description: Discover the Storage Domains which are candidiates to be imported to the setup
+  description: Discover the block Storage Domains which are candidates to be imported to the setup. For FCP no arguments are needed.
   request:
     body:
       parameterType: Action
       signatures:
       - optionalArguments: {action.iscsi.address: 'xs:string', action.target: 'xs:string'}
-        description: Discover the Storage Domains which are candidiates to be imported to the setup
+        description: Discover the block Storage Domains which are candidates to be imported to the setup. For FCP no arguments are needed.
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
