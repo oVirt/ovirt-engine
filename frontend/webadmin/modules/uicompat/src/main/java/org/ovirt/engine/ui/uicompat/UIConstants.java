@@ -2643,8 +2643,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     String updateSnapshotConfigurationConfirmationTitle();
 
     @DefaultStringValue("Configuring volume snapshot options\n\n"
-            + "Changing configuration parameters will lead to deletion of snapshots if they exceed the new limit.\n\n"
-            + "Are you sure you want to continue?")
+            + "Changing configuration parameters will limit the creation of new snapshots if they exceed the new limit.\n\n"
+            + "Do you want to continue?")
     String youAreAboutChangeSnapshotConfigurationMsg();
 
     @DefaultStringValue("existing")
