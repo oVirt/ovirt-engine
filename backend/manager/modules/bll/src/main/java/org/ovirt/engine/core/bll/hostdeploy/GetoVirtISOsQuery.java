@@ -10,14 +10,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.VdsDynamicDAO;
 
 /**
  * The {@code GetoVirtISOsQuery} is responsible to detect all available oVirt images installed on engine server. It detects
@@ -27,6 +31,9 @@ import org.ovirt.engine.core.compat.Version;
 public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCommandBase<P> {
     private static final String OVIRT_ISO_VERSION_PREFIX = "version";
     private static final String OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX = "vdsm-compatibility";
+
+    @Inject
+    private VdsDynamicDAO hostDynamicDao;
 
     public GetoVirtISOsQuery(P parameters) {
         super(parameters);
@@ -106,6 +113,14 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         }
         Collections.sort(availableISOsList);
         getQueryReturnValue().setReturnValue(availableISOsList);
+        updateUpdatesAvailableForHost(availableISOsList, vds);
+    }
+
+    public void updateUpdatesAvailableForHost(List<RpmVersion> availableIsos, VDS vds) {
+        boolean updateAvailable = RpmVersionUtils.isUpdateAvailable(availableIsos, vds.getHostOs());
+        if (updateAvailable != vds.isUpdateAvailable()) {
+            hostDynamicDao.updateUpdateAvailable(vds.getId(), updateAvailable);
+        }
     }
 
     private boolean isIsoCompatibleForUpgradeByClusterVersion(IsoData isoData) {
