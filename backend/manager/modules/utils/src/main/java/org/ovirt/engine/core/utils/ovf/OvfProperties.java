@@ -76,4 +76,6 @@ public class OvfProperties {
     final static String MIGRATION_SUPPORT = "MigrationSupport";
     final static String DEDICATED_VM_FOR_VDS = "DedicatedVmForVds";
     final static String USE_HOST_CPU = "UseHostCpu";
+    final static String PREDEFINED_PROPERTIES = "PredefinedProperties";
+    final static String USER_DEFINED_PROPERTIES = "UserDefinedProperties";
 }

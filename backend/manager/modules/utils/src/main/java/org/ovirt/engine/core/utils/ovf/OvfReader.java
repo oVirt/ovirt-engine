@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.VmInitUtils;
@@ -727,6 +728,23 @@ public abstract class OvfReader implements IOvfBuilder {
                 vmBase.setCustomCpuName(node.innerText);
             }
         }
+
+        node = content.SelectSingleNode(OvfProperties.PREDEFINED_PROPERTIES);
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setPredefinedProperties(node.innerText);
+            }
+        }
+
+        node = content.SelectSingleNode(OvfProperties.USER_DEFINED_PROPERTIES);
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setUserDefinedProperties(node.innerText);
+            }
+        }
+
+        vmBase.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(
+                vmBase.getPredefinedProperties(), vmBase.getUserDefinedProperties()));
 
         readGeneralData(content);
 
