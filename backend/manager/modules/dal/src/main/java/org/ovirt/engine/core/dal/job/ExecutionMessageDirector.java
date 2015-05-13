@@ -119,7 +119,7 @@ public class ExecutionMessageDirector {
         if (!messagesMap.containsKey(key)) {
             messagesMap.put(enumKey, value);
         } else {
-            log.warn("Code '{}' appears more then once in '{}' table.", key, enumClass.getSimpleName());
+            log.warn("Code '{}' appears more than once in '{}' table.", key, enumClass.getSimpleName());
         }
     }
 
