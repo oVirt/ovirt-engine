@@ -3362,9 +3362,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Negative values are not allowed.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_NEGATIVE_VALUES();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Values are out of range.")
-    String ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES();
-
     @DefaultStringValue("Cannot ${action} ${type}. Duplicate QoS name in Data Center.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_NAME_EXIST();
 
@@ -3401,11 +3398,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The overall committed rate on a single interface must not exceed ${commitmentThreshold}% of the interface's speed, but exceeds this threshold on the following interface(s): ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT_LIST}.")
     String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Values are out of range\n(Legal range is: 1-100).")
-    String ACTION_TYPE_FAILED_QOS_CPU_OUT_OF_RANGE_VALUES();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Values are out of range.")
-    String ACTION_TYPE_FAILED_QOS_STORAGE_OUT_OF_RANGE_VALUES();
+    @DefaultStringValue("Cannot ${action} ${type}. Values are out of range\n(Legal range is: ${range}).")
+    String ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES();
 
     @DefaultStringValue("Cannot ${action} ${type}. Invalid data center")
     String ACTION_TYPE_FAILED_QOS_STORAGE_POOL_NOT_EXIST();

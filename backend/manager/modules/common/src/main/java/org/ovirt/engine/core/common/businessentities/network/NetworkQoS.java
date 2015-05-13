@@ -12,27 +12,27 @@ public class NetworkQoS extends QosBase {
     private static final long serialVersionUID = 1122772549710787758L;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxAverageNetworkQoSValue,
-            message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
     private Integer inboundAverage;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxPeakNetworkQoSValue,
-            message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
     private Integer inboundPeak;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxBurstNetworkQoSValue,
-            message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
     private Integer inboundBurst;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxAverageNetworkQoSValue,
-            message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
     private Integer outboundAverage;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxPeakNetworkQoSValue,
-            message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
     private Integer outboundPeak;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxBurstNetworkQoSValue,
-            message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
     private Integer outboundBurst;
 
     public NetworkQoS() {
