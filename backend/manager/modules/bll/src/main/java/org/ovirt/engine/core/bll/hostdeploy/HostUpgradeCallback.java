@@ -104,13 +104,14 @@ public class HostUpgradeCallback extends CommandCallback {
      */
     private boolean evaluateHostUpgradeInternalCommandProgress(List<Guid> childCmdIds, CommandBase<?> rootCommand) {
         CommandEntity upgradeCommand = getHostUpgradeInternalCommand(childCmdIds);
-        if (upgradeCommand != null) {
+        if (upgradeCommand == null) {
+            return false;
+        }
 
             // upgrade command execution has started and its status should be examined
             switch (upgradeCommand.getCommandStatus()) {
             case ACTIVE:
             case NOT_STARTED:
-                return false;
 
             case FAILED:
             case FAILED_RESTARTED:
@@ -122,9 +123,9 @@ public class HostUpgradeCallback extends CommandCallback {
                 rootCommand.setCommandStatus(CommandStatus.SUCCEEDED);
                 return true;
             }
-        }
 
-        return false;
+        return true;
+
     }
 
     private CommandEntity getHostUpgradeInternalCommand(List<Guid> childCmdIds) {
