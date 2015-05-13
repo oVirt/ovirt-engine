@@ -6,7 +6,10 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.ImageHttpAccessVDSCommandParameters;
+import org.ovirt.engine.core.utils.log.Logged;
+import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
+@Logged(returnLevel = LogLevel.DEBUG)
 public class RetrieveImageDataVDSCommand<P extends ImageHttpAccessVDSCommandParameters> extends HttpImageTaskVDSCommand<GetMethod, P> {
 
     public RetrieveImageDataVDSCommand(P parameters) {
