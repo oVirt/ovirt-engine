@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 public class CINDERStorageHelper extends StorageHelperBase {
 
-    private Logger log = LoggerFactory.getLogger(CINDERStorageHelper.class);
+    private static Logger log = LoggerFactory.getLogger(CINDERStorageHelper.class);
 
     private boolean runInNewTransaction = true;
 
@@ -58,7 +58,10 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     @Override
     protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
-        return registerLibvirtSecrets(storageDomain, vdsId);
+        Provider provider = getProviderDao().get(Guid.createGuidFromString(storageDomain.getStorage()));
+        List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
+        VDS vds = getVdsDao().get(vdsId);
+        return registerLibvirtSecrets(storageDomain, vds, libvirtSecrets);
     }
 
     @Override
@@ -66,16 +69,14 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return unregisterLibvirtSecrets(storageDomain, vdsId);
     }
 
-    private Pair<Boolean, VdcFault> registerLibvirtSecrets(StorageDomain storageDomain, Guid vdsId) {
-        Provider provider = getProviderDao().get(Guid.createGuidFromString(storageDomain.getStorage()));
-        VDS vds = getVdsDao().get(vdsId);
-        List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
+    public static Pair<Boolean, VdcFault> registerLibvirtSecrets(StorageDomain storageDomain, VDS vds,
+                                                           List<LibvirtSecret> libvirtSecrets) {
         VDSReturnValue returnValue;
         if (!libvirtSecrets.isEmpty()) {
             try {
                 returnValue = Backend.getInstance().getResourceManager().RunVdsCommand(
                         VDSCommandType.RegisterLibvirtSecrets,
-                        new RegisterLibvirtSecretsVDSParameters(vdsId, libvirtSecrets));
+                        new RegisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecrets));
             } catch (RuntimeException e) {
                 log.error("Failed to register libvirt secret for storage domain {} on vds {}. Error: {}",
                         storageDomain.getName(), vds.getName(), e.getMessage());
@@ -125,7 +126,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return true;
     }
 
-    private void addMessageToAuditLog(AuditLogType auditLogType, String storageDomainName, String vdsName){
+    private static void addMessageToAuditLog(AuditLogType auditLogType, String storageDomainName, String vdsName){
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("StorageDomainName", storageDomainName);
         logable.addCustomValue("VdsName", vdsName);

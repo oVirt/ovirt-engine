@@ -23,6 +23,7 @@ public class UpdateLibvirtSecretCommand extends LibvirtSecretCommandBase {
     protected void executeCommand() {
         super.executeCommand();
         getLibvirtSecretDAO().update(getParameters().getLibvirtSecret());
+        registerLibvirtSecret();
         setSucceeded(true);
     }
 
