@@ -48,6 +48,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         implements StoragePopupPresenterWidget.ViewDef {
 
@@ -86,9 +89,14 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     ListModelListBoxEditor<StoragePool> datacenterListEditor;
 
     @UiField(provided = true)
-    @Path(value = "availableStorageItems.selectedItem")
-    @WithElementId("availableStorageItems")
-    ListModelListBoxEditor<IStorageModel> storageTypeListEditor;
+    @Path(value = "availableStorageDomainTypeItems.selectedItem")
+    @WithElementId("availableStorageDomainTypeItems")
+    ListModelListBoxEditor<StorageDomainType> domainFunctionListEditor;
+
+    @UiField(provided = true)
+    @Path(value = "availableStorageTypeItems.selectedItem")
+    @WithElementId("availableStorageTypeItems")
+    ListModelListBoxEditor<StorageType> storageTypeListEditor;
 
     @UiField(provided = true)
     @Path(value = "format.selectedItem")
@@ -200,36 +208,19 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
         hostListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
-        storageTypeListEditor = new ListModelListBoxEditor<IStorageModel>(new AbstractRenderer<IStorageModel>() {
-            @Override
-            public String render(IStorageModel object) {
-                String formattedString = ""; //$NON-NLS-1$
+        domainFunctionListEditor = new ListModelListBoxEditor<StorageDomainType>(new EnumRenderer<StorageDomainType>());
 
-                if (object != null) {
-                    EnumRenderer<StorageType> storageEnumRenderer = new EnumRenderer<StorageType>();
-                    EnumRenderer<StorageDomainType> storageDomainEnumRenderer = new EnumRenderer<StorageDomainType>();
-
-                    String storageDomainType = storageDomainEnumRenderer.render(object.getRole());
-                    String storageType = storageEnumRenderer.render(object.getType());
-
-                    formattedString = storageDomainType + " / " + storageType; //$NON-NLS-1$
-                }
-                return formattedString;
-            }
-        });
+        storageTypeListEditor = new ListModelListBoxEditor<StorageType>(new EnumRenderer<StorageType>());
 
         activateDomainEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void addStyles() {
-        storageTypeListEditor.setLabelStyleName(style.label());
-        storageTypeListEditor.addContentWidgetContainerStyleName(style.storageContentWidget());
-        formatListEditor.setLabelStyleName(style.label());
-        formatListEditor.addContentWidgetContainerStyleName(style.formatContentWidget());
         activateDomainEditor.addContentWidgetContainerStyleName(style.activateDomainEditor());
         advancedParametersExpanderContent.setStyleName(style.advancedParametersExpanderContent());
         warningLowSpaceIndicatorEditor.addContentWidgetContainerStyleName(style.warningTextBoxEditor());
         criticalSpaceActionBlockerEditor.addContentWidgetStyleName(style.blockerTextBoxEditor());
+        formatListEditor.addContentWidgetStyleName(style.formatListEditor());
     }
 
     void localize() {
@@ -237,6 +228,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         descriptionEditor.setLabel(constants.storagePopupDescriptionLabel());
         commentEditor.setLabel(constants.commentLabel());
         datacenterListEditor.setLabel(constants.storagePopupDataCenterLabel());
+        domainFunctionListEditor.setLabel(constants.storagePopupDomainFunctionLabel());
         storageTypeListEditor.setLabel(constants.storagePopupStorageTypeLabel());
         formatListEditor.setLabel(constants.storagePopupFormatTypeLabel());
         hostListEditor.setLabel(constants.storagePopupHostLabel());
@@ -252,7 +244,16 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         driver.edit(object);
 
         final StorageModel storageModel = object;
-        storageModel.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+
+        storageModel.getAvailableStorageDomainTypeItems().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                // Display the StorageTypes according to the selected StorageDomainFunction.
+                updateStorageTypesByDomainType(storageModel);
+            }
+        });
+
+        storageModel.getAvailableStorageTypeItems().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 // Reveal the appropriate storage view according to the selected storage type
@@ -290,34 +291,46 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
     @SuppressWarnings("unchecked")
     private void revealStorageView(StorageModel object) {
-        IStorageModel model = object.getSelectedItem();
+        StorageType storageType = storageTypeListEditor.asEditor().getActualEditor().getValue();
+        StorageDomainType storageDomainType = domainFunctionListEditor.asEditor().getActualEditor().getValue();
 
-        if (model != null) {
+        if (storageType == null || storageDomainType == null) {
+            return;
+        }
 
-            if (model.getType() == StorageType.NFS) {
+        switch (storageType) {
+            case NFS:
                 storageView = new NfsStorageView();
-            } else if (model.getType() == StorageType.LOCALFS) {
+                break;
+            case LOCALFS:
                 storageView = new LocalStorageView();
-            } else if (model.getType() == StorageType.POSIXFS) {
+                break;
+            case POSIXFS:
                 storageView = new PosixStorageView();
-            } else if (model.getType() == StorageType.GLUSTERFS) {
+                break;
+            case GLUSTERFS:
                 storageView = new GlusterStorageView();
-            } else if (model.getType() == StorageType.FCP) {
+                break;
+            case FCP:
                 if (!object.getBehavior().isImport()) {
                     storageView = new FcpStorageView(true);
-                }
-                else {
+                } else {
                     storageView = new ImportFcpStorageView();
                 }
-            } else if (model.getType() == StorageType.ISCSI) {
+                break;
+            case ISCSI:
                 if (!object.getBehavior().isImport()) {
                     storageView = new IscsiStorageView(true);
-                }
-                else {
+                } else {
                     storageView = new ImportIscsiStorageView();
                 }
-            }
+                break;
+            default:
+                break;
         }
+
+        updateStorageSelectedItem(object, storageType, storageDomainType);
+        IStorageModel model = object.getSelectedItem();
 
         // Re-apply element IDs on 'storageView' change
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -334,6 +347,26 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                 storageView.focus();
             }
         }
+    }
+
+    private void updateStorageSelectedItem(StorageModel storageModel, StorageType storageType, StorageDomainType domainType) {
+        for (IStorageModel model : storageModel.getItems()) {
+            if (model.getType() == storageType && model.getRole() == domainType) {
+                storageModel.setSelectedItem(model);
+                break;
+            }
+        }
+    }
+
+    private void updateStorageTypesByDomainType(StorageModel storageModel) {
+        StorageDomainType storageDomainType = domainFunctionListEditor.asEditor().getActualEditor().getValue();
+        Set<StorageType> filteredStorageTypes = new LinkedHashSet<>();
+        for (IStorageModel currModel : storageModel.getItems()) {
+            if (currModel.getRole() == storageDomainType) {
+                filteredStorageTypes.add(currModel.getType());
+            }
+        }
+        storageModel.getAvailableStorageTypeItems().setItems(filteredStorageTypes);
     }
 
     @Override
@@ -358,23 +391,17 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     }
 
     interface WidgetStyle extends CssResource {
-        String formatContentWidget();
-
-        String storageContentWidget();
-
         String activateDomainEditor();
 
         String label();
-
-        String storageTypeLabel();
-
-        String storageDomainTypeLabel();
 
         String advancedParametersExpanderContent();
 
         String warningTextBoxEditor();
 
         String blockerTextBoxEditor();
+
+        String formatListEditor();
     }
 
 }

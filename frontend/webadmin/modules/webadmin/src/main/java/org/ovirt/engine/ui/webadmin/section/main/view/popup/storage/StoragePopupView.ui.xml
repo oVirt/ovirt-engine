@@ -6,19 +6,21 @@
 
         <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView.WidgetStyle">
+        .generalTabTopDecorator {
+            background-color: #D3D3D3;
+            margin-bottom: 8px;
+            margin-top: 0px;
+            margin-right: 3px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            width: 100%;
+        }
+
 		.content {
             overflow-x: hidden;
 		}
 
-		.formatContentWidget {
-			width: 80px;
-		}
-
-		.storageContentWidget {
-			width: 240px;
-		}
-
-        .activateDomainEditor {
+		.activateDomainEditor {
             width: 370px;
         }
 
@@ -49,46 +51,25 @@
             line-height: 26px !important;
         }
 
-		.nameEditor,
 		.datacenterListEditor,
-		.hostListEditor {
+        .domainFunctionListEditor,
+        .storageTypeListEditor,
+        .hostListEditor {
 			width: 375px;
 		}
 
-		.descriptionEditor {
+        .formatListEditor {
+            width: 60px;
+            margin-left: 6px;
+            line-height: 26px !important;
+        }
+
+		.descriptionEditor,
+        .commentEditor,
+        .nameEditor {
 			position: absolute;
 			right: 2px;
 			width: 350px;
-		}
-
-		.commentEditor {
-			position: absolute;
-			right: 2px;
-			width: 350px;
-		}
-
-		.formatListEditor {
-			width: 140px;
-			float: right;
-            padding-top: 5px;
-		}
-
-		.storageTypeListEditor {
-			width: 510px;
-			padding-left: 5px;
-            padding-top: 5px;
-		}
-
-		.storageTypeLabel {
-			color: black;
-			font-size: 12px;
-			padding-left: 40px;
-		}
-
-		.storageDomainTypeLabel {
-			color: black;
-			font-size: 12px;
-			font-weight: bold;
 		}
 
         .advancedParametersExpanderContent {
@@ -115,25 +96,27 @@
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="760px" height="665px">
-		<d:content>
-			<g:FlowPanel addStyleNames="{style.content}">
-				<g:HorizontalPanel>
-					<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}"/>
-					<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.descriptionEditor}"/>
-				</g:HorizontalPanel>
-				<g:HorizontalPanel>
-					<e:ListModelListBoxEditor ui:field="datacenterListEditor" addStyleNames="{style.datacenterListEditor}"/>
-					<g:Image ui:field="datacenterAlertIcon" resource='{resources.alertImage}' visible="false" addStyleNames="{style.dataCenterAlertIcon}"/>
-					<ge:StringEntityModelTextBoxEditor ui:field="commentEditor" addStyleNames="{style.commentEditor}"/>
-                    <ge:EntityModelCheckBoxEditor ui:field="activateDomainEditor" />
-                </g:HorizontalPanel>
-				<g:HorizontalPanel addStyleNames="{style.obrand_storageTypePanel}">
-					<e:ListModelListBoxEditor ui:field="storageTypeListEditor" addStyleNames="{style.storageTypeListEditor}"/>
-					<e:ListModelListBoxEditor ui:field="formatListEditor" addStyleNames="{style.formatListEditor}"/>
-				</g:HorizontalPanel>
-				<e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.hostListEditor}"/>
-				<g:FlowPanel ui:field="specificStorageTypePanel" addStyleNames="{style.specificStorageTypePanel}"></g:FlowPanel>
+    <d:SimpleDialogPanel width="760px" height="665px">
+        <d:content>
+            <g:FlowPanel addStyleNames="{style.content}">
+                <g:VerticalPanel addStyleNames="{style.generalTabTopDecorator}">
+                    <g:HorizontalPanel>
+                        <e:ListModelListBoxEditor ui:field="datacenterListEditor" addStyleNames="{style.datacenterListEditor}"/>
+                        <g:Image ui:field="datacenterAlertIcon" resource='{resources.alertImage}' visible="false" addStyleNames="{style.dataCenterAlertIcon}"/>
+                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}"/>
+                    </g:HorizontalPanel>
+                    <g:HorizontalPanel>
+                        <e:ListModelListBoxEditor ui:field="domainFunctionListEditor" addStyleNames="{style.domainFunctionListEditor}"/>
+                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.descriptionEditor}"/>
+                    </g:HorizontalPanel>
+                    <g:HorizontalPanel>
+                        <e:ListModelListBoxEditor ui:field="storageTypeListEditor" addStyleNames="{style.storageTypeListEditor}"/>
+                        <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" addStyleNames="{style.commentEditor}"/>
+                        <ge:EntityModelCheckBoxEditor ui:field="activateDomainEditor" />
+                    </g:HorizontalPanel>
+                    <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.hostListEditor}"/>
+                </g:VerticalPanel>
+                <g:FlowPanel ui:field="specificStorageTypePanel" addStyleNames="{style.specificStorageTypePanel}"></g:FlowPanel>
                 <d:AdvancedParametersExpander ui:field="advancedParametersExpander"/>
                 <g:VerticalPanel ui:field="advancedParametersExpanderContent">
                     <g:HorizontalPanel>
@@ -141,10 +124,11 @@
                         <g:Label ui:field="warningLowSpaceSizeLabel" addStyleNames="{style.warningLowSpaceSizeLabel}"/>
                     </g:HorizontalPanel>
                     <ge:IntegerEntityModelTextBoxEditor ui:field="criticalSpaceActionBlockerEditor"/>
+                    <e:ListModelListBoxEditor ui:field="formatListEditor" />
                     <ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.wipeAfterDeleteEditor}"/>
                 </g:VerticalPanel>
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+            </g:FlowPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

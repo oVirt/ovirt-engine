@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -35,17 +38,24 @@ public abstract class StorageModelBehavior extends Model
     public void filterUnSelectableModels()
     {
         // Filter UnSelectable models from AvailableStorageItems list
-        ArrayList<IStorageModel> filterredItems = new ArrayList<IStorageModel>();
         ArrayList<IStorageModel> items = Linq.<IStorageModel> cast(getModel().getItems());
+        Set<StorageDomainType> storageDomainTypeItems = new LinkedHashSet<StorageDomainType>();
+        Set<StorageType> storageTypeItems = new LinkedHashSet<StorageType>();
+
+        // This is needed as long the AvailableStorageItems List is in use. Other code parts rely on this information. See ImportStorageModelBehavior.
+        ArrayList<IStorageModel> filterredItems = new ArrayList<IStorageModel>();
         for (IStorageModel model : items)
         {
             if (((Model) model).getIsSelectable())
             {
                 filterredItems.add(model);
+                storageDomainTypeItems.add(model.getRole());
+                storageTypeItems.add(model.getType());
             }
         }
-
         getModel().getAvailableStorageItems().setItems(filterredItems);
+        getModel().getAvailableStorageDomainTypeItems().setItems(storageDomainTypeItems);
+        getModel().getAvailableStorageTypeItems().setItems(storageTypeItems);
     }
 
     public void onStorageModelUpdated(IStorageModel model)

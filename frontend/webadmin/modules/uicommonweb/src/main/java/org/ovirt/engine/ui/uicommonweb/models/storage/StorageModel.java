@@ -168,6 +168,30 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         privateAvailableStorageItems = value;
     }
 
+    private ListModel<StorageType> availableStorageTypeItems;
+
+    public ListModel<StorageType> getAvailableStorageTypeItems()
+    {
+        return availableStorageTypeItems;
+    }
+
+    private void setAvailableStorageTypeItems(ListModel<StorageType> value)
+    {
+        availableStorageTypeItems = value;
+    }
+
+    private ListModel<StorageDomainType> availableStorageDomainTypeItems;
+
+    public ListModel<StorageDomainType> getAvailableStorageDomainTypeItems()
+    {
+        return availableStorageDomainTypeItems;
+    }
+
+    private void setAvailableStorageDomainTypeItems(ListModel<StorageDomainType> value)
+    {
+        availableStorageDomainTypeItems = value;
+    }
+
     private EntityModel<Integer> warningLowSpaceIndicator;
 
     public EntityModel<Integer> getWarningLowSpaceIndicator() {
@@ -233,8 +257,9 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         getHost().getSelectedItemChangedEvent().addListener(this);
         setFormat(new ListModel<StorageFormatType>());
         setAvailableStorageItems(new ListModel<IStorageModel>());
-        getAvailableStorageItems().getSelectedItemChangedEvent().addListener(this);
-
+        setAvailableStorageTypeItems(new ListModel<StorageType>());
+        getAvailableStorageTypeItems().getSelectedItemChangedEvent().addListener(this);
+        setAvailableStorageDomainTypeItems(new ListModel<StorageDomainType>());
         setWarningLowSpaceIndicator(new EntityModel<Integer>());
         getWarningLowSpaceIndicator().setEntity(getWarningLowSpaceIndicatorValue());
         setWarningLowSpaceSize(new EntityModel<String>());
@@ -273,14 +298,11 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
             {
                 host_SelectedItemChanged();
             }
-            else if (sender == getAvailableStorageItems())
+            else if (sender == getAvailableStorageTypeItems())
             {
-                if (getAvailableStorageItems().getSelectedItem() instanceof IStorageModel)
-                {
-                    setSelectedItem(null);
-                    setSelectedItem(getAvailableStorageItems().getSelectedItem());
-                    updateWipeAfterDelete();
-                }
+                setSelectedItem(null);
+                setSelectedItem(getAvailableStorageItems().getSelectedItem());
+                updateWipeAfterDelete();
             }
         }
         else if (ev.matchesDefinition(NfsStorageModel.pathChangedEventDefinition))
@@ -668,7 +690,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     }
 
     private void updateWipeAfterDelete() {
-        StorageType storageType = getAvailableStorageItems().getSelectedItem().getType();
+        StorageType storageType = getAvailableStorageTypeItems().getSelectedItem();
         if (isNewStorage()) {
             AsyncDataProvider.getInstance().getStorageDomainDefaultWipeAfterDelete(new AsyncQuery(this,
                     new INewAsyncCallback() {

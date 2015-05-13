@@ -344,6 +344,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.getWipeAfterDelete().setIsChangeable(isStoragePropertiesEditable);
         //set the field domain type to non editable
         model.getAvailableStorageItems().setIsChangeable(false);
+        model.getAvailableStorageTypeItems().setIsChangeable(false);
+        model.getAvailableStorageDomainTypeItems().setIsChangeable(false);
         model.setIsChangeable(isStorageNameEditable || isStoragePropertiesEditable);
 
         model.getWarningLowSpaceIndicator().setEntity(storage.getWarningLowSpaceIndicator());

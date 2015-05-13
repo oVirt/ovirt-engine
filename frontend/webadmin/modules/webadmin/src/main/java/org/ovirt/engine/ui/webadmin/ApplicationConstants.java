@@ -389,8 +389,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Data Center")
     String storagePopupDataCenterLabel();
 
-    @DefaultStringValue("Domain Function / Storage Type")
+    @DefaultStringValue("Storage Type")
     String storagePopupStorageTypeLabel();
+
+    @DefaultStringValue("Domain Function")
+    String storagePopupDomainFunctionLabel();
 
     @DefaultStringValue("Format")
     String storagePopupFormatTypeLabel();
