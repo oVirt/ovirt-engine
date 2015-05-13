@@ -304,8 +304,10 @@ public class VdsManager {
         }
 
         synchronized (getLockObj()) {
-            cachedVds.getDynamicData().setUpdateAvailable(updateAvailable);
-            DbFacade.getInstance().getVdsDynamicDao().updateUpdateAvailable(cachedVds.getId(), updateAvailable);
+            if (updateAvailable != cachedVds.isUpdateAvailable()) {
+                cachedVds.getDynamicData().setUpdateAvailable(updateAvailable);
+                DbFacade.getInstance().getVdsDynamicDao().updateUpdateAvailable(cachedVds.getId(), updateAvailable);
+            }
         }
     }
 
