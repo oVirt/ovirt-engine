@@ -1428,7 +1428,7 @@ actions:
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=get
   description: get details of the specified storage domain in a data center
 - name: /datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=delete
-  description: delete the specified storage domain in a data center
+  description: Detach the specified Storage Domain from the Data Center. If the Storage Domain is local it will also be completely removed.
 - name: /datacenters/{datacenter:id}/storagedomains|rel=add
   description: add a new storage domain to the data center
   request:
