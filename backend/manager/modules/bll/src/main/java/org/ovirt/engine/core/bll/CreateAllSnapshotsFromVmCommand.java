@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -66,6 +67,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements QuotaStorageDependent, TaskHandlerCommand<CreateAllSnapshotsFromVmParameters> {
 
     private List<DiskImage> cachedSelectedActiveDisks;
+    private List<DiskImage> cachedImagesDisks;
     private Guid cachedStorageDomainId = Guid.Empty;
     private String cachedSnapshotIsBeingTakenMessage;
     private Guid newActiveSnapshotId = Guid.newGuid();
@@ -103,7 +105,21 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
 
     private List<DiskImage> getDiskImagesForVm() {
-        return ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()), true, true, true);
+        List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
+        List<DiskImage> allDisks = new ArrayList<>(getDiskImages(disks));
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(disks, true);
+        for (CinderDisk cinder : cinderDisks) {
+            allDisks.add(ImagesHandler.getSnapshotLeaf(cinder.getId()));
+        }
+        return allDisks;
+    }
+
+    private List<DiskImage> getDiskImages(List<Disk> disks) {
+        if (cachedImagesDisks == null) {
+            cachedImagesDisks = ImagesHandler.filterImageDisks(disks, true, true, true);
+        }
+        return cachedImagesDisks;
+
     }
 
     /**
@@ -112,16 +128,16 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
      */
     protected List<DiskImage> getDisksList() {
         if (cachedSelectedActiveDisks == null) {
-            List<DiskImage> imagesForVm = getDiskImagesForVm();
+            List<DiskImage> imagesAndCinderForVm = getDiskImagesForVm();
 
             // Get disks from the specified parameters or according to the VM
             if (getParameters().getDisks() == null) {
-                cachedSelectedActiveDisks = imagesForVm;
+                cachedSelectedActiveDisks = imagesAndCinderForVm;
             }
             else {
                 // Get selected images from 'DiskImagesForVm' to ensure disks entities integrity
-                // (i.e. only images' IDs are relevant).
-                cachedSelectedActiveDisks = ImagesHandler.imagesIntersection(imagesForVm, getParameters().getDisks());
+                // (i.e. only images' IDs and Cinders' IDs are relevant).
+                cachedSelectedActiveDisks = ImagesHandler.imagesIntersection(imagesAndCinderForVm, getParameters().getDisks());
             }
         }
         return cachedSelectedActiveDisks;
@@ -146,6 +162,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private boolean validateStorage() {
         List<DiskImage> vmDisksList = getDisksListForChecks();
         if (vmDisksList.size() > 0) {
+            // TODO: Add a validator factory for Cinder and image disks (after disks will be refacored)
             DiskImagesValidator diskImagesValidator = createDiskImageValidator(vmDisksList);
             if (!(validate(diskImagesValidator.diskImagesNotLocked())
                     && validate(diskImagesValidator.diskImagesNotIllegal()))) {
