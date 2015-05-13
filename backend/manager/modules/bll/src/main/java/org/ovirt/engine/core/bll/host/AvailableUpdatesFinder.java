@@ -12,7 +12,7 @@ public class AvailableUpdatesFinder {
 
     private static Logger log = LoggerFactory.getLogger(AvailableUpdatesFinder.class);
 
-    public AvailableUpdatesFinder() {
+    private AvailableUpdatesFinder() {
     }
 
     public boolean isUpdateAvailable(VDS host) {
