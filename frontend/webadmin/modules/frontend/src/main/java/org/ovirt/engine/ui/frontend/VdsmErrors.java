@@ -961,4 +961,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Error registering Libvirt secret")
     String SecretRegisterError();
+
+    @DefaultStringValue("Error un-registering Libvirt secret")
+    String SecretUnregisterError();
 }

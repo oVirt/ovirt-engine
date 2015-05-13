@@ -424,4 +424,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterSnapshotScheduleReset();
 
     public Map<String, Object> registerSecrets(Map<String, String>[] libvirtSecrets);
+
+    public Map<String, Object> unregisterSecrets(String[] libvirtSecretsUuids);
 }

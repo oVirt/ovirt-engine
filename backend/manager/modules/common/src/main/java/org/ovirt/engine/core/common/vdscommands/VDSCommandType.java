@@ -199,6 +199,7 @@ public enum VDSCommandType {
     Destroy("org.ovirt.engine.core.vdsbroker.vdsbroker"),        // Clean a DOWN VM from the vms list
     HostDevChangeNumVfs("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     RegisterLibvirtSecrets("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    UnregisterLibvirtSecrets("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     /**
      * Get Host capabilities
      */

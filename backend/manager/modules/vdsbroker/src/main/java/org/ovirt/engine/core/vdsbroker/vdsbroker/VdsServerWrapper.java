@@ -1927,4 +1927,14 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc unregisterSecrets(String[] libvirtSecretsUuids) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.unregisterSecrets(libvirtSecretsUuids);
+            return new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }
