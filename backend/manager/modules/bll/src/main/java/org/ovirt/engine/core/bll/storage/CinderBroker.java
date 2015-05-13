@@ -126,6 +126,16 @@ public class CinderBroker extends AuditLogableBase {
         });
     }
 
+    public Void deleteSnapshot(final Guid snapshotId) {
+        return execute(new Callable<Void>() {
+            @Override
+            public Void call() {
+                proxy.deleteSnapshot(snapshotId.toString());
+                return null;
+            }
+        });
+    }
+
     public CinderConnectionInfo initializeConnectionForDisk(final CinderDisk cinderDisk) {
         return execute(new Callable<CinderConnectionInfo>() {
             @Override
