@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.cinder.model.ConnectionForInitialize;
+import com.woorea.openstack.cinder.model.SnapshotForCreate;
 import com.woorea.openstack.cinder.model.Volume;
 import com.woorea.openstack.cinder.model.VolumeForCreate;
 import com.woorea.openstack.cinder.model.VolumeForUpdate;
@@ -110,6 +111,17 @@ public class CinderBroker extends AuditLogableBase {
             public Void call() {
                 proxy.extendVolume(cinderDisk.getId().toString(), newSize);
                 return null;
+            }
+        });
+    }
+
+    public String createSnapshot(final CinderDisk cinderDisk) {
+        return execute(new Callable<String>() {
+            @Override
+            public String call() {
+                SnapshotForCreate snapshotForCreate = new SnapshotForCreate();
+                snapshotForCreate.setVolumeId(cinderDisk.getId().toString());
+                return proxy.createSnapshot(snapshotForCreate);
             }
         });
     }
