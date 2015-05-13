@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -160,20 +159,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected EngineLock getSnapshotsEngineLock() {
         return snapshotsEngineLock;
-    }
-
-    /**
-     * Snapshot can be created only when there is no other images mapped to same drive in vm.
-     *
-     * @return true if snapshot can be created
-     */
-    // TODO: Should be moved to another class in the hierarchy
-    protected boolean canCreateSnapshot() {
-        if (!new SnapshotsValidator().vmNotDuringSnapshot(getVmId()).isValid()) {
-            log.error("Cannot create snapshot. Vm is in preview status");
-            return false;
-        }
-        return true;
     }
 
     /**

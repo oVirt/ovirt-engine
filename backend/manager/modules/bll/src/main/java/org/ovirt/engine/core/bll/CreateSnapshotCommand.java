@@ -43,23 +43,19 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
 
     @Override
     protected void executeCommand() {
-        if (canCreateSnapshot()) {
-            VDSReturnValue vdsReturnValue = performImageVdsmOperation();
-            if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                    @Override
-                    public Void runInTransaction() {
-                        processOldImageFromDb();
-                        addDiskImageToDb(newDiskImage, getCompensationContext());
-                        setActionReturnValue(newDiskImage);
-                        setSucceeded(true);
-                        return null;
-                    }
-                });
-
-            }
+        VDSReturnValue vdsReturnValue = performImageVdsmOperation();
+        if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    processOldImageFromDb();
+                    addDiskImageToDb(newDiskImage, getCompensationContext());
+                    setActionReturnValue(newDiskImage);
+                    setSucceeded(true);
+                    return null;
+                }
+            });
         }
-
     }
 
     protected Guid getDestinationStorageDomainId() {
