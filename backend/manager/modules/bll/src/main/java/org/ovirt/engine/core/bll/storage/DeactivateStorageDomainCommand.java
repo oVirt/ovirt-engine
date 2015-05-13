@@ -315,6 +315,18 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     private void deactivateCinderStorageDomain() {
+        List<Pair<Guid, Boolean>> hostsConnectionResults = disconnectHostsInUpToDomainStorageServer();
+        for (Pair<Guid, Boolean> pair : hostsConnectionResults) {
+            if (!pair.getSecond()) {
+                log.error("Failed to deactivate Cinder storage domain '{}' due to secrets un-registration failure.",
+                        getStorageDomain().getName());
+                StoragePoolIsoMap map = getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(
+                        getParameters().getStorageDomainId(), getParameters().getStoragePoolId()));
+                map.setStatus(StorageDomainStatus.Inactive);
+                getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getStatus());
+                return;
+            }
+        }
         CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
         CINDERStorageHelper.deactivateCinderDomain(getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());

@@ -334,6 +334,34 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return ThreadPoolUtil.invokeAll(callables);
     }
 
+    protected List<Pair<Guid, Boolean>> disconnectHostsInUpToDomainStorageServer() {
+        List<VDS> hostsInStatusUp = getAllRunningVdssInPool();
+        List<Callable<Pair<Guid, Boolean>>> callables = new LinkedList<>();
+        for (final VDS vds : hostsInStatusUp) {
+            callables.add(new Callable<Pair<Guid, Boolean>>() {
+                @Override
+                public Pair<Guid, Boolean> call() throws Exception {
+                    Pair<Guid, Boolean> toReturn = new Pair<>(vds.getId(), Boolean.FALSE);
+                    try {
+                        boolean connectResult = StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
+                                .disconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
+                        toReturn.setSecond(connectResult);
+                    } catch (RuntimeException e) {
+                        log.error("Failed to disconnect host '{}' to storage domain (name '{}', id '{}'): {}",
+                                vds.getName(),
+                                getStorageDomain().getName(),
+                                getStorageDomain().getId(),
+                                e.getMessage());
+                        log.debug("Exception", e);
+                    }
+                    return toReturn;
+                }
+            });
+        }
+
+        return ThreadPoolUtil.invokeAll(callables);
+    }
+
     protected void disconnectAllHostsInPool() {
         getEventQueue().submitEventSync(
                 new Event(getParameters().getStoragePoolId(),

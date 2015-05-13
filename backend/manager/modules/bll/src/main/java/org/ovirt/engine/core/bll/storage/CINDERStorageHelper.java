@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RegisterLibvirtSecretsVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.UnregisterLibvirtSecretsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -56,6 +58,15 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     @Override
     protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
+        return registerLibvirtSecrets(storageDomain, vdsId);
+    }
+
+    @Override
+    public boolean disconnectStorageFromDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
+        return unregisterLibvirtSecrets(storageDomain, vdsId);
+    }
+
+    private Pair<Boolean, VdcFault> registerLibvirtSecrets(StorageDomain storageDomain, Guid vdsId) {
         Provider provider = getProviderDao().get(Guid.createGuidFromString(storageDomain.getStorage()));
         VDS vds = getVdsDao().get(vdsId);
         List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
@@ -82,6 +93,36 @@ public class CINDERStorageHelper extends StorageHelperBase {
             }
         }
         return new Pair<>(true, null);
+    }
+
+    protected boolean unregisterLibvirtSecrets(StorageDomain storageDomain, Guid vdsId) {
+        Provider provider = getProviderDao().get(Guid.createGuidFromString(storageDomain.getStorage()));
+        VDS vds = getVdsDao().get(vdsId);
+        List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
+        List<Guid> libvirtSecretsUuids = Entities.getIds(libvirtSecrets);
+        if (!libvirtSecrets.isEmpty()) {
+            VDSReturnValue returnValue;
+            try {
+                returnValue = Backend.getInstance().getResourceManager().RunVdsCommand(
+                        VDSCommandType.UnregisterLibvirtSecrets,
+                        new UnregisterLibvirtSecretsVDSParameters(vdsId, libvirtSecretsUuids));
+            } catch (RuntimeException e) {
+                addMessageToAuditLog(AuditLogType.FAILED_TO_UNREGISTER_LIBVIRT_SECRET,
+                        storageDomain.getName(), vds.getName());
+                log.error("Failed to unregister libvirt secret for storage domain {} on vds {}. Error: {}",
+                        storageDomain.getName(), vds.getName(), e.getMessage());
+                log.debug("Exception", e);
+                return false;
+            }
+            if (!returnValue.getSucceeded()) {
+                addMessageToAuditLog(AuditLogType.FAILED_TO_UNREGISTER_LIBVIRT_SECRET,
+                        storageDomain.getName(), vds.getName());
+                log.error("Failed to unregister libvirt secret for storage domain {} on vds {}.",
+                        storageDomain.getName(), vds.getName());
+                return false;
+            }
+        }
+        return true;
     }
 
     private void addMessageToAuditLog(AuditLogType auditLogType, String storageDomainName, String vdsName){
