@@ -137,6 +137,14 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     }
 
     private void activateCinderStorageDomain() {
+        List<Pair<Guid, Boolean>> hostsConnectionResults = connectHostsInUpToDomainStorageServer();
+        for (Pair<Guid, Boolean> pair : hostsConnectionResults) {
+            if (!pair.getSecond()) {
+                log.error("Failed to activate Cinder storage domain '{}' due to secrets registration failure.",
+                        getStorageDomain().getName());
+                return;
+            }
+        }
         CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
         CINDERStorageHelper.activateCinderDomain(getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());

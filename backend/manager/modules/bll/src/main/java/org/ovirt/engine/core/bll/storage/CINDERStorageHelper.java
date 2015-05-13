@@ -5,26 +5,36 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.RegisterLibvirtSecretsVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.LibvirtSecretDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
+import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -46,7 +56,39 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     @Override
     protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
+        Provider provider = getProviderDao().get(Guid.createGuidFromString(storageDomain.getStorage()));
+        VDS vds = getVdsDao().get(vdsId);
+        List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
+        VDSReturnValue returnValue;
+        if (!libvirtSecrets.isEmpty()) {
+            try {
+                returnValue = Backend.getInstance().getResourceManager().RunVdsCommand(
+                        VDSCommandType.RegisterLibvirtSecrets,
+                        new RegisterLibvirtSecretsVDSParameters(vdsId, libvirtSecrets));
+            } catch (RuntimeException e) {
+                log.error("Failed to register libvirt secret for storage domain {} on vds {}. Error: {}",
+                        storageDomain.getName(), vds.getName(), e.getMessage());
+                log.debug("Exception", e);
+                return new Pair<>(false, null);
+            }
+            if (!returnValue.getSucceeded()) {
+                addMessageToAuditLog(AuditLogType.FAILED_TO_REGISTER_LIBVIRT_SECRET,
+                        storageDomain.getName(), vds.getName());
+                log.error("Failed to register libvirt secret for storage domain {} on vds {}.",
+                        storageDomain.getName(), vds.getName());
+                VdcFault vdcFault = new VdcFault();
+                vdcFault.setError(returnValue.getVdsError().getCode());
+                return new Pair<>(false, vdcFault);
+            }
+        }
         return new Pair<>(true, null);
+    }
+
+    private void addMessageToAuditLog(AuditLogType auditLogType, String storageDomainName, String vdsName){
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("StorageDomainName", storageDomainName);
+        logable.addCustomValue("VdsName", vdsName);
+        new AuditLogDirector().log(logable, auditLogType);
     }
 
     private <T> void execute(final Callable<T> callable) {
@@ -150,6 +192,18 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     private StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
         return getDbFacade().getStoragePoolIsoMapDao();
+    }
+
+    private ProviderDao getProviderDao() {
+        return getDbFacade().getProviderDao();
+    }
+
+    private VdsDAO getVdsDao() {
+        return getDbFacade().getVdsDao();
+    }
+
+    private LibvirtSecretDao getLibvirtSecretDao() {
+        return getDbFacade().getLibvirtSecretDao();
     }
 
     private static DbFacade getDbFacade() {
