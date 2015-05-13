@@ -1858,9 +1858,9 @@ public class JsonRpcVdsServer implements IVdsServer {
             String mountPoint,
             Map<String, Object> raidParams, String fsType,
             String[] storageDevices) {
-        JsonRpcRequest request = new RequestBuilder("GlusterHost.createBrick").withParameter("brickName", lvName)
+        JsonRpcRequest request = new RequestBuilder("GlusterHost.createBrick").withParameter("name", lvName)
                 .withParameter("mountPoint", mountPoint)
-                .withParameter("devices", storageDevices)
+                .withParameter("devList", storageDevices)
                 .withParameter("fsType", fsType)
                 .withOptionalParameterAsMap("raidParams", raidParams).build();
 
