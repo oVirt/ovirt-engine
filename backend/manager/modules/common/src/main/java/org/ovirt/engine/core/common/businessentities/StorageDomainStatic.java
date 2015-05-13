@@ -58,7 +58,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
     private Integer warningLowSpaceIndicator;
 
     @Min(value = 0, message = "VALIDATION.STORAGE_DOMAIN.CRITICAL_SPACE_ACTION_BLOCKER.RANGE")
-    @Max(value = 100, message = "VALIDATION.STORAGE_DOMAIN.CRITICAL_SPACE_ACTION_BLOCKER.RANGE")
+    @Max(value = Integer.MAX_VALUE, message = "VALIDATION.STORAGE_DOMAIN.CRITICAL_SPACE_ACTION_BLOCKER.RANGE")
     private Integer criticalSpaceActionBlocker;
 
     public StorageDomainStatic() {

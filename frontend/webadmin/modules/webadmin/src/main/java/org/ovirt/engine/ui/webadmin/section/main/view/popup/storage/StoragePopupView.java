@@ -233,6 +233,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         wipeAfterDeleteEditor.setLabel(constants.wipeAfterDelete());
         warningLowSpaceIndicatorEditor.setLabel(constants.warningLowSpaceIndicatorUnits());
         criticalSpaceActionBlockerEditor.setLabel(constants.criticalSpaceActionBlockerUnits());
+        criticalSpaceActionBlockerEditor.setLabelTooltip(constants.changeCriticalSpaceActionBlockerWarning());
     }
 
     @Override

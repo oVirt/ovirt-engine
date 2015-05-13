@@ -694,7 +694,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         });
 
         getCriticalSpaceActionBlocker().validateEntity(new IValidation[] {
-                new NotEmptyValidation(), new IntegerValidation(0,  StorageConstants.CRITICAL_SPACE_THRESHOLD)
+                new NotEmptyValidation(), new IntegerValidation(0,  Integer.MAX_VALUE)
         });
 
         return getName().getIsValid()

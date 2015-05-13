@@ -1797,6 +1797,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Critical Space Action Blocker")
     String criticalSpaceActionBlocker();
 
+    @DefaultStringValue("Once the free space on the Storage Domain is below this value, any new action that consumes space, even temporarily, will be blocked.")
+    String changeCriticalSpaceActionBlockerWarning();
+
     // VM
     @DefaultStringValue("Cluster")
     String clusterVm();

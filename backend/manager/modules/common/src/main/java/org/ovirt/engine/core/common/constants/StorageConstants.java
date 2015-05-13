@@ -10,5 +10,4 @@ public class StorageConstants {
     public static final String SHARED = "Shared";
     public static final String ISO = "ISO";
     public static final short LOW_SPACE_THRESHOLD = 100; // low space threshold maximum value (%)
-    public static final short CRITICAL_SPACE_THRESHOLD = 100; // critical space threshold maximum value (GB)
 }
