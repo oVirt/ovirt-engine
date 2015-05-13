@@ -136,6 +136,21 @@ public class CinderBroker extends AuditLogableBase {
         });
     }
 
+    public String cloneVolumeFromSnapshot(final CinderDisk cinderDisk, final Guid snapshotId) {
+        return execute(new Callable<String>() {
+            @Override
+            public String call() {
+                VolumeForCreate cinderVolume = new VolumeForCreate();
+                cinderVolume.setName(cinderDisk.getDiskAlias());
+                cinderVolume.setDescription(cinderDisk.getDiskDescription());
+                cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
+                cinderVolume.setSourceVolid(cinderDisk.getId().toString());
+                cinderVolume.setSnapshotId(snapshotId.toString());
+                return proxy.cloneVolumeFromSnapshot(cinderVolume);
+            }
+        });
+    }
+
     public CinderConnectionInfo initializeConnectionForDisk(final CinderDisk cinderDisk) {
         return execute(new Callable<CinderConnectionInfo>() {
             @Override
