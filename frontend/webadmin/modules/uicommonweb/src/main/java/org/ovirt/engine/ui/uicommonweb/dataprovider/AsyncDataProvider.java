@@ -4198,4 +4198,9 @@ public class AsyncDataProvider {
         return new ArrayList<>(Arrays.asList(LibvirtSecretUsageType.values()));
     }
 
+    public boolean isNetworkExclusivenessPermissiveValidation(String version) {
+        return (Boolean) getConfigValuePreConverted(
+                ConfigurationValues.NetworkExclusivenessPermissiveValidation,
+                version);
+    }
 }

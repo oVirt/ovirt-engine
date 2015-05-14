@@ -161,6 +161,7 @@ public enum ConfigurationValues {
     CORSAllowedOrigins,
     CinderProviderSupported,
     NetworkSriovSupported,
+    NetworkExclusivenessPermissiveValidation,
     HostDevicePassthroughCapabilities,
     LiveStorageMigrationBetweenDifferentStorageTypes,
     MaxIoThreadsPerVm,
