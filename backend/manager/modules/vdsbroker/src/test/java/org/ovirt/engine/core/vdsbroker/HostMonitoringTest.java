@@ -81,7 +81,7 @@ public class HostMonitoringTest {
         initConditions();
         when(vdsManager.getRefreshStatistics()).thenReturn(false);
         updater = Mockito.spy(
-                    new HostMonitoring(vdsManager, vds, mock(MonitoringStrategy.class)) {
+                new HostMonitoring(vdsManager, vds, mock(MonitoringStrategy.class), resourceManager) {
 
             @Override
             public DbFacade getDbFacade() {
@@ -120,7 +120,6 @@ public class HostMonitoringTest {
         VDSReturnValue value = new VDSReturnValue();
         value.setSucceeded(false);
         value.setExceptionObject(new VDSNetworkException("unknown host"));
-        when(updater.getResourceManager()).thenReturn(resourceManager);
         when(updater.getVdsEventListener()).thenReturn(vdsEventlistener);
         when(resourceManager.runVdsCommand(any(VDSCommandType.class),
                 any(VDSParametersBase.class))).thenReturn(value);

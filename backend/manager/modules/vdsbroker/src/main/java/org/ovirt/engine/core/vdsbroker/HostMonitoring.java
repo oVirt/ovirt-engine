@@ -46,7 +46,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings({ "synthetic-access", "unchecked", "rawtypes" })
 public class HostMonitoring {
     private final VDS vds;
     private final VdsManager vdsManager;
@@ -59,14 +58,18 @@ public class HostMonitoring {
     private static Map<Guid, Long> hostDownTimes = new HashMap<>();
     private boolean vdsMaintenanceTimeoutOccurred;
     private Map<String, InterfaceStatus> oldInterfaceStatus = new HashMap<String, InterfaceStatus>();
-
+    private final ResourceManager resourceManager;
     private static final Logger log = LoggerFactory.getLogger(HostMonitoring.class);
 
-    public HostMonitoring(VdsManager vdsManager, VDS vds, MonitoringStrategy monitoringStrategy) {
+    public HostMonitoring(VdsManager vdsManager,
+            VDS vds,
+            MonitoringStrategy monitoringStrategy,
+            ResourceManager resourceManager) {
         this.vdsManager = vdsManager;
         this.vds = vds;
         firstStatus = vds.getStatus();
         this.monitoringStrategy = monitoringStrategy;
+        this.resourceManager = resourceManager;
     }
 
     public void refresh() {
@@ -130,7 +133,7 @@ public class HostMonitoring {
                     vds.getVdsGroupName(), cce.getMessage());
             log.debug("Exception", cce);
             if (vds.getStatus() != VDSStatus.PreparingForMaintenance && vds.getStatus() != VDSStatus.Maintenance) {
-                ResourceManager.getInstance().runVdsCommand(VDSCommandType.SetVdsStatus,
+                resourceManager.runVdsCommand(VDSCommandType.SetVdsStatus,
                         new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
             }
         } catch (Throwable t) {
@@ -388,7 +391,7 @@ public class HostMonitoring {
     }
 
     protected IVdsEventListener getVdsEventListener() {
-        return getResourceManager().getEventListener();
+        return resourceManager.getEventListener();
     }
 
     public void afterRefreshTreatment() {
@@ -457,7 +460,7 @@ public class HostMonitoring {
         }
         // get statistics data, images checks and vm_count data (dynamic)
         fetchHostInterfaces();
-        VDSReturnValue statsReturnValue = getResourceManager().runVdsCommand(VDSCommandType.GetStats,
+        VDSReturnValue statsReturnValue = resourceManager.runVdsCommand(VDSCommandType.GetStats,
                 new VdsIdAndVdsVDSCommandParametersBase(vds));
         getVdsEventListener().updateSchedulingStats(vds);
         if (!statsReturnValue.getSucceeded()
@@ -765,9 +768,5 @@ public class HostMonitoring {
 
     public DbFacade getDbFacade() {
         return DbFacade.getInstance();
-    }
-
-    public ResourceManager getResourceManager() {
-        return ResourceManager.getInstance();
     }
 }
