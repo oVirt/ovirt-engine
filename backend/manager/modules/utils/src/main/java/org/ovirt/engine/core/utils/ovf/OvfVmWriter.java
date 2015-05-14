@@ -244,6 +244,9 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteStartElement(RASD_URI, "Template");
             _writer.WriteRaw(image.getImageTemplateId().toString());
             _writer.WriteEndElement();
+            _writer.WriteStartElement(RASD_URI, "DiskStorageType");
+            _writer.WriteRaw(image.getDiskStorageType().name());
+            _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "ApplicationList");
             _writer.WriteRaw(image.getAppList());
             _writer.WriteEndElement();
