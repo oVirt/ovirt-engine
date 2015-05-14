@@ -26,6 +26,7 @@ public class QosRangeValidatorTest {
 
     public static final int OUT_OF_RANGE = 111;
     public static final int MAX_RANGE = 100;
+
     @Rule
     public final MockConfigRule configRule = new MockConfigRule();
 
@@ -54,10 +55,6 @@ public class QosRangeValidatorTest {
 
         assertCanDoMsgCount(canDoMsgs, "$range 1-100", 1);
         assertCanDoMsgCount(canDoMsgs, EngineMessage.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 1);
-    }
-
-    private void assertCanDoMsgCount(List<String> canDoMsgs, String msg, int count) {
-        assertTrue(Collections.frequency(canDoMsgs, msg) == count);
     }
 
     @Test
@@ -94,6 +91,10 @@ public class QosRangeValidatorTest {
 
         assertCanDoMsgCount(canDoMsgs, "$range 0-100", 6);
         assertCanDoMsgCount(canDoMsgs, EngineMessage.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 6);
+    }
+
+    private void assertCanDoMsgCount(List<String> canDoMsgs, String msg, int count) {
+        assertTrue(Collections.frequency(canDoMsgs, msg) == count);
     }
 
 }
