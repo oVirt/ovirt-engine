@@ -81,12 +81,7 @@ public class HostMonitoringTest {
         initConditions();
         when(vdsManager.getRefreshStatistics()).thenReturn(false);
         updater = Mockito.spy(
-                new HostMonitoring(vdsManager, vds, mock(MonitoringStrategy.class), resourceManager) {
-
-            @Override
-            public DbFacade getDbFacade() {
-                return dbFacade;
-            }
+                new HostMonitoring(vdsManager, vds, mock(MonitoringStrategy.class), resourceManager, dbFacade) {
 
             @Override
             protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {

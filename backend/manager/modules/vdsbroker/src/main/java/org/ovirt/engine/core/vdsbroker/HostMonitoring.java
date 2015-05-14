@@ -59,17 +59,20 @@ public class HostMonitoring {
     private boolean vdsMaintenanceTimeoutOccurred;
     private Map<String, InterfaceStatus> oldInterfaceStatus = new HashMap<String, InterfaceStatus>();
     private final ResourceManager resourceManager;
+    private final DbFacade dbFacade;
     private static final Logger log = LoggerFactory.getLogger(HostMonitoring.class);
 
     public HostMonitoring(VdsManager vdsManager,
             VDS vds,
             MonitoringStrategy monitoringStrategy,
-            ResourceManager resourceManager) {
+            ResourceManager resourceManager,
+            DbFacade dbFacade) {
         this.vdsManager = vdsManager;
         this.vds = vds;
         firstStatus = vds.getStatus();
         this.monitoringStrategy = monitoringStrategy;
         this.resourceManager = resourceManager;
+        this.dbFacade = dbFacade;
     }
 
     public void refresh() {
@@ -766,7 +769,7 @@ public class HostMonitoring {
         new AuditLogDirector().log(auditLogable, logType);
     }
 
-    public DbFacade getDbFacade() {
-        return DbFacade.getInstance();
+    private DbFacade getDbFacade() {
+        return dbFacade;
     }
 }

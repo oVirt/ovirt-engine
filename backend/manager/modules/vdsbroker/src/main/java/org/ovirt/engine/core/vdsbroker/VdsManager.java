@@ -208,7 +208,8 @@ public class VdsManager {
                         }
                         if (isMonitoringNeeded()) {
                             setStartTime();
-                            hostMonitoring = new HostMonitoring(this, cachedVds, monitoringStrategy, resourceManager);
+                            hostMonitoring =
+                                    new HostMonitoring(this, cachedVds, monitoringStrategy, resourceManager, dbFacade);
                             hostMonitoring.refresh();
                             mUnrespondedAttempts.set(0);
                             setLastUpdate();
