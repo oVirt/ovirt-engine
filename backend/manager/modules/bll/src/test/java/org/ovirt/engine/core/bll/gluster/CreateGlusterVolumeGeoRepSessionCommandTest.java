@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.ClassRule;
@@ -11,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -31,7 +34,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class CreateGlusterVolumeGeoRepSessionCommandTest {
     private static final Version NOT_SUPPORTED_VERSION = Version.v3_4;
 
-    private static final Object SUPPORTED_VERSION = Version.v3_6;
+    private static final Version SUPPORTED_VERSION = Version.v3_6;
 
     CreateGlusterVolumeGeoRepSessionCommand command;
 
@@ -59,6 +62,9 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
 
     @Mock
     protected VDSGroup vdsGroup;
+
+    @Mock
+    private GlusterUtil glusterUtil;
 
     @Mock
     protected GlusterVolumeEntity volume;
@@ -93,6 +99,9 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
         doReturn(geoRepDao).when(command).getGeoRepDao();
         doReturn(vds).when(command).getUpServer();
         doReturn(VDSStatus.Up).when(vds).getStatus();
+        doReturn(glusterUtil).when(command).getGlusterUtil();
+        when(glusterUtil.isGlusterGeoReplicationSupported(eq(SUPPORTED_VERSION), any(Guid.class))).thenReturn(true);
+        when(glusterUtil.isGlusterGeoReplicationSupported(eq(NOT_SUPPORTED_VERSION), any(Guid.class))).thenReturn(false);
     }
 
     @Test

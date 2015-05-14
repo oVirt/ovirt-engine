@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
@@ -464,7 +463,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
 
     private boolean supportsGlusterGeoRepFeature(VDSGroup cluster) {
         return cluster.supportsGlusterService()
-                && GlusterFeatureSupported.glusterGeoReplication(cluster.getCompatibilityVersion());
+                && getGlusterUtil().isGlusterGeoReplicationSupported(cluster.getCompatibilityVersion(), cluster.getId());
     }
 
 }

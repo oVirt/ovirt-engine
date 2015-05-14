@@ -8,13 +8,13 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterVolumeSnapshotConfigParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -56,7 +56,7 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
             return false;
         }
 
-        if (!GlusterFeatureSupported.glusterSnapshot(getVdsGroup().getCompatibilityVersion())) {
+        if (!getGlusterUtil().isGlusterSnapshotSupported(getVdsGroup().getCompatibilityVersion(), getVdsGroup().getId())) {
             failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
         }
 
@@ -184,5 +184,9 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
         } else {
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CONFIG_UPDATE_FAILED : errorType;
         }
+    }
+
+    protected GlusterUtil getGlusterUtil() {
+        return GlusterUtil.getInstance();
     }
 }

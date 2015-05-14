@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,7 +40,7 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
             return false;
         }
 
-        if (!GlusterFeatureSupported.glusterSnapshot(getVdsGroup().getCompatibilityVersion())) {
+        if (!getGlusterUtil().isGlusterSnapshotSupported(getVdsGroup().getCompatibilityVersion(), getVdsGroup().getId())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
         }
 

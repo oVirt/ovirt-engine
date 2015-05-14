@@ -7,6 +7,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsValidator;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -17,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -49,7 +49,8 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
     protected boolean canDoAction() {
         VDSGroup cluster = getVdsGroup();
         if (!cluster.supportsGlusterService()
-                || !GlusterFeatureSupported.glusterBrickProvisioning(cluster.getCompatibilityVersion())) {
+                || (!getGlusterUtil().isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion(),
+                        getVdsGroup().getId()))) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
         }
 
@@ -152,5 +153,9 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.CREATE_GLUSTER_BRICK : AuditLogType.CREATE_GLUSTER_BRICK_FAILED;
+    }
+
+    protected GlusterUtil getGlusterUtil() {
+        return GlusterUtil.getInstance();
     }
 }

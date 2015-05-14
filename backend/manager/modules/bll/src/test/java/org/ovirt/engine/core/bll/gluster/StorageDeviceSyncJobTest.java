@@ -5,6 +5,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
@@ -59,6 +61,9 @@ public class StorageDeviceSyncJobTest {
     private ClusterUtils clusterUtils;
 
     @Mock
+    private GlusterUtil glusterUtil;
+
+    @Mock
     private VdsGroupDAO clusterDao;
 
     @Mock
@@ -69,6 +74,7 @@ public class StorageDeviceSyncJobTest {
 
     @Mock
     private GlusterAuditLogUtil logUtil;
+
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GlusterBrickProvisioningEnabled, Version.v3_6.toString(), true),
@@ -85,9 +91,12 @@ public class StorageDeviceSyncJobTest {
         doReturn(storageDeviceDao).when(syncJob).getStorageDeviceDao();
         doReturn(clusterDao).when(syncJob).getClusterDao();
         doReturn(clusterUtils).when(syncJob).getClusterUtils();
+        doReturn(glusterUtil).when(syncJob).getGlusterUtil();
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(vdsDao).when(syncJob).getVdsDao();
         doReturn(getAllUpServers()).when(clusterUtils).getAllUpServers(CLUSTER_GUID_3_6);
+        when(glusterUtil.isGlusterBrickProvisioningSupported(eq(Version.v3_5), eq(CLUSTER_GUID_3_5))).thenReturn(false);
+        when(glusterUtil.isGlusterBrickProvisioningSupported(eq(Version.v3_6), eq(CLUSTER_GUID_3_6))).thenReturn(true);
         doReturn(getStorageDevices(HOST_ID_WITH_NEW_DEVICES)).when(storageDeviceDao)
                 .getStorageDevicesInHost(HOST_ID_WITH_NEW_DEVICES);
         doReturn(getStorageDevices(HOST_ID_WITH_DEVICES_CHANGED)).when(storageDeviceDao)

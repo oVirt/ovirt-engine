@@ -4,11 +4,11 @@ import java.util.Arrays;
 
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsValidator;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.di.Injector;
 
 public class SyncStorageDevicesCommand<T extends VdsActionParameters> extends VdsCommand<T> {
@@ -21,7 +21,8 @@ public class SyncStorageDevicesCommand<T extends VdsActionParameters> extends Vd
     protected boolean canDoAction() {
         VDSGroup cluster = getVdsGroup();
         if (!cluster.supportsGlusterService()
-                || !GlusterFeatureSupported.glusterBrickProvisioning(cluster.getCompatibilityVersion())) {
+                || (!getGlusterUtil().isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion(),
+                        getVdsGroup().getId()))) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
         }
 
@@ -53,4 +54,9 @@ public class SyncStorageDevicesCommand<T extends VdsActionParameters> extends Vd
         return getSucceeded() ? AuditLogType.SYNC_STORAGE_DEVICES_IN_HOST
                 : AuditLogType.SYNC_STORAGE_DEVICES_IN_HOST_FAILED;
     }
+
+    protected GlusterUtil getGlusterUtil() {
+        return GlusterUtil.getInstance();
+    }
+
 }

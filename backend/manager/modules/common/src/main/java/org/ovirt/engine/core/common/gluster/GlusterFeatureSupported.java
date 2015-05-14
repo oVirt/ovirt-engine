@@ -81,38 +81,6 @@ public class GlusterFeatureSupported {
         }
     }
 
-   /**
-    *
-    * @param version
-    *            Compatibility version to check for.
-    * @return <code>true</code> if gluster geo-replication management feature is enabled,
-    *         <code>false</code> if it's not.
-    */
-   public static boolean glusterGeoReplication(Version version) {
-       return supportedInConfig(ConfigValues.GlusterGeoReplicationEnabled, version);
-   }
-
-  /**
-   * @param version
-   *            Compatibility version to check for.
-   * @return <code>true</code> if gluster snapshot management feature is enabled,
-   *         <code>false</code> if it's not.
-   */
-  public static boolean glusterSnapshot(Version version) {
-      return supportedInConfig(ConfigValues.GlusterVolumeSnapshotSupported, version);
-  }
-
-   /**
-   *
-   * @param version
-   *            Compatibility version to check for.
-   * @return <code>true</code> if disk provisioning feature is enabled,
-   *         <code>false</code> if it's not.
-   */
-  public static boolean glusterBrickProvisioning(Version version) {
-        return supportedInConfig(ConfigValues.GlusterBrickProvisioningEnabled, version);
-  }
-
   /**
   *
   * @param version

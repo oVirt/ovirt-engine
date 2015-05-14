@@ -21,6 +21,6 @@ public class GlusterFeaturesUtil {
     }
 
     public static boolean isGlusterBrickProvisioningSupported(Version version) {
-        return Version.v3_6.compareTo(version) <= 0;
+        return Version.v3_5.compareTo(version) <= 0;
     }
 }

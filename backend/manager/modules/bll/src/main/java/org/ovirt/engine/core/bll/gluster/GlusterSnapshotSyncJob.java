@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotVDSParameters;
@@ -265,7 +264,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
 
     private boolean supportsGlusterSnapshotFeature(VDSGroup cluster) {
         return cluster.supportsGlusterService()
-                && GlusterFeatureSupported.glusterSnapshot(cluster.getCompatibilityVersion());
+                && getGlusterUtil().isGlusterSnapshotSupported(cluster.getCompatibilityVersion(), cluster.getId());
     }
 
     protected GlusterVolumeDao getGlusterVolumeDao() {
