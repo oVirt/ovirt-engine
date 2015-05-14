@@ -42,6 +42,7 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
 
     @Override
     protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT_CONFIG);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__VOLUME_SNAPSHOT_CONFIG_UPDATE);
     }
 

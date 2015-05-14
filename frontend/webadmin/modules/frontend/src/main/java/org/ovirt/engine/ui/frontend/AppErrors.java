@@ -916,6 +916,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Gluster Volume Snapshot")
     String VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT();
 
+    @DefaultStringValue("$type Gluster Volume Snapshot config")
+    String VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT_CONFIG();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 
@@ -1099,7 +1102,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action update version for")
     String VAR__ACTION__UPDATE_VM_VERSION();
 
-    @DefaultStringValue("$action gluster volume snapshot config update")
+    @DefaultStringValue("$action update")
     String VAR__ACTION__VOLUME_SNAPSHOT_CONFIG_UPDATE();
 
     @DefaultStringValue("$hostStatus Up")
