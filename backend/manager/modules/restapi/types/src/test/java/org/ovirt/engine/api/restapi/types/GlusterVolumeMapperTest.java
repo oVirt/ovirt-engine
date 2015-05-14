@@ -54,6 +54,12 @@ public class GlusterVolumeMapperTest extends AbstractInvertibleMappingTest<Glust
         assertNotNull(transform.getStripeCount());
         assertEquals(model.getStripeCount(), transform.getStripeCount());
 
+        assertNotNull(transform.getDisperseCount());
+        assertEquals(model.getDisperseCount(), transform.getDisperseCount());
+
+        assertNotNull(transform.getRedundancyCount());
+        assertEquals(model.getRedundancyCount(), transform.getRedundancyCount());
+
         verifyOptions(model, transform);
     }
 

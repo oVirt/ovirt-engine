@@ -54,6 +54,14 @@ public class GlusterVolumeMapper {
             volume.setStripeCount(fromVolume.getStripeCount());
         }
 
+        if(fromVolume.isSetDisperseCount()) {
+            volume.setDisperseCount(fromVolume.getDisperseCount());
+        }
+
+        if(fromVolume.isSetRedundancyCount()) {
+            volume.setRedundancyCount(fromVolume.getRedundancyCount());
+        }
+
         if (fromVolume.isSetOptions()) {
             Options options = fromVolume.getOptions();
             if (options.isSetOptions()) {
@@ -97,6 +105,8 @@ public class GlusterVolumeMapper {
 
         volume.setReplicaCount(fromVolume.getReplicaCount());
         volume.setStripeCount(fromVolume.getStripeCount());
+        volume.setDisperseCount(fromVolume.getDisperseCount());
+        volume.setRedundancyCount(fromVolume.getRedundancyCount());
 
         if(fromVolume.getStatus() != null) {
             volume.setStatus(StatusUtils.create(map(fromVolume.getStatus(), null)));
@@ -141,6 +151,10 @@ public class GlusterVolumeMapper {
             return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.STRIPED_REPLICATE;
         case DISTRIBUTED_STRIPED_REPLICATE:
             return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE;
+        case DISPERSE:
+            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISPERSE;
+        case DISTRIBUTED_DISPERSE:
+            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_DISPERSE;
         default:
             return null;
         }
@@ -164,6 +178,10 @@ public class GlusterVolumeMapper {
             return GlusterVolumeType.STRIPED_REPLICATE.value();
         case DISTRIBUTED_STRIPED_REPLICATE:
             return GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE.value();
+        case DISPERSE:
+            return GlusterVolumeType.DISPERSE.value();
+        case DISTRIBUTED_DISPERSE:
+            return GlusterVolumeType.DISTRIBUTED_DISPERSE.value();
         default:
             return null;
         }

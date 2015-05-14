@@ -4054,6 +4054,8 @@
           <xs:element ref="transport_types" minOccurs="0" maxOccurs="1"/>
           <xs:element name="replica_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
           <xs:element name="stripe_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="disperse_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="redundancy_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="bricks" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="options" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
