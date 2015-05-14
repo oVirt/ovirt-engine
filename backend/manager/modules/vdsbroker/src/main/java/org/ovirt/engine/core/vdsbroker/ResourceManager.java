@@ -45,9 +45,14 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDynamicDAO;
+import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.VmStatisticsDAO;
+import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
@@ -60,8 +65,6 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class ResourceManager {
 
-    @Inject
-    private BeanManager beanManager;
     //We can't inject event listener due to Jboss 7.1 bug. using programatic lookup instead.
     private volatile IVdsEventListener eventListener;
 
@@ -78,7 +81,28 @@ public class ResourceManager {
     private int parallelism;
 
     @Inject
+    private BeanManager beanManager;
+
+    @Inject
     private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private VdsDAO hostDao;
+
+    @Inject
+    private VmDAO vmDao;
+
+    @Inject
+    private VdsDynamicDAO hostDynamicDao;
+
+    @Inject
+    private VmDynamicDAO vmDynamicDao;
+
+    @Inject
+    private VmStatisticsDAO vmStatisticsDao;
+
+    @Inject
+    private VmNetworkStatisticsDao vmNetworkStatisticsDao;
 
     private ResourceManager() {
         this.parallelism = Config.<Integer> getValue(ConfigValues.EventProcessingPoolSize);
@@ -102,7 +126,7 @@ public class ResourceManager {
         // init the singleton. TODO remove once all code is using CDI
         setInstance(this);
         log.info("Start initializing {}", getClass().getSimpleName());
-        List<VDS> allVdsList = DbFacade.getInstance().getVdsDao().getAll();
+        List<VDS> allVdsList = hostDao.getAll();
         HashSet<Guid> nonResponsiveVdss = new HashSet<Guid>();
         for (VDS helper_vds : allVdsList) {
             if (helper_vds.getStatus() == VDSStatus.NonResponsive) {
@@ -114,7 +138,7 @@ public class ResourceManager {
         boolean runningVmsInTransition = false;
 
         // Cleanup all vms dynamic data. This is defensive code on power crash
-        List<VM> vms = DbFacade.getInstance().getVmDao().getAll();
+        List<VM> vms = vmDao.getAll();
         for (VM vm : vms) {
             if (!vm.isNotRunning()) {
                 if (vm.getRunOnVds() != null) {
@@ -154,7 +178,7 @@ public class ResourceManager {
             }
         }
 
-        DbFacade.getInstance().getVdsDynamicDao().updateAllInBatch(updatedEntities);
+        hostDynamicDao.updateAllInBatch(updatedEntities);
 
         // Populate the VDS dictionary
         for (VDS curVds : allVdsList) {
@@ -221,7 +245,7 @@ public class ResourceManager {
     }
 
     public void reestablishConnection(Guid vdsId) {
-        VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
+        VDS vds = hostDao.get(vdsId);
         RemoveVds(vds.getId());
         AddVds(vds, false);
     }
@@ -299,13 +323,13 @@ public class ResourceManager {
     }
 
     private void storeVm(VM vm) {
-        DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
-        DbFacade.getInstance().getVmStatisticsDao().update(vm.getStatisticsData());
+        vmDynamicDao.update(vm.getDynamicData());
+        vmStatisticsDao.update(vm.getStatisticsData());
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         if (interfaces != null) {
             for (VmNetworkInterface ifc : interfaces) {
                 VmNetworkStatistics stats = ifc.getStatistics();
-                DbFacade.getInstance().getVmNetworkStatisticsDao().update(stats);
+                vmNetworkStatisticsDao.update(stats);
             }
         }
     }
