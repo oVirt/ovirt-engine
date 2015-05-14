@@ -206,7 +206,7 @@ public class VdsManager {
                         }
                         if (isMonitoringNeeded()) {
                             setStartTime();
-                            hostMonitoring = new HostMonitoring(VdsManager.this, cachedVds, monitoringStrategy);
+                            hostMonitoring = new HostMonitoring(this, cachedVds, monitoringStrategy);
                             hostMonitoring.refresh();
                             mUnrespondedAttempts.set(0);
                             setLastUpdate();
@@ -338,7 +338,7 @@ public class VdsManager {
         log.error("Exception", ex);
     }
 
-    private static void logException(final RuntimeException ex) {
+    private void logException(final RuntimeException ex) {
         log.error("ResourceManager::refreshVdsRunTimeInfo", ex);
     }
 
@@ -957,7 +957,7 @@ public class VdsManager {
         return vdsId;
     }
 
-    public static void cancelRecoveryJob(Guid vdsId) {
+    public void cancelRecoveryJob() {
         String jobId = recoveringJobIdMap.remove(vdsId);
         if (jobId != null) {
             log.info("Cancelling the recovery from crash timer for VDS '{}' because vds started initializing", vdsId);
