@@ -266,7 +266,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 if (!vmDevice.getIsManaged()) {
                     continue;
                 }
-                // more then one device mean that we have payload and should use it
+                // more than one device mean that we have payload and should use it
                 // instead of the blank cd
                 if (!VmPayload.isPayload(vmDevice.getSpecParams()) && vmDevices.size() > 1) {
                     continue;

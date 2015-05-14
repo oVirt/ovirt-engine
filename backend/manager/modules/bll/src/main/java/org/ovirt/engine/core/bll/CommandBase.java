@@ -1302,7 +1302,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // Iterate all over the entities , which should be affected.
         for (PermissionSubject permSubject : permissionSubjects) {
             if (permSubject.getObjectId() != null) {
-                // Add comma when there are more then one entity
+                // Add comma when there are more than one entity
                 // affected.
                 if (builder.length() != 0) {
                     builder.append(", ");

@@ -334,7 +334,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
             statuses.add(vds.getStatus());
         }
         assertCorrectGetAllResult(result);
-        assertTrue("more then one different status expected", statuses.size() > 1);
+        assertTrue("more than one different status expected", statuses.size() > 1);
     }
 
     private void assertGetAllForVdsGroupCorrectResult(List<VDS> result) {

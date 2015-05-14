@@ -130,7 +130,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                 return failCanDoAction(VdcBllMessages.VM_PINNING_VCPU_DOES_NOT_EXIST);
             }
             if (!vcpus.add(currVcpu)) {
-                // ERROR contains more then one definition for the same vcpu
+                // ERROR contains more than one definition for the same vcpu
                 return failCanDoAction(VdcBllMessages.VM_PINNING_DUPLICATE_DEFINITION);
             }
 

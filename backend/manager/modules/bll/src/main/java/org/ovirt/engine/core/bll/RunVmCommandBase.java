@@ -76,7 +76,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     /**
-     * List on all VDSs, vm run on. In the case of problem to run vm will be more then one
+     * List on all VDSs, vm run on. In the case of problem to run vm will be more than one
      */
     protected List<Guid> getRunVdssList() {
         return runVdsList;

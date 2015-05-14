@@ -669,7 +669,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        // validate NUMA nodes count not more then CPUs
+        // validate NUMA nodes count not more than CPUs
         if (getParameters().getVm().getMigrationSupport() == MigrationSupport.PINNED_TO_HOST &&
                 !validate(VmHandler.checkVmNumaNodesIntegrity(getParameters().getVm(),
                         getParameters().getVm(),

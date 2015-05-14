@@ -280,7 +280,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             List<DiskImage> diskImageList =
                     getDiskImageDao().getAllSnapshotsForImageGroup(getOldDisk().getId());
 
-            // If disk image list is more then one then we assume that it has a snapshot, since one image is the active
+            // If disk image list is more than one then we assume that it has a snapshot, since one image is the active
             // disk and all the other images are the snapshots.
             if ((diskImageList.size() > 1) || !Guid.Empty.equals(((DiskImage) getOldDisk()).getImageTemplateId())) {
                 return failCanDoAction(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);

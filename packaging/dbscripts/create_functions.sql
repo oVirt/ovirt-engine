@@ -519,7 +519,7 @@ BEGIN
             else
                v_result := 2;
             end if;
-	      -- else (if return more then 1 row)
+	      -- else (if return more than 1 row)
           else
             select   count(*) INTO v_rowsCount from tt_TEMP22 where status = 3;
             if (v_rowsCount > 0) then
