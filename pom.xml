@@ -396,14 +396,6 @@
       </releases>
     </repository>
     <repository>
-      <id>codehaus</id>
-      <name>Codehaus Releases</name>
-      <url>http://repository.codehaus.org/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
       <id>snmp4j</id>
       <name>snmp4j</name>
       <url>https://oosnmp.net/dist/release/</url>
