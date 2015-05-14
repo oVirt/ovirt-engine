@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
+import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -165,15 +165,15 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         @Override
         public SafeHtml getValue(ClusterNetworkModel clusterNetworkModel) {
-            return NetworkRoleColumnHelper.getValue(Collections.singletonList(clusterNetworkModel.isVmNetwork() ?
+            return MultiImageColumnHelper.getValue(Collections.singletonList(clusterNetworkModel.isVmNetwork() ?
                     vmImage : emptyImage));
         }
 
         @Override
         public SafeHtml getTooltip(ClusterNetworkModel clusterNetworkModel) {
-            return NetworkRoleColumnHelper.getTooltip(clusterNetworkModel.isVmNetwork() ?
+            return MultiImageColumnHelper.getTooltip(clusterNetworkModel.isVmNetwork() ?
                     Collections.singletonMap(vmImage, constants.vmItemInfo())
-                    : Collections.<SafeHtml, String> emptyMap());
+                    : Collections.<SafeHtml, String>emptyMap());
         }
     }
 

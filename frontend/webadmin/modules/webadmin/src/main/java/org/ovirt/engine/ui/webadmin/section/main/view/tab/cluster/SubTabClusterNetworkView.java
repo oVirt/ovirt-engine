@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
+import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -128,7 +128,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                             }
                         }
 
-                        return NetworkRoleColumnHelper.getValue(images);
+                        return MultiImageColumnHelper.getValue(images);
                     }
 
                     @Override
@@ -151,7 +151,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                                 imagesToText.put(glusterNwImage, constants.glusterNwItemInfo());
                             }
                         }
-                        return NetworkRoleColumnHelper.getTooltip(imagesToText);
+                        return MultiImageColumnHelper.getTooltip(imagesToText);
                     }
                 };
 

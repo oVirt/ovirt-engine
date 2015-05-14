@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabNetworkPre
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
+import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -109,7 +109,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                             images.add(emptyImage);
                         }
 
-                        return NetworkRoleColumnHelper.getValue(images);
+                        return MultiImageColumnHelper.getValue(images);
                     }
 
                     @Override
@@ -120,7 +120,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
 
                         }
 
-                        return NetworkRoleColumnHelper.getTooltip(imagesToText);
+                        return MultiImageColumnHelper.getTooltip(imagesToText);
                     }
                 };
 
