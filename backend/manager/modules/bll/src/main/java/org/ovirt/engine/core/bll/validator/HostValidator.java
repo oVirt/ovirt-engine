@@ -29,6 +29,10 @@ public class HostValidator {
         this.host = host;
     }
 
+    public ValidationResult hostExists() {
+        return ValidationResult.failWith(VdcBllMessages.VDS_INVALID_SERVER_ID).when(getHost() == null);
+    }
+
     public ValidationResult nameNotEmpty() {
         return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY)
                 .when(StringUtils.isEmpty(host.getName()));

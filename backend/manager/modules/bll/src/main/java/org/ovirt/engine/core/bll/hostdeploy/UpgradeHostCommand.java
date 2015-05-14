@@ -38,7 +38,7 @@ public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsComm
 
     @Override
     protected boolean canDoAction() {
-        UpgradeHostValidator validator = new UpgradeHostValidator(getDbFacade(), getVds());
+        UpgradeHostValidator validator = new UpgradeHostValidator(getVds());
 
         return validate(validator.hostExists())
                 && validate(validator.statusSupportedForHostUpgrade())
