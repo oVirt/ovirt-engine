@@ -848,7 +848,9 @@ public class VmHandler {
 
             try {
                 Object value = field.get(objectWithEditableDeviceFields);
-                if (value instanceof Boolean) {
+                if (value == null) {
+                    // preserve current configuration
+                } else if (value instanceof Boolean) {
                     addDeviceUpdateOnNextRun(vmId, annotation, null, value, fieldList);
                 } else if (value instanceof Map) {
                     Map<?, ?> map = (Map<?, ?>) value;
