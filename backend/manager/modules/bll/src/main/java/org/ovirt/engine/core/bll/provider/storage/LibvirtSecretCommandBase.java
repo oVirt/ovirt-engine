@@ -77,4 +77,17 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
                     getParameters().getLibvirtSecret().getId(), getStorageDomain().getName());
         }
     }
+
+    protected void unregisterLibvirtSecret() {
+        if (getStorageDomain().getStatus() == StorageDomainStatus.Active) {
+            List<VDS> hostsInStatusUp = getAllRunningVdssInPool();
+            for (VDS vds : hostsInStatusUp) {
+                CINDERStorageHelper.unregisterLibvirtSecrets(
+                        getStorageDomain(), vds, Collections.singletonList(getParameters().getLibvirtSecret()));
+            }
+        } else {
+            log.info("Libvirt secret '{}' hasn't been unregistered since storage domain '{}' is not Active",
+                    getParameters().getLibvirtSecret().getId(), getStorageDomain().getName());
+        }
+    }
 }

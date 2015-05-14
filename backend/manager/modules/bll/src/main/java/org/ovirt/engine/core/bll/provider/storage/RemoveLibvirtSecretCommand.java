@@ -21,6 +21,7 @@ public class RemoveLibvirtSecretCommand extends LibvirtSecretCommandBase {
     protected void executeCommand() {
         super.executeCommand();
         getLibvirtSecretDAO().remove(getParameters().getLibvirtSecret().getId());
+        unregisterLibvirtSecret();
         setSucceeded(true);
     }
 

@@ -66,7 +66,10 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean disconnectStorageFromDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
-        return unregisterLibvirtSecrets(storageDomain, vdsId);
+        Provider provider = getProviderDao().get(Guid.createGuidFromString(storageDomain.getStorage()));
+        List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
+        VDS vds = getVdsDao().get(vdsId);
+        return unregisterLibvirtSecrets(storageDomain, vds, libvirtSecrets);
     }
 
     public static Pair<Boolean, VdcFault> registerLibvirtSecrets(StorageDomain storageDomain, VDS vds,
@@ -96,17 +99,15 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return new Pair<>(true, null);
     }
 
-    protected boolean unregisterLibvirtSecrets(StorageDomain storageDomain, Guid vdsId) {
-        Provider provider = getProviderDao().get(Guid.createGuidFromString(storageDomain.getStorage()));
-        VDS vds = getVdsDao().get(vdsId);
-        List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
+    public static boolean unregisterLibvirtSecrets(
+            StorageDomain storageDomain, VDS vds, List<LibvirtSecret> libvirtSecrets) {
         List<Guid> libvirtSecretsUuids = Entities.getIds(libvirtSecrets);
         if (!libvirtSecrets.isEmpty()) {
             VDSReturnValue returnValue;
             try {
                 returnValue = Backend.getInstance().getResourceManager().RunVdsCommand(
                         VDSCommandType.UnregisterLibvirtSecrets,
-                        new UnregisterLibvirtSecretsVDSParameters(vdsId, libvirtSecretsUuids));
+                        new UnregisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecretsUuids));
             } catch (RuntimeException e) {
                 addMessageToAuditLog(AuditLogType.FAILED_TO_UNREGISTER_LIBVIRT_SECRET,
                         storageDomain.getName(), vds.getName());
