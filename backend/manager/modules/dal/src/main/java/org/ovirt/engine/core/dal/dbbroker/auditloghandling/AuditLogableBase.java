@@ -530,8 +530,8 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     private void allocateCustomValues() {
-        if (Collections.EMPTY_MAP.equals(customValues)) {
-            customValues = new HashMap<String, String>();
+        if (Collections.emptyMap().equals(customValues)) {
+            customValues = new HashMap<>();
         }
     }
 

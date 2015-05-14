@@ -184,14 +184,13 @@ public class HaReservationHandling {
         return hostsUnutilizedResources;
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<Guid, List<VM>> mapHaVmToHostByCluster(Guid clusterId) {
 
         List<VM> vms = DbFacade.getInstance().getVmDao().getAllForVdsGroup(clusterId);
         if (vms == null || vms.isEmpty()) {
             log.debug("No VMs available for this cluster with id '{}'", clusterId);
             // return empty map
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
 
         vms = LinqUtils.filter(vms, new Predicate<VM>() {

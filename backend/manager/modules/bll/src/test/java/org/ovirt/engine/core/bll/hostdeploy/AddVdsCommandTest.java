@@ -141,7 +141,6 @@ public class AddVdsCommandTest {
         setupCommonMock(false);
     }
 
-    @SuppressWarnings("unchecked")
     private void setupGlusterMock(boolean clusterHasServers, VDS upServer, boolean hasPeers) throws Exception {
         setupCommonMock(true);
 
@@ -151,7 +150,7 @@ public class AddVdsCommandTest {
 
         when(commandMock.getGlusterUtil()).thenReturn(glusterUtil);
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)
-                : Collections.EMPTY_SET);
+                : Collections.<String> emptySet());
 
         when(commandMock.getGlusterDBUtils()).thenReturn(glusterDBUtils);
 
