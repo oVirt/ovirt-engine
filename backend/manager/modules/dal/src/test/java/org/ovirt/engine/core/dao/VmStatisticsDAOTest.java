@@ -58,7 +58,7 @@ public class VmStatisticsDAOTest extends BaseDAOTestCase {
         newVmStatistics.setMigrationProgressPercent(0);
         newVmStatistics.setMemoryUsageHistory(Arrays.asList(2, 3, 4));
         newVmStatistics.setCpuUsageHistory(Arrays.asList(5, 6, 7));
-        newVmStatistics.setNetworkUsageHistory(Collections.EMPTY_LIST);
+        newVmStatistics.setNetworkUsageHistory(Collections.<Integer> emptyList());
         dao.save(newVmStatistics);
 
         VmStatistics stats = dao.get(newVmStatic.getId());
