@@ -132,7 +132,7 @@ public class StorageDeviceSyncJobTest {
             vdsRetValue.setReturnValue(devices);
         }
         else {
-            vdsRetValue.setReturnValue(Collections.EMPTY_LIST);
+            vdsRetValue.setReturnValue(Collections.emptyList());
         }
         return vdsRetValue;
     }

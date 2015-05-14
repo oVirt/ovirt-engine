@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -10,7 +11,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -58,9 +58,6 @@ public class GlusterHookSyncJobTest {
         new Guid("AAAAAAAA-2222-2222-2222-222222222222"),
         new Guid("AAAAAAAA-3333-3333-3333-333333333333")};
 
-    private static final Guid[] NEW_HOOK_IDS = {new Guid("BBBBBBBB-1111-1111-1111-111111111111"),
-        new Guid("BBBBBBBB-2222-2222-2222-222222222222")};
-
     @Mock
     private ClusterUtils clusterUtils;
 
@@ -104,12 +101,12 @@ public class GlusterHookSyncJobTest {
         hookSyncJob.setLogUtil(logUtil);
         doReturn(clusterUtils).when(hookSyncJob).getClusterUtils();
         doReturn(getServers()).when(clusterUtils).getAllUpServers(CLUSTER_GUIDS[0]);
-        doReturn(Collections.EMPTY_LIST).when(clusterUtils).getAllUpServers(CLUSTER_GUIDS[1]);
+        doReturn(Collections.emptyList()).when(clusterUtils).getAllUpServers(CLUSTER_GUIDS[1]);
         doNothing().when(logUtil).logAuditMessage(any(Guid.class),
                 any(GlusterVolumeEntity.class),
                 any(VDS.class),
                 any(AuditLogType.class),
-                any(HashMap.class));
+                anyMapOf(String.class, String.class));
         mockDaos();
     }
 

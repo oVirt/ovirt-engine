@@ -93,7 +93,7 @@ public class CreateBrickCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.Raid0,
                 null,
-                null, Collections.EMPTY_LIST)));
+                null, Collections.<StorageDevice> emptyList())));
         prepareMocks(cmd, VDSStatus.Up);
         assertFalse(cmd.canDoAction());
     }
