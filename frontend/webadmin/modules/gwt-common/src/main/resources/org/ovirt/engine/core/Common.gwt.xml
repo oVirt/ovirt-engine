@@ -132,6 +132,7 @@
         <include name="common/businessentities/VdsStatic.java" />
         <include name="common/businessentities/VdsStatistics.java" />
         <include name="common/businessentities/VDSStatus.java" />
+        <include name="common/businessentities/ExternalStatus.java" />
         <include name="common/businessentities/VDSType.java" />
         <include name="common/businessentities/VmPoolMap.java" />
         <include name="common/businessentities/VmPool.java" />

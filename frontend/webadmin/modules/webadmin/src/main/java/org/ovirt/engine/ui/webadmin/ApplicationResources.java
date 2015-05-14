@@ -145,6 +145,19 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/update_available.png")
     ImageResource updateAvailableImage();
 
+    @Source("images/icn_ext_info.png")
+    ImageResource ExternalInfoStatusImage();
+
+    @Source("images/icn_ext_warning.png")
+    ImageResource ExternalWarningStatusImage();
+
+    @Source("images/icn_ext_error.png")
+    ImageResource ExternalErrorStatusImage();
+
+    @Source("images/icn_ext_failure.png")
+    ImageResource ExternalFailureStatusImage();
+
+
     @Source("images/tag_locked.png")
     ImageResource readOnlyTagImage();
 

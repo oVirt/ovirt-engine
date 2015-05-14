@@ -2247,4 +2247,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Actual timezone in the guest differs from the configuration")
     String guestTimezoneDiffers();
+    @DefaultStringValue("External status: ")
+    String ExternalStatus();
 }
