@@ -25,8 +25,10 @@ import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -869,14 +871,26 @@ public abstract class OvfReader implements IOvfBuilder {
     private void buildImageReference() {
         XmlNodeList list = _document.SelectNodes("//*/File", _xmlNS);
         for (XmlNode node : list) {
-            DiskImage image = new DiskImage();
-            image.setImageId(new Guid(node.attributes.get("ovf:id").getValue()));
-            image.setId(OvfParser.GetImageGrupIdFromImageFile(node.attributes.get("ovf:href").getValue()));
+            // If the disk storage type is Cinder then override the disk image with Cinder object, otherwise use the disk image.
+            DiskImage disk = new DiskImage();
+
+            // If the OVF is old and does not contain any storage type reference then we assume we can only have disk image.
+            XmlNode xmlDiskStorageType = node.SelectSingleNode("rasd:DiskStorageType", _xmlNS);
+            String diskStorageTypeFromOvf = xmlDiskStorageType != null ? xmlDiskStorageType.innerText : null;
+            if (StringUtils.isNotEmpty(diskStorageTypeFromOvf)) {
+                DiskStorageType diskStorageType = DiskStorageType.valueOf(diskStorageTypeFromOvf);
+                if (diskStorageType == DiskStorageType.CINDER) {
+                    disk = new CinderDisk();
+                }
+            }
+
+            disk.setImageId(new Guid(node.attributes.get("ovf:id").getValue()));
+            disk.setId(OvfParser.GetImageGrupIdFromImageFile(node.attributes.get("ovf:href").getValue()));
             // Default values:
-            image.setActive(true);
-            image.setImageStatus(ImageStatus.OK);
-            image.setDescription(node.attributes.get("ovf:description").getValue());
-            _images.add(image);
+            disk.setActive(true);
+            disk.setImageStatus(ImageStatus.OK);
+            disk.setDescription(node.attributes.get("ovf:description").getValue());
+            _images.add(disk);
         }
     }
 
