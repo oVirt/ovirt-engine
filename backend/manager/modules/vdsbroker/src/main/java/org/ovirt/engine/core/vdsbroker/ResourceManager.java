@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -103,6 +104,9 @@ public class ResourceManager {
 
     @Inject
     private VmNetworkStatisticsDao vmNetworkStatisticsDao;
+
+    @Inject
+    private DbFacade dbFacade;
 
     private ResourceManager() {
         this.parallelism = Config.<Integer> getValue(ConfigValues.EventProcessingPoolSize);
@@ -251,7 +255,7 @@ public class ResourceManager {
     }
 
     public void AddVds(VDS vds, boolean isInternal) {
-        VdsManager vdsManager = new VdsManager(vds, auditLogDirector, this);
+        VdsManager vdsManager = new VdsManager(vds, auditLogDirector, this, dbFacade);
         if (isInternal) {
             VDSStatus status = vds.getStatus();
             switch (vds.getStatus()) {

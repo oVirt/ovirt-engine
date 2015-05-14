@@ -88,9 +88,11 @@ public class VdsManager {
     private boolean monitoringNeeded;
     private List<VM> lastVmsList = Collections.emptyList();
     private final ResourceManager resourceManager;
+    private final DbFacade dbFacade;
 
-    public VdsManager(VDS vds, AuditLogDirector auditLogDirector, ResourceManager resourceManager) {
+    public VdsManager(VDS vds, AuditLogDirector auditLogDirector, ResourceManager resourceManager, DbFacade dbFacade) {
         this.resourceManager = resourceManager;
+        this.dbFacade = dbFacade;
         this.auditLogDirector = auditLogDirector;
         log.info("Entered VdsManager constructor");
         cachedVds = vds;
@@ -259,7 +261,7 @@ public class VdsManager {
     }
 
     private void refreshCachedVds() {
-        cachedVds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+        cachedVds = dbFacade.getVdsDao().get(getVdsId());
         setMonitoringNeeded();
     }
 
@@ -306,7 +308,7 @@ public class VdsManager {
         synchronized (getLockObj()) {
             if (updateAvailable != cachedVds.isUpdateAvailable()) {
                 cachedVds.getDynamicData().setUpdateAvailable(updateAvailable);
-                DbFacade.getInstance().getVdsDynamicDao().updateUpdateAvailable(cachedVds.getId(), updateAvailable);
+                dbFacade.getVdsDynamicDao().updateUpdateAvailable(cachedVds.getId(), updateAvailable);
             }
         }
     }
@@ -368,7 +370,7 @@ public class VdsManager {
     private void handleVdsRecoveringException(VDSRecoveringException ex) {
         if (cachedVds.getStatus() != VDSStatus.Initializing && cachedVds.getStatus() != VDSStatus.NonOperational) {
             setStatus(VDSStatus.Initializing, cachedVds);
-            DbFacade.getInstance().getVdsDynamicDao().updateStatus(cachedVds.getId(), VDSStatus.Initializing);
+            dbFacade.getVdsDynamicDao().updateStatus(cachedVds.getId(), VDSStatus.Initializing);
             AuditLogableBase logable = new AuditLogableBase(cachedVds.getId());
             logable.addCustomValue("ErrorMessage", ex.getMessage());
             logable.updateCallStackFromThrowable(ex);
@@ -389,7 +391,7 @@ public class VdsManager {
     @OnTimerMethodAnnotation("onTimerHandleVdsRecovering")
     public void onTimerHandleVdsRecovering() {
         recoveringJobIdMap.remove(getVdsId());
-        VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+        VDS vds = dbFacade.getVdsDao().get(getVdsId());
         if (vds.getStatus() == VDSStatus.Initializing) {
             try {
                 resourceManager.getEventListener().vdsNonOperational(vds.getId(),
@@ -414,7 +416,7 @@ public class VdsManager {
      * @param dynamicData
      */
     public void updateDynamicData(VdsDynamic dynamicData) {
-        DbFacade.getInstance().getVdsDynamicDao().updateIfNeeded(dynamicData);
+        dbFacade.getVdsDynamicDao().updateIfNeeded(dynamicData);
         cachedVds.setDynamicData(dynamicData);
     }
 
@@ -424,7 +426,7 @@ public class VdsManager {
      * @param statisticsData
      */
     public void updateStatisticsData(VdsStatistics statisticsData) {
-        DbFacade.getInstance().getVdsStatisticsDao().update(statisticsData);
+        dbFacade.getVdsStatisticsDao().update(statisticsData);
         cachedVds.setStatisticsData(statisticsData);
     }
 
@@ -442,8 +444,7 @@ public class VdsManager {
         final List<VdsNumaNode> numaNodesToUpdate = new ArrayList<>();
         final List<Guid> numaNodesToRemove = new ArrayList<>();
 
-        List<VdsNumaNode> dbVdsNumaNodes = DbFacade.getInstance()
-                .getVdsNumaNodeDAO().getAllVdsNumaNodeByVdsId(vds.getId());
+        List<VdsNumaNode> dbVdsNumaNodes = dbFacade.getVdsNumaNodeDAO().getAllVdsNumaNodeByVdsId(vds.getId());
         for (VdsNumaNode node : vds.getNumaNodeList()) {
             VdsNumaNode searchNode = NumaUtils.getVdsNumaNodeByIndex(dbVdsNumaNodes, node.getIndex());
             if (searchNode != null) {
@@ -466,17 +467,13 @@ public class VdsManager {
                     @Override
                     public Void runInTransaction() {
                         if (!numaNodesToRemove.isEmpty()) {
-                            DbFacade.getInstance()
-                                    .getVdsNumaNodeDAO()
-                                    .massRemoveNumaNodeByNumaNodeId(numaNodesToRemove);
+                            dbFacade.getVdsNumaNodeDAO().massRemoveNumaNodeByNumaNodeId(numaNodesToRemove);
                         }
                         if (!numaNodesToUpdate.isEmpty()) {
-                            DbFacade.getInstance().getVdsNumaNodeDAO().massUpdateNumaNode(numaNodesToUpdate);
+                            dbFacade.getVdsNumaNodeDAO().massUpdateNumaNode(numaNodesToUpdate);
                         }
                         if (!numaNodesToSave.isEmpty()) {
-                            DbFacade.getInstance()
-                                    .getVdsNumaNodeDAO()
-                                    .massSaveNumaNode(numaNodesToSave, vds.getId(), null);
+                            dbFacade.getVdsNumaNodeDAO().massSaveNumaNode(numaNodesToSave, vds.getId(), null);
                         }
                         return null;
                     }
@@ -503,7 +500,7 @@ public class VdsManager {
     public void setStatus(VDSStatus status, VDS vds) {
         synchronized (getLockObj()) {
             if (vds == null) {
-                vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+                vds = dbFacade.getVdsDao().get(getVdsId());
             }
             if (vds.getStatus() != status) {
                 if (status == VDSStatus.PreparingForMaintenance) {
@@ -559,14 +556,14 @@ public class VdsManager {
      */
     @OnTimerMethodAnnotation("recoverFromError")
     public void recoverFromError() {
-        VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+        VDS vds = dbFacade.getVdsDao().get(getVdsId());
 
         /**
          * Move cachedVds to Up status from error
          */
         if (vds != null && vds.getStatus() == VDSStatus.Error) {
             setStatus(VDSStatus.Up, vds);
-            DbFacade.getInstance().getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
+            dbFacade.getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
             log.info("Settings host '{}' to up after {} failed attempts to run a VM",
                     vds.getName(),
                     mFailedToRunVmAttempts);
@@ -669,7 +666,7 @@ public class VdsManager {
             if (oldStatus != VDSStatus.Up) {
                 // persist to db the host's cpu_flags.
                 // TODO this needs to be revisited - either all the logic is in-memory or based on db
-                DbFacade.getInstance().getVdsDynamicDao().updateCpuFlags(vds.getId(), vds.getCpuFlags());
+                dbFacade.getVdsDynamicDao().updateCpuFlags(vds.getId(), vds.getCpuFlags());
                 processHostFeaturesReported(vds);
                 monitoringStrategy.processHardwareCapabilities(vds);
             }
@@ -927,10 +924,8 @@ public class VdsManager {
     }
 
     private List<VM> getVmsToMoveToUnknown() {
-        List<VM> vmList = DbFacade.getInstance().getVmDao().getAllRunningForVds(
-                getVdsId());
-        List<VM> migratingVms = DbFacade.getInstance().getVmDao().getAllMigratingToHost(
-                getVdsId());
+        List<VM> vmList = dbFacade.getVmDao().getAllRunningForVds(getVdsId());
+        List<VM> migratingVms = dbFacade.getVmDao().getAllMigratingToHost(getVdsId());
         for (VM incomingVm : migratingVms) {
             if (incomingVm.getStatus() == VMStatus.MigratingTo) {
                 // this VM is finished the migration handover and is running on this host now
