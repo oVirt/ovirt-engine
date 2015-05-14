@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implements ICommandTarget
 {
     private ArrayList<DiskModel> allDisks;
+    private StoragePool dataCenter;
 
     public ArrayList<DiskModel> getAllDisks()
     {
@@ -59,6 +60,14 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     private ArrayList<DiskImage> diskImages;
+
+    public StoragePool getDataCenter() {
+        return dataCenter;
+    }
+
+    public void setDataCenter(StoragePool dataCenter) {
+        this.dataCenter = dataCenter;
+    }
 
     public ArrayList<DiskImage> getDiskImages()
     {
@@ -167,6 +176,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                     MoveOrCopyDiskModel model = (MoveOrCopyDiskModel) target;
                     StoragePool dataCenter = (StoragePool) returnValue;
 
+                    model.setDataCenter(dataCenter);
                     model.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
                     model.postInitStorageDomains();
                 }

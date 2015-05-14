@@ -3819,6 +3819,11 @@ public class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.MixedDomainTypesInDataCenter, version.toString());
     }
 
+    public boolean isLsmBetweenMixedStorageDomainsSupported(Version version) {
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.LiveStorageMigrationBetweenDifferentStorageTypes,
+                version.toString());
+    }
+
     public ArrayList<VDSGroup> getClusterByServiceList(List<VDSGroup> list,
             boolean supportsVirtService,
             boolean supportsGlusterService) {

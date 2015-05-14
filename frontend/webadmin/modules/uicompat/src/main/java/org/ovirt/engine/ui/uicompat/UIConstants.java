@@ -1955,7 +1955,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Moving disk(s) while the VM is running")
     String liveStorageMigrationWarning();
 
-    @DefaultStringValue("Note: Target domains are filtered by the source domain type (file/block)")
+    @DefaultStringValue("Note: Some target domains are filtered by the source domain type (file/block)")
     String liveStorageMigrationStorageFilteringNote();
 
     @DefaultStringValue("Cannot remove more than one brick from a Replicate volume at a time")

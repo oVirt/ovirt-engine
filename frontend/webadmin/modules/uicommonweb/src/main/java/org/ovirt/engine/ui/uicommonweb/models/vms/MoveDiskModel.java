@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -31,6 +32,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 public class MoveDiskModel extends MoveOrCopyDiskModel
 {
     protected List<String> problematicDisksForWarning = new ArrayList<String>();
+    private boolean isLsmBetweenMixedStorageDomainsSupportedInDC;
 
     public MoveDiskModel() {
         super();
@@ -73,14 +75,19 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
 
     @Override
     protected void postInitStorageDomains() {
+        isLsmBetweenMixedStorageDomainsSupportedInDC = AsyncDataProvider.getInstance().
+                isLsmBetweenMixedStorageDomainsSupported(getDataCenter().getCompatibilityVersion());
+
         super.postInitStorageDomains();
 
+        boolean someDomainsFiltered = false;
         // Add warning for raw/thin disks that reside on a file domain
         // and selected to be cold moved to a block domain (as it will cause
         // the disks to become preallocated, and it may consume considerably
         // more space on the target domain).
         for (final DiskModel diskModel : getDisks()) {
-            if (diskModel.isPluggedToRunningVm()) {
+            if (isFilterDestinationDomainsBySourceType(diskModel)) { // No need for warning for this disk domains are filtered
+                someDomainsFiltered = true;
                 continue;
             }
 
@@ -103,6 +110,11 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
             });
             updateProblematicDisk(diskModel);
         }
+
+        if (someDomainsFiltered) {
+            setMessage(ConstantsManager.getInstance().getConstants().liveStorageMigrationStorageFilteringNote());
+        }
+
     }
 
     private void updateProblematicDisk(DiskModel diskModel) {
@@ -161,7 +173,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
 
     @Override
     protected boolean isFilterDestinationDomainsBySourceType(DiskModel model) {
-        return model.isPluggedToRunningVm();
+        return model.isPluggedToRunningVm() && !isLsmBetweenMixedStorageDomainsSupportedInDC;
     }
 
     @Override
