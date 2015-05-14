@@ -87,8 +87,10 @@ public class VdsManager {
     private HostMonitoring hostMonitoring;
     private boolean monitoringNeeded;
     private List<VM> lastVmsList = Collections.emptyList();
+    private final ResourceManager resourceManager;
 
-    public VdsManager(VDS vds, AuditLogDirector auditLogDirector) {
+    public VdsManager(VDS vds, AuditLogDirector auditLogDirector, ResourceManager resourceManager) {
+        this.resourceManager = resourceManager;
         this.auditLogDirector = auditLogDirector;
         log.info("Entered VdsManager constructor");
         cachedVds = vds;
@@ -290,7 +292,7 @@ public class VdsManager {
 
         boolean updateAvailable;
         try {
-            updateAvailable = ResourceManager.getInstance().isUpdateAvailable(cachedVds);
+            updateAvailable = resourceManager.isUpdateAvailable(cachedVds);
         } catch (Exception e) {
             log.error("Failed to check if updates are available for host '{}'", cachedVds.getName());
 
@@ -390,13 +392,10 @@ public class VdsManager {
         VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
         if (vds.getStatus() == VDSStatus.Initializing) {
             try {
-                ResourceManager
-                            .getInstance()
-                            .getEventListener()
-                            .vdsNonOperational(vds.getId(),
-                                    NonOperationalReason.TIMEOUT_RECOVERING_FROM_CRASH,
-                                    true,
-                                Guid.Empty);
+                resourceManager.getEventListener().vdsNonOperational(vds.getId(),
+                        NonOperationalReason.TIMEOUT_RECOVERING_FROM_CRASH,
+                        true,
+                        Guid.Empty);
                 setIsSetNonOperationalExecuted(true);
             } catch (RuntimeException exp) {
                 log.error(
@@ -496,7 +495,7 @@ public class VdsManager {
                 monitoringStrategy.processHardwareCapabilities(vds);
 
                 // Always check VdsVersion
-                ResourceManager.getInstance().getEventListener().handleVdsVersion(vds.getId());
+                resourceManager.getEventListener().handleVdsVersion(vds.getId());
             }
         }
     }
@@ -587,7 +586,7 @@ public class VdsManager {
                 && mFailedToRunVmAttempts.incrementAndGet() >= Config
                         .<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)) {
             //Only one thread at a time can enter here
-            ResourceManager.getInstance().runVdsCommand(VDSCommandType.SetVdsStatus,
+            resourceManager.runVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
 
             SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
@@ -612,15 +611,15 @@ public class VdsManager {
      */
     public void succeededToRunVm(Guid vmId) {
         mUnrespondedAttempts.set(0);
-        ResourceManager.getInstance().succededToRunVm(vmId, getVdsId());
+        resourceManager.succededToRunVm(vmId, getVdsId());
     }
 
     public VDSStatus refreshCapabilities(AtomicBoolean processHardwareCapsNeeded, VDS vds) {
         log.debug("monitoring: refresh '{}' capabilities", vds);
         VDS oldVDS = vds.clone();
-        VDSReturnValue caps = ResourceManager.getInstance().runVdsCommand(
-                VDSCommandType.GetCapabilities,
-                new VdsIdAndVdsVDSCommandParametersBase(vds));
+        VDSReturnValue caps =
+                resourceManager.runVdsCommand(VDSCommandType.GetCapabilities,
+                        new VdsIdAndVdsVDSCommandParametersBase(vds));
         if (caps.getSucceeded()) {
             // Verify version capabilities
             HashSet<Version> hostVersions = null;
@@ -631,7 +630,7 @@ public class VdsManager {
                 // host and an exception will be raised by VDSM.
                 (hostVersions = vds.getSupportedClusterVersionsSet()) != null &&
                 hostVersions.contains(clusterCompatibility)) {
-                VDSReturnValue ret = ResourceManager.getInstance().runVdsCommand(VDSCommandType.GetHardwareInfo,
+                VDSReturnValue ret = resourceManager.runVdsCommand(VDSCommandType.GetHardwareInfo,
                         new VdsIdAndVdsVDSCommandParametersBase(vds));
                 if (!ret.getSucceeded()) {
                     AuditLogableBase logable = new AuditLogableBase(vds.getId());
@@ -750,7 +749,7 @@ public class VdsManager {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
                         moveVMsToUnknown();
                         logHostFailToRespond(ex, timeoutToFence);
-                        ResourceManager.getInstance().getEventListener().vdsNotResponding(cachedVds);
+                        resourceManager.getEventListener().vdsNotResponding(cachedVds);
                     } else {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
                     }
@@ -895,9 +894,8 @@ public class VdsManager {
         List<VM> vmList = getVmsToMoveToUnknown();
         for (VM vm :vmList) {
             destroyVmOnDestination(vm);
-            ResourceManager.getInstance()
-                    .runVdsCommand(VDSCommandType.SetVmStatus,
-                            new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Unknown));
+            resourceManager.runVdsCommand(VDSCommandType.SetVmStatus,
+                    new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Unknown));
             // log VM transition to unknown status
             AuditLogableBase logable = new AuditLogableBase();
             logable.setVmId(vm.getId());
@@ -915,12 +913,8 @@ public class VdsManager {
             public void run() {
                 VDSReturnValue returnValue = null;
                 returnValue =
-                        ResourceManager.getInstance()
-                                .runVdsCommand(
-                                        VDSCommandType.DestroyVm,
-                                        new DestroyVmVDSCommandParameters(vm.getMigratingToVds()
-                                                , vm.getId(), true, false, 0)
-                                );
+                        resourceManager.runVdsCommand(VDSCommandType.DestroyVm,
+                                new DestroyVmVDSCommandParameters(vm.getMigratingToVds(), vm.getId(), true, false, 0));
                 if (returnValue != null && returnValue.getSucceeded()) {
                     log.info("Stopped migrating VM: '{}' on VDS: '{}'", vm.getName(), vm.getMigratingToVds());
                 }
@@ -1008,7 +1002,7 @@ public class VdsManager {
     public void vmsMonitoringInitFinished() {
         if (!isInitialized()) {
             log.info("VMs initialization finished for Host: '{}:{}'", cachedVds.getName(), cachedVds.getId());
-            ResourceManager.getInstance().handleVmsFinishedInitOnVds(cachedVds.getId());
+            resourceManager.handleVmsFinishedInitOnVds(cachedVds.getId());
             setInitialized(true);
         }
     }

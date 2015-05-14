@@ -227,7 +227,7 @@ public class ResourceManager {
     }
 
     public void AddVds(VDS vds, boolean isInternal) {
-        VdsManager vdsManager = new VdsManager(vds, auditLogDirector);
+        VdsManager vdsManager = new VdsManager(vds, auditLogDirector, this);
         if (isInternal) {
             VDSStatus status = vds.getStatus();
             switch (vds.getStatus()) {
