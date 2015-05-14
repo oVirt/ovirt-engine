@@ -60,19 +60,22 @@ public class HostMonitoring {
     private Map<String, InterfaceStatus> oldInterfaceStatus = new HashMap<String, InterfaceStatus>();
     private final ResourceManager resourceManager;
     private final DbFacade dbFacade;
+    private final AuditLogDirector auditLogDirector;
     private static final Logger log = LoggerFactory.getLogger(HostMonitoring.class);
 
     public HostMonitoring(VdsManager vdsManager,
             VDS vds,
             MonitoringStrategy monitoringStrategy,
             ResourceManager resourceManager,
-            DbFacade dbFacade) {
+            DbFacade dbFacade,
+            AuditLogDirector auditLogDirector) {
         this.vdsManager = vdsManager;
         this.vds = vds;
         firstStatus = vds.getStatus();
         this.monitoringStrategy = monitoringStrategy;
         this.resourceManager = resourceManager;
         this.dbFacade = dbFacade;
+        this.auditLogDirector = auditLogDirector;
     }
 
     public void refresh() {
@@ -765,8 +768,8 @@ public class HostMonitoring {
         }
     }
 
-    protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
-        new AuditLogDirector().log(auditLogable, logType);
+    private void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
+        auditLogDirector.log(auditLogable, logType);
     }
 
     private DbFacade getDbFacade() {

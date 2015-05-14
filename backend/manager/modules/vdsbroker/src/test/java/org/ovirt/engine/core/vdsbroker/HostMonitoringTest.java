@@ -13,8 +13,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -26,8 +24,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.AuditLogDAO;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -67,35 +64,31 @@ public class HostMonitoringTest {
     DbFacade dbFacade;
     @Mock
     VDSGroup cluster;
-    AuditLogDAO mockAuditLogDao = new AuditLogDaoMocker();
     @Mock
     ResourceManager resourceManager;
     @Mock
     private VdsManager vdsManager;
     @Mock
     private IVdsEventListener vdsEventlistener;
+    @Mock
+    private AuditLogDirector auditLogDirector;
 
     @Before
     public void setup() {
         initVds();
         initConditions();
         when(vdsManager.getRefreshStatistics()).thenReturn(false);
-        updater = Mockito.spy(
-                new HostMonitoring(vdsManager, vds, mock(MonitoringStrategy.class), resourceManager, dbFacade) {
-
-            @Override
-            protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
-                AuditLog al = new AuditLog();
-                al.setLogType(logType);
-                mockAuditLogDao.save(al);
-            }
-
-        });
+        updater =
+                Mockito.spy(new HostMonitoring(vdsManager,
+                        vds,
+                        mock(MonitoringStrategy.class),
+                        resourceManager,
+                        dbFacade,
+                        auditLogDirector));
     }
 
     private void initConditions() {
         when(dbFacade.getVdsGroupDao()).thenReturn(groupDAO);
-        when(dbFacade.getAuditLogDao()).thenReturn(mockAuditLogDao);
         when(groupDAO.get((Guid) any())).thenReturn(cluster);
         when(dbFacade.getInterfaceDao()).thenReturn(interfaceDao);
         when(interfaceDao.getAllInterfacesForVds(((Guid) any()))).thenReturn(Collections.<VdsNetworkInterface>emptyList());
