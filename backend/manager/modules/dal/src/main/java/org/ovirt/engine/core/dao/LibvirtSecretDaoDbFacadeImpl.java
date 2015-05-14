@@ -67,4 +67,11 @@ public class LibvirtSecretDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Libv
                 LibvirtSecretRowMapper.instance,
                 getCustomMapSqlParameterSource().addValue("provider_id", providerId));
     }
+
+    @Override
+    public List<LibvirtSecret> getAllByStoragePoolIdFilteredByActiveStorageDomains(Guid storagePoolId) {
+        return getCallsHandler().executeReadList("GetLibvirtSecretsByPoolIdOnActiveDomains",
+                LibvirtSecretRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId));
+    }
 }

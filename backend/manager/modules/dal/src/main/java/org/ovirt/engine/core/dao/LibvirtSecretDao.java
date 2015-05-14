@@ -18,4 +18,13 @@ public interface LibvirtSecretDao extends GenericDao<LibvirtSecret, Guid> {
      * @return the list of secrets
      */
     List<LibvirtSecret> getAllByProviderId(Guid providerId);
+
+    /**
+     * Retrieves all secrets for the specified storage pool id and belong to an active storage domain.
+     *
+     * @param storagePoolId
+     *            The storage pool id
+     * @return the list of secrets
+     */
+    List<LibvirtSecret> getAllByStoragePoolIdFilteredByActiveStorageDomains(Guid storagePoolId);
 }

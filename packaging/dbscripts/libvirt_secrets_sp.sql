@@ -97,3 +97,18 @@ BEGIN
    WHERE provider_id = v_provider_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetLibvirtSecretsByPoolIdOnActiveDomains(v_storage_pool_id UUID)
+RETURNS SETOF libvirt_secrets STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT libvirt_secrets.*
+   FROM libvirt_secrets
+   INNER JOIN storage_domain_static
+    ON CAST (libvirt_secrets.provider_id as varchar) = storage_domain_static.storage
+   INNER JOIN storage_pool_iso_map
+    ON storage_domain_static.id = storage_pool_iso_map.storage_id
+   WHERE storage_pool_iso_map.storage_pool_id = v_storage_pool_id AND storage_pool_iso_map.status = 3; -- Active
+END; $procedure$
+LANGUAGE plpgsql;
