@@ -8,11 +8,10 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering.LdapServersOrderingAlgorithmFactory;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DirectorySearcher {
 
@@ -46,7 +45,7 @@ public class DirectorySearcher {
         List<?> returnValue = find(ldapQueryData, 0);
 
         if (returnValue == null) {
-            returnValue = Collections.EMPTY_LIST;
+            returnValue = Collections.emptyList();
         }
         return returnValue;
     }

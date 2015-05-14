@@ -7,7 +7,7 @@ import java.util.List;
  * Contains search result information for directory groups.
  */
 public class GroupSearchResult {
-    private List<String> memberOf = (List<String>) Collections.EMPTY_LIST;
+    private List<String> memberOf = Collections.<String> emptyList();
     private String distinguishedName;
     private String id;
 
