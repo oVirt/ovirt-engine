@@ -17,7 +17,6 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
-import com.woorea.openstack.base.client.OpenStackResponseException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -102,6 +101,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+
+import com.woorea.openstack.base.client.OpenStackResponseException;
 
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements
         RollbackHandler, TransactionMethod<Object>, Command<T> {
@@ -1356,10 +1357,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         } finally {
             try {
                 if (getCommandShouldBeLogged()) {
-                    logRenamedEntity();
                     logCommand();
                 }
                 if (getSucceeded()) {
+                    if (getCommandShouldBeLogged()) {
+                        logRenamedEntity();
+                    }
+
                     // only after creating all tasks, we can start polling them (we
                     // don't want
                     // to start polling before all tasks were created, otherwise we
