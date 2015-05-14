@@ -26,7 +26,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -97,8 +96,6 @@ public class VmsMonitoringTest {
     @Mock
     private VdsDAO vdsDao;
 
-    AuditLogDAO mockAuditLogDao = new AuditLogDaoMocker();
-
     VM vm_1_db;
     VM vm_1_vdsm;
 
@@ -143,7 +140,6 @@ public class VmsMonitoringTest {
     private void initConditions() {
         when(dbFacade.getVdsGroupDao()).thenReturn(groupDAO);
         when(dbFacade.getVmDao()).thenReturn(vmDAO);
-        when(dbFacade.getAuditLogDao()).thenReturn(mockAuditLogDao);
         when(dbFacade.getVmDeviceDao()).thenReturn(vmDeviceDAO);
         when(dbFacade.getVmDynamicDao()).thenReturn(vmDynamicDao);
         when(dbFacade.getDiskDao()).thenReturn(diskDAO);
