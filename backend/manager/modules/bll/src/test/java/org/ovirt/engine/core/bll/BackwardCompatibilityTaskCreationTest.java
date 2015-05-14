@@ -37,8 +37,10 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -77,11 +79,11 @@ public class BackwardCompatibilityTaskCreationTest extends DbDependentTestBase {
     @Before
     public void before() {
         AsyncTaskDAO asyncTaskDao = mock(AsyncTaskDAO.class);
-        when(asyncTaskDao.getAll()).thenReturn(Collections.EMPTY_LIST);
+        when(asyncTaskDao.getAll()).thenReturn(Collections.<AsyncTask> emptyList());
         when(DbFacade.getInstance().getAsyncTaskDao()).thenReturn(asyncTaskDao);
         CommandEntityDao cmdEntityDao = mock(CommandEntityDao.class);
         when(DbFacade.getInstance().getCommandEntityDao()).thenReturn(cmdEntityDao);
-        when(cmdEntityDao.getAll()).thenReturn(Collections.EMPTY_LIST);
+        when(cmdEntityDao.getAll()).thenReturn(Collections.<CommandEntity> emptyList());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes"})
