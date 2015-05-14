@@ -677,7 +677,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.QOS_CPU_SHARES_OUT_OF_RANGE);
         }
 
-        if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) || isVirtioScsiEnabledForVm(getVmId())) {
+        if (isVirtioScsiEnabled())  {
             // Verify cluster compatibility
             if (!FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
                 return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
