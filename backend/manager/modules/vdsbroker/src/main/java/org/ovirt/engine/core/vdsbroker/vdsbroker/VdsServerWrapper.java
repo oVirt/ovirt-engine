@@ -1919,9 +1919,9 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
-    public StatusOnlyReturnForXmlRpc registerSecrets(Map<String, String>[] libvirtSecrets) {
+    public StatusOnlyReturnForXmlRpc registerSecrets(Map<String, String>[] libvirtSecrets, boolean clearUnusedSecrets) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.registerSecrets(libvirtSecrets);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.registerSecrets(libvirtSecrets, clearUnusedSecrets);
             return new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);

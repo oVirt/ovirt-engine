@@ -1951,9 +1951,10 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
-    public StatusOnlyReturnForXmlRpc registerSecrets(Map<String, String>[] libvirtSecrets) {
+    public StatusOnlyReturnForXmlRpc registerSecrets(Map<String, String>[] libvirtSecrets, boolean clearUnusedSecrets) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.registerSecrets").withParameter("secrets", libvirtSecrets)
+                        .withParameter("clear", clearUnusedSecrets)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);

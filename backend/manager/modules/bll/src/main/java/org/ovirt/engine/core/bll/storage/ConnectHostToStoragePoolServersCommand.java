@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -55,6 +56,9 @@ public class ConnectHostToStoragePoolServersCommand extends
             connectSucceeded = connectStorageServersByType(connectionsType, connections) && connectSucceeded;
         }
 
+        // Register libvirt secrets if needed
+        connectSucceeded &= registerLibvirtSecrets();
+
         log.info("Host '{}' storage connection was {} ", getVds().getName(), connectSucceeded ? "succeeded" : "failed");
 
         return connectSucceeded;
@@ -70,5 +74,15 @@ public class ConnectHostToStoragePoolServersCommand extends
                         new StorageServerConnectionManagementVDSParameters(getVds().getId(),
                                 getStoragePool().getId(), storageType, connections)).getReturnValue();
         return StorageHelperDirector.getInstance().getItem(storageType).isConnectSucceeded(retValues, connections);
+    }
+
+    private boolean registerLibvirtSecrets() {
+        List<LibvirtSecret> libvirtSecrets =
+                getDbFacade().getLibvirtSecretDao().
+                        getAllByStoragePoolIdFilteredByActiveStorageDomains(getStoragePoolId());
+        if (!libvirtSecrets.isEmpty()) {
+            return registerLibvirtSecrets(libvirtSecrets, false);
+        }
+        return true;
     }
 }

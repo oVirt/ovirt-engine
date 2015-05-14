@@ -17,7 +17,8 @@ public class RegisterLibvirtSecretsVDSCommand<P extends RegisterLibvirtSecretsVD
 
     @Override
     protected void executeVdsBrokerCommand() {
-        status = getBroker().registerSecrets(buildStructFromLibvirtSecretsList());
+        status = getBroker().registerSecrets(
+                buildStructFromLibvirtSecretsList(), getParameters().isClearUnusedSecrets());
         proceedProxyReturnValue();
     }
 

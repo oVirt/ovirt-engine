@@ -451,7 +451,7 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc glusterSnapshotScheduleReset();
 
-    StatusOnlyReturnForXmlRpc registerSecrets(Map<String, String>[] libvirtSecrets);
+    StatusOnlyReturnForXmlRpc registerSecrets(Map<String, String>[] libvirtSecrets, boolean clearUnusedSecrets);
 
     StatusOnlyReturnForXmlRpc unregisterSecrets(String[] libvirtSecretsUuids);
 }

@@ -9,10 +9,18 @@ import java.util.List;
 public class RegisterLibvirtSecretsVDSParameters extends VdsIdVDSCommandParametersBase {
 
     private List<LibvirtSecret> libvirtSecrets;
+    private boolean clearUnusedSecrets;
 
     public RegisterLibvirtSecretsVDSParameters(Guid vdsId, List<LibvirtSecret> libvirtSecrets) {
         super(vdsId);
         this.libvirtSecrets = libvirtSecrets;
+    }
+
+    public RegisterLibvirtSecretsVDSParameters(Guid vdsId, List<LibvirtSecret> libvirtSecrets,
+                                               boolean clearUnusedSecrets) {
+        super(vdsId);
+        this.libvirtSecrets = libvirtSecrets;
+        this.clearUnusedSecrets = clearUnusedSecrets;
     }
 
     public RegisterLibvirtSecretsVDSParameters() {
@@ -26,9 +34,18 @@ public class RegisterLibvirtSecretsVDSParameters extends VdsIdVDSCommandParamete
         this.libvirtSecrets = libvirtSecrets;
     }
 
+    public boolean isClearUnusedSecrets() {
+        return clearUnusedSecrets;
+    }
+
+    public void setClearUnusedSecrets(boolean clearUnusedSecrets) {
+        this.clearUnusedSecrets = clearUnusedSecrets;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
-                .append("libvirtSecrets", getLibvirtSecrets());
+                .append("libvirtSecrets", getLibvirtSecrets())
+                .append("clearUnusedSecrets", getLibvirtSecrets());
     }
 }

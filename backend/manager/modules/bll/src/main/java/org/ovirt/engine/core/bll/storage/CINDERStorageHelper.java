@@ -127,7 +127,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return true;
     }
 
-    private static void addMessageToAuditLog(AuditLogType auditLogType, String storageDomainName, String vdsName){
+    public static void addMessageToAuditLog(AuditLogType auditLogType, String storageDomainName, String vdsName){
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("StorageDomainName", storageDomainName);
         logable.addCustomValue("VdsName", vdsName);

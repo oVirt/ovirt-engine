@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -9,11 +7,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.vdscommands.RegisterLibvirtSecretsVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 @InternalCommandAttribute
@@ -56,5 +61,18 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
             StorageType connType = conn.getstorage_type();
             MultiValueMapUtils.addToMap(connType, conn, connectionsTypeMap);
         }
+    }
+
+    protected boolean registerLibvirtSecrets(List<LibvirtSecret> libvirtSecrets, boolean clearUnusedSecrets) {
+        VDSReturnValue returnValue = runVdsCommand(
+                VDSCommandType.RegisterLibvirtSecrets,
+                new RegisterLibvirtSecretsVDSParameters(getVdsId(), libvirtSecrets, clearUnusedSecrets));
+        if (!returnValue.getSucceeded()) {
+            auditLogDirector.log(new AuditLogableBase(getVdsId()),
+                    AuditLogType.FAILED_TO_REGISTER_LIBVIRT_SECRET_ON_VDS);
+            log.error("Failed to register libvirt secret on vds {}.", getVds().getName());
+            return false;
+        }
+        return true;
     }
 }
