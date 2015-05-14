@@ -48,8 +48,8 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -916,7 +916,7 @@ public final class Linq
 
     public static Collection<EntityModel<?>> findSelectedItems(Collection<EntityModel<?>> items) {
         if (items == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return where(items, new IPredicate<EntityModel<?>>() {

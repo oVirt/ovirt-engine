@@ -75,7 +75,7 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
             return ((AbstractVmPopupWidget) getContentWidget()).getInvalidWidgets();
         }
 
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
