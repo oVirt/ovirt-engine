@@ -76,9 +76,7 @@ public class VdsManager {
     private long lastUpdate;
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
-    private String onTimerJobId;
-    private String vmsMonitoringJobId;
-    private String availableUpdatesJobId;
+    private List<String> registeredJobs;
     private int refreshIteration = 1;
     private boolean isSetNonOperationalExecuted;
     private MonitoringStrategy monitoringStrategy;
@@ -100,7 +98,7 @@ public class VdsManager {
         mFailedToRunVmAttempts = new AtomicInteger();
         monitoringLock = new EngineLock(Collections.singletonMap(vdsId.toString(),
                 new Pair<>(LockingGroup.VDS_INIT.name(), "")), null);
-
+        registeredJobs = new ArrayList<>();
         handlePreviousStatus();
         handleSecureSetup();
         initVdsBroker();
@@ -134,40 +132,35 @@ public class VdsManager {
 
         // start with refresh statistics
         refreshIteration = numberRefreshesBeforeSave - 1;
+        registeredJobs.add(sched.scheduleAFixedDelayJob(
+                this,
+                "onTimer",
+                new Class[0],
+                new Object[0],
+                refreshRate,
+                refreshRate,
+                TimeUnit.MILLISECONDS));
 
-        onTimerJobId =
-                sched.scheduleAFixedDelayJob(
-                        this,
-                        "onTimer",
-                        new Class[0],
-                        new Object[0],
-                        refreshRate,
-                        refreshRate,
-                        TimeUnit.MILLISECONDS);
-
-        vmsMonitoringJobId =
-                sched.scheduleAFixedDelayJob(
-                        this,
-                        "vmsMonitoring",
-                        new Class[0],
-                        new Object[0],
-                        refreshRate,
-                        refreshRate,
-                        TimeUnit.MILLISECONDS);
+        registeredJobs.add(sched.scheduleAFixedDelayJob(this,
+                "vmsMonitoring",
+                new Class[0],
+                new Object[0],
+                refreshRate,
+                refreshRate,
+                TimeUnit.MILLISECONDS));
 
         double availableUpdatesRefreshRate = Config.<Double> getValue(ConfigValues.HostPackagesUpdateTimeInHours);
         final int HOURS_TO_MINUTES = 60;
         long rateInMinutes = Math.round(availableUpdatesRefreshRate * HOURS_TO_MINUTES);
 
-        availableUpdatesJobId =
-                sched.scheduleAFixedDelayJob(
-                        this,
-                        "availableUpdates",
-                        new Class[0],
-                        new Object[0],
-                        rateInMinutes,
-                        rateInMinutes,
-                        TimeUnit.MINUTES);
+        registeredJobs.add(sched.scheduleAFixedDelayJob(
+                this,
+                "availableUpdates",
+                new Class[0],
+                new Object[0],
+                rateInMinutes,
+                rateInMinutes,
+                TimeUnit.MINUTES));
     }
 
     private void initVdsBroker() {
@@ -815,9 +808,10 @@ public class VdsManager {
 
     public void dispose() {
         log.info("vdsManager::disposing");
-        SchedulerUtilQuartzImpl.getInstance().deleteJob(onTimerJobId);
-        SchedulerUtilQuartzImpl.getInstance().deleteJob(vmsMonitoringJobId);
-        SchedulerUtilQuartzImpl.getInstance().deleteJob(availableUpdatesJobId);
+        for (String jobId : registeredJobs) {
+            SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
+        }
+
         vdsProxy.close();
     }
 
