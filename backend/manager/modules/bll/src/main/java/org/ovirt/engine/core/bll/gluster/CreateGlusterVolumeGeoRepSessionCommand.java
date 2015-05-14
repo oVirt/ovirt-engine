@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -48,7 +48,8 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
 
     @Override
     protected boolean canDoAction() {
-        if (!GlusterFeatureSupported.glusterGeoReplication(getVdsGroup().getcompatibility_version())) {
+        if (!getGlusterUtil().isGlusterGeoReplicationSupported(getVdsGroup().getcompatibility_version(),
+                getVdsGroup().getId())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GEO_REP_NOT_SUPPORTED);
         }
         slaveHost = getSlaveHost();
@@ -229,5 +230,9 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
             remoteServers.add(getVdsDAO().get(currentBrick.getServerId()));
         }
         return remoteServers;
+    }
+
+    protected GlusterUtil getGlusterUtil() {
+        return GlusterUtil.getInstance();
     }
 }

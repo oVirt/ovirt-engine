@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -180,7 +179,8 @@ public class StorageDeviceSyncJob extends GlusterJob {
 
     private boolean supportsGlusterDiskProvisioning(VDSGroup cluster) {
         return cluster.supportsGlusterService()
-                && GlusterFeatureSupported.glusterBrickProvisioning(cluster.getcompatibility_version());
+                && getGlusterUtil().isGlusterBrickProvisioningSupported(cluster.getcompatibility_version(),
+                        cluster.getId());
     }
 
 }

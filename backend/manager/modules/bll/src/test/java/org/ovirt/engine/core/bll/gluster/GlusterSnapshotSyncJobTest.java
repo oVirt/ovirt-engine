@@ -6,6 +6,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -118,7 +119,8 @@ public class GlusterSnapshotSyncJobTest {
         doReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1)).when(volumeDao)
                 .getByName(argThat(validClusterId()), argThat(validVolumeName()));
         doReturn(getServer()).when(clusterUtils).getRandomUpServer(any(Guid.class));
-
+        when(glusterUtil.isGlusterSnapshotSupported(eq(Version.v3_4), any(Guid.class))).thenReturn(false);
+        when(glusterUtil.isGlusterSnapshotSupported(eq(Version.v3_5), any(Guid.class))).thenReturn(true);
         doReturn(engineLock).when(syncJob).acquireVolumeSnapshotLock(any(Guid.class));
         doNothing().when(glusterUtil).alertVolumeSnapshotSoftLimitReached(any(GlusterVolumeEntity.class));
         doNothing().when(glusterUtil).checkAndRemoveVolumeSnapshotSoftLimitAlert(any(GlusterVolumeEntity.class));
