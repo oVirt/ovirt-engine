@@ -15,7 +15,11 @@ public abstract class StopVmParametersBase extends VmOperationParameterBase impl
 
     private String stopReason;
 
-    public String getStopReason() { return stopReason; }
+    public String getStopReason() {
+        return stopReason;
+    }
 
-    public void setStopReason(String value) { stopReason = value; }
+    public void setStopReason(String value) {
+        stopReason = value;
+    }
 }

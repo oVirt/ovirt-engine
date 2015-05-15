@@ -542,7 +542,9 @@ public abstract class InstanceTypeManager {
      */
     protected abstract VmBase getSource();
 
-    protected boolean isNextRunConfigurationExists() { return false; }
+    protected boolean isNextRunConfigurationExists() {
+        return false;
+    }
 
     protected boolean isSourceCustomInstanceType() {
         if (getSource() instanceof VmTemplate) {

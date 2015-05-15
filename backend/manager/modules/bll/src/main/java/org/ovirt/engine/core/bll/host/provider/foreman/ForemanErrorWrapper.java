@@ -9,5 +9,7 @@ public class ForemanErrorWrapper {
         return fe;
     }
 
-    public void setForemanError(ForemanError fe) { this.fe = fe; }
+    public void setForemanError(ForemanError fe) {
+        this.fe = fe;
+    }
 }

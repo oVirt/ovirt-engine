@@ -8,11 +8,19 @@ public class ForemanError implements Serializable {
     private Map<String, String[]> errors;
     private String[] full_messages;
 
-    public String[] getFull_messages() { return full_messages; }
+    public String[] getFull_messages() {
+        return full_messages;
+    }
 
-    public void setFull_messages(String[] full_messages) { this.full_messages = full_messages; }
+    public void setFull_messages(String[] full_messages) {
+        this.full_messages = full_messages;
+    }
 
-    public Map<String, String[]> getErrors() { return errors; }
+    public Map<String, String[]> getErrors() {
+        return errors;
+    }
 
-    public void setErrors(Map<String, String[]> errors) { this.errors = errors; }
+    public void setErrors(Map<String, String[]> errors) {
+        this.errors = errors;
+    }
 }

@@ -1226,13 +1226,21 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this.bootMenuEnabled = bootMenuEnabled;
     }
 
-    public boolean isSpiceFileTransferEnabled() { return spiceFileTransferEnabled; }
+    public boolean isSpiceFileTransferEnabled() {
+        return spiceFileTransferEnabled;
+    }
 
-    public void setSpiceFileTransferEnabled(boolean spiceFileTransferEnabled) { this.spiceFileTransferEnabled = spiceFileTransferEnabled; }
+    public void setSpiceFileTransferEnabled(boolean spiceFileTransferEnabled) {
+        this.spiceFileTransferEnabled = spiceFileTransferEnabled;
+    }
 
-    public boolean isSpiceCopyPasteEnabled() { return spiceCopyPasteEnabled; }
+    public boolean isSpiceCopyPasteEnabled() {
+        return spiceCopyPasteEnabled;
+    }
 
-    public void setSpiceCopyPasteEnabled(boolean spiceCopyPasteEnabled) { this.spiceCopyPasteEnabled = spiceCopyPasteEnabled; }
+    public void setSpiceCopyPasteEnabled(boolean spiceCopyPasteEnabled) {
+        this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
+    }
 
     public Guid getCpuProfileId() {
         return cpuProfileId;

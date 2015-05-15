@@ -484,21 +484,33 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private ListModel<ExternalEntityBase> privateExternalDiscoveredHosts;
 
-    public ListModel<ExternalEntityBase> getExternalDiscoveredHosts() { return privateExternalDiscoveredHosts; }
+    public ListModel<ExternalEntityBase> getExternalDiscoveredHosts() {
+        return privateExternalDiscoveredHosts;
+    }
 
-    protected void setExternalDiscoveredHosts(ListModel<ExternalEntityBase> value) { privateExternalDiscoveredHosts = value; }
+    protected void setExternalDiscoveredHosts(ListModel<ExternalEntityBase> value) {
+        privateExternalDiscoveredHosts = value;
+    }
 
     private ListModel<ExternalEntityBase> privateExternalHostGroups;
 
-    public ListModel<ExternalEntityBase> getExternalHostGroups() { return privateExternalHostGroups; }
+    public ListModel<ExternalEntityBase> getExternalHostGroups() {
+        return privateExternalHostGroups;
+    }
 
-    protected void setExternalHostGroups(ListModel<ExternalEntityBase> value) { privateExternalHostGroups = value; }
+    protected void setExternalHostGroups(ListModel<ExternalEntityBase> value) {
+        privateExternalHostGroups = value;
+    }
 
     private ListModel<ExternalEntityBase> privateExternalComputeResource;
 
-    public ListModel<ExternalEntityBase> getExternalComputeResource() { return privateExternalComputeResource; }
+    public ListModel<ExternalEntityBase> getExternalComputeResource() {
+        return privateExternalComputeResource;
+    }
 
-    protected void setExternalComputeResource(ListModel<ExternalEntityBase> value) { privateExternalComputeResource = value; }
+    protected void setExternalComputeResource(ListModel<ExternalEntityBase> value) {
+        privateExternalComputeResource = value;
+    }
 
     private EntityModel<String> privateComment;
 

@@ -162,7 +162,8 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDaoDbFacade<VmDynamic
         public static final VmDynamicRowMapper instance = new VmDynamicRowMapper();
 
         @Override
-        public VmDynamic mapRow(ResultSet rs, int rowNum) throws SQLException {VmDynamic entity = new VmDynamic();
+        public VmDynamic mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VmDynamic entity = new VmDynamic();
             entity.setAppList(rs.getString("app_list"));
             entity.setGuestCurrentUserName(rs.getString("guest_cur_user_name"));
             entity.setConsoleCurrentUserName(rs.getString("console_cur_user_name"));

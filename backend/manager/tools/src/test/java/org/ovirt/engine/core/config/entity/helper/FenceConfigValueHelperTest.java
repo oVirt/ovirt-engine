@@ -32,14 +32,24 @@ public class FenceConfigValueHelperTest {
     }
 
     @Test
-    public void validateFenceAgentMappingConfig() {assertEquals(expectedResult, validator.validate(ConfigurationValues.FenceAgentMapping.name(), fenceAgentMapping).isOk());}
-    @Test
-    public void validateFenceAgentDefaultParamsConfig() {assertEquals(expectedResult, validator.validate(ConfigurationValues.FenceAgentDefaultParams.name(), fenceAgentDefault).isOk());}
+    public void validateFenceAgentMappingConfig() {
+        assertEquals(expectedResult, validator.validate(ConfigurationValues.FenceAgentMapping.name(), fenceAgentMapping).isOk());
+    }
 
     @Test
-    public void validateVdsFenceOptionMappingConfig() {assertEquals(expectedResult, validator.validate(ConfigurationValues.VdsFenceOptionMapping.name(), vdsFenceOptionMapping).isOk());}
+    public void validateFenceAgentDefaultParamsConfig() {
+        assertEquals(expectedResult, validator.validate(ConfigurationValues.FenceAgentDefaultParams.name(), fenceAgentDefault).isOk());
+    }
+
     @Test
-    public void validateVdsFenceTypeConfig() {assertEquals(expectedResult, validator.validate(ConfigurationValues.VdsFenceType.name(), vdsFenceType).isOk());}
+    public void validateVdsFenceOptionMappingConfig() {
+        assertEquals(expectedResult, validator.validate(ConfigurationValues.VdsFenceOptionMapping.name(), vdsFenceOptionMapping).isOk());
+    }
+
+    @Test
+    public void validateVdsFenceTypeConfig() {
+        assertEquals(expectedResult, validator.validate(ConfigurationValues.VdsFenceType.name(), vdsFenceType).isOk());
+    }
 
     @Parameterized.Parameters()
     public static Collection<Object[]> fenceAgentMappingParams() {

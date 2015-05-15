@@ -1166,9 +1166,17 @@ public class LinkHelper {
             this.parentType = parentType;
         }
 
-        public Class<?> getResourceType()      { return resourceType; }
-        public Class<?> getCollectionType()    { return collectionType; }
-        public Class<?> getParentType()        { return parentType; }
+        public Class<?> getResourceType() {
+            return resourceType;
+        }
+
+        public Class<?> getCollectionType() {
+            return collectionType;
+        }
+
+        public Class<?> getParentType() {
+            return parentType;
+        }
     }
 
     /**

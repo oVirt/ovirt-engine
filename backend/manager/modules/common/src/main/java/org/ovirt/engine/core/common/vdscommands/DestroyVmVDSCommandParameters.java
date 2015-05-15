@@ -33,7 +33,9 @@ public class DestroyVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         return gracefully;
     }
 
-    public String getReason() { return reason == null ? "" : reason; }
+    public String getReason() {
+        return reason == null ? "" : reason;
+    }
 
     public DestroyVmVDSCommandParameters() {
     }
