@@ -48,13 +48,10 @@
 %global ovirt_install_systemv 0
 %global ovirt_install_poms 1
 %global ovirt_require_maven 1
-%if %{fedora} >= 20
 %global ovirt_provides_jboss 1
-%global jboss ovirt-engine-jboss-as >= 7.1.1
-%else
-%global ovirt_provides_jboss 0
-%global jboss jboss-as >= 7.1.1-9.3
-%endif
+%global jboss ovirt-engine-wildfly
+%global ovirt_wildfly_overlay 1
+%global ovirt_wildfly_fixup 1
 %if %{fedora} >= 21
 %global docker docker
 %global ovirt_with_aio 1
@@ -72,7 +69,9 @@
 %global ovirt_install_poms 1
 %global ovirt_require_maven 1
 %global ovirt_provides_jboss 1
-%global jboss ovirt-engine-jboss-as >= 7.1.1
+%global jboss ovirt-engine-wildfly
+%global ovirt_wildfly_overlay 1
+%global ovirt_wildfly_fixup 1
 %global docker docker
 %global ovirt_with_aio 1
 %else
@@ -81,7 +80,9 @@
 %global ovirt_install_poms 0
 %global ovirt_require_maven 0
 %global ovirt_provides_jboss 1
-%global jboss ovirt-engine-jboss-as >= 7.1.1
+%global jboss ovirt-engine-wildfly
+%global ovirt_wildfly_overlay 1
+%global ovirt_wildfly_fixup 1
 %global docker docker-io
 
 # all-in-one can't work on el6 due to missing vdsm
@@ -225,6 +226,10 @@ BuildRequires:	maven
 BuildRequires:	unzip
 
 Requires:	%{jboss}
+%if %{ovirt_wildfly_overlay}
+Requires:	ovirt-engine-wildfly-overlay
+%endif
+
 Requires:	%{name}-backend = %{version}-%{release}
 Requires:	%{name}-cli
 Requires:	%{name}-dbscripts = %{version}-%{release}
@@ -237,8 +242,7 @@ Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	fop
 Requires:	java
 # rhbz#1028966
-# Remove 1.8 blocking when we will move to WildFly
-Requires:	java-openjdk > 1:1.7.0.45-2.4.3.3.el6, java-openjdk < 1:1.8.0.0
+Requires:	java-openjdk > 1:1.7.0.45-2.4.3.3.el6
 Requires:	jpackage-utils
 Requires:	ovirt-image-uploader >= 3.6.0
 Requires:	ovirt-iso-uploader >= 3.6.0
@@ -683,6 +687,11 @@ done
 #
 # Move jars to destribution location
 #
+# Warning: WildFly 8 doesn't support soft links inside WEB-INF/lib [1], so some
+#          files cannot be linked (see ovirt_wildfly_fixup condition)
+#
+#          [1] https://issues.jboss.org/browse/WFLY-4382
+#
 install -dm 755 "%{buildroot}%{engine_java}"
 while read lib_path; do
 	java_path="%{engine_java}/$(basename "${lib_path}")"
@@ -693,12 +702,8 @@ while read lib_path; do
 	ln -s "${java_path}" "%{buildroot}${lib_path}"
 done << __EOF__
 %{engine_ear}/bll.jar
-%{engine_ear}/docs.war/WEB-INF/lib/branding.jar
 %{engine_ear}/lib/vdsbroker.jar
 %{engine_ear}/lib/scheduler.jar
-%{engine_ear}/userportal.war/WEB-INF/lib/branding.jar
-%{engine_ear}/webadmin.war/WEB-INF/lib/branding.jar
-%{engine_ear}/welcome.war/WEB-INF/lib/branding.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/api/interface-common-jaxrs/main/interface-common-jaxrs.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/api/ovirt-engine-extensions-api/main/ovirt-engine-extensions-api.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/api/restapi-definition/main/restapi-definition.jar
@@ -716,6 +721,12 @@ done << __EOF__
 %{engine_jboss_modules}/common/org/ovirt/engine/core/utils/main/utils.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/core/uutils/main/uutils.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/extensions/builtin/main/builtin.jar
+%if 0%{ovirt_wildfly_fixup} == 0
+%{engine_ear}/docs.war/WEB-INF/lib/branding.jar
+%{engine_ear}/userportal.war/WEB-INF/lib/branding.jar
+%{engine_ear}/webadmin.war/WEB-INF/lib/branding.jar
+%{engine_ear}/welcome.war/WEB-INF/lib/branding.jar
+%endif
 __EOF__
 
 # Needed for compatibility if package is different than the directory structure
@@ -901,7 +912,13 @@ rm -rf "%{buildroot}%{engine_data}/firewalld/aio"
 %if %{ovirt_provides_jboss}
 cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf" << __EOF__
 [environment:default]
-OVESETUP_CONFIG/jbossHome=str:/usr/share/ovirt-engine-jboss-as
+OVESETUP_CONFIG/jbossHome=str:/usr/share/ovirt-engine-wildfly
+__EOF__
+%endif
+
+%if %{ovirt_wildfly_overlay}
+cat > "%{buildroot}%{engine_etc}/engine.conf.d/20-setup-jboss-overlay.conf" << __EOF__
+ENGINE_JAVA_MODULEPATH="/usr/share/ovirt-engine-wildfly-overlay/modules:\${ENGINE_JAVA_MODULEPATH}"
 __EOF__
 %endif
 
@@ -1118,6 +1135,10 @@ fi
 
 %if %{ovirt_provides_jboss}
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf
+%endif
+
+%if %{ovirt_wildfly_overlay}
+%config %{engine_etc}/engine.conf.d/20-setup-jboss-overlay.conf
 %endif
 
 %files setup-plugin-websocket-proxy

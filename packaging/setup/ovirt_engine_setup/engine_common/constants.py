@@ -70,10 +70,7 @@ class FileLocations(object):
         'conf.d',
         'ssl.conf',
     )
-    JBOSS_HOME = os.path.join(
-        osetupcons.FileLocations.DATADIR,
-        'jboss-as',
-    )
+    JBOSS_HOME = config.JBOSS_HOME
     OVIRT_ENGINE_SYSCTL = os.path.join(
         SYSCONFDIR,
         'sysctl.d',

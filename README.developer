@@ -9,7 +9,7 @@ PREREQUISITES
 
 Install the following system components:
 
- - jdk-7 / openjdk-7-jdk / icedtea-7
+ - jdk-7 / openjdk-7-jdk / icedtea-7 or jdk-8 / openjdk-8-jdk / icedtea-8
  - mime-types or mailcap
  - unzip
  - openssl
@@ -31,8 +31,26 @@ Install the following system components:
 Maven-3 is required, download and extract if not installed using
 distribution package management, and add to PATH.
 
->=Jboss 7.1.1 is required, download and extract it if not installed
-using distribution package management.
+Following application servers are required for engine development:
+
+ 1. WildFly 8.2 for oVirt 3.6+ development
+      yum install ovirt-engine-wildfly ovirt-engine-wildfly-overlay
+
+ 2. JBoss 7.1.1 for backporting changes to oVirt 3.5
+      yum install ovirt-engine-jboss-as
+
+Both application servers can be installed from ovirt-master-snapshot-static
+repository:
+
+  [ovirt-master-snapshot-static]
+  name=Latest oVirt master additional nightly snapshot
+  baseurl=http://resources.ovirt.org/pub/ovirt-master-snapshot-static/rpm/@DIST@$releasever/
+  enabled=1
+  skip_if_unavailable=1
+  gpgcheck=0
+
+Please replace "@DIST@" with "fc" for Fedora or "el" for Centos/RHEL.
+
 
 SYSTEM SETTINGS
 
@@ -187,10 +205,18 @@ To setup the product use the following command:
 
 $ $HOME/ovirt-engine/bin/engine-setup
 
-If Jboss is installed not via distribution package management,
+If WildFly is not installed via distribution package management,
 add the following parameter, provided JBOSS_HOME environment contains
 the location of the Jboss installation:
    --jboss-home="${JBOSS_HOME}"
+
+If WildFly 8.2 should be used, then it's required to manually setup
+ovirt-engine-wildfly-overlay using following command:
+
+  echo "ENGINE_JAVA_MODULEPATH=\"/usr/share/ovirt-engine-wildfly-overlay/modules:\${ENGINE_JAVA_MODULEPATH}\"" \
+          > $PREFIX/etc/ovirt-engine/engine.conf.d/20-setup-jboss-overlay.conf
+
+Please adapt $PREFIX according you environment.
 
 REFRESH
 

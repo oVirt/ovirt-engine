@@ -20,6 +20,7 @@ import gettext
 import os
 import re
 import shlex
+import subprocess
 import sys
 
 from Cheetah.Template import Template
@@ -32,10 +33,26 @@ def _(m):
 
 class Daemon(service.Daemon):
 
+    _JBOSS_VERSION_REGEX = re.compile(
+        flags=re.VERBOSE,
+        pattern=r"""
+            ^
+            [^\d]*
+            (?P<major>\d+)
+            \.
+            (?P<minor>\d+)
+            \.
+            (?P<revision>\d+)
+            .*
+        """,
+    )
+
     def __init__(self):
         super(Daemon, self).__init__()
         self._tempDir = None
         self._jbossRuntime = None
+        self._jbossVersion = None
+        self._jbossConfigFile = None
         self._defaults = os.path.abspath(
             os.path.join(
                 os.path.dirname(sys.argv[0]),
@@ -57,6 +74,7 @@ class Daemon(service.Daemon):
                         file=template,
                         searchList=[
                             self._config,
+                            self._jbossVersion,
                             {
                                 'jboss_runtime': self._jbossRuntime.directory,
                             },
@@ -201,6 +219,44 @@ class Daemon(service.Daemon):
             with open('%s.dodeploy' % engineAppLink, 'w'):
                 pass
 
+    def _detectJBossVersion(self):
+        proc = subprocess.Popen(
+            executable=self._executable,
+            args=self._engineArgs + ['-v'],
+            env=self._engineEnv,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            close_fds=True,
+        )
+
+        stdout, stderr = proc.communicate()
+        stdout = stdout.decode('utf-8', 'replace').splitlines()
+        stderr = stderr.decode('utf-8', 'replace').splitlines()
+
+        self.logger.debug(
+            "Return code: %s, \nstdout: '%s, \nstderr: '%s'",
+            proc.returncode,
+            stdout,
+            stderr,
+        )
+
+        for line in stdout:
+            match = self._JBOSS_VERSION_REGEX.match(line)
+            if match is not None:
+                self._jbossVersion = {
+                    'JBOSS_MAJOR': int(match.group('major')),
+                    'JBOSS_MINOR': int(match.group('minor')),
+                    'JBOSS_REVISION': int(match.group('revision')),
+                }
+                break
+        else:
+            raise RuntimeError(_('Cannot detect JBoss version'))
+
+        self.logger.debug(
+            "Detected JBoss version: %s",
+            self._jbossVersion,
+        )
+
     def daemonSetup(self):
 
         if os.geteuid() == 0:
@@ -288,15 +344,6 @@ class Daemon(service.Daemon):
             dir=jbossConfigDir,
         )
 
-        jbossConfigFile = self._processTemplate(
-            template=os.path.join(
-                os.path.dirname(sys.argv[0]),
-                'ovirt-engine.xml.in',
-            ),
-            dir=jbossConfigDir,
-            mode=0o600,
-        )
-
         # We start with an empty list of arguments:
         self._engineArgs = []
 
@@ -375,7 +422,6 @@ class Daemon(service.Daemon):
             '-mp', javaModulePath,
             '-jaxpmodule', 'javax.xml.jaxp-provider',
             'org.jboss.as.standalone',
-            '-c', os.path.basename(jbossConfigFile),
         ])
 
         self._engineEnv = os.environ.copy()
@@ -395,6 +441,17 @@ class Daemon(service.Daemon):
             'ENGINE_VAR': self._config.get('ENGINE_VAR'),
             'ENGINE_CACHE': self._config.get('ENGINE_CACHE'),
         })
+
+        self._detectJBossVersion()
+
+        self._jbossConfigFile = self._processTemplate(
+            template=os.path.join(
+                os.path.dirname(sys.argv[0]),
+                'ovirt-engine.xml.in',
+            ),
+            dir=jbossConfigDir,
+            mode=0o600,
+        )
 
     def daemonStdHandles(self):
         consoleLog = open(
@@ -416,7 +473,10 @@ class Daemon(service.Daemon):
 
             self.daemonAsExternalProcess(
                 executable=self._executable,
-                args=self._engineArgs,
+                args=self._engineArgs + [
+                    '-c',
+                    os.path.basename(self._jbossConfigFile),
+                ],
                 env=self._engineEnv,
                 stopTime=self._config.getinteger(
                     'ENGINE_STOP_TIME'
