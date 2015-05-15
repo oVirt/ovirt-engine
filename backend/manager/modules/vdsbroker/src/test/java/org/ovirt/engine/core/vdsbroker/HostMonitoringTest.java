@@ -11,7 +11,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -79,12 +78,12 @@ public class HostMonitoringTest {
         initConditions();
         when(vdsManager.getRefreshStatistics()).thenReturn(false);
         updater =
-                Mockito.spy(new HostMonitoring(vdsManager,
+                new HostMonitoring(vdsManager,
                         vds,
                         mock(MonitoringStrategy.class),
                         resourceManager,
                         dbFacade,
-                        auditLogDirector));
+                        auditLogDirector);
     }
 
     private void initConditions() {
@@ -108,7 +107,7 @@ public class HostMonitoringTest {
         VDSReturnValue value = new VDSReturnValue();
         value.setSucceeded(false);
         value.setExceptionObject(new VDSNetworkException("unknown host"));
-        when(updater.getVdsEventListener()).thenReturn(vdsEventlistener);
+        when(resourceManager.getEventListener()).thenReturn(vdsEventlistener);
         when(resourceManager.runVdsCommand(any(VDSCommandType.class),
                 any(VDSParametersBase.class))).thenReturn(value);
 
