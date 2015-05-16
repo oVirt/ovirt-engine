@@ -299,16 +299,14 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             if (validator.isDomainExistAndActive().isValid() && getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             }
+            VM vm = getVmFromExportDomain(getParameters().getVmId());
+            if (vm == null) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
+            }
+            // At this point we should work with the VM that was read from
+            // the OVF because the VM from the parameters may lack images
+            setVmFromExportDomain(vm);
         }
-
-        VM vm = getVmFromExportDomain(getParameters().getVmId());
-        if (vm == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
-        }
-
-        // At this point we should work with the VM that was read from
-        // the OVF because the VM from the parameters may lack images
-        setVmFromExportDomain(vm);
 
         if (!validateImages(domainsMap)) {
             return false;
