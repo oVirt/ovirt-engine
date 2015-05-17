@@ -112,6 +112,10 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
         return getClient(getTenantId()).volumes().show(id).execute();
     }
 
+    public Snapshot getSnapshotById(String id) {
+        return getClient(getTenantId()).snapshots().show(id).execute();
+    }
+
     public Limits getLimits() {
         return getClient(getTenantId()).limits().list().execute();
     }
