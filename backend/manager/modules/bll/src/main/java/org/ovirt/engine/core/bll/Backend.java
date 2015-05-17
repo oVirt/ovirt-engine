@@ -37,6 +37,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.EngineWorkingMode;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -67,6 +68,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dal.utils.CacheManager;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter;
 import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
@@ -109,6 +111,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private DbFacade dbFacade;
     @Inject @Any
     private Instance<SchedulerUtil> taskSchedulers;
+    @Inject @Any
+    private Instance<BackendService> services;
 
     public static BackendInternal getInstance() {
         return Injector.get(BackendInternal.class);
@@ -194,6 +198,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         for (SchedulerUtil taskScheduler : taskSchedulers) {
             log.info("Started task scheduler {}", taskScheduler);
         }
+        // initialize CDI services
+        loadService(CacheManager.class);
+
         // initialize configuration utils to use DB
         Config.setConfigUtils(new DBConfigUtils());
         // we need to initialize os-info before the compensations take place because of VmPoolCommandBase#osRepository
@@ -282,6 +289,10 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         EngineExtensionsManager.getInstance().engineInitialize();
         AuthenticationProfileRepository.getInstance();
         AcctUtils.reportReason(Acct.ReportReason.STARTUP, "Starting up engine");
+    }
+
+    private void loadService(Class<? extends BackendService> service) {
+        log.info("Start {} ", services.select(service).get());
     }
 
     /**
