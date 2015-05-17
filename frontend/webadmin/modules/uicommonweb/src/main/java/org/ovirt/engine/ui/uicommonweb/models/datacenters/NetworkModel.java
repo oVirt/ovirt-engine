@@ -473,7 +473,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     private boolean validate()
     {
         RegexValidation tempVar = new RegexValidation();
-        tempVar.setExpression("^[A-Za-z0-9_]{1,15}$"); //$NON-NLS-1$
+        tempVar.setExpression("^[A-Za-z0-9_-]{1,15}$"); //$NON-NLS-1$
         tempVar.setMessage(ConstantsManager.getInstance().getConstants().nameMustContainAlphanumericMaxLenMsg());
         RegexValidation tempVar2 = new RegexValidation();
         tempVar2.setIsNegate(true);

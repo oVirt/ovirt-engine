@@ -27,7 +27,7 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
 
     private Guid id;
 
-    @Pattern(regexp = "^[_a-zA-Z0-9]{1,15}$", message = "NETWORK_ILEGAL_NETWORK_NAME", groups = { CreateEntity.class,
+    @Pattern(regexp = "^[-_a-zA-Z0-9]{1,15}$", message = "NETWORK_ILEGAL_NETWORK_NAME", groups = { CreateEntity.class,
             UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
     private String name;

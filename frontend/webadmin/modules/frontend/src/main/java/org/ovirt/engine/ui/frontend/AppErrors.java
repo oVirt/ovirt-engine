@@ -2291,7 +2291,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("User/group ID cannot be empty.")
     String MISSING_DIRECTORY_ELEMENT_ID();
 
-    @DefaultStringValue("Network name must be 1-15 long and can contain only 'A-Z', 'a-z', '0-9', '_' characters")
+    @DefaultStringValue("Network name must be 1-15 long and can contain only 'A-Z', 'a-z', '0-9', '_', '-' characters")
     String NETWORK_ILEGAL_NETWORK_NAME();
 
     @DefaultStringValue("Network interface name is already in use")

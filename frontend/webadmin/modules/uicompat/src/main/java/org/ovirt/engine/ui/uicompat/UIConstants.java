@@ -852,7 +852,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("You haven't configured Power Management for this Host. Are you sure you want to continue?")
     String youHavntConfigPmMsg();
 
-    @DefaultStringValue("Name must contain alphanumeric characters or '_' (maximum length 15 characters).")
+    @DefaultStringValue("Name must contain alphanumeric characters, '-' or '_' (maximum length 15 characters).")
     String nameMustContainAlphanumericMaxLenMsg();
 
     @DefaultStringValue("Network name shouldn't start with 'bond'.")
