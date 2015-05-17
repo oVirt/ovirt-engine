@@ -103,9 +103,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             SessionDataContainer.getInstance().cleanupEngineSessionsOnStartup();
 
             loadService(HostDeviceManager.class);
-
-            new DwhHeartBeat().init();
-
+            loadService(DwhHeartBeat.class);
         } catch (Exception ex) {
             log.error("Failed to initialize backend", ex);
             throw ex;
