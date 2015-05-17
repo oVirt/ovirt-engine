@@ -5,20 +5,24 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.compat.Guid;
 
+import java.util.Map;
+
 public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
 
     private Disk disk;
     private VmDevice vmDevice;
     private VM vm;
+    private Map<String, String> addressMap;
 
     public HotPlugDiskVDSParameters() {
     }
 
-    public HotPlugDiskVDSParameters(Guid vdsId, VM vm, Disk disk, VmDevice vmDevice) {
+    public HotPlugDiskVDSParameters(Guid vdsId, VM vm, Disk disk, VmDevice vmDevice, Map<String, String> addressMap) {
         super(vdsId, vm.getId());
         this.disk = disk;
         this.vmDevice = vmDevice;
         this.vm = vm;
+        this.addressMap = addressMap;
     }
 
     public Disk getDisk() {
@@ -45,8 +49,16 @@ public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
         this.vm = vm;
     }
 
+    public Map<String, String> getAddressMap() {
+        return addressMap;
+    }
+
+    public void setAddressMap(Map<String, String> addressMap) {
+        this.addressMap = addressMap;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s, diskId = %s", super.toString(), disk.getId());
+        return String.format("%s, diskId = %s, addressMap = %s", super.toString(), disk.getId(), getAddressMap());
     }
 }

@@ -26,6 +26,6 @@ public enum LockingGroup {
     SYNC_LUNS,
     /** This group is used for indication that an operation is executed using the specified host */
     VDS_EXECUTION,
-    VDS_POOL_AND_STORAGE_CONNECTIONS;
-
+    VDS_POOL_AND_STORAGE_CONNECTIONS,
+    VM_DISK_HOT_PLUG
 }
