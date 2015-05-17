@@ -179,8 +179,13 @@ public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS,
      *            the text content of the alert
      * @param command
      *            the command that should be executed when the link is clicked
+     * @param alertType
+     *            the type of the alert
      */
-    private void addTextAndLinkAlert(final ViewDef view, final String text, final UICommand command) {
+    private void addTextAndLinkAlert(final ViewDef view,
+            final String text,
+            final UICommand command,
+            final AlertType alertType) {
         // Find the open and close positions of the link within the message:
         final int openIndex = text.indexOf("<a>"); //$NON-NLS-1$
         final int closeIndex = text.indexOf("</a>"); //$NON-NLS-1$
@@ -223,7 +228,11 @@ public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS,
         alertPanel.add(afterLabel);
 
         // Add the alert to the view:
-        view.addAlert(alertPanel);
+        view.addAlert(alertPanel, alertType);
+    }
+
+    private void addTextAndLinkAlert(final ViewDef view, final String text, final UICommand command) {
+        addTextAndLinkAlert(view, text, command, AlertType.ALERT);
     }
 
     @Override
