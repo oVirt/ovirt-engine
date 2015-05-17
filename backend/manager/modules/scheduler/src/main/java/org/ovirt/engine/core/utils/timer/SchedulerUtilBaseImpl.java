@@ -36,11 +36,7 @@ public abstract class SchedulerUtilBaseImpl implements SchedulerUtil {
     private final AtomicLong sequenceNumber = new AtomicLong(Long.MIN_VALUE);
 
     public static Date getFutureDate(long delay, TimeUnit timeUnit) {
-        if (delay > 0) {
-            return new Date(new Date().getTime() + TimeUnit.MILLISECONDS.convert(delay, timeUnit));
-        } else {
-            return new Date();
-        }
+        return new Date(System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(delay, timeUnit));
     }
 
     /**
