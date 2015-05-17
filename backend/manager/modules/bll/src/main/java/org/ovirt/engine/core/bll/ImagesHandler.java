@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,11 +33,11 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -54,6 +55,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -909,4 +911,56 @@ public final class ImagesHandler {
         return diskDummies;
     }
 
+    protected static DiskImage cloneDiskImage(Guid newVmId,
+            Guid storageDomainId,
+            Guid newImageGroupId,
+            Guid newImageGuid,
+            DiskImage srcDiskImage,
+            Guid diskProfileId,
+            Guid snapshotId,
+            DiskImage diskImageFromClient) {
+
+        DiskImage clonedDiskImage = DiskImage.copyOf(srcDiskImage);
+        clonedDiskImage.setImageId(newImageGuid);
+        clonedDiskImage.setParentId(Guid.Empty);
+        clonedDiskImage.setImageTemplateId(Guid.Empty);
+        clonedDiskImage.setVmSnapshotId(snapshotId);
+        clonedDiskImage.setId(newImageGroupId);
+        clonedDiskImage.setLastModifiedDate(new Date());
+        clonedDiskImage.setvolumeFormat(srcDiskImage.getVolumeFormat());
+        clonedDiskImage.setVolumeType(srcDiskImage.getVolumeType());
+        ArrayList<Guid> storageIds = new ArrayList<Guid>();
+        storageIds.add(storageDomainId);
+        clonedDiskImage.setStorageIds(storageIds);
+        clonedDiskImage.setDiskProfileId(diskProfileId);
+
+        // If volume information was changed at client , use its volume information.
+        // If volume information was not changed at client - use the volume information of the ancestral image
+        if (diskImageFromClient != null) {
+            if (volumeInfoChanged(diskImageFromClient, srcDiskImage)) {
+                changeVolumeInfo(clonedDiskImage, diskImageFromClient);
+            } else {
+                DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getImageId());
+                changeVolumeInfo(clonedDiskImage, ancestorDiskImage);
+            }
+        } else {
+            DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getImageId());
+            changeVolumeInfo(clonedDiskImage, ancestorDiskImage);
+        }
+
+        return clonedDiskImage;
+    }
+
+    private static DiskImageDAO getDiskImageDao() {
+        return DbFacade.getInstance().getDiskImageDao();
+    }
+
+    private static boolean volumeInfoChanged(DiskImage diskImageFromClient, DiskImage srcDiskImage) {
+        return (diskImageFromClient.getVolumeFormat() != srcDiskImage.getVolumeFormat() || diskImageFromClient.getVolumeType() != srcDiskImage.getVolumeType());
+    }
+
+    protected static void changeVolumeInfo(DiskImage clonedDiskImage, DiskImage diskImageFromClient) {
+        clonedDiskImage.setvolumeFormat(diskImageFromClient.getVolumeFormat());
+        clonedDiskImage.setVolumeType(diskImageFromClient.getVolumeType());
+    }
 }

@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,12 +73,14 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
             Guid destStorageDomainId,
             Guid diskProfileId,
             VdcActionType parentCommandType) {
-        DiskImage newDiskImage = cloneDiskImage(getVmId(),
+        DiskImage newDiskImage = ImagesHandler.cloneDiskImage(getVmId(),
                 destStorageDomainId,
                 Guid.newGuid(),
                 Guid.newGuid(),
                 diskImage,
-                diskProfileId);
+                diskProfileId,
+                getVmSnapshotId(),
+                diskInfoDestinationMap != null ? diskInfoDestinationMap.get(diskImage.getId()) : null);
         ImagesHandler.setDiskAlias(newDiskImage, getVm());
         MoveOrCopyImageGroupParameters parameters = createCopyParameters(newDiskImage,
                 srcStorageDomainId,
@@ -178,54 +179,6 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 .getStorageStaticData(),
                 diskImage,
                 getReturnValue().getCanDoActionMessages());
-    }
-
-    protected DiskImage cloneDiskImage(Guid newVmId,
-                                       Guid storageDomainId,
-                                       Guid newImageGroupId,
-                                       Guid newImageGuid,
-                                       DiskImage srcDiskImage,
-                                       Guid diskProfileId) {
-
-        DiskImage clonedDiskImage = DiskImage.copyOf(srcDiskImage);
-        clonedDiskImage.setImageId(newImageGuid);
-        clonedDiskImage.setParentId(Guid.Empty);
-        clonedDiskImage.setImageTemplateId(Guid.Empty);
-        clonedDiskImage.setVmSnapshotId(getVmSnapshotId());
-        clonedDiskImage.setId(newImageGroupId);
-        clonedDiskImage.setLastModifiedDate(new Date());
-        clonedDiskImage.setvolumeFormat(srcDiskImage.getVolumeFormat());
-        clonedDiskImage.setVolumeType(srcDiskImage.getVolumeType());
-        ArrayList<Guid> storageIds = new ArrayList<Guid>();
-        storageIds.add(storageDomainId);
-        clonedDiskImage.setStorageIds(storageIds);
-        clonedDiskImage.setDiskProfileId(diskProfileId);
-
-        // If volume information was changed at client , use its volume information.
-        // If volume information was not changed at client - use the volume information of the ancestral image
-        if (diskInfoDestinationMap != null && diskInfoDestinationMap.containsKey(srcDiskImage.getId())) {
-            DiskImage diskImageFromClient = diskInfoDestinationMap.get(srcDiskImage.getId());
-            if (volumeInfoChanged(diskImageFromClient, srcDiskImage)) {
-                changeVolumeInfo(clonedDiskImage, diskImageFromClient);
-            } else {
-                DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getImageId());
-                changeVolumeInfo(clonedDiskImage, ancestorDiskImage);
-            }
-        } else {
-            DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getImageId());
-            changeVolumeInfo(clonedDiskImage, ancestorDiskImage);
-        }
-
-        return clonedDiskImage;
-    }
-
-    private boolean volumeInfoChanged(DiskImage diskImageFromClient, DiskImage srcDiskImage) {
-        return (diskImageFromClient.getVolumeFormat() != srcDiskImage.getVolumeFormat() || diskImageFromClient.getVolumeType() != srcDiskImage.getVolumeType());
-    }
-
-    protected void changeVolumeInfo(DiskImage clonedDiskImage, DiskImage diskImageFromClient) {
-        clonedDiskImage.setvolumeFormat(diskImageFromClient.getVolumeFormat());
-        clonedDiskImage.setVolumeType(diskImageFromClient.getVolumeType());
     }
 
     /**
