@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
+import org.ovirt.engine.core.bll.scheduling.AresService;
 import org.ovirt.engine.core.bll.scheduling.MigrationHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
@@ -46,6 +47,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
     @Inject
     private Instance<BackendService> services;
+    
+    @Inject
+    private AresService aresService;
 
     /**
      * This method is called upon the bean creation as part
