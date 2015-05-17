@@ -2,10 +2,12 @@ package org.ovirt.engine.core.bll.storage;
 
 import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.cinder.model.ConnectionForInitialize;
+import com.woorea.openstack.cinder.model.Snapshot;
 import com.woorea.openstack.cinder.model.SnapshotForCreate;
 import com.woorea.openstack.cinder.model.Volume;
 import com.woorea.openstack.cinder.model.VolumeForCreate;
 import com.woorea.openstack.cinder.model.VolumeForUpdate;
+
 import org.apache.commons.httpclient.HttpStatus;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -190,6 +192,17 @@ public class CinderBroker extends AuditLogableBase {
                     }
                     throw ex;
                 }
+            }
+        });
+    }
+
+    public ImageStatus getSnapshotStatus(final Guid id) {
+        return execute(new Callable<ImageStatus>() {
+            @Override
+            public ImageStatus call() {
+                Snapshot snapshot = proxy.getSnapshotById(id.toString());
+                CinderVolumeStatus cinderVolumeStatus = CinderVolumeStatus.forValue(snapshot.getStatus());
+                return mapCinderVolumeStatusToImageStatus(cinderVolumeStatus);
             }
         });
     }
