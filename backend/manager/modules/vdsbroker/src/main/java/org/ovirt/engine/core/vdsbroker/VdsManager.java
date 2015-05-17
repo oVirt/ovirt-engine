@@ -282,6 +282,9 @@ public class VdsManager {
         if (cachedVds.getStatus() != VDSStatus.Maintenance
                 && cachedVds.getStatus() != VDSStatus.Up
                 && cachedVds.getStatus() != VDSStatus.NonOperational) {
+            log.warn("Check for available updates is skipped for host '{}' due to unsupported host status '{}' ",
+                    cachedVds.getName(),
+                    cachedVds.getStatus());
             return;
         }
 
@@ -289,7 +292,7 @@ public class VdsManager {
         try {
             updateAvailable = ResourceManager.getInstance().isUpdateAvailable(cachedVds);
         } catch (Exception e) {
-            log.error("Failed to check if updates are available for host {}", cachedVds.getName());
+            log.error("Failed to check if updates are available for host '{}'", cachedVds.getName());
 
             AuditLogableBase auditLog = new AuditLogableBase();
             auditLog.setVds(cachedVds);
