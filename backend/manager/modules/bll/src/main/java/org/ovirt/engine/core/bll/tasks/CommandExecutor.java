@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -55,7 +56,7 @@ public class CommandExecutor {
 
     CommandExecutor(CommandCoordinatorImpl coco) {
         this.coco = coco;
-        SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
+        SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
         scheduler.scheduleAFixedDelayJob(this, "invokeCallbackMethods", new Class[]{},
                 new Object[]{}, Config.<Integer>getValue(ConfigValues.AsyncCommandPollingRateInSeconds),
                 Config.<Integer>getValue(ConfigValues.AsyncCommandPollingRateInSeconds), TimeUnit.SECONDS);

@@ -8,8 +8,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.timer.DBSchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 
 public class RescheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeSnapshotCommandBase<ScheduleGlusterVolumeSnapshotParameters> {
     public RescheduleGlusterVolumeSnapshotCommand(ScheduleGlusterVolumeSnapshotParameters params) {
@@ -22,10 +20,9 @@ public class RescheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolum
 
         GlusterVolumeSnapshotSchedule fetchedSchedule = getGlusterVolumeSnapshotScheduleDao().getByVolumeId(volumeId);
         String jobId = fetchedSchedule.getJobId();
-        SchedulerUtil scheduler = DBSchedulerUtilQuartzImpl.getInstance();
 
         // delete the existing job
-        scheduler.deleteJob(jobId);
+        getDbSchedulUtil().deleteJob(jobId);
 
         GlusterVolumeSnapshotSchedule schedule = getSchedule();
         if (schedule.getRecurrence() != null) {

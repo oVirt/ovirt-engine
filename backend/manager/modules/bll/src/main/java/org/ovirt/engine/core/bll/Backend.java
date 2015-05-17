@@ -14,6 +14,8 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.Interceptors;
@@ -73,6 +75,7 @@ import org.ovirt.engine.core.utils.ErrorTranslatorImpl;
 import org.ovirt.engine.core.utils.OsRepositoryImpl;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 import org.ovirt.engine.core.utils.osinfo.OsInfoPreferencesLoader;
+import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +87,7 @@ import org.slf4j.LoggerFactory;
 // to all the business and timeout methods in the singleton.
 // The developer of the singleton is responsible for ensuring that the state
 // of the singleton is synchronized across all clients.
-@DependsOn("Scheduler")
+@DependsOn("LockManager")
 @Local({ BackendLocal.class, BackendInternal.class, BackendCommandObjectsHandler.class })
 @Interceptors({ CorrelationIdTrackerInterceptor.class })
 @Singleton
@@ -100,9 +103,12 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private DateTime _startedAt;
     private static boolean firstInitialization = true;
     private String poolMonitoringJobId;
-    @Inject Injector injector;
+    @Inject
+    Injector injector;
     @Inject
     private DbFacade dbFacade;
+    @Inject @Any
+    private Instance<SchedulerUtil> taskSchedulers;
 
     public static BackendInternal getInstance() {
         return Injector.get(BackendInternal.class);
@@ -184,6 +190,10 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Override
     public void initialize() {
         log.info("Start initializing {}", getClass().getSimpleName());
+        // start task schedulers
+        for (SchedulerUtil taskScheduler : taskSchedulers) {
+            log.info("Started task scheduler {}", taskScheduler);
+        }
         // initialize configuration utils to use DB
         Config.setConfigUtils(new DBConfigUtils());
         // we need to initialize os-info before the compensations take place because of VmPoolCommandBase#osRepository

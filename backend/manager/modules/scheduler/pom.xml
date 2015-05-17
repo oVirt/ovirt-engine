@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>scheduler</artifactId>
-  <packaging>ejb</packaging>
+  <packaging>jar</packaging>
 
   <name>engine scheduler bean</name>
   <properties>

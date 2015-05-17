@@ -1,28 +1,7 @@
 package org.ovirt.engine.core.utils.timer;
 
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.DependsOn;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
 import org.apache.commons.lang.ClassUtils;
 import org.ovirt.engine.core.utils.ResourceUtils;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -30,11 +9,18 @@ import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 
-@Singleton(name = "PersistentScheduler")
-@DependsOn("LockManager")
-@Startup
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Singleton;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
+
+@Singleton
 public class DBSchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl implements SchedulerUtil {
 
     @Override
@@ -81,15 +67,6 @@ public class DBSchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl implements 
     @PreDestroy
     public void teardown() {
         super.shutDown();
-    }
-
-    /**
-     * Returns the single instance of this Class.
-     *
-     * @return a SchedulerUtil instance
-     */
-    public static SchedulerUtil getInstance() {
-        return EjbUtils.findBean(BeanType.PERSISTENT_SCHEDULER, BeanProxyType.LOCAL);
     }
 
     /**

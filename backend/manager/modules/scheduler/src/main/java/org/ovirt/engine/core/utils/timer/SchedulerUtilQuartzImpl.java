@@ -1,21 +1,5 @@
 package org.ovirt.engine.core.utils.timer;
 
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.DependsOn;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -23,25 +7,25 @@ import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 
-// Here we use a Singleton bean, names Scheduler.
-// The @Startup annotation is to make sure the bean is initialized on startup.
-// @ConcurrencyManagement - we use bean managed concurrency:
-// Singletons that use bean-managed concurrency allow full concurrent access to all the
-// business and timeout methods in the singleton.
-// The developer of the singleton is responsible for ensuring that the state of the singleton is synchronized across all clients.
-@Singleton(name = "Scheduler")
-@DependsOn("LockManager")
-@Startup
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Singleton;
+
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
+
+@Singleton
 public class SchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl {
+    // for backward compatibility.
+    private static SchedulerUtil instance;
+
     /**
      * This method is called upon the bean creation as part
      * of the management Service bean lifecycle.
      */
     @Override
     @PostConstruct
-    public void create(){
+    public void create() {
         setup();
     }
 
@@ -49,11 +33,13 @@ public class SchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl {
      * retrieving the quartz scheduler from the factory.
      */
     public void setup() {
+        instance = this;
         try {
             SchedulerFactory sf = new StdSchedulerFactory();
             sched = sf.getScheduler();
             sched.start();
-            sched.getListenerManager().addJobListener(new FixedDelayJobListener(this), jobGroupEquals(Scheduler.DEFAULT_GROUP));
+            sched.getListenerManager()
+                    .addJobListener(new FixedDelayJobListener(this), jobGroupEquals(Scheduler.DEFAULT_GROUP));
         } catch (SchedulerException se) {
             log.error("there is a problem with the underlying Scheduler: {}", se.getMessage());
             log.debug("Exception", se);
@@ -73,12 +59,20 @@ public class SchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl {
     }
 
     /**
-     * Returns the single instance of this Class.
-     *
-     * @return a SchedulerUtil instance
+     * @deprecated prefer injecting with
+     * <pre>
+     *     {@code @Inject                        }<br>
+     *     {@code SchedulerUtilQuartzImpl taskScheduler;    }
+     * </pre>
+     * or fetching one using {@linkplain org.ovirt.engine.di.Injector}
+     * <pre>
+     *     {@code Injector.get(SchedulerUtilQuartzImpl.class)        }
+     * </pre>
+     * @return a {@code SchedulerUtilQuartzImpl} instance
      */
+    @Deprecated
     public static SchedulerUtil getInstance() {
-        return EjbUtils.findBean(BeanType.SCHEDULER, BeanProxyType.LOCAL);
+        return instance;
     }
 
     @Override

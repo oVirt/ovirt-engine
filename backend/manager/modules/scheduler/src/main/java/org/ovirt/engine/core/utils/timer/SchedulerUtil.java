@@ -1,14 +1,11 @@
 package org.ovirt.engine.core.utils.timer;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import javax.ejb.Local;
-
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 
-@Local
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 public interface SchedulerUtil {
 
     /**

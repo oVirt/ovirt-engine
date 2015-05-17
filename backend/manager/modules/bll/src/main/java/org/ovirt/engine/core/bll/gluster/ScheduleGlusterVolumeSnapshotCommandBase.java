@@ -14,9 +14,13 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 import org.ovirt.engine.core.utils.timer.DBSchedulerUtilQuartzImpl;
 
+import javax.inject.Inject;
+
 public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends ScheduleGlusterVolumeSnapshotParameters> extends GlusterSnapshotCommandBase<T> {
     private GlusterVolumeSnapshotSchedule schedule;
     private boolean force;
+    @Inject
+    private DBSchedulerUtilQuartzImpl schedulerUtil;
 
     public ScheduleGlusterVolumeSnapshotCommandBase(T params) {
         super(params);
@@ -80,7 +84,7 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
         if (cronExpression == null)
             return null;
 
-        return DBSchedulerUtilQuartzImpl.getInstance().scheduleACronJob(new GlusterSnapshotScheduleJob(),
+        return getDbSchedulUtil().scheduleACronJob(new GlusterSnapshotScheduleJob(),
                 "onTimer",
                 new Class[] { String.class, String.class, String.class, String.class, Boolean.class },
                 new Object[] { upServer.getId().toString(), getGlusterVolumeId().toString(),
@@ -103,5 +107,9 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
 
     protected GlusterUtil getGlusterUtil() {
         return GlusterUtil.getInstance();
+    }
+
+    protected DBSchedulerUtilQuartzImpl getDbSchedulUtil() {
+        return schedulerUtil;
     }
 }

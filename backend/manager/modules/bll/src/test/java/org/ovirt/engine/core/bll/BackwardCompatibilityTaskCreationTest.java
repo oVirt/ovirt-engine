@@ -53,6 +53,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
+import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 /**
  * A test for task creation in the various commands.
@@ -75,6 +76,8 @@ public class BackwardCompatibilityTaskCreationTest extends DbDependentTestBase {
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.SCHEDULER, mock(SchedulerUtil.class));
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
 
     @Before
     public void before() {
@@ -84,6 +87,7 @@ public class BackwardCompatibilityTaskCreationTest extends DbDependentTestBase {
         CommandEntityDao cmdEntityDao = mock(CommandEntityDao.class);
         when(DbFacade.getInstance().getCommandEntityDao()).thenReturn(cmdEntityDao);
         when(cmdEntityDao.getAll()).thenReturn(Collections.<CommandEntity> emptyList());
+        injectorRule.bind(SchedulerUtilQuartzImpl.class, mock(SchedulerUtilQuartzImpl.class));
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes"})
