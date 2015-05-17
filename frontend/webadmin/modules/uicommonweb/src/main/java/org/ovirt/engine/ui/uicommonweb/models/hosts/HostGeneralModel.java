@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -41,6 +43,15 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     public static final EventDefinition requestEditEventDefinition;
     private Event<EventArgs> privateRequestEditEvent;
+    private UICommand upgradeHostCommand;
+
+    public UICommand getUpgradeHostCommand() {
+        return upgradeHostCommand;
+    }
+
+    private void setUpgradeHostCommand(UICommand upgradeHostCommand) {
+        this.upgradeHostCommand = upgradeHostCommand;
+    }
 
     public Event<EventArgs> getRequestEditEvent()
     {
@@ -835,6 +846,7 @@ public class HostGeneralModel extends EntityModel<VDS>
 
         setSaveNICsConfigCommand(new UICommand("SaveNICsConfig", this)); //$NON-NLS-1$
         setEditHostCommand(new UICommand("EditHost", this)); //$NON-NLS-1$
+        setUpgradeHostCommand(new UICommand("Upgrade", this)); //$NON-NLS-1$
         setGoToEventsCommand(new UICommand("GoToEvents", this)); //$NON-NLS-1$
     }
 
@@ -964,9 +976,7 @@ public class HostGeneralModel extends EntityModel<VDS>
         setHasReinstallAlertInstallFailed(false);
         setHasReinstallAlertMaintenance(false);
         setHasNICsAlert(false);
-        getEditHostCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(new ArrayList<VDS>(Arrays.asList(new VDS[]{getEntity()})),
-                VDS.class,
-                VdcActionType.UpdateVds));
+
         // Check the network alert presense.
         setHasNICsAlert((getEntity().getNetConfigDirty() == null ? false : getEntity().getNetConfigDirty()));
 
@@ -982,7 +992,7 @@ public class HostGeneralModel extends EntityModel<VDS>
             setHasNoPowerManagementAlert(true);
         }
 
-        // Check the reinstall alert presense.
+        // Check the reinstall alert presence.
         if (getEntity().getStatus() == VDSStatus.NonResponsive)
         {
             setHasReinstallAlertNonResponsive(true);
@@ -999,7 +1009,20 @@ public class HostGeneralModel extends EntityModel<VDS>
         setNonOperationalReasonEntity((getEntity().getNonOperationalReason() == NonOperationalReason.NONE ? null
                 : (NonOperationalReason) getEntity().getNonOperationalReason()));
 
+        updateActionAvailability();
         setHasAnyAlert();
+    }
+
+    private void updateActionAvailability() {
+        getEditHostCommand().setIsExecutionAllowed(canExecuteCommand(VdcActionType.UpdateVds));
+        getUpgradeHostCommand().setIsExecutionAllowed(getEntity().isUpdateAvailable()
+                && canExecuteCommand(VdcActionType.UpgradeHost));
+    }
+
+    private boolean canExecuteCommand(VdcActionType actionType) {
+        return VdcActionUtils.canExecute(new ArrayList<VDS>(Arrays.asList(new VDS[] { getEntity() })),
+                VDS.class,
+                actionType);
     }
 
     public void setHasAnyAlert() {
@@ -1053,6 +1076,30 @@ public class HostGeneralModel extends EntityModel<VDS>
         else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
+        } else if (command == getUpgradeHostCommand()) {
+            upgrade();
         }
+    }
+
+    private void upgrade() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        final VDS host = getEntity();
+        Model model = createUpgradeModel(host);
+        model.initialize();
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); // $NON-NLS-1$
+        setWindow(model);
+    }
+
+    public static Model createUpgradeModel(final VDS host) {
+        Model model;
+        if (host.getVdsType() == VDSType.oVirtNode) {
+            model = new UpgradeModel(host);
+        } else {
+            model = new UpgradeConfirmationModel(host);
+        }
+        return model;
     }
 }

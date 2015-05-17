@@ -1,9 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import static org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel.createUpgradeModel;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
-import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
@@ -54,10 +54,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -76,6 +74,7 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -1509,149 +1508,10 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
     public void upgrade() {
         final VDS host = getSelectedItem();
-        if (host.getVdsType() == VDSType.oVirtNode) {
-            upgradeOvirtNode(host);
-        } else {
-            upgradeHost(host);
-        }
-    }
-
-    private void upgradeHost(VDS host) {
-        final UIConstants constants = ConstantsManager.getInstance().getConstants();
-        ConfirmationModel model = new ConfirmationModel();
-        setConfirmWindow(model);
-        model.setTitle(constants.upgradeHostsTitle());
-        model.setHelpTag(HelpTag.upgrade_host);
-        model.setHashName(HelpTag.upgrade_host.name);
-
-        if (host.getVmCount() > 0) {
-            model.setMessage(constants.areYouSureYouWantToUpgradeTheFollowingHostWithRunningVmsMsg());
-        } else {
-            model.setMessage(constants.areYouSureYouWantToUpgradeTheFollowingHostMsg());
-        }
-
-        UICommand tempVar = new UICommand("OnUpgrade", this); //$NON-NLS-1$
-        tempVar.setTitle(constants.ok());
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(constants.cancel());
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
-    }
-
-    private void upgradeOvirtNode(final VDS host) {
-        InstallModel model = new InstallModel();
-        model.setVds(host);
+        Model model = createUpgradeModel(host);
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().installHostTitle());
-        model.setHelpTag(HelpTag.upgrade_host);
-        model.setHashName(HelpTag.upgrade_host.name);
-        model.getOVirtISO().setIsAvailable(false);
-
-        model.getOverrideIpTables().setIsAvailable(false);
-        model.getActivateHostAfterInstall().setEntity(true);
-
-        model.getHostVersion().setEntity(host.getHostOs());
-        model.getHostVersion().setIsAvailable(false);
-
-        getWindow().startProgress(null);
-
-        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery(model,
-                new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
-                            InstallModel model = (InstallModel) target;
-
-                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
-                            Collections.sort(isos, new Comparator<RpmVersion>() {
-                                @Override
-                                public int compare(RpmVersion rpmV1, RpmVersion rpmV2) {
-                                return RpmVersionUtils.compareRpmParts(rpmV2.getRpmName(), rpmV1.getRpmName());
-                            }
-                            });
-                            model.getOVirtISO().setItems(isos);
-                            model.getOVirtISO().setSelectedItem(Linq.firstOrDefault(isos));
-                            model.getOVirtISO().setIsAvailable(true);
-                            model.getOVirtISO().setIsChangeable(!isos.isEmpty());
-                            model.getHostVersion().setIsAvailable(true);
-
-                            if (isos.isEmpty()) {
-                                model.setMessage(ConstantsManager.getInstance().getConstants()
-                                        .thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
-                            }
-
-                            if (host.getHostOs() == null) {
-                               model.setMessage(ConstantsManager.getInstance().getConstants()
-                                        .hostMustBeInstalledBeforeUpgrade());
-                            }
-
-                            addUpgradeCommands(model, host, isos.isEmpty());
-                            getWindow().stopProgress();
-                    }
-                }),
-                host.getId());
-    }
-
-    private void addUpgradeCommands(InstallModel model, VDS host, boolean isOnlyClose)
-    {
-
-        if (!isOnlyClose) {
-            UICommand command = UICommand.createDefaultOkUiCommand("OnUpgrade", this); //$NON-NLS-1$
-            model.getCommands().add(command);
-        }
-        model.getUserName().setEntity(host.getSshUsername());
-        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(isOnlyClose ? ConstantsManager.getInstance().getConstants().close()
-                : ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
-    }
-
-    public void onUpgrade() {
-        final VDS host = getSelectedItem();
-        if (host.getVdsType() == VDSType.oVirtNode) {
-            onUpgradeOvirtNode(host);
-        } else {
-            onUpgradeHost(host);
-        }
-
-    }
-
-    private void onUpgradeOvirtNode(final VDS host) {
-        InstallModel model = (InstallModel) getWindow();
-        if (!model.validate(true)) {
-            return;
-        }
-
-        UpgradeHostParameters params = new UpgradeHostParameters(host.getId());
-        params.setoVirtIsoFile(model.getOVirtISO().getSelectedItem().getRpmName());
-        invokeHostUpgrade(params);
-    }
-
-    private void onUpgradeHost(final VDS host) {
-        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
-        if (model.getProgress() != null) {
-            return;
-        }
-
-        model.startProgress(null);
-        setConfirmWindow(null);
-        UpgradeHostParameters params = new UpgradeHostParameters(host.getId());
-        invokeHostUpgrade(params);
-    }
-
-    private void invokeHostUpgrade(UpgradeHostParameters params) {
-        Frontend.getInstance().runAction(VdcActionType.UpgradeHost, params, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                VdcReturnValueBase returnValue = result.getReturnValue();
-                if (returnValue != null && returnValue.getSucceeded()) {
-                    cancel();
-                }
-            }
-        });
+        model.initialize();
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); // $NON-NLS-1$
     }
 
     public void restart()
@@ -2327,10 +2187,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         else if ("OnInstall".equals(command.getName())) //$NON-NLS-1$
         {
             onInstall();
-        }
-        else if ("OnUpgrade".equals(command.getName())) //$NON-NLS-1$
-        {
-            onUpgrade();
         }
         else if ("OnRestart".equals(command.getName())) //$NON-NLS-1$
         {

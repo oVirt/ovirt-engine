@@ -130,7 +130,10 @@ public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS,
         // Review the alerts and add those that are active:
         if (model.getHasUpgradeAlert()) {
             if (VdcActionUtils.canExecute(Arrays.asList(model.getEntity()), VDS.class, VdcActionType.UpgradeHost)) {
-                addTextAlert(view, messages.hostInSupportedStatusHasUpgradeAlert(), AlertType.UPDATE_AVAILABLE);
+                addTextAndLinkAlert(view,
+                        messages.hostInSupportedStatusHasUpgradeAlert(),
+                        model.getUpgradeHostCommand(),
+                        AlertType.UPDATE_AVAILABLE);
             } else {
                 addTextAlert(view, messages.hostHasUpgradeAlert(), AlertType.UPDATE_AVAILABLE);
             }

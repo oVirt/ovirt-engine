@@ -531,7 +531,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     String installHostTitle();
 
     @DefaultStringValue("Upgrade Host")
-    String upgradeHostsTitle();
+    String upgradeHostTitle();
 
     @DefaultStringValue("Are you sure?")
     String areYouSureTitle();
