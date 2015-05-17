@@ -4,9 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -19,9 +17,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
-import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends VdsBrokerCommand<P> {
 
@@ -49,7 +44,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         VmDevice vmDevice = getParameters().getVmDevice();
 
         drive.put(VdsProperties.Type, VmDeviceType.DISK.getName());
-        addAddress(drive, getParameters().getVmDevice().getAddress());
+        drive.put(VdsProperties.Address, getParameters().getAddressMap());
         drive.put(VdsProperties.INTERFACE, disk.getDiskInterface().getName());
 
         int numOfIoThreads = getParameters().getVm().getNumOfIoThreads();
@@ -127,56 +122,5 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         }
 
         return drive;
-    }
-
-    private void addAddress(Map<String, Object> map, String address) {
-        if (getParameters().getDisk().getDiskInterface() != DiskInterface.VirtIO_SCSI &&
-                getParameters().getDisk().getDiskInterface() != DiskInterface.SPAPR_VSCSI) {
-            if (StringUtils.isNotBlank(address)) {
-                map.put("address", XmlRpcStringUtils.string2Map(address));
-            }
-        } else {
-            VM vm = DbFacade.getInstance().getVmDao().get(getParameters().getVmId());
-
-            Map<DiskInterface, Integer> controllerIndexMap =
-                    ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
-
-            int virtioScsiIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
-            int sPaprVscsiIndex = controllerIndexMap.get(DiskInterface.SPAPR_VSCSI);
-
-            if (getParameters().getDisk().getDiskInterface() == DiskInterface.VirtIO_SCSI) {
-                Map<VmDevice, Integer> vmDeviceUnitMap = VmInfoBuilder.getVmDeviceUnitMapForVirtioScsiDisks(getParameters().getVm());
-
-                addAddressForScsiDisk(map, address, vmDeviceUnitMap, virtioScsiIndex, false);
-            } else if (getParameters().getDisk().getDiskInterface() == DiskInterface.SPAPR_VSCSI) {
-                Map<VmDevice, Integer> vmDeviceUnitMap = VmInfoBuilder.getVmDeviceUnitMapForSpaprScsiDisks(getParameters().getVm());
-
-                addAddressForScsiDisk(map, address, vmDeviceUnitMap, sPaprVscsiIndex, true);
-            }
-        }
-    }
-
-    private void addAddressForScsiDisk(Map<String, Object> map,
-            String address,
-            Map<VmDevice, Integer> vmDeviceUnitMap,
-            int controllerIndex,
-            boolean reserveFirstAddress) {
-        int availableUnit = VmInfoBuilder.getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstAddress);
-
-        // If address has been already set before, verify its uniqueness;
-        // Otherwise, set address according to the next available unit.
-        if (StringUtils.isNotBlank(address)) {
-            Map<String, String> addressMap = XmlRpcStringUtils.string2Map(address);
-            int unit = Integer.valueOf(addressMap.get(VdsProperties.Unit));
-            if (!vmDeviceUnitMap.containsValue(unit)) {
-                map.put(VdsProperties.Address, addressMap);
-            }
-            else {
-                map.put(VdsProperties.Address, VmInfoBuilder.createAddressForScsiDisk(controllerIndex, availableUnit));
-            }
-        }
-        else {
-            map.put(VdsProperties.Address, VmInfoBuilder.createAddressForScsiDisk(controllerIndex, availableUnit));
-        }
     }
 }
