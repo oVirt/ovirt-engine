@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
@@ -20,14 +21,12 @@ import org.ovirt.engine.core.bll.scheduling.MigrationHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -46,13 +45,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     private static final Logger log = LoggerFactory.getLogger(InitBackendServicesOnStartupBean.class);
 
     @Inject
-    private PmHealthCheckManager pmHealthCheckManager;
-
-    @Inject
-    private EngineBackupAwarenessManager engineBackupAwarenessManager;
-
-    @Inject
-    private HostDeviceManager hostDeviceManager;
+    private Instance<BackendService> services;
 
     /**
      * This method is called upon the bean creation as part
@@ -64,15 +57,10 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
         try {
             // This must be done before starting to sample the hosts status from VDSM since the sampling will turn such host from Reboot to NonResponsive
-            List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
-            // Initialize Power Management Health Check
-            pmHealthCheckManager.initialize();
-            // recover from engine failure
-            pmHealthCheckManager.recover(hosts);
-            // Initialize backup awareness manager
-            engineBackupAwarenessManager.initialize();
+            loadService(PmHealthCheckManager.class);
+            loadService(EngineBackupAwarenessManager.class);
             CommandCoordinatorUtil.initAsyncTaskManager();
-            Injector.get(ResourceManager.class);
+            loadService(ResourceManager.class);
             OvfDataUpdater.getInstance().initOvfDataUpdater();
             SchedulingManager.getInstance().setMigrationHandler(new MigrationHandler() {
 
@@ -114,7 +102,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
             SessionDataContainer.getInstance().cleanupEngineSessionsOnStartup();
 
-            hostDeviceManager.init();
+            loadService(HostDeviceManager.class);
 
             new DwhHeartBeat().init();
 
@@ -124,5 +112,13 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         }
     }
 
-
+    /**
+     * Load CDI beans of type {@code BackendService} by simply getting their reference from
+     * the bean manager. If the instance doesn't exist (which is the assumption) it will be created
+     * and post-constructed (using {@code @PostConstruct} annotated method)
+     * @param service a provider of {@code BackendService} instances. see {@linkplain Instance}
+     */
+    private void loadService(Class<? extends BackendService> service) {
+        log.info("Start {} ", services.select(service).get());
+    }
 }

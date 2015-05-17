@@ -4,10 +4,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -24,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * raise alerts for no backup or too old backup.
  */
 @Singleton
-public class EngineBackupAwarenessManager {
+public class EngineBackupAwarenessManager implements BackendService {
 
     private enum BackupScope {
         DB("db"),
@@ -51,7 +53,8 @@ public class EngineBackupAwarenessManager {
     /**
      * Initializes the backup h Check Manager
      */
-    public void initialize() {
+    @PostConstruct
+    private void initialize() {
         log.info("Start initializing {}", getClass().getSimpleName());
         Integer backupCheckPeriodInHours = Config.<Integer>getValue(ConfigValues.BackupCheckPeriodInHours);
         // disable feature if value is negative

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.pm.PowerManagementHelper.AgentsIterator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -27,6 +29,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -41,30 +44,35 @@ import org.slf4j.LoggerFactory;
  * raise alerts for failed operations.
  */
 @Singleton
-public class PmHealthCheckManager {
+public class PmHealthCheckManager implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(PmHealthCheckManager.class);
     private boolean active = false;
 
     @Inject
     private AuditLogDirector auditLogDirector;
+    @Inject
+    private VdsDAO vdsDAO;
 
     /**
      * Initializes the PM Health Check Manager
      */
-    public void initialize() {
+    @PostConstruct
+    private void initialize() {
         if(Config.<Boolean>getValue(ConfigValues.PMHealthCheckEnabled)) {
             log.info("Start initializing {}", getClass().getSimpleName());
             Integer pmHealthCheckInterval = Config.<Integer> getValue(ConfigValues.PMHealthCheckIntervalInSec);
             SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
                     "pmHealthCheck",
-                    new Class[]{},
-                    new Object[]{},
+                    new Class[] {},
+                    new Object[] {},
                     pmHealthCheckInterval,
                     pmHealthCheckInterval,
                     TimeUnit.SECONDS);
-            log.info("Finished initializing {}", getClass().getSimpleName());
         }
+        // recover from engine failure
+        recover(vdsDAO.getAll());
+        log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
     @OnTimerMethodAnnotation("pmHealthCheck")

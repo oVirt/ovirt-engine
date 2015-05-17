@@ -6,11 +6,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -31,7 +33,7 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
 @ApplicationScoped
-public class HostDeviceManager {
+public class HostDeviceManager implements BackendService {
 
     @Inject
     private VdsDynamicDAO hostDynamicDao;
@@ -48,7 +50,8 @@ public class HostDeviceManager {
     @Inject
     private BackendInternal backend;
 
-    public void init() {
+    @PostConstruct
+    private void init() {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         // It is sufficient to refresh only the devices of 'UP' hosts since other hosts
         // will have their devices refreshed in InitVdsOnUpCommand
