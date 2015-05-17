@@ -17,6 +17,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
     public static final String MEM_USAGE = "MEM_USAGE";
     public static final String CPU_USAGE = "CPU_USAGE";
     public static final String NETWORK_USAGE = "NETWORK_USAGE";
+    public static final String UPDATE_AVAILABLE = "UPDATE_AVAILABLE";
 
     public VdsConditionFieldAutoCompleter() {
         super();
@@ -41,6 +42,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         mVerbs.add("TYPE");
         mVerbs.add(DATACENTER);
         mVerbs.add("ARCHITECTURE");
+        mVerbs.add(UPDATE_AVAILABLE);
         // mVerbs.Add("NOTE", "NOTE");
         buildCompletions();
         mVerbs.add("ID");
@@ -67,6 +69,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         getTypeDictionary().put(DATACENTER, String.class);
         getTypeDictionary().put("ID", UUID.class);
         getTypeDictionary().put("ARCHITECTURE", ArchitectureType.class);
+        getTypeDictionary().put(UPDATE_AVAILABLE, Boolean.class);
         // mTypeDict.Add("NOTE", typeof(string));
         // building the ColumnName Dict
         columnNameDict.put(NAME, "vds_name");
@@ -91,6 +94,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         columnNameDict.put(DATACENTER, "storage_pool_name");
         columnNameDict.put("ID", "vds_id");
         columnNameDict.put("ARCHITECTURE", "architecture");
+        columnNameDict.put(UPDATE_AVAILABLE, "is_update_available");
         // mColumnNameDict.Add("NOTE", "note");
         // Building the validation dict
         buildBasicValidationTable();
