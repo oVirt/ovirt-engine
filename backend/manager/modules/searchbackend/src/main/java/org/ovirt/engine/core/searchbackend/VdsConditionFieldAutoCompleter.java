@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.VDSNiceType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 
@@ -13,6 +14,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
     public static final String CLUSTER = "CLUSTER";
     public static final String DATACENTER = "DATACENTER";
     public static final String STATUS = "STATUS";
+    public static final String EXTERNAL_STATUS = "EXTERNAL_STATUS";
     public static final String ACTIVE_VMS = "ACTIVE_VMS";
     public static final String MEM_USAGE = "MEM_USAGE";
     public static final String CPU_USAGE = "CPU_USAGE";
@@ -24,6 +26,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         mVerbs.add(NAME);
         mVerbs.add("COMMENT");
         mVerbs.add(STATUS);
+        mVerbs.add(EXTERNAL_STATUS);
         mVerbs.add(CLUSTER);
         mVerbs.add(ADDRESS);
         mVerbs.add(CPU_USAGE);
@@ -50,6 +53,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         getTypeDictionary().put(NAME, String.class);
         getTypeDictionary().put("COMMENT", String.class);
         getTypeDictionary().put(STATUS, VDSStatus.class);
+        getTypeDictionary().put(EXTERNAL_STATUS, ExternalStatus.class);
         getTypeDictionary().put(CLUSTER, String.class);
         getTypeDictionary().put(ADDRESS, String.class);
         getTypeDictionary().put(CPU_USAGE, Integer.class);
@@ -75,6 +79,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         columnNameDict.put(NAME, "vds_name");
         columnNameDict.put("COMMENT", "free_text_comment");
         columnNameDict.put(STATUS, "status");
+        columnNameDict.put(EXTERNAL_STATUS, "external_status");
         columnNameDict.put(CLUSTER, "vds_group_name");
         columnNameDict.put(ADDRESS, "host_name");
         columnNameDict.put(CPU_USAGE, "usage_cpu_percent");
@@ -119,6 +124,9 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         IConditionValueAutoCompleter retval = null;
         if (STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(VDSStatus.class);
+        }
+        else if (EXTERNAL_STATUS.equals(fieldName)) {
+            retval = new EnumValueAutoCompleter(ExternalStatus.class);
         }
         else if ("TYPE".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(VDSNiceType.class);
