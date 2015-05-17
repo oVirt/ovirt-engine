@@ -8,6 +8,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -110,7 +111,7 @@ public class BackendVmPoolResource
             final VM vm = mapToVM(map(entity));
 
             if (incoming.isSetTemplate()) {
-                vm.setVmtGuid(new Guid(incoming.getTemplate().getId()));
+                vm.setVmtGuid(getTempalteId(incoming.getTemplate()));
             } else {
                 final VM existing = currentVmCount > 0
                                 ? getEntity(VM.class,
@@ -139,6 +140,23 @@ public class BackendVmPoolResource
             parameters.setStorageDomainId(getStorageDomainId(vm.getVmtGuid()));
             return parameters;
         }
+    }
+
+    private Guid getTempalteId(Template template) {
+        Guid result = null;
+        if (template.isSetId()) {
+            result = new Guid(template.getId());
+        } else if (template.isSetName()) {
+            result = lookupTemplateByName(template.getName()).getId();
+        }
+        return result;
+    }
+
+    private VmTemplate lookupTemplateByName(String name) {
+        return getEntity(VmTemplate.class,
+                VdcQueryType.GetVmTemplate,
+                new GetVmTemplateParameters(name),
+                "GetVmTemplate");
     }
 
     @Override
