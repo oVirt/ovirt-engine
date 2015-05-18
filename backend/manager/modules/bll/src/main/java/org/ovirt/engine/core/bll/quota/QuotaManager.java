@@ -5,9 +5,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
@@ -25,11 +27,16 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QuotaManager {
-    private static final QuotaManager INSTANCE = new QuotaManager();
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
+public class QuotaManager implements BackendService {
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Logger log = LoggerFactory.getLogger(QuotaManager.class);
     private HashMap<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<>();
@@ -37,13 +44,25 @@ public class QuotaManager {
     private final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
     private final List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<>();
     private final List<Integer> nonCountableQutoaVmStatusesList = new ArrayList<>();
+    @Inject
+    private SchedulerUtilQuartzImpl schedulerUtil;
 
-    // Forbid the creation of new instances outside this class
-    private QuotaManager() {
+    // constructor is exposed only for Java test. //TODO remove it when arquillian test used.
+    protected QuotaManager() {
     }
 
-    public static QuotaManager getInstance() {
-        return INSTANCE;
+    @PostConstruct
+    private void init() {
+        int quotaCacheIntervalInMinutes = Config.<Integer>getValue(ConfigValues.QuotaCacheIntervalInMinutes);
+        schedulerUtil.scheduleAFixedDelayJob(
+                this,
+                "updateQuotaCache",
+                new Class[] {},
+                new Object[] {},
+                1,
+                quotaCacheIntervalInMinutes,
+                TimeUnit.MINUTES
+        );
     }
 
     protected QuotaManagerAuditLogger getQuotaManagerAuditLogger() {

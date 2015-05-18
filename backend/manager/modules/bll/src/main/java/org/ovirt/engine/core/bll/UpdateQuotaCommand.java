@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -50,7 +49,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
     }
 
     protected void removeQuotaFromCache() {
-        QuotaManager.getInstance().removeQuotaFromCache(getQuota().getStoragePoolId(), getQuota().getId());
+        getQuotaManager().removeQuotaFromCache(getQuota().getStoragePoolId(), getQuota().getId());
     }
 
     @Override
@@ -94,7 +93,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
 
     protected void afterUpdate() {
         boolean newSizeUnderCurrentConsumption =
-                QuotaManager.getInstance().isStorageQuotaExceeded(getQuota().getId());
+                getQuotaManager().isStorageQuotaExceeded(getQuota().getId());
 
         if (newSizeUnderCurrentConsumption) {
             AuditLogableBase logable = new AuditLogableBase();

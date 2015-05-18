@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.TransactionRolledbackLocalException;
+import javax.inject.Inject;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -121,6 +122,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private TransactionScopeOption scope;
     private TransactionScopeOption endActionScope;
     private List<QuotaConsumptionParameter> consumptionParameters;
+    @Inject
+    private QuotaManager quotaManager;
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
     /** Object which is representing a lock that some commands will acquire */
@@ -2123,7 +2126,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected QuotaManager getQuotaManager() {
-        return QuotaManager.getInstance();
+        return quotaManager;
     }
 
     protected List<SPMAsyncTaskHandler> getTaskHandlers() {

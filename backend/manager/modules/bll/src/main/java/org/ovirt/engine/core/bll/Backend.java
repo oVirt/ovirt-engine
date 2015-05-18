@@ -265,11 +265,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         loadService(VmPoolMonitor.class);
         loadService(AutoStartVmsRunner.class);
+        loadService(QuotaManager.class);
 
-        int quotaCacheIntervalInMinutes = Config.<Integer> getValue(ConfigValues.QuotaCacheIntervalInMinutes);
-        SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(QuotaManager.getInstance(),
-                "updateQuotaCache", new Class[]{}, new Object[]{},
-                1, quotaCacheIntervalInMinutes, TimeUnit.MINUTES);
         //initializes attestation
         initAttestation();
         updatePredefinedIcons();

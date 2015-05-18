@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
-import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
@@ -83,7 +82,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             removeVmStatelessImages();
         }
 
-        QuotaManager.getInstance().rollbackQuotaByVmId(getVmId());
+        getQuotaManager().rollbackQuotaByVmId(getVmId());
         removeStatelessVmUnmanagedDevices();
 
         boolean vmHasDirectPassthroughDevices = releaseUsedHostDevices();

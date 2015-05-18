@@ -81,7 +81,7 @@ public class QuotaManagerTest {
     );
 
     @Spy
-    private QuotaManager quotaManager = QuotaManager.getInstance();
+    private QuotaManager quotaManager = new QuotaManager();
     @Spy
     private QuotaManagerAuditLogger quotaManagerAuditLogger = quotaManager.getQuotaManagerAuditLogger();
 

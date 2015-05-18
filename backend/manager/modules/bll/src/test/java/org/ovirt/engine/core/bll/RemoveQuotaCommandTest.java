@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -14,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -40,6 +42,8 @@ public class RemoveQuotaCommandTest {
 
     @Mock
     private StoragePoolDAO storagePoolDAO;
+    @Mock
+    private QuotaManager quotaManager;
 
     /**
      * The command under test.
@@ -51,6 +55,7 @@ public class RemoveQuotaCommandTest {
         mockQuotaDAO();
         mockVmDAO();
         mockStoragePoolDAO();
+        mockInjections();
     }
 
     private void mockVmDAO() {
@@ -72,6 +77,10 @@ public class RemoveQuotaCommandTest {
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(mockStoragePool());
     }
 
+    private void mockInjections() {
+        doNothing().when(quotaManager).removeQuotaFromCache(any(Guid.class), any(Guid.class));
+    }
+
     @Test
     public void testExecuteCommand() throws Exception {
         RemoveQuotaCommand removeQuotaCommand = createCommand();
@@ -91,6 +100,7 @@ public class RemoveQuotaCommandTest {
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
         doReturn(quotaDAO).when(command).getQuotaDAO();
         doReturn(vmDAO).when(command).getVmDAO();
+        doReturn(quotaManager).when(command).getQuotaManager();
         return command;
     }
 

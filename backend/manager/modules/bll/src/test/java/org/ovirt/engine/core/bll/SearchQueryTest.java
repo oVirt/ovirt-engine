@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -13,6 +17,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -300,8 +305,15 @@ public class SearchQueryTest extends DbDependentTestBase {
         return query.toString();
     }
 
+    private void mockInjections(SearchQuery<SearchParameters> searchQuery) {
+        QuotaManager quotaManager = mock(QuotaManager.class);
+        doNothing().when(quotaManager).updateUsage(anyListOf(Quota.class));
+        when(searchQuery.getQuotaManager()).thenReturn(quotaManager);
+    }
+
     private SearchQuery<SearchParameters> spySearchQuery(SearchParameters searchParam) {
         SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        mockInjections(searchQuery);
         return searchQuery;
     }
 

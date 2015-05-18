@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -200,7 +199,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             if (dest != null) {
                 quotasToRemoveFromCache.add(dest.getQuotaId());
             }
-            QuotaManager.getInstance().removeQuotaFromCache(getStoragePoolId(), quotasToRemoveFromCache);
+            getQuotaManager().removeQuotaFromCache(getStoragePoolId(), quotasToRemoveFromCache);
         }
     }
 

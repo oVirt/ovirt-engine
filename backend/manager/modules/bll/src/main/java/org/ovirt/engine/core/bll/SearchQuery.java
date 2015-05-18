@@ -54,8 +54,12 @@ import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
+import javax.inject.Inject;
+
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static final HashMap<String, QueryData> mQueriesCache = new HashMap<>();
+    @Inject
+    private QuotaManager quotaManager;
 
     public SearchQuery(P parameters) {
         super(parameters);
@@ -294,9 +298,13 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getStorageDomainDao(), true);
     }
 
+    public QuotaManager getQuotaManager() {
+        return quotaManager;
+    }
+
     private List<Quota> searchQuota() {
         List<Quota> quotaList = genericSearch(getDbFacade().getQuotaDao(), true);
-        QuotaManager.getInstance().updateUsage(quotaList);
+        getQuotaManager().updateUsage(quotaList);
         return quotaList;
     }
 
