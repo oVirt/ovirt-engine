@@ -73,8 +73,4 @@ public enum GlusterVolumeType {
     public boolean isDispersedType() {
         return value().contains("DISPERSE");
     }
-
-    public boolean isDistributedDispersedType() {
-        return value().contains("DISTRIBUTED_DISPERSE");
-    }
 }

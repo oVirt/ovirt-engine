@@ -192,6 +192,12 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         boolean allowRemove = true;
         boolean allowReplace = true;
         boolean allowAdvanced = true;
+        boolean allowAdd = true;
+
+        if (volumeEntity == null || volumeEntity.getVolumeType().isDispersedType()) {
+            allowRemove = false;
+            allowAdd = false;
+        }
 
         if (volumeEntity == null || getSelectedItems() == null || getSelectedItems().size() == 0) {
             allowRemove = false;
@@ -227,6 +233,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         getRemoveBricksCommand().setIsExecutionAllowed(allowRemove);
         getReplaceBrickCommand().setIsExecutionAllowed(allowReplace);
         getBrickAdvancedDetailsCommand().setIsExecutionAllowed(allowAdvanced);
+        getAddBricksCommand().setIsExecutionAllowed(allowAdd);
     }
 
     public void updateRemoveBrickActionsAvailability(GlusterVolumeEntity volumeEntity) {

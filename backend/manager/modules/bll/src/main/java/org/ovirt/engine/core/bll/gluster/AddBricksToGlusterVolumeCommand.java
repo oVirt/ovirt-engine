@@ -76,10 +76,6 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ADD_BRICK_TO_DISPERSE_VOLUME_NOT_SUPPORTED);
             return false;
         }
-        if (getGlusterVolume().getVolumeType().isDistributedDispersedType()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ADD_BRICK_TO_DISTRIBUTED_DISPERSE_VOLUME_NOT_SUPPORTED);
-            return false;
-        }
 
         return updateBrickServerAndInterfaceNames(getParameters().getBricks(), true)
                 && validateDuplicateBricks(getParameters().getBricks());
