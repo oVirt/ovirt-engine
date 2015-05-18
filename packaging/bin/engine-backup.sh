@@ -740,6 +740,7 @@ backupDB() {
 			--disable-triggers \
 			--format="${format}" \
 			--no-owner \
+			--no-privileges \
 			2> "${pgdump_log}" \
 			| "${compressor}" > "${file}" \
 			|| logdie "${compressor} failed compressing the backup of database ${database}"
@@ -750,6 +751,7 @@ backupDB() {
 			--disable-triggers \
 			--format="${format}" \
 			--no-owner \
+			--no-privileges \
 			2> "${pgdump_log}" \
 			> "${file}" \
 			|| logdie "Database ${database} backup failed"
@@ -989,11 +991,11 @@ restoreDB() {
 		fi
 	elif [ "${format}" = "custom" ]; then
 		if [ -z "${compressor}" ]; then
-			pg_cmd pg_restore --no-owner -j "${jobsnum}" "${backupfile}" > "${pgrestorelog}"  2>&1
+			pg_cmd pg_restore --no-owner --no-privileges -j "${jobsnum}" "${backupfile}" > "${pgrestorelog}"  2>&1
 		else
 			# Requires the compressor to support '-d'. All our current ones do.
 			"${compressor}" -d < "${backupfile}" | \
-				pg_cmd pg_restore --no-owner > "${pgrestorelog}"  2>&1
+				pg_cmd pg_restore --no-owner --no-privileges > "${pgrestorelog}"  2>&1
 		fi
 	else
 		logdie "Unsupported format ${format}"
