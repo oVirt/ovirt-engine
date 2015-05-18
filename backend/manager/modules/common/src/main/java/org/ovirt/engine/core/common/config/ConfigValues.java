@@ -466,6 +466,21 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     VdsLoadBalancingIntervalInMinutes,
+
+    //AffinityRulesEnforcementManager
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1")
+    AffinityRulesEnforcementManagerRegularInterval,
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("15")
+    AffinityRulesEnforcementManagerStandbyInterval,
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1")
+    AffinityRulesEnforcementManagerInitialDelay,
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("5")
+    AffinityRulesEnforcementManagerMaximumMigrationTries,
+
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     VdsHaReservationIntervalInMinutes,
