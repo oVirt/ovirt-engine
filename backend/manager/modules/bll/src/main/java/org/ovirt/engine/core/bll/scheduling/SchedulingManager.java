@@ -373,7 +373,7 @@ public class SchedulingManager {
                     cluster.getName());
             // release pending threads (requests) and current one (+1)
             clusterLockMap.get(cluster.getId())
-                    .release(Config.<Integer> getValue(ConfigValues.SchedulerOverBookingThreshold) + 1);
+                    .release(Config.<Integer>getValue(ConfigValues.SchedulerOverBookingThreshold) + 1);
         }
     }
 
@@ -786,12 +786,12 @@ public class SchedulingManager {
     public static void enableLoadBalancer() {
         if (Config.<Boolean> getValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start scheduling to enable vds load balancer");
-            SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(instance,
+            Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(instance,
                     "performLoadBalancing",
                     new Class[] {},
                     new Object[] {},
-                    Config.<Integer> getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
-                    Config.<Integer> getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
+                    Config.<Integer>getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
+                    Config.<Integer>getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
                     TimeUnit.MINUTES);
             log.info("Finished scheduling to enable vds load balancer");
         }
@@ -802,7 +802,7 @@ public class SchedulingManager {
         if (Config.<Boolean> getValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start HA Reservation check");
             Integer interval = Config.<Integer> getValue(ConfigValues.VdsHaReservationIntervalInMinutes);
-            SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(instance,
+            Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(instance,
                     "performHaResevationCheck",
                     new Class[] {},
                     new Object[] {},

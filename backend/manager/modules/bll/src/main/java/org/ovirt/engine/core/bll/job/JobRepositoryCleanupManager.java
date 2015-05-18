@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class JobRepositoryCleanupManager {
         failedJobTime = Config.<Integer> getValue(ConfigValues.FailedJobCleanupTimeInMinutes).intValue();
 
         Integer cleanupFrequency = Config.<Integer> getValue(ConfigValues.JobCleanupRateInMinutes);
-        SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
+        Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(this,
                 "completed_jobs_cleanup",
                 new Class[] {},
                 new Object[] {},

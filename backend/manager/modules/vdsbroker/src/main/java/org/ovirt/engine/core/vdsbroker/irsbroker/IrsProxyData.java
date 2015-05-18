@@ -68,6 +68,7 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -150,17 +151,21 @@ public class IrsProxyData {
     public IrsProxyData(Guid storagePoolId) {
         _storagePoolId = storagePoolId;
         int storagePoolRefreshTime = Config.<Integer> getValue(ConfigValues.StoragePoolRefreshTimeInSeconds);
-        storagePoolRefreshJobId = SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
+        storagePoolRefreshJobId = getSchedulUtil().scheduleAFixedDelayJob(this,
                 "_updatingTimer_Elapsed", new Class[0], new Object[0], storagePoolRefreshTime,
                 storagePoolRefreshTime, TimeUnit.SECONDS);
         domainRecoverOnHostJobId =
-                SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
+                getSchedulUtil().scheduleAFixedDelayJob(this,
                         "hostsStorageConnectionsAndPoolMetadataRefresh",
                         new Class[0],
                         new Object[0],
-                        Config.<Integer> getValue(ConfigValues.HostStorageConnectionAndPoolRefreshTimeInSeconds),
+                        Config.<Integer>getValue(ConfigValues.HostStorageConnectionAndPoolRefreshTimeInSeconds),
                         storagePoolRefreshTime,
                         TimeUnit.SECONDS);
+    }
+
+    protected SchedulerUtil getSchedulUtil() {
+        return Injector.get(SchedulerUtilQuartzImpl.class);
     }
 
     @OnTimerMethodAnnotation("_updatingTimer_Elapsed")
@@ -1369,8 +1374,8 @@ public class IrsProxyData {
         log.warn("domain '{}' in problem. vds: '{}'", getDomainIdTuple(domainId), vdsName);
         Class[] inputType = new Class[] { Guid.class };
         Object[] inputParams = new Object[] { domainId };
-        String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimer", inputType,
-                inputParams, Config.<Integer> getValue(ConfigValues.StorageDomainFailureTimeoutInMinutes),
+        String jobId = getSchedulUtil().scheduleAOneTimeJob(this, "onTimer", inputType,
+                inputParams, Config.<Integer>getValue(ConfigValues.StorageDomainFailureTimeoutInMinutes),
                 TimeUnit.MINUTES);
         clearTimer(domainId);
         _timers.put(domainId, jobId);
@@ -1641,7 +1646,7 @@ public class IrsProxyData {
     private void clearTimer(Guid domainId) {
         String jobId = _timers.remove(domainId);
         if (jobId != null) {
-            SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
+            getSchedulUtil().deleteJob(jobId);
         }
     }
 
@@ -1710,7 +1715,7 @@ public class IrsProxyData {
         log.info("clear domain error-timers for pool '{}'.", _storagePoolId);
         for (String jobId : _timers.values()) {
             try {
-                SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
+                getSchedulUtil().deleteJob(jobId);
             } catch (Exception e) {
                 log.warn("failed deleting job '{}'.", jobId);
             }
@@ -1739,8 +1744,8 @@ public class IrsProxyData {
         synchronized (syncObj) {
             log.info("IrsProxyData::disposing");
             resetIrs();
-            SchedulerUtilQuartzImpl.getInstance().deleteJob(storagePoolRefreshJobId);
-            SchedulerUtilQuartzImpl.getInstance().deleteJob(domainRecoverOnHostJobId);
+            getSchedulUtil().deleteJob(storagePoolRefreshJobId);
+            getSchedulUtil().deleteJob(domainRecoverOnHostJobId);
             _disposed = true;
         }
     }

@@ -23,7 +23,7 @@ public class GlusterJobsManager {
 
         log.debug("Initializing Gluster Jobs Manager");
 
-        SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
+        SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
 
         scheduler.scheduleAFixedDelayJob(GlusterSyncJob.getInstance(),
                 "refreshLightWeightData",

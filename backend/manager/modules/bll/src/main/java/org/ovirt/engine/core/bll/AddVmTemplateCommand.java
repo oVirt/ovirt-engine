@@ -81,15 +81,20 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+
+import javax.inject.Inject;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T>
         implements QuotaStorageDependent, QuotaVdsDependent {
 
+    @Inject
+    private SchedulerUtilQuartzImpl schedulerUtil;
     private final List<DiskImage> mImages = new ArrayList<>();
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
@@ -271,7 +276,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             if (jobId != null) {
                 log.info("Cancelling current running update for vms for base template id '{}'", getParameters().getBaseTemplateId());
                 try {
-                    SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
+                    getSchedulUtil().deleteJob(jobId);
                 } catch (Exception e) {
                     log.warn("Failed deleting job '{}' at cancelRecoveryJob", jobId);
                 }
@@ -813,7 +818,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // in case of new version of a template, update vms marked to use latest
         if (isTemplateVersion()) {
-            String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "updateVmVersion", new Class[0],
+            String jobId = getSchedulUtil().scheduleAOneTimeJob(this, "updateVmVersion", new Class[0],
                     new Object[0], 0, TimeUnit.SECONDS);
             updateVmsJobIdMap.put(getParameters().getBaseTemplateId(), jobId);
         }
@@ -1027,5 +1032,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             vmSnapshotId = Guid.newGuid();
         }
         return vmSnapshotId;
+    }
+
+    private SchedulerUtil getSchedulUtil() {
+        return schedulerUtil;
     }
 }

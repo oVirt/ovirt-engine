@@ -20,6 +20,8 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 public final class StoragePoolStatusHandler {
     private static final Logger log = LoggerFactory.getLogger(StoragePoolStatusHandler.class);
 
@@ -27,14 +29,16 @@ public final class StoragePoolStatusHandler {
 
     private Guid poolId;
     private String timerId;
+    @Inject
+    private SchedulerUtilQuartzImpl schedulerUtil;
 
     private StoragePoolStatusHandler(Guid poolId) {
         this.poolId = poolId;
         timerId = null;
     }
 
-    private SchedulerUtil getScheduler() {
-        return SchedulerUtilQuartzImpl.getInstance();
+    protected SchedulerUtil getScheduler() {
+        return schedulerUtil;
     }
 
     private StoragePoolStatusHandler scheduleTimeout() {

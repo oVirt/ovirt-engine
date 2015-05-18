@@ -46,6 +46,7 @@ import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -101,7 +102,7 @@ public class IsoDomainListSyncronizer {
         repoStorageDom = DbFacade.getInstance().getRepoFileMetaDataDao();
         providerDao = DbFacade.getInstance().getProviderDao();
         isoDomainRefreshRate = Config.<Integer> getValue(ConfigValues.AutoRepoDomainRefreshTime) * MIN_TO_MILLISECONDS;
-        SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
+        Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(this,
                 "fetchIsoDomains",
                 new Class[] {},
                 new Object[] {},

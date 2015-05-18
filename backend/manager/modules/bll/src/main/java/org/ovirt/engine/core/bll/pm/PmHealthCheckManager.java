@@ -30,6 +30,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -62,7 +63,7 @@ public class PmHealthCheckManager implements BackendService {
         if(Config.<Boolean>getValue(ConfigValues.PMHealthCheckEnabled)) {
             log.info("Start initializing {}", getClass().getSimpleName());
             Integer pmHealthCheckInterval = Config.<Integer> getValue(ConfigValues.PMHealthCheckIntervalInSec);
-            SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
+            Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(this,
                     "pmHealthCheck",
                     new Class[] {},
                     new Object[] {},

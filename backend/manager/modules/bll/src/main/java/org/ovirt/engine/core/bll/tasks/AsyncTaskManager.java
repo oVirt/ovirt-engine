@@ -37,6 +37,7 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -96,7 +97,7 @@ public final class AsyncTaskManager {
         this.coco = coco;
         _tasks = new ConcurrentHashMap<>();
 
-        SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
+        SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
         scheduler.scheduleAFixedDelayJob(this, "_timer_Elapsed", new Class[]{},
                 new Object[]{}, Config.<Integer>getValue(ConfigValues.AsyncTaskPollingRate),
                 Config.<Integer>getValue(ConfigValues.AsyncTaskPollingRate), TimeUnit.SECONDS);

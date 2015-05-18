@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AutoRecoverDAO;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.NetworkMonitoringHelper;
@@ -49,7 +50,7 @@ public class AutoRecoveryManager {
      */
     void initialize() {
         log.info("Start initializing {}", getClass().getSimpleName());
-        SchedulerUtilQuartzImpl.getInstance().scheduleACronJob(this, "onTimer",
+        Injector.get(SchedulerUtilQuartzImpl.class).scheduleACronJob(this, "onTimer",
                 new Class<?>[] {}, new Object[] {}, Config.<String> getValue(ConfigValues.AutoRecoverySchedule));
         log.info("Finished initializing {}", getClass().getSimpleName());
     }

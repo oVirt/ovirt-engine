@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -38,7 +39,7 @@ public class OvfDataUpdater {
     }
 
     public void initOvfDataUpdater() {
-        SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
+        SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
         scheduler.scheduleAFixedDelayJob(this, "ovfUpdate_timer", new Class[] {},
                 new Object[] {}, Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
                 Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes), TimeUnit.MINUTES);

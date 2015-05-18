@@ -16,8 +16,6 @@ import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
 
 @Singleton
 public class SchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl {
-    // for backward compatibility.
-    private static SchedulerUtil instance;
 
     /**
      * This method is called upon the bean creation as part
@@ -33,7 +31,6 @@ public class SchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl {
      * retrieving the quartz scheduler from the factory.
      */
     public void setup() {
-        instance = this;
         try {
             SchedulerFactory sf = new StdSchedulerFactory();
             sched = sf.getScheduler();
@@ -56,23 +53,6 @@ public class SchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl {
             log.error("Failed to shutdown Quartz service: {}", e.getMessage());
             log.debug("Exception", e);
         }
-    }
-
-    /**
-     * @deprecated prefer injecting with
-     * <pre>
-     *     {@code @Inject                        }<br>
-     *     {@code SchedulerUtilQuartzImpl taskScheduler;    }
-     * </pre>
-     * or fetching one using {@linkplain org.ovirt.engine.di.Injector}
-     * <pre>
-     *     {@code Injector.get(SchedulerUtilQuartzImpl.class)        }
-     * </pre>
-     * @return a {@code SchedulerUtilQuartzImpl} instance
-     */
-    @Deprecated
-    public static SchedulerUtil getInstance() {
-        return instance;
     }
 
     @Override

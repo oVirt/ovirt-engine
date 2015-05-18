@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class AuditLogCleanupManager {
                 calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY));
 
         log.info("Setting audit cleanup manager to run at '{}'", cronExpression);
-        SchedulerUtilQuartzImpl.getInstance().scheduleACronJob(this, "onTimer", new Class[] {}, new Object[] {},
+        Injector.get(SchedulerUtilQuartzImpl.class).scheduleACronJob(this, "onTimer", new Class[] {}, new Object[] {},
                 cronExpression);
         log.info("Finished initializing {}", getClass().getSimpleName());
     }

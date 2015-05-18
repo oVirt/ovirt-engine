@@ -131,7 +131,7 @@ public class VdsManager {
     }
 
     public void scheduleJobs() {
-        SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
+        SchedulerUtil sched = getSchedulUtil();
         int refreshRate = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
 
         // start with refresh statistics
@@ -165,6 +165,10 @@ public class VdsManager {
                 rateInMinutes,
                 rateInMinutes,
                 TimeUnit.MINUTES));
+    }
+
+    private SchedulerUtil getSchedulUtil() {
+        return Injector.get(SchedulerUtilQuartzImpl.class);
     }
 
     private void initVdsBroker() {
@@ -388,7 +392,7 @@ public class VdsManager {
                     ex.getMessage());
             log.debug("Exception", ex);
             final int VDS_RECOVERY_TIMEOUT_IN_MINUTES = Config.<Integer> getValue(ConfigValues.VdsRecoveryTimeoutInMinutes);
-            String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimerHandleVdsRecovering", new Class[0],
+            String jobId = getSchedulUtil().scheduleAOneTimeJob(this, "onTimerHandleVdsRecovering", new Class[0],
                     new Object[0], VDS_RECOVERY_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES);
             recoveringJobIdMap.put(cachedVds.getId(), jobId);
         }
@@ -592,7 +596,7 @@ public class VdsManager {
             resourceManager.runVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
 
-            SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
+            SchedulerUtil sched = getSchedulUtil();
             sched.scheduleAOneTimeJob(
                     this,
                     "recoverFromError",
@@ -814,7 +818,7 @@ public class VdsManager {
     public void dispose() {
         log.info("vdsManager::disposing");
         for (String jobId : registeredJobs) {
-            SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
+            getSchedulUtil().deleteJob(jobId);
         }
 
         vdsProxy.close();
@@ -963,7 +967,7 @@ public class VdsManager {
         if (jobId != null) {
             log.info("Cancelling the recovery from crash timer for VDS '{}' because vds started initializing", vdsId);
             try {
-                SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
+                Injector.get(SchedulerUtilQuartzImpl.class).deleteJob(jobId);
             } catch (Exception e) {
                 log.warn("Failed deleting job '{}' at cancelRecoveryJob: {}", jobId, e.getMessage());
                 log.debug("Exception", e);

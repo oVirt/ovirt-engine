@@ -28,6 +28,9 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class EngineBackupAwarenessManager implements BackendService {
 
+    @Inject
+    private SchedulerUtilQuartzImpl schedulerUtil;
+
     private enum BackupScope {
         DB("db"),
         FILES("files");
@@ -59,10 +62,10 @@ public class EngineBackupAwarenessManager implements BackendService {
         Integer backupCheckPeriodInHours = Config.<Integer>getValue(ConfigValues.BackupCheckPeriodInHours);
         // disable feature if value is negative
         if (backupCheckPeriodInHours > 0) {
-            SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
+            schedulerUtil.scheduleAFixedDelayJob(this,
                     "backupCheck",
-                    new Class[] { },
-                    new Object[] { },
+                    new Class[] {},
+                    new Object[] {},
                     backupCheckPeriodInHours,
                     backupCheckPeriodInHours,
                     TimeUnit.HOURS);

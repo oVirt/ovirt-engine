@@ -255,10 +255,11 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         initExecutionMessageDirector();
 
-        SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(SessionDataContainer.getInstance(),
-                    "cleanExpiredUsersSessions", new Class[] {}, new Object[] {},
-                    1,
-                    1, TimeUnit.MINUTES);
+        taskSchedulers.select(SchedulerUtilQuartzImpl.class).get()
+                .scheduleAFixedDelayJob(SessionDataContainer.getInstance(),
+                "cleanExpiredUsersSessions", new Class[] {}, new Object[] {},
+                1,
+                1, TimeUnit.MINUTES);
 
         // Set start-up time
         _startedAt = DateTime.getNow();
