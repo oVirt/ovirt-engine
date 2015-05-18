@@ -5,9 +5,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -27,27 +29,31 @@ import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * This class represent a job which is responsible for running HA VMs
  */
-public class AutoStartVmsRunner {
+@Singleton
+public class AutoStartVmsRunner implements BackendService{
 
     private static final Logger log = LoggerFactory.getLogger(AutoStartVmsRunner.class);
     /** How long to wait before rerun HA VM that failed to start (not because of lock acquisition) */
     private static final int RETRY_TO_RUN_HA_VM_INTERVAL =
             Config.<Integer> getValue(ConfigValues.RetryToRunAutoStartVmIntervalInSeconds);
-    private static AutoStartVmsRunner instance = new AutoStartVmsRunner();
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    @Inject
+    private AuditLogDirector auditLogDirector;
+    @Inject
+    private SchedulerUtilQuartzImpl schedulerUtil;
 
     /** Records of HA VMs that need to be restarted */
     private CopyOnWriteArraySet<AutoStartVmToRestart> autoStartVmsToRestart;
-
-    public static AutoStartVmsRunner getInstance() {
-        return instance;
-    }
 
     private AutoStartVmsRunner() {
         // There might be HA VMs which went down just before the engine stopped, we detected
@@ -61,6 +67,20 @@ public class AutoStartVmsRunner {
             initialFailedVms.add(new AutoStartVmToRestart(vm.getId()));
         }
         autoStartVmsToRestart = new CopyOnWriteArraySet<>(initialFailedVms);
+    }
+
+    @PostConstruct
+    private void init() {
+        int autoStartVmsRunnerIntervalInSeconds =
+                Config.<Integer>getValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
+        schedulerUtil.scheduleAFixedDelayJob(
+                this,
+                "startFailedAutoStartVms",
+                new Class[] {},
+                new Object[] {},
+                autoStartVmsRunnerIntervalInSeconds,
+                autoStartVmsRunnerIntervalInSeconds,
+                TimeUnit.SECONDS);
     }
 
     /**

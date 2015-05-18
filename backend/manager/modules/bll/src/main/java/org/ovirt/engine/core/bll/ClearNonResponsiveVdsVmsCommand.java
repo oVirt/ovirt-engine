@@ -21,8 +21,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
+import javax.inject.Inject;
+
 @NonTransactiveCommandAttribute
 public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+
+    @Inject
+    private AutoStartVmsRunner autoStartVmsRunner;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -68,7 +73,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
         runVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
                         new UpdateVdsVMsClearedVDSCommandParameters(getVdsId()));
         if (!autoStartVmIdsToRerun.isEmpty()) {
-            AutoStartVmsRunner.getInstance().addVmsToRun(autoStartVmIdsToRerun);
+            autoStartVmsRunner.addVmsToRun(autoStartVmIdsToRerun);
         }
         setSucceeded(true);
     }

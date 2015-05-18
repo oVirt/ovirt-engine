@@ -86,9 +86,11 @@ public class VdsEventListener implements IVdsEventListener {
     Instance<ResourceManager> resourceManagerProvider;
     @Inject
     EventQueue eventQueue;
-
     @Inject
     private AvailableUpdatesFinder availableUpdatesFinder;
+    @Inject
+    AutoStartVmsRunner autoStartVmsRunner;
+
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
@@ -144,7 +146,7 @@ public class VdsEventListener implements IVdsEventListener {
      */
     private void clearDomainCache(final VDS vds) {
         eventQueue.submitEventSync(new Event(vds.getStoragePoolId(),
-                null, vds.getId(), EventType.VDSCLEARCACHE, ""),
+                    null, vds.getId(), EventType.VDSCLEARCACHE, ""),
                 new Callable<EventResult>() {
                     @Override
                     public EventResult call() {
@@ -405,7 +407,7 @@ public class VdsEventListener implements IVdsEventListener {
                     event.getVmName(), vmId);
         }
 
-        AutoStartVmsRunner.getInstance().addVmsToRun(vmIds);
+        autoStartVmsRunner.addVmsToRun(vmIds);
     }
 
     @Override

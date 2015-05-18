@@ -264,12 +264,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         _startedAt = DateTime.getNow();
 
         loadService(VmPoolMonitor.class);
-
-        int autoStartVmsRunnerIntervalInSeconds = Config.<Integer> getValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
-        SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(AutoStartVmsRunner.getInstance(),
-                "startFailedAutoStartVms", new Class[] {}, new Object[] {},
-                autoStartVmsRunnerIntervalInSeconds,
-                autoStartVmsRunnerIntervalInSeconds, TimeUnit.SECONDS);
+        loadService(AutoStartVmsRunner.class);
 
         int quotaCacheIntervalInMinutes = Config.<Integer> getValue(ConfigValues.QuotaCacheIntervalInMinutes);
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(QuotaManager.getInstance(),
