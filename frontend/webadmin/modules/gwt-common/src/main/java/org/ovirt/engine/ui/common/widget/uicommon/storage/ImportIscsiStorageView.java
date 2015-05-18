@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEditTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.AbstractSelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
@@ -207,12 +209,19 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
         storageDomainsTable = new ListModelObjectCellTable<StorageDomain, ListModel>(true, true);
         storageDomainsTable.enableColumnResizing();
 
-        AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
+        AbstractEditTextColumn<StorageDomain> nameColumn = new AbstractEditTextColumn<StorageDomain>(
+                new FieldUpdater<StorageDomain, String>() {
+                    @Override
+                    public void update(int index, StorageDomain model, String value) {
+                        model.setStorageName(value);
+                    }
+                }) {
             @Override
-            public String getValue(StorageDomain object) {
-                return object.getStorageName();
+            public String getValue(StorageDomain model) {
+                return model.getStorageName();
             }
         };
+
         storageDomainsTable.addColumn(nameColumn, constants.storageName(), "50%"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDomain> storageIdColumn = new AbstractTextColumn<StorageDomain>() {

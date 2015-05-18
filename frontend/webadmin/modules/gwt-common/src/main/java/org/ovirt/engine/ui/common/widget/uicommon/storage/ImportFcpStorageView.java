@@ -2,12 +2,14 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.List;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEditTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -83,12 +85,19 @@ public class ImportFcpStorageView extends AbstractStorageView<ImportFcpStorageMo
         storageDomainsTable = new ListModelObjectCellTable<StorageDomain, ListModel>(true, true);
         storageDomainsTable.enableColumnResizing();
 
-        AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
+        AbstractEditTextColumn<StorageDomain> nameColumn = new AbstractEditTextColumn<StorageDomain>(
+                new FieldUpdater<StorageDomain, String>() {
+                    @Override
+                    public void update(int index, StorageDomain model, String value) {
+                        model.setStorageName(value);
+                    }
+                }) {
             @Override
-            public String getValue(StorageDomain object) {
-                return object.getStorageName();
+            public String getValue(StorageDomain model) {
+                return model.getStorageName();
             }
         };
+
         storageDomainsTable.addColumn(nameColumn, constants.storageName(), "50%"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDomain> storageIdColumn = new AbstractTextColumn<StorageDomain>() {
