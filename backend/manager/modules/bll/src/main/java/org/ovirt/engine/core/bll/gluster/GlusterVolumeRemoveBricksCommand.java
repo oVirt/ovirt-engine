@@ -56,9 +56,6 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
         if (getGlusterVolume().getVolumeType().isDispersedType()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REMOVE_BRICK_FROM_DISPERSE_VOLUME_NOT_SUPPORTED);
         }
-        if (getGlusterVolume().getVolumeType().isDispersedType()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REMOVE_BRICK_FROM_DISTRIBUTED_DISPERSE_VOLUME_NOT_SUPPORTED);
-        }
 
         GlusterBrickValidator brickValidator = new GlusterBrickValidator();
         return validate(brickValidator.canRemoveBrick(getParameters().getBricks(),

@@ -3000,9 +3000,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Creation of disperse volume is not supported.")
     String ACTION_TYPE_FAILED_CREATION_OF_DISPERSE_VOLUME_NOT_SUPPORTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Creation of distributed disperse volume is not supported.")
-    String ACTION_TYPE_FAILED_CREATION_OF_DISTRIBUTED_DISPERSE_VOLUME_NOT_SUPPORTED();
-
     @DefaultStringValue("Cannot ${action} ${type}. Brick ${brick} is already used by the volume ${volumeName}.")
     String ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME();
 
