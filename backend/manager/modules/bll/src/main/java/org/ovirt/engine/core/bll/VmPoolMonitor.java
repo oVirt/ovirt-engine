@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -20,11 +22,34 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VmPoolMonitor {
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
+public class VmPoolMonitor implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(VmPoolMonitor.class);
+
+    private String poolMonitoringJobId;
+    @Inject
+    private SchedulerUtilQuartzImpl schedulerUtil;
+    @PostConstruct
+    private void init() {
+        int vmPoolMonitorIntervalInMinutes = Config.<Integer>getValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
+        poolMonitoringJobId =
+                schedulerUtil.scheduleAFixedDelayJob(
+                        this,
+                        "managePrestartedVmsInAllVmPools",
+                        new Class[] {},
+                        new Object[] {},
+                        vmPoolMonitorIntervalInMinutes,
+                        vmPoolMonitorIntervalInMinutes,
+                        TimeUnit.MINUTES);
+    }
 
     /**
      * Goes over each Vmpool, and makes sure there are at least as much prestarted Vms as defined in the prestarted_vms
@@ -36,6 +61,10 @@ public class VmPoolMonitor {
         for (VmPool vmPool : vmPools) {
             managePrestartedVmsInPool(vmPool);
         }
+    }
+
+    public void triggerPoolMonitoringJob() {
+        schedulerUtil.triggerJob(poolMonitoringJobId);
     }
 
     /**

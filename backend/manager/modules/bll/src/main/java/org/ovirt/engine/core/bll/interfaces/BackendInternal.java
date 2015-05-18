@@ -80,11 +80,6 @@ public interface BackendInternal extends BackendLocal {
 
     DateTime getStartedAt();
 
-    /**
-     * Execute the pool monitoring job immediately
-     */
-    void triggerPoolMonitoringJob();
-
     VdcQueryReturnValue runInternalQuery(VdcQueryType queryType, VdcQueryParametersBase queryParameters);
 
 }

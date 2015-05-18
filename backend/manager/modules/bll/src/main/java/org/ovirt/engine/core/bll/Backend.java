@@ -104,7 +104,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private ErrorTranslator _vdsErrorsTranslator;
     private DateTime _startedAt;
     private static boolean firstInitialization = true;
-    private String poolMonitoringJobId;
     @Inject
     Injector injector;
     @Inject
@@ -200,7 +199,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         }
         // initialize CDI services
         loadService(CacheManager.class);
-
         // initialize configuration utils to use DB
         Config.setConfigUtils(new DBConfigUtils());
         // we need to initialize os-info before the compensations take place because of VmPoolCommandBase#osRepository
@@ -265,12 +263,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // Set start-up time
         _startedAt = DateTime.getNow();
 
-        int vmPoolMonitorIntervalInMinutes = Config.<Integer> getValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
-        poolMonitoringJobId =
-                SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(new VmPoolMonitor(),
-                        "managePrestartedVmsInAllVmPools", new Class[] {}, new Object[] {},
-                        vmPoolMonitorIntervalInMinutes,
-                        vmPoolMonitorIntervalInMinutes, TimeUnit.MINUTES);
+        loadService(VmPoolMonitor.class);
 
         int autoStartVmsRunnerIntervalInSeconds = Config.<Integer> getValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(AutoStartVmsRunner.getInstance(),
@@ -690,12 +683,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     protected QueriesCommandBase<?> createQueryCommand(VdcQueryType actionType, VdcQueryParametersBase parameters, EngineContext engineContext) {
         return CommandsFactory.createQueryCommand(actionType, parameters, engineContext);
-    }
-
-    @Override
-    @ExcludeClassInterceptors
-    public void triggerPoolMonitoringJob() {
-        SchedulerUtilQuartzImpl.getInstance().triggerJob(poolMonitoringJobId);
     }
 
     private void initVmPropertiesUtils() {

@@ -11,11 +11,15 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
+import javax.inject.Inject;
+
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T>  implements RenamedEntityInfoProvider{
 
     private VmPool oldPool;
+    @Inject
+    private VmPoolMonitor vmPoolMonitor;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -67,7 +71,7 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     @Override
     protected void executeCommand() {
         super.executeCommand();
-        Backend.getInstance().triggerPoolMonitoringJob();
+        vmPoolMonitor.triggerPoolMonitoringJob();
     }
 
     @Override
