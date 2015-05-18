@@ -114,6 +114,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     public AddVmTemplateCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected void init() {
+        T parameters = getParameters();
         super.setVmTemplateName(parameters.getName());
         VmStatic parameterMasterVm = parameters.getMasterVm();
         if (parameterMasterVm != null) {
