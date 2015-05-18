@@ -12,6 +12,8 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -238,6 +240,31 @@ public class DisksViewColumns {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ||
                         object.getDiskStorageType() == DiskStorageType.CINDER ?
                         ((DiskImage) object).getVolumeType() : null;
+            }
+
+            @Override
+            public SafeHtml getTooltip(Disk object) {
+                if (object.getDiskStorageType() != DiskStorageType.IMAGE &&
+                        object.getDiskStorageType() != DiskStorageType.CINDER) {
+                    return null;
+                }
+
+                VolumeType originalVolumeType = null;
+                for (DiskImage snapshot : ((DiskImage) object).getSnapshots()) {
+                    if (snapshot.getParentId() == null || snapshot.getParentId().equals(Guid.Empty)) {
+                        originalVolumeType = snapshot.getVolumeType();
+                        break;
+                    }
+                }
+
+                if (originalVolumeType == null) {
+                    return null;
+                }
+
+                return SafeHtmlUtils.fromString(
+                        StringFormat.format("%s: %s",  //$NON-NLS-1$
+                                AssetProvider.getConstants().originalAllocationDisk(),
+                                EnumTranslator.getInstance().translate(originalVolumeType)));
             }
         };
 
