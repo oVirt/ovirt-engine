@@ -664,7 +664,15 @@ verifyArgs() {
 pg_cmd() {
 	local cmd="$1"
 	shift
-	PGPASSFILE="${MYPGPASS}" "${cmd}" -w -U "${user}" -h "${host}" -p "${port}" -d "${database}" "$@"
+
+	local use_d=
+	# pg_dump 8.x does not accept '-d database'.
+	# psql and pg_dump accept it as first non-option argument.
+	# pg_restore requires '-d'.
+	[ "${cmd}" = "pg_restore" ] && use_d=1
+
+	log "pg_cmd running: ${cmd} -w -U ${user} -h ${host} -p ${port} ${use_d:+-d} ${database} $*"
+	PGPASSFILE="${MYPGPASS}" "${cmd}" -w -U "${user}" -h "${host}" -p "${port}" ${use_d:+-d} "${database}" "$@"
 }
 
 dobackup() {
