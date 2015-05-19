@@ -515,6 +515,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setPlugDiskToVm(getParameters().getPlugDiskToVm());
         parameters.setVmId(getParameters().getVmId());
         parameters.setStorageDomainId(getParameters().getStorageDomainId());
+        if (getVm() != null) {
+            parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+        }
         return parameters;
     }
 
