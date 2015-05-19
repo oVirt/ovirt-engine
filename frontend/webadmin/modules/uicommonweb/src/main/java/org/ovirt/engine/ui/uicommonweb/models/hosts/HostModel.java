@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetFenceAgentStatusParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -1390,6 +1391,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs
                     updatePmTypeList(pmTypes, getPmSecondaryType());
                 }
             }), cluster.getCompatibilityVersion());
+            Boolean jsonSupported =
+                    (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
+                            cluster.getCompatibilityVersion().toString());
+            getProtocol().setEntity(jsonSupported);
+            getProtocol().setIsChangeable(jsonSupported);
         }
     }
 
