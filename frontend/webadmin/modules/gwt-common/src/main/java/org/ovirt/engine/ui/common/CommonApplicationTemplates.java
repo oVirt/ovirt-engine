@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common;
 
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface CommonApplicationTemplates extends SafeHtmlTemplates {
@@ -107,4 +108,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<div style='border-right: 1px solid #D7D7E1; height: 32px;'>{0}</div>")
     SafeHtml nonResizeableColumnHeader(SafeHtml text);
+
+    @Template("<div class=\"{0}\" id=\"{1}\">{2}</div>")
+    SafeHtml divWithStyle(String style, String id, SafeHtml text);
 }
