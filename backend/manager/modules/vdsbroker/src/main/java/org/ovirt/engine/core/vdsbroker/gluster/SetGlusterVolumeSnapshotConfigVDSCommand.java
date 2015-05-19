@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotSetConfigVDSParameters;
@@ -22,14 +23,15 @@ public class SetGlusterVolumeSnapshotConfigVDSCommand<P extends GlusterVolumeSna
         GlusterVolumeSnapshotConfig cfgParam = getParameters()
                 .getConfgParam();
 
+        String paramValue = StringUtils.removeEnd(cfgParam.getParamValue(), "%");
         if (cfgParam.getVolumeId() != null) {
             GlusterVolumeEntity volume = DbFacade.getInstance().getGlusterVolumeDao().getById(cfgParam.getVolumeId());
             status =
                     getBroker().glusterVolumeSnapshotConfigSet(volume.getName(),
                             cfgParam.getParamName(),
-                            cfgParam.getParamValue());
+                            paramValue);
         } else {
-            status = getBroker().glusterSnapshotConfigSet(cfgParam.getParamName(), cfgParam.getParamValue());
+            status = getBroker().glusterSnapshotConfigSet(cfgParam.getParamName(), paramValue);
         }
 
         proceedProxyReturnValue();
