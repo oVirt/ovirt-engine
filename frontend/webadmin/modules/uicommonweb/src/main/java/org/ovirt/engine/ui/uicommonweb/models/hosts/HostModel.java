@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetNewVdsFenceStatusParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -1392,6 +1393,11 @@ public abstract class HostModel extends Model
                     updatePmTypeList(pmTypes, getPmSecondaryType());
                 }
             }), cluster.getcompatibility_version());
+            Boolean jsonSupported =
+                    (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
+                            cluster.getcompatibility_version().toString());
+            getProtocol().setEntity(jsonSupported);
+            getProtocol().setIsChangable(jsonSupported);
         }
     }
 
