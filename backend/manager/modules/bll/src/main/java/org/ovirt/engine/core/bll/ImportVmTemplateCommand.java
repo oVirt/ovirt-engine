@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -53,6 +55,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -60,6 +63,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmTemplateParameters>
         implements QuotaStorageDependent {
+
+    @Inject
+    private VmTemplateDAO vmTemplateDao;
 
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
         super(parameters);
@@ -237,7 +243,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     protected boolean isVmTemplateWithSameNameExist() {
-        return VmTemplateCommand.isVmTemlateWithSameNameExist(getParameters().getVmTemplate().getName());
+        return vmTemplateDao.getByName(getParameters().getVmTemplate().getName(),
+                getParameters().getStoragePoolId(),
+                null,
+                false) != null;
     }
 
     private void initImportClonedTemplate() {

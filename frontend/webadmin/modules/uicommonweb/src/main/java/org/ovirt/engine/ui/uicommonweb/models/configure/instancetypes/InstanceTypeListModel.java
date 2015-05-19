@@ -200,7 +200,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
                             VmModel.setIsValid(false);
                         }
                     }
-                }), ((UnitVmModel) getWindow()).getName().getEntity());
+                }), ((UnitVmModel) getWindow()).getName().getEntity(), null);
     }
 
     private void buildVmStatic(VmBase vmBase) {

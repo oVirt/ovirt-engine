@@ -41,6 +41,15 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         setUpGetRngDeviceExpectations(new int[]{0, 0});
         setUpGetEntityExpectations(0);
 
+        setUpCreationExpectations();
+
+        Response response = doAdd(getRestModel(0));
+        assertEquals(201, response.getStatus());
+        verifyModel((R)response.getEntity(), 0);
+        assertNull(((R)response.getEntity()).getCreationStatus());
+    }
+
+    protected void setUpCreationExpectations() {
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
                 new String[] { "Name", "Description" },
@@ -55,11 +64,6 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 getEntity(0));
-
-        Response response = doAdd(getRestModel(0));
-        assertEquals(201, response.getStatus());
-        verifyModel((R)response.getEntity(), 0);
-        assertNull(((R)response.getEntity()).getCreationStatus());
     }
 
     @Test

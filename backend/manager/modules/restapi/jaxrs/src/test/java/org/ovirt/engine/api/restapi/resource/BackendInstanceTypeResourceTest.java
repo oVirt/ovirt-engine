@@ -7,6 +7,8 @@ import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 import static org.ovirt.engine.api.restapi.resource.BackendInstanceTypesResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendInstanceTypesResourceTest.setUpEntityExpectations;
@@ -48,5 +50,16 @@ public class BackendInstanceTypeResourceTest
     protected void verifyModel(InstanceType model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model);
+    }
+
+    @Override
+    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+        while (times-- > 0) {
+            setUpGetEntityExpectations(VdcQueryType.GetInstanceType,
+                    GetVmTemplateParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[0] },
+                    notFound ? null : getEntity(0));
+        }
     }
 }

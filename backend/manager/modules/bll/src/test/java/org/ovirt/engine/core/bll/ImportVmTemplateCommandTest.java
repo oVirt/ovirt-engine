@@ -99,6 +99,15 @@ public class ImportVmTemplateCommandTest {
         assertInvalidVolumeInfoCombination(VolumeFormat.Unassigned, VolumeType.Preallocated, StorageType.LOCALFS);
     }
 
+    public void testValidateUniqueTemplateNameInDC() {
+        ImportVmTemplateCommand command =
+                setupVolumeFormatAndTypeTest(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
+        doReturn(true).when(command).isVmTemplateWithSameNameExist();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
+
+    }
+
     private void assertValidVolumeInfoCombination(VolumeFormat volumeFormat,
             VolumeType volumeType,
             StorageType storageType) {

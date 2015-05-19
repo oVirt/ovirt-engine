@@ -85,7 +85,7 @@ public class CloneVmModel extends Model {
                     getCloneName().setIsValid(false);
                 }
             }
-        }), getCloneName().getEntity());
+        }), getCloneName().getEntity(), getVm() == null ? null : getVm().getStoragePoolId());
 
     }
 

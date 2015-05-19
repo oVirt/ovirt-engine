@@ -619,7 +619,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                             templateListModel.postNameUniqueCheck(isNameUnique);
 
                         }
-                    }), name);
+                    }), name, model.getSelectedDataCenter() == null ? null : model.getSelectedDataCenter().getId());
         } else {
             postNameUniqueCheck(true);
         }

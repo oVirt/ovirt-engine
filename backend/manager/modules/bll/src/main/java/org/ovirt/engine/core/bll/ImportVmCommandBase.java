@@ -90,7 +90,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     protected boolean validateUniqueVmName() {
-        return VmHandler.isVmWithSameNameExistStatic(getVm().getName()) ?
+        return VmHandler.isVmWithSameNameExistStatic(getVm().getName(), getStoragePoolId()) ?
                 failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_NAME_EXISTS)
                 : true;
     }

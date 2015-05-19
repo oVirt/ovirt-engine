@@ -19,7 +19,7 @@ public class IsVmWithSameNameExistQueryTest extends AbstractUserQueryTest<NameQu
 
         // Mock the result
         boolean result = RandomUtils.instance().nextBoolean();
-        doReturn(result).when(getQuery()).isVmWithSameNameExistStatic();
+        doReturn(result).when(getQuery()).isVmWithSameNameExistStatic(vmName, null);
 
         // Execute the query
         getQuery().executeQueryCommand();

@@ -280,8 +280,8 @@ public class BackendVmsResourceTest
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[]{0});
-        setUpGetSoundcardExpectations(new int[]{0});
-        setUpGetRngDeviceExpectations(new int[]{0});
+        setUpGetSoundcardExpectations(new int[] { 0 });
+        setUpGetRngDeviceExpectations(new int[] { 0 });
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetCertuficateExpectations(1, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
@@ -291,10 +291,10 @@ public class BackendVmsResourceTest
                 getVdsGroupEntity());
 
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
-                                     GetVmTemplateParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { GUIDS[0] },
-                                     getTemplateEntity(0));
+                GetVmTemplateParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                getTemplateEntity(0));
         setUpCreationExpectations(VdcActionType.AddVmFromScratch,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
@@ -408,7 +408,7 @@ public class BackendVmsResourceTest
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
-                                     getTemplateEntity(0));
+                getTemplateEntity(0));
 
         setUpCreationExpectations(VdcActionType.AddVmFromScratch,
                                   AddVmParameters.class,
@@ -451,8 +451,8 @@ public class BackendVmsResourceTest
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
-                                     new Object[] { GUIDS[0] },
-                                     getTemplateEntity(0));
+                new Object[] { GUIDS[0] },
+                getTemplateEntity(0));
 
 
         expect(osRepository.isBalloonEnabled(anyInt(), anyObject(Version.class))).andReturn(false).anyTimes();
@@ -485,7 +485,7 @@ public class BackendVmsResourceTest
     @Test
     public void testCloneWithDisk() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpTemplateDisksExpectations(GUIDS[0]);
+        setUpTemplateDisksExpectations(GUIDS[1]);
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
@@ -493,14 +493,14 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
-        setUpGetSoundcardExpectations(new int[]{0, 2});
-        setUpGetRngDeviceExpectations(new int[]{0, 2});
+        setUpGetSoundcardExpectations(new int[] { 1, 2 });
+        setUpGetRngDeviceExpectations(new int[] { 1, 2 });
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
-                                     getTemplateEntity(0));
+                getTemplateEntity(1));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -578,14 +578,14 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
-        setUpGetSoundcardExpectations(0, 2);
-        setUpGetRngDeviceExpectations(0, 2);
+        setUpGetSoundcardExpectations(1, 2);
+        setUpGetRngDeviceExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
-                getTemplateEntity(0));
+                getTemplateEntity(1));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
@@ -620,13 +620,13 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
-        setUpGetSoundcardExpectations(new int[]{0, 2});
-        setUpGetRngDeviceExpectations(new int[]{2, 0});
+        setUpGetSoundcardExpectations(new int[] { 1, 2 });
+        setUpGetRngDeviceExpectations(new int[] { 2, 1 });
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
-                getTemplateEntity(0));
+                getTemplateEntity(1));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
@@ -662,6 +662,36 @@ public class BackendVmsResourceTest
 
     @Test
     public void testAdd() throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+                GetVmTemplateParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[1] },
+                getTemplateEntity(1));
+        setupAddExpectations();
+        Response response = collection.add(createModel(null));
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    @Test
+    public void testAddPassTemplateByName() throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+                GetVmTemplateParameters.class,
+                new String[] { "Name", "DataCenterId" },
+                new Object[] { NAMES[1], GUIDS[3] },
+                getTemplateEntity(1));
+        setupAddExpectations();
+        VM model = getModel(2);
+        model.setTemplate(new Template());
+        model.getTemplate().setName(NAMES[1].toString());
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    private void setupAddExpectations() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
@@ -669,14 +699,9 @@ public class BackendVmsResourceTest
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[] { 2 });
         setUpGetVirtioScsiExpectations(new int[]{2});
-        setUpGetSoundcardExpectations(new int[]{0, 2});
-        setUpGetRngDeviceExpectations(new int[]{0, 2});
+        setUpGetSoundcardExpectations(new int[] { 1, 2 });
+        setUpGetRngDeviceExpectations(new int[] { 1, 2 });
         setUpGetVmOvfExpectations(new int[]{2});
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
-                GetVmTemplateParameters.class,
-                new String[]{"Id"},
-                new Object[]{GUIDS[1]},
-                getTemplateEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
@@ -694,11 +719,8 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getEntity(2));
-        Response response = collection.add(createModel(null));
-        assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
     }
+
 
     @Test
     public void testAddFromConfigurationWithRegenerateTrue() throws Exception {
@@ -897,8 +919,8 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
-        setUpGetSoundcardExpectations(new int[]{0, 2});
-        setUpGetRngDeviceExpectations(new int[]{0, 2});
+        setUpGetSoundcardExpectations(new int[] { 1, 2 });
+        setUpGetRngDeviceExpectations(new int[] { 1, 2 });
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsStaticByName,
                 NameQueryParameters.class,
@@ -909,7 +931,7 @@ public class BackendVmsResourceTest
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
-                getTemplateEntity(0));
+                getTemplateEntity(1));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -954,14 +976,14 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
-        setUpGetSoundcardExpectations(new int[]{0, 2});
-        setUpGetRngDeviceExpectations(new int[]{0, 2});
+        setUpGetSoundcardExpectations(new int[] { 1, 2 });
+        setUpGetRngDeviceExpectations(new int[] { 1, 2 });
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
-                                     getTemplateEntity(0));
+                getTemplateEntity(1));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -998,14 +1020,14 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
-        setUpGetSoundcardExpectations(new int[]{0, 2});
-        setUpGetRngDeviceExpectations(new int[]{0, 2});
+        setUpGetSoundcardExpectations(new int[] { 1, 2 });
+        setUpGetRngDeviceExpectations(new int[] { 1, 2 });
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
-                                     getTemplateEntity(0));
+                getTemplateEntity(1));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
@@ -1060,13 +1082,13 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
-        setUpGetSoundcardExpectations(new int[]{0, 2});
-        setUpGetRngDeviceExpectations(new int[]{0, 2});
+        setUpGetSoundcardExpectations(new int[] { 1, 2 });
+        setUpGetRngDeviceExpectations(new int[] { 1, 2 });
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
-                                     getTemplateEntity(0));
+                getTemplateEntity(1));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
@@ -1105,7 +1127,7 @@ public class BackendVmsResourceTest
 
     private void doTestCloneFromTemplateWithClonePermissions(VM model, boolean copy) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpTemplateDisksExpectations(GUIDS[0]);
+        setUpTemplateDisksExpectations(GUIDS[1]);
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
@@ -1115,13 +1137,13 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
-        setUpGetSoundcardExpectations(new int[]{0, 2});
-        setUpGetRngDeviceExpectations(new int[]{0, 2});
+        setUpGetSoundcardExpectations(new int[] { 1, 2 });
+        setUpGetRngDeviceExpectations(new int[] { 1, 2 });
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[]{"Id"},
                                      new Object[]{GUIDS[1]},
-                                     getTemplateEntity(0));
+                getTemplateEntity(1));
                                      setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                                      IdQueryParameters.class,
                                      new String[]{"Id"},
@@ -1264,9 +1286,9 @@ public class BackendVmsResourceTest
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
-                                     getTemplateEntity(0));
-        setUpGetSoundcardExpectations(new int[]{0});
-        setUpGetRngDeviceExpectations(new int[]{0});
+                getTemplateEntity(1));
+        setUpGetSoundcardExpectations(new int[] { 1 });
+        setUpGetRngDeviceExpectations(new int[] { 1 });
 
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
@@ -1477,6 +1499,7 @@ public class BackendVmsResourceTest
 
     protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
         VDSGroup cluster = new VDSGroup();
+        cluster.setStoragePoolId(GUIDS[3]);
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setCompatibilityVersion(Version.getLast());
         return cluster;

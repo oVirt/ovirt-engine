@@ -53,13 +53,14 @@ public class BackendVmPoolsResource
     public Response add(VmPool pool) {
         validateParameters(pool, "name", "template.id|name", "cluster.id|name");
 
+        if (namedCluster(pool)) {
+            VDSGroup cluster = getCluster(pool);
+            pool.getCluster().setId(cluster.getId().toString());
+        }
+
         VmTemplate template = getVmTemplate(pool);
         if (namedTemplate(pool)) {
             pool.getTemplate().setId(template.getId().toString());
-        }
-
-        if (namedCluster(pool)) {
-            pool.getCluster().setId(getClusterId(pool));
         }
 
         org.ovirt.engine.core.common.businessentities.VmPool entity = map(pool);
@@ -148,11 +149,11 @@ public class BackendVmPoolsResource
         return pool.getCluster().isSetName() && !pool.getCluster().isSetId();
     }
 
-    protected String getClusterId(VmPool pool) {
+    protected VDSGroup getCluster(VmPool pool) {
         return getEntity(VDSGroup.class,
                 VdcQueryType.GetVdsGroupByName,
                 new NameQueryParameters(pool.getCluster().getName()),
-                "Cluster: name=" + pool.getCluster().getName()).getId().toString();
+                "Cluster: name=" + pool.getCluster().getName());
     }
 
     protected boolean namedTemplate(VmPool pool) {
@@ -166,9 +167,11 @@ public class BackendVmPoolsResource
                              new GetVmTemplateParameters(asGuid(pool.getTemplate().getId())),
                              pool.getTemplate().getId());
         } else {
+            GetVmTemplateParameters params = new GetVmTemplateParameters(pool.getTemplate().getName());
+            params.setClusterId(asGuid(pool.getCluster().getId()));
             return getEntity(VmTemplate.class,
                     VdcQueryType.GetVmTemplate,
-                    new GetVmTemplateParameters(pool.getTemplate().getName()),
+                    params,
                     "Template: name=" + pool.getTemplate().getName());
         }
     }

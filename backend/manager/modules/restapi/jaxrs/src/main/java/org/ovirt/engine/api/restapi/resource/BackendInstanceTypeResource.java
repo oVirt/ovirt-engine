@@ -42,7 +42,7 @@ public class BackendInstanceTypeResource
 
     @Override
     public InstanceType get() {
-        InstanceType instanceType = performGet(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
+        InstanceType instanceType = performGet(VdcQueryType.GetInstanceType, new GetVmTemplateParameters(guid));
         DisplayHelper.adjustDisplayData(this, instanceType);
         return instanceType;
     }
@@ -50,7 +50,7 @@ public class BackendInstanceTypeResource
     @Override
     public InstanceType update(InstanceType incoming) {
         return performUpdate(incoming,
-                             new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
+                new QueryIdResolver<Guid>(VdcQueryType.GetInstanceType, GetVmTemplateParameters.class),
                              VdcActionType.UpdateVmTemplate,
                              new UpdateParametersProvider());
     }

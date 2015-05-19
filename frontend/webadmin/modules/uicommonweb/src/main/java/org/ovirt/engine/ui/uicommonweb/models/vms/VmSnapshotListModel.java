@@ -730,7 +730,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
 
                         }
                     }),
-                    name);
+                    name, model.getSelectedDataCenter().getId());
         }
     }
 

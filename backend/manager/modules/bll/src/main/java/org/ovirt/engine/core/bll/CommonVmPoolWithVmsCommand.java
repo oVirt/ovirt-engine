@@ -191,7 +191,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         String currentVmName;
         do {
             currentVmName = nameForVmInPoolGenerator.generateVmName();
-        } while (VmHandler.isVmWithSameNameExistStatic(currentVmName));
+        } while (VmHandler.isVmWithSameNameExistStatic(currentVmName, getStoragePoolId()));
 
         return currentVmName;
     }

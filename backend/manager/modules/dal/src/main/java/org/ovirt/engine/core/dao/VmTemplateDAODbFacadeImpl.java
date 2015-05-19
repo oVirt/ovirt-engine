@@ -41,12 +41,17 @@ public class VmTemplateDAODbFacadeImpl extends VmBaseDaoDbFacade<VmTemplate> imp
     }
 
     @Override
-    public InstanceType getInstanceType(Guid id) {
-        VmTemplate result = get(id);
+    public InstanceType getInstanceType(Guid id, Guid userID, boolean isFiltered) {
+        VmTemplate result = get(id, userID, isFiltered);
         if (result != null && result.getTemplateType() != VmEntityType.INSTANCE_TYPE) {
             result = null;
         }
         return result;
+    }
+
+    @Override
+    public InstanceType getInstanceType(Guid id) {
+        return getInstanceType(id, null, false);
     }
 
     @Override
@@ -66,11 +71,19 @@ public class VmTemplateDAODbFacadeImpl extends VmBaseDaoDbFacade<VmTemplate> imp
     }
 
     @Override
-    public VmTemplate getByName(String name, Guid userID, boolean isFiltered) {
+    public VmTemplate getByName(String name, Guid datacenterId, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("GetVmTemplateByVmtName",
                 VMTemplateRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("vmt_name", name).addValue("user_id", userID).addValue("is_filtered", isFiltered));
+                        .addValue("vmt_name", name)
+                        .addValue("storage_pool_id", datacenterId)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered));
+    }
+
+    @Override
+    public VmTemplate getInstanceTypeByName(String name, Guid userID, boolean isFiltered) {
+        return getByName(name, null, userID, isFiltered);
     }
 
     @Override

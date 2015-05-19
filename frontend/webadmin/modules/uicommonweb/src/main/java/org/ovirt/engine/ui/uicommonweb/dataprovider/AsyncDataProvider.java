@@ -1921,7 +1921,7 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void isTemplateNameUnique(AsyncQuery aQuery, String name) {
+    public void isTemplateNameUnique(AsyncQuery aQuery, String templateName, Guid datacenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1929,12 +1929,14 @@ public class AsyncDataProvider {
                 return source != null ? !((Boolean) source).booleanValue() : false;
             }
         };
+        NameQueryParameters params = new NameQueryParameters(templateName);
+        params.setDatacenterId(datacenterId);
         Frontend.getInstance().runQuery(VdcQueryType.IsVmTemlateWithSameNameExist,
-                new NameQueryParameters(name),
+                params,
                 aQuery);
     }
 
-    public void isVmNameUnique(AsyncQuery aQuery, String name) {
+    public void isVmNameUnique(AsyncQuery aQuery, String name, Guid datacenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1942,7 +1944,9 @@ public class AsyncDataProvider {
                 return source != null ? !((Boolean) source).booleanValue() : false;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.IsVmWithSameNameExist, new NameQueryParameters(name), aQuery);
+        NameQueryParameters params = new NameQueryParameters(name);
+        params.setDatacenterId(datacenterId);
+        Frontend.getInstance().runQuery(VdcQueryType.IsVmWithSameNameExist, params, aQuery);
     }
 
     public void getDataCentersWithPermittedActionOnClusters(AsyncQuery aQuery, ActionGroup actionGroup,

@@ -641,7 +641,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // Checking if a desktop with same name already exists
         if (!StringUtils.equals(vmFromDB.getName(), vmFromParams.getName())) {
-            boolean exists = isVmWithSameNameExists(vmFromParams.getName());
+            boolean exists = isVmWithSameNameExists(vmFromParams.getName(), getStoragePoolId());
 
             if (exists) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);

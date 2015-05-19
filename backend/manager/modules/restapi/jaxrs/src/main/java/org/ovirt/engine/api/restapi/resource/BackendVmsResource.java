@@ -111,26 +111,23 @@ public class BackendVmsResource extends
                 response = createVmFromSnapshot(vm);
             } else {
                 validateParameters(vm, "template.id|name");
-                Guid templateId = getTemplateId(vm.getTemplate());
-
-                VmTemplate templateEntity = lookupTemplate(templateId);
-
                 VDSGroup cluster = getCluster(vm);
+                VmTemplate template = lookupTemplate(vm.getTemplate(), cluster.getStoragePoolId());
 
-                VmStatic builtFromTemplate = VmMapper.map(templateEntity, null, cluster.getCompatibilityVersion());
+                VmStatic builtFromTemplate = VmMapper.map(template, null, cluster.getCompatibilityVersion());
                 // if VM is based on a template, and going to be on another cluster then template, clear the cpu_profile
                 // since the template cpu_profile doesn't match cluster.
                 if (!vm.isSetCpuProfile() && vm.isSetCluster()
-                        && !ObjectUtils.equals(templateEntity.getVdsGroupId(), vm.getCluster().getId())) {
+                        && !ObjectUtils.equals(template.getVdsGroupId(), vm.getCluster().getId())) {
                     builtFromTemplate.setCpuProfileId(null);
                 }
 
                 VmStatic builtFromInstanceType = null;
-                org.ovirt.engine.core.common.businessentities.InstanceType instanceTypeEntity = null;
+                InstanceType instanceTypeEntity = null;
                 if (vm.isSetInstanceType() && (vm.getInstanceType().isSetId() || vm.getInstanceType().isSetName())) {
-                    instanceTypeEntity = lookupInstanceType(getTemplateId(vm.getInstanceType()));
+                    instanceTypeEntity = lookupInstance(vm.getInstanceType());
                     builtFromInstanceType = VmMapper.map(instanceTypeEntity, builtFromTemplate, cluster.getCompatibilityVersion());
-                    builtFromInstanceType.setInstanceTypeId(getTemplateId(vm.getInstanceType()));
+                    builtFromInstanceType.setInstanceTypeId(instanceTypeEntity.getId());
                 }
 
                 VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm, builtFromInstanceType != null ? builtFromInstanceType : builtFromTemplate);
@@ -138,7 +135,7 @@ public class BackendVmsResource extends
                     staticVm.setVdsGroupId(cluster.getId());
                 }
 
-                if (Guid.Empty.equals(templateId) && !vm.isSetOs()) {
+                if (Guid.Empty.equals(template.getId()) && !vm.isSetOs()) {
                     staticVm.setOsId(OsRepository.AUTO_SELECT_OS);
                 }
 
@@ -160,7 +157,7 @@ public class BackendVmsResource extends
                 // If the user omits the placement policy in the incoming XML and the selected template
                 // is the blank one, the AddVmCommand must auto-select a proper default value for the
                 // migration support (disabling it in architectures that do not support this feature)
-                if (!vm.isSetPlacementPolicy() && templateId.equals(Guid.Empty)) {
+                if (!vm.isSetPlacementPolicy() && template.getId().equals(Guid.Empty)) {
                     staticVm.setMigrationSupport(null);
                 }
 
@@ -170,11 +167,11 @@ public class BackendVmsResource extends
                                 : Guid.Empty;
 
                 if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
-                    response = cloneVmFromTemplate(staticVm, vm, templateEntity, instanceTypeEntity, cluster);
-                } else if (Guid.Empty.equals(templateId)) {
+                    response = cloneVmFromTemplate(staticVm, vm, template, instanceTypeEntity, cluster);
+                } else if (Guid.Empty.equals(template.getId())) {
                     response = addVmFromScratch(staticVm, vm, instanceTypeEntity, cluster);
                 } else {
-                    response = addVm(staticVm, vm, storageDomainId, templateEntity, instanceTypeEntity, cluster);
+                    response = addVm(staticVm, vm, storageDomainId, template, instanceTypeEntity, cluster);
                 }
             }
         }
@@ -622,24 +619,29 @@ public class BackendVmsResource extends
         return vm.isSetTemplate() && (vm.getTemplate().isSetId() || vm.getTemplate().isSetName());
     }
 
-    protected Guid getTemplateId(Template template) {
-        return template.isSetId() ? asGuid(template.getId()) : getTemplateByName(template).getId();
+    protected InstanceType lookupInstance(Template template) {
+        return getEntity(InstanceType.class,
+                VdcQueryType.GetInstanceType,
+                new GetVmTemplateParameters(asGuid(template.getId())),
+                "GetInstanceType");
     }
 
-    private VmTemplate getTemplateByName(Template template) {
-        return lookupTemplateByName(template.getName());
-    }
-
-    public VmTemplate lookupTemplateByName(String name) {
-        return getEntity(VmTemplate.class, VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(name), "GetVmTemplate");
+    protected VmTemplate lookupTemplate(Template template, Guid datacenterId) {
+        if (template.isSetId()) {
+            return getEntity(VmTemplate.class,
+                    VdcQueryType.GetVmTemplate,
+                    new GetVmTemplateParameters(asGuid(template.getId())),
+                    "GetVmTemplate");
+        } else if (template.isSetName()) {
+            GetVmTemplateParameters params = new GetVmTemplateParameters(template.getName());
+            params.setDataCenterId(datacenterId);
+            return getEntity(VmTemplate.class, VdcQueryType.GetVmTemplate, params, "GetVmTemplate");
+        }
+        return null; // should never happen.
     }
 
     public VmTemplate lookupTemplate(Guid id) {
         return getEntity(VmTemplate.class, VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(id), "GetVmTemplate");
-    }
-
-    public org.ovirt.engine.core.common.businessentities.InstanceType lookupInstanceType(Guid id) {
-        return getEntity(org.ovirt.engine.core.common.businessentities.InstanceType.class, VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(id), "GetVmTemplate");
     }
 
     private VDSGroup lookupCluster(Guid id) {

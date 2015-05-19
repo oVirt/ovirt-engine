@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetVmTemplateQuery<P extends GetVmTemplateParameters> extends QueriesCommandBase<P> {
@@ -12,17 +14,36 @@ public class GetVmTemplateQuery<P extends GetVmTemplateParameters> extends Queri
     @Override
     protected void executeQueryCommand() {
         VmTemplate vmt;
-        if (getParameters().getName() != null) {
+        GetVmTemplateParameters params = getParameters();
+        if (params.getName() != null) {
+            Guid storagePoolId = getStoragePoolId(); // If no DC info available, the query will return the first
+                                                     // Template with the given name found.
             vmt = DbFacade.getInstance().getVmTemplateDao()
-                .getByName(getParameters().getName(), getUserID(), getParameters().isFiltered());
-        } else {
+                    .getByName(params.getName(), storagePoolId, getUserID(), params.isFiltered());
+        }
+        else {
             vmt = DbFacade.getInstance().getVmTemplateDao()
-                .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
+                    .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         }
         if (vmt != null) {
             VmTemplateHandler.updateDisksFromDb(vmt);
             VmHandler.updateVmInitFromDB(vmt, true);
         }
         getQueryReturnValue().setReturnValue(vmt);
+    }
+
+    // Get the datacenter ID.
+    private Guid getStoragePoolId() {
+        Guid result = null;
+        GetVmTemplateParameters params = getParameters();
+        if (params.getDataCenterId() != null) {
+            result = params.getDataCenterId();
+        } else if (params.getClusterId() != null) {
+            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(params.getClusterId());
+            if (vdsGroup != null) {
+                result = vdsGroup.getStoragePoolId();
+            }
+        }
+        return result;
     }
 }

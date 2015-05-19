@@ -700,7 +700,7 @@ public class AddVmCommandTest {
 
     private <T extends AddVmParameters> void mockUninterestingMethods(AddVmCommand<T> spy) {
         doReturn(true).when(spy).isVmNameValidLength(Matchers.<VM> any(VM.class));
-        doReturn(false).when(spy).isVmWithSameNameExists(anyString());
+        doReturn(false).when(spy).isVmWithSameNameExists(anyString(), any(Guid.class));
         doReturn(STORAGE_POOL_ID).when(spy).getStoragePoolId();
         doReturn(createVmTemplate()).when(spy).getVmTemplate();
         doReturn(createVdsGroup()).when(spy).getVdsGroup();

@@ -1347,7 +1347,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
                         }
                     }),
-                    name);
+                    name, model.getSelectedDataCenter() == null ? null : model.getSelectedDataCenter().getId());
         }
     }
 

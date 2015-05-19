@@ -7,6 +7,8 @@ public class GetVmTemplateParameters extends VdcQueryParametersBase {
 
     private Guid _id;
     private String _name;
+    private Guid clusterId;
+    private Guid dataCenterId;
 
     public GetVmTemplateParameters(Guid id) {
         _id = id;
@@ -27,4 +29,21 @@ public class GetVmTemplateParameters extends VdcQueryParametersBase {
 
     public GetVmTemplateParameters() {
     }
+
+    public Guid getDataCenterId() {
+        return dataCenterId;
+    }
+
+    public void setDataCenterId(Guid dataCenterId) {
+        this.dataCenterId = dataCenterId;
+    }
+
+    public Guid getClusterId() {
+        return clusterId;
+    }
+
+    public void setClusterId(Guid clusterId) {
+        this.clusterId = clusterId;
+    }
+
 }

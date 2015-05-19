@@ -2,8 +2,14 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.InstanceType;
+import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -98,4 +104,32 @@ public class BackendInstanceTypesResourceTest
         setUpGetGraphicsExpectations(3);
         super.testList();
     }
+
+    @Override
+    protected void setUpGetEntityExpectations(int index) throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetInstanceType,
+                GetVmTemplateParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[index] },
+                getEntity(index));
+    }
+
+    @Override
+    protected void setUpCreationExpectations() {
+        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+                AddVmTemplateParameters.class,
+                new String[] { "Name", "Description" },
+                new Object[] { NAMES[0], DESCRIPTIONS[0] },
+                true,
+                true,
+                GUIDS[0],
+                asList(GUIDS[2]),
+                asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
+                VdcQueryType.GetInstanceType,
+                GetVmTemplateParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                getEntity(0));
+    }
+
 }

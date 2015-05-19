@@ -428,6 +428,6 @@ public class UpdateVmCommandTest {
     }
 
     private void mockSameNameQuery(boolean result) {
-        doReturn(result).when(command).isVmWithSameNameExists(anyString());
+        doReturn(result).when(command).isVmWithSameNameExists(anyString(), any(Guid.class));
     }
 }

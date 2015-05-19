@@ -96,8 +96,20 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             if (!getVmTemplate().isBaseTemplate()) {
                 // template version should always have the name of the base template
                 return failCanDoAction(VdcBllMessages.VMT_CANNOT_UPDATE_VERSION_NAME);
-            } else if (isVmTemlateWithSameNameExist(getVmTemplateName())) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+            } else {
+                // validate uniqueness of template name. If template is a regular template, uniqueness
+                // is considered in context of the datacenter. If template is an 'Instance-Type', name
+                // must be unique also across datacenters.
+                if (isInstanceType) {
+                    if (isInstanceWithSameNameExists(getVmTemplateName())) {
+                        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                    }
+                } else {
+                    if (isVmTemlateWithSameNameExist(getVmTemplateName(), isBlankTemplate ? null
+                            : getVdsGroup().getStoragePoolId())) {
+                        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                    }
+                }
             }
         }
 

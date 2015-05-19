@@ -30,17 +30,32 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
     public VmTemplate get(Guid id, Guid userID, boolean isFiltered);
 
     /**
-    * Retrieves the template with the given id with optional filtering.
-    *
-    * @param name
-    *            The name to look by (can't be <code>null</code>).
-    * @param userID
-    *            the ID of the user requesting the information
-    * @param isFiltered
-    *            Whether the results should be filtered according to the user's permissions
-    * @return The entity instance, or <code>null</code> if not found.
-    */
-    public VmTemplate getByName(String name, Guid userID, boolean isFiltered);
+     * Retrieves the template with the given id with optional filtering.
+     *
+     * @param name
+     *            The name to look by (can't be <code>null</code>).
+     * @param storagePoolId
+     *            The ID of the datacenter
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return The entity instance, or <code>null</code> if not found.
+     */
+    public VmTemplate getByName(String name, Guid storagePoolId, Guid userID, boolean isFiltered);
+
+    /**
+     * Get the Instance with the given name.
+     *
+     * @param name
+     *            The Instance name
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return The Instance which has this name of null if no such exists.
+     */
+    public VmTemplate getInstanceTypeByName(String name, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves all templates with optional filtering.
@@ -155,6 +170,14 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
      * @return the instance type
      */
     InstanceType getInstanceType(Guid id);
+
+    /**
+     * Retrieve the instance type with the given id
+     * @param id
+     *            the instance type id
+     * @return the instance type
+     */
+    InstanceType getInstanceType(Guid id, Guid userID, boolean isFiltered);
 
     /**
      * Retrieve the image type with the given id

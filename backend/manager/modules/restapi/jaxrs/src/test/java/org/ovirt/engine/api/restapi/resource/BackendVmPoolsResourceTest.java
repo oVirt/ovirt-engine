@@ -129,8 +129,8 @@ public class BackendVmPoolsResourceTest extends
 
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
-                new String[] { "Name" },
-                new Object[] { NAMES[1] },
+                new String[] { "Name", "ClusterId" },
+                new Object[] { NAMES[1], GUIDS[2] },
                 getTemplateEntity());
 
         setUpGetConsoleExpectations(new int[] { 1 });

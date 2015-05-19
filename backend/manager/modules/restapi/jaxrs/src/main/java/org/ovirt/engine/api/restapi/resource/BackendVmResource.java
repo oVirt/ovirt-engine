@@ -602,7 +602,10 @@ public class BackendVmResource extends
     }
 
     private VmTemplate lookupInstanceTypeByName(Template template) {
-        return getEntity(VmTemplate.class, VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(template.getName()), "GetVmTemplate");
+        return getEntity(VmTemplate.class,
+                VdcQueryType.GetInstanceType,
+                new GetVmTemplateParameters(template.getName()),
+                "GetVmTemplate");
     }
 
     @Override

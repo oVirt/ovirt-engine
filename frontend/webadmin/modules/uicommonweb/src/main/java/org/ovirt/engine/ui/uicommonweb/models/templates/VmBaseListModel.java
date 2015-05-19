@@ -331,7 +331,8 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
                         }
 
                         ),
-                        vmName);
+                        vmName,
+                        model.getSelectedDataCenter() == null ? null : model.getSelectedDataCenter().getId());
     }
 
     protected void onSaveVM(UnitVmModel model) {

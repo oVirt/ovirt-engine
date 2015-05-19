@@ -813,7 +813,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected boolean canAddVm(List<String> reasons, String name, Guid storagePoolId,
             int vmPriority) {
         // Checking if a desktop with same name already exists
-        if (isVmWithSameNameExists(name)) {
+        if (isVmWithSameNameExists(name, storagePoolId)) {
             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED.name());
             return false;
         }

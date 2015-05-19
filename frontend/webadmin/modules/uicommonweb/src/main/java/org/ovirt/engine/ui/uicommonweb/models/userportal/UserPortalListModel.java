@@ -655,7 +655,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
                         }
                     }),
-                    name);
+                    name, model.getSelectedDataCenter() == null ? null : model.getSelectedDataCenter().getId());
         }
     }
 
@@ -1054,7 +1054,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
                     }
                 }),
-                model.getName().getEntity());
+                model.getName().getEntity(),
+                model.getSelectedDataCenter() == null ? null : model.getSelectedDataCenter().getId());
     }
 
     private void stopProgress(Object target) {

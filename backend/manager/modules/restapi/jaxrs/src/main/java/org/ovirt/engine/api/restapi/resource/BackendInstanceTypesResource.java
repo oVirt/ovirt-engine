@@ -81,7 +81,7 @@ public class BackendInstanceTypesResource
 
         return performCreate(VdcActionType.AddVmTemplate,
                                addInstanceTypeParameters,
-                               new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate,
+                new QueryIdResolver<Guid>(VdcQueryType.GetInstanceType,
                                                    GetVmTemplateParameters.class));
     }
 

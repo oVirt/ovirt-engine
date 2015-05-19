@@ -449,9 +449,19 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (isVmInDb && getVm().getStatus() != VMStatus.Down) {
             return failCanDoAction(VdcBllMessages.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
         }
-
-        if (!isTemplateVersion() && isVmTemlateWithSameNameExist(getVmTemplateName())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        // validate uniqueness of template name. If template is a regular template, uniqueness
+        // is considered in context of the datacenter. If template is an 'Instance' name must
+        // be unique also across datacenters.
+        if (!isTemplateVersion()) {
+            if (isInstanceType) {
+                if (isInstanceWithSameNameExists(getVmTemplateName())) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                }
+            } else {
+                if (isVmTemlateWithSameNameExist(getVmTemplateName(), getVdsGroup().getStoragePoolId())) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                }
+            }
         }
 
         if (isTemplateVersion()) {

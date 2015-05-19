@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -33,9 +35,12 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmTemplateDAO;
 
 public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> extends CommandBase<T> {
 
+    @Inject
+    private VmTemplateDAO vmTemplateDao;
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -62,8 +67,12 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         throw new NotImplementedException();
     }
 
-    public static boolean isVmTemlateWithSameNameExist(String name) {
-        return DbFacade.getInstance().getVmTemplateDao().getByName(name, null, false) != null;
+    public boolean isVmTemlateWithSameNameExist(String name, Guid datacenterId) {
+        return vmTemplateDao.getByName(name, datacenterId, null, false) != null;
+    }
+
+    public boolean isInstanceWithSameNameExists(String name) {
+        return vmTemplateDao.getInstanceTypeByName(name, null, false) != null;
     }
 
     public static boolean isVmTemplateImagesReady(VmTemplate vmTemplate,
