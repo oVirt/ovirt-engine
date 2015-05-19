@@ -53,16 +53,21 @@ public class CinderDisksValidator {
         return validate(new Callable<ValidationResult>() {
             @Override
             public ValidationResult call() {
-                int diskIndex = 0;
-                for (CinderDisk disk : cinderDisks) {
-                    OpenStackVolumeProviderProxy proxy = diskProxyMap.get(disk.getId());
-                    Limits limits = proxy.getLimits();
-                    if (limits.getAbsolute().getTotalVolumesUsed() + diskIndex >= limits.getAbsolute().getMaxTotalVolumes()) {
+                Map<Guid, CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageMap =
+                        getRelatedCinderDisksToStorageDomainMap();
+                Collection<CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageCollection =
+                        relatedCinderDisksByStorageMap.values();
+                for (CinderStorageRelatedDisksAndProxy relatedCinderDisksByStorage : relatedCinderDisksByStorageCollection) {
+                    Limits limits = relatedCinderDisksByStorage.getProxy().getLimits();
+                    int numOfDisks = relatedCinderDisksByStorage.getCinderDisks().size();
+                    if (isLimitExceeded(limits, VolumeClassification.Volume, numOfDisks)) {
+                        String storageName =
+                                getStorageDomainDao().get(relatedCinderDisksByStorage.getStorageDomainId())
+                                        .getStorageName();
                         return new ValidationResult(VdcBllMessages.CANNOT_ADD_CINDER_DISK_VOLUME_LIMIT_EXCEEDED,
                                 String.format("$maxTotalVolumes %d", limits.getAbsolute().getMaxTotalVolumes()),
-                                String.format("$diskAlias %s", disk.getDiskAlias()));
+                                String.format("$storageName %s", storageName));
                     }
-                    diskIndex++;
                 }
                 return ValidationResult.VALID;
             }
