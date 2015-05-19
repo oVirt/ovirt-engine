@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -321,10 +320,36 @@ public class IsoDomainListSyncronizer {
     private boolean refreshIsoDomain(Guid storageDomainId,
             List<RepoImage> problematicRepoFileList,
             ImageFileType imageType) {
-        boolean refreshSucceeded = false;
-        List<RepoImage> tempProblematicRepoFileList = new ArrayList<>();
+        List<StoragePoolIsoMap> isoMapList = fetchAllStoragePoolsForIsoDomain(storageDomainId, imageType);
 
-        // Fetch all the Storage pools for this Iso domain Id.
+        for (StoragePoolIsoMap storagePoolIsoMap : isoMapList) {
+            Guid storagePoolId = storagePoolIsoMap.getstorage_pool_id();
+            StorageDomainStatus status = storagePoolIsoMap.getStatus();
+
+            if (StorageDomainStatus.Active != status) {
+                handleInactiveStorageDomain(storageDomainId, imageType, status);
+            } else {
+                // Try to refresh the domain of the storage pool id because its status is active.
+                boolean refreshOk = refreshIsoDomainFileForStoragePool(storageDomainId, storagePoolId, imageType);
+                if (!refreshOk) {
+                    log.debug("Failed refreshing Storage domain id '{}', for '{}' file type in storage pool id '{}'.",
+                            storageDomainId,
+                            imageType,
+                            storagePoolId);
+
+                    // Add the repository file to the list of problematic Iso domains.
+                    RepoImage repoImage = createMockRepositoryFileMetaData(storageDomainId, imageType, storagePoolId);
+                    problematicRepoFileList.add(repoImage);
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    // Fetch all the Storage pools for this Iso domain Id.
+    private List<StoragePoolIsoMap> fetchAllStoragePoolsForIsoDomain(Guid storageDomainId, ImageFileType imageType) {
         List<StoragePoolIsoMap> isoMapList =
                 DbFacade.getInstance()
                         .getStoragePoolIsoMapDao()
@@ -333,50 +358,28 @@ public class IsoDomainListSyncronizer {
                 isoMapList.size(),
                 imageType,
                 storageDomainId);
-        Iterator<StoragePoolIsoMap> iter = isoMapList.iterator();
+        return isoMapList;
+    }
 
-        while (iter.hasNext() && !refreshSucceeded) {
-            StoragePoolIsoMap storagePoolIsoMap = iter.next();
-            Guid storagePoolId = storagePoolIsoMap.getstorage_pool_id();
-            StorageDomainStatus status = storagePoolIsoMap.getStatus();
+    // set a mock repository file meta data with storage domain id and storage pool id.
+    private static RepoImage createMockRepositoryFileMetaData(Guid storageDomainId,
+            ImageFileType imageType,
+            Guid storagePoolId) {
+        RepoImage repoImage = new RepoImage();
+        repoImage.setStoragePoolId(storagePoolId);
+        repoImage.setRepoDomainId(storageDomainId);
+        repoImage.setFileType(imageType);
+        return repoImage;
+    }
 
-            if (status != StorageDomainStatus.Active) {
-                log.debug("Storage domain id '{}', is not active, and therefore could not be refreshed for '{}'"
-                                + " file type (Iso domain status is '{}').",
-                        storageDomainId,
-                        imageType,
-                        status);
-            }
-            else {
-                // Try to refresh the domain of the storage pool id because its status is active.
-                refreshSucceeded =
-                        refreshIsoDomainFileForStoragePool(storageDomainId,
-                                storagePoolId,
-                                imageType);
-                if (!refreshSucceeded) {
-                    log.debug("Failed refreshing Storage domain id '{}', for '{}' file type in storage pool id '{}'.",
-                            storageDomainId,
-                            imageType,
-                            storagePoolId);
-                    // set a mock repository file meta data with storage domain id and storage pool id.
-                    RepoImage repoImage = new RepoImage();
-                    repoImage.setStoragePoolId(storagePoolId);
-                    repoImage.setRepoDomainId(storageDomainId);
-                    repoImage.setFileType(imageType);
-
-                    // Add the repository file to the list of problematic Iso domains.
-                    tempProblematicRepoFileList.add(repoImage);
-
-                }
-            }
-        }
-
-        // If refreshed was not succeeded add the problematic storage Iso domain to the list.
-        if (!refreshSucceeded) {
-            problematicRepoFileList.addAll(tempProblematicRepoFileList);
-        }
-
-        return refreshSucceeded;
+    private void handleInactiveStorageDomain(Guid storageDomainId,
+            ImageFileType imageType,
+            StorageDomainStatus status) {
+        log.debug("Storage domain id '{}', is not active, and therefore could not be refreshed for '{}'"
+                        + " file type (Iso domain status is '{}').",
+                storageDomainId,
+                imageType,
+                status);
     }
 
     /**
@@ -450,11 +453,10 @@ public class IsoDomainListSyncronizer {
     private static void handleErrorLog(Guid storagePoolId, Guid storageDomainId, ImageFileType imageType) {
         List<RepoImage> tempProblematicRepoFileList = new ArrayList<>();
 
-        // set mock repo file meta data with storage domain id and storage pool id.
-        RepoImage repoImage = new RepoImage();
-        repoImage.setStoragePoolId(storagePoolId);
-        repoImage.setRepoDomainId(storageDomainId);
-        repoImage.setFileType(imageType);
+        RepoImage repoImage = createMockRepositoryFileMetaData(
+                storageDomainId,
+                imageType,
+                storagePoolId);
 
         // Add the repository file to the list, and use handleError.
         tempProblematicRepoFileList.add(repoImage);
