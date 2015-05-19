@@ -936,10 +936,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
                 }
             }
         });
-        getGlusterTunedProfile().setIsAvailable(getEnableGlusterService().getEntity());
-        if (getEnableGlusterService().getEntity()) {
-            initTunedProfiles();
-        }
+
         getEnableOvirtService().setEntity(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         getEnableOvirtService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.VirtOnly
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
@@ -1020,6 +1017,9 @@ public class ClusterModel extends EntityModel<VDSGroup>
         getEnableGlusterService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly));
         getGlusterTunedProfile().setIsAvailable(getEnableGlusterService().getEntity());
+        if (getEnableGlusterService().getEntity()) {
+            initTunedProfiles();
+        }
         setOptimizationNone(new EntityModel<Integer>());
         setOptimizationForServer(new EntityModel<Integer>());
         setOptimizationForDesktop(new EntityModel<Integer>());
