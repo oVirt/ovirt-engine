@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:style type="org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox.Style">
+        .container {
+            height: 100%;
+            border: solid 1px gray;
+            padding: 0px;
+        }
+
+        .labelContainer_legacy {
+            text-align: left;
+        }
+
+        .labelContainer {
+            border: none;
+            border-top: solid 1px gray;
+            font-style: italic;
+        }
+
+        .listBox {
+            height: 21px;
+            width: 100%;
+            border: none;
+        }
+    </ui:style>
+
+    <g:FlowPanel ui:field="container">
+        <g:FlowPanel ui:field="groupLabelContainer" addStyleNames="input-group-addon {style.labelContainer_legacy}">
+            <g:Label ui:field="groupLabel"/>
+        </g:FlowPanel>
+    </g:FlowPanel>
+
+</ui:UiBinder>
+

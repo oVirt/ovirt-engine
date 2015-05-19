@@ -83,10 +83,12 @@ public class ListModel<T> extends Model
         return selectedItem;
     }
 
-    public void setSelectedItem(T value)
-    {
-        if (selectedItem != value)
-        {
+    public void setSelectedItem(T value) {
+        setSelectedItem(value, true);
+    }
+
+    public void setSelectedItem(T value, boolean fireEvent) {
+        if (selectedItem != value && fireEvent) {
             onSelectedItemChanging(value, selectedItem);
             selectedItem = value;
             onSelectedItemChanged();

@@ -8,6 +8,7 @@
              xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
              xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
+             xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
@@ -258,10 +259,7 @@
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
                                 <b:Row addStyleNames="{style.generalTabTopDecorator} {style.topElement}">
-                                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7"/>
-                                </b:Row>
-                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
-                                    <e:ListModelListBoxEditor ui:field="clusterEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7"/>
+                                    <e:GroupedListModelListBoxEditor ui:field="clusterEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7"/>
                                 </b:Row>
                                 <b:Row addStyleNames="{style.generalTabTopDecorator}">
                                     <b:Column size="LG_5">

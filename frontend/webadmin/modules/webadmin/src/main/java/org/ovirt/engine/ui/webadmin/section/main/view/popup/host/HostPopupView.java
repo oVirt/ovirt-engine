@@ -1,6 +1,11 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Row;
@@ -8,7 +13,6 @@ import org.ovirt.engine.core.common.action.VdsOperationActionParameters.Authenti
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -24,6 +28,8 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
+import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox;
+import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
@@ -113,14 +119,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     DialogTab powerManagementTab;
 
     @UiField(provided = true)
-    @Path(value = "dataCenter.selectedItem")
-    @WithElementId("dataCenter")
-    ListModelListBoxEditor<StoragePool> dataCenterEditor;
-
-    @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     @WithElementId("cluster")
-    ListModelListBoxEditor<VDSGroup> clusterEditor;
+    GroupedListModelListBoxEditor<VDSGroup> clusterEditor;
 
     @UiField
     @Path(value = "name.entity")
@@ -541,9 +542,59 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         publicKeyEditor = new StringEntityModelTextAreaLabelEditor();
 
         // List boxes
-        dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
+        clusterEditor = new GroupedListModelListBoxEditor<>(new GroupedListModelListBox<VDSGroup>(new NameRenderer<VDSGroup>()) {
 
-        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
+            @Override
+            public SortedMap<String, List<VDSGroup>> getGroupedList(List<VDSGroup> acceptableValues) {
+                SortedMap<String, List<VDSGroup>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+                Collections.sort(acceptableValues, new DataCenterClusterComparator());
+                String currentDataCenter = null;
+                List<VDSGroup> currentClusterList = null;
+                for (VDSGroup cluster: acceptableValues) {
+                    if (currentDataCenter == null || !currentDataCenter.equals(cluster.getStoragePoolName())) {
+                        currentClusterList = new ArrayList<>();
+                        currentDataCenter = cluster.getStoragePoolName();
+                        result.put(currentDataCenter, currentClusterList);
+                    }
+                    if (currentClusterList != null) {
+                        currentClusterList.add(cluster);
+                    }
+                }
+                return result;
+            }
+
+            @Override
+            public String getModelLabel(VDSGroup model) {
+                return model.getName();
+            }
+
+            @Override
+            public String getGroupLabel(VDSGroup model) {
+                return messages.hostDataCenter(model.getStoragePoolName());
+            }
+
+            /**
+             * Comparator that sorts on data center name first, and then cluster name. Ignoring case.
+             */
+            final class DataCenterClusterComparator implements Comparator<VDSGroup> {
+
+                 @Override
+                 public int compare(VDSGroup cluster1, VDSGroup cluster2) {
+                     if (cluster1.getStoragePoolName() != null && cluster2.getStoragePoolName() == null) {
+                         return -1;
+                     } else if (cluster2.getStoragePoolName() != null && cluster1.getStoragePoolName() == null) {
+                         return 1;
+                     } else if (cluster1.getStoragePoolName() == null && cluster2.getStoragePoolName() == null) {
+                         return 0;
+                     }
+                     if (cluster1.getStoragePoolName().equals(cluster2.getStoragePoolName())) {
+                         return cluster1.getName().compareToIgnoreCase(cluster2.getName());
+                     } else {
+                         return cluster1.getStoragePoolName().compareToIgnoreCase(cluster2.getStoragePoolName());
+                     }
+                 }
+             }
+         });
 
         externalHostNameEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
@@ -599,7 +650,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     void localize() {
         // General tab
         generalTab.setLabel(constants.hostPopupGeneralTabLabel());
-        dataCenterEditor.setLabel(constants.hostPopupDataCenterLabel());
         clusterEditor.setLabel(constants.hostPopupClusterLabel());
         nameEditor.setLabel(constants.hostPopupNameLabel());
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
@@ -1125,7 +1175,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Override
     public int setTabIndexes(int nextTabIndex) {
         // ==General Tab==
-        dataCenterEditor.setTabIndex(nextTabIndex++);
         clusterEditor.setTabIndex(nextTabIndex++);
         externalHostProviderEnabledEditor.setTabIndex(nextTabIndex++);
         providersEditor.setTabIndex(nextTabIndex++);

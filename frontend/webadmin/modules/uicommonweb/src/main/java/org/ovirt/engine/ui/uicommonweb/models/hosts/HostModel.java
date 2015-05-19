@@ -1302,56 +1302,46 @@ public abstract class HostModel extends Model implements HasValidatedTabs
                 public void onSuccess(Object model, Object result)
                 {
                     HostModel hostModel = (HostModel) model;
+                    @SuppressWarnings("unchecked")
                     ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
-                    StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
 
-                    // Update selected cluster only if the returned cluster list is indeed the selected datacenter's
-                    // clusters
-                    if (clusters.isEmpty()
-                            || clusters.size() > 0
-                            && clusters.get(0)
-                                    .getStoragePoolId()
-                                    .equals(selectedDataCenter.getId()))
-                    {
+                    if (hostModel.getIsNew()) {
+                        updateClusterList(hostModel, clusters);
+                    } else {
+                        AsyncQuery architectureQuery = new AsyncQuery();
 
+                        architectureQuery.setModel(new Object[] { hostModel, clusters });
+                        architectureQuery.asyncCallback = new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object model, Object returnValue) {
+                                Object[] objArray = (Object[]) model;
+                                HostModel hostModel = (HostModel) objArray[0];
+                                @SuppressWarnings("unchecked")
+                                ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) objArray[1];
 
-                        if (hostModel.getIsNew()) {
-                            updateClusterList(hostModel, clusters);
-                        } else {
-                            AsyncQuery architectureQuery = new AsyncQuery();
+                                ArchitectureType architecture = (ArchitectureType) returnValue;
 
-                            architectureQuery.setModel(new Object[] { hostModel, clusters });
-                            architectureQuery.asyncCallback = new INewAsyncCallback() {
-                                @Override
-                                public void onSuccess(Object model, Object returnValue) {
-                                    Object[] objArray = (Object[]) model;
-                                    HostModel hostModel = (HostModel) objArray[0];
-                                    ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) objArray[1];
+                                ArrayList<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
 
-                                    ArchitectureType architecture = (ArchitectureType) returnValue;
-
-                                    ArrayList<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
-
-                                    for (VDSGroup cluster : clusters) {
-                                        if (architecture == ArchitectureType.undefined
-                                                || cluster.getArchitecture() == ArchitectureType.undefined
-                                                || cluster.getArchitecture() == architecture) {
-                                            filteredClusters.add(cluster);
-                                        }
+                                for (VDSGroup cluster : clusters) {
+                                    if (architecture == ArchitectureType.undefined
+                                            || cluster.getArchitecture() == ArchitectureType.undefined
+                                            || cluster.getArchitecture() == architecture) {
+                                        filteredClusters.add(cluster);
                                     }
-
-                                    updateClusterList(hostModel, filteredClusters);
                                 }
-                            };
 
-                            AsyncDataProvider.getInstance().getHostArchitecture(architectureQuery, hostModel.getHostId());
+                                updateClusterList(hostModel, filteredClusters);
+                            }
+                        };
 
-                        }
+                        AsyncDataProvider.getInstance().getHostArchitecture(architectureQuery, hostModel.getHostId());
+
                     }
                 }
             };
 
-            AsyncDataProvider.getInstance().getClusterList(_asyncQuery, dataCenter.getId());
+            AsyncDataProvider.getInstance().getClusterList(_asyncQuery);
         }
     }
 
@@ -1396,6 +1386,13 @@ public abstract class HostModel extends Model implements HasValidatedTabs
                             cluster.getCompatibilityVersion().toString());
             getProtocol().setEntity(jsonSupported);
             getProtocol().setIsChangeable(jsonSupported);
+            //Match the appropriate selected data center to the selected cluster, don't fire update events.
+            for (StoragePool datacenter : getDataCenter().getItems()) {
+                if (datacenter.getId().equals(cluster.getStoragePoolId())) {
+                    getDataCenter().setSelectedItem(datacenter, false);
+                    break;
+                }
+            }
         }
     }
 
@@ -1868,23 +1865,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs
             getIsPm().setEntity(vds.isPmEnabled());
         }
         updateModelDataCenterFromVds(dataCenters, vds);
-
-        ArrayList<VDSGroup> clusters;
-        if (getCluster().getItems() == null)
-        {
-            VDSGroup tempVar = new VDSGroup();
-            tempVar.setName(vds.getVdsGroupName());
-            tempVar.setId(vds.getVdsGroupId());
-            tempVar.setCompatibilityVersion(vds.getVdsGroupCompatibilityVersion());
-            getCluster()
-                    .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { tempVar })));
-        }
-        clusters = (ArrayList<VDSGroup>) getCluster().getItems();
-        updateModelClusterFromVds(clusters, vds);
-        if (getCluster().getSelectedItem() == null)
-        {
-            getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
-        }
 
         if (vds.getStatus() != VDSStatus.Maintenance &&
             vds.getStatus() != VDSStatus.PendingApproval &&
