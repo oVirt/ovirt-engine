@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
@@ -350,8 +349,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
             {
                 getSelectedItem().getUpdateCommand().execute();
 
-                VDSType vdsType = this.getHost().getSelectedItem().getVdsType();
-                String prefix = vdsType.equals(VDSType.oVirtNode) ? localFSPath : ""; //$NON-NLS-1$
+                String prefix = host.isOvirtNode() ? localFSPath : ""; //$NON-NLS-1$
                 if (!StringHelper.isNullOrEmpty(prefix))
                 {
                     for (Object item : getItems())

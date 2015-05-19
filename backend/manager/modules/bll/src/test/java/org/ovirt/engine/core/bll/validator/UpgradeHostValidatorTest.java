@@ -81,9 +81,13 @@ public class UpgradeHostValidatorTest {
 
     @Test
     public void updatesUnavailableForUpgradingOvirtNode() {
-        when(host.getVdsType()).thenReturn(VDSType.oVirtNode);
+        mockOvirtNode();
 
         assertThat(validator.updatesAvailable(), isValid());
+    }
+
+    private void mockOvirtNode() {
+        when(host.isOvirtNode()).thenReturn(true);
     }
 
     @Test
@@ -101,7 +105,7 @@ public class UpgradeHostValidatorTest {
 
     @Test
     public void imageNotProvidedForOvirtNode() {
-        when(host.getVdsType()).thenReturn(VDSType.oVirtNode);
+        mockOvirtNode();
 
         assertThat(validator.imageProvidedForOvirtNode(null),
                 failsWith(VdcBllMessages.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE));

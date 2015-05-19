@@ -1343,4 +1343,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     public void setAdditionalFeatures(Set<String> additionalFeatures) {
         vdsDynamic.setAdditionalFeatures(additionalFeatures);
     }
+
+    public boolean isOvirtNode() {
+        return getVdsType() == VDSType.oVirtNode;
+    }
 }

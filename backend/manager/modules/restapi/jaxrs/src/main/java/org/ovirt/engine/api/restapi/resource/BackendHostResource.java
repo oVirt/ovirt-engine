@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
@@ -174,7 +173,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         UpdateVdsActionParameters params = new UpdateVdsActionParameters(vds.getStaticData(), action.getRootPassword(), true);
         params = (UpdateVdsActionParameters) getMapper
                 (Action.class, VdsOperationActionParameters.class).map(action, (VdsOperationActionParameters) params);
-        if (vds.getVdsType()==VDSType.oVirtNode) {
+        if (vds.isOvirtNode()) {
             params.setReinstallOrUpgrade(true);
             if (action.isSetImage()) {
                 params.setoVirtIsoFile(action.getImage());

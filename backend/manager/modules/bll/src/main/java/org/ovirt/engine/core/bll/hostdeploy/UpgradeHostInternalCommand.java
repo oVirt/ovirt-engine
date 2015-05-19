@@ -72,7 +72,7 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
                 setVdsStatus(VDSStatus.InstallFailed);
                 return;
             }
-        } else if (getVds().getVdsType() == VDSType.oVirtNode) {
+        } else if (getVds().isOvirtNode()) {
             InstallVdsParameters parameters = new InstallVdsParameters(getVdsId());
             parameters.setIsReinstallOrUpgrade(true);
             parameters.setoVirtIsoFile(getParameters().getoVirtIsoFile());

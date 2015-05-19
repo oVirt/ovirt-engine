@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -203,7 +202,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
     private boolean isOvirtReInstallOrUpgrade() {
         return (
             getParameters().getIsReinstallOrUpgrade() &&
-            getVds().getVdsType() == VDSType.oVirtNode
+            getVds().isOvirtNode()
         );
     }
 

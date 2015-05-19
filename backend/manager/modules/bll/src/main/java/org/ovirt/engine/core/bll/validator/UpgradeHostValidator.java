@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class UpgradeHostValidator {
@@ -35,12 +34,12 @@ public class UpgradeHostValidator {
 
     public ValidationResult updatesAvailable() {
         return ValidationResult.failWith(VdcBllMessages.NO_AVAILABLE_UPDATES_FOR_HOST)
-                .unless(host.getVdsType() == VDSType.oVirtNode || host.isUpdateAvailable());
+                .unless(host.isOvirtNode() || host.isUpdateAvailable());
     }
 
     public ValidationResult imageProvidedForOvirtNode(String image) {
         return ValidationResult.failWith(VdcBllMessages.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE)
-                .when(host.getVdsType() == VDSType.oVirtNode && StringUtils.isBlank(image));
+                .when(host.isOvirtNode() && StringUtils.isBlank(image));
     }
 
     public ValidationResult hostWasInstalled() {

@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -1454,9 +1453,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     {
         final VDS host = getSelectedItem();
         InstallModel model = (InstallModel) getWindow();
-        final boolean isOVirt = host.getVdsType() == VDSType.oVirtNode;
 
-        if (!model.validate(isOVirt)) {
+        if (!model.validate(host.isOvirtNode())) {
             model.setValidationFailed(new EntityModel<Boolean>(true));
             return;
         }
@@ -1664,7 +1662,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.setHelpTag(HelpTag.configure_local_storage);
         model.setHashName("configure_local_storage"); //$NON-NLS-1$
 
-        if (host.getVdsType() == VDSType.oVirtNode) {
+        if (host.isOvirtNode()) {
             configureLocalStorage2(model);
         } else {
             configureLocalStorage3(model);
@@ -1860,7 +1858,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             return;
         }
 
-        if (host.getVdsType() != VDSType.oVirtNode) {
+        if (!host.isOvirtNode()) {
             return;
         }
 
@@ -1939,7 +1937,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         boolean approveAvailability =
                 items.size() == 1
                         && (VdcActionUtils.canExecute(items, VDS.class, VdcActionType.ApproveVds) || (items.get(0)
-                                .getStatus() == VDSStatus.InstallFailed && items.get(0).getVdsType() == VDSType.oVirtNode));
+                                .getStatus() == VDSStatus.InstallFailed && items.get(0).isOvirtNode()));
         getApproveCommand().setIsExecutionAllowed(approveAvailability);
 
         boolean installAvailability = false;

@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.businessentities.EditableOnVdsStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -59,12 +58,8 @@ public class VdsHandler extends BaseHandler {
         return mUpdateVdsStatic.IsFieldsUpdated(source, destination, list);
     }
 
-    static private boolean isPendingOvirt(VDSType type, VDSStatus status) {
-        return type == VDSType.oVirtNode && status == VDSStatus.PendingApproval;
-    }
-
-    static public boolean isPendingOvirt(VDS vds) {
-        return isPendingOvirt(vds.getVdsType(), vds.getStatus());
+    public static boolean isPendingOvirt(VDS vds) {
+        return vds.isOvirtNode() && vds.getStatus() == VDSStatus.PendingApproval;
     }
 
     /**

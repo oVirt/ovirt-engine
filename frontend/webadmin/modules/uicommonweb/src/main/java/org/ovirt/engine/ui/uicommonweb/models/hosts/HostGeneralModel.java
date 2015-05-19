@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -1095,7 +1094,7 @@ public class HostGeneralModel extends EntityModel<VDS>
 
     public static Model createUpgradeModel(final VDS host) {
         Model model;
-        if (host.getVdsType() == VDSType.oVirtNode) {
+        if (host.isOvirtNode()) {
             model = new UpgradeModel(host);
         } else {
             model = new UpgradeConfirmationModel(host);
