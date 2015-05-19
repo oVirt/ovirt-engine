@@ -69,7 +69,7 @@ public class GlusterSnapshotScheduleJob implements Serializable {
         GlusterVolumeSnapshotSchedule schedule =
                 getGlusterVolumeSnapshotScheduleDao().getByVolumeId(volume.getId());
         Date endDate = GlusterUtil.getInstance().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
-        if (endDate.before(new Date())) {
+        if (endDate != null && endDate.before(new Date())) {
             getGlusterVolumeSnapshotScheduleDao().removeByVolumeId(volume.getId());
             logUtil.logAuditMessage(volume.getClusterId(),
                     volume,
