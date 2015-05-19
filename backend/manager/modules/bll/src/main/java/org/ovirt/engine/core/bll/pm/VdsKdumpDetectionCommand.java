@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -139,9 +138,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
                     auditLogDirector.log(base, AuditLogType.KDUMP_FLOW_DETECTED_ON_VDS);
 
                     // set status to Kdumping to prevent Host Monitoring errors and wait until kdump finishes
-                    runVdsCommand(VDSCommandType.SetVdsStatus,
-                                    new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Kdumping)
-                            );
+                    setVdsStatus(VDSStatus.Kdumping);
 
                     // restart VMs running on Vds
                     restartVdsVms();
@@ -152,9 +149,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
 
                 if (kdumpStatus.getStatus() == KdumpFlowStatus.FINISHED) {
                     // host finished its kdump flow, set status to Non Responsive
-                    runVdsCommand(VDSCommandType.SetVdsStatus,
-                                    new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.NonResponsive)
-                            );
+                    setVdsStatus(VDSStatus.NonResponsive);
                     return KdumpDetectionResult.KDUMP_FINISHED;
                 }
             }

@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -26,8 +25,6 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -158,10 +155,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     protected void setStatus() {
-        Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                        new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Reboot));
+        setVdsStatus(VDSStatus.Reboot);
         runSleepOnReboot();
     }
 
@@ -169,8 +163,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // we need to load current status from db
         VdsDynamic currentHost = getDbFacade().getVdsDynamicDao().get(getVds().getId());
         if (currentHost != null && currentHost.getStatus() != status) {
-            getBackend().getResourceManager().RunVdsCommand(VDSCommandType.SetVdsStatus,
-                    new SetVdsStatusVDSCommandParameters(getVds().getId(), status));
+            setVdsStatus(status);
         }
     }
 

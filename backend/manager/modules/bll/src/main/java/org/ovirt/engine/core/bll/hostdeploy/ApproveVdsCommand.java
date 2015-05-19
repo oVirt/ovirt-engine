@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
 @NonTransactiveCommandAttribute
 public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVdsInternalCommand<T> {
@@ -61,12 +59,10 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
             setSucceeded(true);
         }
         if (getSucceeded()) {
-            runVdsCommand(VDSCommandType.SetVdsStatus,
-                            new SetVdsStatusVDSCommandParameters(getVds().getId(), VDSStatus.Unassigned));
+            setVdsStatus(VDSStatus.Unassigned);
         } else if (getParameters().isApprovedByRegister()) {
             // In case of Approval of oVirt host process, the status of the host is re-initialized to PendingApproval
-            runVdsCommand(VDSCommandType.SetVdsStatus,
-                            new SetVdsStatusVDSCommandParameters(getVds().getId(), VDSStatus.PendingApproval));
+            setVdsStatus(VDSStatus.PendingApproval);
         }
     }
 }

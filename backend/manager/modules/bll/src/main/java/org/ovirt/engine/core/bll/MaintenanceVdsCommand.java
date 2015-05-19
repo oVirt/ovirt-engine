@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -26,7 +27,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -76,8 +76,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             if (getVds().getStatus() == VDSStatus.NonResponsive
                     || getVds().getStatus() == VDSStatus.Connecting
                     || getVds().getStatus() == VDSStatus.Down) {
-                runVdsCommand(VDSCommandType.SetVdsStatus,
-                                new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Maintenance));
+                setVdsStatus(VDSStatus.Maintenance);
             }
         }
         // if there's VM(s) in this VDS which is migrating, mark this command as async

@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -62,9 +61,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
         final VDS vds = getVds();
         try (EngineLock monitoringLock = acquireMonitorLock()) {
             ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
-            setSucceeded(runVdsCommand(VDSCommandType.SetVdsStatus,
-                    new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Unassigned)).getSucceeded()
-            );
+            setSucceeded(setVdsStatus(VDSStatus.Unassigned).getSucceeded());
 
             if (getSucceeded()) {
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {

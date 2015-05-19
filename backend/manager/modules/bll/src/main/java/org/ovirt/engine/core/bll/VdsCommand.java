@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -94,8 +95,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         log.info("Waiting {} seconds, for server to finish reboot process.",
                 sleepTimeInSec);
         ThreadUtils.sleep(sleepTimeInSec * 1000);
-        runVdsCommand(VDSCommandType.SetVdsStatus,
-                        new SetVdsStatusVDSCommandParameters(getVdsId(), status));
+        setVdsStatus(status);
     }
 
     /**
@@ -281,17 +281,18 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         _failureMessage = e.getMessage();
     }
 
-    /**
-     * Set vds object status.
-     *
-     * @param status
-     *            new status.
-     */
-    protected void setVdsStatus(VDSStatus status) {
-        runVdsCommand(
-                VDSCommandType.SetVdsStatus,
-                new SetVdsStatusVDSCommandParameters(getVdsId(), status)
-        );
+    protected VDSReturnValue setVdsStatus(VDSStatus status) {
+        SetVdsStatusVDSCommandParameters parameters = new SetVdsStatusVDSCommandParameters(getVdsId(), status);
+        return invokeSetHostStatus(parameters);
+    }
+
+    protected VDSReturnValue setVdsStatus(VDSStatus status, NonOperationalReason reason) {
+        SetVdsStatusVDSCommandParameters parameters = new SetVdsStatusVDSCommandParameters(getVdsId(), status, reason);
+        return invokeSetHostStatus(parameters);
+    }
+
+    private VDSReturnValue invokeSetHostStatus(SetVdsStatusVDSCommandParameters parameters) {
+        return runVdsCommand(VDSCommandType.SetVdsStatus, parameters);
     }
 
     protected String getErrorMessage(String msg) {

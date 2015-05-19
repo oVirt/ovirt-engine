@@ -30,8 +30,6 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Sta
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -130,8 +128,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
             // fence execution was skipped due to fencing policy, host should be alive
             skippedDueToFencingPolicy = true;
             setSucceeded(false);
-            runVdsCommand(VDSCommandType.SetVdsStatus, new SetVdsStatusVDSCommandParameters(vdsId,
-                    VDSStatus.NonResponsive));
+            setVdsStatus(VDSStatus.NonResponsive);
             return;
         } else if (returnValue.getSucceeded()) {
             executeFenceVdsManuallyAction(vdsId, sessionId);
@@ -147,8 +144,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
             log.warn("Restart host action failed, updating host '{}' to '{}'",
                     vdsId,
                     VDSStatus.NonResponsive.name());
-            runVdsCommand(VDSCommandType.SetVdsStatus, new SetVdsStatusVDSCommandParameters(vdsId,
-                    VDSStatus.NonResponsive));
+            setVdsStatus(VDSStatus.NonResponsive);
         }
     }
 

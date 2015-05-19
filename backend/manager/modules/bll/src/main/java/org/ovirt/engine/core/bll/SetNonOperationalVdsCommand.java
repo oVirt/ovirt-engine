@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 /**
@@ -42,10 +40,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
      */
     @Override
     protected void executeCommand() {
-        runVdsCommand(VDSCommandType.SetVdsStatus,
-                        new SetVdsStatusVDSCommandParameters(getVdsId(),
-                                VDSStatus.NonOperational,
-                                getParameters().getNonOperationalReason()));
+        setVdsStatus(VDSStatus.NonOperational, getParameters().getNonOperationalReason());
         if (getVdsGroup() != null && getVdsGroup().supportsGlusterService()) {
             updateBrickStatusDown();
         }
