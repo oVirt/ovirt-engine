@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.CompatibilityVersionFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuPinningPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EmulatedMachineFilterPolicyUnit;
@@ -52,6 +53,7 @@ public class InternalClusterPolicies {
                 .addFilters(VmAffinityFilterPolicyUnit.class)
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(CpuPinningPolicyUnit.class)
+                .addFilters(CompatibilityVersionFilterPolicyUnit.class)
 
                 .addFunction(1, NoneWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
@@ -74,6 +76,7 @@ public class InternalClusterPolicies {
                 .addFilters(VmAffinityFilterPolicyUnit.class)
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(CpuPinningPolicyUnit.class)
+                .addFilters(CompatibilityVersionFilterPolicyUnit.class)
 
                 .addFunction(1, EvenDistributionWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
@@ -99,6 +102,7 @@ public class InternalClusterPolicies {
                 .addFilters(VmAffinityFilterPolicyUnit.class)
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(CpuPinningPolicyUnit.class)
+                .addFilters(CompatibilityVersionFilterPolicyUnit.class)
 
                 .addFunction(1, PowerSavingWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
@@ -125,6 +129,7 @@ public class InternalClusterPolicies {
                 .addFilters(VmAffinityFilterPolicyUnit.class)
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(CpuPinningPolicyUnit.class)
+                .addFilters(CompatibilityVersionFilterPolicyUnit.class)
 
                 .addFunction(1, EvenGuestDistributionWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
