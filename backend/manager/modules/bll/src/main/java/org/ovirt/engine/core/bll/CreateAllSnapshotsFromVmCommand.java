@@ -26,6 +26,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.validator.LiveSnapshotValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
@@ -113,10 +114,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private List<DiskImage> getDiskImagesForVm() {
         List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
         List<DiskImage> allDisks = new ArrayList<>(getDiskImages(disks));
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(disks, true);
-        for (CinderDisk cinder : cinderDisks) {
-            allDisks.add(ImagesHandler.getSnapshotLeaf(cinder.getId()));
-        }
+        allDisks.addAll(ImagesHandler.getCinderLeafImages(disks, true));
         return allDisks;
     }
 
@@ -189,7 +187,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(allDisks);
         if (!validate(sdValidator.allDomainsExistAndActive())
-                || !validate(sdValidator.allDomainsWithinThresholds())) {
+                || !validate(sdValidator.allDomainsWithinThresholds())
+                || !validateCinder()) {
             return false;
         }
 
@@ -198,6 +197,19 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
 
         return validate(sdValidator.allDomainsHaveSpaceForAllDisks(vmDisksList, memoryDisksList));
+    }
+
+    public boolean validateCinder() {
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()));
+        if (!cinderDisks.isEmpty()) {
+            CinderDisksValidator cinderDisksValidator = getCinderDisksValidator(cinderDisks);
+            return validate(cinderDisksValidator.validateCinderDiskSnapshotsLimits());
+        }
+        return true;
+    }
+
+    protected CinderDisksValidator getCinderDisksValidator(List<CinderDisk> cinderDisks) {
+        return new CinderDisksValidator(cinderDisks);
     }
 
     protected MemoryImageBuilder getMemoryImageBuilder() {

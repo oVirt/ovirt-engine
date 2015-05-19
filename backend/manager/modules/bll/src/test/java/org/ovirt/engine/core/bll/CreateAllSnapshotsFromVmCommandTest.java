@@ -78,6 +78,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         doReturn(diskImagesValidator).when(cmd).createDiskImageValidator(any(List.class));
         doReturn(multipleStorageDomainsValidator).when(cmd).createMultipleStorageDomainsValidator(any(List.class));
         doReturn(memoryImageBuilder).when(cmd).getMemoryImageBuilder();
+        doReturn(true).when(cmd).validateCinder();
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(anyList());
     }
 
