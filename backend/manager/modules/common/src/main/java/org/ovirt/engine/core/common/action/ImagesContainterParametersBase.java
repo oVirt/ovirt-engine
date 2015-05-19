@@ -6,6 +6,7 @@ public class ImagesContainterParametersBase extends ImagesActionsParametersBase 
     private static final long serialVersionUID = -5293411452987894523L;
     private boolean wipeAfterDelete;
     private Guid containerid;
+    private boolean parentHasTasks;
 
     public ImagesContainterParametersBase() {
         containerid = Guid.Empty;
@@ -35,5 +36,13 @@ public class ImagesContainterParametersBase extends ImagesActionsParametersBase 
 
     public void setWipeAfterDelete(boolean value) {
         wipeAfterDelete = value;
+    }
+
+    public boolean isParentHasTasks() {
+        return parentHasTasks;
+    }
+
+    public void setParentHasTasks(boolean parentHasTasks) {
+        this.parentHasTasks = parentHasTasks;
     }
 }
