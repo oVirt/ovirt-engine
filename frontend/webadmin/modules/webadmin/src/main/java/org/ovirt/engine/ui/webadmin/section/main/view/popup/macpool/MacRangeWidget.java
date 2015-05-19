@@ -40,7 +40,7 @@ public class MacRangeWidget extends AddRemoveRowWidget<ListModel<MacRangeModel>,
     @Override
     protected boolean isGhost(MacRangeModel value) {
         return StringHelper.isNullOrEmpty(value.getLeftBound().getEntity())
-                || StringHelper.isNullOrEmpty(value.getRightBound().getEntity());
+                && StringHelper.isNullOrEmpty(value.getRightBound().getEntity());
     }
 
 }
