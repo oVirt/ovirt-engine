@@ -617,6 +617,14 @@ verifyArgs() {
 			die "--db-passfile or --db-password is missing"
 		[ -n "${MY_DB_DATABASE}" ] || die "--db-name is missing"
 	fi
+	[ -z "${CHANGE_DB_CREDENTIALS}" -a \
+		\( \
+			-n "${MY_DB_HOST}" \
+			-o -n "${MY_DB_USER}" \
+			-o -n "${MY_DB_PASSWORD}" \
+			-o -n "${MY_DB_DATABASE}" \
+		\) \
+	] && die "Please use --change-db-credentials to change engine db credentials"
 	if [ -n "${CHANGE_DWH_DB_CREDENTIALS}" ]; then
 		[ -n "${PROVISION_DWH_DB}" ] && die "Cannot change credentials if provisioning a database"
 		[ -n "${MY_DWH_DB_HOST}" ] || die "--dwh-db-host is missing"
@@ -625,6 +633,14 @@ verifyArgs() {
 			die "--dwh-db-passfile or --dwh-db-password is missing"
 		[ -n "${MY_DWH_DB_DATABASE}" ] || die "--dwh-db-name is missing"
 	fi
+	[ -z "${CHANGE_DWH_DB_CREDENTIALS}" -a \
+		\( \
+			-n "${MY_DWH_DB_HOST}" \
+			-o -n "${MY_DWH_DB_USER}" \
+			-o -n "${MY_DWH_DB_PASSWORD}" \
+			-o -n "${MY_DWH_DB_DATABASE}" \
+		\) \
+	] && die "Please use --change-dwh-db-credentials to change dwh db credentials"
 	if [ -n "${CHANGE_REPORTS_DB_CREDENTIALS}" ]; then
 		[ -n "${PROVISION_REPORTS_DB}" ] && die "Cannot change credentials if provisioning a database"
 		[ -n "${MY_REPORTS_DB_HOST}" ] || die "--reports-db-host is missing"
@@ -633,6 +649,14 @@ verifyArgs() {
 			die "--reports-db-passfile or --reports-db-password is missing"
 		[ -n "${MY_REPORTS_DB_DATABASE}" ] || die "--reports-db-name is missing"
 	fi
+	[ -z "${CHANGE_REPORTS_DB_CREDENTIALS}" -a \
+		\( \
+			-n "${MY_REPORTS_DB_HOST}" \
+			-o -n "${MY_REPORTS_DB_USER}" \
+			-o -n "${MY_REPORTS_DB_PASSWORD}" \
+			-o -n "${MY_REPORTS_DB_DATABASE}" \
+		\) \
+	] && die "Please use --change-reports-db-credentials to change reports db credentials"
 }
 
 # Expects user/host/port/database in the environment.
