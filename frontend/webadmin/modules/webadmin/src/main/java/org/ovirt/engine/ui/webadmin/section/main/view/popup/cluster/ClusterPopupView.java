@@ -665,9 +665,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     }
 
     private void initInfoIcons() {
-        memoryOptimizationInfo = new InfoIcon(templates.italicFixedWidth("465px", constants.clusterPopupMemoryOptimizationInfo())); //$NON-NLS-1$
+        memoryOptimizationInfo = new InfoIcon(templates.italicText(constants.clusterPopupMemoryOptimizationInfo()));
 
-        cpuThreadsInfo = new InfoIcon(templates.italicFixedWidth("600px", constants.clusterPopupCpuThreadsInfo())); //$NON-NLS-1$
+        cpuThreadsInfo = new InfoIcon(templates.italicText(constants.clusterPopupCpuThreadsInfo()));
 
         schedulerOptimizationInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
         allowOverbookingInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
@@ -679,12 +679,12 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo<String>(label, spiceProxyOverrideEnabled);
 
         fencingEnabledInfo = new InfoIcon(
-                templates.italicFixedWidth("400px", constants.fencingEnabledInfo())); //$NON-NLS-1$
+                templates.italicText(constants.fencingEnabledInfo()));
         skipFencingIfSDActiveInfo = new InfoIcon(
-                templates.italicFixedWidth("400px", constants.skipFencingIfSDActiveInfo())); //$NON-NLS-1$
+                templates.italicText(constants.skipFencingIfSDActiveInfo()));
 
         skipFencingIfConnectivityBrokenInfo = new InfoIcon(
-                templates.italicFixedWidth("400px", constants.skipFencingWhenConnectivityBrokenInfo())); //$NON-NLS-1$
+                templates.italicText(constants.skipFencingWhenConnectivityBrokenInfo()));
     }
 
     @Override
@@ -772,12 +772,10 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         });
 
         schedulerOptimizationInfoIcon.setText(SafeHtmlUtils.fromTrustedString(
-                templates.italicFixedWidth("350px", //$NON-NLS-1$
-                object.getSchedulerOptimizationInfoMessage()).asString()
+                templates.italicText(object.getSchedulerOptimizationInfoMessage()).asString()
                         .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
         allowOverbookingInfoIcon.setText(SafeHtmlUtils.fromTrustedString(
-                templates.italicFixedWidth("350px", //$NON-NLS-1$
-                        object.getAllowOverbookingInfoMessage()).asString()
+                templates.italicText(object.getAllowOverbookingInfoMessage()).asString()
                         .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
         allowOverbookingPanel.setVisible(allowOverbookingEditor.isVisible());
 
