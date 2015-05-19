@@ -756,6 +756,7 @@ backupDB() {
 	local format="$7"
 
 	local pgdump_log="${TEMP_FOLDER}/pgdump.log"
+	local failed_msg=
 
 	if [ -n "${compressor}" ]; then
 		pg_cmd pg_dump \
@@ -767,7 +768,7 @@ backupDB() {
 			--no-privileges \
 			2> "${pgdump_log}" \
 			| "${compressor}" > "${file}" \
-			|| logdie "${compressor} failed compressing the backup of database ${database}"
+			|| failed_msg="${compressor} failed compressing the backup of database ${database}"
 	else
 		pg_cmd pg_dump \
 			-E "UTF8" \
@@ -778,13 +779,14 @@ backupDB() {
 			--no-privileges \
 			2> "${pgdump_log}" \
 			> "${file}" \
-			|| logdie "Database ${database} backup failed"
+			|| failed_msg="Database ${database} backup failed"
 	fi
 
 	if [ -s "${pgdump_log}" ]; then
 		cat "${pgdump_log}" >> "${LOG}"
-		logdie "Database ${database} backup failed"
+		[ -z "${failed_msg}" ] && failed_msg="Database ${database} backup failed"
 	fi
+	[ -n "${failed_msg}" ] && logdie "${failed_msg}"
 }
 
 dorestore() {
@@ -1002,16 +1004,17 @@ restoreDB() {
 
 	log "restoreDB: backupfile ${backupfile} user ${user} host ${host} port ${port} database ${database} orig_user ${orig_user} compressor ${compressor} format ${format} jobsnum ${jobsnum}"
 	local pgrestorelog="${TEMP_FOLDER}/pg-restore-log"
+	local failed_msg=
 
 	if [ "${format}" = "plain" ]; then
 		if [ -z "${compressor}" ]; then
 			pg_cmd psql -f "${backupfile}" > "${pgrestorelog}"  2>&1 \
-				|| logdie "Database ${database} restore failed"
+				|| failed_msg="Database ${database} restore failed"
 		else
 			# Requires the compressor to support '-d'. All our current ones do.
 			"${compressor}" -d < "${backupfile}" | \
 				pg_cmd psql > "${pgrestorelog}"  2>&1 \
-				|| logdie "Database ${database} restore failed"
+				|| failed_msg="Database ${database} restore failed"
 		fi
 	elif [ "${format}" = "custom" ]; then
 		if [ -z "${compressor}" ]; then
@@ -1027,6 +1030,8 @@ restoreDB() {
 
 	cat "${pgrestorelog}" >> "${LOG}"  2>&1 \
 		|| logdie "Failed to append pg log to restore log"
+
+	[ -n "${failed_msg}" ] && logdie "${failed_msg}"
 
 	local IGNORED_ERRORS=$(cat << __EOF | egrep -v '^$|^#' | tr '\012' '|' | sed 's/|$//'
 language "plpgsql" already exists
@@ -1058,16 +1063,13 @@ cleanDbTempData() {
 	local port="$3"
 	local database="$4"
 	local tables_to_clean="$5"
-	local psqllog="${TEMP_FOLDER}/psql-cleanup-log"
 	echo "${tables_to_clean}" | while read -r table; do
 		log "truncating ${table}"
 		pg_cmd psql \
 			-t \
 			-c "TRUNCATE TABLE ${table} cascade" \
-			> "${psqllog}"  2>&1 \
+			>> "${LOG}"  2>&1 \
 			|| logdie "Failed cleaning up ${table}"
-			cat "${psqllog}" >> "${LOG}"  2>&1 \
-				|| logdie "Failed to append psql log to restore log"
 	done || logdie "Failed cleaning up temp data"
 }
 
@@ -1076,23 +1078,18 @@ resetDwhCurrentlyRunning() {
 	local host="$2"
 	local port="$3"
 	local database="$4"
-	local psqllog="${TEMP_FOLDER}/psql-dwhrunning-log"
 	local psqlout="${TEMP_FOLDER}/psql-dwhrunning-out"
 
 	local sel_q="SELECT var_value FROM dwh_history_timekeeping WHERE var_name='DwhCurrentlyRunning'"
 	local upd_q="UPDATE dwh_history_timekeeping SET var_value='0' WHERE var_name='DwhCurrentlyRunning'"
 
-	pg_cmd psql -t -c "${sel_q}" > "${psqlout}" 2> "${psqllog}" \
+	pg_cmd psql -t -c "${sel_q}" > "${psqlout}" 2>> "${LOG}" \
 		|| logdie "Failed checking DwhCurrentlyRunning"
-	cat "${psqllog}" "${psqlout}" >> "${LOG}"  2>&1 \
-		|| logdie "Failed to append psql log to restore log"
 
 	if grep -q '1' "${psqlout}"; then
 		output '  - Resetting DwhCurrentlyRunning in dwh_history_timekeeping in engine database'
-		pg_cmd psql -t -c "${upd_q}" > "${psqllog}" 2>&1 \
+		pg_cmd psql -t -c "${upd_q}" >> "${LOG}" 2>&1 \
 			|| logdie "Failed resetting DwhCurrentlyRunning"
-		cat "${psqllog}" >> "${LOG}"  2>&1 \
-			|| logdie "Failed to append psql log to restore log"
 	fi
 }
 
@@ -1383,16 +1380,13 @@ notify_engine() {
 
 	message="$(printf "%s" "${message}" | sed "s/'/''/g")"
 
-	local psqllog="${TEMP_FOLDER}/psql-notification-log"
 	local logpath="$(readlink -f ${LOG})"
 
 	do_notify() {
 		local scope="$1"
 		pg_cmd psql -t -c "SELECT LogEngineBackupEvent('${scope}', now(), ${status}, '${message}', '${ENGINE_FQDN}', '${logpath}');" \
-			> "${psqllog}"  2>&1 \
+			>> "${LOG}"  2>&1 \
 			|| logdie "Failed notifying engine"
-		cat "${psqllog}" >> "${LOG}"  2>&1 \
-			|| logdie "Failed to append psql log to main log"
 	}
 
 	output "Notifying engine"
