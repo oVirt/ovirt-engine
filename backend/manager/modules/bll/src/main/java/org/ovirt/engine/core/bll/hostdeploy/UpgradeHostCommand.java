@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import javax.annotation.PostConstruct;
-
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -26,9 +24,8 @@ public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsComm
         super(parameters);
     }
 
-    @PostConstruct
     @Override
-    protected void postConstruct() {
+    protected void init() {
         if (getParameters().getInitialStatus() == null) {
             if (getVds() != null) {
                 getParameters().setInitialStatus(getVds().getStatus());

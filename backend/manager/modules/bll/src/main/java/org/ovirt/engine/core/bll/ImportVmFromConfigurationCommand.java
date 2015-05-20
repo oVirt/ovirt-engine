@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -68,8 +67,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     }
 
     @Override
-    @PostConstruct
-    protected void postConstruct() {
+    protected void init() {
         VM vmFromConfiguration = getParameters().getVm();
         if (vmFromConfiguration != null) {
             vmFromConfiguration.getStaticData().setVdsGroupId(getParameters().getVdsGroupId());
@@ -83,7 +81,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
 
         setVdsGroupId(getParameters().getVdsGroupId());
         getParameters().setStoragePoolId(getVdsGroup().getStoragePoolId());
-        super.postConstruct();
+        super.init();
     }
 
     private void initUnregisteredVM() {

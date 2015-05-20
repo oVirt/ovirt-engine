@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -146,8 +144,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     @Override
-    @PostConstruct
-    protected void postConstruct() {
+    protected void init() {
         T parameters = getParameters();
         if (parameters.getVmStaticData() != null) {
             Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();

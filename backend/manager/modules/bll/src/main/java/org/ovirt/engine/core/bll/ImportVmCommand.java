@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -117,9 +115,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     @Override
-    @PostConstruct
-    protected void postConstruct() {
-        super.postConstruct();
+    protected void init() {
+        super.init();
         T parameters = getParameters();
         setVmId(parameters.getContainerId());
         setVm(parameters.getVm());

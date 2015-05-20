@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -92,8 +91,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     @Override
-    @PostConstruct
-    protected void postConstruct() {
+    protected void init() {
         T parameters = getParameters();
         // before the execute phase, parameters.getVmId().equals(parameters.getVm().getId() == true
         // afterwards if will be false if parameters.isImportAsNewEntity() == true, and there is no

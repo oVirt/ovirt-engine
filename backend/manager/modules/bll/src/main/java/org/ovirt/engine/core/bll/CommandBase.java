@@ -201,14 +201,19 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Implement this method whenever you need extra initialization of the command after the
-     * constructor. All DB calls or other interaction with the command dependencies for initialization
-     * should be done here. It is ensured that all injected dependencies were injected at the time calling.
-     *
      * @see PostConstruct
      */
     @PostConstruct
-    protected void postConstruct() {
+    protected final void postConstruct() {
+        init();
+    }
+
+    /**
+     * Implement this method whenever you need extra initialization of the command after the
+     * constructor. All DB calls or other interaction with the command dependencies for initialization
+     * should be done here. It is ensured that all injected dependencies were injected at the time calling.
+     */
+    protected void init() {
     }
 
     protected List<SPMAsyncTaskHandler> initTaskHandlers() {

@@ -143,9 +143,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     @Override
-    protected void postConstruct() {
-        super.postConstruct();
-
+    protected void init() {
         if (getVm() != null) {
             needsHostDevices = hostDeviceManager.checkVmNeedsDirectPassthrough(getVm());
         }

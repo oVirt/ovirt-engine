@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections.MapUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -89,8 +88,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     }
 
     @Override
-    @PostConstruct
-    protected void postConstruct() {
+    protected void init() {
         // skipped if participating in compensation flow
         if (getParameters() == null) {
             return;

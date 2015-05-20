@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -53,9 +52,8 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     @Override
-    @PostConstruct
-    protected void postConstruct() {
-        super.postConstruct();
+    protected void init() {
+        super.init();
         oldVmId = getParameters().getVmId();
         setVmName(getParameters().getNewName());
 
