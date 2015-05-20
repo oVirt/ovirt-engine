@@ -86,7 +86,7 @@ public class IsoDomainListSyncronizer {
 
     // Not kept as static member to enable reloading the config value
     public static String getGuestToolsSetupIsoPrefix() {
-        return Config.<String> getValue(ConfigValues.GuestToolsSetupIsoPrefix);
+        return Config.getValue(ConfigValues.GuestToolsSetupIsoPrefix);
     }
 
     /**
@@ -183,20 +183,16 @@ public class IsoDomainListSyncronizer {
     public List<RepoImage> getUserRequestForStorageDomainRepoFileList(Guid storageDomainId,
             ImageFileType imageType,
             boolean forceRefresh) {
-        // The result list we send back.
-        List<RepoImage> repoList = null;
         if (!isStorageDomainValid(storageDomainId, imageType, forceRefresh)) {
             throw new VdcBLLException(VdcBllErrors.GetIsoListError);
         }
         // At any case, if refreshed or not, get Iso list from the cache.
-        repoList = getCachedIsoListByDomainId(storageDomainId, imageType);
+        return getCachedIsoListByDomainId(storageDomainId, imageType);
 
-        // Return list of repository files.
-        return repoList;
     }
 
     private boolean refreshRepos(Guid storageDomainId, ImageFileType imageType) {
-        boolean refreshResult = false;
+        boolean refreshResult;
         List<RepoImage> tempProblematicRepoFileList = new ArrayList<>();
         StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
 
@@ -204,7 +200,7 @@ public class IsoDomainListSyncronizer {
             refreshResult = refreshIsoDomain(storageDomainId, tempProblematicRepoFileList, imageType);
         } else if (storageDomain.getStorageDomainType() == StorageDomainType.Image &&
                 storageDomain.getStorageType() == StorageType.GLANCE) {
-            refreshResult = refreshImageDomain(storageDomain, tempProblematicRepoFileList, imageType);
+            refreshResult = refreshImageDomain(storageDomain, imageType);
         } else {
             log.error("Unable to refresh the storage domain '{}', Storage Domain Type '{}' not supported",
                     storageDomainId, storageDomain.getStorageDomainType());
@@ -221,8 +217,7 @@ public class IsoDomainListSyncronizer {
         return refreshResult;
     }
 
-    private boolean refreshImageDomain(final StorageDomain storageDomain,
-            List<RepoImage> problematicRepoFileList, final ImageFileType imageType) {
+    private boolean refreshImageDomain(final StorageDomain storageDomain, final ImageFileType imageType) {
         final RepoFileMetaDataDAO repoFileMetaDataDao = repoStorageDom;
 
         Provider provider = providerDao.get(new Guid(storageDomain.getStorage()));
