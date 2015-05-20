@@ -679,23 +679,19 @@ public class IsoDomainListSyncronizer {
                 repoStorageDomainId,
                 fileListRefreshed,
                 ImageFileType.ISO,
-                fileStats);
+                fileStatsFromVDSReturnValue(fileStats));
     }
 
     private boolean refreshVdsmFileList(Guid repoStoragePoolId,
             Guid repoStorageDomainId,
             FileListRefreshed fileListRefreshed,
-            ImageFileType imageFileType,
-            VDSReturnValue fileStats) {
+            ImageFileType imageFileType, Map<String, Map<String, Object>> fileStats) {
 
-        if (repoStorageDomainId == null || fileStats == null) {
+        if (repoStorageDomainId == null) {
             return false;
         }
 
-        @SuppressWarnings("unchecked")
-        Map<String, Map<String, Object>> fileStatsReturnValue =
-                (Map<String, Map<String, Object>>) fileStats.getReturnValue();
-        boolean vdsmRefreshOk = fileStats.getSucceeded() && fileStatsReturnValue != null;
+        boolean vdsmRefreshOk = fileStats != null;
         log.debug("The refresh process from VDSM, for {}, {}.",
                 imageFileType,
                 succeededOrFailed(vdsmRefreshOk));
@@ -706,14 +702,24 @@ public class IsoDomainListSyncronizer {
 
         boolean refreshSucceeded = refreshIsoFileListMetaData(repoStorageDomainId,
                 repoStorageDom,
-                fileStatsReturnValue,
+                fileStats,
                 imageFileType);
 
         if (refreshSucceeded && fileListRefreshed != null) {
-            fileListRefreshed.onFileListRefreshed(repoStoragePoolId, fileStatsReturnValue.keySet());
+            fileListRefreshed.onFileListRefreshed(repoStoragePoolId, fileStats.keySet());
         }
 
         return refreshSucceeded;
+    }
+
+    private Map<String, Map<String, Object>> fileStatsFromVDSReturnValue(VDSReturnValue fileStats) {
+        if (fileStats == null || !fileStats.getSucceeded()) {
+            return null;
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, Map<String, Object>> result = (Map<String, Map<String, Object>>) fileStats.getReturnValue();
+        return result;
     }
 
     public interface FileListRefreshed {
@@ -740,7 +746,7 @@ public class IsoDomainListSyncronizer {
                 repoStorageDomainId,
                 null,
                 ImageFileType.Floppy,
-                fileStats);
+                fileStatsFromVDSReturnValue(fileStats));
     }
 
     private String succeededOrFailed(boolean status) {
