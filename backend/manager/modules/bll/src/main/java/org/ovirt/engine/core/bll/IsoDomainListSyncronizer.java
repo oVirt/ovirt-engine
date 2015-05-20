@@ -575,19 +575,22 @@ public class IsoDomainListSyncronizer {
                         public Object runInTransaction() {
                             long currentTime = System.currentTimeMillis();
                             repoFileMetaDataDao.removeRepoDomainFileList(repoStorageDomainId, imageType);
-                            RepoImage repo_md;
                             for (Map.Entry<String, Map<String, Object>> entry : fileStats.entrySet()) {
-                                repo_md = new RepoImage();
-                                repo_md.setLastRefreshed(currentTime);
-                                repo_md.setSize(retrieveIsoFileSize(entry));
-                                repo_md.setRepoDomainId(repoStorageDomainId);
-                                repo_md.setDateCreated(null);
-                                repo_md.setRepoImageId(entry.getKey());
-                                repo_md.setRepoImageName(null);
-                                repo_md.setFileType(imageType);
-                                repoFileMetaDataDao.addRepoFileMap(repo_md);
+                                repoFileMetaDataDao.addRepoFileMap(newRepoImage(currentTime, entry));
                             }
                             return true;
+                        }
+
+                        public RepoImage newRepoImage(long currentTime, Map.Entry<String, Map<String, Object>> entry) {
+                            RepoImage repo_md = new RepoImage();
+                            repo_md.setLastRefreshed(currentTime);
+                            repo_md.setSize(retrieveIsoFileSize(entry));
+                            repo_md.setRepoDomainId(repoStorageDomainId);
+                            repo_md.setDateCreated(null);
+                            repo_md.setRepoImageId(entry.getKey());
+                            repo_md.setRepoImageName(null);
+                            repo_md.setFileType(imageType);
+                            return repo_md;
                         }
                     });
         } catch (Exception e) {
