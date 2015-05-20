@@ -25,7 +25,7 @@ public class NewInstanceTypeModelBehavior extends NonClusterModelBehaviorBase {
 
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
         getModel().setSelectedMigrationDowntime(null);
-        updateMemoryBalloon(latestCluster());
+        getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(true);
         initPriority(0);
         getModel().getTotalCPUCores().setEntity("1"); //$NON-NLS-1$
 

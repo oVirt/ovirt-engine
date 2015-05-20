@@ -741,13 +741,16 @@
                                 </g:VerticalPanel>
                             </g:HorizontalPanel>
                         </g:FlowPanel>
-                        <g:FlowPanel ui:field="disksAllocationPanel" addStyleNames="{style.sectionPanelTight}">
-                            <g:HorizontalPanel>
-                                <g:Label addStyleNames="{style.sectionLabel}" text="{constants.disksAllocation}" />
-                            </g:HorizontalPanel>
+                        <g:FlowPanel>
                             <g:HorizontalPanel addStyleNames="{style.floatLeft}">
                                 <ge:EntityModelCheckBoxEditor ui:field="isVirtioScsiEnabled" addStyleNames="{style.checkbox}" />
                                 <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
+                            </g:HorizontalPanel>
+                        </g:FlowPanel>
+
+                        <g:FlowPanel ui:field="disksAllocationPanel" addStyleNames="{style.sectionPanelTight}">
+                            <g:HorizontalPanel>
+                                <g:Label addStyleNames="{style.sectionLabel}" text="{constants.disksAllocation}" />
                             </g:HorizontalPanel>
                             <g:FlowPanel ui:field="disksPanel">
                                 <s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="550px" showVolumeType="true" addStyleNames="{style.disksPanel}" />

@@ -121,6 +121,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                             getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
                                         }
                                     }), vm.getId());
+
                         }
 
                     }

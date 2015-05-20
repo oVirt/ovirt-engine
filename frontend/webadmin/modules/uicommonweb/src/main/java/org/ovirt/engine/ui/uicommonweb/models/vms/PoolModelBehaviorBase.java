@@ -161,6 +161,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                         updateCpuProfile(getModel().getSelectedCluster().getId(),
                                 getClusterCompatibilityVersion(), vmBase.getCpuProfileId());
                     }
+
+                    getModel().getCpuSharesAmount().setEntity(vmBase.getCpuShares());
+                    updateCpuSharesSelection();
                 }
             });
         }

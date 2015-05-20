@@ -541,7 +541,7 @@ public abstract class InstanceTypeManager {
 
     protected boolean isNextRunConfigurationExists() { return false; }
 
-    protected boolean isSourceCustomInstanceTypeOrBlankTemplate() {
+    protected boolean isSourceCustomInstanceType() {
         if (getSource() instanceof VmTemplate) {
             VmTemplate source = (VmTemplate) getSource();
             if (source.getTemplateType() == VmEntityType.INSTANCE_TYPE) {
@@ -550,7 +550,7 @@ public abstract class InstanceTypeManager {
                 return source.getId() == null;
             }
 
-            return source.getId().equals(Guid.Empty);
+            return false;
         }
 
         return false;

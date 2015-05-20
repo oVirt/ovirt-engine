@@ -45,20 +45,20 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
 
         Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(entity.getId()), new AsyncQuery(
-            this,
-            new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                    Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
+                this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
 
-                    for (GraphicsDevice graphicsDevice : graphicsDevices) {
-                        graphicsTypesCollection.add(graphicsDevice.getGraphicsType());
+                        for (GraphicsDevice graphicsDevice : graphicsDevices) {
+                            graphicsTypesCollection.add(graphicsDevice.getGraphicsType());
+                        }
+
+                        initDisplayTypes(entity.getDefaultDisplayType(), UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypesCollection));
                     }
-
-                    initDisplayTypes(entity.getDefaultDisplayType(), UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypesCollection));
                 }
-            }
         ));
 
         initSoundCard(entity.getId());
@@ -170,6 +170,8 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
         getModel().getEmulatedMachine().setSelectedItem(entity.getCustomEmulatedMachine());
         getModel().getCustomCpu().setSelectedItem(entity.getCustomCpuName());
         getModel().getMigrationMode().setSelectedItem(entity.getMigrationSupport());
+        getModel().getCpuSharesAmount().setEntity(entity.getCpuShares());
+        updateCpuSharesSelection();
     }
 
     protected void postBuild() {

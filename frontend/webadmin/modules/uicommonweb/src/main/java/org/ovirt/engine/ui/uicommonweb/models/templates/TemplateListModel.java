@@ -694,12 +694,13 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         setVmRngDeviceToParams(model, parameters);
+        parameters.setBalloonEnabled(balloonEnabled(model));
+        parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
 
         Frontend.getInstance().runAction(VdcActionType.UpdateVmTemplate, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
-
                         TemplateListModel localModel = (TemplateListModel) result.getState();
                         localModel.postUpdateVmTemplate(result.getReturnValue());
 
@@ -709,7 +710,9 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
     @SuppressWarnings("unchecked")
     protected static void buildTemplateOnSave(UnitVmModel model, VmTemplate template) {
-        BuilderExecutor.build(model, template, new FullUnitToVmBaseBuilder<VmTemplate>(), new VersionNameUnitToVmBaseBuilder());
+        BuilderExecutor.build(model, template,
+                new FullUnitToVmBaseBuilder<VmTemplate>(),
+                new VersionNameUnitToVmBaseBuilder());
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, UpdateVmTemplateParameters updateVmParams) {

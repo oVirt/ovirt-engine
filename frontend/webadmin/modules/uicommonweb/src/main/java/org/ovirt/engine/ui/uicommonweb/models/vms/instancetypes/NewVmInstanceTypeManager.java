@@ -28,7 +28,7 @@ public class NewVmInstanceTypeManager extends VmInstanceTypeManager {
 
     @Override
     protected void updateBalloon(VmBase vmBase, boolean continueWithNext) {
-        if (!isSourceCustomInstanceTypeOrBlankTemplate()) {
+        if (!isSourceCustomInstanceType()) {
             super.updateBalloon(vmBase, continueWithNext);
         } else if (continueWithNext) {
             updateRngDevice(vmBase);

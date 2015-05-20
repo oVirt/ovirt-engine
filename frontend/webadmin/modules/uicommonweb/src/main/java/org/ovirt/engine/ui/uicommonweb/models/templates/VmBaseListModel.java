@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -36,6 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
+import org.ovirt.engine.ui.uicommonweb.models.vms.BalloonEnabled;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
@@ -46,9 +46,6 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsModel<E, T> {
-
-
-    public static final Version BALLOON_DEVICE_MIN_VERSION = Version.v3_2;
 
     private VM privatecurrentVm;
 
@@ -207,7 +204,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
 
     protected void showWarningOnExistingEntities(ExportVmModel model, final VdcQueryType getVmOrTemplateQuery) {
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(new Object[] { this, model },
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(new Object[]{this, model},
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -345,10 +342,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
 
         getcurrentVm().setCpuPinning(model.getCpuPinning().getEntity());
 
-        if (model.getCpuSharesAmount().getIsAvailable() && model.getCpuSharesAmount().getEntity() != null) { // $NON-NLS-1$
-            getcurrentVm().setCpuShares(model.getCpuSharesAmount().getEntity());
-        }
-
         getcurrentVm().setUseHostCpuFlags(model.getHostCpu().getEntity());
 
         getcurrentVm().setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
@@ -428,14 +421,14 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
     }
 
     public static void buildVmOnSave(UnitVmModel model, VM vm) {
-        BuilderExecutor.build(model, vm.getStaticData(), new FullUnitToVmBaseBuilder());
+        BuilderExecutor.build(model, vm.getStaticData(),
+                new FullUnitToVmBaseBuilder());
         BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
     }
 
 
     protected boolean balloonEnabled(UnitVmModel model) {
-        return model.getMemoryBalloonDeviceEnabled().getEntity()
-                && model.getSelectedCluster().getCompatibilityVersion().compareTo(BALLOON_DEVICE_MIN_VERSION) >= 0;
+        return BalloonEnabled.balloonEnabled(model);
     }
 
     protected void setVmWatchdogToParams(final UnitVmModel model, VmManagementParametersBase updateVmParams) {

@@ -1827,7 +1827,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             {
                 dataCenterWithClusterSelectedItemChanged(sender, args);
                 updateDisplayAndGraphics();
-                updateMemoryBalloonDevice();
                 behavior.updateNumOfIoThreads();
                 initUsbPolicy();
                 behavior.updateEmulatedMachines();
@@ -1859,7 +1858,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 getBehavior().oSType_SelectedItemChanged();
                 getVmInitModel().osTypeChanged(getOSType().getSelectedItem());
                 updateDisplayAndGraphics();
-                updateMemoryBalloonDevice();
+                getBehavior().updateMemoryBalloon();
                 initUsbPolicy();
 
                 getBehavior().activateInstanceTypeManager();
@@ -2125,26 +2124,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         } else if (displayTypes.size() > 0) {
             getDisplayType().setItems(displayTypes, displayTypes.iterator().next());
         }
-    }
-
-    private void updateMemoryBalloonDevice() {
-
-        VDSGroup cluster = getSelectedCluster();
-        Integer osType = getOSType().getSelectedItem();
-
-        if (cluster == null || osType == null) {
-            return;
-        }
-
-        boolean isBalloonEnabled = AsyncDataProvider.getInstance().isBalloonEnabled(osType,
-                cluster.getCompatibilityVersion());
-
-        getMemoryBalloonDeviceEnabled().setIsChangeable(isBalloonEnabled);
-
-        if (getBehavior().basedOnCustomInstanceType()) {
-            getMemoryBalloonDeviceEnabled().setEntity(isBalloonEnabled);
-        }
-
     }
 
     private void initFirstBootDevice()
@@ -2891,7 +2870,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         // Minimum 'Physical Memory Guaranteed' is 1MB
         validateMemorySize(getMemSize(), Integer.MAX_VALUE, 1);
-        if (!getBehavior().isAnyTemplateBehavior() && getMemSize().getIsValid()) {
+        if (getMemSize().getIsValid()) {
             validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
         }
 

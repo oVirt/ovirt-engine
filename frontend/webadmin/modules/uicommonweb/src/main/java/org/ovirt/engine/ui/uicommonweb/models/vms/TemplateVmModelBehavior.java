@@ -6,9 +6,12 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
@@ -86,6 +89,22 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                                             initCdImage();
                                                         }
                                                     }), template.getId());
+
+                                            Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(template.getId()), new AsyncQuery(
+                                                    new INewAsyncCallback() {
+                                                        @Override
+                                                        public void onSuccess(Object model, Object returnValue) {
+                                                            getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                                                        }
+                                                    }
+                                            ));
+
+                                            AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery(new INewAsyncCallback() {
+                                                @Override
+                                                public void onSuccess(Object model, Object returnValue) {
+                                                    getModel().getIsVirtioScsiEnabled().setEntity((Boolean) returnValue);
+                                                }
+                                            }), template.getId());
                                         }
                                     }),
                                     true,
@@ -142,6 +161,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         updateMemoryBalloon();
         updateCpuSharesAvailability();
+        getModel().getCpuSharesAmount().setEntity(template.getCpuShares());
+        updateCpuSharesSelection();
         updateVirtioScsiAvailability();
         updateMigrationForLocalSD();
         updateOSValues();
@@ -189,8 +210,6 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         buildModel(template, new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
             @Override
             public void finished(VmBase source, UnitVmModel destination) {
-                getModel().getMinAllocatedMemory().setIsChangeable(false);
-
                 updateTimeZone(template.getTimeZone());
 
                 // Storage domain and provisioning are not available for an existing VM.

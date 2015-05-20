@@ -771,16 +771,25 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateMemoryBalloon() {
-        if (getModel().getSelectedCluster() != null) {
-            updateMemoryBalloon(getModel().getSelectedCluster().getCompatibilityVersion());
+        VDSGroup cluster = getModel().getSelectedCluster();
+        Integer osType = getModel().getOSType().getSelectedItem();
+
+        if (cluster != null && osType != null) {
+            updateMemoryBalloon(cluster.getCompatibilityVersion(), osType);
         }
     }
 
-    protected void updateMemoryBalloon(Version clusterVersion) {
-        boolean hasMemoryBalloon = clusterVersion
-                .compareTo(VmListModel.BALLOON_DEVICE_MIN_VERSION) >= 0;
-        getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(hasMemoryBalloon);
+    protected void updateMemoryBalloon(Version clusterVersion, int osType) {
+        boolean isBalloonEnabled = AsyncDataProvider.getInstance().isBalloonEnabled(osType,
+                clusterVersion);
+
+        if (!isBalloonEnabled) {
+            getModel().getMemoryBalloonDeviceEnabled().setEntity(false);
+        }
+        getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(isBalloonEnabled);
+
     }
+
     private boolean isRngDeviceSupported(UnitVmModel model) {
         Version clusterVersion = clusterVersionOrNull(model);
         return clusterVersion == null ? false : (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
@@ -941,7 +950,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void updateCpuSharesSelection() {
         boolean foundEnum = false;
         for (UnitVmModel.CpuSharesAmount cpuSharesAmount : UnitVmModel.CpuSharesAmount.values()) {
-            if (cpuSharesAmount.getValue() == getModel().getCpuSharesAmount().getEntity()) {
+            // this has to be done explicitly otherwise it fails on NPE on unboxing since the cpuSharesAmount.getValue() is a small int
+            int cpuShares = getModel().getCpuSharesAmount().getEntity() != null ? getModel().getCpuSharesAmount().getEntity() : 0;
+            if (cpuSharesAmount.getValue() == cpuShares) {
                 getModel().getCpuSharesAmountSelection().setSelectedItem(cpuSharesAmount);
                 foundEnum = true;
                 break;
@@ -1431,6 +1442,5 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public boolean isAnyTemplateBehavior() {
         return this instanceof TemplateVmModelBehavior || this instanceof ExistingBlankTemplateModelBehavior;
     }
-
 
 }
