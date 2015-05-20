@@ -51,6 +51,8 @@ public class VdcActionParametersBase implements Serializable {
 
     private List<Guid> vdsmTaskIds;
 
+    private Guid vdsRunningOn;
+
     private int executionIndex;
 
     /**
@@ -263,6 +265,14 @@ public class VdcActionParametersBase implements Serializable {
 
     public void decrementExecutionIndex() {
         executionIndex--;
+    }
+
+    public Guid getVdsRunningOn() {
+        return vdsRunningOn;
+    }
+
+    public void setVdsRunningOn(Guid vdsRunningOn) {
+        this.vdsRunningOn = vdsRunningOn;
     }
 
     /**
