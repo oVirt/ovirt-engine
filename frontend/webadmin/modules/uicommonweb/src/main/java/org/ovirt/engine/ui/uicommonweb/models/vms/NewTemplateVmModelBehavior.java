@@ -41,11 +41,18 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 {
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-    private final VM vm;
+    private VM vm;
 
-    public NewTemplateVmModelBehavior(VM vm)
-    {
+    public NewTemplateVmModelBehavior() {
+    }
+
+    public NewTemplateVmModelBehavior(VM vm) {
         this.vm = vm;
+    }
+
+    public void setVm(VM vm) {
+        this.vm = vm;
+        getModel().getIsSingleQxlEnabled().setEntity(vm.getSingleQxlPci());
     }
 
     protected VM getVm() {
@@ -506,6 +513,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     @Override
     public void enableSinglePCI(boolean enabled) {
         super.enableSinglePCI(enabled);
-        getModel().getIsSingleQxlEnabled().setEntity(vm.getSingleQxlPci());
+        getModel().getIsSingleQxlEnabled().setEntity(vm != null ? vm.getSingleQxlPci() : false);
     }
 }

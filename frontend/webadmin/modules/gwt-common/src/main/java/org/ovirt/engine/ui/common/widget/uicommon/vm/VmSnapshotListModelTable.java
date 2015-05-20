@@ -215,5 +215,11 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 return SafeHtmlUtils.fromString(tooltip);
             }
         });
+        getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.makeTemplateFromSnapshot()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getCloneTemplateCommand();
+            }
+        });
     }
 }

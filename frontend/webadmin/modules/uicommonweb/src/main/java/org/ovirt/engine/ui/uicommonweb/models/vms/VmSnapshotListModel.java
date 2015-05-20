@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
+import org.ovirt.engine.core.common.action.AddVmTemplateFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
@@ -36,8 +37,13 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.SnapshotByCreationDateCommparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -46,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -140,6 +147,16 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
     private void setCloneVmCommand(UICommand value)
     {
         privateCloneVmCommand = value;
+    }
+
+    private UICommand cloneTemplateCommand;
+
+    public UICommand getCloneTemplateCommand() {
+        return cloneTemplateCommand;
+    }
+
+    public void setCloneTemplateCommand(UICommand cloneTemplateCommand) {
+        this.cloneTemplateCommand = cloneTemplateCommand;
     }
 
     private EntityModel privateCanSelectSnapshot;
@@ -251,6 +268,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         setUndoCommand(new UICommand("Undo", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setCloneVmCommand(new UICommand("CloneVM", this)); //$NON-NLS-1$
+        setCloneTemplateCommand(new UICommand("CloneTemplate", this)); //$NON-NLS-1$
 
         setCanSelectSnapshot(new EntityModel());
         getCanSelectSnapshot().setEntity(true);
@@ -624,6 +642,160 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         setWindow(null);
     }
 
+    private void cloneTemplate() {
+        Snapshot snapshot = getSelectedItem();
+        if (snapshot == null)
+        {
+            return;
+        }
+
+        if (getWindow() != null)
+        {
+            return;
+        }
+
+        VM selectedVm = getEntity();
+        final UnitVmModel model = new UnitVmModel(new NewTemplateVmModelBehavior(), this);
+        setWindow(model);
+        model.startProgress(null);
+        model.getVmType().setSelectedItem(selectedVm.getVmType());
+        model.getIsHighlyAvailable().setEntity(selectedVm.getStaticData().isAutoStartup());
+
+        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) model.getBehavior();
+                VM vm = (VM) returnValue;
+                behavior.setVm(vm);
+
+                model.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
+                model.setHelpTag(HelpTag.clone_template_from_snapshot);
+                model.setHashName("clone_template_from_snapshot"); //$NON-NLS-1$
+                model.setIsNew(true);
+                model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
+                model.initialize(VmSnapshotListModel.this.getSystemTreeSelectedItem());
+                model.getCommands().add(
+                        new UICommand("OnNewTemplate", VmSnapshotListModel.this) //$NON-NLS-1$
+                                .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                                .setIsDefault(true));
+
+                model.getCommands().add(UICommand.createCancelUiCommand("Cancel", VmSnapshotListModel.this)); //$NON-NLS-1$
+                model.stopProgress();
+            }
+        }), snapshot.getId());
+    }
+
+    private void onCloneTemplate() {
+        final UnitVmModel model = (UnitVmModel) getWindow();
+        NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) model.getBehavior();
+        Snapshot snapshot = getSelectedItem();
+        if (snapshot == null)
+        {
+            cancel();
+            return;
+        }
+
+        final VM vm = behavior.getVm();
+
+        if (!model.validate(false))
+        {
+            model.setIsValid(false);
+        }
+        else  if (model.getIsSubTemplate().getEntity()) {
+            postNameUniqueCheck(vm);
+        }
+        else
+        {
+            String name = model.getName().getEntity();
+
+            // Check name unicitate.
+            AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target, Object returnValue) {
+
+                            boolean isNameUnique = (Boolean) returnValue;
+                            if (!isNameUnique)
+                            {
+                                model.getInvalidityReasons().clear();
+                                model.getName()
+                                        .getInvalidityReasons()
+                                        .add(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .nameMustBeUniqueInvalidReason());
+                                model.getName().setIsValid(false);
+                                model.setIsValid(false);
+                            }
+                            else
+                            {
+                                postNameUniqueCheck(vm);
+                            }
+
+                        }
+                    }),
+                    name);
+        }
+    }
+
+    private void postNameUniqueCheck(VM vm)
+    {
+        UnitVmModel model = (UnitVmModel) getWindow();
+
+        VM newVm = buildVmOnNewTemplate(model, vm);
+
+        AddVmTemplateFromSnapshotParameters parameters =
+                new AddVmTemplateFromSnapshotParameters(newVm.getStaticData(),
+                        model.getName().getEntity(),
+                        model.getDescription().getEntity(),
+                        getSelectedItem().getId());
+        parameters.setPublicUse(model.getIsTemplatePublic().getEntity());
+
+        parameters.setDiskInfoDestinationMap(
+                model.getDisksAllocationModel().getImageToDestinationDomainMap());
+        parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        parameters.setBalloonEnabled(balloonEnabled(model));
+        parameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
+        model.startProgress(null);
+        parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+        if (model.getIsSubTemplate().getEntity()) {
+            parameters.setBaseTemplateId(model.getBaseTemplate().getSelectedItem().getId());
+            parameters.setTemplateVersionName(model.getTemplateVersionName().getEntity());
+        }
+
+        Frontend.getInstance().runAction(VdcActionType.AddVmTemplateFromSnapshot,
+                parameters,
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+
+                        VmSnapshotListModel model = (VmSnapshotListModel) result.getState();
+                        model.getWindow().stopProgress();
+                        VdcReturnValueBase returnValueBase = result.getReturnValue();
+                        if (returnValueBase != null && returnValueBase.getSucceeded()) {
+                            model.cancel();
+                        }
+
+                    }
+                }, this);
+    }
+
+    protected static VM buildVmOnNewTemplate(UnitVmModel model, VM vm) {
+        VM resultVm = new VM();
+        resultVm.setId(vm.getId());
+        BuilderExecutor.build(model, resultVm.getStaticData(), new CommonUnitToVmBaseBuilder());
+        BuilderExecutor.build(vm.getStaticData(), resultVm.getStaticData(),
+                new KernelParamsVmBaseToVmBaseBuilder(),
+                new DedicatedVmForVdsVmBaseToVmBaseBuilder(),
+                new MigrationOptionsVmBaseToVmBaseBuilder(),
+                new UsbPolicyVmBaseToVmBaseBuilder());
+        return resultVm;
+    }
+
+    protected boolean balloonEnabled(UnitVmModel model) {
+        return model.getMemoryBalloonDeviceEnabled().getEntity()
+                && model.getSelectedCluster().getCompatibilityVersion().compareTo(VmBaseListModel.BALLOON_DEVICE_MIN_VERSION) >= 0;
+    }
+
     private void cloneVM()
     {
         Snapshot snapshot = getSelectedItem();
@@ -778,6 +950,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
                 && (isLiveMergeSupported() ? isVmQualifiedForSnapshotMerge : isVmDown));
         getCloneVmCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
                 && !isVmImageLocked && !isStateless && isCloneVmSupported);
+        getCloneTemplateCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
+                && !isVmImageLocked && !isStateless);
     }
 
     public boolean getIsPreviewing() {
@@ -927,6 +1101,14 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         else if (command == getCloneVmCommand())
         {
             cloneVM();
+        }
+        else if (command == getCloneTemplateCommand())
+        {
+            cloneTemplate();
+        }
+        else if ("OnNewTemplate".equals(command.getName())) //$NON-NLS-1$
+        {
+            onCloneTemplate();
         }
         else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {

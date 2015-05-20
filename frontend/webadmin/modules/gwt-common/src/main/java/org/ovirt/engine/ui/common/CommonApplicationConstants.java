@@ -959,6 +959,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Clone")
     String cloneSnapshot();
 
+    @DefaultStringValue("Make Template")
+    String makeTemplateFromSnapshot();
+
     @DefaultStringValue("Installed Applications")
     String installedAppsSnapshot();
 

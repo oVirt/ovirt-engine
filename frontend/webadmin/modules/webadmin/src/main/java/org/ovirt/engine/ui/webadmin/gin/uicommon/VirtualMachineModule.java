@@ -313,6 +313,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
             final Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider,
+            final Provider<VmMakeTemplatePopupPresenterWidget> cloneTemplatePopupProvider,
             final Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider,
             final Provider<VmSnapshotCustomPreviewPopupPresenterWidget> customPreviewPopupProvider,
             final Provider<VmListModel<Void>> mainModelProvider,
@@ -332,6 +333,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return previewPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getCustomPreviewCommand()) {
                             return customPreviewPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getCloneTemplateCommand()) {
+                            return cloneTemplatePopupProvider.get();
                         } else {
                             return super.getModelPopup(source, lastExecutedCommand, windowModel);
                         }
