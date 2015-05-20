@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetFileStatsParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -589,6 +590,13 @@ public class IsoDomainListSyncronizer {
                             return true;
                         }
                     });
+        } catch (Exception e) {
+            log.warn("Updating repository content to DB failed for repoStorageDomainId={}, imageType={}: {}",
+                    repoStorageDomainId,
+                    imageType,
+                    e.getMessage());
+            log.debug("Exception", e);
+            return false;
         } finally {
             syncObject.unlock();
         }
@@ -644,56 +652,69 @@ public class IsoDomainListSyncronizer {
     /**
      * Gets the Iso file list from VDSM, and if the fetch is valid refresh the Iso list in the DB.
      *
-     * @param repoStoragePoolId
-     *            - The repository storage pool id, we want to update the file list.
-     * @param repoStorageDomainId
-     *            - The repository storage domain id, for activate storage domain id.
+     * @param repoStoragePoolId - The repository storage pool id, we want to update the file list.
+     * @param repoStorageDomainId - The repository storage domain id, for activate storage domain id.
+     *
      * @return True, if the fetch from VDSM has succeeded. False otherwise.
      */
-    private boolean updateIsoListFromVDSM(Guid repoStoragePoolId, Guid repoStorageDomainId) {
-        boolean refreshIsoSucceeded = false;
-        VDSReturnValue returnValue;
+    private boolean updateIsoListFromVDSM(Guid repoStoragePoolId,
+            Guid repoStorageDomainId) {
 
-        if (repoStorageDomainId != null) {
-            try {
-                StoragePool dc = getStoragePoolDAO().get(repoStoragePoolId);
-                if (FeatureSupported.getFileStats(dc.getCompatibilityVersion())) {
-                    returnValue = Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(VDSCommandType.GetFileStats,
-                                    new GetFileStatsParameters(repoStoragePoolId,
-                                            repoStorageDomainId, ISO_FILE_PATTERN, false));
-                } else {
-                    returnValue = Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(VDSCommandType.GetIsoList,
-                                    new IrsBaseVDSCommandParameters(repoStoragePoolId));
-                }
+        VDSReturnValue fileStats = getFileStats(repoStoragePoolId,
+                repoStorageDomainId,
+                ISO_FILE_PATTERN,
+                VDSCommandType.GetIsoList);
 
-                @SuppressWarnings("unchecked")
-                Map<String, Map<String, Object>> fileStats =
-                        (Map<String, Map<String, Object>>) returnValue.getReturnValue();
-                if (returnValue.getSucceeded() && fileStats != null) {
-                    log.debug("The refresh process from VDSM, for Iso files succeeded.");
-                    // Set the Iso domain file list fetched from VDSM into the DB.
-                    refreshIsoSucceeded =
-                            refreshIsoFileListMetaData(repoStorageDomainId,
-                                    repoStorageDom,
-                                    fileStats,
-                                    ImageFileType.ISO);
-                    if (refreshIsoSucceeded) {
-                        VmHandler.refreshVmsToolsVersion(repoStoragePoolId, fileStats.keySet());
-                    }
-                }
-            } catch (Exception e) {
-                refreshIsoSucceeded = false;
-                log.warn("The refresh process from VDSM, for Iso files failed: {}", e.getMessage());
-                log.debug("Exception", e);
+        FileListRefreshed fileListRefreshed = new FileListRefreshed() {
+            @Override
+            public void onFileListRefreshed(Guid poolId, Set<String> isoList) {
+                VmHandler.refreshVmsToolsVersion(poolId, isoList);
             }
+        };
+
+        return refreshVdsmFileList(repoStoragePoolId,
+                repoStorageDomainId,
+                fileListRefreshed,
+                ImageFileType.ISO,
+                fileStats);
+    }
+
+    private boolean refreshVdsmFileList(Guid repoStoragePoolId,
+            Guid repoStorageDomainId,
+            FileListRefreshed fileListRefreshed,
+            ImageFileType imageFileType,
+            VDSReturnValue fileStats) {
+
+        if (repoStorageDomainId == null || fileStats == null) {
+            return false;
         }
-        return refreshIsoSucceeded;
+
+        @SuppressWarnings("unchecked")
+        Map<String, Map<String, Object>> fileStatsReturnValue =
+                (Map<String, Map<String, Object>>) fileStats.getReturnValue();
+        boolean vdsmRefreshOk = fileStats.getSucceeded() && fileStatsReturnValue != null;
+        log.debug("The refresh process from VDSM, for {}, {}.",
+                imageFileType,
+                succeededOrFailed(vdsmRefreshOk));
+
+        if (!vdsmRefreshOk) {
+            return false;
+        }
+
+        boolean refreshSucceeded = refreshIsoFileListMetaData(repoStorageDomainId,
+                repoStorageDom,
+                fileStatsReturnValue,
+                imageFileType);
+
+        if (refreshSucceeded && fileListRefreshed != null) {
+            fileListRefreshed.onFileListRefreshed(repoStoragePoolId, fileStatsReturnValue.keySet());
+        }
+
+        return refreshSucceeded;
+    }
+
+    public interface FileListRefreshed {
+        void onFileListRefreshed(Guid poolId, Set<String> isoList);
     }
 
     /**
@@ -706,46 +727,44 @@ public class IsoDomainListSyncronizer {
      * @return True, if the fetch from VDSM has succeeded. False otherwise.
      */
     private boolean updateFloppyListFromVDSM(Guid repoStoragePoolId, Guid repoStorageDomainId) {
-        boolean refreshFloppySucceeded = false;
-        VDSReturnValue returnValue;
 
-        if (repoStorageDomainId != null) {
-            try {
-                StoragePool dc = getStoragePoolDAO().get(repoStoragePoolId);
-                if (FeatureSupported.getFileStats(dc.getCompatibilityVersion())) {
-                    returnValue = Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(VDSCommandType.GetFileStats,
-                                    new GetFileStatsParameters(repoStoragePoolId,
-                                            repoStorageDomainId, FLOPPY_FILE_PATTERN, false));
-                } else {
-                    returnValue = Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(VDSCommandType.GetFloppyList,
-                                    new IrsBaseVDSCommandParameters(repoStoragePoolId));
-                }
+        VDSReturnValue fileStats = getFileStats(repoStoragePoolId,
+                repoStorageDomainId,
+                FLOPPY_FILE_PATTERN,
+                VDSCommandType.GetFloppyList);
 
-                @SuppressWarnings("unchecked")
-                Map<String, Map<String, Object>> fileStats =
-                        (Map<String, Map<String, Object>>) returnValue.getReturnValue();
-                if (returnValue.getSucceeded() && fileStats != null) {
-                    // Set the Iso domain floppy file list fetched from VDSM into the DB.
-                    refreshFloppySucceeded =
-                            refreshIsoFileListMetaData(repoStorageDomainId,
-                                    repoStorageDom,
-                                    fileStats,
-                                    ImageFileType.Floppy);
-                }
-                log.debug("The refresh process from VDSM, for Floppy files succeeded.");
-            } catch (Exception e) {
-                refreshFloppySucceeded = false;
-                log.warn("The refresh process from VDSM, for Floppy files failed: {}", e.getMessage());
-                log.debug("Exception", e);
+        return refreshVdsmFileList(repoStoragePoolId,
+                repoStorageDomainId,
+                null,
+                ImageFileType.Floppy,
+                fileStats);
+    }
+
+    private String succeededOrFailed(boolean status) {
+        return status ? " succeeded" : "failed";
+    }
+
+    private VDSReturnValue getFileStats(Guid repoStoragePoolId,
+            Guid repoStorageDomainId,
+            String filePattern,
+            VDSCommandType alternateGetFileStatsCommand) {
+
+        try {
+            StoragePool dc = getStoragePoolDAO().get(repoStoragePoolId);
+            VDSBrokerFrontend resourceManager = Backend.getInstance().getResourceManager();
+            if (FeatureSupported.getFileStats(dc.getCompatibilityVersion())) {
+                return resourceManager.RunVdsCommand(VDSCommandType.GetFileStats,
+                        new GetFileStatsParameters(repoStoragePoolId,
+                                repoStorageDomainId, filePattern, false));
+            } else {
+                return resourceManager.RunVdsCommand(alternateGetFileStatsCommand,
+                        new IrsBaseVDSCommandParameters(repoStoragePoolId));
             }
+        } catch (Exception e) {
+            log.warn("The refresh process for pattern {} failed: {}", filePattern, e.getMessage());
+            log.debug("Exception", e);
+            return null;
         }
-        return refreshFloppySucceeded;
     }
 
     /**
