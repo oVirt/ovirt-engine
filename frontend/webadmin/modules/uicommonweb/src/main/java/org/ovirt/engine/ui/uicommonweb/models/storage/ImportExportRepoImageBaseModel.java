@@ -288,6 +288,6 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         }
     }
 
-    public abstract boolean showImportAsTemplateOptions();
+    public abstract boolean isImportModel();
 
 }

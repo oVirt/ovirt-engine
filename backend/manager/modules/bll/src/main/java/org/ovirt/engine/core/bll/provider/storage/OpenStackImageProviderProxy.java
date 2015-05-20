@@ -171,9 +171,6 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
         validateContainerFormat(glanceImage);
 
         String shortHash = glanceImage.getId().substring(0, 7);
-
-        diskImage.setDiskAlias("GlanceDisk-" + shortHash);
-
         if (glanceImage.getName() != null) {
             diskImage.setDiskDescription(glanceImage.getName() + " (" + shortHash + ")");
         } else {

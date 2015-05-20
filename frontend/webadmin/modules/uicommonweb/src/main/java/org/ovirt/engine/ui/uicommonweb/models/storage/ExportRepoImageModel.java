@@ -76,7 +76,7 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
     }
 
     @Override
-    public boolean showImportAsTemplateOptions() {
+    public boolean isImportModel() {
         return false;
     }
 }

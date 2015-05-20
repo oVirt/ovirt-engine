@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -17,14 +18,17 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEditTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportExportRepoImageBaseModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.RepoImageModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
 
@@ -87,6 +91,8 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+
     @Inject
     public ImportExportImagePopupView(EventBus eventBus) {
         super(eventBus);
@@ -108,6 +114,33 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
 
         imageListPanel = new SimplePanel();
 
+        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        driver.initialize(this);
+    }
+
+    @Override
+    public void edit(final ImportExportRepoImageBaseModel model) {
+        driver.edit(model);
+
+        importAsTemplateEditor.setVisible(model.isImportModel());
+        clusterEditor.setVisible(model.isImportModel());
+
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev,
+                    Object sender,
+                    PropertyChangedEventArgs args) {
+                if ("ImportExportEntities".equals(args.propertyName) //$NON-NLS-1$
+                        && model.getEntities() != null) {
+                    imageList.setRowData(model.getEntities());
+                }
+            }
+        });
+
+        initTable(model);
+    }
+
+    private void initTable(ImportExportRepoImageBaseModel model) {
         imageList = new EntityModelCellTable<>(SelectionMode.NONE, true);
         imageList.addColumn(new AbstractEntityModelTextColumn<Object>() {
             @Override
@@ -120,6 +153,10 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 return constants.unknown();
             }
         }, constants.fileNameIso());
+        if (model.isImportModel()) {
+            imageList.addColumn(new DiskAliasTextColumn(new DiskAliasFieldUpdater()),
+                    templates.sub(constants.diskSnapshotAlias(), constants.clickToEdit()));
+        }
         imageList.addColumn(new AbstractEntityModelTextColumn<Object>() {
             @Override
             public String getText(Object image) {
@@ -135,7 +172,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
             @Override
             protected Long getRawValue(EntityModel object) {
                 if (object.getEntity() instanceof RepoImage) {
-                    return ((RepoImage) (object.getEntity())).getSize();
+                    return ((RepoImage) object.getEntity()).getSize();
                 } else if (object.getEntity() instanceof DiskImage) {
                     return ((DiskImage) (object.getEntity())).getSizeInGigabytes();
                 }
@@ -145,27 +182,6 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
 
         imageList.setWidth("100%", true); //$NON-NLS-1$
         imageListPanel.setWidget(imageList);
-
-        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        driver.initialize(this);
-    }
-
-    @Override
-    public void edit(final ImportExportRepoImageBaseModel model) {
-        driver.edit(model);
-
-        importAsTemplateEditor.setVisible(model.showImportAsTemplateOptions());
-        clusterEditor.setVisible(model.showImportAsTemplateOptions());
-
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("ImportExportEntities".equals(args.propertyName) //$NON-NLS-1$
-                        && model.getEntities() != null) {
-                    imageList.setRowData(model.getEntities());
-                }
-            }
-        });
     }
 
     @Override
@@ -182,4 +198,22 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
         messagePanel.add(new Label(message));
     }
 
+    private static final class DiskAliasTextColumn extends AbstractEditTextColumn<RepoImageModel> {
+
+        private DiskAliasTextColumn(DiskAliasFieldUpdater diskAliasFieldUpdater) {
+            super(diskAliasFieldUpdater);
+        }
+
+        @Override
+        public String getValue(RepoImageModel repoImageModel) {
+            return repoImageModel.getDiskImageAlias();
+        }
+    }
+
+    private static final class DiskAliasFieldUpdater implements FieldUpdater<RepoImageModel, String> {
+        @Override
+        public void update(int i, RepoImageModel repoImageModel, String diskAlias) {
+            repoImageModel.setDiskImageAlias(diskAlias);
+        }
+    }
 }

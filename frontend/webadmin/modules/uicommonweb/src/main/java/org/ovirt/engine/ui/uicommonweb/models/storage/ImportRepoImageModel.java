@@ -41,9 +41,9 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
     }
 
     public void setRepoImages(List<RepoImage> repoImages) {
-        ArrayList<EntityModel> entities = new ArrayList<EntityModel>();
+        ArrayList<EntityModel> entities = new ArrayList<>();
         for (RepoImage i : repoImages) {
-            entities.add(new EntityModel(i));
+            entities.add(new RepoImageModel(i));
         }
         setEntities(entities);
     }
@@ -66,7 +66,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
     }
 
     @Override
-    public boolean showImportAsTemplateOptions() {
+    public boolean isImportModel() {
         return true;
     }
 
@@ -88,6 +88,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
             importParameters.setSourceStorageDomainId(sourceStorageDomain.getId());
 
             // destination
+            importParameters.setDiskAlias(((RepoImageModel) entity).getDiskImageAlias());
             importParameters.setStoragePoolId(((StoragePool) getDataCenter().getSelectedItem()).getId());
             importParameters.setStorageDomainId(((StorageDomain) getStorageDomain().getSelectedItem()).getId());
             importParameters.setClusterId(((StorageDomain) getStorageDomain().getSelectedItem()).getId());

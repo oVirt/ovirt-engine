@@ -10,6 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class RepoImage implements IVdcQueryable {
     private static final long serialVersionUID = 566928138057530047L;
+    private static final int SHORT_HASH_END_INDEX = 7;
     private Guid storagePoolId;
     private Guid repoDomainId;
     private String repoImageId;
@@ -98,13 +99,21 @@ public class RepoImage implements IVdcQueryable {
      */
     public String getRepoImageTitle() {
         if (repoImageName != null) {
-            // To provide an hint about the image id and at the same time
-            // maintain the image title short we just report 7 characters
+            // To provide a hint about the image id and at the same time maintain
+            // the image title short we just report SHORT_HASH_END_INDEX characters
             // of the id (similarly to what git does with hashes).
-            return repoImageName + " (" + repoImageId.substring(0, 7) + ")";
+            return repoImageName + " (" + getShortHash(repoImageId) + ")";
         } else {
             return repoImageId;
         }
+    }
+
+    public static String getRepoImageAlias(String prefix, String repoId) {
+        return prefix + getShortHash(repoId);
+    }
+
+    private static String getShortHash(String repoId) {
+        return repoId.substring(0, SHORT_HASH_END_INDEX);
     }
 
     /**

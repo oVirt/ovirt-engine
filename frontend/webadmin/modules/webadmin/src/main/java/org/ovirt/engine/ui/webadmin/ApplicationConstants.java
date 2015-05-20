@@ -1751,6 +1751,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Type")
     String typeStorage();
 
+    @DefaultStringValue("(Click to Edit)")
+    String clickToEdit();
+
     // Storage General
     @DefaultStringValue("Size")
     String sizeStorageGeneral();

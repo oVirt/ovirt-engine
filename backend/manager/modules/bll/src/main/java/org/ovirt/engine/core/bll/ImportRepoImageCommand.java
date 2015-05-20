@@ -25,8 +25,10 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -157,7 +159,10 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
                 } else {
                     diskImage.setVolumeType(VolumeType.Sparse);
                 }
-                if (getParameters().getDiskAlias() != null) {
+                if (getParameters().getDiskAlias() == null) {
+                    diskImage.setDiskAlias(RepoImage.getRepoImageAlias(
+                            StorageConstants.GLANCE_DISK_ALIAS_PREFIX, getParameters().getSourceRepoImageId()));
+                } else {
                     diskImage.setDiskAlias(getParameters().getDiskAlias());
                 }
             }
