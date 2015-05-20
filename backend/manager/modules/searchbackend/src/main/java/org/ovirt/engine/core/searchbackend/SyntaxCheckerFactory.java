@@ -35,7 +35,4 @@ public class SyntaxCheckerFactory {
         return ConfigAuthenticationMethod;
     }
 
-    public static ISyntaxChecker getUISyntaxChecker() {
-        return uiSyntaxChecker;
-    }
 }

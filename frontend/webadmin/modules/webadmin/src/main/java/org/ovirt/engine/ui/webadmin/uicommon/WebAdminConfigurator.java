@@ -2,10 +2,14 @@ package org.ovirt.engine.ui.webadmin.uicommon;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
+import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.ContextSensitiveHelpManager;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -95,6 +99,12 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     @Override
     public Float clientBrowserVersion() {
         return clientAgentType.version;
+    }
+
+    @Override
+    public ISyntaxChecker getSyntaxChecker() {
+        return SyntaxCheckerFactory.createUISyntaxChecker(
+                (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
     }
 
 }

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb;
 
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
@@ -28,7 +29,6 @@ public abstract class Configurator {
     private static final String DOCS_ROOT = BaseContextPathData.getInstance().getRelativePath() + "docs/manual"; //$NON-NLS-1$
     private static final String CSH_ROOT = BaseContextPathData.getInstance().getRelativePath() + "docs/csh"; //$NON-NLS-1$
     private static final String JSON = ".json"; //$NON-NLS-1$
-
 
     private static String localeDir;
 
@@ -332,5 +332,10 @@ public abstract class Configurator {
     protected abstract String clientPlatformType();
 
     public abstract Float clientBrowserVersion();
+
+    /**
+     * Returns the UI syntax checker instance or {@code null} if not available.
+     */
+    public abstract ISyntaxChecker getSyntaxChecker();
 
 }

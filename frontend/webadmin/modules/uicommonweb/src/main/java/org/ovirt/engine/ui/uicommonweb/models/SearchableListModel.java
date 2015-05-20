@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.HasStoragePool;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -26,7 +25,6 @@ import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxChecker;
-import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
 import org.ovirt.engine.core.searchbackend.SyntaxObject;
@@ -64,11 +62,6 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
     private static final Logger logger = Logger.getLogger(SearchableListModel.class.getName());
     private static final String PAGE_STRING_REGEX = "[\\s]+page[\\s]+[1-9]+[0-9]*[\\s]*$"; //$NON-NLS-1$
     private static final String PAGE_NUMBER_REGEX = "[1-9]+[0-9]*$"; //$NON-NLS-1$
-
-    // Syntax checker singleton instance.
-    // Note: must be static since SyntaxCheckerFactory.createUISyntaxChecker method
-    // works with single syntax checker instance (uiSyntaxChecker) for the entire UI.
-    private static ISyntaxChecker syntaxChecker;
 
     private UICommand privateSearchCommand;
     private HandlerRegistration timerChangeHandler;
@@ -305,15 +298,6 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
         // should have paging will set it explicitly in their constructors.
         getSearchNextPageCommand().setIsAvailable(false);
         getSearchPreviousPageCommand().setIsAvailable(false);
-
-        if (syntaxChecker == null) {
-            syntaxChecker = SyntaxCheckerFactory.createUISyntaxChecker(
-                    (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
-        }
-    }
-
-    protected ISyntaxChecker getSyntaxChecker() {
-        return syntaxChecker;
     }
 
     /**
@@ -808,8 +792,13 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
      * Otherwise, this method returns {@code true}.
      */
     public boolean isSearchValidForServerSideSorting() {
+        ISyntaxChecker syntaxChecker = getConfigurator().getSyntaxChecker();
+        if (syntaxChecker == null) {
+            return true;
+        }
+
         String search = getSearchString();
-        SyntaxContainer syntaxResult = getSyntaxChecker().analyzeSyntaxState(search, true);
+        SyntaxContainer syntaxResult = syntaxChecker.analyzeSyntaxState(search, true);
 
         if (syntaxResult.getError() != SyntaxError.NO_ERROR) {
             return false;

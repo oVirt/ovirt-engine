@@ -88,7 +88,7 @@ public class SearchSuggestModel extends SearchableListModel
     {
         getItems().clear();
 
-        SyntaxContainer syntax = getSyntaxChecker().getCompletion(search);
+        SyntaxContainer syntax = getConfigurator().getSyntaxChecker().getCompletion(search);
 
         int lastHandledIndex = syntax.getLastHandledIndex();
         String pf = search.substring(0, lastHandledIndex);
