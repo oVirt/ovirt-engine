@@ -2617,8 +2617,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Clear All")
     String clearAllDismissedAlerts();
 
+    @DefaultStringValue("Clear All")
+    String clearAllDismissedEvents();
+
     @DefaultStringValue("Dismiss Alert")
     String dismissAlert();
+
+    @DefaultStringValue("Dismiss Event")
+    String dismissEvent();
 
     // Network popup
 

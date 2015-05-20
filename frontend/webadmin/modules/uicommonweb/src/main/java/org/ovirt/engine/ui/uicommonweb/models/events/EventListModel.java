@@ -1,10 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.events;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
+import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -22,11 +20,13 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> {
+import java.util.List;
+
+public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> implements HasDismissCommand {
     private UICommand privateRefreshCommand;
 
     public UICommand getRefreshCommand()
@@ -43,6 +43,19 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> {
 
     public UICommand getDetailsCommand() {
         return detailsCommand;
+    }
+
+    private UICommand dismissCommand;
+
+    @Override
+    public UICommand getDismissCommand() {
+        return dismissCommand;
+    }
+
+    private UICommand clearAllCommand;
+
+    public UICommand getClearAllCommand() {
+        return clearAllCommand;
     }
 
     private void setDetailsCommand(UICommand value) {
@@ -81,12 +94,6 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> {
         }
     }
 
-    private boolean requestingData;
-
-    public boolean isRequestingData() {
-        return requestingData;
-    }
-
     public EventListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().eventsTitle());
@@ -96,6 +103,8 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> {
 
         setRefreshCommand(new UICommand("Refresh", this)); //$NON-NLS-1$
         setDetailsCommand(new UICommand("Details", this)); //$NON-NLS-1$
+        dismissCommand = new UICommand("Dismiss", this); //$NON-NLS-1$
+        clearAllCommand = new UICommand("ClearAll", this); //$NON-NLS-1$
 
         setDefaultSearchString("Events:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
@@ -117,32 +126,12 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> {
     }
 
     @Override
-    protected void syncSearch()
-    {
-        super.syncSearch();
-
-        requestingData = true;
-        setItems(new ObservableCollection<AuditLog>());
-        setLastEvent(null);
-    }
-
-    @Override
-    public void search() {
-        super.search();
-
-        // Force refresh of the event list when the event tab is shown
-        // without waiting to the timer. This is invoked only the first
-        // time the Events tab is shown - than the timer takes care of this.
-        forceRefreshWithoutTimers();
+    protected void syncSearch() {
+        refreshModel();
     }
 
     protected void forceRefreshWithoutTimers() {
         getRefreshCommand().execute();
-    }
-
-    @Override
-    protected boolean handleRefreshActiveModel(RefreshActiveModelEvent event) {
-        return false;
     }
 
     @Override
@@ -154,26 +143,16 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> {
     {
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object returnValue) {
-                EventListModel eventListModel = (EventListModel) model;
-                ArrayList<AuditLog> list = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                requestingData = false;
-                for (AuditLog auditLog : list) {
-                    // in case the corr_id is created in client,
-                    // remove unnecessary data (leave only the corr_id).
-                    if (auditLog.getCorrelationId() != null
-                        && auditLog.getCorrelationId().startsWith(TaskListModel._WEBADMIN_)) {
-                        auditLog.setCorrelationId(auditLog.getCorrelationId().split("_")[2]); //$NON-NLS-1$
-                    }
-                }
-                eventListModel.updateItems(list);
+            public void onSuccess(Object outerObject, Object returnValue) {
+                List<AuditLog> list = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                EventListModel.this.setItems(list);
+                EventListModel.this.setLastEvent(Linq.firstOrDefault(list));
             }
         });
 
         SearchParameters params = new SearchParameters(applySortOptions(getSearchString()), SearchType.AuditLog,
                 isCaseSensitiveSearch());
         params.setMaxCount(getSearchPageSize());
-        params.setSearchFrom(getLastEvent() != null ? getLastEvent().getAuditLogId() : 0);
         params.setRefresh(false);
 
         Frontend.getInstance().runQuery(VdcQueryType.Search, params, query);
@@ -209,55 +188,43 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> {
         super.executeCommand(command);
 
         if (command == getRefreshCommand()) {
-            refreshModel();
-            updatePagingAvailability();
+            syncSearch();
         } else if (command == getDetailsCommand()) {
             details();
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
+        } else if (command == getDismissCommand()) {
+            dismissEvent();
+        } else if (command == getClearAllCommand()) {
+            clearAllDismissedEvents();
         }
+    }
+
+    public void dismissEvent() {
+        final AuditLog auditLog = getSelectedItem();
+        if (auditLog == null) {
+            return;
+        }
+        RemoveAuditLogByIdParameters params = new RemoveAuditLogByIdParameters(auditLog.getAuditLogId());
+        Frontend.getInstance().runAction(VdcActionType.RemoveAuditLogById, params, new IFrontendActionAsyncCallback() {
+            @Override public void executed(FrontendActionAsyncResult result) {
+                EventListModel.this.refresh();
+            }
+        });
+    }
+
+    public void clearAllDismissedEvents() {
+        Frontend.getInstance().runAction(VdcActionType.ClearDismissedAuditLogEvents, new VdcActionParametersBase(),
+                new IFrontendActionAsyncCallback() {
+            @Override public void executed(FrontendActionAsyncResult result) {
+                EventListModel.this.refresh();
+            }
+        });
     }
 
     @Override
     public UICommand getDoubleClickCommand() {
         return getDetailsCommand();
-    }
-
-    private void updateItems(ArrayList<AuditLog> source)
-    {
-        if (getItems() == null)
-        {
-            return;
-        }
-
-        List<AuditLog> list = (List<AuditLog>) getItems();
-
-        Collections.sort(source, new Linq.AuditLogComparer());
-        if (!source.isEmpty() && !list.contains(source.get(source.size() - 1))) {
-            //We received some new events, tell the active models to update.
-            RefreshActiveModelEvent.fire(this, false);
-        }
-
-        for (AuditLog item : source)
-        {
-            if (list.size() == getSearchPageSize())
-            {
-                list.remove(list.size() - 1);
-            }
-            // This check is for an issue in FF where somehow the event lists gets items twice. This
-            // simply checks if the event is already there and only adds it if it is not there.
-            if (!list.contains(item)) {
-                list.add(0, item);
-            }
-        }
-        getItemsChangedEvent().raise(this, EventArgs.EMPTY);
-        setLastEvent(Linq.firstOrDefault(list));
-
-        // If there are no data for this entity, the LastEvent has to be fired in order
-        // to stop the progress animation (SearchableTabModelProvider).
-        if (Linq.firstOrDefault(list) == null) {
-            onPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
-        }
     }
 
     private boolean entitiesChanged = true;

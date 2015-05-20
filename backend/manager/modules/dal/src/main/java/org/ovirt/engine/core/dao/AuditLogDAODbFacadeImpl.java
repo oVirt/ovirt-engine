@@ -236,6 +236,16 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
         getCallsHandler().executeModification("ClearAllDismissedAuditLogs", getCustomMapSqlParameterSource());
     }
 
+    @Override public void clearDismissedEvents() {
+        getCallsHandler().executeModification("ClearDismissedAuditLogsBySeverityOtherThan", getCustomMapSqlParameterSource()
+                .addValue("severity", AuditLogSeverity.ALERT));
+    }
+
+    @Override public void clearDismissedAlerts() {
+        getCallsHandler().executeModification("ClearDismissedAuditLogsBySeverity",
+                getCustomMapSqlParameterSource().addValue("severity", AuditLogSeverity.ALERT));
+    }
+
     @Override
     public void deleteBackupRelatedAlerts() {
         getCallsHandler().executeModification("DeleteBackupRelatedAlerts", getCustomMapSqlParameterSource());

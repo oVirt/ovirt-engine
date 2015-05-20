@@ -177,6 +177,18 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
     void clearAllDismissed();
 
     /**
+     * Clears all previously dismissed audit log entries with severity other than {@link AuditLogSeverity#ALERT}.
+     * Audit logs delete flag will be set back to false.
+     */
+    void clearDismissedEvents();
+
+    /**
+     * Clears all previously dismissed audit log entries with severity {@link AuditLogSeverity#ALERT}. Audit logs
+     * delete flag will be set back to false.
+     */
+    void clearDismissedAlerts();
+
+    /**
      * Clears all backup related alerts (no backup alert or old backup alert)
      */
     void deleteBackupRelatedAlerts();

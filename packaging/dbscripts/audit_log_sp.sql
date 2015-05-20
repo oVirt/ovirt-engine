@@ -119,10 +119,26 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION ClearAllDismissedAuditLogs()
+    RETURNS VOID
+AS $procedure$
+BEGIN
+      UPDATE audit_log SET deleted = false;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION ClearDismissedAuditLogsBySeverity(v_severity INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
-      UPDATE audit_log SET deleted = false;
+      UPDATE audit_log SET deleted = false WHERE severity = v_severity;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION ClearDismissedAuditLogsBySeverityOtherThan(v_severity INTEGER)
+    RETURNS VOID
+AS $procedure$
+BEGIN
+      UPDATE audit_log SET deleted = false WHERE severity != v_severity;
 END; $procedure$
 LANGUAGE plpgsql;
 

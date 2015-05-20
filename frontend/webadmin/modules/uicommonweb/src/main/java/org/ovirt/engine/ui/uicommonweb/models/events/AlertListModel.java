@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class AlertListModel extends SearchableListModel
+public class AlertListModel extends SearchableListModel<Void, AuditLog> implements HasDismissCommand
 {
     private UICommand dismissCommand;
 
@@ -92,8 +92,7 @@ public class AlertListModel extends SearchableListModel
     }
 
     public void clearAllDismissedAlerts() {
-        VdcActionParametersBase params = new VdcActionParametersBase();
-        Frontend.getInstance().runAction(VdcActionType.ClearAllDismissedAuditLogs, params);
+        Frontend.getInstance().runAction(VdcActionType.ClearDismissedAuditLogAlerts, new VdcActionParametersBase());
     }
 
     @Override

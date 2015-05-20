@@ -59,15 +59,6 @@ public class RemoveAuditLogByIdCommandTest {
     }
 
     @Test
-    public void canDoActionFailsOnRemovingEventWithOvirtOrigin() {
-        command =
-                spy(new RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters>(new RemoveAuditLogByIdParameters(EVENT_ID_2)));
-        prepareMocks(command);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
-    }
-
-    @Test
     public void canDoActionSucceeds() {
         command =
                 spy(new RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters>(new RemoveAuditLogByIdParameters(EVENT_ID_3)));

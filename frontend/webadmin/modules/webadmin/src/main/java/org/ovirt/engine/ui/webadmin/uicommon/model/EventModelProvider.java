@@ -30,13 +30,7 @@ public class EventModelProvider extends SearchableTabModelProvider<AuditLog, Eve
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 // For EventListModel classes: update data whenever the last event changes
                 if ("LastEvent".equals(args.propertyName)) { //$NON-NLS-1$
-                    if (model.getLastEvent() == null && model.isRequestingData()) {
-                        // Tell data provider we await further data
-                        clearData();
-                    } else {
-                        // Data has arrived, update data provider
-                        updateData();
-                    }
+                    updateData();
                 }
             }
         });
