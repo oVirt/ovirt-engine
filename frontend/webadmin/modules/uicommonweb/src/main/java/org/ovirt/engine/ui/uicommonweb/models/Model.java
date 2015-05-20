@@ -171,7 +171,6 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     public void setHashName(String value)
     {
         sethashName(value);
-        setOpenDocumentationCommand(new UICommand("OpenDocumentation", this)); //$NON-NLS-1$
         onPropertyChanged(new PropertyChangedEventArgs("HashName")); //$NON-NLS-1$
     }
 
@@ -185,6 +184,8 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     public void setHelpTag(HelpTag helpTag)
     {
         this.helpTag = helpTag;
+        setOpenDocumentationCommand(new UICommand("OpenDocumentation", this)); //$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("HelpTag")); //$NON-NLS-1$
     }
 
     public HelpTag getHelpTag()
