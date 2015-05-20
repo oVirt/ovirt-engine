@@ -205,7 +205,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     @PostConstruct
     protected final void postConstruct() {
-        init();
+        // do not initialize for compensation
+        if (getParameters() != null) {
+            init();
+        }
     }
 
     /**
