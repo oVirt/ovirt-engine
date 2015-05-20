@@ -755,22 +755,25 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected void addVmTemplateImages(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
         List<DiskImage> diskImages = ImagesHandler.filterImageDisks(mImages, true, false, true);
         for (DiskImage diskImage : diskImages) {
-            // The return value of this action is the 'copyImage' task GUID:
-            VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(
-                    VdcActionType.CreateImageTemplate,
-                    buildChildCommandParameters(diskImage, Guid.newGuid()),
-                    ExecutionHandler.createDefaultContextForTasks(getContext()));
-
-            if (!retValue.getSucceeded()) {
-                throw new VdcBLLException(retValue.getFault().getError(), retValue.getFault().getMessage());
-            }
-
-            getReturnValue().getVdsmTaskIdList().addAll(retValue.getInternalVdsmTaskIdList());
-            DiskImage newImage = (DiskImage) retValue.getActionReturnValue();
-            srcDeviceIdToTargetDeviceIdMapping.put(diskImage.getId(), newImage.getId());
+            addVmTemplateImage(srcDeviceIdToTargetDeviceIdMapping, diskImage);
         }
     }
 
+    protected void addVmTemplateImage(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping, DiskImage diskImage) {
+        // The return value of this action is the 'copyImage' task GUID:
+        VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(
+                VdcActionType.CreateImageTemplate,
+                buildChildCommandParameters(diskImage, Guid.newGuid()),
+                ExecutionHandler.createDefaultContextForTasks(getContext()));
+
+        if (!retValue.getSucceeded()) {
+            throw new VdcBLLException(retValue.getFault().getError(), retValue.getFault().getMessage());
+        }
+
+        getReturnValue().getVdsmTaskIdList().addAll(retValue.getInternalVdsmTaskIdList());
+        DiskImage newImage = (DiskImage) retValue.getActionReturnValue();
+        srcDeviceIdToTargetDeviceIdMapping.put(diskImage.getId(), newImage.getId());
+    }
 
     private Guid getVmIdFromImageParameters(){
         return getParameters().getMasterVm().getId();
