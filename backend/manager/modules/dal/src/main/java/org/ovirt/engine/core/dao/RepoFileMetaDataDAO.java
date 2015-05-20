@@ -29,13 +29,13 @@ public interface RepoFileMetaDataDAO extends DAO {
      *
      * @param map - The repository file meta data to insert.
      */
-    public void addRepoFileMap(RepoImage map);
+    void addRepoFileMap(RepoImage map);
 
     /**
      * Returns a list of repository files with specific file extension from storage domain id.<BR/>
      * If no repository found, will return an empty list.
      */
-    public List<RepoImage> getRepoListForStorageDomain(Guid storageDomainId,
+    List<RepoImage> getRepoListForStorageDomain(Guid storageDomainId,
             ImageFileType fileType);
 
     /**
@@ -43,7 +43,7 @@ public interface RepoFileMetaDataDAO extends DAO {
      * for each storage pool, storage domain and file type in all System,
      * which meets the same storage domain status, type and SPM status.
      */
-    public List<RepoImage> getAllRepoFilesForAllStoragePools(StorageDomainType storageDomainType,
+    List<RepoImage> getAllRepoFilesForAllStoragePools(StorageDomainType storageDomainType,
             StoragePoolStatus storagePoolStatus, StorageDomainStatus storageDomainStatus,
             VDSStatus vdsStatus);
 }

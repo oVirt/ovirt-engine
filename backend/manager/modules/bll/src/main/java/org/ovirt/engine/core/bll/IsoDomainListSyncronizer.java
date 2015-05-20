@@ -74,8 +74,8 @@ public class IsoDomainListSyncronizer {
     private static volatile IsoDomainListSyncronizer isoDomainListSyncronizer;
     private static final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<>();
     private int isoDomainRefreshRate;
-    RepoFileMetaDataDAO repoStorageDom;
-    ProviderDao providerDao;
+    private RepoFileMetaDataDAO repoStorageDom;
+    private ProviderDao providerDao;
 
     public static final String TOOL_CLUSTER_LEVEL = "clusterLevel";
     public static final String TOOL_VERSION = "toolVersion";
