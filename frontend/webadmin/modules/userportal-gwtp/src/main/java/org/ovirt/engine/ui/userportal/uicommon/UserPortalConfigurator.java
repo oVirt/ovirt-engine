@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.console.ConsoleOptions.WanColorDepth;
 import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.ContextSensitiveHelpManager;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -149,4 +150,10 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     public Float clientBrowserVersion() {
         return clientAgentType.version;
     }
+
+    @Override
+    public ISyntaxChecker getSyntaxChecker() {
+        return null;
+    }
+
 }

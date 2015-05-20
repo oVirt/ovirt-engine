@@ -1149,7 +1149,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         if (tokens == null) {
             return false;
         }
-        ISyntaxChecker syntaxChecker = getAutoCompleteModel().getSyntaxChecker();
+        ISyntaxChecker syntaxChecker = getAutoCompleteModel().getConfigurator().getSyntaxChecker();
         SyntaxContainer syntaxCont = syntaxChecker.analyzeSyntaxState(searchString, true);
         Set<SyntaxObjectType> searchTokenSet = new HashSet<SyntaxObjectType>();
         Iterator<SyntaxObject> iterator = syntaxCont.iterator();
