@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent.As
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent.AsyncOperationStartedHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -189,6 +190,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         updateMessage(model);
         updateItems(model);
         updateHashName(model);
+        updateHelpTag(model);
         model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
@@ -202,6 +204,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
                     updateItems(model);
                 } else if ("HashName".equals(propName)) { //$NON-NLS-1$
                     updateHashName(model);
+                } else if ("HelpTag".equals(propName)) { //$NON-NLS-1$
+                    updateHelpTag(model);
                 } else if ("OpenDocumentation".equals(propName)) { //$NON-NLS-1$
                     openDocumentation(model);
                 }
@@ -281,18 +285,16 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
     protected void updateHashName(T model) {
         String hashName = model.getHashName();
         getView().setHashName(hashName);
-
-        UICommand openDocumentationCommand = model.getOpenDocumentationCommand();
-        if (openDocumentationCommand != null) {
-            boolean isDocumentationAvailable = hashName != null &&
-                    ContextSensitiveHelpManager.getPath(hashName) != null;
-            openDocumentationCommand.setIsAvailable(isDocumentationAvailable);
-            updateHelpCommand(isDocumentationAvailable ? openDocumentationCommand : null);
-        }
     }
 
-    void updateHelpCommand(UICommand command) {
-        getView().setHelpCommand(command); // also sets the help icon visible
+    protected void updateHelpTag(T model) {
+        HelpTag helpTag = model.getHelpTag();
+        UICommand command = model.getOpenDocumentationCommand();
+
+        if (command != null && helpTag != null && ContextSensitiveHelpManager.getPath(helpTag.name()) != null) {
+            command.setIsAvailable(true);
+            getView().setHelpCommand(command); // also sets the help icon visible
+        }
     }
 
     void updateItems(T model) {
@@ -339,7 +341,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
      * ContextSensitiveHelpManager locates the proper URL via helptag/csh mapping file.
      */
     protected void openDocumentation(T model) {
-        String helpTag = model.getHelpTag().name;
+        String helpTag = model.getHelpTag().name();
         String docPath = ContextSensitiveHelpManager.getPath(helpTag);
         String docBase = model.getConfigurator().getDocsBaseUrl();
 
