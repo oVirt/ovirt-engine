@@ -178,7 +178,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         return new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, getDestinationVdsId(),
                 dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp(), getVds().getVdsGroupCompatibilityVersion(),
-                getMaximumMigrationDowntime(), getAutoConverge(), getMigrateCompressed());
+                getMaximumMigrationDowntime(), getAutoConverge(), getMigrateCompressed(), getDestinationVds().getConsoleAddress());
     }
 
     @Override

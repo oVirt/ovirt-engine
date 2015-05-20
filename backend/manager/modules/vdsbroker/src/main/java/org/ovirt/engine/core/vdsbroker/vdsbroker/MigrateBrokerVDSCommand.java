@@ -54,6 +54,10 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
             migrationInfo.put(VdsProperties.MIGRATE_COMPRESSED, parameters.getMigrateCompressed().toString());
         }
 
+        if (parameters.getConsoleAddress() != null) {
+            migrationInfo.put(VdsProperties.CONSOLE_ADDRESS, parameters.getConsoleAddress());
+        }
+
         return migrationInfo;
     }
 }

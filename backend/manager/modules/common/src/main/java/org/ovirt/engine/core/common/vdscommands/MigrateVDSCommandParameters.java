@@ -16,11 +16,12 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private Integer migrationDowntime;
     private Boolean autoConverge;
     private Boolean migrateCompressed;
+    private String consoleAddress;
 
     public MigrateVDSCommandParameters(Guid vdsId, Guid vmId, String srcHost, Guid dstVdsId,
-            String dstHost, MigrationMethod migrationMethod, boolean tunnelMigration,
-            String dstQemu, Version clusterVersion, int migrationDowntime,
-            Boolean autoConverge, Boolean migrateCompressed) {
+                                       String dstHost, MigrationMethod migrationMethod, boolean tunnelMigration,
+                                       String dstQemu, Version clusterVersion, int migrationDowntime,
+                                       Boolean autoConverge, Boolean migrateCompressed, String consoleAddress) {
         super(vdsId, vmId);
         this.srcHost = srcHost;
         this.dstVdsId = dstVdsId;
@@ -32,6 +33,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.migrationDowntime = migrationDowntime;
         this.autoConverge = autoConverge;
         this.migrateCompressed = migrateCompressed;
+        this.consoleAddress = consoleAddress;
     }
 
     public String getSrcHost() {
@@ -90,6 +92,14 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         return clusterVersion;
     }
 
+    public String getConsoleAddress() {
+        return consoleAddress;
+    }
+
+    public void setConsoleAddress(String consoleAddress) {
+        this.consoleAddress = consoleAddress;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
@@ -100,6 +110,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                 .append("tunnelMigration", isTunnelMigration())
                 .append("migrationDowntime", getMigrationDowntime())
                 .append("autoConverge", getAutoConverge())
-                .append("migrateCompressed", getMigrateCompressed());
+                .append("migrateCompressed", getMigrateCompressed())
+                .append("consoleAddress", getConsoleAddress());
     }
 }
