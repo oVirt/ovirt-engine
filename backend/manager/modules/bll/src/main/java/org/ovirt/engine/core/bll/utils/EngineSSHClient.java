@@ -87,7 +87,7 @@ public class EngineSSHClient extends SSHClient {
      * @return fingerprint.
      */
     public String getHostFingerprint() throws IOException {
-        String fingerprint = OpenSSHUtils.getKeyFingerprintString(getHostKey());
+        String fingerprint = OpenSSHUtils.getKeyFingerprint(getHostKey(), "MD5");
 
         if (fingerprint == null) {
             throw new IOException("Unable to parse host key");

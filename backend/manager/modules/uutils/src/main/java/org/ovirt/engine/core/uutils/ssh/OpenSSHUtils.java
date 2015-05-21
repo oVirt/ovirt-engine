@@ -6,13 +6,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,66 +135,37 @@ public class OpenSSHUtils {
         return keyString;
     }
 
-    /**
-     * Generate the fingerprint of a public key as used by SSH.
-     *
-     * @param the public key
-     * @return an array of bytes containing the fingerprint of the key
-     */
-    public static final byte[] getKeyFingerprintBytes(final PublicKey key) {
-        if (key == null) {
-            log.error("Public key is null, failed to retrieve fingerprint.");
-            return null;
-        }
+    public static final String getKeyFingerprint(final PublicKey key, String digest) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA1");
+            md.update(getKeyBytes(key));
 
-        // Get the serialized version of the key:
-        final byte[] keyBytes = getKeyBytes(key);
-        if (keyBytes == null) {
-            log.error("Can't get key bytes, will return null.");
-            return null;
-        }
-
-        // The fingerprint is a MD5 digest of the key bytes:
-        final byte[] fingerprintBytes = DigestUtils.md5(keyBytes);
-        if (log.isDebugEnabled()) {
-            log.debug("Fingerprint bytes are {}.", Hex.encodeHexString(fingerprintBytes));
-        }
-
-        return fingerprintBytes;
-    }
-
-    /**
-     * Generate the fingerprint of a public key as used by SSH.
-     *
-     * @param the public key
-     * @return a string containing the fingerprint of the key
-     */
-    public static final String getKeyFingerprintString(final PublicKey key) {
-        // Get the key bytes:
-        final byte[] fingerprintBytes = getKeyFingerprintBytes(key);
-        if (fingerprintBytes == null) {
-            log.error("Can't get key bytes, will return null.");
-            return null;
-        }
-
-        // Generate the string representation as two hex characters per byte
-        // separated by colons:
-        final StringBuilder buffer = new StringBuilder(fingerprintBytes.length * 3 -1);
-        boolean first = true;
-        for (byte b : fingerprintBytes) {
-            if (!first) {
-                buffer.append(':');
+            String fingerprint;
+            if ("MD5".equals(digest)) {
+                StringBuilder s = new StringBuilder();
+                for (byte b : md.digest()) {
+                    if (s.length() > 0) {
+                        s.append(':');
+                    }
+                    s.append(String.format("%02x", b));
+                }
+                fingerprint = s.toString();
+            } else {
+                fingerprint = String.format(
+                    "%s:%s",
+                    digest.toUpperCase().replace("-", ""),
+                    new Base64(0).encodeToString(md.digest())
+                );
             }
-            final String s = String.format("%02x", b);
-            buffer.append(s);
-            first = false;
-        }
-        final String fingerprintString = buffer.toString();
-        if (log.isDebugEnabled()) {
-            log.debug("Fingerprint string is '{}'.", fingerprintString);
-        }
 
-        return fingerprintString;
+            if (log.isDebugEnabled()) {
+                log.debug("Fingerprint: {}", fingerprint);
+            }
+
+            return fingerprint;
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static boolean verifyByteArray(DataInputStream dataInputStream, byte[] expected) throws IOException {
