@@ -29,8 +29,8 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
     public static final SafeHtmlHeader BLANK_HEADER = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("")); //$NON-NLS-1$
 
     interface CellTemplate extends SafeHtmlTemplates {
-        @Template("<span class=\"underlinedHeader\">{0}</span>")
-        SafeHtml underlinedHeader(SafeHtml html);
+        @Template("<span class=\"hasTooltip\">{0}</span>")
+        SafeHtml hasTooltip(SafeHtml html);
     }
 
     private static final CellTemplate templates = GWT.create(CellTemplate.class);
@@ -93,7 +93,7 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
 
     protected void setValue(SafeHtml headerText) {
         if (showUnderline) {
-            this.headerText = templates.underlinedHeader(headerText);
+            this.headerText = templates.hasTooltip(headerText);
         }
         else {
             this.headerText = headerText;

@@ -312,6 +312,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         }
         labelTooltip.setText(labelConfiguredTooltip);
         labelTooltip.reconfigure();
+        setLabelTooltipStyle(labelConfiguredTooltip);
         contentWidgetContainerTooltip.setText(contentWidgetContainerConfiguredTooltip);
         contentWidgetContainerTooltip.reconfigure();
     }
@@ -322,6 +323,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         String tooltipText = getValidationTooltipText(validationHints);
         labelTooltip.setText(tooltipText);
         labelTooltip.reconfigure();
+        addLabelStyleName(OvirtCss.HAS_TOOLTIP);
         contentWidgetContainerTooltip.setText(tooltipText);
         contentWidgetContainerTooltip.reconfigure();
     }
@@ -341,6 +343,19 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         labelConfiguredTooltip = tooltipText;
         labelTooltip.setText(tooltipText);
         labelTooltip.reconfigure();
+        setLabelTooltipStyle(tooltipText);
+    }
+
+    /**
+     * Toggle the label tooltip style (to give a visual clue that this label can be hovered over).
+     */
+    protected void setLabelTooltipStyle(String tooltipText) {
+        if (tooltipText == null || tooltipText.isEmpty()) {
+            removeLabelStyleName(OvirtCss.HAS_TOOLTIP);
+        }
+        else {
+            addLabelStyleName(OvirtCss.HAS_TOOLTIP);
+        }
     }
 
     // set styleNames on my components

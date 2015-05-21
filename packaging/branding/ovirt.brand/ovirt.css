@@ -53,6 +53,6 @@ Widgets -- cells and columns
 TODO: use SASS, break into columns.scss
 ****************************************/
 
-.underlinedHeader {
+.hasTooltip {
     border-bottom: 1px dotted #000;
 }

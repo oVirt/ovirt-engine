@@ -8,13 +8,14 @@ xmlns:b="urn:import:org.gwtbootstrap3.client.ui" >
         .wrapper_legacy {
             line-height: 30px;
             text-align: left;
+            padding: 0 5px;
         }
 
         .label_legacy {
             font-size: 13px;
-            padding: 0 5px;
             font-family: Arial, sans-serif;
             line-height: 16px;
+            padding: 0;
         }
 
         .contentWidgetContainer_legacy {
