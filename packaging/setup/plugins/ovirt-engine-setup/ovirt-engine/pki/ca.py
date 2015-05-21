@@ -242,7 +242,14 @@ class Plugin(plugin.PluginBase):
                 '%s.p12' % entry['name'],
             )
 
-            enroll = not renew
+            if not os.path.exists(pkcs12):
+                enroll = True
+                self.logger.debug(
+                    "'%s' does not exist, enrolling",
+                    pkcs12,
+                )
+            else:
+                enroll = not renew
 
             if not enroll:
                 x509 = self._extractPKCS12Certificate(pkcs12)
