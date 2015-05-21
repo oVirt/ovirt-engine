@@ -205,10 +205,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     @PostConstruct
     protected final void postConstruct() {
-        // do not initialize for compensation
-        if (getParameters() != null) {
+        if (!isCompensationContext()) {
             init();
         }
+    }
+
+    private boolean isCompensationContext() {
+        return getParameters() == null;
     }
 
     /**
