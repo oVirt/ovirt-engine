@@ -175,7 +175,7 @@
 					<g:HorizontalPanel>
 						<ge:EntityModelCheckBoxEditor ui:field="attachIsoEditor" addStyleNames="{style.attachImageCheckbox}" />
 						<e:ListModelListBoxEditor ui:field="isoImageEditor" addStyleNames="{style.attachImageSelectbox}" />
-						<g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton}">
+						<g:PushButton ui:field="isoImagesRefreshButton" addStyleNames="{style.refreshButton}">
 							<g:upFace image='{resources.refreshButtonImage}' />
 						</g:PushButton>
 					</g:HorizontalPanel>
@@ -203,8 +203,16 @@
 
 		<g:DisclosurePanel ui:field="linuxBootOptionsPanel" label="{constants.runOncePopupLinuxBootOptionsLabel}" addStyleNames="{style.panelStyle}">
 			<g:VerticalPanel addStyleNames="{style.linuxBootOptionsPanel}">
-				<ge:StringEntityModelTextBoxEditor ui:field="kernelPathEditor" addStyleNames="{style.linuxBootOption}" />
-				<ge:StringEntityModelTextBoxEditor ui:field="initrdPathEditor" addStyleNames="{style.linuxBootOption}" />
+				<g:HorizontalPanel>
+					<e:ListModelTypeAheadChangeableListBoxEditor ui:field="kernelImageEditor"
+																											 addStyleNames="{style.linuxBootOption}"/>
+					<g:PushButton ui:field="linuxBootOptionsRefreshButton" addStyleNames="{style.refreshButton}">
+						<g:upFace image='{resources.refreshButtonImage}'/>
+					</g:PushButton>
+				</g:HorizontalPanel>
+
+				<e:ListModelTypeAheadChangeableListBoxEditor ui:field="initrdImageEditor"
+																										 addStyleNames="{style.linuxBootOption}"/>
 				<ge:StringEntityModelTextBoxEditor ui:field="kernelParamsEditor" addStyleNames="{style.linuxBootOption}" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>

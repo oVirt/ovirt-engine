@@ -193,6 +193,8 @@ import org.ovirt.engine.ui.uicompat.SpiceConstantsManager;
 
 public class AsyncDataProvider {
 
+    //TODO MM: fix duplicity with org.ovirt.engine.core.bll.RunVmCommand.ISO_PREFIX  ?
+    public static final String ISO_PREFIX = "iso://";    //$NON-NLS-1$
     private static AsyncDataProvider instance;
 
     public static AsyncDataProvider getInstance() {
@@ -643,11 +645,43 @@ public class AsyncDataProvider {
         getIrsImageList(aQuery, storagePoolId, false, ImageFileType.Floppy);
     }
 
+    public void getUnknownImageList(AsyncQuery aQuery, Guid storagePoolId, boolean forceRefresh) {
+        getIrsImageList(aQuery,
+                storagePoolId,
+                forceRefresh,
+                ImageFileType.All,
+                new RepoImageToImageFileNameAsyncConverter() {
+
+
+                    @Override
+                    protected String transform(ArrayList<String> fileNameList, RepoImage repoImage) {
+                        return ISO_PREFIX + super.transform(fileNameList, repoImage);
+                    }
+
+                    @Override
+                    protected boolean desiredImage(RepoImage repoImage) {
+                        return ImageFileType.Unknown == repoImage.getFileType();
+                    }
+                });
+    }
+
     public void getIrsImageList(AsyncQuery aQuery,
             Guid storagePoolId,
             boolean forceRefresh,
             ImageFileType imageFileType) {
-        aQuery.converterCallback = new RepoImageToImageFileNameAsyncConverter();
+
+
+        getIrsImageList(aQuery, storagePoolId, forceRefresh, imageFileType,
+                new RepoImageToImageFileNameAsyncConverter());
+    }
+
+    private void getIrsImageList(AsyncQuery aQuery,
+            Guid storagePoolId,
+            boolean forceRefresh,
+            ImageFileType imageFileType,
+            IAsyncConverter converterCallBack) {
+
+        aQuery.converterCallback = converterCallBack;
 
         GetImagesListByStoragePoolIdParameters parameters =
                 new GetImagesListByStoragePoolIdParameters(storagePoolId, imageFileType);
@@ -4219,13 +4253,23 @@ public class AsyncDataProvider {
                 ArrayList<RepoImage> repoList = (ArrayList<RepoImage>) source;
                 ArrayList<String> fileNameList = new ArrayList<String>();
                 for (RepoImage repoImage : repoList) {
-                    fileNameList.add(repoImage.getRepoImageId());
+                    if (desiredImage(repoImage)) {
+                        fileNameList.add(transform(fileNameList, repoImage));
+                    }
                 }
 
                 Collections.sort(fileNameList, String.CASE_INSENSITIVE_ORDER);
                 return fileNameList;
             }
             return new ArrayList<String>();
+        }
+
+        protected String transform(ArrayList<String> fileNameList, RepoImage repoImage) {
+            return repoImage.getRepoImageId();
+        }
+
+        protected boolean desiredImage(RepoImage repoImage) {
+            return true;
         }
     }
 }

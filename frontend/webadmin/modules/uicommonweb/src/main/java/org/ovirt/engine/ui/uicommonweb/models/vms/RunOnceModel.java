@@ -51,6 +51,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public abstract class RunOnceModel extends Model
 {
@@ -116,6 +117,26 @@ public abstract class RunOnceModel extends Model
         privateIsoImage = value;
     }
 
+    private ListModel<String> kernelImage;
+
+    public ListModel<String> getKernelImage() {
+        return kernelImage;
+    }
+
+    public void setKernelImage(ListModel<String> kernelImage) {
+        this.kernelImage = kernelImage;
+    }
+
+    private ListModel<String> initrdImage;
+
+    public ListModel<String> getInitrdImage() {
+        return initrdImage;
+    }
+
+    public void setInitrdImage(ListModel<String> initrdImage) {
+        this.initrdImage = initrdImage;
+    }
+
     private ListModel<EntityModel<DisplayType>> privateDisplayProtocol;
 
     public ListModel<EntityModel<DisplayType>> getDisplayProtocol()
@@ -128,42 +149,18 @@ public abstract class RunOnceModel extends Model
         privateDisplayProtocol = value;
     }
 
-    private EntityModel<String> privateInitrd_path;
-
-    public EntityModel<String> getInitrd_path()
-    {
-        return privateInitrd_path;
-    }
-
-    private void setInitrd_path(EntityModel<String> value)
-    {
-        privateInitrd_path = value;
-    }
-
-    private EntityModel<String> privateKernel_path;
-
-    public EntityModel<String> getKernel_path()
-    {
-        return privateKernel_path;
-    }
-
-    private void setKernel_path(EntityModel<String> value)
-    {
-        privateKernel_path = value;
-    }
-
     // Linux Boot Options tab
 
-    private EntityModel<String> privateKernel_parameters;
+    private EntityModel<String> privateKernelParameters;
 
-    public EntityModel<String> getKernel_parameters()
+    public EntityModel<String> getKernelParameters()
     {
-        return privateKernel_parameters;
+        return privateKernelParameters;
     }
 
     private void setKernel_parameters(EntityModel<String> value)
     {
-        privateKernel_parameters = value;
+        privateKernelParameters = value;
     }
 
     // Initial Boot tab - Sysprep
@@ -617,8 +614,8 @@ public abstract class RunOnceModel extends Model
 
         // Linux Boot Options tab
         setKernel_parameters(new EntityModel<String>());
-        setKernel_path(new EntityModel<String>());
-        setInitrd_path(new EntityModel<String>());
+        setKernelImage(new ListModel<String>());
+        setInitrdImage(new ListModel<String>());
 
         // Initial Boot tab - Sysprep
         setIsCloudInitEnabled(new EntityModel<Boolean>(false));
@@ -716,9 +713,7 @@ public abstract class RunOnceModel extends Model
         setHwAcceleration(true);
 
         // passing Kernel parameters
-        getKernel_parameters().setEntity(vm.getKernelParams());
-        getKernel_path().setEntity(vm.getKernelUrl());
-        getInitrd_path().setEntity(vm.getInitrdUrl());
+        getKernelParameters().setEntity(vm.getKernelParams());
 
         setIsLinuxOS(AsyncDataProvider.getInstance().isLinuxOsType(vm.getVmOsId()));
         getIsLinuxOptionsAvailable().setEntity(getIsLinuxOS());
@@ -731,6 +726,7 @@ public abstract class RunOnceModel extends Model
         updateDomainList();
         updateSystemTabLists();
         updateIsoList();
+        updateUnknownTypeImagesList();
         updateDisplayProtocols();
         updateFloppyImages();
         updateInitialRunFields();
@@ -804,17 +800,18 @@ public abstract class RunOnceModel extends Model
         params.setCustomProperties(getCustomPropertySheet().serialize());
 
         // kernel params
-        if (getKernel_path().getEntity() != null)
-        {
-            params.setKernelUrl(getKernel_path().getEntity());
+        String selectedKernelImage = getKernelImage().getSelectedItem();
+        if (!StringUtils.isEmpty(selectedKernelImage)) {
+            params.setKernelUrl(selectedKernelImage);
         }
-        if (getKernel_parameters().getEntity() != null)
-        {
-            params.setKernelParams(getKernel_parameters().getEntity());
+
+        if (getKernelParameters().getEntity() != null) {
+            params.setKernelParams(getKernelParameters().getEntity());
         }
-        if (getInitrd_path().getEntity() != null)
-        {
-            params.setInitrdUrl(getInitrd_path().getEntity());
+
+        String selectedInitrdImage = getInitrdImage().getSelectedItem();
+        if (!StringUtils.isEmpty(selectedInitrdImage)) {
+            params.setInitrdUrl(selectedInitrdImage);
         }
 
         // Sysprep params
@@ -976,6 +973,29 @@ public abstract class RunOnceModel extends Model
 
     public void updateIsoList() {
         updateIsoList(false);
+    }
+
+    public void updateUnknownTypeImagesList() {
+        updateUnknownTypeImagesList(false);
+    }
+
+    public void updateUnknownTypeImagesList(boolean forceRefresh) {
+        INewAsyncCallback callback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                List<String> images = (List<String>) returnValue;
+
+                getKernelImage().setItems(images);
+                getInitrdImage().setItems(images);
+
+                getKernelImage().setSelectedItem(null);
+                getInitrdImage().setSelectedItem(null);
+            }
+        };
+
+
+        AsyncQuery aQuery = new AsyncQuery(this, callback);
+        AsyncDataProvider.getInstance().getUnknownImageList(aQuery, vm.getStoragePoolId(), forceRefresh);
     }
 
     public void updateIsoList(boolean forceRefresh) {
@@ -1236,26 +1256,26 @@ public abstract class RunOnceModel extends Model
         boolean customPropertyValidation = getCustomPropertySheet().validate();
 
         if (getIsLinuxOS()) {
-            getKernel_path().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-            getInitrd_path().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-            getKernel_parameters().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
+            getKernelImage().validateSelectedItem(new IValidation[] { new NoTrimmingWhitespacesValidation() });
+            getInitrdImage().validateSelectedItem(new IValidation[] { new NoTrimmingWhitespacesValidation() });
+            getKernelParameters().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
 
             // initrd path and kernel params require kernel path to be filled
-            if (StringHelper.isNullOrEmpty(getKernel_path().getEntity())) {
+            if (StringHelper.isNullOrEmpty(getKernelImage().getSelectedItem())) {
                 final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-                if (!StringHelper.isNullOrEmpty(getInitrd_path().getEntity())) {
-                    getInitrd_path().getInvalidityReasons().add(constants.initrdPathInvalid());
-                    getInitrd_path().setIsValid(false);
-                    getKernel_path().getInvalidityReasons().add(constants.initrdPathInvalid());
-                    getKernel_path().setIsValid(false);
+                if (!StringHelper.isNullOrEmpty(getInitrdImage().getSelectedItem())) {
+                    getInitrdImage().getInvalidityReasons().add(constants.initrdPathInvalid());
+                    getInitrdImage().setIsValid(false);
+                    getKernelImage().getInvalidityReasons().add(constants.initrdPathInvalid());
+                    getKernelImage().setIsValid(false);
                 }
 
-                if (!StringHelper.isNullOrEmpty(getKernel_parameters().getEntity())) {
-                    getKernel_parameters().getInvalidityReasons().add(constants.kernelParamsInvalid());
-                    getKernel_parameters().setIsValid(false);
-                    getKernel_path().getInvalidityReasons().add(constants.kernelParamsInvalid());
-                    getKernel_path().setIsValid(false);
+                if (!StringHelper.isNullOrEmpty(getKernelParameters().getEntity())) {
+                    getKernelParameters().getInvalidityReasons().add(constants.kernelParamsInvalid());
+                    getKernelParameters().setIsValid(false);
+                    getKernelImage().getInvalidityReasons().add(constants.kernelParamsInvalid());
+                    getKernelImage().setIsValid(false);
                 }
             }
         }
@@ -1285,9 +1305,9 @@ public abstract class RunOnceModel extends Model
 
         return getIsoImage().getIsValid()
                 && getFloppyImage().getIsValid()
-                && getKernel_path().getIsValid()
-                && getInitrd_path().getIsValid()
-                && getKernel_parameters().getIsValid()
+                && getKernelImage().getIsValid()
+                && getInitrdImage().getIsValid()
+                && getKernelParameters().getIsValid()
                 && getDefaultHost().getIsValid()
                 && customPropertyValidation
                 && cloudInitIsValid

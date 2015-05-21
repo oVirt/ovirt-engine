@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ComboBox;
+import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
@@ -161,18 +162,18 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @WithElementId("runAndPause")
     EntityModelCheckBoxEditor runAndPauseEditor;
 
-    @UiField
-    @Path(value = "kernel_path.entity")
-    @WithElementId("kernelPath")
-    StringEntityModelTextBoxEditor kernelPathEditor;
+    @UiField(provided = true)
+    @Path(value = "kernelImage.selectedItem")
+    @WithElementId("kernelImage")
+    ListModelTypeAheadChangeableListBoxEditor kernelImageEditor;
+
+    @UiField(provided = true)
+    @Path(value = "initrdImage.selectedItem")
+    @WithElementId("initrdImage")
+    ListModelTypeAheadChangeableListBoxEditor initrdImageEditor;
 
     @UiField
-    @Path(value = "initrd_path.entity")
-    @WithElementId("initrdPath")
-    StringEntityModelTextBoxEditor initrdPathEditor;
-
-    @UiField
-    @Path(value = "kernel_parameters.entity")
+    @Path(value = "kernelParameters.entity")
     @WithElementId("kernelParameters")
     StringEntityModelTextBoxEditor kernelParamsEditor;
 
@@ -283,7 +284,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     @UiField
     @Ignore
-    ButtonBase refreshButton;
+    ButtonBase isoImagesRefreshButton;
+
+    @UiField
+    @Ignore
+    ButtonBase linuxBootOptionsRefreshButton;
 
     private RunOnceModel runOnceModel;
 
@@ -324,8 +329,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         bootSequenceLabel.setText(constants.runOncePopupBootSequenceLabel());
 
         // Linux Boot Options
-        kernelPathEditor.setLabel(constants.runOncePopupKernelPathLabel());
-        initrdPathEditor.setLabel(constants.runOncePopupInitrdPathLabel());
+        kernelImageEditor.setLabel(constants.runOncePopupKernelPathLabel());
+        initrdImageEditor.setLabel(constants.runOncePopupInitrdPathLabel());
         kernelParamsEditor.setLabel(constants.runOncePopupKernelParamsLabel());
 
         // Cloud Init
@@ -368,6 +373,29 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     void initListBoxEditors() {
         vncKeyboardLayoutEditor = new ListModelListBoxEditor<>(new VncKeyMapRenderer());
+        this.kernelImageEditor = new ListModelTypeAheadChangeableListBoxEditor(
+                new ListModelTypeAheadChangeableListBoxEditor.NullSafeSuggestBoxRenderer() {
+
+                    @Override
+                    public String getDisplayStringNullSafe(String data) {
+                        return typeAheadNameTemplateNullSafe(data);
+                    }
+                },
+                false,
+                new VisibilityRenderer.SimpleVisibilityRenderer(),
+                constants.empty());
+
+        this.initrdImageEditor = new ListModelTypeAheadChangeableListBoxEditor(
+                new ListModelTypeAheadChangeableListBoxEditor.NullSafeSuggestBoxRenderer() {
+
+                    @Override
+                    public String getDisplayStringNullSafe(String data) {
+                        return typeAheadNameTemplateNullSafe(data);
+                    }
+                },
+                false,
+                new VisibilityRenderer.SimpleVisibilityRenderer(),
+                constants.empty());
     }
 
     void initRadioButtonEditors() {
@@ -575,9 +603,14 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         vmInitWidget.setCloudInitContentVisible(selected && possible);
     }
 
-    @UiHandler("refreshButton")
-    void handleRefreshButtonClick(ClickEvent event) {
+    @UiHandler("isoImagesRefreshButton")
+    void handleIsoImagesRefreshButtonClick(ClickEvent event) {
         runOnceModel.updateIsoList(true);
+    }
+
+    @UiHandler("linuxBootOptionsRefreshButton")
+    void handleLinuxBootOptionsRefreshButtonRefreshButtonClick(ClickEvent event) {
+        runOnceModel.updateUnknownTypeImagesList(true);
     }
 
     @UiHandler("bootSequenceUpButton")
