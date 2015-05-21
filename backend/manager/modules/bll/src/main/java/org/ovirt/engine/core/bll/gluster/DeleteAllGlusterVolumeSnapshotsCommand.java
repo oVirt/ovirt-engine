@@ -34,6 +34,7 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        super.setActionMessageParameters();
     }
 
     private boolean deleteAllGlusterVolumeSnapshots(Guid serverId,
