@@ -635,56 +635,24 @@ public class AsyncDataProvider {
     }
 
     public void getIrsImageList(AsyncQuery aQuery, Guid storagePoolId, boolean forceRefresh) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source != null)
-                {
-                    ArrayList<RepoImage> repoList = (ArrayList<RepoImage>) source;
-                    ArrayList<String> fileNameList = new ArrayList<String>();
-                    for (RepoImage repoImage : repoList)
-                    {
-                        fileNameList.add(repoImage.getRepoImageId());
-                    }
-
-                    Collections.sort(fileNameList, String.CASE_INSENSITIVE_ORDER);
-                    return fileNameList;
-                }
-                return new ArrayList<String>();
-            }
-        };
-
-        GetImagesListByStoragePoolIdParameters parameters =
-                new GetImagesListByStoragePoolIdParameters(storagePoolId, ImageFileType.ISO);
-        parameters.setForceRefresh(forceRefresh);
-        Frontend.getInstance().runQuery(VdcQueryType.GetImagesListByStoragePoolId, parameters, aQuery);
+        ImageFileType imageFileType = ImageFileType.ISO;
+        getIrsImageList(aQuery, storagePoolId, forceRefresh, imageFileType);
     }
 
     public void getFloppyImageList(AsyncQuery aQuery, Guid storagePoolId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source != null)
-                {
-                    ArrayList<RepoImage> repoList = (ArrayList<RepoImage>) source;
-                    ArrayList<String> fileNameList = new ArrayList<String>();
-                    for (RepoImage repoImage : repoList)
-                    {
-                        fileNameList.add(repoImage.getRepoImageId());
-                    }
+        getIrsImageList(aQuery, storagePoolId, false, ImageFileType.Floppy);
+    }
 
-                    Collections.sort(fileNameList, String.CASE_INSENSITIVE_ORDER);
-                    return fileNameList;
-                }
-                return new ArrayList<String>();
-            }
-        };
+    public void getIrsImageList(AsyncQuery aQuery,
+            Guid storagePoolId,
+            boolean forceRefresh,
+            ImageFileType imageFileType) {
+        aQuery.converterCallback = new RepoImageToImageFileNameAsyncConverter();
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetImagesListByStoragePoolId,
-                new GetImagesListByStoragePoolIdParameters(storagePoolId, ImageFileType.Floppy),
-                aQuery);
+        GetImagesListByStoragePoolIdParameters parameters =
+                new GetImagesListByStoragePoolIdParameters(storagePoolId, imageFileType);
+        parameters.setForceRefresh(forceRefresh);
+        Frontend.getInstance().runQuery(VdcQueryType.GetImagesListByStoragePoolId, parameters, aQuery);
     }
 
     public void getDefaultManagementNetwork(AsyncQuery aQuery, Guid dataCenterId) {
@@ -4244,4 +4212,20 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    private static class RepoImageToImageFileNameAsyncConverter implements IAsyncConverter {
+        @Override
+        public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            if (source != null) {
+                ArrayList<RepoImage> repoList = (ArrayList<RepoImage>) source;
+                ArrayList<String> fileNameList = new ArrayList<String>();
+                for (RepoImage repoImage : repoList) {
+                    fileNameList.add(repoImage.getRepoImageId());
+                }
+
+                Collections.sort(fileNameList, String.CASE_INSENSITIVE_ORDER);
+                return fileNameList;
+            }
+            return new ArrayList<String>();
+        }
+    }
 }
