@@ -3,13 +3,14 @@ package org.ovirt.engine.core.bll.scheduling.utils;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.common.businessentities.VDS;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  * Comparator that compares the CPU usage of two hosts, with regard to the number of CPUs each host has and it's
  * strength.
  */
-public class VdsCpuUsageComparator implements Comparator<VDS> {
+public class VdsCpuUsageComparator implements Comparator<VDS>, Serializable {
     boolean countThreadsAsCores;
 
     public VdsCpuUsageComparator(boolean countThreadsAsCores) {
