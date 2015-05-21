@@ -3707,6 +3707,7 @@ actions:
           openstack_image_provider.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
+          openstack_image_provider.tenant_name: xs:string
         description: update the specified OpenStack image provider in the system
 - name: /openstackimageproviders|rel=add
   description: add a new OpenStack image provider to the system
@@ -3726,6 +3727,7 @@ actions:
           openstack_image_provider.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
+          openstack_image_provider.tenant_name: xs:string
         description: add a new OpenStack image provider to the system
 - name: /openstackimageproviders/{openstackimageprovider:id}/images|rel=get
   description: get the list of images from the OpenStack image provider
@@ -3789,6 +3791,7 @@ actions:
           openstack_volume_provider.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
+          openstack_volume_provider.tenant_name: xs:string
         description: update the specified OpenStack volume provider in the system
 - name: /openstackvolumeproviders|rel=add
   description: add a new OpenStack volume provider to the system
@@ -3809,6 +3812,7 @@ actions:
           openstack_volume_provider.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
+          openstack_volume_provider.tenant_name: xs:string
         description: add a new OpenStack volume provider to the system
 - name: /openstackvolumeproviders/{openstackvolumeprovider:id}/volumetypes|rel=get
   description: get the list of volume types of the OpenStack volume provider
@@ -3838,6 +3842,7 @@ actions:
           openstack_network_provider.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
+          openstack_network_provider.tenant_name: xs:string
         description: update the specified OpenStack network provider in the system
 - name: /openstacknetworkproviders|rel=add
   description: add a new OpenStack network provider to the system
@@ -3857,6 +3862,7 @@ actions:
           openstack_network_provider.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
+          openstack_network_provider.tenant_name: xs:string
         description: add a new OpenStack network provider to the system
 - name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks|rel=get
   description: get the list of networks from the OpenStack network provider
