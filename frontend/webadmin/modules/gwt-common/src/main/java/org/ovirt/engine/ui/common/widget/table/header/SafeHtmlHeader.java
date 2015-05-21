@@ -15,16 +15,13 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 /**
  * A Header that renders SafeHtml. Supports tooltips. Supports element-id framework.
  *
- * If you want to show an underline on the header to indicate the presence of a tooltip, use the
- * constructor with showUnderline and set it to true.
- *
  * @param <H> Cell data type.
  */
 public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWithElementId, TooltipHeader {
 
     private SafeHtml headerText;
+    private SafeHtml renderedHeaderText;
     private SafeHtml tooltipText;
-    boolean showUnderline = false;
 
     public static final SafeHtmlHeader BLANK_HEADER = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("")); //$NON-NLS-1$
 
@@ -36,7 +33,7 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
     private static final CellTemplate templates = GWT.create(CellTemplate.class);
 
     public SafeHtmlHeader(SafeHtmlCell safeHtmlCell) {
-        this(null, null, false, safeHtmlCell);
+        this(null, null, safeHtmlCell);
     }
 
     public SafeHtmlHeader(SafeHtml headerText) {
@@ -44,22 +41,17 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
     }
 
     public SafeHtmlHeader(SafeHtml headerText, SafeHtmlCell safeHtmlCell) {
-        this(headerText, null, false, safeHtmlCell);
+        this(headerText, null, safeHtmlCell);
     }
 
     public SafeHtmlHeader(SafeHtml headerText, SafeHtml tooltipText) {
-        this(headerText, tooltipText, false, createSafeHtmlCell());
+        this(headerText, tooltipText, createSafeHtmlCell());
     }
 
-    public SafeHtmlHeader(SafeHtml headerText, SafeHtml tooltipText, boolean showUnderline) {
-        this(headerText, tooltipText, showUnderline, createSafeHtmlCell());
-    }
-
-    public SafeHtmlHeader(SafeHtml headerText, SafeHtml tooltipText, boolean showUnderline, SafeHtmlCell safeHtmlCell) {
+    public SafeHtmlHeader(SafeHtml headerText, SafeHtml tooltipText, SafeHtmlCell safeHtmlCell) {
         super(safeHtmlCell);
-        this.tooltipText = tooltipText;
-        this.showUnderline = showUnderline;
         setValue(headerText);
+        setTooltip(tooltipText);
     }
 
     public static SafeHtmlCell createSafeHtmlCell() {
@@ -86,22 +78,35 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
         return tooltipText;
     }
 
+    /**
+     * Return the SafeHtml to be rendered.
+     * @see com.google.gwt.user.cellview.client.Header#getValue()
+     */
     @Override
     public SafeHtml getValue() {
-        return headerText;
+        return renderedHeaderText;
     }
 
     protected void setValue(SafeHtml headerText) {
-        if (showUnderline) {
-            this.headerText = templates.hasTooltip(headerText);
-        }
-        else {
-            this.headerText = headerText;
-        }
+        this.headerText = headerText;
+        setHeaderTooltipStyle(this.tooltipText);
     }
 
     protected void setTooltip(SafeHtml tooltipText) {
         this.tooltipText = tooltipText;
+        setHeaderTooltipStyle(tooltipText);
+    }
+
+    /**
+     * Toggle the header tooltip style (to give a visual clue that this header can be hovered over).
+     */
+    protected void setHeaderTooltipStyle(SafeHtml tooltipText) {
+        if (tooltipText == null || tooltipText.asString().isEmpty()) {
+            renderedHeaderText = this.headerText;
+        }
+        else {
+            renderedHeaderText = templates.hasTooltip(headerText);
+        }
     }
 
 }
