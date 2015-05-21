@@ -294,9 +294,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             public Void runInTransaction() {
                 addPermission();
                 addVmTemplateImages(srcDeviceIdToTargetDeviceIdMapping);
-                List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values());
-                if (!cinderDisks.isEmpty() && !addVmTemplateCinderDisks(cinderDisks, srcDeviceIdToTargetDeviceIdMapping)) {
-                    setSucceeded(false);
+                if (getVm() != null && !addVmTemplateCinderDisks(srcDeviceIdToTargetDeviceIdMapping)) {
                     return null;
                 }
                 addVmInterfaces(srcDeviceIdToTargetDeviceIdMapping);
@@ -719,7 +717,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
     }
 
-    protected boolean addVmTemplateCinderDisks(List<CinderDisk> cinderDisks, Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
+    protected boolean addVmTemplateCinderDisks(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values());
+        if (cinderDisks.isEmpty()) {
+            return true;
+        }
         // Create Cinder disk templates
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.CloneCinderDisks,
