@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -54,6 +55,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
         addCustomValue(GlusterConstants.VOLUME_SNAPSHOT_NAME, getParameters().getSnapshot().getSnapshotName());
+        super.setActionMessageParameters();
     }
 
     private boolean pauseAndCreateSnapshotForGeoRepSessions() {
@@ -199,8 +201,10 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
 
         if (volume.getAsyncTask() != null
                 && (volume.getAsyncTask().getType() == GlusterTaskType.REBALANCE
-                || volume.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS);
+                || volume.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK)
+                && volume.getAsyncTask().getStatus() == JobExecutionStatus.STARTED) {
+            addCanDoActionMessageVariable("asyncTask", volume.getAsyncTask().getType().name().toLowerCase());
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS);
         }
 
         if (!GlusterUtil.getInstance().isVolumeThinlyProvisioned(volume)) {

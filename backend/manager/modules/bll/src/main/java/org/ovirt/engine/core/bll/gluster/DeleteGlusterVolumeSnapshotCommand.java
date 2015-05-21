@@ -30,6 +30,7 @@ public class DeleteGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCom
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        super.setActionMessageParameters();
     }
 
     private boolean deleteGlusterVolumeSnapshot(Guid serverId, String volumeName, String snapshotName) {

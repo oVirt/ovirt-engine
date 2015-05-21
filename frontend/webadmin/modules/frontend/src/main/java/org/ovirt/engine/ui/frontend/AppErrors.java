@@ -3161,6 +3161,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. A task is in progress on the volume ${volumeName} in cluster ${vdsGroup}.")
     String ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. A ${asyncTask} operation is in progress on the volume ${volumeName} in cluster ${vdsGroup}.")
+    String ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS();
+
     @DefaultStringValue("Cannot ${action} ${type}. The image content could not be detected. Please try to re-import the image.")
     String ACTION_TYPE_FAILED_IMAGE_DOWNLOAD_ERROR();
 

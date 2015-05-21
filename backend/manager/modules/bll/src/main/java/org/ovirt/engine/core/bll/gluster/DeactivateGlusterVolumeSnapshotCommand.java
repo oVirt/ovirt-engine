@@ -18,6 +18,7 @@ public class DeactivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapsho
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DEACTIVATE);
+        super.setActionMessageParameters();
     }
 
     @Override

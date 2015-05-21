@@ -36,6 +36,7 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
+        super.setActionMessageParameters();
     }
 
     @Override
