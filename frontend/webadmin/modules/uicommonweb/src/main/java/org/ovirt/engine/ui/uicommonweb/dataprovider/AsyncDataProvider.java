@@ -1208,7 +1208,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(id), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(id).withoutRefresh(), aQuery);
     }
 
     public static void getHostListByCluster(AsyncQuery aQuery, String clusterName) {
@@ -2413,7 +2413,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(id), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(id).withoutRefresh(), aQuery);
     }
 
     public static void getVmList(AsyncQuery aQuery, String poolName) {
