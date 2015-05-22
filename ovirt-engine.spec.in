@@ -373,7 +373,7 @@ Requires:	bind-utils
 Requires:	iproute
 Requires:	libxml2-python
 Requires:	logrotate
-Requires:	otopi >= 1.2.2
+Requires:	otopi >= 1.3.2
 Requires:	python-paramiko
 Conflicts:	%{name}-dwh-setup < 3.5.0
 Conflicts:	%{name}-reports-setup < 3.5.0
