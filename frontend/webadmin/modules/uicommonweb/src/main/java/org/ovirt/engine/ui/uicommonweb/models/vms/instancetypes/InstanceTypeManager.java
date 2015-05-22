@@ -182,13 +182,6 @@ public abstract class InstanceTypeManager {
         ManagedFieldsManager managedFieldsManager = new ManagedFieldsManager();
         model.getInstanceTypes().getSelectedItemChangedEvent().addListener(managedFieldsManager);
         model.getTemplateWithVersion().getSelectedItemChangedEvent().addListener(managedFieldsManager);
-
-        model.getOSType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-
-            }
-        });
     }
 
     public void activate() {
