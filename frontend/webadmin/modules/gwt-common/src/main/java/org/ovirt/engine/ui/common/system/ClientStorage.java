@@ -16,13 +16,14 @@ package org.ovirt.engine.ui.common.system;
 public interface ClientStorage {
 
     /**
-     * Returns {@code true} if the browser supports HTML5 Web Storage (both local storage and session storage APIs).
+     * Returns {@code true} if the browser supports HTML5 Web Storage
+     * (both local storage and session storage APIs).
      */
     boolean isWebStorageAvailable();
 
     /**
-     * Returns the value for the given key from local (persistent) storage, or {@code null} if there is no value for
-     * such key.
+     * Returns the value for the given key from local (persistent) storage,
+     * or {@code null} if there is no value for such key.
      */
     String getLocalItem(String key);
 
@@ -32,13 +33,8 @@ public interface ClientStorage {
     void setLocalItem(String key, String value);
 
     /**
-     * Removes the value associated with the given key from local (persistent) storage.
-     */
-    void removeLocalItem(String key);
-
-    /**
-     * Returns the value for the given key from session (transient) storage, or {@code null} if there is no value for
-     * such key.
+     * Returns the value for the given key from session (transient) storage,
+     * or {@code null} if there is no value for such key.
      */
     String getSessionItem(String key);
 
@@ -46,10 +42,5 @@ public interface ClientStorage {
      * Sets the value for the given key using session (transient) storage.
      */
     void setSessionItem(String key, String value);
-
-    /**
-     * Removes the value associated with the given key from session (transient) storage.
-     */
-    void removeSessionItem(String key);
 
 }
