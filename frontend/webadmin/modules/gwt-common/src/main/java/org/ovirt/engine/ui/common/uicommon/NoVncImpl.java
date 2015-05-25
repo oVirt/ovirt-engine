@@ -22,7 +22,7 @@ public class NoVncImpl extends AbstractVnc implements INoVnc {
     }
 
     protected WebsocketProxyConfig getConfig() {
-        if (config != null) {
+        if (config == null) {
             config = new WebsocketProxyConfig((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy),
                     getOptions().getHost());
         }

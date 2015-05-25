@@ -20,7 +20,7 @@
     -->
 
 <script>var INCLUDE_URI="files/novnc/include/";</script>
-<script src="files/novnc/include/vnc.js"></script>
+<script src="files/novnc/include/util.js"></script>
 <link rel="stylesheet" href="files/novnc/include/base.css" title="plain">
 </head>
 
@@ -48,7 +48,38 @@
         /*global window, $, Util, RFB, */
         "use strict";
 
-        var rfb;
+        var rfb, isOldNoVnc, loadedScripts = false, eventData = null;
+
+        // Load supporting scripts
+        if (Util.load_scripts !== undefined) {
+            // for noVNC 0.5
+
+            isOldNoVnc = false;
+
+            Util.load_scripts(["webutil.js", "base64.js", "websock.js", "des.js",
+                           "keysymdef.js", "keyboard.js", "input.js", "display.js",
+                           "jsunzip.js", "rfb.js", "keysym.js"]);
+        } else {
+            // for noVNC 0.4
+
+            isOldNoVnc = true;
+
+            var extra = "", start, end;
+
+            start = "<script src='files/novnc/include/";
+            end = "'><\/script>";
+
+            extra += start + "webutil.js" + end;
+            extra += start + "base64.js" + end;
+            extra += start + "websock.js" + end;
+            extra += start + "des.js" + end;
+            extra += start + "input.js" + end;
+            extra += start + "display.js" + end;
+            extra += start + "rfb.js" + end;
+            extra += start + "jsunzip.js" + end;
+
+            document.write(extra);
+        }
 
         function passwordRequired(rfb) {
             var msg;
@@ -91,17 +122,16 @@
             }
         }
 
-        function connectToConsole (evt) {
-            if (evt.data === null || evt.data.password === null || evt.data.connectionTicket === null) {
-                alert("Incorrect connection data");
+        function connectToConsole () {
+            if (!loadedScripts || !eventData) {
                 return;
             }
 
             try {
                 var host = WebUtil.getQueryVar('host', window.location.hostname);
                 var port = WebUtil.getQueryVar('port', window.location.port);
-                var password = evt.data.password;
-                var path = evt.data.connectionTicket;
+                var password = eventData.password;
+                var path = eventData.connectionTicket;
 
                 if ((!host) || (!port)) {
                     updateState('failed',
@@ -109,31 +139,60 @@
                     return;
                 }
 
-                rfb = new RFB({'target':       $D('noVNC_canvas'),
+                var rfbParams = {'target':       $D('noVNC_canvas'),
                            'encrypt':      WebUtil.getQueryVar('encrypt',
                                    (window.location.protocol === "https:")),
                            'true_color':   WebUtil.getQueryVar('true_color', true),
                            'local_cursor': WebUtil.getQueryVar('cursor', true),
                            'shared':       WebUtil.getQueryVar('shared', true),
                            'view_only':    WebUtil.getQueryVar('view_only', false),
-                           'updateState':  updateState,
-                           'onPasswordRequired':  passwordRequired});
-                           rfb.connect(host, port, password, path);
+                           'onPasswordRequired':  passwordRequired};
+
+                if (isOldNoVnc) {
+                    rfbParams.updateState = updateState;
+                } else {
+                    rfbParams.onUpdateState = updateState;
+                }
+
+                rfb = new RFB(rfbParams);
+                rfb.connect(host, port, password, path);
             }catch(e) {alert(e);}
         }
 
+        function receiveEvtData(evt) {
+            if (evt.data === null || evt.data.password === null || evt.data.connectionTicket === null) {
+                alert("Incorrect connection data");
+                return;
+            }
+
+            eventData = evt.data;
+
+            connectToConsole();
+        };
+
         if (window.addEventListener) {
             // For standards-compliant web browsers
-            window.addEventListener("message", connectToConsole, false);
+            window.addEventListener("message", receiveEvtData, false);
         } else {
-            window.attachEvent("onmessage", connectToConsole);
+            window.attachEvent("onmessage", receiveEvtData);
         }
+
+        window.onscriptsload = function () {
+            loadedScripts = true;
+
+            connectToConsole();
+        };
 
         window.onload = function () {
             $D('sendCtrlAltDelButton').style.display = "inline";
             $D('sendCtrlAltDelButton').onclick = sendCtrlAltDel;
 
             document.title = unescape(WebUtil.getQueryVar('title', 'noVNC'));
+
+            if (isOldNoVnc) {
+                window.onscriptsload();
+            }
+
 //            window.opener.postMessage("postVncMessage", engineOrigin);
         };
         </script>
