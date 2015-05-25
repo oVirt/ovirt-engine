@@ -1587,6 +1587,7 @@ public class IrsProxyData {
                                 vds.getName(),
                                 domainIdTuple);
 
+                        final Map<String, String> customLogValues = Collections.singletonMap("StorageDomainNames", storageDomain.getName());
                         ThreadPoolUtil.execute(new Runnable() {
                             @Override
                             public void run() {
@@ -1594,7 +1595,7 @@ public class IrsProxyData {
                                         .getInstance()
                                         .getEventListener()
                                         .vdsNonOperational(vdsId, NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE,
-                                                true, domainId);
+                                                true, domainId, customLogValues);
                             }
                         });
 
