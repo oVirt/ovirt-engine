@@ -300,6 +300,7 @@ public class VmDeviceUtils {
         boolean hasSoundDevice = false;
         boolean hasAlreadyConsoleDevice = false;
         boolean hasVirtioScsiController = false;
+        boolean hasAlreadyBalloonDevice = false;
 
         VDSGroup cluster = vmBase.getVdsGroupId() != null ? DbFacade.getInstance().getVdsGroupDao().get(vmBase.getVdsGroupId()) : null;
 
@@ -372,6 +373,10 @@ public class VmDeviceUtils {
                     break;
 
                 case BALLOON:
+                    hasAlreadyBalloonDevice = true;
+                    if (!isBalloonEnabled) {
+                        continue;
+                    }
                     specParams.put(VdsProperties.Model, VdsProperties.Virtio);
                     break;
 
@@ -445,6 +450,10 @@ public class VmDeviceUtils {
 
         if (Boolean.TRUE.equals(isVirtioScsiEnabled) && !hasVirtioScsiController) {
             addVirtioScsiController(dstId);
+        }
+
+        if (isBalloonEnabled && !hasAlreadyBalloonDevice) {
+            addEmptyMemoryBalloon(dstId);
         }
 
         if (isVm) {
@@ -1054,10 +1063,7 @@ public class VmDeviceUtils {
         boolean hasBalloon = dao.isMemBalloonEnabled(id);
         if (hasBalloon != shouldHaveBalloon) {
             if (!hasBalloon && shouldHaveBalloon) {
-                // add a balloon device
-                Map<String, Object> specParams = new HashMap<>();
-                specParams.put(VdsProperties.Model, VdsProperties.Virtio);
-                addManagedDevice(new VmDeviceId(Guid.newGuid(), id) , VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true, null, false);
+                addEmptyMemoryBalloon(id);
             }
             else {
                 // remove the balloon device
@@ -1069,6 +1075,17 @@ public class VmDeviceUtils {
                 removeNumberOfDevices(list, 1);
             }
         }
+    }
+
+    private static void addEmptyMemoryBalloon(Guid id) {
+        addManagedDevice(new VmDeviceId(Guid.newGuid(), id),
+                VmDeviceGeneralType.BALLOON,
+                VmDeviceType.MEMBALLOON,
+                Collections.<String, Object>singletonMap(VdsProperties.Model, VdsProperties.Virtio),
+                true,
+                true,
+                null,
+                false);
     }
 
     private static void setNewIdInImportedCollections(VmBase entity) {
