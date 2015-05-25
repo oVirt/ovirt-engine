@@ -292,7 +292,6 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
         UICommand okCommand = new UICommand("onDeleteSnapshot", this); //$NON-NLS-1$
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         okCommand.setIsDefault(true);
-        getConfirmWindow().getCommands().add(okCommand);
         model.getCommands().add(okCommand);
         UICommand cancelCommand = new UICommand("cancelConfirmation", this); //$NON-NLS-1$
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
@@ -341,7 +340,6 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
         UICommand okCommand = new UICommand("onDeleteAllSnapshots", this); //$NON-NLS-1$
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         okCommand.setIsDefault(true);
-        getConfirmWindow().getCommands().add(okCommand);
         model.getCommands().add(okCommand);
         UICommand cancelCommand = new UICommand("cancelConfirmation", this); //$NON-NLS-1$
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
@@ -368,7 +366,6 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
         UICommand okCommand = new UICommand("onActivateSnapshot", this); //$NON-NLS-1$
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         okCommand.setIsDefault(true);
-        getConfirmWindow().getCommands().add(okCommand);
         model.getCommands().add(okCommand);
         UICommand cancelCommand = new UICommand("cancelConfirmation", this); //$NON-NLS-1$
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
@@ -398,7 +395,6 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
         UICommand okCommand = new UICommand("onDeactivateSnapshot", this); //$NON-NLS-1$
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         okCommand.setIsDefault(true);
-        getConfirmWindow().getCommands().add(okCommand);
         model.getCommands().add(okCommand);
         UICommand cancelCommand = new UICommand("cancelConfirmation", this); //$NON-NLS-1$
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
