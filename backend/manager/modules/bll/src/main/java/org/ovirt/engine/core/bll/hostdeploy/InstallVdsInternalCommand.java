@@ -153,6 +153,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     );
             }
 
+            installer.setVMConsole(parameters.getEnableSerialConsole());
+
             switch (getParameters().getAuthMethod()) {
                 case Password:
                     installer.setPassword(parameters.getPassword());

@@ -186,6 +186,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
             installVdsParameters.setNetworkProviderId(getParameters().getNetworkProviderId());
             installVdsParameters.setNetworkMappings(getParameters().getNetworkMappings());
+            installVdsParameters.setEnableSerialConsole(getParameters().getEnableSerialConsole());
             Map<String, String> values = new HashMap<>();
             values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getName());
             Step installStep = ExecutionHandler.addSubStep(getExecutionContext(),

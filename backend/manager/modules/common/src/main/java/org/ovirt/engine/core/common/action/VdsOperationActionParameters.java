@@ -21,6 +21,8 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     private boolean activateHost;
 
+    private boolean enableSerialConsole;
+
     /**
      * reboot the installed Host when done
      */
@@ -64,6 +66,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         password = passwordVal;
         authMethod = AuthenticationMethod.Password;
         rebootAfterInstallation = true;
+        enableSerialConsole = true;
     }
 
     public VdsOperationActionParameters(VdsStatic vdsStatic) {
@@ -73,6 +76,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     public VdsOperationActionParameters() {
         authMethod = AuthenticationMethod.Password;
         rebootAfterInstallation = true;
+        enableSerialConsole = true;
     }
 
     public VdsStatic getVdsStaticData() {
@@ -154,6 +158,14 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public void setNetworkMappings(String networkMappings) {
         this.networkMappings = networkMappings;
+    }
+
+    public void setEnableSerialConsole(boolean enableSerialConsole) {
+        this.enableSerialConsole = enableSerialConsole;
+    }
+
+    public boolean getEnableSerialConsole() {
+        return enableSerialConsole;
     }
 
 }
