@@ -11,7 +11,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 public class VolumeCapacityCell<P extends GlusterVolumeEntity> extends GlusterCapacityCell<P> {
 
     @Override
-    public void render(Context context, GlusterVolumeEntity object, SafeHtmlBuilder sb) {
+    public void render(Context context, GlusterVolumeEntity object, SafeHtmlBuilder sb, String id) {
         GlusterVolumeAdvancedDetails advancedDetails = object.getAdvancedDetails();
         GlusterVolumeSizeInfo sizeInfo = null;
         if (advancedDetails != null) {
@@ -23,6 +23,6 @@ public class VolumeCapacityCell<P extends GlusterVolumeEntity> extends GlusterCa
                 setInUnit(SizeUnit.BYTES);
             }
         }
-        super.render(context, advancedDetails == null ? null : sizeInfo == null ? null : sizeInfo, sb);
+        super.render(context, advancedDetails == null ? null : sizeInfo == null ? null : sizeInfo, sb, id);
     }
 }

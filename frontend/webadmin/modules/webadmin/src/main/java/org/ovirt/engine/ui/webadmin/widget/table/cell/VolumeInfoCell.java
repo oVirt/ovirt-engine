@@ -34,7 +34,7 @@ public class VolumeInfoCell extends AbstractCell<GlusterVolumeEntity> {
         if (volume.getIsGeoRepMaster()) {
             SafeHtml geoRepMasterHtml =
                     SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(geoRepMasterImage).getHTML());
-            sb.append(applicationTemplates.statusTemplate(geoRepMasterHtml, constants.geoRepMasterVolumeToolTip()));
+            sb.append(applicationTemplates.imageWithHoverTextAndContainerId(geoRepMasterHtml, constants.geoRepMasterVolumeToolTip(), id));
         }
         if (volume.getIsGeoRepSlave()) {
             SafeHtml geoRepSlaveHtml =
@@ -42,14 +42,14 @@ public class VolumeInfoCell extends AbstractCell<GlusterVolumeEntity> {
             String[] volClusterNames = formatVolClusterName(volume.getGeoRepMasterVolAndClusterName());
             String volName = volClusterNames[0];
             String clusterName = volClusterNames.length == 2 ? volClusterNames[1] : "UNKNOWN"; //$NON-NLS-1$
-            sb.append(applicationTemplates.statusTemplate(geoRepSlaveHtml,
-                    messages.geoRepSlaveVolumeToolTip(volName, clusterName)));
+            sb.append(applicationTemplates.imageWithHoverTextAndContainerId(geoRepSlaveHtml,
+                    messages.geoRepSlaveVolumeToolTip(volName, clusterName), id));
         }
         if (volume.getSnapshotScheduled()) {
             SafeHtml snapshotScheduledHtml =
                     SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(snapshotScheduledImage).getHTML());
-            sb.append(applicationTemplates.statusTemplate(snapshotScheduledHtml,
-                    constants.glusterVolumeSnapshotsScheduledToolTip()));
+            sb.append(applicationTemplates.imageWithHoverTextAndContainerId(snapshotScheduledHtml,
+                    constants.glusterVolumeSnapshotsScheduledToolTip(), id));
         }
     }
 

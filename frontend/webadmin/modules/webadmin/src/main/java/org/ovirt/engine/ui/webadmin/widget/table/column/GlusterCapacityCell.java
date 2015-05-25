@@ -10,8 +10,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -83,7 +83,7 @@ public abstract class GlusterCapacityCell<P extends Serializable> extends Abstra
     }
 
     @Override
-    public void render(Context context, Serializable value, SafeHtmlBuilder sb) {
+    public void render(Context context, Serializable value, SafeHtmlBuilder sb, String id) {
         if(value == null) {
             clearAll();
         }
@@ -91,7 +91,7 @@ public abstract class GlusterCapacityCell<P extends Serializable> extends Abstra
         String sizeString = getProgressText(freeSize, totalSize);
         String color = progress < 70 ? "#669966" : progress < 95 ? "#FF9900" : "#FF0000"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String toolTip = messages.glusterCapacityInfo(getSizeString(freeSize, inUnit), getSizeString(usedSize, inUnit), getSizeString(totalSize, inUnit));
-        SafeHtml safeHtml = templates.glusterCapcityProgressBar(progress, sizeString, color, toolTip);
+        SafeHtml safeHtml = templates.glusterCapcityProgressBar(progress, sizeString, color, toolTip, id);
         sb.append(safeHtml);
     }
 }

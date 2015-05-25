@@ -33,10 +33,10 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             "</div>")
     SafeHtml lineChartWithoutImage(int textWidth, String textColor, String fontWeight, int percentage);
 
-    @Template("<div title='{3}' class='engine-progress-box'>" +
+    @Template("<div id=\"{4}\" title='{3}' class='engine-progress-box'>" +
             "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
             "<div class='engine-progress-text'>{1}</div></div>")
-    SafeHtml glusterCapcityProgressBar(int progress, String sizeString, String color, String toolTip);
+    SafeHtml glusterCapcityProgressBar(int progress, String sizeString, String color, String toolTip, String id);
 
     /**
      * Creates a tree-item HTML
@@ -105,6 +105,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     @Template("<div id=\"{1}\" style=\"text-align: center;\">{0}</div>")
     SafeHtml statusTemplate(SafeHtml statusImage, String id);
+
+    @Template("<div title='{1}' id=\"{2}\" style=\"text-align: center;\">{0}</div>")
+    SafeHtml imageWithHoverTextAndContainerId(SafeHtml statusImage, String hoverText, String id);
 
     @Template("<span><span style='position: fixed; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{1}</span>"
             + "<span style='position: relative; white-space: normal; height: 14px; line-height: 14px;'>{0}</span></span>")
