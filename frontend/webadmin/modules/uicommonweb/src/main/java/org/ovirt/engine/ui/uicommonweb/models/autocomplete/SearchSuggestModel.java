@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
@@ -96,7 +97,12 @@ public class SearchSuggestModel extends SearchableListModel {
     {
         getItems().clear();
 
-        SyntaxContainer syntax = getConfigurator().getSyntaxChecker().getCompletion(search);
+        ISyntaxChecker syntaxChecker = getConfigurator().getSyntaxChecker();
+        if (syntaxChecker == null) {
+            return;
+        }
+
+        SyntaxContainer syntax = syntaxChecker.getCompletion(search);
 
         int lastHandledIndex = syntax.getLastHandledIndex();
         String pf = search.substring(0, lastHandledIndex);

@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -1150,13 +1149,15 @@ public class CommonModel extends ListModel<SearchableListModel> {
             return false;
         }
         ISyntaxChecker syntaxChecker = getAutoCompleteModel().getConfigurator().getSyntaxChecker();
-        SyntaxContainer syntaxCont = syntaxChecker.analyzeSyntaxState(searchString, true);
-        Set<SyntaxObjectType> searchTokenSet = new HashSet<SyntaxObjectType>();
-        Iterator<SyntaxObject> iterator = syntaxCont.iterator();
-        while(iterator.hasNext()) {
-            searchTokenSet.add(iterator.next().getType());
+        if (syntaxChecker == null) {
+            return false;
         }
-        Set<SyntaxObjectType> tokenSet = new HashSet<SyntaxObjectType>();
+        SyntaxContainer syntaxCont = syntaxChecker.analyzeSyntaxState(searchString, true);
+        Set<SyntaxObjectType> searchTokenSet = new HashSet<>();
+        for (SyntaxObject syntaxObject : syntaxCont) {
+            searchTokenSet.add(syntaxObject.getType());
+        }
+        Set<SyntaxObjectType> tokenSet = new HashSet<>();
         tokenSet.addAll(Arrays.asList(tokens));
         searchTokenSet.retainAll(tokenSet);
         return !searchTokenSet.isEmpty();
