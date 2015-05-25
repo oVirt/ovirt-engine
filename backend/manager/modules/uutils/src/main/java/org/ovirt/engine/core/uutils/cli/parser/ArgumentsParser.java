@@ -271,7 +271,7 @@ public class ArgumentsParser {
                 Object convertedValue = null;
                 if (value != null) {
                     Matcher m = argument.getMatcher().matcher(value);
-                    if (!m.find()) {
+                    if (!m.matches()) {
                         errors.add(
                             new IllegalArgumentException(
                                 String.format(
