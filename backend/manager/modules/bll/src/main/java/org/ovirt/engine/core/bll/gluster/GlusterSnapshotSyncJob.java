@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotConfigInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -124,6 +126,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             fetchedSnapshotsMap.put(fetchedSnapshot.getId(), fetchedSnapshot);
         }
 
+        VDSGroup cluster = getClusterDao().get(clusterId);
         List<GlusterVolumeSnapshotEntity> existingSnapshots =
                 getGlusterVolumeSnapshotDao().getAllByClusterId(clusterId);
         Map<Guid, GlusterVolumeSnapshotEntity> existingSnapshotsMap = new HashMap<>();
@@ -135,22 +138,52 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         List<GlusterVolumeSnapshotEntity> newlyAddedSnapshots = new ArrayList<>();
         List<GlusterVolumeSnapshotEntity> deletedSnapshots = new ArrayList<>();
 
-        for (GlusterVolumeSnapshotEntity fetchedSnapshot : fetchedSnapshots) {
+        for (final GlusterVolumeSnapshotEntity fetchedSnapshot : fetchedSnapshots) {
             GlusterVolumeSnapshotEntity correspondingExistingSnapshot =
                     existingSnapshotsMap.get(fetchedSnapshot.getId());
             if (correspondingExistingSnapshot == null) {
+                final GlusterVolumeEntity volume = getGlusterVolumeDao().getById(fetchedSnapshot.getVolumeId());
                 newlyAddedSnapshots.add(fetchedSnapshot);
+                log.debug("Detected new gluster volume snapshot '{}' for volume '{}' on cluster: '{}'",
+                        fetchedSnapshot.getSnapshotName(),
+                        volume.getName(),
+                        cluster.getName());
+                logUtil.logAuditMessage(clusterId,
+                        volume,
+                        null,
+                        AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DETECTED_NEW,
+                        new HashMap<String, String>() {
+                            {
+                                put("snapName", fetchedSnapshot.getSnapshotName());
+                                put(GlusterConstants.VOLUME_NAME, volume.getName());
+                            }
+                        });
             } else if (correspondingExistingSnapshot.getStatus() != fetchedSnapshot.getStatus()) {
                 correspondingExistingSnapshot.setStatus(fetchedSnapshot.getStatus());
                 updatedSnapshots.add(correspondingExistingSnapshot);
             }
         }
 
-        for (GlusterVolumeSnapshotEntity existingSnapshot : existingSnapshots) {
+        for (final GlusterVolumeSnapshotEntity existingSnapshot : existingSnapshots) {
             GlusterVolumeSnapshotEntity correspondingFetchedSnapshot =
                     fetchedSnapshotsMap.get(existingSnapshot.getId());
             if (correspondingFetchedSnapshot == null) {
+                final GlusterVolumeEntity volume = getGlusterVolumeDao().getById(existingSnapshot.getVolumeId());
                 deletedSnapshots.add(existingSnapshot);
+                log.debug("Gluster volume snapshot '{}' detected removed for volume '{}' on cluster: '{}'",
+                        existingSnapshot.getSnapshotName(),
+                        volume.getName(),
+                        cluster.getName());
+                logUtil.logAuditMessage(clusterId,
+                        volume,
+                        null,
+                        AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DELETED_FROM_CLI,
+                        new HashMap<String, String>() {
+                            {
+                                put("snapName", existingSnapshot.getSnapshotName());
+                                put(GlusterConstants.VOLUME_NAME, volume.getName());
+                            }
+                        });
             }
         }
 
@@ -167,10 +200,11 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
     }
 
     private void addOrUpdateSnapshotsConfig(Guid clusterId, GlusterSnapshotConfigInfo configInfo) {
+        VDSGroup cluster = getClusterDao().get(clusterId);
         try (EngineLock lock = acquireVolumeSnapshotLock(clusterId)) {
             for (Map.Entry<String, String> entry : configInfo.getClusterConfigOptions().entrySet()) {
                 if (entry.getValue() != null) {
-                    addOrUpdateClusterConfig(clusterId, entry.getKey(), entry.getValue());
+                    addOrUpdateClusterConfig(cluster, entry.getKey(), entry.getValue());
                 }
             }
         } catch (Exception e) {
@@ -192,8 +226,8 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
                 if (volumeConfig != null) {
                     for (Map.Entry<String, String> entry1 : volumeConfig.entrySet()) {
                         if (entry.getValue() != null) {
-                            addOrUpdateVolumeConfig(clusterId,
-                                    volume.getId(),
+                            addOrUpdateVolumeConfig(cluster,
+                                    volume,
                                     entry1.getKey(),
                                     entry1.getValue());
                         }
@@ -208,39 +242,72 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         }
     }
 
-    private void addOrUpdateClusterConfig(Guid clusterId, String paramName, String paramValue) {
+    private void addOrUpdateClusterConfig(VDSGroup cluster, final String paramName, final String paramValue) {
         GlusterVolumeSnapshotConfig param = new GlusterVolumeSnapshotConfig();
-        param.setClusterId(clusterId);
+        param.setClusterId(cluster.getId());
         param.setVolumeId(null);
         param.setParamName(paramName);
         param.setParamValue(paramValue);
         GlusterVolumeSnapshotConfig existingParamDetail =
-                getGlusterVolumeSnapshotConfigDao().getConfigByClusterIdAndName(clusterId,
+                getGlusterVolumeSnapshotConfigDao().getConfigByClusterIdAndName(cluster.getId(),
                         paramName);
         if (existingParamDetail == null) {
             getGlusterVolumeSnapshotConfigDao().save(param);
+            log.debug("Detected new gluster volume snapshot configuration '{}' with value '{}' for cluster: '{}'",
+                    paramName,
+                    paramValue,
+                    cluster.getName());
+            logUtil.logAuditMessage(cluster.getId(),
+                    null,
+                    null,
+                    AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CLUSTER_CONFIG_DETECTED_NEW,
+                    new HashMap<String, String>() {
+                        {
+                            put("snapConfigName", paramName);
+                            put("snapConfigValue", paramValue);
+                        }
+                    });
         } else if (!(existingParamDetail.getParamValue().equals(paramValue))) {
-            getGlusterVolumeSnapshotConfigDao().updateConfigByClusterIdAndName(clusterId,
+            getGlusterVolumeSnapshotConfigDao().updateConfigByClusterIdAndName(cluster.getId(),
                     paramName,
                     paramValue);
         }
     }
 
-    private void addOrUpdateVolumeConfig(Guid clusterId, Guid volumeId, String paramName, String paramValue) {
+    private void addOrUpdateVolumeConfig(VDSGroup cluster,
+            final GlusterVolumeEntity volume,
+            final String paramName,
+            final String paramValue) {
         GlusterVolumeSnapshotConfig cfg = new GlusterVolumeSnapshotConfig();
-        cfg.setClusterId(clusterId);
-        cfg.setVolumeId(volumeId);
+        cfg.setClusterId(cluster.getId());
+        cfg.setVolumeId(volume.getId());
         cfg.setParamName(paramName);
         cfg.setParamValue(paramValue);
         GlusterVolumeSnapshotConfig existingParamDetail =
-                getGlusterVolumeSnapshotConfigDao().getConfigByVolumeIdAndName(clusterId,
-                        volumeId,
+                getGlusterVolumeSnapshotConfigDao().getConfigByVolumeIdAndName(cluster.getId(),
+                        volume.getId(),
                         paramName);
         if (existingParamDetail == null) {
             getGlusterVolumeSnapshotConfigDao().save(cfg);
+            log.debug("Detected new gluster volume snapshot configuration '{}' with value '{}' for volume: '{}' on cluster '{}'",
+                    paramName,
+                    paramValue,
+                    cluster.getName(),
+                    volume.getName());
+            logUtil.logAuditMessage(cluster.getId(),
+                    volume,
+                    null,
+                    AuditLogType.GLUSTER_VOLUME_SNAPSHOT_VOLUME_CONFIG_DETECTED_NEW,
+                    new HashMap<String, String>() {
+                        {
+                            put("snapConfigName", paramName);
+                            put("snapConfigValue", paramValue);
+                            put(GlusterConstants.VOLUME_NAME, volume.getName());
+                        }
+                    });
         } else if (!(existingParamDetail.getParamValue().equals(paramValue))) {
-            getGlusterVolumeSnapshotConfigDao().updateConfigByVolumeIdAndName(clusterId,
-                    volumeId,
+            getGlusterVolumeSnapshotConfigDao().updateConfigByVolumeIdAndName(cluster.getId(),
+                    volume.getId(),
                     paramName,
                     paramValue);
         }
