@@ -115,6 +115,7 @@ public class GlusterSnapshotSyncJobTest {
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
 
         doReturn(getClusters()).when(clusterDao).getAll();
+        doReturn(getValidCluster()).when(clusterDao).get(any(Guid.class));
         doReturn(getVolumes()).when(volumeDao).getByClusterId(argThat(validClusterId()));
         doReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1)).when(volumeDao)
                 .getByName(argThat(validClusterId()), argThat(validVolumeName()));
@@ -132,6 +133,7 @@ public class GlusterSnapshotSyncJobTest {
         doReturn(getSnapshotVDSReturnVal(true)).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeSnapshotInfo),
                         argThat(snapshotInfoParam()));
+        when(volumeDao.getById(any(Guid.class))).thenReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1));
         syncJob.refreshSnapshotList();
         Mockito.verify(snapshotDao, times(1)).saveAll(any(List.class));
         Mockito.verify(snapshotDao, times(1)).removeAll(any(List.class));
@@ -327,6 +329,17 @@ public class GlusterSnapshotSyncJobTest {
         snapshots.add(snap2);
 
         return snapshots;
+    }
+
+    private VDSGroup getValidCluster() {
+        VDSGroup cluster = new VDSGroup();
+        cluster.setId(CLUSTER_ID_1);
+        cluster.setName("cluster");
+        cluster.setGlusterService(true);
+        cluster.setVirtService(false);
+        cluster.setcompatibility_version(Version.v3_5);
+
+        return cluster;
     }
 
     private List<VDSGroup> getClusters() {
