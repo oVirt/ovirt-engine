@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>ovirt-vmconsole-proxy</short>
+  <description>oVirt configured VM Console Proxy service</description>
+  <port protocol="tcp" port="@VMCONSOLE_PROXY_PORT@"/>
+</service>

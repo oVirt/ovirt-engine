@@ -233,6 +233,7 @@ Requires:	%{name}-tools = %{version}-%{release}
 Requires:	%{name}-userportal = %{version}-%{release}
 Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
+Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	fop
 Requires:	java
 # rhbz#1028966
@@ -600,6 +601,23 @@ Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 
 %description setup-plugin-websocket-proxy
 Setup and upgrade specific plugins for websocket-proxy
+
+%package vmconsole-proxy-helper
+Summary:	%{ovirt_product_name_short} VMconsole Proxy Helper
+Group:		%{ovirt_product_group}
+Requires:	%{name}-lib >= %{version}-%{release}
+Requires:	%{name}-setup-plugin-vmconsole-proxy-helper >= %{version}-%{release}
+
+%description vmconsole-proxy-helper
+%{ovirt_product_name_short} VMconsole Proxy helper, to integrate
+with ovirt-vmconsole-proxy package
+
+%package setup-plugin-vmconsole-proxy-helper
+Summary:	Setup and upgrade specific plugins for vmconsole-proxy-helper
+Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
+
+%description setup-plugin-vmconsole-proxy-helper
+Setup and upgrade specific plugins for vmconsole-proxy-helper
 
 %if %{ovirt_with_aio}
 %package setup-plugin-allinone
@@ -1109,6 +1127,12 @@ fi
 %{engine_data}/setup/ovirt_engine_setup/websocket_proxy/
 %{engine_data}/setup/plugins/*/websocket_proxy/
 
+%files setup-plugin-vmconsole-proxy-helper
+
+%{engine_data}/firewalld/vmconsole-proxy/
+%{engine_data}/setup/ovirt_engine_setup/vmconsole_proxy_helper/
+%{engine_data}/setup/plugins/*/vmconsole_proxy_helper/
+
 %if %{ovirt_with_aio}
 %files setup-plugin-allinone
 
@@ -1160,6 +1184,11 @@ fi
 %if %{ovirt_install_systemv}
 %{_initddir}/ovirt-websocket-proxy
 %endif
+
+%files vmconsole-proxy-helper
+
+%{_libexecdir}/ovirt-vmconsole-proxy-helper/
+%{engine_etc}/ovirt-vmconsole-proxy-helper.conf.d/
 
 %files tools -f .mfiles-tools
 

@@ -1,0 +1,13 @@
+#
+# Package information
+#
+PACKAGE_NAME="@PACKAGE_NAME@"
+PACKAGE_VERSION="@PACKAGE_VERSION@"
+
+#
+# This is a default configuration file for oVirt/RHEV-M vmconsole helper,
+# to integrate with the ovirt-vmconsole-proxy package
+#
+TOKEN_CERTIFICATE=
+TOKEN_KEY=
+ENGINE_BASE_URL=

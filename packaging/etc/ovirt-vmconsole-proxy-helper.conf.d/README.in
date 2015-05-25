@@ -1,0 +1,9 @@
+ovirt-websocket-proxy-helper configuration directory
+
+Only *.conf are considered.
+
+Files are sorted by name, last wins.
+
+Variables available at:
+
+  @ENGINE_LIBEXEC@/ovirt-websocket-proxy-helper/ovirt-websocket-proxy-helper.conf

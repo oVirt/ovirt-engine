@@ -48,6 +48,7 @@ BIN_DIR=$(PREFIX)/bin
 PID_DIR=$(LOCALSTATE_DIR)/run
 SYSCONF_DIR=$(PREFIX)/etc
 DATAROOT_DIR=$(PREFIX)/share
+LIBEXEC_DIR=$(PREFIX)/libexec
 MAN_DIR=$(DATAROOT_DIR)/man
 DOC_DIR=$(DATAROOT_DIR)/doc
 DATA_DIR=$(DATAROOT_DIR)/$(ENGINE_NAME)
@@ -139,6 +140,8 @@ BUILD_TARGET=install
 	-e "s|@ENGINE_NOTIFIER_VARS@|$(PKG_SYSCONF_DIR)/notifier/notifier.conf|g" \
 	-e "s|@ENGINE_FKLSNR_VARS@|$(PKG_SYSCONF_DIR)/ovirt-fence-kdump-listener.conf|g" \
 	-e "s|@ENGINE_WSPROXY_VARS@|$(PKG_SYSCONF_DIR)/ovirt-websocket-proxy.conf|g" \
+	-e "s|@ENGINE_VMPROXY_VARS@|$(PKG_SYSCONF_DIR)/ovirt-vmconsole-proxy-helper.conf|g" \
+	-e "s|@ENGINE_VMPROXY_DIR@|$(PKG_SYSCONF_DIR)/ovirt-vmconsole|g" \
 	-e "s|@ENGINE_USER@|$(PKG_USER)|g" \
 	-e "s|@ENGINE_GROUP@|$(PKG_GROUP)|g" \
 	-e "s|@ENGINE_ETC@|$(PKG_SYSCONF_DIR)|g" \
@@ -146,6 +149,7 @@ BUILD_TARGET=install
 	-e "s|@ENGINE_LOG@|$(PKG_LOG_DIR)|g" \
 	-e "s|@ENGINE_TMP@|$(PKG_TMP_DIR)|g" \
 	-e "s|@ENGINE_USR@|$(DATA_DIR)|g" \
+	-e "s|@ENGINE_LIBEXEC@|$(LIBEXEC_DIR)|g" \
 	-e "s|@ENGINE_DOC@|$(PKG_DOC_DIR)|g" \
 	-e "s|@ENGINE_VAR@|$(PKG_STATE_DIR)|g" \
 	-e "s|@ENGINE_CACHE@|$(PKG_CACHE_DIR)|g" \
@@ -166,6 +170,8 @@ BUILD_TARGET=install
 	-e "s|@PEP8@|$(PEP8)|g" \
 	-e "s|@PYFLAKES@|$(PYFLAKES)|g" \
 	-e "s|@DEVMODE@|$(BUILD_DEV)|g" \
+	-e "s|@VMCONSOLE_PROXY_HELPER_CONF_DIR@|$(SYSCONF_DIR)/ovirt-vmconsole/ovirt-vmconsole-proxy-helper/conf|g" \
+	-e "s|@VMCONSOLE_PROXY_HELPER_PATH@|$(LIBEXEC_DIR)/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py|g" \
 	$< > $@
 
 # List of files that will be generated from templates:
@@ -180,6 +186,7 @@ GENERATED = \
 	packaging/etc/engine.conf.d/README \
 	packaging/etc/notifier/notifier.conf.d/README \
 	packaging/etc/ovirt-fence-kdump-listener.conf.d/README \
+	packaging/etc/ovirt-vmconsole-proxy-helper.conf.d/README \
 	packaging/etc/ovirt-websocket-proxy.conf.d/README \
 	packaging/pythonlib/ovirt_engine/config.py \
 	packaging/services/ovirt-engine-notifier/config.py \
@@ -194,6 +201,8 @@ GENERATED = \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.conf \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.systemd \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.sysv \
+	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt_vmconsole_conf.py \
+	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-proxy-helper.conf \
 	packaging/services/ovirt-websocket-proxy/config.py \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.conf \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.systemd \
@@ -203,6 +212,7 @@ GENERATED = \
 	packaging/setup/ovirt_engine_setup/engine/config.py \
 	packaging/setup/ovirt_engine_setup/engine_common/config.py \
 	packaging/setup/ovirt_engine_setup/websocket_proxy/config.py \
+	packaging/setup/ovirt_engine_setup/vmconsole_proxy_helper/config.py \
 	packaging/sys-etc/logrotate.d/ovirt-engine \
 	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
 	packaging/sys-etc/logrotate.d/ovirt-engine-setup \
@@ -435,6 +445,7 @@ install-packaging-files: \
 	$(MAKE) copy-recursive SOURCEDIR=packaging/doc TARGETDIR="$(DESTDIR)$(PKG_DOC_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/man TARGETDIR="$(DESTDIR)$(MAN_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON_DIR)" EXCLUDE_GEN="$(GENERATED)"
+	$(MAKE) copy-recursive SOURCEDIR=packaging/libexec TARGETDIR="$(DESTDIR)$(LIBEXEC_DIR)" EXCLUDE_GEN="$(GENERATED)"
 
 	# we should avoid make these directories dirty
 	$(MAKE) copy-recursive SOURCEDIR=packaging/dbscripts TARGETDIR="$(DESTDIR)$(DATA_DIR)/dbscripts" \

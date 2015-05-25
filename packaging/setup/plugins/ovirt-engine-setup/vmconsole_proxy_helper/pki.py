@@ -1,0 +1,300 @@
+#
+# ovirt-engine-setup -- ovirt engine setup
+# Copyright (C) 2015 Red Hat, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+
+"""vmconsole proxy plugin."""
+
+
+import collections
+import gettext
+import os
+
+from otopi import filetransaction, plugin, util
+from otopi import constants as otopicons
+from ovirt_engine import util as outil
+
+from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.vmconsole_proxy_helper import constants as ovmpcons
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
+
+
+# owner OR group = None: no need to change it.
+Artifact = collections.namedtuple(
+    'Artifact',
+    (
+        'path', 'mode', 'owner', 'group', 'destination'
+    ),
+)
+
+
+def get_install_command(artifact, destination_path=None):
+    if destination_path is None:
+        if artifact.owner is not None:
+            chown_cmd = 'chown {owner}:{group} {path}\n'.format(
+                owner=artifact.owner,
+                group=artifact.group,
+                path=artifact.path,
+            )
+        else:
+            chown_cmd = ''
+
+        chmod_cmd = 'chmod {mode:o} {path}\n'.format(
+            mode=artifact.mode,
+            path=artifact.path,
+        )
+
+        return chown_cmd + chmod_cmd
+    else:
+        destination = (
+            destination_path if artifact.destination is None
+            else os.path.join(destination_path, artifact.destination)
+        )
+        return (
+            'install{owner}{group} -m {mode:o} {path} {destination}\n'.format(
+                owner=(
+                    ' -o %s' % artifact.owner
+                    if artifact.owner is not None
+                    else ''
+                ),
+                group=(
+                    ' -g %s' % artifact.group
+                    if artifact.group is not None
+                    else ''
+                ),
+                mode=artifact.mode,
+                path=artifact.path,
+                destination=destination,
+            )
+        )
+
+
+def CopyFileTransaction(
+        src_name,
+        dst_name,
+        binary=False,
+        mode=0o644,
+        dmode=0o755,
+        owner=None,
+        group=None,
+        downer=None,
+        dgroup=None,
+        enforcePermissions=False,
+        visibleButUnsafe=False,
+        modifiedList=None):
+    with open(src_name) as src_file:
+        return filetransaction.FileTransaction(
+            name=dst_name,
+            content=src_file.read(),
+            binary=binary,
+            mode=mode,
+            dmode=dmode,
+            owner=owner,
+            group=group,
+            downer=downer,
+            dgroup=dgroup,
+            enforcePermissions=enforcePermissions,
+            visibleButUnsafe=visibleButUnsafe,
+            modifiedList=modifiedList,
+        )
+
+
+def CopyFileInDirTransaction(
+        src_name,
+        dst_dir,
+        dst_name=None,
+        binary=False,
+        mode=0o644,
+        dmode=0o755,
+        owner=None,
+        group=None,
+        downer=None,
+        dgroup=None,
+        enforcePermissions=False,
+        visibleButUnsafe=False,
+        modifiedList=None):
+    dst_path = os.path.join(
+        dst_dir,
+        os.path.basename(src_name) if dst_name is None else dst_name,
+    )
+    return CopyFileTransaction(
+        src_name=src_name,
+        dst_name=dst_path,
+        binary=binary,
+        mode=mode,
+        dmode=dmode,
+        owner=owner,
+        group=group,
+        downer=downer,
+        dgroup=dgroup,
+        enforcePermissions=enforcePermissions,
+        visibleButUnsafe=visibleButUnsafe,
+        modifiedList=modifiedList,
+    )
+
+
+@util.export
+class Plugin(plugin.PluginBase):
+    """vmconsole proxy configuration plugin."""
+
+    def __init__(self, context):
+        super(Plugin, self).__init__(context=context)
+        self._enabled = False
+
+    def _subjectComponentEscape(self, s):
+        return outil.escape(s, '/\\')
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+    )
+    def _boot(self):
+        self.environment[
+            otopicons.CoreEnv.LOG_FILTER_KEYS
+        ].append(
+            oenginecons.PKIEnv.STORE_PASS
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        name=ovmpcons.Stages.CONFIG_VMCONSOLE_PKI_ENGINE,
+        after=(
+            ovmpcons.Stages.CA_AVAILABLE,
+        ),
+        condition=lambda self: (
+            self.environment[
+                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
+            ]
+        ),
+    )
+    def _miscPKIEngine(self):
+        self._enabled = True
+        uninstall_files = []
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].createGroup(
+            group='ca_pki_vmp_engine',
+            description='VMP PKI Engine keys',
+            optional=True,
+        ).addFiles(
+            group='ca_pki_vmp_engine',
+            fileList=uninstall_files,
+        )
+
+        self.logger.info(
+            _(
+                'Setting up ovirt-vmconsole proxy helper PKI artifacts'
+            )
+        )
+
+        # vmconsole enrollment needs special care due to EKU
+        self.execute(
+            (
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
+                '--name=%s' % ovmpcons.Const.VMCONSOLE_PROXY_HELPER_PKI_NAME,
+                '--password=%s' % (
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
+                ),
+                '--subject=/C=%s/O=%s/CN=%s' % (
+                    self._subjectComponentEscape(
+                        self.environment[oenginecons.PKIEnv.COUNTRY],
+                    ),
+                    self._subjectComponentEscape(
+                        self.environment[oenginecons.PKIEnv.ORG],
+                    ),
+                    self._subjectComponentEscape(
+                        self.environment[osetupcons.ConfigEnv.FQDN],
+                    ),
+                ),
+                '--ku=digitalSignature',
+                '--eku=%s' % ovmpcons.Const.OVIRT_VMCONSOLE_PROXY_EKU,
+            ),
+        )
+
+        uninstall_files.extend(
+            (
+                (
+                    ovmpcons.FileLocations.
+                    OVIRT_ENGINE_PKI_VMCONSOLE_PROXY_HELPER_CERT
+                ),
+                (
+                    ovmpcons.FileLocations.
+                    OVIRT_ENGINE_PKI_VMCONSOLE_PROXY_HELPER_STORE
+                ),
+            )
+        )
+
+        rc, key_content, stderr = self.execute(
+            args=(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                '--name=%s' % ovmpcons.Const.VMCONSOLE_PROXY_HELPER_PKI_NAME,
+                '--passin=%s' % (
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
+                ),
+                '--key=-',
+            ),
+        )
+
+        key_file = Artifact(
+            path=(
+                ovmpcons.FileLocations.
+                OVIRT_ENGINE_PKI_VMCONSOLE_PROXY_HELPER_KEY
+            ),
+            mode=0o600,
+            owner=ovmpcons.Const.OVIRT_VMCONSOLE_USER,
+            group=ovmpcons.Const.OVIRT_VMCONSOLE_GROUP,
+            destination=None,
+        )
+
+        if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                filetransaction.FileTransaction(
+                    name=key_file.path,
+                    mode=key_file.mode,
+                    content=key_content,
+                    owner=key_file.owner,
+                    group=key_file.group,
+                    modifiedList=uninstall_files,
+                )
+            )
+        else:
+            # store incomplete file, let admin fix later
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                filetransaction.FileTransaction(
+                    name=key_file.path,
+                    content=key_content,
+                    modifiedList=uninstall_files,
+                )
+            )
+
+            self.dialog.note(
+                _(
+                    'Manual intervention is required, because '
+                    'setup was run under unprivileged user.\n'
+                    'Cannot set the ownership of the PKI artifacts.\n'
+                    'Please make sure to run as root:\n'
+                    '\n'
+                    '{install_cmd}\n'.format(
+                        install_cmd=get_install_command(key_file)
+                    )
+                )
+            )
+
+
+# vim: expandtab tabstop=4 shiftwidth=4
