@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
+import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,24 +40,9 @@ public class BackendQosResource extends AbstractBackendSubResource<QoS, QosBase>
                 new QueryIdResolver<Guid>(VdcQueryType.GetQosById, IdQueryParameters.class);
         final QosBase qosBase =
                 getEntity(new QueryIdResolver<Guid>(VdcQueryType.GetQosById, IdQueryParameters.class), true);
-        VdcActionType updateActionType = null;
-
-        switch (qosBase.getQosType()) {
-        case STORAGE:
-            updateActionType = VdcActionType.UpdateStorageQos;
-            break;
-        case CPU:
-            updateActionType = VdcActionType.UpdateCpuQos;
-            break;
-        case NETWORK:
-            updateActionType = VdcActionType.UpdateNetworkQoS;
-            break;
-        default:
-            break;
-        }
         return performUpdate(incoming,
                 entityResolver,
-                updateActionType,
+                updateActionTypeForQosType(qosBase.getQosType()),
                 new ParametersProvider<QoS, QosBase>() {
                     @Override
                     public VdcActionParametersBase getParameters(QoS model,
@@ -67,6 +53,19 @@ public class BackendQosResource extends AbstractBackendSubResource<QoS, QosBase>
                         return parameters;
                     }
                 });
+    }
+
+    private VdcActionType updateActionTypeForQosType(QosType qosType) {
+        switch (qosType) {
+        case STORAGE:
+            return VdcActionType.UpdateStorageQos;
+        case CPU:
+            return VdcActionType.UpdateCpuQos;
+        case NETWORK:
+            return VdcActionType.UpdateNetworkQoS;
+        default:
+            throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
+        }
     }
 
     protected class UpdateParametersProvider implements ParametersProvider<QoS, QosBase> {
