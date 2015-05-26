@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.IpAddressAssignment;
+import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 
@@ -24,7 +25,7 @@ public class NetworkAttachmentMapperTest extends AbstractInvertibleMappingTest<o
         assertEquals(model.getHostNic().getId(), transform.getHostNic().getId());
         assertNotNull(transform.getProperties());
         assertEquals(CustomPropertiesParser.toMap(model.getProperties()),
-                CustomPropertiesParser.toMap(transform.getProperties()));
+            CustomPropertiesParser.toMap(transform.getProperties()));
 
         assertNotNull(transform.getIpAddressAssignments());
         List<IpAddressAssignment> transformAddresses = transform.getIpAddressAssignments().getIpAddressAssignments();
@@ -46,6 +47,7 @@ public class NetworkAttachmentMapperTest extends AbstractInvertibleMappingTest<o
     @Override
     protected org.ovirt.engine.api.model.NetworkAttachment postPopulate(org.ovirt.engine.api.model.NetworkAttachment model) {
         model.getIpAddressAssignments().getIpAddressAssignments().get(0).setAssignmentMethod("dhcp");
+        model.getQos().setType(QosType.HOSTNETWORK.name().toLowerCase());
         return super.postPopulate(model);
     }
 }

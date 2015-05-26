@@ -13,6 +13,7 @@ import org.ovirt.engine.api.resource.QosResource;
 import org.ovirt.engine.api.restapi.types.QosTypeMapper;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
@@ -42,7 +43,7 @@ public class BackendQossResource extends AbstractBackendCollectionResource<QoS, 
         validateParameters(qos, "name", "type");
         validateEnums(QoS.class, qos);
         QosParametersBase<QosBase> params = new QosParametersBase<>();
-        org.ovirt.engine.api.model.QosType qosType = QosTypeMapper.mapQosType(qos.getType(), null);
+        org.ovirt.engine.api.model.QosType qosType = QosTypeMapper.map(qos.getType(), null);
         QosBase qosEntity = createNewQosEntityForQosType(qosType);
 
         params.setQos(map(qos, qosEntity));
@@ -62,6 +63,8 @@ public class BackendQossResource extends AbstractBackendCollectionResource<QoS, 
             return new CpuQos();
         case NETWORK:
             return new NetworkQoS();
+        case HOSTNETWORK:
+            return new HostNetworkQos();
         default:
             throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
         }
@@ -75,6 +78,8 @@ public class BackendQossResource extends AbstractBackendCollectionResource<QoS, 
             return VdcActionType.AddCpuQos;
         case NETWORK:
             return VdcActionType.AddNetworkQoS;
+        case HOSTNETWORK:
+            return VdcActionType.AddHostNetworkQos;
         default:
             throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
 

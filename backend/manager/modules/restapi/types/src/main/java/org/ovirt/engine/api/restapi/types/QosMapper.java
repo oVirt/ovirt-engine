@@ -4,10 +4,12 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.core.compat.Guid;
 
 public class QosMapper {
 
@@ -19,7 +21,12 @@ public class QosMapper {
 
         model.setType(QosTypeMapper.qosTypeToString(entity.getQosType()));
         model.setDataCenter(new DataCenter());
-        model.getDataCenter().setId(entity.getStoragePoolId().toString());
+
+        Guid storagePoolId = entity.getStoragePoolId();
+        if (storagePoolId != null) {
+            model.getDataCenter().setId(storagePoolId.toString());
+        }
+
         model.setDescription(entity.getDescription());
         mapQosTypeToModel(entity, model);
 
@@ -37,8 +44,20 @@ public class QosMapper {
         case NETWORK:
             mapNetworkQosToModel(entity, model);
             break;
+        case HOSTNETWORK:
+            mapHostNetworkQosToModel(entity, model);
+            break;
         default:
             throw new IllegalArgumentException("Unsupported QoS type");
+        }
+    }
+
+    private static void mapHostNetworkQosToModel(QosBase entity, QoS model) {
+        HostNetworkQos hostNetworkQos = verifyAndCast(entity, HostNetworkQos.class);
+        if (hostNetworkQos != null) {
+            model.setOutboundAverageLinkshare(hostNetworkQos.getOutAverageLinkshare());
+            model.setOutboundAverageUpperlimit(hostNetworkQos.getOutAverageUpperlimit());
+            model.setOutboundAverageRealtime(hostNetworkQos.getOutAverageRealtime());
         }
     }
 
@@ -99,6 +118,8 @@ public class QosMapper {
             return new CpuQos();
         case NETWORK:
             return new NetworkQoS();
+        case HOSTNETWORK:
+            return new HostNetworkQos();
         default:
             throw new IllegalArgumentException("Unsupported QoS type");
         }
@@ -107,7 +128,7 @@ public class QosMapper {
     @Mapping(from = QoS.class, to = QosBase.class)
     public static QosBase map(QoS model, QosBase template) {
         QosBase entity = template == null ? null : template;
-        QosType qosType = QosTypeMapper.mapQosType(model.getType(), entity == null ? null : entity.getQosType());
+        QosType qosType = QosTypeMapper.map (model.getType(), entity == null ? null : entity.getQosType());
 
         if (entity == null) {
             entity = createNewQosEntityForQosType(qosType);
@@ -144,8 +165,25 @@ public class QosMapper {
         case NETWORK:
             mapNetworkQosToEntity(model, (NetworkQoS) entity);
             break;
+        case HOSTNETWORK:
+            mapHostNetworkQosToEntity(model, (HostNetworkQos) entity);
+            break;
         default:
             break;
+        }
+    }
+
+    private static void mapHostNetworkQosToEntity(QoS model, HostNetworkQos entity) {
+        if (model.isSetOutboundAverageLinkshare()) {
+            entity.setOutAverageLinkshare(model.getOutboundAverageLinkshare());
+        }
+
+        if (model.isSetOutboundAverageUpperlimit()) {
+            entity.setOutAverageUpperlimit(model.getOutboundAverageUpperlimit());
+        }
+
+        if (model.isSetOutboundAverageRealtime()) {
+            entity.setOutAverageRealtime(model.getOutboundAverageRealtime());
         }
     }
 

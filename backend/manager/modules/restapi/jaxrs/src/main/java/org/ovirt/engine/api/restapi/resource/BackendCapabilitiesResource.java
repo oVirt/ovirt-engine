@@ -87,6 +87,7 @@ import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStates;
 import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.PowerManagers;
+import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.model.QosTypes;
 import org.ovirt.engine.api.model.QuotaModeType;
 import org.ovirt.engine.api.model.QuotaModeTypes;
@@ -957,11 +958,21 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     private void addSupportedQosTypes(VersionCaps version) {
         version.setQosTypes(new QosTypes());
         if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
-            version.getQosTypes().getQosTypes().add(org.ovirt.engine.api.model.QosType.NETWORK.name().toLowerCase());
+            addQosTypes(version, QosType.NETWORK);
         }
         if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
-            version.getQosTypes().getQosTypes().add(org.ovirt.engine.api.model.QosType.STORAGE.name().toLowerCase());
-            version.getQosTypes().getQosTypes().add(org.ovirt.engine.api.model.QosType.CPU.name().toLowerCase());
+            addQosTypes(version, QosType.STORAGE, QosType.CPU);
+        }
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_6)) {
+            addQosTypes(version, QosType.HOSTNETWORK);
+        }
+    }
+
+    private void addQosTypes(VersionCaps version, QosType... qosTypesToAdd) {
+        List<String> supportedQosTypeNames = version.getQosTypes().getQosTypes();
+        for (QosType qosType : qosTypesToAdd) {
+            String qosTypeAsString = qosType.name().toLowerCase();
+            supportedQosTypeNames.add(qosTypeAsString);
         }
     }
 
