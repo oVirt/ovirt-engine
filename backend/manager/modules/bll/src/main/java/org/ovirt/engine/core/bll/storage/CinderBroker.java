@@ -196,6 +196,27 @@ public class CinderBroker extends AuditLogableBase {
         });
     }
 
+    public boolean isSnapshotExist(final Guid id) {
+        return execute(new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                try {
+                    Snapshot snapshot = proxy.getSnapshotById(id.toString());
+                    return snapshot != null;
+                } catch (OpenStackResponseException ex) {
+                    if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
+                        log.info("Snapshot does not exists");
+                        return false;
+                    } else {
+                        log.error("An error has occurred while looking for snapshot.");
+                        throw ex;
+                    }
+
+                }
+            }
+        });
+    }
+
     public ImageStatus getSnapshotStatus(final Guid id) {
         return execute(new Callable<ImageStatus>() {
             @Override
