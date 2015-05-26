@@ -226,6 +226,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         createParams.setDestinationStorageDomainId(imageFromParams.getStorageIds().get(0));
         createParams.setDiskAlias(imageFromParams.getDiskAlias());
         createParams.setDescription(imageFromParams.getDiskDescription());
+        createParams.setParentCommand(getActionType());
         createParams.setParentParameters(getParameters());
         createParams.setQuotaId(getQuotaIdForDisk(diskImage));
         createParams.setDiskProfileId(imageFromParams.getDiskProfileId());

@@ -56,7 +56,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
             newImage.setVolumeType(getParameters().getVolumeType());
         }
 
-        Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmTemplate);
+        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
 
         VolumeFormat targetFormat = getTargetVolumeFormat(newImage.getVolumeFormat(), newImage.getVolumeType(),
                 getParameters().getDestinationStorageDomainId());
@@ -74,7 +74,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         getReturnValue().getInternalVdsmTaskIdList().add(
                 createTask(taskId,
                         vdsReturnValue.getCreationInfo(),
-                        VdcActionType.AddVmTemplate,
+                        getParameters().getParentCommand(),
                         VdcObjectType.Storage,
                         getParameters().getStorageDomainId(),
                         getParameters().getDestinationStorageDomainId()));
