@@ -2227,6 +2227,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Host Device")
     String hostdevDeviceGeneralType();
 
+    @DefaultStringValue("Memory")
+    String memoryDeviceGeneralType();
+
     @DefaultStringValue("Unknown")
     String unknownDeviceGeneralType();
 

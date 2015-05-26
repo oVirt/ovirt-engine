@@ -49,6 +49,8 @@ public class VmDeviceGeneralTypeColumn<T> extends AbstractSafeHtmlColumn<T> {
                 return resources.watchdogDeviceGeneralTypeIcon();
             case HOSTDEV:
                 return resources.hostdevDeviceGeneralTypeIcon();
+            case MEMORY:
+                return resources.memoryDeviceGeneralTypeIcon();
             case UNKNOWN:
                 return resources.questionMarkImage();
             }
@@ -117,6 +119,8 @@ public class VmDeviceGeneralTypeColumn<T> extends AbstractSafeHtmlColumn<T> {
                 return SafeHtmlUtils.fromTrustedString(constants.watchdogDeviceGeneralType());
             case HOSTDEV:
                 return SafeHtmlUtils.fromTrustedString(constants.hostdevDeviceGeneralType());
+            case MEMORY:
+                return SafeHtmlUtils.fromTrustedString(constants.memoryDeviceGeneralType());
             case UNKNOWN:
                 return SafeHtmlUtils.fromTrustedString(constants.unknownDeviceGeneralType());
             }

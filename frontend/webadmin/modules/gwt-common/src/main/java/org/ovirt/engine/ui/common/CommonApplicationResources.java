@@ -395,4 +395,7 @@ public interface CommonApplicationResources extends ClientBundle {
 
     @Source("images/device_hostdev.png")
     ImageResource hostdevDeviceGeneralTypeIcon();
+
+    @Source("images/memory_icon.png")
+    ImageResource memoryDeviceGeneralTypeIcon();
 }
