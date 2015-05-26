@@ -16,7 +16,8 @@ public class QosMapper {
         QoS model = template != null ? template : new QoS();
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
-        model.setType(org.ovirt.engine.api.model.QosType.fromValue(entity.getQosType().toString()).name().toLowerCase());
+
+        model.setType(QosTypeMapper.qosTypeToString(entity.getQosType()));
         model.setDataCenter(new DataCenter());
         model.getDataCenter().setId(entity.getStoragePoolId().toString());
         model.setDescription(entity.getDescription());
@@ -76,14 +77,8 @@ public class QosMapper {
 
     @Mapping(from = QoS.class, to = QosBase.class)
     public static QosBase map(QoS model, QosBase template) {
-        QosBase entity = null;
-        if (template != null) {
-            entity = template;
-        }
-        QosType qosType =
-                model.getType() != null ? QosType.valueOf(model
-                        .getType().toUpperCase()) : entity != null ? QosType.valueOf(entity
-                        .getQosType().toString().toUpperCase()) : QosType.STORAGE;
+        QosBase entity = template == null ? null : template;
+        QosType qosType = QosTypeMapper.mapQosType(model.getType(), entity == null ? null : entity.getQosType());
         switch (qosType) {
         case STORAGE:
             if (entity == null) {
@@ -167,4 +162,6 @@ public class QosMapper {
 
         return entity;
     }
+
+
 }

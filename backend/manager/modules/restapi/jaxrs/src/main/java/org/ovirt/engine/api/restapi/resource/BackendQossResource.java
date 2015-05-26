@@ -7,14 +7,15 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.model.QoSs;
+import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.resource.QoSsResource;
 import org.ovirt.engine.api.resource.QosResource;
+import org.ovirt.engine.api.restapi.types.QosTypeMapper;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
-import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
@@ -40,32 +41,44 @@ public class BackendQossResource extends AbstractBackendCollectionResource<QoS, 
     public Response add(QoS qos) {
         validateParameters(qos, "name", "type");
         validateEnums(QoS.class, qos);
-        QosParametersBase<QosBase> params = new QosParametersBase<QosBase>();
-        QosBase entity = null;
-        VdcActionType addVdcActionType = null;
-        switch (QosType.valueOf(qos.getType().toUpperCase())) {
-        case STORAGE:
-            entity = new StorageQos();
-            addVdcActionType = VdcActionType.AddStorageQos;
-            break;
-        case CPU:
-            entity = new CpuQos();
-            addVdcActionType = VdcActionType.AddCpuQos;
-            break;
-        case NETWORK:
-            entity = new NetworkQoS();
-            addVdcActionType = VdcActionType.AddNetworkQoS;
-            break;
-        default:
-            break;
-        }
-        params.setQos(map(qos, entity));
+        QosParametersBase<QosBase> params = new QosParametersBase<>();
+        org.ovirt.engine.api.model.QosType qosType = QosTypeMapper.mapQosType(qos.getType(), null);
+        QosBase qosEntity = createNewQosEntityForQosType(qosType);
+
+        params.setQos(map(qos, qosEntity));
         if (dataCenterId != null) {
-            entity.setStoragePoolId(dataCenterId);
+            qosEntity.setStoragePoolId(dataCenterId);
         }
-        return performCreate(addVdcActionType,
+        return performCreate(addActionTypeForQosType(qosType),
                 params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetQosById, IdQueryParameters.class));
+    }
+
+    private QosBase createNewQosEntityForQosType(QosType qosType) {
+        switch (qosType) {
+        case STORAGE:
+            return new StorageQos();
+        case CPU:
+            return new CpuQos();
+        case NETWORK:
+            return new NetworkQoS();
+        default:
+            throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
+        }
+    }
+
+    private VdcActionType addActionTypeForQosType(QosType qosType) {
+        switch (qosType) {
+        case STORAGE:
+            return VdcActionType.AddStorageQos;
+        case CPU:
+            return VdcActionType.AddCpuQos;
+        case NETWORK:
+            return VdcActionType.AddNetworkQoS;
+        default:
+            throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
+
+        }
     }
 
     @Override
