@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -23,6 +24,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -179,6 +181,18 @@ public abstract class NetworkModel extends Model
 
         setIsGeneralTabValid(true);
         setIsVnicProfileTabValid(true);
+        updateAvailability();
+    }
+
+    private void updateAvailability() {
+        if (!ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {
+            getExternalProviders().setIsAvailable(false);
+            getNeutronPhysicalNetwork().setIsAvailable(false);
+            getCreateSubnet().setIsAvailable(false);
+            getVLanTag().setIsAvailable(false);
+            getHasVLanTag().setIsAvailable(false);
+            getExport().setIsAvailable(false);
+        }
     }
 
     private VnicProfileModel createDefaultProfile() {

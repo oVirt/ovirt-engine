@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -95,7 +97,7 @@ public class NewNetworkModel extends NetworkModel {
 
     @Override
     protected void initIsVm() {
-        getIsVmNetwork().setEntity(true);
+        getIsVmNetwork().setEntity(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
     }
 
     @Override
@@ -105,9 +107,10 @@ public class NewNetworkModel extends NetworkModel {
 
     @Override
     protected void onExportChanged() {
-        boolean externalNetwork = (Boolean) getExport().getEntity();
+        boolean externalNetwork = getExport().getEntity();
         getExternalProviders().setIsChangable(externalNetwork);
-        getIsVmNetwork().setIsChangable(!externalNetwork && isSupportBridgesReportByVDSM());
+        getIsVmNetwork().setIsChangable(!externalNetwork && isSupportBridgesReportByVDSM()
+                && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         if (externalNetwork) {
             getIsVmNetwork().setEntity(true);
         }
@@ -149,7 +152,7 @@ public class NewNetworkModel extends NetworkModel {
         parameters.setVnicProfileRequired(false);
 
         // New network
-        if ((Boolean) getExport().getEntity()) {
+        if (getExport().getEntity()) {
             Provider externalProvider = getExternalProviders().getSelectedItem();
             ProviderNetwork providerNetwork = new ProviderNetwork();
             providerNetwork.setProviderId(externalProvider.getId());
@@ -193,7 +196,7 @@ public class NewNetworkModel extends NetworkModel {
 
         Frontend.getInstance().runMultipleAction(VdcActionType.AttachNetworkToVdsGroup, actionParameters1);
 
-        if ((Boolean) getExport().getEntity() && (Boolean) getCreateSubnet().getEntity()) {
+        if (getExport().getEntity() && getCreateSubnet().getEntity()) {
             getSubnetModel().setExternalNetwork(getNetwork().getProvidedBy());
             getSubnetModel().flush();
 

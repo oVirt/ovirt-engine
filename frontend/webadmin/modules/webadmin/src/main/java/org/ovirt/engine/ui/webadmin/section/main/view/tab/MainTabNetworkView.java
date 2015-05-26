@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.searchbackend.NetworkConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -15,6 +16,7 @@ import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlToolti
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -77,6 +79,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
 
         CommentColumn<NetworkView> commentColumn = new CommentColumn<NetworkView>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+        boolean virtMode = ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly);
 
         TextColumnWithTooltip<NetworkView> dcColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
@@ -86,7 +89,8 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         };
         dcColumn.makeSortable(NetworkConditionFieldAutoCompleter.DATA_CENTER);
 
-        getTable().addColumn(dcColumn, constants.dcNetwork(), "200px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(dcColumn, constants.dcNetwork(), virtMode, "200px"); //$NON-NLS-1$
+
 
         TextColumnWithTooltip<NetworkView> descriptionColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
@@ -146,7 +150,8 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
             }
         };
         vlanColumn.makeSortable(NetworkConditionFieldAutoCompleter.VLAN_ID);
-        getTable().addColumn(vlanColumn, constants.vlanNetwork(), "60px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(vlanColumn, constants.vlanNetwork(), virtMode, "60px"); //$NON-NLS-1$
+
 
         TextColumnWithTooltip<NetworkView> labelColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
@@ -163,7 +168,9 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                 return object.getProvidedBy() == null ? "" : object.getProviderName(); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(providerColumn, constants.providerNetwork(), "200px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(providerColumn, constants.providerNetwork(), virtMode, "200px"); //$NON-NLS-1$
+
+
 
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.newNetwork()) {
             @Override

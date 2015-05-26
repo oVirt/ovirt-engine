@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -11,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.GuidLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -70,7 +72,13 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
         formBuilder.addFormItem(new FormItem(constants.descriptionNetwork(), description, 2, 0));
 
         formBuilder.addFormItem(new FormItem(constants.roleNetwork(), role, 0, 1));
-        formBuilder.addFormItem(new FormItem(constants.vlanNetwork(), vlan, 1, 1));
+        formBuilder.addFormItem(new FormItem(constants.vlanNetwork(), vlan, 1, 1) {
+            @Override
+            public boolean getIsAvailable() {
+                return ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly);
+            }
+        });
+
         formBuilder.addFormItem(new FormItem(constants.mtuNetwork(), mtu, 2, 1) {
             public boolean getIsAvailable() {
                 return getDetailModel().getExternalId() == null;
