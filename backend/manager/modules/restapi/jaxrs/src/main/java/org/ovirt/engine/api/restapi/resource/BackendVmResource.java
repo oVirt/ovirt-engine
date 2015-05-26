@@ -157,7 +157,7 @@ public class BackendVmResource
             Guid clusterId = lookupClusterId(incoming);
             if(!clusterId.toString().equals(get().getCluster().getId())){
                 performAction(VdcActionType.ChangeVMCluster,
-                              new ChangeVMClusterParameters(clusterId, guid));
+                              new ChangeVMClusterParameters(clusterId, guid, null)); // TODO: change 'null' to 'incoming.getVmCompa...' when REST support is added
             }
         }
         if (!isFiltered()) {

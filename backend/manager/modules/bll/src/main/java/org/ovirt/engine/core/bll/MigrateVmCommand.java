@@ -220,7 +220,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return;
         }
 
-        ChangeVMClusterParameters params = new ChangeVMClusterParameters(getParameters().getTargetClusterId(), getVmId());
+        ChangeVMClusterParameters params = new ChangeVMClusterParameters(
+                getParameters().getTargetClusterId(),
+                getVmId(),
+                getVm().getCustomCompatibilityVersion());
         setSucceeded(getBackend().runInternalAction(VdcActionType.ChangeVMCluster, params).getSucceeded());
     }
 
@@ -434,7 +437,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
 
         if (getParameters().getTargetClusterId() != null) {
-            ChangeVmClusterValidator changeVmClusterValidator = new ChangeVmClusterValidator(this, getParameters().getTargetClusterId());
+            ChangeVmClusterValidator changeVmClusterValidator = new ChangeVmClusterValidator(
+                    this,
+                    getParameters().getTargetClusterId(),
+                    getVm().getCustomCompatibilityVersion());
             if (!changeVmClusterValidator.validate()) {
                 return false;
             }

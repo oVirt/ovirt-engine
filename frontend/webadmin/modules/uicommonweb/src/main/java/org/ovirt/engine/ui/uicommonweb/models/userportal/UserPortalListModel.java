@@ -1049,8 +1049,11 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         Guid oldClusterID = ((VM) selectedItem.getEntity()).getClusterId();
         Guid newClusterID = model.getSelectedCluster().getId();
         if (oldClusterID.equals(newClusterID) == false) {
-            Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID,
-                            gettempVm().getId()),
+            Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster,
+                                             new ChangeVMClusterParameters(
+                                                     newClusterID,
+                                                     gettempVm().getId(),
+                                                     model.getCustomCompatibilityVersion().getSelectedItem()),
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {

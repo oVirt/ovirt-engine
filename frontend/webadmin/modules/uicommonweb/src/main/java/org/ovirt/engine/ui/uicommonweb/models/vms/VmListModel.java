@@ -1821,7 +1821,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         Guid newClusterID = model.getSelectedCluster().getId();
         if (oldClusterID.equals(newClusterID) == false) {
             ChangeVMClusterParameters parameters =
-                    new ChangeVMClusterParameters(newClusterID, getcurrentVm().getId());
+                    new ChangeVMClusterParameters(
+                            newClusterID,
+                            getcurrentVm().getId(),
+                            model.getCustomCompatibilityVersion().getSelectedItem());
 
             model.startProgress();
 

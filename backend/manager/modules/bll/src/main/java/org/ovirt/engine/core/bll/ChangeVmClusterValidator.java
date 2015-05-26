@@ -18,15 +18,16 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class ChangeVmClusterValidator {
 
-    private final Guid targetClusterId;
-
     private VmCommand parentCommand;
+    private final Guid targetClusterId;
+    private Version vmCompatibilityVersion;
 
     private Cluster targetCluster;
 
-    public ChangeVmClusterValidator(VmCommand parentCommand, Guid targetClusterId) {
+    public ChangeVmClusterValidator(VmCommand parentCommand, Guid targetClusterId, Version vmCustomCompatibilityVersion) {
         this.parentCommand = parentCommand;
         this.targetClusterId = targetClusterId;
+        this.vmCompatibilityVersion = vmCustomCompatibilityVersion;
     }
 
     protected boolean validate() {
@@ -47,11 +48,14 @@ public class ChangeVmClusterValidator {
                 return false;
             }
 
+            if (vmCompatibilityVersion == null) {
+                vmCompatibilityVersion = targetCluster.getCompatibilityVersion();
+            }
+
             List<VmNic> interfaces = DbFacade.getInstance().getVmNicDao().getAllForVm(vm.getId());
 
-            Version clusterCompatibilityVersion = targetCluster.getCompatibilityVersion();
             if (!validateDestinationClusterContainsNetworks(interfaces)
-                    || !validateNics(interfaces, clusterCompatibilityVersion)) {
+                    || !validateNics(interfaces, targetCluster.getCompatibilityVersion())) {
                 return false;
             }
 
@@ -60,34 +64,41 @@ public class ChangeVmClusterValidator {
                     vm.getStaticData().getNumOfSockets(),
                     vm.getStaticData().getCpuPerSocket(),
                     vm.getStaticData().getThreadsPerCpu(),
-                    clusterCompatibilityVersion.getValue(),
+                    vmCompatibilityVersion.getValue(),
                     parentCommand.getReturnValue().getValidationMessages());
             if (!isCpuSocketsValid) {
                 return false;
             }
 
             // Check that the USB policy is legal
-            if (!VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(), vm.getOs(), targetCluster.getCompatibilityVersion(), parentCommand.getReturnValue().getValidationMessages())) {
+            if (!VmHandler.isUsbPolicyLegal(
+                    vm.getUsbPolicy(),
+                    vm.getOs(),
+                    vmCompatibilityVersion,
+                    parentCommand.getReturnValue().getValidationMessages())) {
                 return false;
             }
 
             // Check if the display type is supported
-            if (!VmHandler.isGraphicsAndDisplaySupported(vm.getOs(),
+            if (!VmHandler.isGraphicsAndDisplaySupported(
+                    vm.getOs(),
                     VmDeviceUtils.getGraphicsTypesOfEntity(vm.getId()),
                     vm.getDefaultDisplayType(),
                     parentCommand.getReturnValue().getValidationMessages(),
-                    clusterCompatibilityVersion)) {
+                    vmCompatibilityVersion)) {
                 return false;
             }
 
             if (VmDeviceUtils.hasVirtioScsiController(vm.getId())) {
                 // Verify cluster compatibility
-                if (!FeatureSupported.virtIoScsi(targetCluster.getCompatibilityVersion())) {
+                if (!FeatureSupported.virtIoScsi(vmCompatibilityVersion)) {
                     return parentCommand.failValidation(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
                 }
 
                 // Verify OS compatibility
-                if (!VmHandler.isOsTypeSupportedForVirtioScsi(vm.getOs(), targetCluster.getCompatibilityVersion(),
+                if (!VmHandler.isOsTypeSupportedForVirtioScsi(
+                        vm.getOs(),
+                        vmCompatibilityVersion,
                         parentCommand.getReturnValue().getValidationMessages())) {
                     return false;
                 }
