@@ -859,7 +859,7 @@ select fn_db_update_config_value('AutoRecoveryAllowedTypes','{\"storage domains\
 select fn_db_update_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_update_config_value('DBEngine','Postgres','general');
 select fn_db_update_config_value('DefaultTimeZone','(GMT) GMT Standard Time','general');
-select fn_db_update_config_value('FenceAgentDefaultParams','drac7:privlvl=OPERATOR,lanplus,delay=10;ilo3:lanplus,power_wait=4;ilo4:lanplus,power_wait=4','general');
+select fn_db_update_config_value('FenceAgentDefaultParams','drac7:privlvl=OPERATOR,lanplus=1,delay=10;ilo3:lanplus=1,power_wait=4;ilo4:lanplus=1,power_wait=4','general');
 select fn_db_update_config_value('FenceAgentDefaultParamsForPPC','ilo3:lanplus=1,cipher=1,privlvl=administrator,power_wait=4,retry_on=2;ilo4:ilanplus=1,cipher=1,privlvl=administrator,power_wait=4,retry_on=2;ipmilan:lanplus=1,cipher=1,privlvl=administrator,power_wait=4,retry_on=2','general');
 select fn_db_update_config_value('FenceAgentMapping','drac7=ipmilan,ilo2=ilo,ilo3=ipmilan,ilo4=ipmilan','general');
 select fn_db_update_config_value('FenceStartStatusDelayBetweenRetriesInSec','10','general');
