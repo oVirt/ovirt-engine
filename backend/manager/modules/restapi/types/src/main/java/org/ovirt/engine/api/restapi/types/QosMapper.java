@@ -21,129 +21,96 @@ public class QosMapper {
         model.setDataCenter(new DataCenter());
         model.getDataCenter().setId(entity.getStoragePoolId().toString());
         model.setDescription(entity.getDescription());
+        mapQosTypeToModel(entity, model);
+
+        return model;
+    }
+
+    private static void mapQosTypeToModel(QosBase entity, QoS model) {
         switch (entity.getQosType()) {
         case STORAGE:
-            StorageQos storageQos = null;
-            // avoid findbugs error.
-            if (entity instanceof StorageQos) {
-                storageQos = (StorageQos) entity;
-            }
-            // avoid findbugs error.
-            if (storageQos == null) {
-                return model;
-            }
-            model.setMaxThroughput(storageQos.getMaxThroughput());
-            model.setMaxReadThroughput(storageQos.getMaxReadThroughput());
-            model.setMaxWriteThroughput(storageQos.getMaxWriteThroughput());
-            model.setMaxIops(storageQos.getMaxIops());
-            model.setMaxReadIops(storageQos.getMaxReadIops());
-            model.setMaxWriteIops(storageQos.getMaxWriteIops());
+            mapStorageQosToModel(entity, model);
             break;
         case CPU:
-            CpuQos cpuQos = null;
-            // avoid findbugs error.
-            if (entity instanceof CpuQos) {
-                cpuQos = (CpuQos) entity;
-            }
-            // avoid findbugs error.
-            if (cpuQos == null) {
-                return model;
-            }
-            model.setCpuLimit(cpuQos.getCpuLimit());
+            mapCpuQosToModel(entity, model);
             break;
         case NETWORK:
-            NetworkQoS networkQos = null;
-            // avoid findbugs error.
-            if (entity instanceof NetworkQoS) {
-                networkQos = (NetworkQoS) entity;
-            }
-            // avoid findbugs error.
-            if (networkQos == null) {
-                return model;
-            }
+            mapNetworkQosToModel(entity, model);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported QoS type");
+        }
+    }
+
+    private static void mapNetworkQosToModel(QosBase entity, QoS model) {
+        NetworkQoS networkQos = verifyAndCast(entity, NetworkQoS.class);
+
+        if (networkQos != null) {
             model.setInboundAverage(networkQos.getInboundAverage());
             model.setInboundPeak(networkQos.getInboundPeak());
             model.setInboundBurst(networkQos.getInboundBurst());
             model.setOutboundAverage(networkQos.getOutboundAverage());
             model.setOutboundPeak(networkQos.getOutboundPeak());
             model.setOutboundBurst(networkQos.getOutboundBurst());
-            break;
-        default:
-            break;
+        }
+    }
+
+    private static void mapCpuQosToModel(QosBase entity, QoS model) {
+        CpuQos cpuQos = verifyAndCast(entity, CpuQos.class);
+        if (cpuQos != null) {
+            model.setCpuLimit(cpuQos.getCpuLimit());
+        }
+    }
+
+    private static void mapStorageQosToModel(QosBase entity, QoS model) {
+        StorageQos storageQos = verifyAndCast(entity, StorageQos.class);
+
+        if (storageQos != null) {
+            model.setMaxThroughput(storageQos.getMaxThroughput());
+            model.setMaxReadThroughput(storageQos.getMaxReadThroughput());
+            model.setMaxWriteThroughput(storageQos.getMaxWriteThroughput());
+            model.setMaxIops(storageQos.getMaxIops());
+            model.setMaxReadIops(storageQos.getMaxReadIops());
+            model.setMaxWriteIops(storageQos.getMaxWriteIops());
+        }
+    }
+
+    private static <T> T verifyAndCast(Object toCast, Class<T> castTo) {
+        if (toCast == null) {
+            return null;
         }
 
-        return model;
+        if (castTo.isAssignableFrom(toCast.getClass())) {
+            return castTo.cast(toCast);
+        } else {
+            throw new IllegalArgumentException("Cannot cast \"" +
+                    toCast +
+                    "\" to \"" +
+                    castTo +
+                    "\", however given object should be capable of that.");
+        }
+    }
+
+    private static QosBase createNewQosEntityForQosType(QosType qosType) {
+        switch (qosType) {
+        case STORAGE:
+            return new StorageQos();
+        case CPU:
+            return new CpuQos();
+        case NETWORK:
+            return new NetworkQoS();
+        default:
+            throw new IllegalArgumentException("Unsupported QoS type");
+        }
     }
 
     @Mapping(from = QoS.class, to = QosBase.class)
     public static QosBase map(QoS model, QosBase template) {
         QosBase entity = template == null ? null : template;
         QosType qosType = QosTypeMapper.mapQosType(model.getType(), entity == null ? null : entity.getQosType());
-        switch (qosType) {
-        case STORAGE:
-            if (entity == null) {
-                entity = new StorageQos();
-            }
-            if (model.isSetMaxThroughput()) {
-                ((StorageQos) entity)
-                        .setMaxThroughput(IntegerMapper.mapMinusOneToNull(model.getMaxThroughput()));
-            }
-            if (model.isSetMaxReadThroughput()) {
-                ((StorageQos) entity).setMaxReadThroughput(IntegerMapper.mapMinusOneToNull(model
-                        .getMaxReadThroughput()));
-            }
-            if (model.isSetMaxWriteThroughput()) {
-                ((StorageQos) entity).setMaxWriteThroughput(IntegerMapper.mapMinusOneToNull(model
-                        .getMaxWriteThroughput()));
-            }
-            if (model.isSetMaxIops()) {
-                ((StorageQos) entity)
-                        .setMaxIops(IntegerMapper.mapMinusOneToNull(model.getMaxIops()));
-            }
-            if (model.isSetMaxReadIops()) {
-                ((StorageQos) entity)
-                        .setMaxReadIops(IntegerMapper.mapMinusOneToNull(model.getMaxReadIops()));
-            }
-            if (model.isSetMaxWriteIops()) {
-                ((StorageQos) entity)
-                        .setMaxWriteIops(IntegerMapper.mapMinusOneToNull(model.getMaxWriteIops()));
-            }
-            break;
-        case CPU:
-            if (entity == null) {
-                entity = new CpuQos();
-            }
-            if (model.isSetCpuLimit()) {
-                ((CpuQos) entity)
-                        .setCpuLimit(IntegerMapper.mapMinusOneToNull(model.getCpuLimit()));
-            }
-            break;
-        case NETWORK:
-            if (entity == null) {
-                entity = new NetworkQoS();
-            }
-            if (model.isSetInboundAverage()) {
-                ((NetworkQoS) entity).setInboundAverage(IntegerMapper.mapMinusOneToNull(model.getInboundAverage()));
-            }
-            if (model.isSetInboundPeak()) {
-                ((NetworkQoS) entity).setInboundPeak(IntegerMapper.mapMinusOneToNull(model.getInboundPeak()));
-            }
-            if (model.isSetInboundBurst()) {
-                ((NetworkQoS) entity).setInboundBurst(IntegerMapper.mapMinusOneToNull(model.getInboundBurst()));
-            }
-            if (model.isSetOutboundAverage()) {
-                ((NetworkQoS) entity).setOutboundAverage(IntegerMapper.mapMinusOneToNull(model.getOutboundAverage()));
-            }
-            if (model.isSetOutboundPeak()) {
-                ((NetworkQoS) entity).setOutboundPeak(IntegerMapper.mapMinusOneToNull(model.getOutboundPeak()));
 
-            }
-            if (model.isSetOutboundBurst()) {
-                ((NetworkQoS) entity).setOutboundBurst(IntegerMapper.mapMinusOneToNull(model.getOutboundBurst()));
-            }
-            break;
-        default:
-            break;
+        if (entity == null) {
+            entity = createNewQosEntityForQosType(qosType);
         }
 
         if (model.isSetId()) {
@@ -154,14 +121,83 @@ public class QosMapper {
         }
         if (model.isSetDataCenter() && model.getDataCenter().isSetId()) {
             entity.setStoragePoolId(GuidUtils.asGuid(model.getDataCenter()
-                    .getId()));
+                .getId()));
         }
         if (model.isSetDescription()) {
             entity.setDescription(model.getDescription());
         }
 
+        mapQosToEntity(model, entity, qosType);
+
+
         return entity;
     }
 
+    private static void mapQosToEntity(QoS model, QosBase entity, QosType qosType) {
+        switch (qosType) {
+        case STORAGE:
+            mapStorageQosToEntity(model, (StorageQos) entity);
+            break;
+        case CPU:
+            mapCpuQosToEntity(model, (CpuQos) entity);
+            break;
+        case NETWORK:
+            mapNetworkQosToEntity(model, (NetworkQoS) entity);
+            break;
+        default:
+            break;
+        }
+    }
+
+    private static QosBase mapNetworkQosToEntity(QoS model, NetworkQoS entity) {
+        if (model.isSetInboundAverage()) {
+            entity.setInboundAverage(IntegerMapper.mapMinusOneToNull(model.getInboundAverage()));
+        }
+        if (model.isSetInboundPeak()) {
+            entity.setInboundPeak(IntegerMapper.mapMinusOneToNull(model.getInboundPeak()));
+        }
+        if (model.isSetInboundBurst()) {
+            entity.setInboundBurst(IntegerMapper.mapMinusOneToNull(model.getInboundBurst()));
+        }
+        if (model.isSetOutboundAverage()) {
+            entity.setOutboundAverage(IntegerMapper.mapMinusOneToNull(model.getOutboundAverage()));
+        }
+        if (model.isSetOutboundPeak()) {
+            entity.setOutboundPeak(IntegerMapper.mapMinusOneToNull(model.getOutboundPeak()));
+
+        }
+        if (model.isSetOutboundBurst()) {
+            entity.setOutboundBurst(IntegerMapper.mapMinusOneToNull(model.getOutboundBurst()));
+        }
+        return entity;
+    }
+
+    private static QosBase mapCpuQosToEntity(QoS model, CpuQos entity) {
+        if (model.isSetCpuLimit()) {
+            entity.setCpuLimit(IntegerMapper.mapMinusOneToNull(model.getCpuLimit()));
+        }
+        return entity;
+    }
+
+    private static void mapStorageQosToEntity(QoS model, StorageQos entity) {
+        if (model.isSetMaxThroughput()) {
+            entity.setMaxThroughput(IntegerMapper.mapMinusOneToNull(model.getMaxThroughput()));
+        }
+        if (model.isSetMaxReadThroughput()) {
+            entity.setMaxReadThroughput(IntegerMapper.mapMinusOneToNull(model.getMaxReadThroughput()));
+        }
+        if (model.isSetMaxWriteThroughput()) {
+            entity.setMaxWriteThroughput(IntegerMapper.mapMinusOneToNull(model.getMaxWriteThroughput()));
+        }
+        if (model.isSetMaxIops()) {
+            entity.setMaxIops(IntegerMapper.mapMinusOneToNull(model.getMaxIops()));
+        }
+        if (model.isSetMaxReadIops()) {
+            entity.setMaxReadIops(IntegerMapper.mapMinusOneToNull(model.getMaxReadIops()));
+        }
+        if (model.isSetMaxWriteIops()) {
+            entity.setMaxWriteIops(IntegerMapper.mapMinusOneToNull(model.getMaxWriteIops()));
+        }
+    }
 
 }
