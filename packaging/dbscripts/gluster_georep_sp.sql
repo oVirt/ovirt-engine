@@ -270,3 +270,12 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetGeoRepSessionBySlaveVolume(v_slave_volume_id UUID)
+RETURNS SETOF gluster_georep_sessions_view STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM  gluster_georep_sessions_view
+    WHERE slave_volume_id = v_slave_volume_id;
+END; $procedure$
+LANGUAGE plpgsql;

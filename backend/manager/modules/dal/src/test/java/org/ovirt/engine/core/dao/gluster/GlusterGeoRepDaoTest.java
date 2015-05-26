@@ -120,6 +120,13 @@ public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
     }
 
     @Test
+    public void testGetGeoRepSessionBySlaveVolume() {
+        GlusterGeoRepSession session = dao.getGeoRepSessionBySlaveVolume(FixturesTool.GLUSTER_GEOREP_SESSION_SLAVE_VOLUME_ID);
+        assertNotNull(session);
+        assertEquals(FixturesTool.GLUSTER_GEOREP_SESSION_ID, session.getId());
+    }
+
+    @Test
     public void testUpdateDetails() {
         GlusterGeoRepSessionDetails sessionDetails = getGlusterGeoRepSessionDetails();
         dao.saveDetails(sessionDetails);

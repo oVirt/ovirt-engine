@@ -5,6 +5,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
+import java.util.Collections;
+import java.util.HashSet;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -38,7 +41,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest {
     public void commandSucceeds() {
         command =
                 spy(new SetupGlusterGeoRepMountBrokerInternalCommand(new SetUpMountBrokerParameters(Guid.newGuid(),
-                        "",
+                        new HashSet<Guid>(Collections.singletonList(Guid.newGuid())),
                         null,
                         null)));
         doReturn(vds).when(command).getUpServer();
@@ -51,7 +54,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest {
     public void commandFailsSlaveNotOvirtMonitored() {
         command =
                 spy(new SetupGlusterGeoRepMountBrokerInternalCommand(new SetUpMountBrokerParameters(Guid.newGuid(),
-                        "",
+                        new HashSet<Guid>(Collections.singletonList(Guid.newGuid())),
                         null,
                         null)));
         doReturn(vds).when(command).getUpServer();
@@ -63,7 +66,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest {
     public void commandFailsSlaveVolumeNotUp() {
         command =
                 spy(new SetupGlusterGeoRepMountBrokerInternalCommand(new SetUpMountBrokerParameters(Guid.newGuid(),
-                        "",
+                        new HashSet<Guid>(Collections.singletonList(Guid.newGuid())),
                         null,
                         null)));
         doReturn(vds).when(command).getUpServer();

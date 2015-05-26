@@ -36,6 +36,8 @@ public interface GlusterGeoRepDao extends DAO {
 
     public List<GlusterGeoRepSession> getGeoRepSessionsInCluster(Guid clusterId);
 
+    public GlusterGeoRepSession getGeoRepSessionBySlaveVolume(Guid slaveVolumeId);
+
     public void remove(Guid id);
 
     public void updateSession(GlusterGeoRepSession geoRepSession);

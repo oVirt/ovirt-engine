@@ -35,7 +35,8 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
                                 getGlusterVolumeName(),
                                 session.getSlaveHostName(),
                                 session.getSlaveVolumeName(),
-                                session.getUserName()));
+                                session.getUserName(),
+                                getParameters().isForce()));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
             session.setStatus(GeoRepSessionStatus.INITIALIZING);
@@ -51,7 +52,7 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
         if (!super.canDoAction()) {
             return false;
         }
-        if (getGeoRepSession().getStatus().equals(GeoRepSessionStatus.ACTIVE)) {
+        if (getGeoRepSession().getStatus().equals(GeoRepSessionStatus.ACTIVE) && !(getParameters().isForce())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_STARTED);
         }
         return true;

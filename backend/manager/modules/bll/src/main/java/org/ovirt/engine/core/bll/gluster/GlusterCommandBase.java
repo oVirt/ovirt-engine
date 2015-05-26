@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.validator.gluster.GlusterVolumeValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -117,12 +119,16 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     }
 
     protected void handleVdsErrors(AuditLogType errType, List<String> errors) {
-        errorType = errType;
-        getReturnValue().getExecuteFailedMessages().addAll(errors);
-        getReturnValue().getFault().setMessage(StringUtils.join(errors, SystemUtils.LINE_SEPARATOR));
+        propagateFailure(errType, errors);
         // Setting Error to null to make the FrontendErrorHandler to use the Message which is being set above instead of
         // the VdcBllErrors.ENGINE(which will get translated to "Internal engine error")
         getReturnValue().getFault().setError(null);
+    }
+
+    protected void propagateFailure(AuditLogType errType, List<String> errors) {
+        errorType = errType;
+        getReturnValue().getExecuteFailedMessages().addAll(errors);
+        getReturnValue().getFault().setMessage(StringUtils.join(errors, SystemUtils.LINE_SEPARATOR));
     }
 
     protected void handleVdsError(AuditLogType errType, String error) {
@@ -132,6 +138,27 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         // Setting Error to null to make the FrontendErrorHandler to use the Message which is being set above instead of
         // the VdcBllErrors.ENGINE(which will get translated to "Internal engine error")
         getReturnValue().getFault().setError(null);
+    }
+
+    protected boolean evaluateReturnValue(AuditLogType auditLogType, VdcReturnValueBase returnValue) {
+        boolean succeeded = returnValue.getCanDoAction();
+        if (!succeeded) {
+            handleVdsErrors(auditLogType, returnValue.getCanDoActionMessages());
+        }
+        succeeded = succeeded && returnValue.getSucceeded();
+        if (!succeeded) {
+            handleVdsErrors(auditLogType, returnValue.getExecuteFailedMessages());
+        }
+        return succeeded;
+    }
+
+    protected boolean evaluateReturnValue(AuditLogType auditLogType, VDSReturnValue returnValue) {
+        boolean succeeded = true;
+        succeeded = returnValue.getSucceeded();
+        if (!succeeded) {
+            handleVdsError(auditLogType, returnValue.getVdsError().getMessage());
+        }
+        return succeeded;
     }
 
     protected boolean updateBrickServerAndInterfaceNames(List<GlusterBrickEntity> bricks, boolean addCanDoActionMessage) {

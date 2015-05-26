@@ -2184,15 +2184,19 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
     }
 
+    protected void propagateFailure(VdcQueryReturnValue internalReturnValue) {
+        getReturnValue().getExecuteFailedMessages().add(internalReturnValue.getExceptionString());
+    }
+
     protected VdcReturnValueBase convertToVdcReturnValueBase(final VDSReturnValue vdsReturnValue) {
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setSucceeded(false);
         returnValue.setActionReturnValue(vdsReturnValue.getReturnValue());
-        returnValue.setExecuteFailedMessages(new ArrayList<String>()
-                {{
-                    add(vdsReturnValue.getVdsError().getMessage());
-                    }}
-        );
+        returnValue.setExecuteFailedMessages(new ArrayList<String>() {
+            {
+                add(vdsReturnValue.getVdsError().getMessage());
+            }
+        });
         return returnValue;
     }
 
