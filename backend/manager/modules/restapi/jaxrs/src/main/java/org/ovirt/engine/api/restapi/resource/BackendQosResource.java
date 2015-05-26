@@ -63,6 +63,8 @@ public class BackendQosResource extends AbstractBackendSubResource<QoS, QosBase>
             return VdcActionType.UpdateCpuQos;
         case NETWORK:
             return VdcActionType.UpdateNetworkQoS;
+        case HOSTNETWORK:
+            return VdcActionType.UpdateHostNetworkQos;
         default:
             throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
         }

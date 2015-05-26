@@ -4306,6 +4306,7 @@
           <xs:element ref="properties" minOccurs="0" maxOccurs="1"/>
           <xs:element name="reported_configurations" type="ReportedConfigurations" minOccurs="0"/>
           <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="qos" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -5336,32 +5337,22 @@
       <xs:extension base="BaseResource">
         <xs:sequence>
           <xs:element ref="data_center" minOccurs="0" maxOccurs="1" />
-          <xs:element name="max_throughput" type="xs:int"
-            minOccurs="0" maxOccurs="1" />
-          <xs:element name="max_read_throughput" type="xs:int" minOccurs="0"
-            maxOccurs="1" />
-          <xs:element name="max_write_throughput" type="xs:int"
-            minOccurs="0" maxOccurs="1" />
-          <xs:element name="max_iops" type="xs:int"
-            minOccurs="0" maxOccurs="1" />
-          <xs:element name="max_read_iops" type="xs:int"
-            minOccurs="0" maxOccurs="1" />
-          <xs:element name="max_write_iops" type="xs:int"
-            minOccurs="0" maxOccurs="1" />
-          <xs:element name="cpu_limit" type="xs:int"
-            minOccurs="0" maxOccurs="1" />
-          <xs:element name="inbound_average" type="xs:int" minOccurs="0"
-            maxOccurs="1" />
-          <xs:element name="inbound_peak" type="xs:int" minOccurs="0"
-            maxOccurs="1" />
-          <xs:element name="inbound_burst" type="xs:int" minOccurs="0"
-            maxOccurs="1" />
-          <xs:element name="outbound_average" type="xs:int" minOccurs="0"
-            maxOccurs="1" />
-          <xs:element name="outbound_peak" type="xs:int" minOccurs="0"
-            maxOccurs="1" />
-          <xs:element name="outbound_burst" type="xs:int" minOccurs="0"
-            maxOccurs="1" />
+          <xs:element name="max_throughput" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="max_read_throughput" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="max_write_throughput" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="max_iops" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="max_read_iops" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="max_write_iops" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="cpu_limit" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="inbound_average" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="inbound_peak" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="inbound_burst" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="outbound_average" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="outbound_peak" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="outbound_burst" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="outbound_average_linkshare" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="outbound_average_upperlimit" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="outbound_average_realtime" type="xs:int" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string"/>
       </xs:extension>

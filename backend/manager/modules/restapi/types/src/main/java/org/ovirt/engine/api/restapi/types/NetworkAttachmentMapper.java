@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkAttachment;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 
@@ -66,6 +67,10 @@ public class NetworkAttachmentMapper {
             for (IpAddressAssignment ipAddressAssignment : ipAddressAssignments.getIpAddressAssignments()) {
                 entity.getIpConfiguration().getIPv4Addresses().add(mapIpAddressAssignment(ipAddressAssignment));
             }
+        }
+
+        if (model.isSetQos()) {
+            entity.setHostNetworkQos((HostNetworkQos) QosMapper.map(model.getQos(), null));
         }
 
         return entity;
@@ -138,6 +143,10 @@ public class NetworkAttachmentMapper {
 
         if (entity.getReportedConfigurations() != null) {
             model.setReportedConfigurations(ReportedConfigurationsMapper.map(entity.getReportedConfigurations(), null));
+        }
+
+        if (entity.getHostNetworkQos() != null) {
+            model.setQos(QosMapper.map(entity.getHostNetworkQos(), null));
         }
 
         return model;

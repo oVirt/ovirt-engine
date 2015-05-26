@@ -1068,7 +1068,10 @@ actions:
                            qos.inbound_burst: 'xs:int',
                            qos.outbound_average: 'xs:int',
                            qos.outbound_peak: 'xs:int',
-                           qos.outbound_burst: 'xs:int'}
+                           qos.outbound_burst: 'xs:int',
+                           qos.outbound_average_linkshare: 'xs:int',
+                           qos.outbound_average_upperlimit: 'xs:int',
+                           qos.outbound_average_realtime: 'xs:int'}
 - name: /datacenters/{datacenter:id}/qoss|rel=add
   description: add a new QoS to the datacenter
   request:
@@ -1089,7 +1092,10 @@ actions:
                            qos.inbound_burst: 'xs:int',
                            qos.outbound_average: 'xs:int',
                            qos.outbound_peak: 'xs:int',
-                           qos.outbound_burst: 'xs:int'}
+                           qos.outbound_burst: 'xs:int',
+                           qos.outbound_average_linkshare: 'xs:int',
+                           qos.outbound_average_upperlimit: 'xs:int',
+                           qos.outbound_average_realtime: 'xs:int'}
         description: add a new QoS to the datacenter
 - name: /storagedomains|rel=get
   description: get storage domains in the system
