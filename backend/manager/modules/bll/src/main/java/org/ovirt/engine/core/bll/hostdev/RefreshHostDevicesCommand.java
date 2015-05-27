@@ -14,18 +14,18 @@ import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
-import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -51,6 +51,10 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
     @Inject
     private HostNicVfsConfigHelper hostNicVfsConfigHelper;
 
+    private Map<String, HostDevice> oldMap;
+
+    private Map<String, HostDevice> fetchedMap;
+
     public RefreshHostDevicesCommand(T parameters) {
         super(parameters);
     }
@@ -71,8 +75,8 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
         List<HostDevice> oldDevices = hostDeviceDao.getHostDevicesByHostId(getVdsId());
         List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByType(VmDeviceGeneralType.HOSTDEV);
 
-        Map<String, HostDevice> fetchedMap = Entities.entitiesByName(fetchedDevices);
-        final Map<String, HostDevice> oldMap = Entities.entitiesByName(oldDevices);
+        fetchedMap = Entities.entitiesByName(fetchedDevices);
+        oldMap = Entities.entitiesByName(oldDevices);
         Map<String, VmDevice> vmDeviceMap = Entities.vmDevicesByDevice(vmDevices);
 
         final List<HostDevice> newDevices = new ArrayList<>();
@@ -110,12 +114,13 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
+
+                    hostDeviceDao.removeAllInBatch(removedDevices);
                     hostDeviceDao.saveAllInBatch(newDevices);
                     hostDeviceDao.updateAllInBatch(changedDevices);
 
-                    handleHostNicVfsConfigUpdate(oldMap, newDevices, changedDevices, removedDevices);
+                    handleHostNicVfsConfigUpdate(newDevices, changedDevices, removedDevices);
 
-                    hostDeviceDao.removeAllInBatch(removedDevices);
                     vmDeviceDao.removeAllInBatch(removedVmDevices);
 
                     return null;
@@ -128,8 +133,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
         setSucceeded(true);
     }
 
-    private void handleHostNicVfsConfigUpdate(final Map<String, HostDevice> oldMap,
-            final List<HostDevice> newDevices,
+    private void handleHostNicVfsConfigUpdate(final List<HostDevice> newDevices,
             final List<HostDevice> changedDevices,
             final List<HostDevice> removedDevices) {
         final List<HostNicVfsConfig> newHostNicVfsConfigs = new ArrayList<>();
@@ -161,12 +165,12 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
             }
         }
 
-        if (!newHostNicVfsConfigs.isEmpty()) {
-            hostNicVfsConfigDao.saveAllInBatch(newHostNicVfsConfigs);
-        }
-
         if (!removedHostNicVfsConfigs.isEmpty()) {
             hostNicVfsConfigDao.removeAllInBatch(removedHostNicVfsConfigs);
+        }
+
+        if (!newHostNicVfsConfigs.isEmpty()) {
+            hostNicVfsConfigDao.saveAllInBatch(newHostNicVfsConfigs);
         }
     }
 
@@ -177,7 +181,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
     }
 
     private HostNicVfsConfig getHostNicVfsConfigToAdd(HostDevice device) {
-        VdsNetworkInterface nic = hostNicVfsConfigHelper.getNicByPciDevice(device);
+        VdsNetworkInterface nic = hostNicVfsConfigHelper.getNicByPciDevice(device, fetchedMap.values());
 
         if (nic == null) {
             return null;
@@ -192,7 +196,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
     }
 
     private HostNicVfsConfig getHostNicVfsConfigToRemove(HostDevice device) {
-        VdsNetworkInterface nic = hostNicVfsConfigHelper.getNicByPciDevice(device);
+        VdsNetworkInterface nic = hostNicVfsConfigHelper.getNicByPciDevice(device, oldMap.values());
         if (nic == null) {
             return null;
         }

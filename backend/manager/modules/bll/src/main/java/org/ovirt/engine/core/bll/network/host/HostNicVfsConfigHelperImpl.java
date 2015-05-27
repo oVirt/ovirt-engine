@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -38,7 +39,12 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
 
     @Override
     public VdsNetworkInterface getNicByPciDevice(final HostDevice pciDevice) {
-        final HostDevice netDevice = getNetDeviceByPciDevice(pciDevice);
+        return getNicByPciDevice(pciDevice, null);
+    }
+
+    @Override
+    public VdsNetworkInterface getNicByPciDevice(final HostDevice pciDevice, Collection<HostDevice> devices) {
+        final HostDevice netDevice = getNetDeviceByPciDevice(pciDevice, devices);
 
         if (netDevice == null || !isNetworkDevice(netDevice)) {
             return null;
@@ -55,8 +61,9 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
         });
     }
 
-    private HostDevice getNetDeviceByPciDevice(final HostDevice pciDevice) {
-        return LinqUtils.firstOrNull(getDevicesByHostId(pciDevice.getHostId()), new Predicate<HostDevice>() {
+    private HostDevice getNetDeviceByPciDevice(final HostDevice pciDevice, Collection<HostDevice> devices) {
+        Collection<HostDevice> hostDevices = devices == null ? getDevicesByHostId(pciDevice.getHostId()) : devices;
+        return LinqUtils.firstOrNull(hostDevices, new Predicate<HostDevice>() {
 
             @Override
             public boolean eval(HostDevice device) {

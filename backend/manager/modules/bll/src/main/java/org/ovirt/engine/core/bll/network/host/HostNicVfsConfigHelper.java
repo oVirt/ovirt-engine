@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +20,18 @@ public interface HostNicVfsConfigHelper {
      *         is returned.
      */
     public VdsNetworkInterface getNicByPciDevice(final HostDevice pciDevice);
+
+    /**
+     * Retrieves the <code>VdsNetworkInterface</code> that the specified <code>pciDevice</code> represents.
+     * This method uses the specified <code>devices</code> and doesn't fetch data from the DB.
+     *
+     * @param pciDevice
+     * @param devices collection of all the devices.
+     * @return the <code>VdsNetworkInterface</code> that the specified <code>pciDevice</code> represents. If the device
+     *         is not parent of network interface device or doesn't exist in the VdsInterface table a <code>null</code>
+     *         is returned.
+     */
+    public VdsNetworkInterface getNicByPciDevice(final HostDevice pciDevice, Collection<HostDevice> devices);
 
     /**
      * Retrieves whether the specified <code>device</code> is SR-IOV enabled.

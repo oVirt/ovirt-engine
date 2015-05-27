@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -118,6 +119,15 @@ public class HostNicVfsConfigHelperImplTest {
     public void getNicByNetDeviceValid() {
         mockNics(Collections.<VdsNetworkInterface> emptyList(), true);
         assertEquals(nic, hostNicVfsConfigHelper.getNicByPciDevice(pciDevice));
+    }
+
+    @Test
+    public void getNicByNetDeviceWithNonDbDevicesNoNetDevice() {
+        mockNics(Collections.<VdsNetworkInterface> emptyList(), true);
+        Collection<HostDevice> devices = new ArrayList<>();
+        devices.add(pciDevice);
+
+        assertNull(hostNicVfsConfigHelper.getNicByPciDevice(pciDevice, devices));
     }
 
     @Test
