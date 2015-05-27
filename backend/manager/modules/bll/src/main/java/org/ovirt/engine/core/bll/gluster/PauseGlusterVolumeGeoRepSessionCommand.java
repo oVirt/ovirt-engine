@@ -52,6 +52,9 @@ public class PauseGlusterVolumeGeoRepSessionCommand extends GeoRepSessionCommand
         if (!getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_GEO_REP_PAUSE_FAILED, returnValue.getVdsError().getMessage());
             return;
+        } else {
+            session.setStatus(GeoRepSessionStatus.PAUSED);
+            getGlusterGeoRepDao().updateSession(session);
         }
     }
 

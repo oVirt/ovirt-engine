@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionPar
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeSnapshotActionParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -30,9 +32,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCommandBase<GlusterVolumeSnapshotActionParameters> {
     private List<GlusterGeoRepSession> georepSessions;
+    private List<GlusterGeoRepSession> engineStoppedSessions;
 
     public RestoreGlusterVolumeSnapshotCommand(GlusterVolumeSnapshotActionParameters params) {
         super(params);
+        engineStoppedSessions = new ArrayList<>();
         georepSessions = getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
     }
 
@@ -44,15 +48,19 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
 
     private boolean stopGeoReplicationSessions(List<GlusterGeoRepSession> geoRepSessions) {
         for (GlusterGeoRepSession session : geoRepSessions) {
-            try (EngineLock lock = acquireGeoRepSessionLock(session.getId())) {
-                VdcReturnValueBase retVal = runInternalAction(VdcActionType.StopGeoRepSession,
-                        new GlusterVolumeGeoRepSessionParameters(getGlusterVolumeId(), session.getId()));
+            if (!(session.getStatus() == GeoRepSessionStatus.STOPPED || session.getStatus() == GeoRepSessionStatus.CREATED)) {
+                try (EngineLock lock = acquireGeoRepSessionLock(session.getId())) {
+                    VdcReturnValueBase retVal = runInternalAction(VdcActionType.StopGeoRepSession,
+                            new GlusterVolumeGeoRepSessionParameters(getGlusterVolumeId(), session.getId()));
 
-                if (!retVal.getSucceeded()) {
-                    handleVdsError(AuditLogType.GEOREP_SESSION_STOP_FAILED, retVal.getExecuteFailedMessages()
-                            .toString());
-                    setSucceeded(false);
-                    return false;
+                    if (!retVal.getSucceeded()) {
+                        handleVdsError(AuditLogType.GEOREP_SESSION_STOP_FAILED, retVal.getExecuteFailedMessages()
+                                .toString());
+                        setSucceeded(false);
+                        return false;
+                    }
+                    session.setStatus(GeoRepSessionStatus.STOPPED);
+                    engineStoppedSessions.add(session);
                 }
             }
         }
@@ -219,7 +227,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
             @Override
             public Boolean runInTransaction() {
                 if (georepSessions != null) {
-                    // Pause the geo-replication session
+                    // Stop the geo-replication session
                     if (!stopGeoReplicationSessions(georepSessions)) {
                         return false;
                     }
@@ -261,11 +269,8 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
             return;
         }
 
-        List<GlusterGeoRepSession> updatedGeoRepSessions =
-                getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
-
         // Start the slave volumes
-        if (updatedGeoRepSessions != null && !startSlaveVolumes(updatedGeoRepSessions)) {
+        if (engineStoppedSessions != null && !startSlaveVolumes(engineStoppedSessions)) {
             return;
         }
 
@@ -274,14 +279,14 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
             return;
         }
 
-        if (updatedGeoRepSessions != null) {
+        if (engineStoppedSessions != null) {
             // Start the geo-replication sessions
-            if (!startGeoRepSessions(updatedGeoRepSessions)) {
+            if (!startGeoRepSessions(engineStoppedSessions)) {
                 return;
             }
 
             // Resume the geo-replication sessions
-            if (!resumeGeoRepSessions(updatedGeoRepSessions)) {
+            if (!resumeGeoRepSessions(engineStoppedSessions)) {
                 return;
             }
         }
