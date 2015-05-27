@@ -15,9 +15,17 @@ public abstract class ManagingVmCommand<P extends VdsAndVmIDVDSParametersBase> e
         vmManager.lock();
         try {
             executeVmCommand();
+            updateVmDataChangedTime();
         } finally {
             vmManager.unlock();
         }
+    }
+
+    /**
+     * update the time the vm data was changed
+     */
+    protected void updateVmDataChangedTime() {
+        vmManager.updateVmDataChangedTime();
     }
 
     protected abstract void executeVmCommand();

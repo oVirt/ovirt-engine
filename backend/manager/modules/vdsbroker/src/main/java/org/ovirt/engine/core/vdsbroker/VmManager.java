@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.util.concurrent.locks.ReentrantLock;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -12,18 +13,18 @@ import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-import java.util.concurrent.locks.ReentrantLock;
-
 public class VmManager {
 
     private final Guid id;
     private final ReentrantLock lock = new ReentrantLock();
+    private long vmDataChangedTime;
 
     private int convertOperationProgress;
     private String convertOperationDescription;
 
     public VmManager(Guid id) {
         this.id = id;
+        updateVmDataChangedTime();
     }
 
     public void lock() {
@@ -91,5 +92,19 @@ public class VmManager {
     public void updateConvertOperation(String description, int progress) {
         this.convertOperationDescription = description;
         this.convertOperationProgress = progress;
+    }
+
+    public long getVmDataChangedTime () {
+        return vmDataChangedTime;
+    }
+
+    /**
+     * set the changed time of the vm data to the current System.nanoTime()
+     * nanoTime should be used as it is more accurate and monotonic,
+     *
+     * in general this should be called while holding the manager lock
+     */
+    public final void updateVmDataChangedTime() {
+        vmDataChangedTime = System.nanoTime();
     }
 }

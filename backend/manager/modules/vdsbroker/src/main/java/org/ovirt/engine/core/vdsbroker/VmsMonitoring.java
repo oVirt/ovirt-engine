@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -54,6 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 public class VmsMonitoring {
 
+    private final long fetchTime;
     private VdsManager vdsManager;
     /**
      * The Vms we want to monitor and analyze for changes.
@@ -111,11 +111,13 @@ public class VmsMonitoring {
             VdsManager vdsManager,
             List<Pair<VM, VmInternalData>> monitoredVms,
             List<Pair<VM, VmInternalData>> vmsWithChangedDevices,
-            AuditLogDirector auditLogDirector) {
+            AuditLogDirector auditLogDirector,
+            long fetchTime) {
         this.vdsManager = vdsManager;
         this.monitoredVms = monitoredVms;
         this.vmsWithChangedDevices = vmsWithChangedDevices;
         this.auditLogDirector = auditLogDirector;
+        this.fetchTime = fetchTime;
     }
 
     /**
@@ -146,9 +148,18 @@ public class VmsMonitoring {
         if (vmId != null) {
             VmManager vmManager = getResourceManager().getVmManager(vmId);
             if (vmManager.trylock()) {
-                // store the locked managers to finally release them at the end of the cycle
-                vmManagers.put(vmId, vmManager);
-                return true;
+                if (fetchTime - vmManager.getVmDataChangedTime() <= 0) {
+                    log.warn("skipping VM '{}' from this monitoring cycle" +
+                            " - the VM data has changed since fetching the data", vmId);
+                    vmManager.unlock();
+                } else {
+                    // store the locked managers to finally release them at the end of the cycle
+                    vmManagers.put(vmId, vmManager);
+                    return true;
+                }
+            } else {
+                log.debug("skipping VM '{}' from this monitoring cycle" +
+                        " - the VM is locked by its VmManager ", getVmId(pair));
             }
         }
         return false;
@@ -156,6 +167,7 @@ public class VmsMonitoring {
 
     private void unlockVmsManager() {
         for (VmManager vmManager : vmManagers.values()) {
+            vmManager.updateVmDataChangedTime();
             vmManager.unlock();
         }
     }
@@ -181,9 +193,6 @@ public class VmsMonitoring {
                 if (vmAnalyzer.isExternalVm()) {
                     externalVms.add(new Pair<>(vmAnalyzer.getDbVm(), vmAnalyzer.getVdsmVm()));
                 }
-            } else {
-                log.debug("skipping VM '{}' from this monitoring cycle" +
-                        " - the VM is locked by its VmManager ", getVmId(pair));
             }
         }
 

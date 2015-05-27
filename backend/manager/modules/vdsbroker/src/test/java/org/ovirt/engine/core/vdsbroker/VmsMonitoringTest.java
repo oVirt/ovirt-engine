@@ -1,14 +1,10 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
@@ -35,6 +31,9 @@ import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 @Ignore
 @RunWith(MockitoJUnitRunner.class)
@@ -117,7 +116,8 @@ public class VmsMonitoringTest {
                 new VmsMonitoring(
                         vdsManager,
                         Arrays.asList(VmTestPairs.MIGRATION_DONE.build()),
-                        Collections.<Pair<VM, VmInternalData>>emptyList(), auditLogDirector) {
+                        Collections.<Pair<VM, VmInternalData>>emptyList(), auditLogDirector,
+                        System.nanoTime()) {
 
                     @Override
                     public DbFacade getDbFacade() {

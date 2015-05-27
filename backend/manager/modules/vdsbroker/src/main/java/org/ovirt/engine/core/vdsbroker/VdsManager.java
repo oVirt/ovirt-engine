@@ -287,11 +287,13 @@ public class VdsManager {
                     getRefreshStatistics() ?
                             new VmsStatisticsFetcher(this) :
                             new VmsListFetcher(this);
+            long fetchTime = System.nanoTime();
             fetcher.fetch();
             new VmsMonitoring(this,
                     fetcher.getChangedVms(),
                     fetcher.getVmsWithChangedDevices(),
-                    auditLogDirector
+                    auditLogDirector,
+                    fetchTime
             ).perform();
         }
     }
