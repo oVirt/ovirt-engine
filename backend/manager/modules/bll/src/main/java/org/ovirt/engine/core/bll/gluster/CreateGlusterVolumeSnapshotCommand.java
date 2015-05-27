@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,11 +39,13 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
     private GlusterVolumeSnapshotEntity snapshot;
     private boolean force;
     private List<GlusterGeoRepSession> georepSessions;
+    private List<GlusterGeoRepSession> enginePausedSessions;
 
     public CreateGlusterVolumeSnapshotCommand(CreateGlusterVolumeSnapshotParameters params) {
         super(params);
         this.snapshot = params.getSnapshot();
         this.force = params.getForce();
+        this.enginePausedSessions = new ArrayList<>();
 
         if (this.snapshot != null) {
             setVdsGroupId(this.snapshot.getClusterId());
@@ -61,64 +64,68 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
     private boolean pauseAndCreateSnapshotForGeoRepSessions() {
         if (georepSessions != null && georepSessions.size() > 0) {
             for (GlusterGeoRepSession session : georepSessions) {
-                if (session.getStatus() != GeoRepSessionStatus.PAUSED) {
-                    final GlusterVolumeEntity slaveVolume =
-                            getDbFacade().getGlusterVolumeDao().getById(session.getSlaveVolumeId());
+                final GlusterVolumeEntity slaveVolume =
+                        getDbFacade().getGlusterVolumeDao().getById(session.getSlaveVolumeId());
 
-                    if (slaveVolume == null) {
-                        // Continue to other geo-rep sessions and pause them for snapshot purpose
-                        continue;
-                    }
+                if (slaveVolume == null) {
+                    // Continue to other geo-rep sessions and pause them for snapshot purpose
+                    continue;
+                }
 
-                    VDS slaveUpServer = ClusterUtils.getInstance().getRandomUpServer(slaveVolume.getClusterId());
-                    if (slaveUpServer == null) {
-                        handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED,
-                                "No up server found in slave cluster of geo-rep session");
-                        setSucceeded(false);
-                        return false;
-                    }
+                VDS slaveUpServer = ClusterUtils.getInstance().getRandomUpServer(slaveVolume.getClusterId());
+                if (slaveUpServer == null) {
+                    handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED,
+                            "No up server found in slave cluster of geo-rep session");
+                    setSucceeded(false);
+                    return false;
+                }
 
-                    // Pause the geo-rep session and create snapshot for remote volume
+                // Pause the geo-rep session if required
+                if (!(session.getStatus() == GeoRepSessionStatus.CREATED
+                        || session.getStatus() == GeoRepSessionStatus.PAUSED
+                        || session.getStatus() == GeoRepSessionStatus.STOPPED)) {
                     VdcReturnValueBase sessionPauseRetVal = null;
                     try (EngineLock lock = acquireEngineLock(slaveVolume.getId(), LockingGroup.GLUSTER_SNAPSHOT)) {
                         sessionPauseRetVal =
                                 runInternalAction(VdcActionType.PauseGlusterVolumeGeoRepSession,
-                                        new GlusterVolumeGeoRepSessionParameters(getGlusterVolumeId(), session.getId()));
+                                        new GlusterVolumeGeoRepSessionParameters(getGlusterVolumeId(),
+                                                session.getId()));
                     }
                     if (sessionPauseRetVal != null && !sessionPauseRetVal.getSucceeded()) {
                         handleVdsErrors(AuditLogType.GLUSTER_VOLUME_GEO_REP_PAUSE_FAILED,
                                 sessionPauseRetVal.getExecuteFailedMessages());
                         setSucceeded(false);
                         return false;
-                    } else {
-                        // Create snapshot for slave volume
-                        VDSReturnValue snapCreationRetVal =
-                                runVdsCommand(VDSCommandType.CreateGlusterVolumeSnapshot,
-                                        new CreateGlusterVolumeSnapshotVDSParameters(slaveUpServer.getId(),
-                                                session.getSlaveVolumeName(),
-                                                snapshot.getSnapshotName(),
-                                                snapshot.getDescription(),
-                                                force));
-                        if (!snapCreationRetVal.getSucceeded()) {
-                            handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED,
-                                    snapCreationRetVal.getVdsError().getMessage());
+                    }
+                    session.setStatus(GeoRepSessionStatus.PAUSED);
+                    enginePausedSessions.add(session);
+                }
+
+                // Create snapshot for slave volume
+                VDSReturnValue snapCreationRetVal =
+                        runVdsCommand(VDSCommandType.CreateGlusterVolumeSnapshot,
+                                new CreateGlusterVolumeSnapshotVDSParameters(slaveUpServer.getId(),
+                                        session.getSlaveVolumeName(),
+                                        snapshot.getSnapshotName(),
+                                        snapshot.getDescription(),
+                                        force));
+                if (!snapCreationRetVal.getSucceeded()) {
+                    handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED,
+                            snapCreationRetVal.getVdsError().getMessage());
                             setSucceeded(false);
                             return false;
-                        } else {
-                            // Persist the snapshot details
-                            GlusterVolumeSnapshotEntity slaveVolumeSnapshot =
-                                    (GlusterVolumeSnapshotEntity) snapCreationRetVal.getReturnValue();
-                            slaveVolumeSnapshot.setClusterId(slaveVolume.getClusterId());
-                            slaveVolumeSnapshot.setVolumeId(slaveVolume.getId());
-                            slaveVolumeSnapshot.setDescription(snapshot.getDescription());
-                            slaveVolumeSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
-                            getDbFacade().getGlusterVolumeSnapshotDao().save(slaveVolumeSnapshot);
+                } else {
+                    // Persist the snapshot details
+                    GlusterVolumeSnapshotEntity slaveVolumeSnapshot =
+                            (GlusterVolumeSnapshotEntity) snapCreationRetVal.getReturnValue();
+                    slaveVolumeSnapshot.setClusterId(slaveVolume.getClusterId());
+                    slaveVolumeSnapshot.setVolumeId(slaveVolume.getId());
+                    slaveVolumeSnapshot.setDescription(snapshot.getDescription());
+                    slaveVolumeSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
+                    getDbFacade().getGlusterVolumeSnapshotDao().save(slaveVolumeSnapshot);
 
-                            // check if the snapshot soft limit reached now for the volume and alert
-                            getGlusterUtil().alertVolumeSnapshotLimitsReached(slaveVolume);
-
-                        }
-                    }
+                    // check if the snapshot soft limit reached now for the volume and alert
+                    getGlusterUtil().alertVolumeSnapshotLimitsReached(slaveVolume);
                 }
             }
         }
@@ -166,22 +173,18 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             getGlusterUtil().alertVolumeSnapshotLimitsReached(getGlusterVolume());
         }
 
-        // Resume the snapshot sessions
-        List<GlusterGeoRepSession> updatedGeoRepSessions =
-                getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(volume.getId());
-        if (updatedGeoRepSessions != null && updatedGeoRepSessions.size() > 0) {
-            for (GlusterGeoRepSession session : updatedGeoRepSessions) {
-                if (session.getStatus() == GeoRepSessionStatus.PAUSED) {
-                    try (EngineLock lock = acquireGeoRepSessionLock(session.getId())) {
-                        VdcReturnValueBase sessionResumeRetVal =
-                                runInternalAction(VdcActionType.ResumeGeoRepSession,
-                                        new GlusterVolumeGeoRepSessionParameters(volume.getId(), session.getId()));
-                        if (!sessionResumeRetVal.getSucceeded()) {
-                            handleVdsErrors(AuditLogType.GLUSTER_VOLUME_GEO_REP_RESUME_FAILED,
-                                    sessionResumeRetVal.getExecuteFailedMessages());
-                            setSucceeded(false);
-                            return;
-                        }
+        // Resume the snapshot paused sessions by engine
+        for (GlusterGeoRepSession session : enginePausedSessions) {
+            if (session.getStatus() == GeoRepSessionStatus.PAUSED) {
+                try (EngineLock lock = acquireGeoRepSessionLock(session.getId())) {
+                    VdcReturnValueBase sessionResumeRetVal =
+                            runInternalAction(VdcActionType.ResumeGeoRepSession,
+                                    new GlusterVolumeGeoRepSessionParameters(volume.getId(), session.getId()));
+                    if (!sessionResumeRetVal.getSucceeded()) {
+                        handleVdsErrors(AuditLogType.GLUSTER_VOLUME_GEO_REP_RESUME_FAILED,
+                                sessionResumeRetVal.getExecuteFailedMessages());
+                        setSucceeded(false);
+                        return;
                     }
                 }
             }
