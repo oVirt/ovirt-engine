@@ -76,6 +76,6 @@ public class NicPanel<T extends NetworkInterfaceModel> extends NetworkItemPanel<
 
     @Override
     protected void onAction() {
-       item.edit();
+        item.edit();
     }
 }

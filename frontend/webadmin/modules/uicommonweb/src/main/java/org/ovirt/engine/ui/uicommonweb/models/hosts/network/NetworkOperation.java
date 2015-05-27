@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel.NewNetworkLabelModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 /**
@@ -380,6 +381,90 @@ public enum NetworkOperation {
         }
 
     },
+    LABEL {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return (op1 instanceof NewNetworkLabelModel) ? ConstantsManager.getInstance().getConstants().newLabel()
+                    : ConstantsManager.getInstance().getMessages().label(op1.getName());
+        }
+
+        @Override
+        protected NetworkOperationCommandTarget getTarget() {
+            return new NetworkOperationCommandTarget() {
+                @Override
+                protected void executeNetworkCommand(NetworkItemModel<?> op1,
+                        NetworkItemModel<?> op2,
+                        List<VdsNetworkInterface> allNics,
+                        Object... params) {
+                    NetworkLabelModel label = (NetworkLabelModel) op1;
+                    NetworkInterfaceModel iface = (NetworkInterfaceModel) op2;
+
+                    if (label.isAttached()) {
+                        UNLABEL.getCommand(label, null, allNics).execute();
+                    }
+
+                    iface.label(label);
+                    for (LogicalNetworkModel network : label.getNetworks()) {
+                        ATTACH_NETWORK.getCommand(network, iface, allNics).execute();
+                        network.attachViaLabel();
+                    }
+                }
+            };
+        }
+
+        @Override
+        public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            for (LogicalNetworkModel network : ((NetworkLabelModel) op1).getNetworks()) {
+                if (ATTACH_NETWORK.isDisplayNetworkAffected(network, null)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    },
+    UNLABEL {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getMessages().unlabel(op1.getName());
+        }
+
+        @Override
+        public boolean isUnary() {
+            return true;
+        }
+
+        @Override
+        protected NetworkOperationCommandTarget getTarget() {
+            return new NetworkOperationCommandTarget() {
+
+                @Override
+                protected void executeNetworkCommand(NetworkItemModel<?> op1,
+                        NetworkItemModel<?> op2,
+                        List<VdsNetworkInterface> allNics,
+                        Object... params) {
+                    NetworkLabelModel label = (NetworkLabelModel) op1;
+                    label.getInterface().unlabel(label);
+                    for (LogicalNetworkModel network : label.getNetworks()) {
+                        DETACH_NETWORK.getCommand(network, null, allNics).execute();
+                    }
+                }
+            };
+        }
+
+        @Override
+        public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            for (LogicalNetworkModel network : ((NetworkLabelModel) op1).getNetworks()) {
+                if (DETACH_NETWORK.isDisplayNetworkAffected(network, null)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    },
     NULL_OPERATION {
 
         @Override
@@ -416,7 +501,7 @@ public enum NetworkOperation {
         }
 
     },
-    NULL_OPERATION_BOND_UNMANAGED {
+    NULL_OPERATION_BATCH_UNMANAGED {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
@@ -452,7 +537,7 @@ public enum NetworkOperation {
         }
 
     },
-    NULL_OPERATION_BOND_OUT_OF_SYNC {
+    NULL_OPERATION_BATCH_OUT_OF_SYNC {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
@@ -488,7 +573,7 @@ public enum NetworkOperation {
         }
 
     },
-    NULL_OPERATION_BOND_TOO_MANY_NON_VLANS {
+    NULL_OPERATION_BATCH_TOO_MANY_NON_VLANS {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
@@ -523,7 +608,7 @@ public enum NetworkOperation {
             return true;
         }
     },
-    NULL_OPERATION_BOND_VM_WITH_VLANS {
+    NULL_OPERATION_BATCH_VM_WITH_VLANS {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
@@ -542,7 +627,7 @@ public enum NetworkOperation {
 
     };
 
-    public static void clearNetworks(NetworkInterfaceModel nic, List<VdsNetworkInterface> allNics) {
+    private static void clearNetworks(NetworkInterfaceModel nic, List<VdsNetworkInterface> allNics) {
         List<LogicalNetworkModel> attachedNetworks = nic.getItems();
         if (attachedNetworks.size() > 0) {
             for (LogicalNetworkModel networkModel : new ArrayList<LogicalNetworkModel>(attachedNetworks)) {
@@ -602,9 +687,13 @@ public enum NetworkOperation {
         return message;
     }
 
-    protected String appendDetachNetworkSuggestion(String originalMessage, NetworkInterfaceModel nic) {
-        return originalMessage + ' '
-                + ConstantsManager.getInstance().getMessages().suggestDetachNetwork(nic.getCulpritNetwork());
+    protected String appendDetachNetworkSuggestion(String originalMessage, NetworkItemModel<?> item) {
+        String res = originalMessage;
+        String culpritNetwork = item.getCulpritNetwork();
+        if (culpritNetwork != null) {
+            res += ' ' + ConstantsManager.getInstance().getMessages().suggestDetachNetwork(item.getCulpritNetwork());
+        }
+        return res;
     }
 
     /**
@@ -651,7 +740,6 @@ public enum NetworkOperation {
         return false;
     }
 
-    @SuppressWarnings("unused")
     public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
         return false;
     }

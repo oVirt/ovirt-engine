@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
@@ -13,6 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCandidateEventArgs;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -25,7 +27,9 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.ExternalNetworkPanel;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.ExternalNetworksPanel;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkLabelPanel;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkLabelPanel.NewNetworkLabelPanel;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.SimpleNetworkItemsPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InternalNetworkPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InternalNetworksPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkGroup;
@@ -36,9 +40,12 @@ import org.ovirt.engine.ui.webadmin.widget.footer.StatusPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.inject.Inject;
 
 public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<HostSetupNetworksModel> implements HostSetupNetworksPopupPresenterWidget.ViewDef {
@@ -51,10 +58,22 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     }
 
     @UiField
+    RadioButtonsHorizontalPanel networksOrLabels;
+
+    @UiField
+    Panel networksPanel;
+
+    @UiField
+    Panel labelsPanel;
+
+    @UiField
     InternalNetworksPanel internalNetworkList;
 
     @UiField
-    ExternalNetworksPanel externalNetworkList;
+    SimpleNetworkItemsPanel<NetworkPanel> externalNetworkList;
+
+    @UiField
+    SimpleNetworkItemsPanel<NetworkLabelPanel> labelsList;
 
     @UiField(provided = true)
     InfoIcon externalNetworksInfo;
@@ -107,14 +126,33 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         initStatusPanel();
         checkConnectivity.setContentWidgetContainerStyleName(style.checkCon());
         commitChanges.setContentWidgetContainerStyleName(style.commitChanges());
-        initUnassignedNetworksPanel();
+        initUnassignedItemsPanel();
         localize();
         driver.initialize(this);
     }
 
-    private void initUnassignedNetworksPanel() {
+    private void initUnassignedItemsPanel() {
         internalNetworkList.setStyle(style);
         externalNetworkList.setStyle(style);
+        labelsList.setStyle(style);
+
+        networksOrLabels.addRadioButton(constants.networksPanel(), true, true, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                onRadioButtonSelection(true);
+            }
+        });
+        networksOrLabels.addRadioButton(constants.labelsPanel(), false, true, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                onRadioButtonSelection(false);
+            }
+        });
+    }
+
+    private void onRadioButtonSelection(boolean networksPanelSelected) {
+        networksPanel.setVisible(networksPanelSelected);
+        labelsPanel.setVisible(!networksPanelSelected);
     }
 
     private void localize() {
@@ -130,14 +168,13 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 // this is called after both networks and nics were retrieved
                 HostSetupNetworksModel model = (HostSetupNetworksModel) sender;
-                List<LogicalNetworkModel> networks = model.getNetworks();
-                List<NetworkInterfaceModel> nics = model.getNics();
                 if (!keepStatusText) {
                     initStatusPanel();
                 }
                 keepStatusText = false;
-                updateNetworks(networks);
-                updateNics(nics);
+                updateNetworks(model.getNetworks());
+                updateLabels(model.getNewNetworkLabelModel(), model.getLabels());
+                updateNics(model.getNics());
                 // mark as rendered
                 rendered = true;
             }
@@ -172,6 +209,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
         internalNetworkList.setSetupModel(uicommonModel);
         externalNetworkList.setSetupModel(uicommonModel);
+        labelsList.setSetupModel(uicommonModel);
     }
 
     @Override
@@ -183,8 +221,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         internalNetworkList.clear();
         externalNetworkList.clear();
         Collections.sort(allNetworks);
-        List<NetworkPanel> staticNetworkPanels = new ArrayList<NetworkPanel>();
-        List<NetworkPanel> dynamicNetworkPanels = new ArrayList<NetworkPanel>();
+        List<NetworkPanel> staticNetworkPanels = new ArrayList<>();
+        List<NetworkPanel> dynamicNetworkPanels = new ArrayList<>();
         for (LogicalNetworkModel network : allNetworks) {
             if (network.getNetwork().isExternal()) {
                 dynamicNetworkPanels.add(new ExternalNetworkPanel(network, style));
@@ -194,6 +232,21 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         }
         internalNetworkList.addAll(staticNetworkPanels, !rendered);
         externalNetworkList.addAll(dynamicNetworkPanels, !rendered);
+    }
+
+    private void updateLabels(NetworkLabelModel newLabelModel, List<NetworkLabelModel> labels) {
+        labelsList.clear();
+
+        List<NetworkLabelPanel> labelPanels = new ArrayList<>();
+        labelPanels.add(new NewNetworkLabelPanel(newLabelModel, style));
+
+        Collections.sort(labels);
+        for (NetworkLabelModel label : labels) {
+            if (!label.isAttached()) {
+                labelPanels.add(new NetworkLabelPanel(label, style));
+            }
+        }
+        labelsList.addAll(labelPanels, !rendered);
     }
 
     private void updateNics(List<NetworkInterfaceModel> nics) {

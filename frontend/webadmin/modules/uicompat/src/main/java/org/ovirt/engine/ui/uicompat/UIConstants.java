@@ -57,6 +57,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Join Bonds")
     String joinBondsTitle();
 
+    @DefaultStringValue("Add new Label")
+    String addNewLabelTitle();
+
     @DefaultStringValue("Manage Networks")
     String assignDetachNetworksTitle();
 
@@ -526,6 +529,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Edit Management Network Interface")
     String editManagementNetworkInterfaceTitle();
+
+    @DefaultStringValue("[New Label]")
+    String newLabelPanelText();
+
+    @DefaultStringValue("Add new Label to")
+    String newLabel();
 
     @DefaultStringValue("Install Host")
     String installHostTitle();
@@ -1004,6 +1013,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("The right bound of the MAC address range must not be smaller than its left bound.")
     String invalidMacRangeRightBound();
+
+    @DefaultStringValue("Label already exists in the Data Center.")
+    String labelAlreadyExists();
 
     @DefaultStringValue("Note: Local Storage is already configured for this Host. The Host belongs to")
     String noteLocalStorageAlreadyConfiguredForThisHostMsg();

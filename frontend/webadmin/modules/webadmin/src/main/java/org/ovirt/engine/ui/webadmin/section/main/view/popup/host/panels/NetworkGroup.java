@@ -65,7 +65,7 @@ public class NetworkGroup extends FocusPanel {
 
         // rows
         FlexCellFormatter flexCellFormatter = table.getFlexCellFormatter();
-        flexCellFormatter.setRowSpan(0, 1, networkSize > 1 ? networkSize : 1);
+        flexCellFormatter.setRowSpan(0, 1, Math.max(networkSize, 1));
 
         // nic
         if (nicModel instanceof BondNetworkInterfaceModel) {

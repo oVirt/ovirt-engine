@@ -1,22 +1,63 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import java.util.Collection;
 import java.util.Set;
 
+import org.ovirt.engine.ui.common.widget.ScrollableAddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsNicLabelModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
-public class VfsNicLabelWidget extends NicLabelWidget implements HasValueChangeHandlers<Set<String>> {
+public class VfsNicLabelWidget extends ScrollableAddRemoveRowWidget<VfsNicLabelModel, ListModel<String>, NicLabelEditor> implements HasValueChangeHandlers<Set<String>> {
 
     private String labelEditorStyle;
     private String editorWrapperStyle;
+
+    @UiField
+    @Ignore
+    Label titleLabel;
+
+    public interface WidgetUiBinder extends UiBinder<Widget, VfsNicLabelWidget> {
+        WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
+    }
+
+    private Collection<String> suggestions;
+
+    public VfsNicLabelWidget() {
+        initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+    }
+
+    @Override
+    protected ListModel<String> createGhostValue() {
+        ListModel<String> value = new ListModel<String>();
+        value.setItems(suggestions);
+        value.setSelectedItem(""); //$NON-NLS-1$
+        return value;
+    }
+
+    @Override
+    protected boolean isGhost(ListModel<String> value) {
+        String text = value.getSelectedItem();
+        return text == null || text.isEmpty();
+    }
+
+    @Override
+    public void edit(VfsNicLabelModel model) {
+        suggestions = model.getSuggestedLabels();
+        super.edit(model);
+    }
 
     public void setLabelEditorStyle(String labelEditorStyle) {
         this.labelEditorStyle = labelEditorStyle;
@@ -28,7 +69,8 @@ public class VfsNicLabelWidget extends NicLabelWidget implements HasValueChangeH
 
     @Override
     protected NicLabelEditor createWidget(ListModel<String> value) {
-        NicLabelEditor editor = super.createWidget(value);
+        NicLabelEditor editor = new NicLabelEditor();
+        editor.edit(value);
         editor.suggestBoxEditor.addContentWidgetContainerStyleName(labelEditorStyle);
         editor.suggestBoxEditor.addWrapperStyleName(editorWrapperStyle);
         return editor;

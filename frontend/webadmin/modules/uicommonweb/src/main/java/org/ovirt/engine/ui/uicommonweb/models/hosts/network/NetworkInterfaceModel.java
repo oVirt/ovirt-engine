@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -32,12 +34,17 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
             boolean sriovEnabled,
             HostSetupNetworksModel setupModel) {
         this(nic, sriovEnabled, setupModel);
+
         // attach all networks
         for (LogicalNetworkModel network : nicNetworks) {
             network.attach(this, false);
         }
+
+        // add all labels
         if (nicLabels != null) {
-            labels.addAll(nicLabels);
+            for (NetworkLabelModel label : nicLabels) {
+                label(label);
+            }
         }
     }
 
@@ -58,6 +65,29 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
 
     public List<NetworkLabelModel> getLabels() {
         return labels;
+    }
+
+    public void label(NetworkLabelModel labelModel) {
+        labelModel.setInterface(this);
+        getLabels().add(labelModel);
+
+        Set<String> labels = getIface().getLabels();
+        if (labels == null) {
+            labels = new HashSet<>();
+            getIface().setLabels(labels);
+        }
+        labels.add(labelModel.getName());
+    }
+
+    public void unlabel(NetworkLabelModel labelModel) {
+        labelModel.setInterface(null);
+        getLabels().remove(labelModel);
+
+        Set<String> labels = getIface().getLabels();
+        labels.remove(labelModel.getName());
+        if (labels.isEmpty()) {
+            getIface().setLabels(null);
+        }
     }
 
     public int getTotalItemSize() {
@@ -99,21 +129,9 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
         return HostSetupNetworksModel.NIC;
     }
 
-    private String culpritNetwork;
-
-    /**
-     * If this NIC was the destination of a null bond operation, the culprit network is one of those that caused the
-     * operation to fail, the first encountered of the following: unmanaged, out of sync, one of several non-VLAN
-     * networks, VM network when VLAN networks exist.
-     *
-     * @return the name of the network at fault, or null if there isn't one.
-     */
-    public String getCulpritNetwork() {
-        return culpritNetwork;
-    }
-
-    public void setCulpritNetwork(String culpritNetwork) {
-        this.culpritNetwork = culpritNetwork;
+    @Override
+    public boolean aggregatesNetworks() {
+        return true;
     }
 
     public boolean isSriovEnabled() {

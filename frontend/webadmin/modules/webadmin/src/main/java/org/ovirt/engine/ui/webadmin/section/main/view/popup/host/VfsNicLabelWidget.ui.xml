@@ -27,7 +27,7 @@
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.mainPanel} nlw_mainPanel_pfly_fix" >
-        <g:Label ui:field="titleLabel" text="{constants.labelsHostPopup}" addStyleNames="{style.labelStyle}" />
+        <g:Label ui:field="titleLabel" text="{constants.labelsVfsConfigPopup}" addStyleNames="{style.labelStyle}" />
         <g:ScrollPanel ui:field="scrollPanel" height="110px">
             <g:FlowPanel ui:field="contentPanel" />
         </g:ScrollPanel>

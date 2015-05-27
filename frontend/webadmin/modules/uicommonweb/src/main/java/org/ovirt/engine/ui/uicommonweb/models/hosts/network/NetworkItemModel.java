@@ -75,4 +75,30 @@ public abstract class NetworkItemModel<T extends Enum<T>> extends ListModel<Logi
 
     public abstract String getType();
 
+    /**
+     * Queries whether this item could contain several networks (e.g. interface, label).
+     *
+     * @return true iff it might contain a subcollection of networks.
+     */
+    public boolean aggregatesNetworks() {
+        return false;
+    }
+
+    private String culpritNetwork;
+
+    /**
+     * If this item was the part of a null operation including a batch of networks, the culprit network is one of those
+     * that caused the operation to fail, the first encountered of the following: unmanaged, out of sync, one of several
+     * non-VLAN networks, VM network when VLAN networks exist.
+     *
+     * @return the name of the network at fault, or null if there isn't one.
+     */
+    public String getCulpritNetwork() {
+        return culpritNetwork;
+    }
+
+    public void setCulpritNetwork(String culpritNetwork) {
+        this.culpritNetwork = culpritNetwork;
+    }
+
 }

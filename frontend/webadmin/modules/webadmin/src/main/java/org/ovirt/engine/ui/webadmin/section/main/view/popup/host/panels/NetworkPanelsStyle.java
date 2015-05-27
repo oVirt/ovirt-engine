@@ -9,6 +9,10 @@ public interface NetworkPanelsStyle extends CssResource {
 
     String bondPanel();
 
+    String labelPanel();
+
+    String newLabelPanel();
+
     String emptyPanel();
 
     String emptyPanelLabel();

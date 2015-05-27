@@ -1,8 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -12,10 +10,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class SetupNetworksEditBondModel extends SetupNetworksBondModel {
 
-    public SetupNetworksEditBondModel(final VdsNetworkInterface bond,
-            Collection<String> suggestedLabels,
-            Map<String, String> labelToIface) {
-
+    public SetupNetworksEditBondModel(final VdsNetworkInterface bond) {
         setTitle(ConstantsManager.getInstance()
                 .getMessages()
                 .editBondInterfaceTitle(bond.getName()));
@@ -47,8 +42,6 @@ public class SetupNetworksEditBondModel extends SetupNetworksBondModel {
             customItem.setValue(value);
             getBondingOptions().setSelectedItem(customItem);
         }
-
-        setLabelsModel(new NicLabelModel(Collections.singletonList(bond), suggestedLabels, labelToIface));
     }
 
 }

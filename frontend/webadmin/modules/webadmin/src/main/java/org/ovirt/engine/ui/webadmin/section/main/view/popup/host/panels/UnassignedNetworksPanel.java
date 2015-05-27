@@ -18,7 +18,7 @@ import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public abstract class UnassignedNetworksPanel extends FocusPanel {
+public abstract class UnassignedNetworksPanel<T extends NetworkItemPanel<?>> extends FocusPanel {
 
     protected final AnimatedVerticalPanel animatedPanel = new AnimatedVerticalPanel();
 
@@ -79,7 +79,7 @@ public abstract class UnassignedNetworksPanel extends FocusPanel {
         panel.setWidth("100%"); //$NON-NLS-1$
     }
 
-    public abstract void addAll(List<NetworkPanel> list, boolean fadeIn);
+    public abstract void addAll(List<T> list, boolean fadeIn);
 
     @Override
     public void clear() {

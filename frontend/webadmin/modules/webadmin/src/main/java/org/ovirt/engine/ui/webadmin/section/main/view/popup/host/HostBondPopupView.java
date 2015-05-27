@@ -131,7 +131,6 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         bondEditor = new ListModelListBoxEditor<String>();
         networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
         bondingModeEditor = new ListModelListBoxEditor<Map.Entry<String, EntityModel<String>>>(new NullSafeRenderer<Map.Entry<String, EntityModel<String>>>() {
-            @SuppressWarnings("unchecked")
             @Override
             protected String renderNullSafe(Map.Entry<String, EntityModel<String>> pair) {
                 String key = pair.getKey();
@@ -207,7 +206,6 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         });
 
         customEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<String>() {
-            @SuppressWarnings("unchecked")
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
                 for (Map.Entry<String, EntityModel<String>> pair : object.getBondingOptions().getItems()) {
@@ -237,7 +235,6 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     }
 
     private void updateBondOptions(ListModel<Map.Entry<String, EntityModel<String>>> list) {
-        @SuppressWarnings("unchecked")
         Map.Entry<String, EntityModel<String>> pair = list.getSelectedItem();
         if ("custom".equals(pair.getKey())) { //$NON-NLS-1$
             customEditor.setVisible(true);

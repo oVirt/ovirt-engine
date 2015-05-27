@@ -207,6 +207,12 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Remove {0} from Bond")
     String removeFromBond(String name);
 
+    @DefaultMessage("Add Label {0} to")
+    String label(String label);
+
+    @DefaultMessage("Remove Label {0}")
+    String unlabel(String label);
+
     @DefaultMessage("This might work without network {0}.")
     String suggestDetachNetwork(String networkName);
 

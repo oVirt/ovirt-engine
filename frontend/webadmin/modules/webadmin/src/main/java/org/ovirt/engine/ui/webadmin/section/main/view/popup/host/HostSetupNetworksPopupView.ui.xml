@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder 
-    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
     xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
     xmlns:f="urn:import:org.ovirt.engine.ui.webadmin.widget.footer"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-    xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels">
+    xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels"
+    xmlns:c="urn:import:org.ovirt.engine.ui.common.widget">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
@@ -130,13 +130,15 @@
             box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
         }
 
-        .bondPanel {
+        .bondPanel, .labelPanel {
+            cursor: move;
             height: auto;
             background-color: #EFEFEF;
         }
 
-        .bondPanel:HOVER {
-            background-color: #EFEFEF;
+        .newLabelPanel {
+            background-color: white;
+            border-style: dashed;
         }
 
         .groupPanel {
@@ -261,13 +263,13 @@
                 <g:HorizontalPanel width="100%" height="77%" verticalAlignment="ALIGN_TOP" addStyleNames="ts10">
                     <g:Cell width="69%" height="100%">
                         <g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT">
-                        <g:HorizontalPanel>
-                            <g:Label text="{constants.interfaces}" styleName="{style.nicstitle}" />
-                            <g:Label text="{constants.assignedLogicalNetworks}" styleName="{style.assignedtitle}" />
-                        </g:HorizontalPanel>
-                        <g:ScrollPanel height="370px">
-                            <e:AnimatedVerticalPanel ui:field="nicList" width="100%"  addStyleNames="ts10 {style.allNicsPanel}"/>
-                        </g:ScrollPanel>
+                            <g:HorizontalPanel>
+                                <g:Label text="{constants.interfaces}" styleName="{style.nicstitle}" />
+                                <g:Label text="{constants.assignedLogicalNetworks}" styleName="{style.assignedtitle}" />
+                            </g:HorizontalPanel>
+                            <g:ScrollPanel height="370px">
+                                <e:AnimatedVerticalPanel ui:field="nicList" width="100%"  addStyleNames="ts10 {style.allNicsPanel}"/>
+                            </g:ScrollPanel>
                         </g:VerticalPanel>
                     </g:Cell>
                     <g:Cell width="1%" height="100%">
@@ -275,17 +277,21 @@
                         </g:HTMLPanel>
                     </g:Cell>
                     <g:Cell width="30%" height="100%">
-                        <g:ScrollPanel height="390px">
-                            <g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT">
+                        <g:FlowPanel height="390px">
+                            <c:RadioButtonsHorizontalPanel ui:field="networksOrLabels" name="networksOrLabels" />
+                            <g:FlowPanel ui:field="networksPanel" width="100%">
                                 <g:Label text="{constants.unassignedLogicalNetworks}" styleName="{style.unassignedtitle}" />
                                 <p:InternalNetworksPanel ui:field="internalNetworkList" />
                                 <g:FlowPanel styleName="{style.externalNetworksPanel}" >
                                     <g:Label text="{constants.externalLogicalNetworks}" styleName="{style.externaltitle}" />
                                     <d:InfoIcon ui:field="externalNetworksInfo" styleName="{style.externalNetworksInfo}" />
                                 </g:FlowPanel>
-                                <p:ExternalNetworksPanel ui:field="externalNetworkList"/>
-                            </g:VerticalPanel>
-                        </g:ScrollPanel>
+                                <p:SimpleNetworkItemsPanel ui:field="externalNetworkList"/>
+                            </g:FlowPanel>
+                            <g:FlowPanel ui:field="labelsPanel" width="100%" visible="false">
+                                <p:SimpleNetworkItemsPanel ui:field="labelsList" />
+                            </g:FlowPanel>
+                        </g:FlowPanel>
                     </g:Cell>
                 </g:HorizontalPanel>
                 <g:VerticalPanel addStyleNames="{style.checkBoxesPanel} hsnpv_checkBoxesPanel_pfly_fix" >

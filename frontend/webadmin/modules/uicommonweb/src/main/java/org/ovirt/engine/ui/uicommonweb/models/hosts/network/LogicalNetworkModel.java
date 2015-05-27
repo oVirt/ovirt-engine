@@ -102,6 +102,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         NetworkInterfaceModel attachingNic = attachedToNic;
         // this needs to be null before the NIC items are changed, because they trigger an event
         attachedToNic = null;
+        attachedViaLabel = false;
         List<LogicalNetworkModel> nicNetworks = attachingNic.getItems();
         nicNetworks.remove(this);
         // clear network name

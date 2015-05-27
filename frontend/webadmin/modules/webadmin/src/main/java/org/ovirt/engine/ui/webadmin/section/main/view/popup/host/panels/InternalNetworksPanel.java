@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class InternalNetworksPanel extends UnassignedNetworksPanel {
+public class InternalNetworksPanel extends UnassignedNetworksPanel<NetworkPanel> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 

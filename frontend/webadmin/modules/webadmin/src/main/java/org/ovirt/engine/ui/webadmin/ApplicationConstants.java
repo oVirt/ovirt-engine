@@ -2666,9 +2666,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Custom mode")
     String customModeHostPopup();
 
-    @DefaultStringValue("Labels")
-    String labelsHostPopup();
-
     @DefaultStringValue("Boot Protocol")
     String bootProtocolHostPopup();
 
@@ -2686,6 +2683,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Verify connectivity between Host and Engine")
     String checkConHostPopup();
+
+    @DefaultStringValue("Labels")
+    String labelsVfsConfigPopup();
 
     @DefaultStringValue("Sync network")
     String syncNetwork();
@@ -3065,6 +3065,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Unassigned Logical Networks")
     String unassignedLogicalNetworks();
+
+    @DefaultStringValue("Networks")
+    String networksPanel();
+
+    @DefaultStringValue("Labels")
+    String labelsPanel();
+
+    @DefaultStringValue("Label")
+    String setupNetworksNewLabel();
 
     @DefaultStringValue("External Logical Networks")
     String externalLogicalNetworks();

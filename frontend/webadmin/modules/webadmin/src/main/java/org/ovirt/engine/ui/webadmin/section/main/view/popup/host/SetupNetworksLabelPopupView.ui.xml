@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:g="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+
+    <ui:style>
+        .labelStyle {
+            margin-top: 5px;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="230px" height="115px">
+        <d:content>
+            <g:StringEntityModelTextBoxEditor ui:field="label" addStyleNames="{style.labelStyle}" />
+        </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>

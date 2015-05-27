@@ -331,6 +331,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConf
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.MultipleHostsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksBondPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksInterfacePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksManagementPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.VfsConfigPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes.InstanceTypesPopupView;
@@ -1303,6 +1305,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VfsConfigPopupPresenterWidget.class,
                 VfsConfigPopupPresenterWidget.ViewDef.class,
                 VfsConfigPopupView.class);
+        bindPresenterWidget(SetupNetworksLabelPopupPresenterWidget.class,
+                SetupNetworksLabelPopupPresenterWidget.ViewDef.class,
+                SetupNetworksLabelPopupView.class);
         bindPresenterWidget(HostSetupNetworksPopupPresenterWidget.class,
                 HostSetupNetworksPopupPresenterWidget.ViewDef.class,
                 HostSetupNetworksPopupView.class);

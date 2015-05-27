@@ -5,8 +5,7 @@
     xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
   xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-    xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget"
-    xmlns:h="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host">
+    xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
 
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostBondPopupView.Style">
         .checkCon{
@@ -25,7 +24,6 @@
                         <e:ListModelListBoxEditor ui:field="networkEditor" />
                         <e:ListModelListBoxEditor ui:field="bondingModeEditor" />
                         <ge:StringEntityModelTextBoxEditor ui:field="customEditor" visible="false" />
-                        <h:NicLabelWidget ui:field="labelsWidget" visible="false" />
                         <ge:StringEntityModelLabelEditor ui:field="bootProtocolLabel" />
                         <e:EnumRadioEditor ui:field="bootProtocol" />
                         <ge:StringEntityModelTextBoxEditor ui:field="address" />

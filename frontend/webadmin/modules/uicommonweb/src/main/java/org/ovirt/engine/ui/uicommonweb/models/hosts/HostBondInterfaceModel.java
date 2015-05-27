@@ -177,16 +177,6 @@ public class HostBondInterfaceModel extends Model
         return getBootProtocol() == NetworkBootProtocol.STATIC_IP;
     }
 
-    private NicLabelModel labelsModel;
-
-    public NicLabelModel getLabelsModel() {
-        return labelsModel;
-    }
-
-    protected void setLabelsModel(NicLabelModel labelsModel) {
-        this.labelsModel = labelsModel;
-    }
-
     public HostBondInterfaceModel() {
         setAddress(new EntityModel<String>());
         setSubnet(new EntityModel<String>());

@@ -49,11 +49,6 @@ public class NetworkOperationFactory {
             }
         }
 
-        // no valid operation for network labels
-        if (op1 instanceof NetworkLabelModel) {
-            return NetworkOperation.NULL_OPERATION;
-        }
-
         // unary operation dragging op1 to nowhere
         if (op2 == null) {
 
@@ -82,6 +77,13 @@ public class NetworkOperationFactory {
                     return NetworkOperation.DETACH_NETWORK;
                 }
             }
+            // op1 is a label, if an interface is labelled with it - unlabel
+            else if (op1 instanceof NetworkLabelModel) {
+                NetworkLabelModel label = (NetworkLabelModel) op1;
+                if (label.isAttached()) {
+                    return NetworkOperation.UNLABEL;
+                }
+            }
         }
         // binary operation joining items together - in most cases valid iff their networks comply
         else if (op2 instanceof NetworkInterfaceModel) {
@@ -97,13 +99,21 @@ public class NetworkOperationFactory {
                 if (src.isBonded() || src.equals(dst)) {
                     return NetworkOperation.NULL_OPERATION;
                 }
-                networks.addAll(((NetworkInterfaceModel) op1).getItems());
+                networks.addAll(src.getItems());
             }
             // op1 is a network, verify that it isn't dragged unto the NIC already containing it
             else if (op1 instanceof LogicalNetworkModel) {
                 if (!networks.add((LogicalNetworkModel) op1)) {
                     return NetworkOperation.NULL_OPERATION;
                 }
+            }
+            // op1 is a label, verify that it's not applied to the interface already labelled by it
+            else if (op1 instanceof NetworkLabelModel) {
+                NetworkLabelModel src = (NetworkLabelModel) op1;
+                if (dst.equals(src.getInterface())) {
+                    return NetworkOperation.NULL_OPERATION;
+                }
+                networks.addAll(src.getNetworks());
             }
 
             // go over the networks and check whether they comply, if not - the reason is important
@@ -114,16 +124,16 @@ public class NetworkOperationFactory {
                 if (!network.isManaged()) {
                     if (op1 instanceof LogicalNetworkModel) {
                         return NetworkOperation.NULL_OPERATION_UNMANAGED;
-                    } else if (op1 instanceof NetworkInterfaceModel) {
+                    } else if (op1.aggregatesNetworks()) {
                         dst.setCulpritNetwork(network.getName());
-                        return NetworkOperation.NULL_OPERATION_BOND_UNMANAGED;
+                        return NetworkOperation.NULL_OPERATION_BATCH_UNMANAGED;
                     }
                 } else if (!network.isInSync()) {
                     if (op1 instanceof LogicalNetworkModel) {
                         return NetworkOperation.NULL_OPERATION_OUT_OF_SYNC;
-                    } else if (op1 instanceof NetworkInterfaceModel) {
+                    } else if (op1.aggregatesNetworks()) {
                         dst.setCulpritNetwork(network.getName());
-                        return NetworkOperation.NULL_OPERATION_BOND_OUT_OF_SYNC;
+                        return NetworkOperation.NULL_OPERATION_BATCH_OUT_OF_SYNC;
                     }
                 }
                 if (network.hasVlan()) {
@@ -137,16 +147,16 @@ public class NetworkOperationFactory {
                 if (nonVlanCounter > 1) {
                     if (op1 instanceof LogicalNetworkModel) {
                         return NetworkOperation.NULL_OPERATION_TOO_MANY_NON_VLANS;
-                    } else if (op1 instanceof NetworkInterfaceModel) {
+                    } else if (op1.aggregatesNetworks()) {
                         dst.setCulpritNetwork(network.getName());
-                        return NetworkOperation.NULL_OPERATION_BOND_TOO_MANY_NON_VLANS;
+                        return NetworkOperation.NULL_OPERATION_BATCH_TOO_MANY_NON_VLANS;
                     }
                 } else if (nonVlanVmNetwork != null && vlanFound) {
                     if (op1 instanceof LogicalNetworkModel) {
                         return NetworkOperation.NULL_OPERATION_VM_WITH_VLANS;
-                    } else if (op1 instanceof NetworkInterfaceModel) {
+                    } else if (op1.aggregatesNetworks()) {
                         dst.setCulpritNetwork(nonVlanVmNetwork);
-                        return NetworkOperation.NULL_OPERATION_BOND_VM_WITH_VLANS;
+                        return NetworkOperation.NULL_OPERATION_BATCH_VM_WITH_VLANS;
                     }
                 }
             }
@@ -166,6 +176,8 @@ public class NetworkOperationFactory {
                 } else {
                     return NetworkOperation.BOND_WITH;
                 }
+            } else if (op1 instanceof NetworkLabelModel) {
+                return NetworkOperation.LABEL;
             }
         }
 

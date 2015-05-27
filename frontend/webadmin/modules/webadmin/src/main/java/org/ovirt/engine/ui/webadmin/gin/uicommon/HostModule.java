@@ -45,6 +45,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
@@ -64,6 +65,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetwo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -182,6 +184,7 @@ public class HostModule extends AbstractGinModule {
             final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
             final Provider<SetupNetworksBondPopupPresenterWidget> setupNetworksBondPopupProvider,
             final Provider<VfsConfigPopupPresenterWidget> vfsConfigPopupProvider,
+            final Provider<SetupNetworksLabelPopupPresenterWidget> setupNetworksLabelPopupProvider,
             final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider,
             final Provider<HostListModel<Void>> mainModelProvider,
             final Provider<HostInterfaceListModel> modelProvider) {
@@ -222,6 +225,8 @@ public class HostModule extends AbstractGinModule {
                                 }
                             } else if (windowModel instanceof VfsConfigModel) {
                                 return vfsConfigPopupProvider.get();
+                            } else if (windowModel instanceof SetupNetworksLabelModel) {
+                                return setupNetworksLabelPopupProvider.get();
                             }
                         }
 

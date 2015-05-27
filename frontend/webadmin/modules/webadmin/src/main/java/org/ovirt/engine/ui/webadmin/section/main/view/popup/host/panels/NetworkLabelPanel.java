@@ -20,7 +20,11 @@ public class NetworkLabelPanel extends NetworkItemPanel<NetworkLabelModel> {
     private final static ApplicationResources resources = AssetProvider.getResources();
 
     public NetworkLabelPanel(NetworkLabelModel item, NetworkPanelsStyle style) {
-        super(item, style, false);
+        super(item, style, true);
+    }
+
+    protected void addClassName() {
+        getElement().addClassName(style.labelPanel());
     }
 
     @Override
@@ -41,7 +45,7 @@ public class NetworkLabelPanel extends NetworkItemPanel<NetworkLabelModel> {
         LabelWithTextTruncation titleLabel = new LabelWithTextTruncation(item.getName());
         titleLabel.setWidth("185px"); //$NON-NLS-1$
         titleLabel.setHeight("100%"); //$NON-NLS-1$
-        Image labelImage = new Image(resources.bond());
+        Image labelImage = new Image(resources.tagImage());
 
         titleRow.setWidget(0, 0, labelImage);
         titleRow.setWidget(0, 1, titleLabel);
@@ -49,8 +53,9 @@ public class NetworkLabelPanel extends NetworkItemPanel<NetworkLabelModel> {
         titleRow.addStyleName("tp3"); //$NON-NLS-1$
         vPanel.add(titleRow);
 
-        getElement().addClassName(style.bondPanel());
-        List<LogicalNetworkModel> networks = ((NetworkLabelModel) item).getNetworks();
+        addClassName();
+
+        List<LogicalNetworkModel> networks = item.getNetworks();
         Collections.sort(networks);
 
         for (LogicalNetworkModel network : networks) {
@@ -65,6 +70,19 @@ public class NetworkLabelPanel extends NetworkItemPanel<NetworkLabelModel> {
     @Override
     protected void onAction() {
         // Do nothing
+    }
+
+    public static class NewNetworkLabelPanel extends NetworkLabelPanel {
+
+        public NewNetworkLabelPanel(NetworkLabelModel item, NetworkPanelsStyle style) {
+            super(item, style);
+        }
+
+        @Override
+        protected void addClassName() {
+            super.addClassName();
+            getElement().addClassName(style.newLabelPanel());
+        }
     }
 
 }

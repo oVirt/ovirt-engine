@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkExternalSubnetListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
@@ -51,6 +52,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ExternalSubnetPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -244,6 +246,7 @@ public class NetworkModule extends AbstractGinModule {
             final Provider<SetupNetworksInterfacePopupPresenterWidget> setupNetworksInterfacePopupProvider,
             final Provider<SetupNetworksManagementPopupPresenterWidget> setupNetworksManagementPopupProvider,
             final Provider<VfsConfigPopupPresenterWidget> vfsConfigPopupProvider,
+            final Provider<SetupNetworksLabelPopupPresenterWidget> setupNetworksLabelPopupProvider,
             final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider,
             final Provider<NetworkListModel> mainModelProvider,
             final Provider<NetworkHostListModel> modelProvider) {
@@ -264,6 +267,8 @@ public class NetworkModule extends AbstractGinModule {
                             return setupNetworksInterfacePopupProvider.get();
                         } else if (windowModel instanceof VfsConfigModel) {
                             return vfsConfigPopupProvider.get();
+                        } else if (windowModel instanceof SetupNetworksLabelModel) {
+                            return setupNetworksLabelPopupProvider.get();
                         }
 
                         // Resolve by last executed command

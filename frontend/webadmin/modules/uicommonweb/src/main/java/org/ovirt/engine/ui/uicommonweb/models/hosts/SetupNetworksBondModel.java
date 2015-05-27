@@ -14,13 +14,7 @@ public class SetupNetworksBondModel extends HostBondInterfaceModel {
         getGateway().setIsAvailable(false);
         setBootProtocolAvailable(false);
 
-        setBond(new SortedListModel(new LexoNumericComparator()));
-    }
-
-    @Override
-    public boolean validate() {
-        getLabelsModel().validate();
-        return getLabelsModel().getIsValid();
+        setBond(new SortedListModel<>(new LexoNumericComparator()));
     }
 
 }
