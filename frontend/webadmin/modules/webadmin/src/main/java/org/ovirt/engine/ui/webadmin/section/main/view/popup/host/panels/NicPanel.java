@@ -53,6 +53,7 @@ public class NicPanel<T extends NetworkInterfaceModel> extends NetworkItemPanel<
         rowPanel.setWidget(0, 3, titleLabel);
         rowPanel.setWidget(0, 4, actionButton);
 
+        actionButton.setVisible(item.isSriovEnabled());
         return rowPanel;
     }
 

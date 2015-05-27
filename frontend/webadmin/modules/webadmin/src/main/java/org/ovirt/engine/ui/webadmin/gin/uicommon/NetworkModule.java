@@ -30,7 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.NewHostNetworkQosM
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostNicModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkExternalSubnetListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
@@ -43,11 +43,11 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostNicPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ExternalSubnetPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
@@ -243,7 +243,7 @@ public class NetworkModule extends AbstractGinModule {
             final Provider<SetupNetworksBondPopupPresenterWidget> setupNetworksBondPopupProvider,
             final Provider<SetupNetworksInterfacePopupPresenterWidget> setupNetworksInterfacePopupProvider,
             final Provider<SetupNetworksManagementPopupPresenterWidget> setupNetworksManagementPopupProvider,
-            final Provider<HostNicPopupPresenterWidget> hostNicPopupProvider,
+            final Provider<VfsConfigPopupPresenterWidget> vfsConfigPopupProvider,
             final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider,
             final Provider<NetworkListModel> mainModelProvider,
             final Provider<NetworkHostListModel> modelProvider) {
@@ -262,8 +262,8 @@ public class NetworkModule extends AbstractGinModule {
                             return setupNetworksManagementPopupProvider.get();
                         } else if (windowModel instanceof HostInterfaceModel) {
                             return setupNetworksInterfacePopupProvider.get();
-                        } else if (windowModel instanceof HostNicModel) {
-                            return hostNicPopupProvider.get();
+                        } else if (windowModel instanceof VfsConfigModel) {
+                            return vfsConfigPopupProvider.get();
                         }
 
                         // Resolve by last executed command

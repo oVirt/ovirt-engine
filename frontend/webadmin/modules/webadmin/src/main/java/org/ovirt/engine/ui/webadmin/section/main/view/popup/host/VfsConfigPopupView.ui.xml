@@ -7,7 +7,7 @@
 	xmlns:h="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host">
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.VfsConfigWidget.WidgetStyle">
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.VfsConfigPopupView.WidgetStyle">
         .valueWidth {
             width: 60px;
         }
@@ -93,25 +93,29 @@
         }
 	</ui:style>
 
-	<g:FlowPanel>
-		<d:AdvancedParametersExpander ui:field="numVfsExpander" addStyleNames="{style.expander}" />
-		<g:FlowPanel ui:field="numVfsExpanderContent" addStyleNames="{style.expanderContent}">
-			<ge:IntegerEntityModelTextBoxEditor ui:field="numOfVfs" addStyleNames="{style.numOfVfs}" />
-			<g:ValueLabel ui:field="maxVfsLabel" addStyleNames="{style.maxVfsLabel}" />
-		</g:FlowPanel>
-		<g:Label ui:field="allowedNetworksLabel" addStyleNames="{style.allAllowedLabel}" />
-		<e:ListModelRadioGroupEditor ui:field="allNetworksSelectorEditor" addStyleNames="{style.allAllowedSelector}" />
-		<g:SimplePanel addStyleNames="{style.clear}" />
-		<g:FlowPanel ui:field="allowedNetworksPanel" addStyleNames="{style.allowedNetworksPanel}" >
-			<g:FlowPanel addStyleNames="{style.networksPanel}" >
-				<g:Label ui:field="selectNetworksLabel" addStyleNames="{style.selectNetworksLabel}" />
-				<g:ScrollPanel addStyleNames="{style.networksTableScrollPanel}">
-					<e:EntityModelCellTable ui:field="networks" />
-				</g:ScrollPanel>
+	<d:SimpleDialogPanel width="515px" height="600px">
+		<d:content>
+			<g:FlowPanel>
+				<d:AdvancedParametersExpander ui:field="numVfsExpander" addStyleNames="{style.expander}" />
+				<g:FlowPanel ui:field="numVfsExpanderContent" addStyleNames="{style.expanderContent}">
+					<ge:IntegerEntityModelTextBoxEditor ui:field="numOfVfs" addStyleNames="{style.numOfVfs}" />
+					<g:ValueLabel ui:field="maxVfsLabel" addStyleNames="{style.maxVfsLabel}" />
+				</g:FlowPanel>
+				<g:Label ui:field="allowedNetworksLabel" addStyleNames="{style.allAllowedLabel}" />
+				<e:ListModelRadioGroupEditor ui:field="allNetworksSelectorEditor" addStyleNames="{style.allAllowedSelector}" />
+				<g:SimplePanel addStyleNames="{style.clear}" />
+				<g:FlowPanel ui:field="allowedNetworksPanel" addStyleNames="{style.allowedNetworksPanel}" >
+					<g:FlowPanel addStyleNames="{style.networksPanel}" >
+						<g:Label ui:field="selectNetworksLabel" addStyleNames="{style.selectNetworksLabel}" />
+						<g:ScrollPanel addStyleNames="{style.networksTableScrollPanel}">
+							<e:EntityModelCellTable ui:field="networks" />
+						</g:ScrollPanel>
+					</g:FlowPanel>
+					<g:SimplePanel addStyleNames="{style.splitter}" />
+					<h:VfsNicLabelWidget ui:field="labelsWidget" addStyleNames="{style.labelWidget}" />
+				</g:FlowPanel>
 			</g:FlowPanel>
-			<g:SimplePanel addStyleNames="{style.splitter}" />
-			<h:VfsNicLabelWidget ui:field="labelsWidget" addStyleNames="{style.labelWidget}" />
-		</g:FlowPanel>
-	</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
 
 </ui:UiBinder>

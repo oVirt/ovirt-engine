@@ -153,8 +153,8 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Edit Bond Interface {0}")
     String editBondInterfaceTitle(String name);
 
-    @DefaultMessage("Edit Interface {0}")
-    String editInterfaceTitle(String name);
+    @DefaultMessage("Edit Virtual Functions (SR-IOV) configuration of {0}")
+    String editHostNicVfsConfigTitle(String name);
 
     @DefaultMessage("Edit Network {0}")
     String editNetworkTitle(String name);

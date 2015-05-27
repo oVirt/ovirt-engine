@@ -250,7 +250,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     private boolean computeAndCommitLabelChanges(final VdsNetworkInterface entity,
-            PfNicLabelModel labelsModel) {
+            NicLabelModel labelsModel) {
 
         if (!labelsModel.wasChanged()) {
             return true;
@@ -267,7 +267,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return false;
     }
 
-    private Set<LogicalNetworkModel> getPotentialNetworks(PfNicLabelModel labelsModel,
+    private Set<LogicalNetworkModel> getPotentialNetworks(NicLabelModel labelsModel,
             Collection<LogicalNetworkModel> originalNetworks) {
 
         Collection<String> removedLabels = labelsModel.getRemovedLabels();
@@ -316,7 +316,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return valid;
     }
 
-    private void commitNetworksAndLabelChanges(PfNicLabelModel labelModel,
+    private void commitNetworksAndLabelChanges(NicLabelModel labelModel,
             VdsNetworkInterface iface,
             Collection<LogicalNetworkModel> potentialNetworks) {
 
@@ -367,7 +367,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         return;
                     }
                     sourceListModel.setConfirmWindow(null);
-                    PfNicLabelModel labelsModel = bondDialogModel.getLabelsModel();
+                    NicLabelModel labelsModel = bondDialogModel.getLabelsModel();
 
                    if (computeAndCommitLabelChanges(entity, labelsModel)) {
                        setBondOptions(entity, bondDialogModel);
@@ -376,36 +376,27 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             };
         } else if (item instanceof NetworkInterfaceModel) {
             /*******************
-             * Interface Dialog
+             * VFs Config Dialog
              *******************/
             final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getIface();
-            final boolean isBondSalve = entity.isBondSlave();
             final HostNicVfsConfig hostNicVfsConfig = nicToVfsConfig.get(entity.getId());
-            final HostNicModel interfacePopupModel =
-                    new HostNicModel(entity,
-                            isBondSalve ? null : getFreeLabels(),
-                            isBondSalve ? null : labelToIface,
-                            nicToVfsConfig.get(entity.getId()),
-                            allNetworks,
-                            dcLabels);
-            editPopup = interfacePopupModel;
+            if (hostNicVfsConfig != null) {
+                final VfsConfigModel vfsConfigPopupModel = new VfsConfigModel(hostNicVfsConfig, allNetworks, dcLabels);
+                setTitle(ConstantsManager.getInstance().getMessages().editHostNicVfsConfigTitle(entity.getName()));
+                editPopup = vfsConfigPopupModel;
 
-            // OK Target
-            okTarget = new BaseCommandTarget() {
-                @Override
-                public void executeCommand(UICommand uiCommand) {
-                    if (!interfacePopupModel.validate()) {
-                        return;
+                // OK Target
+                okTarget = new BaseCommandTarget() {
+                    @Override
+                    public void executeCommand(UICommand uiCommand) {
+                        if (!vfsConfigPopupModel.validate()) {
+                            return;
+                        }
+                        sourceListModel.setConfirmWindow(null);
+                        commitVfsConfigChanges(hostNicVfsConfig, vfsConfigPopupModel);
                     }
-                    sourceListModel.setConfirmWindow(null);
-
-                    if (!isBondSalve) {
-                        computeAndCommitLabelChanges(entity, interfacePopupModel.getLabelsModel());
-                    }
-
-                    commitVfsConfigChanges(hostNicVfsConfig, interfacePopupModel.getVfsConfigModel());
-                }
-       };
+                };
+            }
         } else if (item instanceof LogicalNetworkModel) {
             /*****************
              * Network Dialog

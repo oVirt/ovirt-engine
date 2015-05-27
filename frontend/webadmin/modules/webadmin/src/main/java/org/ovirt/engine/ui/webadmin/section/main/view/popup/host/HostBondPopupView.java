@@ -69,10 +69,6 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     @Ignore
     StringEntityModelTextBoxEditor customEditor;
 
-    @UiField
-    @Ignore
-    NicLabelWidget labelsWidget;
-
     @UiField(provided = true)
     EnumRadioEditor<NetworkBootProtocol> bootProtocol;
 

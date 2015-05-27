@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.ovirt.engine.ui.common.widget.ScrollableAddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.NicLabelModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsNicLabelModel;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -12,7 +12,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class NicLabelWidget extends ScrollableAddRemoveRowWidget<NicLabelModel, ListModel<String>, NicLabelEditor> {
+public class NicLabelWidget extends ScrollableAddRemoveRowWidget<VfsNicLabelModel, ListModel<String>, NicLabelEditor> {
 
     @UiField
     @Ignore
@@ -50,7 +50,7 @@ public class NicLabelWidget extends ScrollableAddRemoveRowWidget<NicLabelModel, 
     }
 
     @Override
-    public void edit(NicLabelModel model) {
+    public void edit(VfsNicLabelModel model) {
         suggestions = model.getSuggestedLabels();
         super.edit(model);
     }

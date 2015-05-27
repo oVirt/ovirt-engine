@@ -92,13 +92,13 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         networks.setItems(vfsConfigNetworks);
     }
 
-    public void validate() {
+    public boolean validate() {
         numOfVfs.validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new IntegerValidation(0, getMaxNumOfVfs().getEntity()) });
 
         labelsModel.validate();
 
-        setIsValid(labelsModel.getIsValid() && numOfVfs.getIsValid());
+        return labelsModel.getIsValid() && numOfVfs.getIsValid();
     }
 
     public static enum AllNetworksSelector {

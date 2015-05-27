@@ -177,13 +177,13 @@ public class HostBondInterfaceModel extends Model
         return getBootProtocol() == NetworkBootProtocol.STATIC_IP;
     }
 
-    private PfNicLabelModel labelsModel;
+    private NicLabelModel labelsModel;
 
-    public PfNicLabelModel getLabelsModel() {
+    public NicLabelModel getLabelsModel() {
         return labelsModel;
     }
 
-    protected void setLabelsModel(PfNicLabelModel labelsModel) {
+    protected void setLabelsModel(NicLabelModel labelsModel) {
         this.labelsModel = labelsModel;
     }
 

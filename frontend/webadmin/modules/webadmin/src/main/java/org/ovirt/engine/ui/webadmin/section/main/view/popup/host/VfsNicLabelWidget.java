@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 import java.util.Set;
 
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.NicLabelModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsNicLabelModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -35,7 +35,7 @@ public class VfsNicLabelWidget extends NicLabelWidget implements HasValueChangeH
     }
 
     @Override
-    protected void init(NicLabelModel model) {
+    protected void init(VfsNicLabelModel model) {
         super.init(model);
         for (ListModel<String> labelModel : model.getItems()) {
             labelModel.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {

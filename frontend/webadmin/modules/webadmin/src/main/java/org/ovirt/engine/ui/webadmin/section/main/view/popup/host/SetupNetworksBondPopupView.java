@@ -17,11 +17,9 @@ public class SetupNetworksBondPopupView extends HostBondPopupView implements Set
     @Override
     public void edit(final HostBondInterfaceModel object) {
         super.edit(object);
-        labelsWidget.edit(object.getLabelsModel());
 
         bondSuggestEditor.setVisible(true);
         bondEditor.setVisible(false);
-        labelsWidget.setVisible(true);
 
         // hide widgets
         info.setVisible(false);
@@ -31,11 +29,4 @@ public class SetupNetworksBondPopupView extends HostBondPopupView implements Set
         layoutPanel.getElement().getStyle().setOverflow(Overflow.HIDDEN);
         asPopupPanel().setPixelSize(400, 275);
     }
-
-    @Override
-    public HostBondInterfaceModel flush() {
-        labelsWidget.flush();
-        return super.flush();
-    }
-
 }

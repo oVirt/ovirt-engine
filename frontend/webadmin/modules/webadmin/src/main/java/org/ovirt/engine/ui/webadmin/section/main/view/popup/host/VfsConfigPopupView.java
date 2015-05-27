@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
+import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
@@ -12,7 +14,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBo
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
-import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel.AllNetworksSelector;
@@ -24,12 +25,14 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -40,16 +43,16 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.inject.Inject;
 
-public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigModel> {
+public class VfsConfigPopupView extends AbstractModelBoundPopupView<VfsConfigModel> implements VfsConfigPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<VfsConfigModel, VfsConfigWidget> {
+    interface Driver extends SimpleBeanEditorDriver<VfsConfigModel, VfsConfigPopupView> {
     }
 
-    interface WidgetUiBinder extends UiBinder<FlowPanel, VfsConfigWidget> {
-        WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VfsConfigPopupView> {
+        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    interface WidgetIdHandler extends ElementIdHandler<VfsConfigWidget> {
+    interface WidgetIdHandler extends ElementIdHandler<VfsConfigPopupView> {
         WidgetIdHandler idHandler = GWT.create(WidgetIdHandler.class);
     }
 
@@ -114,7 +117,8 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
 
     @Inject
-    public VfsConfigWidget() {
+    public VfsConfigPopupView(EventBus eventBus) {
+        super(eventBus);
         maxVfsLabel = new ValueLabel<>(new AbstractRenderer<Integer>() {
 
             @Override
@@ -127,7 +131,7 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
 
         labelsWidget = new VfsNicLabelWidget();
 
-        initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
 
         labelsWidget.setLabelEditorStyle(style.labelEditorContent());

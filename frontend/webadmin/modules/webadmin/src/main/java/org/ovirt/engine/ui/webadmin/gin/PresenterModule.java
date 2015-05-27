@@ -66,7 +66,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstal
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostNicPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
@@ -74,6 +73,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.VmRepinHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.InstanceTypesPopupPresenterWidget;
@@ -111,8 +111,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.Templa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.PublicKeyPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
@@ -325,7 +325,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInstallPopu
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostNicPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostSetupNetworksPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView;
@@ -333,6 +332,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.MultipleHostsPo
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksBondPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksManagementPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.VfsConfigPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes.InstanceTypesPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.SharedMacPoolPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQoSPopupView;
@@ -371,16 +371,16 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.tag.TagPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.user.ManageEventsPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.AddVmHostDevicePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.CloneVmPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.SingleSelectionVmDiskAttachPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.PublicKeyPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.SingleSelectionVmDiskAttachPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmClonePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskAttachPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.AddVmHostDevicePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMakeTemplatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMigratePopupView;
@@ -1300,9 +1300,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(SetupNetworksBondPopupPresenterWidget.class,
                 SetupNetworksBondPopupPresenterWidget.ViewDef.class,
                 SetupNetworksBondPopupView.class);
-        bindPresenterWidget(HostNicPopupPresenterWidget.class,
-                HostNicPopupPresenterWidget.ViewDef.class,
-                HostNicPopupView.class);
+        bindPresenterWidget(VfsConfigPopupPresenterWidget.class,
+                VfsConfigPopupPresenterWidget.ViewDef.class,
+                VfsConfigPopupView.class);
         bindPresenterWidget(HostSetupNetworksPopupPresenterWidget.class,
                 HostSetupNetworksPopupPresenterWidget.ViewDef.class,
                 HostSetupNetworksPopupView.class);
