@@ -37,7 +37,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class NetworkItemPanel extends FocusPanel {
+public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends FocusPanel {
 
     public static final String SETUP_NETWORKS_DATA = "SetupNetworksData"; //$NON-NLS-1$
     public static final String SETUP_NETWORKS_TYPE = "SetupNetworksType"; //$NON-NLS-1$
@@ -46,11 +46,11 @@ public abstract class NetworkItemPanel extends FocusPanel {
 
     final Image dragImage = new Image(resources.itemDraggable());
     final PushButton actionButton;
-    final NetworkItemModel<?> item;
+    final T item;
 
     final private boolean draggable;
     final protected NetworkPanelsStyle style;
-    protected NetworkItemPanel parentPanel;
+    protected NetworkItemPanel<?> parentPanel;
     private MenuBar menu;
 
     private WidgetTooltip tooltip;
@@ -62,7 +62,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
 
     private static String lastDragData = ""; //$NON-NLS-1$
 
-    public NetworkItemPanel(NetworkItemModel<?> item, NetworkPanelsStyle style, boolean draggable) {
+    public NetworkItemPanel(T item, NetworkPanelsStyle style, boolean draggable) {
         this.draggable = draggable;
         getElement().setDraggable(draggable ? Element.DRAGGABLE_TRUE : Element.DRAGGABLE_FALSE);
 
@@ -130,7 +130,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
 
             @Override
             public void onContextMenu(ContextMenuEvent event) {
-                NetworkItemPanel sourcePanel = (NetworkItemPanel) event.getSource();
+                NetworkItemPanel<?> sourcePanel = (NetworkItemPanel<?>) event.getSource();
                 NativeEvent nativeEvent = event.getNativeEvent();
                 showContextMenu(sourcePanel, nativeEvent.getClientX(), nativeEvent.getClientY());
                 event.stopPropagation();
@@ -144,7 +144,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
             addBitlessDomHandler(new DragStartHandler() {
                 @Override
                 public void onDragStart(DragStartEvent event) {
-                    NetworkItemPanel sourcePanel = (NetworkItemPanel) event.getSource();
+                    NetworkItemPanel<?> sourcePanel = (NetworkItemPanel<?>) event.getSource();
                     // Required: set data for the event.
                     lastDragData = sourcePanel.item.getType() + " " + sourcePanel.item.getName(); //$NON-NLS-1$
                     event.setData("Text", lastDragData); //$NON-NLS-1$
@@ -215,7 +215,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
         return menuBar;
     }
 
-    private void showContextMenu(NetworkItemPanel panel, int clientX, int clientY) {
+    private void showContextMenu(NetworkItemPanel<?> panel, int clientX, int clientY) {
         if (!menu.isEmpty()){
             menuPopup.setWidget(menu);
             menuPopup.setPopupPosition(clientX, clientY);
@@ -228,7 +228,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
         return menuBar;
     }
 
-    public NetworkItemModel<?> getItem() {
+    public T getItem() {
         return item;
     }
 

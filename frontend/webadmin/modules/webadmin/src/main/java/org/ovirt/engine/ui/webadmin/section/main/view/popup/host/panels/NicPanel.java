@@ -11,15 +11,15 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class NicPanel extends NetworkItemPanel {
+public class NicPanel<T extends NetworkInterfaceModel> extends NetworkItemPanel<T> {
 
     private final static ApplicationResources resources = AssetProvider.getResources();
 
-    public NicPanel(NetworkInterfaceModel item, NetworkPanelsStyle style) {
+    public NicPanel(T item, NetworkPanelsStyle style) {
         this(item, style, true);
     }
 
-    public NicPanel(NetworkInterfaceModel item, NetworkPanelsStyle style, boolean draggable) {
+    public NicPanel(T item, NetworkPanelsStyle style, boolean draggable) {
         super(item, style, draggable);
         getElement().addClassName(style.nicPanel());
         this.actionButton.setStyleName(style.actionButtonNetwork());
@@ -52,15 +52,16 @@ public class NicPanel extends NetworkItemPanel {
         rowPanel.setWidget(0, 2, nicImage);
         rowPanel.setWidget(0, 3, titleLabel);
         rowPanel.setWidget(0, 4, actionButton);
+
         return rowPanel;
     }
 
     private ImageResource getNicIcon() {
-        return ((NetworkInterfaceModel) item).isSriovEnabled() ? resources.nicSriov() : resources.nicIcon();
+        return item.isSriovEnabled() ? resources.nicSriov() : resources.nicIcon();
     }
 
     private ImageResource getStatusImage() {
-        switch (((NetworkInterfaceModel) item).getStatus()) {
+        switch (item.getStatus()) {
         case UP:
             return resources.nicUp();
         case DOWN:

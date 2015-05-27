@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class NetworkLabelPanel extends NetworkItemPanel {
+public class NetworkLabelPanel extends NetworkItemPanel<NetworkLabelModel> {
 
     private final static ApplicationResources resources = AssetProvider.getResources();
 

@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class NetworkPanel extends NetworkItemPanel {
+public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel> {
 
     private final static ApplicationResources resources = AssetProvider.getResources();
     private final static ApplicationMessages messages = AssetProvider.getMessages();
@@ -45,7 +45,6 @@ public abstract class NetworkPanel extends NetworkItemPanel {
 
     @Override
     protected Widget getContents() {
-        LogicalNetworkModel network = (LogicalNetworkModel) item;
 
         Image mgmtNetworkImage;
         Image vmImage;
@@ -55,7 +54,7 @@ public abstract class NetworkPanel extends NetworkItemPanel {
         Image alertImage;
         Image glusterNwImage;
 
-        if (!network.isManaged()) {
+        if (!item.isManaged()) {
             monitorImage = null;
             mgmtNetworkImage = null;
             vmImage = null;
@@ -64,44 +63,44 @@ public abstract class NetworkPanel extends NetworkItemPanel {
             notSyncImage = null;
             alertImage = null;
         } else {
-            monitorImage = network.getNetwork().getCluster().isDisplay() ?
+            monitorImage = item.getNetwork().getCluster().isDisplay() ?
                     new Image(resources.networkMonitor()) : null;
-            mgmtNetworkImage = network.isManagement() ? new Image(resources.mgmtNetwork()) : null;
-            vmImage = network.getNetwork().isVmNetwork() ? new Image(resources.networkVm()) : null;
-            migrationImage = network.getNetwork().getCluster().isMigration() ?
+            mgmtNetworkImage = item.isManagement() ? new Image(resources.mgmtNetwork()) : null;
+            vmImage = item.getNetwork().isVmNetwork() ? new Image(resources.networkVm()) : null;
+            migrationImage = item.getNetwork().getCluster().isMigration() ?
                     new Image(resources.migrationNetwork()) : null;
-            glusterNwImage = network.getNetwork().getCluster().isGluster() ?
+            glusterNwImage = item.getNetwork().getCluster().isGluster() ?
                     new Image(resources.glusterNetwork()) : null;
-            notSyncImage = !network.isInSync() ? new Image(resources.networkNotSyncImage()) : null;
-            alertImage = network.getErrorMessage() != null ? new Image(resources.alertImage()) : null;
+            notSyncImage = !item.isInSync() ? new Image(resources.networkNotSyncImage()) : null;
+            alertImage = item.getErrorMessage() != null ? new Image(resources.alertImage()) : null;
 
-            if (network.isManagement()) {
+            if (item.isManagement()) {
                 mgmtNetworkImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (network.getNetwork().isVmNetwork()) {
+            if (item.getNetwork().isVmNetwork()) {
                 vmImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (network.getNetwork().getCluster().isDisplay()) {
+            if (item.getNetwork().getCluster().isDisplay()) {
                 monitorImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (network.getNetwork().getCluster().isMigration()) {
+            if (item.getNetwork().getCluster().isMigration()) {
                 migrationImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (network.getNetwork().getCluster().isGluster()) {
+            if (item.getNetwork().getCluster().isGluster()) {
                 glusterNwImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (!network.isInSync()) {
+            if (!item.isInSync()) {
                 notSyncImage.setStylePrimaryName(style.networkImageBorder());
             }
         }
 
-        actionButton.setVisible(network.getAttachedToNic() != null
-                && (network.isManaged() || !network.isAttachedViaLabel()));
+        actionButton.setVisible(item.getAttachedToNic() != null
+                && (item.isManaged() || !item.isAttachedViaLabel()));
 
         Grid rowPanel = new Grid(1, 10);
         rowPanel.setCellSpacing(0);
@@ -139,13 +138,12 @@ public abstract class NetworkPanel extends NetworkItemPanel {
     }
 
     private Panel createTitlePanel() {
-        LogicalNetworkModel networkModel = (LogicalNetworkModel) item;
-        titleLabel = new Label(networkModel.getName());
+        titleLabel = new Label(item.getName());
         titleLabel.getElement().addClassName(style.titleLabel());
         Panel titlePanel = new HorizontalPanel();
         titlePanel.add(titleLabel);
-        if (networkModel.hasVlan()) {
-            Label vlanLabel = new Label(messages.vlanNetwork(networkModel.getVlanId()));
+        if (item.hasVlan()) {
+            Label vlanLabel = new Label(messages.vlanNetwork(item.getVlanId()));
             vlanLabel.getElement().addClassName(style.vlanLabel());
             titlePanel.add(vlanLabel);
         }
@@ -156,8 +154,7 @@ public abstract class NetworkPanel extends NetworkItemPanel {
 
     @Override
     protected void onAction() {
-        LogicalNetworkModel network = (LogicalNetworkModel) item;
-        if (network.isManaged()) {
+        if (item.isManaged()) {
             item.edit();
         } else {
             OperationMap operationMap = item.getSetupModel().commandsFor(item);

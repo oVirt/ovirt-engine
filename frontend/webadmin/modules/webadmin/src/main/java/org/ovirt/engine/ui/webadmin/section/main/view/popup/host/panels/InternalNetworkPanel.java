@@ -22,7 +22,7 @@ public class InternalNetworkPanel extends NetworkPanel {
 
     @Override
     protected ImageResource getStatusImage() {
-        NetworkStatus netStatus = ((LogicalNetworkModel) item).getStatus();
+        NetworkStatus netStatus = item.getStatus();
 
         if (netStatus == NetworkStatus.OPERATIONAL) {
             return resources.upImage();
