@@ -106,6 +106,11 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     protected void executeVDSCommand() {
         try {
             executeVdsBrokerCommand();
+        } catch (VDSNetworkException ex) {
+            printReturnValue();
+            updateNetworkException(ex, ex.getMessage());
+            networkError.fire(ex);
+            throw ex;
         } catch (VDSExceptionBase ex) {
             printReturnValue();
             throw ex;
@@ -132,6 +137,16 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
 
     }
 
+    private void updateNetworkException(VDSNetworkException ex, String message) {
+        VDSError error = ex.getVdsError();
+        if (error == null) {
+            error = new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, message);
+            ex.setVdsError(error);
+        }
+
+        error.setVdsId(getVds().getId());
+    }
+
     protected VDSNetworkException createNetworkException(Exception ex) {
         Throwable rootCause = ExceptionUtils.getRootCause(ex);
         VDSNetworkException networkException;
@@ -143,9 +158,8 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
             networkException = new VDSNetworkException(ex);
             message = ex.getMessage();
         }
-        VDSError value = new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, message);
-        value.setVdsId(getVds().getId());
-        networkException.setVdsError(value);
+
+        updateNetworkException(networkException, message);
         return networkException;
     }
 
