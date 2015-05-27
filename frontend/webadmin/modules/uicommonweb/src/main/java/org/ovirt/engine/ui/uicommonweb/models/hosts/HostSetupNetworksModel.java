@@ -1072,7 +1072,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         SimpleAction closeAction = getCloseAction();
         UiAction setupNetworks = new UiVdcAction(VdcActionType.SetupNetworks, params, this, true);
 
-        setupNetworks.then(getCommitNetworkChangesAction()).then(getVfsConfigAction()).onAllExecutionsFinish(closeAction);
+        setupNetworks.then(getVfsConfigAction()).then(getCommitNetworkChangesAction()).onAllExecutionsFinish(closeAction);
 
         setupNetworks.runAction();
     }
