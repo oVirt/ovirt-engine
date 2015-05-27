@@ -260,7 +260,9 @@ OR REPLACE VIEW dwh_host_interface_history_view AS
 SELECT
     vds_interface_statistics.id AS host_interface_id,
     CAST ( vds_interface_statistics.rx_rate AS SMALLINT ) AS receive_rate_percent,
-    CAST ( vds_interface_statistics.tx_rate AS SMALLINT ) AS transmit_rate_percent
+    CAST ( vds_interface_statistics.tx_rate AS SMALLINT ) AS transmit_rate_percent,
+    vds_interface_statistics.rx_total AS received_total_byte,
+    vds_interface_statistics.tx_total AS transmitted_total_byte
 FROM
     vds_interface_statistics;
 CREATE
@@ -379,7 +381,9 @@ OR REPLACE VIEW dwh_vm_interface_history_view AS
 SELECT
     vm_interface_statistics.id AS vm_interface_id,
     CAST ( vm_interface_statistics.rx_rate AS SMALLINT ) AS receive_rate_percent,
-    CAST ( vm_interface_statistics.tx_rate AS SMALLINT ) AS transmit_rate_percent
+    CAST ( vm_interface_statistics.tx_rate AS SMALLINT ) AS transmit_rate_percent,
+    vm_interface_statistics.rx_total AS received_total_byte,
+    vm_interface_statistics.tx_total AS transmitted_total_byte
 FROM
     vm_interface_statistics;
 CREATE
