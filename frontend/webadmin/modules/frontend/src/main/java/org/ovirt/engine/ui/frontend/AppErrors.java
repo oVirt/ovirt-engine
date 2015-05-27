@@ -1489,6 +1489,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The display network ${DisplayNetwork} must have a DHCP or Static boot protocol when configured on a host.")
     String ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are used by gluster volume bricks: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK_LIST}. Please remove or replace the bricks in order to remove the network.")
+    String ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK();
+
     @DefaultStringValue("Cannot ${action} ${type}. The following networks are already attached to a different interface: ${AssignedNetworks}. Please remove the networks in order to label the interface.")
     String LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE();
 
@@ -1731,6 +1734,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The address of the network '${ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST}' cannot be modified without reinstalling the host, since this address was used to create the host's certification.")
     String ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The address of the network '${ACTION_TYPE_FAILED_NETWORK_ADDRESS_BRICK_IN_USE_LIST}' cannot be modified without removing or replacing the bricks, since this address was used to create gluster volume bricks.")
+    String ACTION_TYPE_FAILED_NETWORK_ADDRESS_BRICK_IN_USE();
 
     @DefaultStringValue("Cannot preview Active VM snapshot.")
     String CANNOT_PREVIEW_ACTIVE_SNAPSHOT();

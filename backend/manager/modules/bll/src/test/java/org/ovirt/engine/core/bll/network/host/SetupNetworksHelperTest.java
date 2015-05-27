@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
@@ -87,6 +89,9 @@ public class SetupNetworksHelperTest {
 
     @Mock
     private NetworkQoSDao qosDao;
+
+    @Mock
+    private GlusterBrickDao brickDao;
 
     /* --- Tests for networks functionality --- */
 
@@ -1629,7 +1634,9 @@ public class SetupNetworksHelperTest {
      * @return A network with some defaults and the given name,
      */
     private Network createNetwork(String networkName) {
-        return new Network("", "", Guid.newGuid(), networkName, "", "", 0, null, false, 0, true);
+        Network net = new Network("", "", Guid.newGuid(), networkName, "", "", 0, null, false, 0, true);
+        net.setCluster(new NetworkCluster());
+        return net;
     }
 
     /**
@@ -1962,6 +1969,7 @@ public class SetupNetworksHelperTest {
         doReturn(mock(VdsDAO.class)).when(dbFacade).getVdsDao();
         doReturn(networkDAO).when(dbFacade).getNetworkDao();
         doReturn(qosDao).when(dbFacade).getNetworkQosDao();
+        doReturn(brickDao).when(dbFacade).getGlusterBrickDao();
 
         return helper;
     }

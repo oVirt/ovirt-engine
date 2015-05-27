@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -122,6 +123,7 @@ public class SetupNetworksHelper {
         validateNetworkQos();
         validateNotRemovingLabeledNetworks();
         validateCustomProperties();
+        validateNotRemovingGlusterBrickNetworks();
 
         return translateViolations();
     }
@@ -142,6 +144,21 @@ public class SetupNetworksHelper {
                 } else {
                     validateNicForNotRemovingLabeledNetworks(network, nic);
                 }
+            }
+        }
+    }
+
+    private void validateNotRemovingGlusterBrickNetworks() {
+        for (String network : removedNetworks) {
+            Network removedNetwork = getExistingClusterNetworks().get(network);
+            if (removedNetwork == null || !removedNetwork.getCluster().isGluster()) {
+                continue;
+            }
+            List<GlusterBrickEntity> bricks =
+                    getDbFacade().getGlusterBrickDao().getAllByClusterAndNetworkId(vds.getVdsGroupId(),
+                            removedNetwork.getId());
+            if (!bricks.isEmpty()) {
+                addViolation(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK, network);
             }
         }
     }
@@ -469,6 +486,9 @@ public class SetupNetworksHelper {
                     if (networkIpAddressWasSameAsHostnameAndChanged(iface)) {
                         addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED, networkName);
                     }
+                    if (networkIpAddressUsedByBrickChanged(iface, network)) {
+                        addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ADDRESS_BRICK_IN_USE, networkName);
+                    }
                     modifiedNetworks.add(network);
                 }
             } else {
@@ -506,6 +526,35 @@ public class SetupNetworksHelper {
             }
         }
 
+        return false;
+    }
+
+    /**
+     * Checks if a network is configured incorrectly:
+     * <ul>
+     * <li>If the network is configured to use static IP address and the interface is used by gluster bricks, then it is
+     * forbidden to modify the IP address without replacing the bricks.</li>
+     * </ul>
+     *
+     * @param iface
+     *            The network interface which carries the network
+     * @return <code>true</code> if the network was reconfigured improperly
+     */
+
+    private boolean networkIpAddressUsedByBrickChanged(VdsNetworkInterface iface, Network network) {
+        if (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
+            List<GlusterBrickEntity> bricks =
+                    getDbFacade().getGlusterBrickDao()
+                            .getAllByClusterAndNetworkId(vds.getVdsGroupId(), network.getId());
+            if (bricks.isEmpty()) {
+                return false;
+            }
+            VdsNetworkInterface existingIface = getExistingIfaceByNetwork(iface.getNetworkName());
+            if (existingIface != null) {
+                String oldAddress = existingIface.getAddress();
+                return StringUtils.isNotEmpty(oldAddress) && !StringUtils.equals(oldAddress, iface.getAddress());
+            }
+        }
         return false;
     }
 
