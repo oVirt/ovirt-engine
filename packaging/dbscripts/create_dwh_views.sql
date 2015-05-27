@@ -134,6 +134,11 @@ SELECT
     b.libvirt_version,
     b.software_version AS vdsm_version,
     a.port AS vdsm_port,
+    CAST ( b.cpu_threads  AS SMALLINT ) AS threads_per_core,
+    b.hw_manufacturer AS hardware_manufacturer,
+    b.hw_product_name AS hardware_product_name,
+    b.hw_version AS hardware_version,
+    b.hw_serial_number AS hardware_serial_number,
     a._create_date AS create_date,
     a._update_date AS update_date
 FROM
@@ -186,6 +191,11 @@ SELECT
         ELSE b.software_version
     END AS vdsm_version,
     a.port AS vdsm_port,
+    CAST ( b.cpu_threads  AS SMALLINT ) AS threads_per_core,
+    b.hw_manufacturer AS hardware_manufacturer,
+    b.hw_product_name AS hardware_product_name,
+    b.hw_version AS hardware_version,
+    b.hw_serial_number AS hardware_serial_number,
     a._create_date AS create_date,
     a._update_date AS update_date
 FROM
