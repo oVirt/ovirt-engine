@@ -1,5 +1,15 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -32,21 +43,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SetupNetworksHelperTest {
@@ -99,6 +101,9 @@ public class SetupNetworksHelperTest {
 
     @Mock
     private HostNetworkQosDao qosDao;
+
+    @Mock
+    private GlusterBrickDao brickDao;
 
     @Mock
     private ManagementNetworkUtil managementNetworkUtil;
@@ -1901,7 +1906,9 @@ public class SetupNetworksHelperTest {
      * @return A network with some defaults and the given name,
      */
     private Network createNetwork(String networkName) {
-        return new Network("", "", Guid.newGuid(), networkName, "", "", 0, null, false, 0, true);
+        Network net = new Network("", "", Guid.newGuid(), networkName, "", "", 0, null, false, 0, true);
+        net.setCluster(new NetworkCluster());
+        return net;
     }
 
     private Network createManagementNetwork() {
@@ -2282,6 +2289,7 @@ public class SetupNetworksHelperTest {
         doReturn(mock(VdsDAO.class)).when(dbFacade).getVdsDao();
         doReturn(networkDAO).when(dbFacade).getNetworkDao();
         doReturn(qosDao).when(dbFacade).getHostNetworkQosDao();
+        doReturn(brickDao).when(dbFacade).getGlusterBrickDao();
 
         return helper;
     }

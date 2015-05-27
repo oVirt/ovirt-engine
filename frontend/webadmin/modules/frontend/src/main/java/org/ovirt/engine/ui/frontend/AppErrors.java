@@ -1540,6 +1540,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are managed by the label: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST}. Please remove the label from the network interface in order to remove the network.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are used by gluster volume bricks: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK_LIST}. Please remove or replace the bricks in order to remove the network.")
+    String ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK();
+
     @DefaultStringValue("Cannot ${action} ${type}. The following networks are already attached to a different interface: ${AssignedNetworks}. Please remove the networks in order to label the interface.")
     String LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE();
 
@@ -1848,6 +1851,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The address of the network '${ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST}' cannot be modified without reinstalling the host, since this address was used to create the host's certification.")
     String ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The address of the network '${ACTION_TYPE_FAILED_NETWORK_ADDRESS_BRICK_IN_USE_LIST}' cannot be modified without removing or replacing the bricks, since this address was used to create gluster volume bricks.")
+    String ACTION_TYPE_FAILED_NETWORK_ADDRESS_BRICK_IN_USE();
 
     @DefaultStringValue("Cannot preview Active VM snapshot.")
     String CANNOT_PREVIEW_ACTIVE_SNAPSHOT();
