@@ -45,4 +45,8 @@ public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> exten
     protected boolean getIsPrintReturnValue() {
         return false;
     }
+
+    @Override
+    protected void logToAudit(){
+    }
 }

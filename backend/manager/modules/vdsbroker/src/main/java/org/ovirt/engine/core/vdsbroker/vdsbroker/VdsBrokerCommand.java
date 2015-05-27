@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.VDSError;
@@ -9,6 +10,8 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
@@ -20,6 +23,10 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     private final IVdsServer mVdsBroker;
     private VdsStatic vdsStatic;
     private VDS vds;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
     @Inject
     Event<VDSNetworkException> networkError;
     /**
@@ -140,6 +147,15 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         value.setVdsId(getVds().getId());
         networkException.setVdsError(value);
         return networkException;
+    }
+
+    @Override
+    protected void logToAudit(){
+        AuditLogableBase auditLogableBase = new AuditLogableBase(vds.getId());
+        auditLogableBase.setVds(vds);
+        auditLogableBase.addCustomValue("message", getReturnStatus().mMessage);
+
+        auditLogDirector.log(auditLogableBase, AuditLogType.VDS_BROKER_COMMAND_FAILURE);
     }
 
     protected abstract void executeVdsBrokerCommand();

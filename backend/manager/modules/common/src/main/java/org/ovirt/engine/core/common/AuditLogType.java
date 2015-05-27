@@ -1211,7 +1211,10 @@ public enum AuditLogType {
 
     // Host Devices
     VM_ADD_HOST_DEVICES(10800),
-    VM_REMOVE_HOST_DEVICES(10801);
+    VM_REMOVE_HOST_DEVICES(10801),
+
+    VDS_BROKER_COMMAND_FAILURE(10802, AuditLogSeverity.ERROR),
+    IRS_BROKER_COMMAND_FAILURE(10803, AuditLogSeverity.ERROR);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.

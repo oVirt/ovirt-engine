@@ -31,4 +31,8 @@ public class GetAllVmStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBa
     protected boolean getIsPrintReturnValue() {
         return false;
     }
+
+    @Override
+    protected void logToAudit(){
+    }
 }

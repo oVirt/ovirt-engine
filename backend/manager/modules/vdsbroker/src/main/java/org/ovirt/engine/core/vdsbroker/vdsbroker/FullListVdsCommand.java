@@ -36,4 +36,8 @@ public class FullListVdsCommand<P extends FullListVDSCommandParameters> extends 
     protected boolean getIsPrintReturnValue() {
         return false;
     }
+
+    @Override
+    protected void logToAudit(){
+    }
 }

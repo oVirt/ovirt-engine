@@ -191,7 +191,13 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         tempVar.setCode(returnStatus);
         tempVar.setMessage(getReturnStatus().mMessage);
         outEx.setVdsError(tempVar);
+
+        logToAudit();
+
         throw outEx;
+    }
+
+    protected void logToAudit(){
     }
 
     private VDSExceptionBase createException() {
