@@ -246,7 +246,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             vmStatic.setPriority(instanceType.getPriority());
             vmStatic.setTunnelMigration(instanceType.getTunnelMigration());
 
-            List<VmDevice> vmDevices = VmDeviceUtils.getBalloonDevices(instanceType.getId());
+            List<VmDevice> vmDevices = VmDeviceUtils.getMemoryBalloons(instanceType.getId());
             vmStatic.setMinAllocatedMem(instanceType.getMinAllocatedMem());
             if (vmDevices.isEmpty()) {
                 getParameters().setBalloonEnabled(false);

@@ -226,10 +226,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     vm.getNumOfMonitors(),
                     allVmInterfaces,
                     allVmDisks,
-                    VmDeviceUtils.isVirtioScsiControllerAttached(vm.getId()),
+                    VmDeviceUtils.hasVirtioScsiController(vm.getId()),
                     VmDeviceUtils.hasWatchdog(vm.getId()),
-                    VmDeviceUtils.isBalloonEnabled(vm.getId()),
-                    VmDeviceUtils.isSoundDeviceEnabled(vm.getId()),
+                    VmDeviceUtils.hasMemoryBalloon(vm.getId()),
+                    VmDeviceUtils.hasSoundDevice(vm.getId()),
                     getReturnValue().getCanDoActionMessages())) {
                 return false;
             }
@@ -531,7 +531,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     protected void updateBootOrder() {
-        VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
+        VmDeviceUtils.updateBootOrder(getVm().getId());
     }
 
     private void extendDiskImageSize() {

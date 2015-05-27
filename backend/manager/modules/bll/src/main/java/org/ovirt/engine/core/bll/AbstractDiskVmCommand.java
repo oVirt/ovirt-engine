@@ -131,15 +131,15 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected boolean isVirtioScsiControllerAttached(Guid vmId) {
-        return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
+        return VmDeviceUtils.hasVirtioScsiController(vmId);
     }
 
     protected boolean isBalloonEnabled(Guid vmId) {
-        return VmDeviceUtils.isBalloonEnabled(vmId);
+        return VmDeviceUtils.hasMemoryBalloon(vmId);
     }
 
     protected boolean isSoundDeviceEnabled(Guid vmId) {
-        return VmDeviceUtils.isSoundDeviceEnabled(vmId);
+        return VmDeviceUtils.hasSoundDevice(vmId);
     }
 
     protected boolean hasWatchdog(Guid vmId) {

@@ -704,7 +704,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         // Before running the VM we update its devices, as they may
         // need to be changed due to configuration option change
-        VmDeviceUtils.updateVmDevices(getVm().getStaticData());
+        VmDeviceUtils.updateVmDevicesOnRun(getVm().getStaticData());
 
         getVm().setKvmEnable(getParameters().getKvmEnable());
         getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());

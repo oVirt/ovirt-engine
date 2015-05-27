@@ -182,7 +182,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             public Void runInTransaction() {
                 vmDevice.setIsPlugged(getParameters().getAction() == PlugAction.PLUG ? true : false);
                 getVmDeviceDao().update(vmDevice);
-                VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
+                VmDeviceUtils.updateBootOrder(getVm().getId());
                 return null;
             }
         };

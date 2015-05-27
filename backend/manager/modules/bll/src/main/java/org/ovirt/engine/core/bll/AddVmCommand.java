@@ -932,9 +932,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                     payload.getDeviceType(),
                     payload.getSpecParams(),
                     true,
-                    true,
-                    null,
-                    false);
+                    true);
         }
     }
 
@@ -1438,7 +1436,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean isVirtioScsiControllerAttached(Guid vmId) {
-        return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
+        return VmDeviceUtils.hasVirtioScsiController(vmId);
     }
 
     /**

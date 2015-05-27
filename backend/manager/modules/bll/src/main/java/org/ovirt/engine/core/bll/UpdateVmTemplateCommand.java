@@ -183,9 +183,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getParameters().getVmTemplateData().getNumOfMonitors(),
                     interfaces,
                     new ArrayList<DiskImageBase>(getParameters().getVmTemplateData().getDiskList()),
-                    VmDeviceUtils.isVirtioScsiControllerAttached(getParameters().getVmTemplateData().getId()),
+                    VmDeviceUtils.hasVirtioScsiController(getParameters().getVmTemplateData().getId()),
                     hasWatchdog(getParameters().getVmTemplateData().getId()),
-                    VmDeviceUtils.isBalloonEnabled(getParameters().getVmTemplateData().getId()),
+                    VmDeviceUtils.hasMemoryBalloon(getParameters().getVmTemplateData().getId()),
                     isSoundDeviceEnabled(),
                     getReturnValue().getCanDoActionMessages())) {
                 returnValue = false;
@@ -222,7 +222,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     protected boolean isSoundDeviceEnabled() {
         Boolean soundDeviceEnabled = getParameters().isSoundDeviceEnabled();
         return soundDeviceEnabled != null ? soundDeviceEnabled :
-                VmDeviceUtils.isSoundDeviceEnabled(getParameters().getVmTemplateData().getId());
+                VmDeviceUtils.hasSoundDevice(getParameters().getVmTemplateData().getId());
     }
 
     @Override
@@ -297,7 +297,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         // also update the smartcard device
         VmDeviceUtils.updateSmartcardDevice(getVmTemplateId(), getParameters().getVmTemplateData().isSmartcardEnabled());
         // update audio device
-        VmDeviceUtils.updateAudioDevice(mOldTemplate,
+        VmDeviceUtils.updateSoundDevice(mOldTemplate,
                 getVmTemplate(),
                 getVdsGroup() != null ? getVdsGroup().getCompatibilityVersion() : null,
                 getParameters().isSoundDeviceEnabled());

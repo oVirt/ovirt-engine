@@ -161,7 +161,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
+                VmDeviceUtils.updateBootOrder(getVm().getId());
                 return null;
             }
         });

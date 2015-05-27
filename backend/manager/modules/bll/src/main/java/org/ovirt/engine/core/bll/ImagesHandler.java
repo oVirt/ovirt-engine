@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -47,7 +46,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
@@ -375,14 +373,7 @@ public final class ImagesHandler {
      */
     public static void addDiskToVm(BaseDisk disk, Guid vmId) {
         DbFacade.getInstance().getBaseDiskDao().save(disk);
-        VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getId(), vmId),
-                VmDeviceGeneralType.DISK,
-                VmDeviceType.DISK,
-                null,
-                true,
-                false,
-                null,
-                false);
+        VmDeviceUtils.addDiskDevice(vmId, disk.getId());
     }
 
     /**

@@ -394,15 +394,26 @@ public class VmDeviceCommonUtils {
     }
 
     /**
-     * Find a device in the map given by device name.
+     * Find a device in the map with the given type.
      *
      * @param vmManagedDeviceMap
-     * @param name
+     * @param type
      * @return
      */
-    public static VmDevice findVmDeviceByName(Map<Guid, VmDevice> vmManagedDeviceMap, String name) {
+    public static VmDevice findVmDeviceByType(Map<Guid, VmDevice> vmManagedDeviceMap, VmDeviceType type) {
+        return findVmDeviceByType(vmManagedDeviceMap, type.getName());
+    }
+
+    /**
+     * Find a device in the map with the given type.
+     *
+     * @param vmManagedDeviceMap
+     * @param typeName
+     * @return
+     */
+    public static VmDevice findVmDeviceByType(Map<Guid, VmDevice> vmManagedDeviceMap, String typeName) {
         for (VmDevice vmDevice : vmManagedDeviceMap.values()) {
-            if (vmDevice.getDevice().equals(name)) {
+            if (vmDevice.getDevice().equals(typeName)) {
                 return vmDevice;
             }
         }
@@ -411,14 +422,14 @@ public class VmDeviceCommonUtils {
     }
 
     /**
-     * Find a device in the map given by device general type.
+     * Find a device in the map with the given general type.
      *
      * @param vmManagedDeviceMap
      * @param generalType
      * @return
      */
     public static VmDevice findVmDeviceByGeneralType(Map<Guid, VmDevice> vmManagedDeviceMap,
-                                               VmDeviceGeneralType generalType) {
+                                                     VmDeviceGeneralType generalType) {
         for (VmDevice vmDevice : vmManagedDeviceMap.values()) {
             if (vmDevice.getType() == generalType) {
                 return vmDevice;
@@ -429,14 +440,25 @@ public class VmDeviceCommonUtils {
     }
 
     /**
-     * Check if device with the name given exists in the map.
+     * Check if device with the type given exists in the map.
      *
      * @param vmManagedDeviceMap
-     * @param name
+     * @param type
      * @return
      */
-    public static boolean isVmDeviceExists(Map<Guid, VmDevice> vmManagedDeviceMap, String name) {
-        return findVmDeviceByName(vmManagedDeviceMap, name) != null;
+    public static boolean isVmDeviceExists(Map<Guid, VmDevice> vmManagedDeviceMap, VmDeviceType type) {
+        return isVmDeviceExists(vmManagedDeviceMap, type.getName());
+    }
+
+    /**
+     * Check if device with the type given exists in the map.
+     *
+     * @param vmManagedDeviceMap
+     * @param typeName
+     * @return
+     */
+    public static boolean isVmDeviceExists(Map<Guid, VmDevice> vmManagedDeviceMap, String typeName) {
+        return findVmDeviceByType(vmManagedDeviceMap, typeName) != null;
     }
 
     /**

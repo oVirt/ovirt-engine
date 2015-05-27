@@ -94,7 +94,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         // update cached image
         VmHandler.updateDisksFromDb(getVm());
         // update vm device boot order
-        VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
+        VmDeviceUtils.updateBootOrder(getVm().getId());
         getVmStaticDAO().incrementDbGeneration(getVm().getId());
         setSucceeded(true);
     }

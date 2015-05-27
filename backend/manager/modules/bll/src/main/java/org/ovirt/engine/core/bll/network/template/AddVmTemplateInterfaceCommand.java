@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -37,8 +36,9 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                         getParameters().getInterface().getType()).getSpeed());
 
         getVmNicDao().save(getParameters().getInterface());
-        VmDeviceUtils.addNetworkInterfaceDevice(
-                new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmTemplateId()),
+        VmDeviceUtils.addInterface(
+                getParameters().getVmTemplateId(),
+                getParameters().getInterface().getId(),
                 getParameters().getInterface().isPlugged(),
                 getParameters().getInterface().isPassthrough());
 
@@ -73,10 +73,10 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                     getVmTemplate().getNumOfMonitors(),
                     interfacesForCheckPciLimit,
                     new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()),
-                    VmDeviceUtils.isVirtioScsiControllerAttached(getVmTemplate().getId()),
+                    VmDeviceUtils.hasVirtioScsiController(getVmTemplate().getId()),
                     VmDeviceUtils.hasWatchdog(getVmTemplate().getId()),
-                    VmDeviceUtils.isBalloonEnabled(getVmTemplate().getId()),
-                    VmDeviceUtils.isSoundDeviceEnabled(getVmTemplate().getId()),
+                    VmDeviceUtils.hasMemoryBalloon(getVmTemplate().getId()),
+                    VmDeviceUtils.hasSoundDevice(getVmTemplate().getId()),
                     getReturnValue().getCanDoActionMessages())) {
                 return false;
             }

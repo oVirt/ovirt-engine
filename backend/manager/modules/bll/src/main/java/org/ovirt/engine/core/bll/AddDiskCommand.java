@@ -41,8 +41,6 @@ import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -57,7 +55,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -427,13 +424,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected VmDevice addManagedDeviceForDisk(Guid diskId, Boolean isUsingScsiReservation) {
-        return VmDeviceUtils.addManagedDevice(new VmDeviceId(diskId, getVmId()),
-                VmDeviceGeneralType.DISK,
-                VmDeviceType.DISK,
-                null,
+        return  VmDeviceUtils.addDiskDevice(
+                getVmId(),
+                diskId,
                 shouldDiskBePlugged(),
                 Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
-                null,
                 Boolean.TRUE.equals(isUsingScsiReservation));
     }
 

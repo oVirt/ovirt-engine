@@ -113,10 +113,10 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 getVmTemplate().getNumOfMonitors(),
                 interfaces,
                 new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()),
-                VmDeviceUtils.isVirtioScsiControllerAttached(getVmTemplate().getId()),
+                VmDeviceUtils.hasVirtioScsiController(getVmTemplate().getId()),
                 VmDeviceUtils.hasWatchdog(getVmTemplate().getId()),
-                VmDeviceUtils.isBalloonEnabled(getVmTemplate().getId()),
-                VmDeviceUtils.isSoundDeviceEnabled(getVmTemplate().getId()),
+                VmDeviceUtils.hasMemoryBalloon(getVmTemplate().getId()),
+                VmDeviceUtils.hasSoundDevice(getVmTemplate().getId()),
                 getReturnValue().getCanDoActionMessages());
     }
 

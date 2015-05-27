@@ -319,14 +319,14 @@ public abstract class InstanceTypeManager {
         if (isNextRunConfigurationExists()) {
             deactivate();
             getModel().getIsSoundcardEnabled().setEntity(
-                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.SOUND.getName()));
+                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.SOUND));
             getModel().getIsConsoleDeviceEnabled().setEntity(
-                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.CONSOLE.getName()));
+                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.CONSOLE));
 
             Set<GraphicsType> graphicsTypeSet = new HashSet<>();
             for (GraphicsType graphicsType : GraphicsType.values()) {
                 if (VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(),
-                        graphicsType.getCorrespondingDeviceType().getName())) {
+                        graphicsType.getCorrespondingDeviceType())) {
                     graphicsTypeSet.add(graphicsType);
                 }
             }
@@ -431,7 +431,7 @@ public abstract class InstanceTypeManager {
     private void updateVirtioScsi(VmBase vmBase) {
         if (isNextRunConfigurationExists()) {
             getModel().getIsVirtioScsiEnabled().setEntity(
-                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.VIRTIOSCSI.getName()));
+                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.VIRTIOSCSI));
             model.stopProgress();
             return;
         }

@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HttpLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -23,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DownloadImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -147,15 +144,7 @@ public class ImportRepoImageCopyTaskHandler
 
     private void attachDiskToTemplate(Guid templateId) {
         DiskImage templateDiskImage = getEnclosingCommand().getParameters().getDiskImage();
-        VmDeviceUtils.addManagedDevice(new VmDeviceId(templateDiskImage.getId(),
-                templateId),
-                VmDeviceGeneralType.DISK,
-                VmDeviceType.DISK,
-                null,
-                true,
-                Boolean.FALSE,
-                null,
-                false);
+        VmDeviceUtils.addDiskDevice(templateId, templateDiskImage.getId());
     }
 
     @Override

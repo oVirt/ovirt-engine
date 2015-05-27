@@ -85,7 +85,7 @@ public class DiskValidator {
     }
 
     public boolean isVirtioScsiControllerAttached(Guid vmId) {
-        return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
+        return VmDeviceUtils.hasVirtioScsiController(vmId);
     }
 
     public ValidationResult isDiskPluggedToVmsThatAreNotDown(boolean checkOnlyVmsSnapshotPluggedTo, List<Pair<VM, VmDevice>> vmsForDisk) {

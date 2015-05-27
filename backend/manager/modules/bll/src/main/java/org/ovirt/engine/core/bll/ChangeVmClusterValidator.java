@@ -79,7 +79,7 @@ public class ChangeVmClusterValidator {
                 return false;
             }
 
-            if (VmDeviceUtils.isVirtioScsiControllerAttached(vm.getId())) {
+            if (VmDeviceUtils.hasVirtioScsiController(vm.getId())) {
                 // Verify cluster compatibility
                 if (!FeatureSupported.virtIoScsi(targetCluster.getCompatibilityVersion())) {
                     return parentCommand.failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);

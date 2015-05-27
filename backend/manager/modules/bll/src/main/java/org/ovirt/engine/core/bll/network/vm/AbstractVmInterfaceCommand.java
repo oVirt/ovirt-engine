@@ -80,10 +80,10 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         return checkPciAndIdeLimit(vm.getOs(),
                 vm.getVdsGroupCompatibilityVersion(),
                 vm.getNumOfMonitors(), allInterfaces, allDisks,
-                VmDeviceUtils.isVirtioScsiControllerAttached(getVmId()),
+                VmDeviceUtils.hasVirtioScsiController(getVmId()),
                 VmDeviceUtils.hasWatchdog(getVmId()),
-                VmDeviceUtils.isBalloonEnabled(getVmId()),
-                VmDeviceUtils.isSoundDeviceEnabled(getVmId()),
+                VmDeviceUtils.hasMemoryBalloon(getVmId()),
+                VmDeviceUtils.hasSoundDevice(getVmId()),
                 getReturnValue().getCanDoActionMessages());
     }
 

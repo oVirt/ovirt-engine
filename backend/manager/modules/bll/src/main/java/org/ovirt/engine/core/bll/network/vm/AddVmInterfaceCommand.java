@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -76,9 +75,11 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     }
 
     private void addInterfaceDeviceToDb() {
-        VmDevice vmDevice = VmDeviceUtils.addNetworkInterfaceDevice(
-                new VmDeviceId(getInterface().getId(), getParameters().getVmId()),
-                getInterface().isPlugged(), getInterface().isPassthrough());
+        VmDevice vmDevice = VmDeviceUtils.addInterface(
+                getParameters().getVmId(),
+                getInterface().getId(),
+                getInterface().isPlugged(),
+                getInterface().isPassthrough());
         getCompensationContext().snapshotNewEntity(vmDevice);
     }
 

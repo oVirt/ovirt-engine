@@ -312,7 +312,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             getParameters().isSoundDeviceEnabled(),
                             getParameters().isConsoleEnabled(),
                             getParameters().isVirtioScsiEnabled(),
-                            VmDeviceUtils.isBalloonEnabled(getVmId()),
+                            VmDeviceUtils.hasMemoryBalloon(getVmId()),
                             graphicsToSkip,
                             false);
                 } else {

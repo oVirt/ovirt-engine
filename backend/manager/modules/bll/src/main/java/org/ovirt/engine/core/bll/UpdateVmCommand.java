@@ -404,9 +404,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                         payload.getDeviceType(),
                         payload.getSpecParams(),
                         true,
-                        true,
-                        null,
-                        false);
+                        true);
             }
         }
     }
@@ -922,18 +920,18 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     public boolean isVirtioScsiEnabledForVm(Guid vmId) {
-        return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
+        return VmDeviceUtils.hasVirtioScsiController(vmId);
     }
 
     protected boolean isBalloonEnabled() {
         Boolean balloonEnabled = getParameters().isBalloonEnabled();
-        return balloonEnabled != null ? balloonEnabled : VmDeviceUtils.isBalloonEnabled(getVmId());
+        return balloonEnabled != null ? balloonEnabled : VmDeviceUtils.hasMemoryBalloon(getVmId());
     }
 
     protected boolean isSoundDeviceEnabled() {
         Boolean soundDeviceEnabled = getParameters().isSoundDeviceEnabled();
         return soundDeviceEnabled != null ? soundDeviceEnabled :
-                VmDeviceUtils.isSoundDeviceEnabled(getVmId());
+                VmDeviceUtils.hasSoundDevice(getVmId());
     }
 
     protected boolean hasWatchdog() {
