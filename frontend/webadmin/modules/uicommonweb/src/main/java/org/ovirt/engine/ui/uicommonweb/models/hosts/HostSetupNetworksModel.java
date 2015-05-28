@@ -486,6 +486,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             return;
         } else if (operation == NetworkOperation.BOND_WITH || operation == NetworkOperation.JOIN_BONDS) {
             final SetupNetworksBondModel bondPopup;
+            final List<VdsNetworkInterface> srcIfaces = new ArrayList<>();
+            srcIfaces.add(((NetworkInterfaceModel) networkCommand.getOp1()).getIface());
+            srcIfaces.add(((NetworkInterfaceModel) networkCommand.getOp2()).getIface());
             if (operation == NetworkOperation.BOND_WITH) {
                 bondPopup =
                         new SetupNetworksAddBondModel(getFreeBonds(), nextBondName);
@@ -515,8 +518,10 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                             redraw();
 
                             // Attach the previous networks
-                            NetworkInterfaceModel bondModel = nicMap.get(bond.getName());
-                            NetworkOperation.attachNetworks(bondModel, new ArrayList<LogicalNetworkModel>(networks), allNics);
+                            commitNetworkChanges(bond, networks);
+
+                            // Attach previous labels
+                            commitLabelChanges(srcIfaces, bond);
                             redraw();
                         }
                     }));
@@ -555,6 +560,18 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
         // set window
         sourceListModel.setConfirmWindow(popupWindow);
+    }
+
+    private void commitLabelChanges(List<VdsNetworkInterface> srcIfaces,
+            VdsNetworkInterface dstIface) {
+        NetworkOperation.moveLabels(srcIfaces, dstIface);
+    }
+
+    private void commitNetworkChanges(VdsNetworkInterface iface, List<LogicalNetworkModel> networks) {
+        NetworkInterfaceModel bondModel = nicMap.get(iface.getName());
+        NetworkOperation.attachNetworks(bondModel,
+                new ArrayList<LogicalNetworkModel>(networks),
+                allNics);
     }
 
     public void redraw() {

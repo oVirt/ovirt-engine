@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -264,21 +265,22 @@ public enum NetworkOperation {
                     assert op1 instanceof NetworkInterfaceModel;
                     assert op2 instanceof BondNetworkInterfaceModel;
 
-                    NetworkInterfaceModel nic = (NetworkInterfaceModel) op1;
-                    BondNetworkInterfaceModel bond = (BondNetworkInterfaceModel) op2;
+                    NetworkInterfaceModel nicModel = (NetworkInterfaceModel) op1;
+                    BondNetworkInterfaceModel bondModel = (BondNetworkInterfaceModel) op2;
 
                     // Save the networks on the nic before they are detached
                     List<LogicalNetworkModel> networksToReatach =
-                            nic.getItems() != null ? new ArrayList<LogicalNetworkModel>(nic.getItems())
+                            nicModel.getItems() != null ? new ArrayList<LogicalNetworkModel>(nicModel.getItems())
                                     : new ArrayList<LogicalNetworkModel>();
 
                     // Detach possible networks from the nic
-                    clearNetworks(nic, allNics);
+                    clearNetworks(nicModel, allNics);
 
                     // Attach previous nic networks to bond
-                    attachNetworks(bond, networksToReatach, allNics);
+                    attachNetworks(bondModel, networksToReatach, allNics);
+                    moveLabels(Collections.singletonList(nicModel.getIface()), bondModel.getIface());
 
-                    nic.getIface().setBondName(bond.getIface().getName());
+                    nicModel.getIface().setBondName(bondModel.getIface().getName());
                 }
             };
         }
@@ -649,6 +651,26 @@ public enum NetworkOperation {
             allNics.remove(networkToDetach.getVlanNicModel().getIface());
         }
         networkToDetach.detach();
+    }
+
+    public static void moveLabels(List<VdsNetworkInterface> srcIfaces, VdsNetworkInterface dstIface) {
+        Set<String> labels = new HashSet<>();
+        for (VdsNetworkInterface srcIface : srcIfaces) {
+            if (srcIface.getLabels() != null) {
+                labels.addAll(srcIface.getLabels());
+                srcIface.setLabels(null);
+            }
+        }
+
+        if (labels.isEmpty()) {
+            return;
+        }
+
+        if (dstIface.getLabels() == null) {
+            dstIface.setLabels(labels);
+        } else {
+            dstIface.getLabels().addAll(labels);
+        }
     }
 
     /**
