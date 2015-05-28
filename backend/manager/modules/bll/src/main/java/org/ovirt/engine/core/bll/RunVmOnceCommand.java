@@ -157,7 +157,9 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         sysPrepParams.setSysPrepPassword(runOnceParams.getSysPrepPassword());
         createVmParams.setSysPrepParams(sysPrepParams);
 
-        createVmParams.getVm().setVmInit(getParameters().getVmInit());
+        if (getParameters().getVmInit() != null) {
+            createVmParams.getVm().setVmInit(getParameters().getVmInit());
+        }
 
         fillRunOnceGraphics();
 
