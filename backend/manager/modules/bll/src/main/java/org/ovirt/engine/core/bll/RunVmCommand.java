@@ -664,9 +664,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     (getParameters().getUseVnc() ? DisplayType.vnc : DisplayType.qxl));
 
         if (getParameters().getInitializationType() == null) {
-            // if vm not initialized, use sysprep/cloud-init
-            if (!getVm().isInitialized()) {
-                VmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
+            VmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
+            if (!getVm().isInitialized() && getVm().getVmInit() != null) {
                 getVm().setInitializationType(InitializationType.None);
                 if (osRepository.isWindows(getVm().getVmOsId())) {
                     if (!isPayloadExists(VmDeviceType.FLOPPY)) {
@@ -679,7 +678,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     }
                 }
             }
-        } else {
+        } else if (getParameters().getInitializationType() != InitializationType.None) {
             getVm().setInitializationType(getParameters().getInitializationType());
             // If the user asked for sysprep/cloud-init via run-once we eliminate
             // the payload since we can only have one media (Floppy/CDROM) per payload.
