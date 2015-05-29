@@ -35,9 +35,8 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
         AddDiskParameters params = new AddDiskParameters();
         Guid storageDomainId = getStorageDomainId(disk);
         params.setStorageDomainId(storageDomainId);
-        org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain = getStorageDomainById(storageDomainId);
-        if (storageDomain != null) {
-            disk.setStorageType(DiskMapper.map(storageDomain.getStorageDomainType()).value());
+        if (storageDomainId != null) {
+            updateStorageTypeForDisk(disk, storageDomainId);
         }
         params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(disk, null));
         if (disk.isSetLunStorage() && disk.getLunStorage().isSetHost()) {
@@ -45,6 +44,13 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
         }
         return performCreate(VdcActionType.AddDisk, params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class));
+    }
+
+    private void updateStorageTypeForDisk(Disk disk, Guid storageDomainId) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain = getStorageDomainById(storageDomainId);
+        if (storageDomain != null) {
+            disk.setStorageType(DiskMapper.map(storageDomain.getStorageDomainType()).value());
+        }
     }
 
     private Guid getStorageDomainId(Disk disk) {
