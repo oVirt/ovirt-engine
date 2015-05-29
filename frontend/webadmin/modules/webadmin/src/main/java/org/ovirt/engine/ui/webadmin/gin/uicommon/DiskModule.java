@@ -101,7 +101,7 @@ public class DiskModule extends AbstractGinModule {
         bind(DiskVmListModel.class).in(Singleton.class);
         bind(DiskTemplateListModel.class).in(Singleton.class);
         bind(DiskStorageListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<DiskListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<Disk>>(){}).in(Singleton.class);
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<DiskListModel, DiskGeneralModel>>(){})
