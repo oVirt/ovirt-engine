@@ -66,9 +66,9 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             @Override
             public Void runInTransaction() {
                 if (!getParameters().isShouldRemainIllegalOnFailedExecution()) {
-                    addDiskImageToDb(newDiskImage, getCompensationContext());
+                    addDiskImageToDb(newDiskImage, getCompensationContext(), Boolean.TRUE);
                 } else {
-                    addDiskImageToDb(newDiskImage, null);
+                    addDiskImageToDb(newDiskImage, null, Boolean.TRUE);
                     getCompensationContext().snapshotEntityStatus(newDiskImage.getImage(), ImageStatus.ILLEGAL);
                 }
                 return null;

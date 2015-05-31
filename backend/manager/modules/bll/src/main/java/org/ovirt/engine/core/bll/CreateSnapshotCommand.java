@@ -49,7 +49,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                 @Override
                 public Void runInTransaction() {
                     processOldImageFromDb();
-                    addDiskImageToDb(newDiskImage, getCompensationContext());
+                    addDiskImageToDb(newDiskImage, getCompensationContext(), Boolean.TRUE);
                     setActionReturnValue(newDiskImage);
                     setSucceeded(true);
                     return null;

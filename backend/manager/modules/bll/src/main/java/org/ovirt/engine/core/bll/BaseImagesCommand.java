@@ -243,8 +243,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         }
     }
 
-    protected void addDiskImageToDb(DiskImage image, CompensationContext compensationContext) {
-        image.setActive(true);
+    protected void addDiskImageToDb(DiskImage image, CompensationContext compensationContext, boolean active) {
+        image.setActive(active);
         getImageDao().save(image.getImage());
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(image.getImageId());
