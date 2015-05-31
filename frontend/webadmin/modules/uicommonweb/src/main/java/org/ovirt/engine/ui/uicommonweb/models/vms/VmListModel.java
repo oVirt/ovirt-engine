@@ -62,12 +62,10 @@ import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.template.UnitToAddVmTemplateParametersBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.template.VmBaseToVmBaseForTemplateCompositeBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsVmBaseToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmIconUnitAndVmToParameterBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -1364,20 +1362,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 new AddVmTemplateParameters(newVm,
                         model.getName().getEntity(),
                         model.getDescription().getEntity());
-        addVmTemplateParameters.setPublicUse(model.getIsTemplatePublic().getEntity());
-
-        addVmTemplateParameters.setDiskInfoDestinationMap(
-                model.getDisksAllocationModel().getImageToDestinationDomainMap());
-        addVmTemplateParameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-        addVmTemplateParameters.setBalloonEnabled(balloonEnabled(model));
-        addVmTemplateParameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
+        BuilderExecutor.build(model, addVmTemplateParameters, new UnitToAddVmTemplateParametersBuilder());
         model.startProgress(null);
-        addVmTemplateParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-        if (model.getIsSubTemplate().getEntity()) {
-            addVmTemplateParameters.setBaseTemplateId(model.getBaseTemplate().getSelectedItem().getId());
-            addVmTemplateParameters.setTemplateVersionName(model.getTemplateVersionName().getEntity());
-        }
-
         Frontend.getInstance().runAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -1398,11 +1384,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         VM resultVm = new VM();
         resultVm.setId(vm.getId());
         BuilderExecutor.build(model, resultVm.getStaticData(), new CommonUnitToVmBaseBuilder());
-        BuilderExecutor.build(vm.getStaticData(), resultVm.getStaticData(),
-                new KernelParamsVmBaseToVmBaseBuilder(),
-                new DedicatedVmForVdsVmBaseToVmBaseBuilder(),
-                new MigrationOptionsVmBaseToVmBaseBuilder(),
-                new UsbPolicyVmBaseToVmBaseBuilder());
+        BuilderExecutor.build(vm.getStaticData(), resultVm.getStaticData(), new VmBaseToVmBaseForTemplateCompositeBaseBuilder());
         return resultVm;
     }
 

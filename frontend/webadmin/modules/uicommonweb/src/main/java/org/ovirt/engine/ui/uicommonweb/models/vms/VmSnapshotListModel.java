@@ -37,13 +37,11 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.SnapshotByCreationDateCommparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.template.UnitToAddVmTemplateParametersBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.template.VmBaseToVmBaseForTemplateCompositeBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -52,7 +50,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -748,20 +745,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
                         model.getName().getEntity(),
                         model.getDescription().getEntity(),
                         getSelectedItem().getId());
-        parameters.setPublicUse(model.getIsTemplatePublic().getEntity());
-
-        parameters.setDiskInfoDestinationMap(
-                model.getDisksAllocationModel().getImageToDestinationDomainMap());
-        parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-        parameters.setBalloonEnabled(balloonEnabled(model));
-        parameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
+        BuilderExecutor.build(model, parameters, new UnitToAddVmTemplateParametersBuilder());
         model.startProgress(null);
-        parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-        if (model.getIsSubTemplate().getEntity()) {
-            parameters.setBaseTemplateId(model.getBaseTemplate().getSelectedItem().getId());
-            parameters.setTemplateVersionName(model.getTemplateVersionName().getEntity());
-        }
-
         Frontend.getInstance().runAction(VdcActionType.AddVmTemplateFromSnapshot,
                 parameters,
                 new IFrontendActionAsyncCallback() {
@@ -783,17 +768,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
         VM resultVm = new VM();
         resultVm.setId(vm.getId());
         BuilderExecutor.build(model, resultVm.getStaticData(), new CommonUnitToVmBaseBuilder());
-        BuilderExecutor.build(vm.getStaticData(), resultVm.getStaticData(),
-                new KernelParamsVmBaseToVmBaseBuilder(),
-                new DedicatedVmForVdsVmBaseToVmBaseBuilder(),
-                new MigrationOptionsVmBaseToVmBaseBuilder(),
-                new UsbPolicyVmBaseToVmBaseBuilder());
+        BuilderExecutor.build(vm.getStaticData(), resultVm.getStaticData(), new VmBaseToVmBaseForTemplateCompositeBaseBuilder());
         return resultVm;
-    }
-
-    protected boolean balloonEnabled(UnitVmModel model) {
-        return model.getMemoryBalloonDeviceEnabled().getEntity()
-                && model.getSelectedCluster().getCompatibilityVersion().compareTo(VmBaseListModel.BALLOON_DEVICE_MIN_VERSION) >= 0;
     }
 
     private void cloneVM()
