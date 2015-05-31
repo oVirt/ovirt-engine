@@ -158,7 +158,7 @@ public class VmHandlerTest {
     public void verifyDomainForMemory() {
         Guid sdId = Guid.newGuid();
         List<StorageDomain> storageDomains = createStorageDomains(sdId);
-        long vmSpaceInBytes = SizeConverter.convert(VM_SPACE_IN_MB, SizeConverter.SizeUnit.MB, SizeConverter.SizeUnit.BYTES).intValue();
+        long vmSpaceInBytes = SizeConverter.convert(VM_SPACE_IN_MB, SizeConverter.SizeUnit.MiB, SizeConverter.SizeUnit.BYTES).intValue();
         List<DiskImage> disksList =  MemoryUtils.createDiskDummies(vmSpaceInBytes, META_DATA_SIZE_IN_GB);
 
         StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(storageDomains, disksList);

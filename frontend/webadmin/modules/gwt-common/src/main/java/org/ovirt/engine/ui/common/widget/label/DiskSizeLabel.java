@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.ValueLabel;
 public class DiskSizeLabel<T extends Number> extends ValueLabel<T> {
 
     public DiskSizeLabel() {
-        super(new DiskSizeRenderer<T>(SizeConverter.SizeUnit.GB));
+        super(new DiskSizeRenderer<T>(SizeConverter.SizeUnit.GiB));
     }
 
     public DiskSizeLabel(SizeConverter.SizeUnit diskSizeUnit) {

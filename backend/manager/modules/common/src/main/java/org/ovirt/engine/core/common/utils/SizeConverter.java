@@ -19,18 +19,20 @@ public class SizeConverter {
     }
 
     public static enum SizeUnit {
-        BYTES(1),
-        KB(2),
-        MB(3),
-        GB(4),
-        TB(5);
+        BYTES(1, "B"),
+        KiB(2, "KiB"),
+        MiB(3, "MiB"),
+        GiB(4, "GiB"),
+        TiB(5, "TiB");
 
         private long unitWeight;
+        private String unitInString;
 
         private static List<Pair<Long, SizeUnit>> weightToUnit = new ArrayList<Pair<Long, SizeUnit>>();
 
-        private SizeUnit(long unitWeight) {
+        private SizeUnit(long unitWeight, String unitString) {
             this.unitWeight = unitWeight;
+            this.unitInString = unitString;
         }
 
         static {
@@ -60,6 +62,11 @@ public class SizeConverter {
 
         public static SizeUnit getMinHandledUnit() {
             return weightToUnit.get(weightToUnit.size() - 1).getSecond();
+        }
+
+        @Override
+        public String toString() {
+            return unitInString;
         }
     };
 

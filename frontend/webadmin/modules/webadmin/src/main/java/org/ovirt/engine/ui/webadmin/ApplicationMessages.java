@@ -92,18 +92,6 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("Rebalance {0}")
     String rebalanceStatusMessage(JobExecutionStatus jobStatus);
 
-    @DefaultMessage("{0} Bytes")
-    String rebalanceFileSizeBytes(String size);
-
-    @DefaultMessage("{0} KB")
-    String rebalanceFileSizeKb(String size);
-
-    @DefaultMessage("{0} MB")
-    String rebalanceFileSizeMb(String size);
-
-    @DefaultMessage("{0} GB")
-    String rebalanceFileSizeGb(String size);
-
     @DefaultMessage("{0}. Moving the display network will drop VM console connectivity until they are restarted.")
     String moveDisplayNetworkWarning(String networkOperationMessage);
 

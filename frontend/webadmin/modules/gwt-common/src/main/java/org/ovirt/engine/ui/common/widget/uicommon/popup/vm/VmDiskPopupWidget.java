@@ -501,7 +501,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         };
         externalDiskTable.addColumn(idColumn, constants.idVmDiskTable(), "60px"); //$NON-NLS-1$
 
-        DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GB) {
+        DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GiB) {
             @Override
             protected Long getRawValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());

@@ -143,7 +143,7 @@ public class VdsBrokerObjectsBuilder {
                     if (disk.containsKey(VdsProperties.disk_true_size)) {
                         long sizeInBytes = AssignLongValue(disk, VdsProperties.disk_true_size);
                         int sizeInGB = SizeConverter.convert(
-                                sizeInBytes, SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GB).intValue();
+                                sizeInBytes, SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB).intValue();
                         lun.setDeviceSize(sizeInGB);
                     }
 

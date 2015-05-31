@@ -1,31 +1,22 @@
 package org.ovirt.engine.ui.webadmin.widget.renderer;
 
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.text.shared.AbstractRenderer;
 
 public class RebalanceFileSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
-    private ApplicationMessages messages;
+    private final static UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     @Override
     public String render(T size) {
-        if(size.longValue() > SizeConverter.BYTES_IN_GB) {
-            return messages.rebalanceFileSizeGb(formatSize(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.GB).doubleValue()));
-        } else if(size.longValue() > SizeConverter.BYTES_IN_MB) {
-            return messages.rebalanceFileSizeMb(formatSize(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.MB).doubleValue()));
-        } else if(size.longValue() > SizeConverter.BYTES_IN_KB) {
-            return messages.rebalanceFileSizeKb(formatSize(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.KB).doubleValue()));
-        } else {
-            return messages.rebalanceFileSizeBytes(formatSize(size.doubleValue()));
-        }
-    }
-
-    public RebalanceFileSizeRenderer(ApplicationMessages messages) {
-        this.messages = messages;
+        Pair<SizeUnit, Double>  sizePair = SizeConverter.autoConvert(size.longValue(), SizeUnit.BYTES);
+        return messages.sizeUnitString(formatSize(sizePair.getSecond()), sizePair.getFirst());
     }
 
     public String formatSize(double size) {

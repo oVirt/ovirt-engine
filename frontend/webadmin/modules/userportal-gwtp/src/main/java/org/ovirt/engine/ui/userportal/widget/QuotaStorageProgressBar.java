@@ -17,7 +17,7 @@ public class QuotaStorageProgressBar extends QuotaProgressBar {
     }
 
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GB);
+            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GiB);
 
     @Override
     protected void setValuesByType(QuotaUsagePerUser quotaUsagePerUser) {

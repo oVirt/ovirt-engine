@@ -96,7 +96,7 @@ public class CreateBrickModel extends Model {
             }
         }
 
-        Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(totalSize, SizeUnit.MB);
+        Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(totalSize, SizeUnit.MiB);
         setBrickSize(convertedSize);
     }
 
