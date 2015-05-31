@@ -101,6 +101,11 @@ public class CommandBaseTest {
         }
 
         @Override
+        protected boolean parentHasCallback() {
+            return false;
+        }
+
+        @Override
         protected void logRollbackedTask() {
             return;
         }

@@ -1363,13 +1363,25 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
+    protected boolean parentHasCallback() {
+        if (getParameters().getParentCommand() != VdcActionType.Unknown) {
+            CommandEntity commandEntity =
+                    CommandCoordinatorUtil.getCommandEntity(getParameters().getParentParameters().getCommandId());
+            return commandEntity != null && commandEntity.isCallbackEnabled();
+        }
+
+        return false;
+    }
+
     protected final void execute() {
         setCommandStatus(CommandStatus.ACTIVE);
-        if (getCallback() != null) {
-            persistCommand(getParameters().getParentCommand(), true);
-        }
+
         getReturnValue().setCanDoAction(true);
         getReturnValue().setIsSyncronious(true);
+
+        if (getCallback() != null || parentHasCallback()) {
+            persistCommand(getParameters().getParentCommand(), getCallback() != null);
+        }
 
         if (!hasTaskHandlers() || getExecutionIndex() == 0) {
             ExecutionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
