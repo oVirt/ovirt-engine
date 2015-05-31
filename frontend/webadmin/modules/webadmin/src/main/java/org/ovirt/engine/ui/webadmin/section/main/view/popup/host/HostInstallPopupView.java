@@ -210,6 +210,9 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         userNameEditor.setEnabled(false);
 
         networkProviderWidget.edit(model.getNetworkProviderModel());
+        if (model.getVds().isOvirtNode()) {
+            networkProviderTab.setVisible(false);
+        }
     }
 
     private void displayPasswordField(boolean isPasswordVisible) {
