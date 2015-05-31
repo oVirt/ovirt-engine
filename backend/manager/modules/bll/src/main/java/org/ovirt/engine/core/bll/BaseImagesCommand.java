@@ -246,10 +246,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     protected void addDiskImageToDb(DiskImage image, CompensationContext compensationContext, boolean active) {
         image.setActive(active);
         getImageDao().save(image.getImage());
-        DiskImageDynamic diskDynamic = new DiskImageDynamic();
-        diskDynamic.setId(image.getImageId());
-        diskDynamic.setactual_size(image.getActualSizeInBytes());
-        getDiskImageDynamicDAO().save(diskDynamic);
+        DiskImageDynamic diskDynamic = updateDiskImageDynamicIntoDB(image);
         ImageStorageDomainMap imageStorageDomainMap = new ImageStorageDomainMap(image.getImageId(),
                 image.getStorageIds().get(0), image.getQuotaId(), image.getDiskProfileId());
         getImageStorageDomainMapDao().save(imageStorageDomainMap);
@@ -263,6 +260,14 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             }
             compensationContext.stateChanged();
         }
+    }
+
+    protected DiskImageDynamic updateDiskImageDynamicIntoDB(DiskImage image) {
+        DiskImageDynamic diskDynamic = new DiskImageDynamic();
+        diskDynamic.setId(image.getImageId());
+        diskDynamic.setactual_size(image.getActualSizeInBytes());
+        getDiskImageDynamicDAO().save(diskDynamic);
+        return diskDynamic;
     }
 
     /**
