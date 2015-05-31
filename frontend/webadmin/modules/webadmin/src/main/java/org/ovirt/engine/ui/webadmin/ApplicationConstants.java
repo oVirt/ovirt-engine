@@ -626,7 +626,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Use JSON protocol")
     String hostPopupProtocolLabel();
 
-    @DefaultStringValue("Use Foreman Hosts Providers")
+    @DefaultStringValue("Use Foreman/Satellite")
     String hostPopupEnableExternalHostProvider();
 
     @DefaultStringValue("Providers Hosts")

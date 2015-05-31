@@ -1795,7 +1795,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The provider type should be 'OpenStack Networking'.")
     String ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The provider type should be 'External Host Provider (Foreman)'.")
+    @DefaultStringValue("Cannot ${action} ${type}. The provider type should be 'External Host Provider (Foreman/Satellite)'.")
     String ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH();
 
     @DefaultStringValue("Cannot ${action} ${type}. The network provider's broker host address must be configured on the provider.")
