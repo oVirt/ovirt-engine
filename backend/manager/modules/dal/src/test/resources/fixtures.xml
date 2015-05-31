@@ -1121,6 +1121,20 @@
             <value>{"messagingConfiguration" : {"brokerTpe" : "QPID", "address" : "test", "port" : 5672, "username" : null, "password" : null}, "networkMappings" : ""}</value>
             <value>http://keystone-server:35357/v2.0/</value>
         </row>
+        <row>
+            <value>983fcfe8-ca56-4a11-8d0e-840c988d67af</value>
+            <value>cinder provider</value>
+            <value>OpenStack volume provider</value>
+            <value>http://provider.com</value>
+            <value>OPENSTACK_VOLUME</value>
+            <value>false</value>
+            <null/>
+            <null/>
+            <value>services</value>
+            <null/>
+            <null/>
+            <value>http://keystone-server:5000/v2.0/</value>
+        </row>
     </table>
 
     <table name="qos">
@@ -9034,6 +9048,24 @@
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
             <value>TEST_FEATURE_2</value>
+        </row>
+    </table>
+    <table name="libvirt_secrets">
+        <column>secret_id</column>
+        <column>secret_value</column>
+        <column>secret_usage_type</column>
+        <column>secret_description</column>
+        <column>provider_id</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>77569427-9fbe-41db-ae91-fb96fab17141</value>
+            <value>MTIzCg==</value>
+            <value>0</value>
+            <null/>
+            <value>983fcfe8-ca56-4a11-8d0e-840c988d67af</value>
+            <value>2015-02-10 14:49:55.806609+05:30 </value>
+            <value>2015-02-10 16:35:15.362494+05:30</value>
         </row>
     </table>
 </dataset>

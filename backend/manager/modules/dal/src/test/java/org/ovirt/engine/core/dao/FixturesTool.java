@@ -679,6 +679,10 @@ public class FixturesTool {
 
     public static final String EXTERNAL_NETWORK_ID = "52d5c1c6-cb15-4832-b2a4-023770607200";
 
+    public static final Guid CINDER_PROVIDER_ID = new Guid("983fcfe8-ca56-4a11-8d0e-840c988d67af");
+
+    public static final Guid EXISTING_LIBVIRT_SECRET_ID = new Guid("77569427-9fbe-41db-ae91-fb96fab17141");
+
     /**
      * Scheduling Policy
      */
