@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -32,7 +34,10 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -168,8 +173,24 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         }
     }
 
+    private boolean isContainImages() {
+        return !ImagesHandler.filterImageDisks(getSourceImages(), true, false, true).isEmpty();
+    }
+
+    private ImagesContainterParametersBase buildChildCommandParameters(DiskImage snapshotCinderDisk) {
+        ImagesContainterParametersBase createParams = new ImagesContainterParametersBase(snapshotCinderDisk.getImageId());
+        createParams.setDestinationImageId(snapshotCinderDisk.getImageId());
+        createParams.setStorageDomainId(snapshotCinderDisk.getStorageIds().get(0));
+        createParams.setParentHasTasks(isContainImages());
+        return withRootCommandInfo(createParams, getActionType());
+    }
+
     private void removeImages() {
         for (final DiskImage source : getSourceImages()) {
+            if (source.getDiskStorageType() == DiskStorageType.CINDER) {
+                handleCinderSnapshotDisk(source);
+                continue;
+            }
 
             // The following is ok because we have tested in the candoaction that the vm
             // is not a template and the vm is not in preview mode and that
@@ -200,6 +221,23 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 quotasToRemoveFromCache.add(dest.getQuotaId());
             }
             getQuotaManager().removeQuotaFromCache(getStoragePoolId(), quotasToRemoveFromCache);
+        }
+    }
+
+    private void handleCinderSnapshotDisk(DiskImage source) {
+        ImagesContainterParametersBase params = buildChildCommandParameters(source);
+
+        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                VdcActionType.RemoveCinderSnapshotDisk,
+                params,
+                cloneContextAndDetachFromParent());
+        try {
+            VdcReturnValueBase vdcReturnValueBase = future.get();
+            if (!vdcReturnValueBase.getSucceeded()) {
+                log.error("Error removing snapshot for Cinder disk '{}'", source.getDiskAlias());
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error removing snapshot for Cinder disk '{}': {}", source.getDiskAlias(), e.getMessage());
         }
     }
 
@@ -387,13 +425,21 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     protected boolean validateImages() {
-        List<DiskImage> imagesToValidate =
-                ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false, true);
+        List<DiskImage> imagesToValidate = getDiskImagesToValidate();
+
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(imagesToValidate);
 
         return validate(diskImagesValidator.diskImagesNotLocked()) &&
                 (getVm().isQualifiedForLiveSnapshotMerge()
                  || validate(diskImagesValidator.diskImagesNotIllegal()));
+    }
+
+    private List<DiskImage> getDiskImagesToValidate() {
+        List<Disk> disks = getDiskDao().getAllForVm(getVmId());
+        List<DiskImage> allDisks = ImagesHandler.filterImageDisks(disks, true, false, true);
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(disks);
+        allDisks.addAll(cinderDisks);
+        return allDisks;
     }
 
     protected boolean validateImageNotInTemplate() {
