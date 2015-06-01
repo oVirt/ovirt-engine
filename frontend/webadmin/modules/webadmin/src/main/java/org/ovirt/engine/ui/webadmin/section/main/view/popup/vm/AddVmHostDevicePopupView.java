@@ -19,9 +19,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.AddVmHostDevicesModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
 
@@ -58,7 +56,6 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
     EntityModelCellTable<ListModel<EntityModel<HostDeviceView>>> selectedHostDevices;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
-    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public AddVmHostDevicePopupView(EventBus eventBus, Driver driver, ViewUiBinder uiBinder, ViewIdHandler idHandler) {
@@ -98,7 +95,7 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
         addHostDeviceColumn(hostDeviceTable, constants.product(), "350px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
             @Override
             public String getValue(EntityModel<HostDeviceView> hostDevice) {
-                return renderNameId(
+                return HostDeviceColumnHelper.renderNameId(
                         hostDevice.getEntity().getProductName(),
                         hostDevice.getEntity().getProductId());
             }
@@ -107,7 +104,7 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
         addHostDeviceColumn(hostDeviceTable, constants.vendor(), "200px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
             @Override
             public String getValue(EntityModel<HostDeviceView> hostDevice) {
-                return renderNameId(
+                return HostDeviceColumnHelper.renderNameId(
                         hostDevice.getEntity().getVendorName(),
                         hostDevice.getEntity().getVendorId());
             }
@@ -123,24 +120,16 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
         addHostDeviceColumn(hostDeviceTable, constants.attachedToVms(), "150px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
             @Override
             public String getValue(EntityModel<HostDeviceView> hostDevice) {
-                return StringUtils.join(hostDevice.getEntity().getAttachedVmNames(), ", "); //$NON-NLS-1$
+                return HostDeviceColumnHelper.renderVmNamesList(hostDevice.getEntity().getAttachedVmNames());
             }
         });
 
         addHostDeviceColumn(hostDeviceTable, constants.iommuGroup(), "150px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
             @Override
             public String getValue(EntityModel<HostDeviceView> hostDevice) {
-                return hostDevice.getEntity().getIommuGroup() == null ? constants.notAvailableLabel() : hostDevice.getEntity().getIommuGroup().toString();
+                return HostDeviceColumnHelper.renderIommuGroup(hostDevice.getEntity().getIommuGroup());
             }
         });
-    }
-
-    private String renderNameId(String name, String id) {
-        if (StringUtils.isEmpty(name)) {
-            return id;
-        }
-        // we assume that VDSM will never report name != null && id == null
-        return messages.nameId(name, id);
     }
 
     private void addHostDeviceColumn(EntityModelCellTable<ListModel<EntityModel<HostDeviceView>>> hostDeviceTable,
