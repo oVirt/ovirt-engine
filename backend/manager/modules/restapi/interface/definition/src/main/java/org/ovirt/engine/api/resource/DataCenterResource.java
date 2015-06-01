@@ -16,13 +16,23 @@
 
 package org.ovirt.engine.api.resource;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface DataCenterResource extends UpdatableResource<DataCenter> {
+    @DELETE
+    Response remove();
+
+    @DELETE
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    Response remove(Action action);
 
     @Path("storagedomains")
     public AttachedStorageDomainsResource getAttachedStorageDomainsResource();

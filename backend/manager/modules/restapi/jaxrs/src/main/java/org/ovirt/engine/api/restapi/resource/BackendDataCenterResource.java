@@ -5,6 +5,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResource.S
 
 import java.util.List;
 
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
@@ -17,6 +18,7 @@ import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
+import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -25,6 +27,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+
+import javax.ws.rs.core.Response;
 
 public class BackendDataCenterResource extends AbstractBackendSubResource<DataCenter, StoragePool>
         implements DataCenterResource {
@@ -149,5 +153,21 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     @Override
     public QoSsResource getQossResource() {
         return inject(new BackendQossResource(id));
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveStoragePool, new StoragePoolParametersBase(asGuid(id)));
+    }
+
+    @Override
+    public Response remove(Action action) {
+        get();
+        StoragePoolParametersBase params = new StoragePoolParametersBase(asGuid(id));
+        if (action != null && action.isSetForce()) {
+            params.setForceDelete(action.isForce());
+        }
+        return performAction(VdcActionType.RemoveStoragePool, params);
     }
 }

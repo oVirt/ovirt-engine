@@ -10,10 +10,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -55,57 +53,6 @@ public class BackendDataCentersResourceTest
         verifyCollection(getCollection());
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations();
-        setUpVersionExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStoragePool,
-                                           StoragePoolParametersBase.class,
-                                           new String[] { "StoragePoolId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveForced() throws Exception {
-        setUpGetEntityExpectations();
-        setUpVersionExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStoragePool,
-                                           StoragePoolParametersBase.class,
-                                           new String[] { "StoragePoolId", "ForceDelete" },
-                                           new Object[] { GUIDS[0], Boolean.TRUE },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString(), new Action(){{setForce(true);}}));
-    }
-
-    @Test
-    public void testRemoveForcedIncomplete() throws Exception {
-        setUpGetEntityExpectations();
-        setUpVersionExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStoragePool,
-                                           StoragePoolParametersBase.class,
-                                           new String[] { "StoragePoolId", "ForceDelete" },
-                                           new Object[] { GUIDS[0], Boolean.FALSE },
-                                           true,
-                                           true));
-        collection.remove(GUIDS[0].toString(), new Action(){{}});
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(NON_EXISTANT_GUID, true);
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
 
     private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
@@ -115,32 +62,6 @@ public class BackendDataCentersResourceTest
                 returnNull ? null : getEntity(0));
     }
 
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations();
-        setUpVersionExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStoragePool,
-                                           StoragePoolParametersBase.class,
-                                           new String[] { "StoragePoolId" },
-                                           new Object[] { GUIDS[0] },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
-    }
 
     @Test
     public void testAddDataCenter() throws Exception {

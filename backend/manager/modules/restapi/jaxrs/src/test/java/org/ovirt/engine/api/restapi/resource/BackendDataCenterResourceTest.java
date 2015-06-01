@@ -11,8 +11,10 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
+import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -135,6 +137,106 @@ public class BackendDataCenterResourceTest
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyImmutabilityConstraint(wae);
+        }
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUpVersionExpectations();
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveStoragePool,
+                StoragePoolParametersBase.class,
+                new String[] { "StoragePoolId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveForced() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUpVersionExpectations();
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveStoragePool,
+                StoragePoolParametersBase.class,
+                new String[] { "StoragePoolId", "ForceDelete" },
+                new Object[] { GUIDS[0], Boolean.TRUE },
+                true,
+                true
+            )
+        );
+        Action action = new Action();
+        action.setForce(true);
+        verifyRemove(resource.remove(action));
+    }
+
+    @Test
+    public void testRemoveForcedIncomplete() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUpVersionExpectations();
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveStoragePool,
+                StoragePoolParametersBase.class,
+                new String[] { "StoragePoolId", "ForceDelete" },
+                new Object[] { GUIDS[0], Boolean.FALSE },
+                true,
+                true
+            )
+        );
+        Action action = new Action();
+        resource.remove(action);
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception{
+        setUpGetEntityExpectations(1, true);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpGetEntityExpectations(1);
+        setUpVersionExpectations();
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveStoragePool,
+                StoragePoolParametersBase.class,
+                new String[] { "StoragePoolId" },
+                new Object[] { GUIDS[0] },
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
         }
     }
 

@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenters;
 import org.ovirt.engine.api.model.StorageType;
@@ -12,7 +11,6 @@ import org.ovirt.engine.api.model.SupportedVersions;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -60,21 +58,6 @@ public class BackendDataCentersResource extends
         return performCreate(VdcActionType.AddEmptyStoragePool,
                                new StoragePoolManagementParameter(entity),
                                new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, IdQueryParameters.class));
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveStoragePool, new StoragePoolParametersBase(asGuid(id)));
-    }
-
-    @Override
-    public Response remove(String id, Action action) {
-        getEntity(id);
-        StoragePoolParametersBase params = new StoragePoolParametersBase(asGuid(id));
-        if (action != null && action.isSetForce()) {
-            params.setForceDelete(action.isForce());
-        }
-        return performAction(VdcActionType.RemoveStoragePool, params);
     }
 
     private DataCenters mapCollection(List<StoragePool> entities) {
