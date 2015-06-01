@@ -1,10 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
+import org.ovirt.engine.api.resource.AffinityGroupVmResource;
 import org.ovirt.engine.api.resource.AffinityGroupVmsResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -58,17 +58,6 @@ public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionRe
     }
 
     @Override
-    protected Response performRemove(String id) {
-        AffinityGroup affinityGroup = getEntity();
-
-        if (!affinityGroup.getEntityIds().remove(asGuid(id))) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
-        }
-        return performAction(VdcActionType.EditAffinityGroup, new AffinityGroupCRUDParameters(affinityGroup.getId(),
-                affinityGroup));
-    }
-
-    @Override
     protected org.ovirt.engine.core.common.scheduling.AffinityGroup getEntity() {
         return getEntity(org.ovirt.engine.core.common.scheduling.AffinityGroup.class,
                 VdcQueryType.GetAffinityGroupById,
@@ -76,4 +65,9 @@ public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionRe
                 affinityGroupId.toString());
     }
 
+    @Override
+    @SingleEntityResource
+    public AffinityGroupVmResource getAffinityGroupVmSubResource(String id) {
+        return inject(new BackendAffinityGroupVmResource(affinityGroupId, id));
+    }
 }

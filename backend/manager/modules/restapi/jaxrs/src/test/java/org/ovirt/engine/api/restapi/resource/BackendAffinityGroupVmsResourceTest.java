@@ -57,23 +57,6 @@ public class BackendAffinityGroupVmsResourceTest
         assertEquals(200, response.getStatus());
     }
 
-    @Test
-    public void testRemoveVmFromAffinityGroup() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(true);
-
-        setUriInfo(setUpActionExpectations(VdcActionType.EditAffinityGroup,
-                AffinityGroupCRUDParameters.class,
-                new String[] {},
-                new Object[] {},
-                true,
-                true));
-
-        VM vm = new VM();
-        vm.setId(GUIDS[0].toString());
-        Response response = collection.remove(GUIDS[0].toString());
-        assertEquals(200, response.getStatus());
-    }
 
     private void setUpGetEntityExpectations(boolean withVms) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetAffinityGroupById,
