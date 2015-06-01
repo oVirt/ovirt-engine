@@ -497,7 +497,7 @@ class Plugin(plugin.PluginBase):
         if os.path.exists(template):
             with open(template) as f:
                 PREFIX = 'caIssuers;URI:'
-                for l in f.readlines():
+                for l in f.read().splitlines():
                     if l.startswith('authorityInfoAccess'):
                         aia = l[l.find(PREFIX)+len(PREFIX):]
                         break
