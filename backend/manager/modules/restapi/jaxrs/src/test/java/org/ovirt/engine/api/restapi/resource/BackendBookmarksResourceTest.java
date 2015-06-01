@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
-import org.ovirt.engine.core.common.action.BookmarksParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -31,41 +30,6 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     @Before
     public void setUp() {
         super.setUp();
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations(GUIDS[0], getEntity(0));
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveBookmark,
-                BookmarksParametersBase.class,
-                new String[] { "BookmarkId" },
-                new Object[] { GUIDS[0] },
-                true,
-                true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(NON_EXISTANT_GUID, null);
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
     }
 
     @Test
@@ -114,18 +78,6 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
                 new Object[] { NAMES[0], VALUES[0] }, canDo, success));
         try {
             collection.add(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(GUIDS[0], getEntity(0));
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveBookmark, BookmarksParametersBase.class,
-                new String[] { "BookmarkId" }, new Object[] { GUIDS[0] }, canDo, success));
-        try {
-            collection.remove(GUIDS[0].toString());
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyFault(wae, detail);

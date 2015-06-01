@@ -3,11 +3,14 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.resource.BookmarkResource;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
+import org.ovirt.engine.core.common.action.BookmarksParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+
+import javax.ws.rs.core.Response;
 
 public class BackendBookmarkResource extends AbstractBackendSubResource<Bookmark,
     org.ovirt.engine.core.common.businessentities.Bookmark> implements BookmarkResource {
@@ -42,4 +45,9 @@ public class BackendBookmarkResource extends AbstractBackendSubResource<Bookmark
         return model;
     }
 
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveBookmark, new BookmarksParametersBase(guid));
+    }
 }

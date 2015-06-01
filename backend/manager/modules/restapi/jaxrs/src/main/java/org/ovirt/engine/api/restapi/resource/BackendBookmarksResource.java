@@ -9,7 +9,6 @@ import org.ovirt.engine.api.model.Bookmarks;
 import org.ovirt.engine.api.resource.BookmarkResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
-import org.ovirt.engine.core.common.action.BookmarksParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -41,11 +40,6 @@ public class BackendBookmarksResource extends
     @SingleEntityResource
     public BookmarkResource getBookmarkSubResource(String id) {
         return inject(new BackendBookmarkResource(id));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveBookmark, new BookmarksParametersBase(asGuid(id)));
     }
 
     @Override
