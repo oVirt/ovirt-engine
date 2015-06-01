@@ -88,14 +88,14 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
     private void initHostDeviceCellTable(EntityModelCellTable<ListModel<EntityModel<HostDeviceView>>> hostDeviceTable) {
         hostDeviceTable.enableColumnResizing();
 
-        addHostDeviceColumn(hostDeviceTable, constants.deviceName(), new AbstractTextColumn<EntityModel<HostDeviceView>>() {
+        addHostDeviceColumn(hostDeviceTable, constants.deviceName(), "200px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
             @Override
             public String getValue(EntityModel<HostDeviceView> hostDevice) {
                 return hostDevice.getEntity().getDeviceName();
             }
         });
 
-        addHostDeviceColumn(hostDeviceTable, constants.product(), new AbstractTextColumn<EntityModel<HostDeviceView>>() {
+        addHostDeviceColumn(hostDeviceTable, constants.product(), "350px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
             @Override
             public String getValue(EntityModel<HostDeviceView> hostDevice) {
                 return renderNameId(
@@ -104,7 +104,7 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
             }
         });
 
-        addHostDeviceColumn(hostDeviceTable, constants.vendor(), new AbstractTextColumn<EntityModel<HostDeviceView>>() {
+        addHostDeviceColumn(hostDeviceTable, constants.vendor(), "200px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
             @Override
             public String getValue(EntityModel<HostDeviceView> hostDevice) {
                 return renderNameId(
@@ -113,21 +113,21 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
             }
         });
 
-        addHostDeviceColumn(hostDeviceTable, constants.currentlyUsedByVm(), new AbstractTextColumn<EntityModel<HostDeviceView>>() {
+        addHostDeviceColumn(hostDeviceTable, constants.currentlyUsedByVm(), "150px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
             @Override
             public String getValue(EntityModel<HostDeviceView> hostDevice) {
                 return hostDevice.getEntity().getRunningVmName();
             }
         });
 
-        addHostDeviceColumn(hostDeviceTable, constants.attachedToVms(), new AbstractTextColumn<EntityModel<HostDeviceView>>() {
+        addHostDeviceColumn(hostDeviceTable, constants.attachedToVms(), "150px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
             @Override
             public String getValue(EntityModel<HostDeviceView> hostDevice) {
-                return StringUtils.join(hostDevice.getEntity().getAttachedVmNames(), ", "); // $NON-NLS-1$
+                return StringUtils.join(hostDevice.getEntity().getAttachedVmNames(), ", "); //$NON-NLS-1$
             }
         });
 
-        addHostDeviceColumn(hostDeviceTable, constants.iommuGroup(), new AbstractTextColumn<EntityModel<HostDeviceView>>() {
+        addHostDeviceColumn(hostDeviceTable, constants.iommuGroup(), "150px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
             @Override
             public String getValue(EntityModel<HostDeviceView> hostDevice) {
                 return hostDevice.getEntity().getIommuGroup() == null ? constants.notAvailableLabel() : hostDevice.getEntity().getIommuGroup().toString();
@@ -136,16 +136,17 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
     }
 
     private String renderNameId(String name, String id) {
-        if (id == null) {
-            return name;
+        if (StringUtils.isEmpty(name)) {
+            return id;
         }
+        // we assume that VDSM will never report name != null && id == null
         return messages.nameId(name, id);
     }
 
     private void addHostDeviceColumn(EntityModelCellTable<ListModel<EntityModel<HostDeviceView>>> hostDeviceTable,
-                                     String header, AbstractTextColumn<EntityModel<HostDeviceView>> column) {
+                                     String header, String width, AbstractTextColumn<EntityModel<HostDeviceView>> column) {
         column.makeSortable();
-        hostDeviceTable.addColumn(column, header);
+        hostDeviceTable.addColumn(column, header, width);
     }
 
     @Override

@@ -9,7 +9,7 @@
 
 	<ui:with field="constants" type="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
 
-	<d:SimpleDialogPanel width="1200px" height="800px">
+	<d:SimpleDialogPanel width="1280px" height="800px">
 		<d:content>
 			<g:FlowPanel>
 				<g:FlowPanel>

@@ -34,25 +34,25 @@ public class SubTabHostDeviceView
     public void initTable() {
         getTable().enableColumnResizing();
 
-        addColumn(constants.deviceName(), "150px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
+        addColumn(constants.deviceName(), "350px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
             @Override
             public String getValue(HostDeviceView object) {
                 return object.getDeviceName();
             }
         });
-        addColumn(constants.iommuGroup(), "50px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
+        addColumn(constants.iommuGroup(), "100px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
             @Override
             public String getValue(HostDeviceView object) {
                 return object.getIommuGroup() == null ? constants.notAvailableLabel() : object.getIommuGroup().toString();
             }
         });
-        addColumn(constants.capability(), "30px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
+        addColumn(constants.capability(), "100px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
             @Override
             public String getValue(HostDeviceView object) {
                 return object.getCapability();
             }
         });
-        addColumn(constants.productName(), "150px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
+        addColumn(constants.product(), "350px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
             @Override
             public String getValue(HostDeviceView object) {
                 return object.getProductName();
