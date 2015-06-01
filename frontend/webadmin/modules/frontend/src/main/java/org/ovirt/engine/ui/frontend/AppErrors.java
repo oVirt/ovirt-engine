@@ -3731,6 +3731,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("VM is associated with both positive and negative Affinity Groups, please reconfigure VM's affinity groups")
     String ACTION_TYPE_FAILED_MIX_POSITIVE_NEGATIVE_AFFINITY_GROUP();
 
+    @DefaultStringValue("Affinity Group contradiction detected between unified affinity group:\n${UnifiedAffinityGroups}\nand negative affinity group:\n${negativeAR}")
+    String ACTION_TYPE_FAILED_AFFINITY_RULES_COLLISION();
+
     @DefaultStringValue("iSCSI bond name must not exceed 50 characters")
     String VALIDATION_ISCSI_BOND_NAME_MAX();
 
