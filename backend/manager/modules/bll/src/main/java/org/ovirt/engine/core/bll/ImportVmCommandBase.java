@@ -28,7 +28,10 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.BaseDiskDao;
@@ -56,6 +59,30 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     ImportVmCommandBase(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        if (getVdsGroup() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+        }
+
+        return true;
+    }
+
+    protected boolean validateBallonDevice() {
+        if (!VmDeviceCommonUtils.isBalloonDeviceExists(getVm().getManagedVmDeviceMap().values())) {
+            return true;
+        }
+
+        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        if (!osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
+                getVdsGroup().getCompatibilityVersion())) {
+            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+        }
+
+        return true;
     }
 
     @Override
@@ -100,8 +127,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (parameters.isImportAsNewEntity() && parameters.getVmId().equals(parameters.getVm().getId())) {
             parameters.getVm().setId(Guid.newGuid());
         }
-        setStoragePoolId(parameters.getStoragePoolId());
-        imageToDestinationDomainMap = parameters.getImageToDestinationDomainMap();
+        setVdsGroupId(parameters.getVdsGroupId());
+        setVm(parameters.getVm());
     }
 
     /**

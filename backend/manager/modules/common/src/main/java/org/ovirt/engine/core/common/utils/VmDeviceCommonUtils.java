@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -438,4 +439,19 @@ public class VmDeviceCommonUtils {
         return findVmDeviceByName(vmManagedDeviceMap, name) != null;
     }
 
+    /**
+     * Check if the given collection of devices contains balloon
+     *
+     * @param devices - collection of VM devices to look in
+     * @return
+     */
+    public static boolean isBalloonDeviceExists(Collection<VmDevice> devices) {
+        for (VmDevice device : devices) {
+            if (isMemoryBalloon(device)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

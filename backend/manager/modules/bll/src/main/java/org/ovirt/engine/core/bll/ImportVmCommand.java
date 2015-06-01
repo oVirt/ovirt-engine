@@ -74,14 +74,11 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
@@ -89,7 +86,6 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.Function;
@@ -119,11 +115,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Override
     protected void init() {
         super.init();
-        T parameters = getParameters();
-        setVmId(parameters.getContainerId());
-        setVm(parameters.getVm());
-        setVdsGroupId(parameters.getVdsGroupId());
-        if (parameters.getVm() != null && getVm().getDiskMap() != null) {
+        setVmId(getParameters().getContainerId());
+        setStoragePoolId(getParameters().getStoragePoolId());
+        imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
+        if (getParameters().getVm() != null && getVm().getDiskMap() != null) {
             imageList = new ArrayList<>();
             for (Disk disk : getVm().getDiskMap().values()) {
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
@@ -131,15 +126,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 }
             }
         }
-        ensureDomainMap(imageList, parameters.getDestDomainId());
+        ensureDomainMap(imageList, getParameters().getDestDomainId());
 
-        Version clusterVersion = getVdsGroup() == null
-                ? null
-                : getVdsGroup().getCompatibilityVersion();
-        VmStatic staticData = getVm() == null
-                ? null
-                : getVm().getStaticData();
-        ImportUtils.updateGraphicsDevices(staticData, clusterVersion);
+        ImportUtils.updateGraphicsDevices(
+                getVm() != null ? getVm().getStaticData() : null,
+                getVdsGroup() != null ? getVdsGroup().getCompatibilityVersion() : null);
     }
 
     private List<VmDevice> getDevicesOfType(VmDeviceGeneralType type) {
@@ -196,12 +187,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     @Override
     protected boolean canDoAction() {
-        Map<Guid, StorageDomain> domainsMap = new HashMap<>();
-
-        if (getVdsGroup() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+        if (!super.canDoAction()) {
+            return false;
         }
 
+        Map<Guid, StorageDomain> domainsMap = new HashMap<>();
         if (!canDoActionBeforeCloneVm(domainsMap)) {
             return false;
         }
@@ -219,31 +209,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         return canDoActionAfterCloneVm(domainsMap);
-    }
-
-    protected boolean validateBallonDevice() {
-        if (!isBalloonDeviceExists(getVm().getManagedVmDeviceMap().values())) {
-            return true;
-        }
-
-        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
-        if (!osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
-                getVdsGroup().getCompatibilityVersion())) {
-            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
-            return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
-        }
-
-        return true;
-    }
-
-    private boolean isBalloonDeviceExists(Collection<VmDevice> devices) {
-        for (VmDevice vmDevice : getVm().getManagedVmDeviceMap().values()) {
-            if (VmDeviceCommonUtils.isMemoryBalloon(vmDevice)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override
