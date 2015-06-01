@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -30,6 +31,8 @@ import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface ClusterResource extends UpdatableResource<Cluster> {
+    @DELETE
+    Response remove();
 
     @Path("networks")
     public AssignedNetworksResource getAssignedNetworksSubResource();

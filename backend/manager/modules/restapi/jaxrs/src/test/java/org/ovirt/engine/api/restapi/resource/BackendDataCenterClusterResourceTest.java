@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
+import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -201,6 +202,96 @@ public class BackendDataCenterClusterResourceTest
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyImmutabilityConstraint(wae);
+        }
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetVdsGroupsByStoragePoolId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { dataCenterId },
+            setUpVDSGroups(),
+            null
+        );
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveVdsGroup,
+                VdsGroupParametersBase.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception {
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetVdsGroupsByStoragePoolId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { dataCenterId },
+            new ArrayList<VDSGroup>(),
+            null
+        );
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetVdsGroupsByStoragePoolId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { dataCenterId },
+            setUpVDSGroups(),
+            null
+        );
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetVdsGroupsByStoragePoolId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { dataCenterId },
+            setUpVDSGroups(),
+            null
+        );
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveVdsGroup,
+                VdsGroupParametersBase.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[0] },
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
         }
     }
 

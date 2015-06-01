@@ -12,7 +12,6 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -30,30 +29,6 @@ public class BackendClustersResourceTest extends
         super(new BackendClustersResource(), SearchType.Cluster, "Clusters : ");
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVdsGroup,
-                                           VdsGroupParametersBase.class,
-                                           new String[] { "VdsGroupId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(NON_EXISTANT_GUID, true);
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
 
     private void setUpGetEntityExpectations(Guid entityId, Boolean returnNull) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetVdsGroupById,
@@ -61,37 +36,6 @@ public class BackendClustersResourceTest extends
                 new String[] { "Id" },
                 new Object[] { entityId },
                 returnNull ? null : getEntity(0));
-    }
-
-    private void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(GUIDS[0], false);
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        setUpGetEntityExpectations();
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        setUpGetEntityExpectations();
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVdsGroup,
-                                           VdsGroupParametersBase.class,
-                                           new String[] { "VdsGroupId" },
-                                           new Object[] { GUIDS[0] },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
     }
 
     @Test

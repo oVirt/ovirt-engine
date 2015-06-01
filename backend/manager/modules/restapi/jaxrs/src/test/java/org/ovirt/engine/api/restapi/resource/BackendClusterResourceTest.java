@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -154,6 +155,68 @@ public class BackendClusterResourceTest
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyImmutabilityConstraint(wae);
+        }
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveVdsGroup,
+                VdsGroupParametersBase.class,
+                new String[]{"VdsGroupId"},
+                new Object[]{GUIDS[0]},
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception{
+        setUpGetEntityExpectations(1, true);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        setUpGetEntityExpectations(1);
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        setUpGetEntityExpectations(1);
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveVdsGroup,
+                VdsGroupParametersBase.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[0] },
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
         }
     }
 

@@ -47,7 +47,9 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return performRemove(id);
     }
 
-    protected abstract Response performRemove(String id);
+    protected Response performRemove(String id) {
+        throw new UnsupportedOperationException();
+    }
 
     protected List<Q> getBackendCollection(SearchType searchType) {
         return getBackendCollection(searchType, QueryHelper.getConstraint(getUriInfo(), "",  modelType));
