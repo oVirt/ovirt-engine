@@ -79,21 +79,6 @@ public abstract class AbstractBackendDiskProfilesResource
     protected abstract void validateParameters(DiskProfile diskProfile);
 
     @Override
-    protected Response performRemove(String id) {
-        org.ovirt.engine.core.common.businessentities.profiles.DiskProfile diskProfile = getDiskProfile(id);
-        return performAction(VdcActionType.RemoveDiskProfile,
-                new DiskProfileParameters(diskProfile,
-                        diskProfile.getId()));
-    }
-
-    protected org.ovirt.engine.core.common.businessentities.profiles.DiskProfile getDiskProfile(String id) {
-        return getEntity(org.ovirt.engine.core.common.businessentities.profiles.DiskProfile.class,
-                VdcQueryType.GetDiskProfileById,
-                new IdQueryParameters(asGuidOr404(id)),
-                "DiskProfiles");
-    }
-
-    @Override
     protected DiskProfile doPopulate(DiskProfile model,
             org.ovirt.engine.core.common.businessentities.profiles.DiskProfile entity) {
         return model;

@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,18 +13,13 @@ import org.ovirt.engine.api.model.DiskProfiles;
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface AssignedDiskProfilesResource {
-
     @GET
-    public DiskProfiles list();
+    DiskProfiles list();
 
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
-    public Response add(DiskProfile diskProfile);
-
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id);
+    Response add(DiskProfile diskProfile);
 
     @Path("{id}")
-    public AssignedDiskProfileResource getAssignedDiskProfileSubResource(@PathParam("id") String id);
+    AssignedDiskProfileResource getAssignedDiskProfileSubResource(@PathParam("id") String id);
 }
