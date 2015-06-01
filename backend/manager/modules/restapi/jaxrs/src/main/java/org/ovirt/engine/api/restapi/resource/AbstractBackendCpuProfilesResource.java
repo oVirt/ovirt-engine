@@ -79,21 +79,6 @@ public abstract class AbstractBackendCpuProfilesResource
     protected abstract void validateParameters(CpuProfile cpuProfile);
 
     @Override
-    protected Response performRemove(String id) {
-        org.ovirt.engine.core.common.businessentities.profiles.CpuProfile cpuProfile = getCpuProfile(id);
-        return performAction(VdcActionType.RemoveCpuProfile,
-                new CpuProfileParameters(cpuProfile,
-                        cpuProfile.getId()));
-    }
-
-    protected org.ovirt.engine.core.common.businessentities.profiles.CpuProfile getCpuProfile(String id) {
-        return getEntity(org.ovirt.engine.core.common.businessentities.profiles.CpuProfile.class,
-                VdcQueryType.GetCpuProfileById,
-                new IdQueryParameters(asGuidOr404(id)),
-                "CpuProfiles");
-    }
-
-    @Override
     protected CpuProfile doPopulate(CpuProfile model,
             org.ovirt.engine.core.common.businessentities.profiles.CpuProfile entity) {
         return model;

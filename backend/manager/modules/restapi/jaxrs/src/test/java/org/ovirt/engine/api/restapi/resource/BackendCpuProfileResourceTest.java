@@ -123,6 +123,86 @@ public class BackendCpuProfileResourceTest
         }
     }
 
+    @Test
+    public void testRemoveNotFound() throws Exception {
+        setUpEntityQueryExpectations(1, 0, true);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyNotFoundException(wae);
+        }
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpEntityQueryExpectations(2, 0, false);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveCpuProfile,
+                CpuProfileParameters.class,
+                new String[] {},
+                new Object[] {},
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception {
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetCpuProfileById,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { GUIDS[0] },
+            null
+        );
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpEntityQueryExpectations(2, 0, false);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveCpuProfile,
+                CpuProfileParameters.class,
+                new String[] {},
+                new Object[] {},
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
+    }
+
     protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetCpuProfileById,
