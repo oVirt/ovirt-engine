@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Network;
@@ -8,8 +7,6 @@ import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -28,7 +25,7 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
     }
 
     public BackendNetworksResource(VdcQueryType queryType) {
-        super(queryType, VdcActionType.AddNetwork, VdcActionType.RemoveNetwork, SUB_COLLECTIONS);
+        super(queryType, VdcActionType.AddNetwork, SUB_COLLECTIONS);
     }
 
     @Override
@@ -77,11 +74,6 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
         }
 
         return parameters;
-    }
-
-    @Override
-    protected VdcActionParametersBase getRemoveParameters(org.ovirt.engine.core.common.businessentities.network.Network entity) {
-        return new RemoveNetworkParameters(entity.getId());
     }
 
     protected String[] getRequiredAddFields() {

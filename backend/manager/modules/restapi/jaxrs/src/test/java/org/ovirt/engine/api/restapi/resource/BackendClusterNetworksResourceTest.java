@@ -2,8 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
 
-import java.util.ArrayList;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -22,67 +20,6 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
     public BackendClusterNetworksResourceTest() {
         super(new BackendClusterNetworksResource(CLUSTER_ID.toString()));
-    }
-
-    @Test
-    public void testRemoveNotFound() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                                     IdQueryParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { CLUSTER_ID },
-                                     new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
-        control.replay();
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUpVDSGroupExpectations(CLUSTER_ID);
-
-        setUpEntityQueryExpectations(2);
-
-        setUriInfo(setUpActionExpectations(VdcActionType.DetachNetworkToVdsGroup,
-                                           AttachNetworkToVdsGroupParameter.class,
-                                           new String[] { "VdsGroupId" },
-                                           new Object[] { CLUSTER_ID },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpVDSGroupExpectations(CLUSTER_ID);
-
-        setUpEntityQueryExpectations(2);
-
-        setUriInfo(setUpActionExpectations(VdcActionType.DetachNetworkToVdsGroup,
-                                           AttachNetworkToVdsGroupParameter.class,
-                                           new String[] { "VdsGroupId" },
-                                           new Object[] { CLUSTER_ID },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
     }
 
     @Test

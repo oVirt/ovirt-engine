@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -31,18 +30,13 @@ import org.ovirt.engine.api.model.Networks;
 @Path("/networks")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface NetworksResource {
-
     @GET
-    public Networks list();
+    Networks list();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    public Response add(Network network);
-
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id);
+    Response add(Network network);
 
     @Path("{id}")
-    public NetworkResource getNetworkSubResource(@PathParam("id") String id);
+    NetworkResource getNetworkSubResource(@PathParam("id") String id);
 }

@@ -2,8 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -12,41 +10,24 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class AbstractBackendNetworksResource extends AbstractBackendCollectionResource<Network, org.ovirt.engine.core.common.businessentities.network.Network>
-{
+public abstract class AbstractBackendNetworksResource
+    extends AbstractBackendCollectionResource<Network, org.ovirt.engine.core.common.businessentities.network.Network> {
 
     protected VdcQueryType queryType;
     protected VdcActionType addAction;
-    protected VdcActionType removeAction;
 
-    public AbstractBackendNetworksResource(VdcQueryType queryType,
-            VdcActionType addAction,
-            VdcActionType removeAction,
-            String... subCollections) {
+    public AbstractBackendNetworksResource(VdcQueryType queryType, VdcActionType addAction, String... subCollections) {
         super(Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class, subCollections);
         this.queryType = queryType;
         this.addAction = addAction;
-        this.removeAction = removeAction;
     }
 
     protected abstract VdcQueryParametersBase getQueryParameters();
 
     protected abstract VdcActionParametersBase getAddParameters(Network network, org.ovirt.engine.core.common.businessentities.network.Network entity);
 
-    protected abstract VdcActionParametersBase getRemoveParameters(org.ovirt.engine.core.common.businessentities.network.Network entity);
-
     public Networks list() {
         return mapCollection(getBackendCollection(queryType, getQueryParameters()));
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        org.ovirt.engine.core.common.businessentities.network.Network entity = lookupNetwork(asGuidOr404(id));
-        if (entity == null) {
-            notFound();
-            return null;
-        }
-        return performAction(removeAction, getRemoveParameters(entity));
     }
 
     protected Networks mapCollection(List<org.ovirt.engine.core.common.businessentities.network.Network> entities) {

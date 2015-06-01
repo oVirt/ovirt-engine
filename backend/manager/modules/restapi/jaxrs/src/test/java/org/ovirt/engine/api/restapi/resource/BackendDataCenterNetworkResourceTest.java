@@ -9,6 +9,7 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -133,6 +134,93 @@ public class BackendDataCenterNetworkResourceTest
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyImmutabilityConstraint(wae);
+        }
+    }
+
+    @Test
+    public void testRemoveNotFound() throws Exception {
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetNetworksByDataCenterId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { dataCenterId },
+            new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>()
+        );
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyNotFoundException(wae);
+        }
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpEntityQueryExpectations(2);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveNetwork,
+                RemoveNetworkParameters.class,
+                new String[] { "Id" },
+                new Object[] { networkId },
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception{
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetNetworksByDataCenterId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { dataCenterId },
+            new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>(),
+            null
+        );
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpEntityQueryExpectations(2);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveNetwork,
+                RemoveNetworkParameters.class,
+                new String[] { "Id" },
+                new Object[] { networkId },
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
         }
     }
 

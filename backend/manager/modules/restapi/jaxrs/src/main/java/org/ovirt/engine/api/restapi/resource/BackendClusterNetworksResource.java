@@ -25,9 +25,7 @@ public class BackendClusterNetworksResource
     private String clusterId;
 
     public BackendClusterNetworksResource(String clusterId) {
-        super(VdcQueryType.GetAllNetworksByClusterId,
-              VdcActionType.AttachNetworkToVdsGroup,
-              VdcActionType.DetachNetworkToVdsGroup);
+        super(VdcQueryType.GetAllNetworksByClusterId, VdcActionType.AttachNetworkToVdsGroup);
         this.clusterId = clusterId;
     }
 
@@ -99,11 +97,6 @@ public class BackendClusterNetworksResource
     @Override
     protected VdcActionParametersBase getAddParameters(Network network,
             org.ovirt.engine.core.common.businessentities.network.Network entity) {
-        return new AttachNetworkToVdsGroupParameter(getVDSGroup(), entity);
-    }
-
-    @Override
-    protected VdcActionParametersBase getRemoveParameters(org.ovirt.engine.core.common.businessentities.network.Network entity) {
         return new AttachNetworkToVdsGroupParameter(getVDSGroup(), entity);
     }
 
