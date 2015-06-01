@@ -23,8 +23,10 @@
         <g:FlowPanel ui:field="changedFieldsExpanderContent" addStyleNames="{style.sectionPanel}">
             <g:HTML ui:field="changedFields" />
         </g:FlowPanel>
-        <g:FlowPanel ui:field="cpuPanel">
-            <g:HTML ui:field="message2" />
+        <g:FlowPanel ui:field="hotplugPanel">
+            <g:HTML ui:field="applyNowTitleMessage" />
+            <g:HTML ui:field="applyNowCpuMessage" />
+            <g:HTML ui:field="applyNowMemoryMessage" />
             <ge:EntityModelCheckBoxEditor ui:field="applyCpuLaterEditor" addStyleNames="{style.contentWidgets}"/>
         </g:FlowPanel>
 	</g:FlowPanel>

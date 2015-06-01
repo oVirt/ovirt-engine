@@ -1100,6 +1100,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             confirmModel.setChangedFields(changedFields);
                             confirmModel.setCpuPluggable(selectedItem.getCpuPerSocket() == gettempVm().getCpuPerSocket() &&
                                     selectedItem.getNumOfSockets() != gettempVm().getNumOfSockets());
+                            // currentl only hot plug memory is supported here (no hot unplug)
+                            confirmModel.setMemoryPluggable(selectedItem.getMemSizeMb() < gettempVm().getMemSizeMb());
                             confirmModel.getCommands().add(new UICommand("updateExistingVm", UserPortalListModel.this) //$NON-NLS-1$
                             .setTitle(ConstantsManager.getInstance().getConstants().ok())
                             .setIsDefault(true));

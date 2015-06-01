@@ -40,7 +40,15 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
 
     @UiField
     @Ignore
-    HTML message2;
+    HTML applyNowTitleMessage;
+
+    @UiField
+    @Ignore
+    HTML applyNowCpuMessage;
+
+    @UiField
+    @Ignore
+    HTML applyNowMemoryMessage;
 
     @UiField
     @Ignore
@@ -51,7 +59,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     EntityModelCheckBoxEditor applyCpuLaterEditor;
 
     @UiField
-    FlowPanel cpuPanel;
+    FlowPanel hotplugPanel;
 
     @UiField
     @Ignore
@@ -82,7 +90,9 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
 
     void localize() {
         message1.setHTML(listItem(messages.nextRunConfigurationExists()));
-        message2.setHTML(listItem(messages.nextRunConfigurationCanBeAppliedImmediately()));
+        applyNowTitleMessage.setHTML(listItem(messages.nextRunConfigurationCanBeAppliedImmediately()));
+        applyNowCpuMessage.setHTML(listItem(messages.nextRunConfigurationCpuValue()));
+        applyNowMemoryMessage.setHTML(listItem(messages.nextRunConfigurationMemoryValue()));
         applyCpuLaterEditor.setLabel(constants.applyLater());
 
         changedFieldsExpander.setTitleWhenExpanded(constants.changedFieldsList());
@@ -96,7 +106,9 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     @Override
     public void edit(VmNextRunConfigurationModel object) {
         driver.edit(object);
-        cpuPanel.setVisible(object.isCpuPluggable());
+        hotplugPanel.setVisible(object.isCpuPluggable() || object.isMemoryPluggable());
+        applyNowCpuMessage.setVisible(object.isCpuPluggable());
+        applyNowMemoryMessage.setVisible(object.isMemoryPluggable());
 
         SafeHtmlBuilder changedFieldsBuilder = new SafeHtmlBuilder();
         for (String field: object.getChangedFields()) {
@@ -104,6 +116,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
             changedFieldsBuilder.append(listItem(escapedField));
         }
         changedFields.setHTML(changedFieldsBuilder.toSafeHtml());
+
     }
 
     @Override

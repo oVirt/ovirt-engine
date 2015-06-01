@@ -1877,6 +1877,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                         confirmModel.setChangedFields(changedFields);
                         confirmModel.setCpuPluggable(selectedItem.getCpuPerSocket() == getcurrentVm().getCpuPerSocket() &&
                                 selectedItem.getNumOfSockets() != getcurrentVm().getNumOfSockets());
+                        // currentl only hot plug memory is supported here (no hot unplug)
+                        confirmModel.setMemoryPluggable(selectedItem.getMemSizeMb() < getcurrentVm().getMemSizeMb());
 
                         confirmModel.getCommands().add(new UICommand("updateExistingVm", VmListModel.this) //$NON-NLS-1$
                         .setTitle(ConstantsManager.getInstance().getConstants().ok())

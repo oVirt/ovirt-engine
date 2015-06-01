@@ -152,8 +152,14 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Some of the changes will be applied only on the vm next start.")
     String nextRunConfigurationExists();
 
-    @DefaultMessage("The following values can be applied immediately:<br/>- cpu")
+    @DefaultMessage("The following values can be applied immediately:<br/>")
     String nextRunConfigurationCanBeAppliedImmediately();
+
+    @DefaultMessage("- cpu<br/>")
+    String nextRunConfigurationCpuValue();
+
+    @DefaultMessage("- memory<br/>")
+    String nextRunConfigurationMemoryValue();
 
     @DefaultMessage("{0} (Previewing: {1})")
     String snapshotPreviewing(String snapshotDescription, String diskAliases);

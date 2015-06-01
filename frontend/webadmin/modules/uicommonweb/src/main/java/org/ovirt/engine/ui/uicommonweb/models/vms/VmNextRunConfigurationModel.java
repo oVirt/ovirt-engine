@@ -9,6 +9,7 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
 
     private EntityModel<Boolean> applyCpuLater;
     private boolean cpuPluggable;
+    private boolean memoryPluggable;
     private List<String> changedFields;
 
     public VmNextRunConfigurationModel() {
@@ -37,5 +38,13 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
 
     public void setChangedFields(List<String> changedFields) {
         this.changedFields = changedFields;
+    }
+
+    public boolean isMemoryPluggable() {
+        return memoryPluggable;
+    }
+
+    public void setMemoryPluggable(boolean memoryPluggable) {
+        this.memoryPluggable = memoryPluggable;
     }
 }
