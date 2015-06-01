@@ -26,6 +26,7 @@ public class JsonRpcIntegrationTest {
     private final static int TIMEOUT = 5000;
     private final static String DEFAULT_REQUEST_QUEUE = "jms.queue.requests";
     private final static String DEFAULT_RESPONSE_QUEUE = "jms.queue.reponses";
+    private final static String DEFAULT_EVENTS_QUEUE = "jms.queue.events";
 
     @Test
     public void testGetVdsCapabilities() throws InterruptedException, ExecutionException, ClientConnectionException {
@@ -37,7 +38,8 @@ public class JsonRpcIntegrationTest {
                 "TLSv1",
                 Runtime.getRuntime().availableProcessors(),
                 DEFAULT_REQUEST_QUEUE,
-                DEFAULT_RESPONSE_QUEUE);
+                DEFAULT_RESPONSE_QUEUE,
+                DEFAULT_EVENTS_QUEUE);
         final JsonRpcRequest request = new RequestBuilder("Host.getCapabilities").build();
         Map<String, Object> map = new FutureMap(client, request);
         assertTrue(map.isEmpty());

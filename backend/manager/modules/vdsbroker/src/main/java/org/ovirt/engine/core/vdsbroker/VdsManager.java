@@ -185,6 +185,7 @@ public class VdsManager {
         int clientRetries = Config.<Integer> getValue(ConfigValues.vdsRetries);
         vdsProxy = TransportFactory.createVdsServer(
                 cachedVds.getProtocol(),
+                cachedVds.getVdsGroupCompatibilityVersion(),
                 cachedVds.getHostName(),
                 cachedVds.getPort(),
                 clientTimeOut,

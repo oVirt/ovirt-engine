@@ -403,6 +403,12 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("jms.queue.irsreponses")
     IrsResponseQueueName,
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("jms.queue.events")
+    EventQueueName,
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    EventsSupported,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     EventProcessingPoolSize,

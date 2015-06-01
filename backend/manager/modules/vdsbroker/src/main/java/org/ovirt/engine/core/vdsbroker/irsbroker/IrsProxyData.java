@@ -60,6 +60,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -136,6 +137,16 @@ public class IrsProxyData {
 
     private void setProtocol(VdsProtocol value) {
         this.privateProtocol = value;
+    }
+
+    private Version privateVersion;
+
+    private Version getVersion() {
+        return this.privateVersion;
+    }
+
+    private void setVersion(Version version) {
+        this.privateVersion = version;
     }
 
     public Guid getFencedIrs() {
@@ -562,6 +573,7 @@ public class IrsProxyData {
         setmIrsPort(vds.getPort());
         privatemCurrentIrsHost = vds.getHostName();
         setProtocol(vds.getProtocol());
+        setVersion(vds.getVdsGroupCompatibilityVersion());
     }
 
     public boolean failover() {
@@ -623,7 +635,14 @@ public class IrsProxyData {
                     int connectionTimeOut = Config.<Integer> getValue(ConfigValues.vdsConnectionTimeout) * 1000;
                     int heartbeat = Config.<Integer> getValue(ConfigValues.vdsHeartbeatInSeconds) * 1000;
                     int clientRetries = Config.<Integer> getValue(ConfigValues.vdsRetries);
-                    irsProxy = TransportFactory.createIrsServer(getProtocol(), host, getmIrsPort(), clientTimeOut, connectionTimeOut, clientRetries, heartbeat);
+                    irsProxy = TransportFactory.createIrsServer(getProtocol(),
+                                    getVersion(),
+                                    host,
+                                    getmIrsPort(),
+                                    clientTimeOut,
+                                    connectionTimeOut,
+                                    clientRetries,
+                                    heartbeat);
                     runStoragePoolUpEvent(storagePool);
                 }
             }

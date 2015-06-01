@@ -28,14 +28,17 @@ public class JsonRpcUtils {
             String protocol,
             int parallelism,
             String requestQueue,
-            String responseQueue) {
-        ClientPolicy connectionPolicy =
+            String responseQueue,
+            String eventQueue) {
+        StompClientPolicy connectionPolicy =
                 new StompClientPolicy(connectionTimeout,
                         connectionRetry,
                         heartbeat,
                         IOException.class,
                         requestQueue,
                         responseQueue);
+        connectionPolicy.setEventQueue(eventQueue);
+
         ClientPolicy clientPolicy = new ClientPolicy(clientTimeout, connectionRetry, heartbeat, IOException.class);
         return createClient(hostname, port, connectionPolicy, clientPolicy, isSecure, ReactorType.STOMP, protocol, parallelism);
     }

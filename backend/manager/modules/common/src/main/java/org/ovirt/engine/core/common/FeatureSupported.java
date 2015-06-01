@@ -480,6 +480,15 @@ public class FeatureSupported {
     /**
      * @param version
      *            Compatibility version to check for.
+     * @return <code>true</code> if events are supported for the given version.
+     */
+    public static boolean events(Version version) {
+        return supportedInConfig(ConfigValues.EventsSupported, version);
+    }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
      * @return <code>true</code> if forcing convergence on migration is supported for the given version
      */
     public static boolean autoConvergence(Version version) {
