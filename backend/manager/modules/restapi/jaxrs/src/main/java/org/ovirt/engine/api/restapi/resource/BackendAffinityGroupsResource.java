@@ -57,13 +57,6 @@ public class BackendAffinityGroupsResource
     }
 
     @Override
-    protected Response performRemove(String id) {
-        AffinityGroupCRUDParameters params = new AffinityGroupCRUDParameters();
-        params.setAffinityGroupId(asGuid(id));
-        return performAction(VdcActionType.RemoveAffinityGroup, params);
-    }
-
-    @Override
     protected AffinityGroup doPopulate(AffinityGroup model, org.ovirt.engine.core.common.scheduling.AffinityGroup entity) {
         return model;
     }

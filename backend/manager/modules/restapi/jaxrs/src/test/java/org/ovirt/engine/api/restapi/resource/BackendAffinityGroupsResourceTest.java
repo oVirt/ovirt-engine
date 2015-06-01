@@ -5,7 +5,6 @@ import static org.easymock.EasyMock.expect;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
@@ -84,40 +83,6 @@ public class BackendAffinityGroupsResourceTest extends AbstractBackendCollection
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof AffinityGroup);
         verifyModel((AffinityGroup) response.getEntity(), 0);
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(GUIDS[0], false);
-        setUpActionExpectations(VdcActionType.RemoveAffinityGroup,
-                AffinityGroupCRUDParameters.class,
-                new String[] { "AffinityGroupId" },
-                new Object[] { GUIDS[0] },
-                true,
-                true);
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception {
-        setUpGetEntityExpectations(NON_EXISTANT_GUID, true);
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
-
-    private void setUpGetEntityExpectations(Guid entityId, Boolean returnNull) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetAffinityGroupById,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { entityId },
-                returnNull ? null : getEntity(0));
     }
 
     private List<org.ovirt.engine.core.common.scheduling.AffinityGroup> setUpAffinityGroups() {

@@ -58,6 +58,36 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
         verifyModel(resource.update(getModel(0)), 0);
     }
 
+    @Test
+    public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(1, true);
+        setUpActionExpectations(
+            VdcActionType.RemoveAffinityGroup,
+            AffinityGroupCRUDParameters.class,
+            new String[] { "AffinityGroupId" },
+            new Object[] { GUIDS[0] },
+            true,
+            true
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(1, false);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
     private void setUpGetEntityExpectations(int times, boolean found) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetAffinityGroupById,

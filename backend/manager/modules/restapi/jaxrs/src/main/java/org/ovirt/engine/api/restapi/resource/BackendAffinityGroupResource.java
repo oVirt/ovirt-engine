@@ -10,6 +10,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 
+import javax.ws.rs.core.Response;
+
 public class BackendAffinityGroupResource
         extends AbstractBackendSubResource<AffinityGroup, org.ovirt.engine.core.common.scheduling.AffinityGroup>
         implements AffinityGroupResource {
@@ -49,4 +51,12 @@ public class BackendAffinityGroupResource
         return inject(new BackendAffinityGroupVmsResource(guid));
     }
 
+
+    @Override
+    public Response remove() {
+        get();
+        AffinityGroupCRUDParameters params = new AffinityGroupCRUDParameters();
+        params.setAffinityGroupId(asGuid(id));
+        return performAction(VdcActionType.RemoveAffinityGroup, params);
+    }
 }
