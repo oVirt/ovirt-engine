@@ -666,7 +666,7 @@ done << __EOF__
 %{engine_ear}/bll.jar
 %{engine_ear}/docs.war/WEB-INF/lib/branding.jar
 %{engine_ear}/lib/vdsbroker.jar
-%{engine_ear}/scheduler.jar
+%{engine_ear}/lib/scheduler.jar
 %{engine_ear}/userportal.war/WEB-INF/lib/branding.jar
 %{engine_ear}/webadmin.war/WEB-INF/lib/branding.jar
 %{engine_ear}/welcome.war/WEB-INF/lib/branding.jar
@@ -984,7 +984,6 @@ fi
 %{engine_ear}/docs.war/
 %{engine_ear}/lib
 %{engine_ear}/root.war/
-%{engine_ear}/scheduler.jar
 %{engine_ear}/services.war/
 %{engine_ear}/welcome.war/
 %{engine_etc}/osinfo.conf.d/
