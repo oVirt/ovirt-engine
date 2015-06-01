@@ -469,13 +469,13 @@ public class HostMonitoring {
         fetchHostInterfaces();
         VDSReturnValue statsReturnValue = resourceManager.runVdsCommand(VDSCommandType.GetStats,
                 new VdsIdAndVdsVDSCommandParametersBase(vds));
-        getVdsEventListener().updateSchedulingStats(vds);
         if (!statsReturnValue.getSucceeded()
                 && statsReturnValue.getExceptionObject() != null) {
             log.error(" Failed getting vds stats,  vds='{}'({}): {}",
                     vds.getName(), vds.getId(), statsReturnValue.getExceptionString());
             throw statsReturnValue.getExceptionObject();
         }
+        getVdsEventListener().updateSchedulingStats(vds);
         updateV2VJobs();
         // save also dynamic because vm_count data and image_check getting with
         // statistics data
