@@ -16,8 +16,10 @@
 
 package org.ovirt.engine.api.resource.openstack;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.resource.ApiMediaType;
@@ -27,4 +29,7 @@ import org.ovirt.engine.api.resource.ExternalProviderResource;
 public interface OpenStackNetworkProviderResource extends ExternalProviderResource<OpenStackNetworkProvider> {
     @Path("networks")
     public OpenStackNetworksResource getOpenStackNetworks();
+
+    @DELETE
+    public Response remove();
 }

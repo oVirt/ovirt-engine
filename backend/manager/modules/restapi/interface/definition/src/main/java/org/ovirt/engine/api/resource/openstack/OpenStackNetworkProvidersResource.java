@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.resource.openstack;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -39,10 +38,6 @@ public interface OpenStackNetworkProvidersResource {
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public Response add(OpenStackNetworkProvider provider);
-
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id);
 
     @Path("{id}")
     public OpenStackNetworkProviderResource getOpenStackNetworkProvider(@PathParam("id") String id);

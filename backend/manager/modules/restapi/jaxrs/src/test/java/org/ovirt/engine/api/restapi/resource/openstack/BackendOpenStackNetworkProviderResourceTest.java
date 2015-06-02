@@ -145,6 +145,19 @@ public class BackendOpenStackNetworkProviderResourceTest
         }
     }
 
+    @Test
+    public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(1);
+        setUpActionExpectations(VdcActionType.RemoveProvider,
+                ProviderParameters.class,
+                new String[] { "Provider.Id" },
+                new Object[] { GUIDS[0] },
+                true,
+                true);
+        resource.remove();
+    }
+
     private OpenStackNetworkProvider getModel(int index) {
         OpenStackNetworkProvider model = new OpenStackNetworkProvider();
         model.setName(NAMES[index]);

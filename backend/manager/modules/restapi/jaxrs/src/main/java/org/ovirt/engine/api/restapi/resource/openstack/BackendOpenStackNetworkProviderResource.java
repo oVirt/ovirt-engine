@@ -18,12 +18,18 @@ package org.ovirt.engine.api.restapi.resource.openstack;
 
 import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackNetworkProvidersResource.SUB_COLLECTIONS;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.resource.ExternalProviderCertificatesResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackNetworksResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderCertificatesResource;
+import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
+import org.ovirt.engine.core.common.action.ProviderParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Provider;
 
 public class BackendOpenStackNetworkProviderResource
         extends AbstractBackendExternalProviderResource<OpenStackNetworkProvider>
@@ -40,5 +46,12 @@ public class BackendOpenStackNetworkProviderResource
     @Override
     public ExternalProviderCertificatesResource getCertificates() {
         return inject(new BackendExternalProviderCertificatesResource(id));
+    }
+
+    @Override
+    public Response remove() {
+        Provider provider = BackendExternalProviderHelper.getProvider(this, id);
+        ProviderParameters parameters = new ProviderParameters(provider);
+        return performAction(VdcActionType.RemoveProvider, parameters);
     }
 }
