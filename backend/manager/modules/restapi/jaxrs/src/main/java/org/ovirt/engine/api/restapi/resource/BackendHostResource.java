@@ -33,12 +33,9 @@ import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendHostKatelloErrataResource;
-import org.ovirt.engine.api.restapi.types.DeprecatedPowerManagementMapper;
-import org.ovirt.engine.api.restapi.types.FenceAgentMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
-import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
@@ -57,7 +54,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
@@ -117,8 +113,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             }
         }
 
-        // deprecatedUpdateFenceAgents(incoming);
-
         Host host = performUpdate(incoming,
                 entity,
                 map(entity),
@@ -138,30 +132,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                 host2.setId(host.getId());
                 agent.setHost(host2);
                 LinkHelper.addLinks(uriInfo, agent);
-            }
-        }
-    }
-
-    @SuppressWarnings("unused")
-    @Deprecated
-    /**
-     * In the past fence-agents appeared in-line in a host, and updating them was done through an update
-     * of the host. This is maintained for backwards-compatibility (for simplicity, agents are removed and
-     * re-added). Update of 3+ agents is not supported, since traditionally there were at most 2.
-     * This method does not handle deleting only one of the agents (existing bug).
-     */
-    private void deprecatedUpdateFenceAgents(Host incoming) {
-        List<FenceAgent> agents =
-                DeprecatedPowerManagementMapper.map(incoming.getPowerManagement(),
-                        getFenceAgentsResource().getFenceAgents());
-        if (agents.isEmpty()) {
-            FenceAgentCommandParameterBase params = new FenceAgentCommandParameterBase();
-            params.setVdsId(guid);
-            performAction(VdcActionType.RemoveFenceAgentsByVdsId, params);
-        } else if (agents.size() < 3) {
-            for (FenceAgent agent : agents) {
-                getFenceAgentsResource().remove(agent.getId().toString());
-                getFenceAgentsResource().add(FenceAgentMapper.map(agent, null));
             }
         }
     }
