@@ -7,6 +7,7 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
+import org.ovirt.engine.core.common.action.RemoveMacPoolByIdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -126,6 +127,74 @@ public class BackendMacPoolResourceTest
         }
     }
 
+    @Test
+    public void testRemove() throws Exception {
+        setUpEntityQueryExpectations(false);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveMacPool,
+                RemoveMacPoolByIdParameters.class,
+                new String[] { "MacPoolId" },
+                new Object[] { MAC_POOL_ID },
+                true,
+                true));
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNotFound() throws Exception {
+        setUpEntityQueryExpectations(true);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyNotFoundException(wae);
+        }
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetMacPoolById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { MAC_POOL_ID },
+                null);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpEntityQueryExpectations(false);
+
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveMacPool,
+                RemoveMacPoolByIdParameters.class,
+                new String[] {},
+                new Object[] {},
+                canDo,
+                success));
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
+    }
+
     protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetMacPoolById,
@@ -156,5 +225,13 @@ public class BackendMacPoolResourceTest
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         return entity;
+    }
+
+    protected void setUpEntityQueryExpectations(boolean notFound) throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetMacPoolById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                notFound ? null : getEntity(0));
     }
 }

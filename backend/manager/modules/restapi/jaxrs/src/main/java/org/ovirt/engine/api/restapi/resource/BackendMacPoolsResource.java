@@ -9,7 +9,6 @@ import org.ovirt.engine.api.model.MacPools;
 import org.ovirt.engine.api.resource.MacPoolResource;
 import org.ovirt.engine.api.resource.MacPoolsResource;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
-import org.ovirt.engine.core.common.action.RemoveMacPoolByIdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -22,11 +21,6 @@ public class BackendMacPoolsResource
 
     public BackendMacPoolsResource() {
         super(MacPool.class, org.ovirt.engine.core.common.businessentities.MacPool.class);
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveMacPool, new RemoveMacPoolByIdParameters(asGuid(id)));
     }
 
     @Override
