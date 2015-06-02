@@ -2,14 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Host;
@@ -32,16 +26,11 @@ public class BackendFenceAgentsResource extends AbstractBackendCollectionResourc
     private String hostId;
 
     @Override
-    @GET
-    @Formatted
     public Agents list() {
         return mapCollection(getFenceAgents());
     }
 
     @Override
-    @POST
-    @Formatted
-    @Consumes({ "application/xml", "application/json", "application/x-yaml" })
     public Response add(Agent agent) {
         validateParameters(agent, "address", "order", "type", "username", "password");
         return performCreate(VdcActionType.AddFenceAgent,
@@ -59,18 +48,8 @@ public class BackendFenceAgentsResource extends AbstractBackendCollectionResourc
     }
 
     @Override
-    @Path("{id}")
-    public FenceAgentResource getFenceAgentSubResource(@PathParam("id") String id) {
+    public FenceAgentResource getFenceAgentSubResource(String id) {
         return inject(new BackendFenceAgentResource(id));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        FenceAgentCommandParameterBase params = new FenceAgentCommandParameterBase();
-        FenceAgent agent = new FenceAgent();
-        agent.setId(asGuid(id));
-        params.setAgent(agent);
-        return performAction(VdcActionType.RemoveFenceAgent, params);
     }
 
     @Override
@@ -87,9 +66,7 @@ public class BackendFenceAgentsResource extends AbstractBackendCollectionResourc
         return agents;
     }
 
-    @Override
-    public List<FenceAgent> getFenceAgents() {
+    private List<FenceAgent> getFenceAgents() {
         return getBackendCollection(VdcQueryType.GetFenceAgentsByVdsId, new IdQueryParameters(new Guid(hostId)));
     }
-
 }

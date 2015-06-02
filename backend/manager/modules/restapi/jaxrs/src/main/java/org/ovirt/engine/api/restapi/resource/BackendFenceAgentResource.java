@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.Consumes;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.resource.FenceAgentResource;
@@ -24,7 +24,6 @@ public class BackendFenceAgentResource extends AbstractBackendSubResource<Agent,
     }
 
     @Override
-    @Consumes({ "application/xml", "application/json", "application/x-yaml" })
     public Agent update(Agent agent) {
         QueryIdResolver<Guid> agentResolver =
                 new QueryIdResolver<Guid>(VdcQueryType.GetFenceAgentById, IdQueryParameters.class);
@@ -50,5 +49,15 @@ public class BackendFenceAgentResource extends AbstractBackendSubResource<Agent,
             updateParams.setAgent(agent);
             return updateParams;
         }
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        FenceAgentCommandParameterBase params = new FenceAgentCommandParameterBase();
+        FenceAgent agent = new FenceAgent();
+        agent.setId(guid);
+        params.setAgent(agent);
+        return performAction(VdcActionType.RemoveFenceAgent, params);
     }
 }
