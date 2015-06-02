@@ -18,10 +18,16 @@ package org.ovirt.engine.api.restapi.resource.openstack;
 
 import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackImageProvidersResource.SUB_COLLECTIONS;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.resource.openstack.OpenStackImageProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackImagesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
+import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
+import org.ovirt.engine.core.common.action.ProviderParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Provider;
 
 public class BackendOpenStackImageProviderResource
         extends AbstractBackendExternalProviderResource<OpenStackImageProvider>
@@ -33,5 +39,12 @@ public class BackendOpenStackImageProviderResource
     @Override
     public OpenStackImagesResource getOpenStackImages() {
         return inject(new BackendOpenStackImagesResource(id));
+    }
+
+    @Override
+    public Response remove() {
+        Provider provider = BackendExternalProviderHelper.getProvider(this, id);
+        ProviderParameters parameters = new ProviderParameters(provider);
+        return performAction(VdcActionType.RemoveProvider, parameters);
     }
 }

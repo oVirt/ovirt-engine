@@ -16,8 +16,10 @@
 
 package org.ovirt.engine.api.resource.openstack;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.resource.ApiMediaType;
@@ -26,5 +28,9 @@ import org.ovirt.engine.api.resource.ExternalProviderResource;
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface OpenStackImageProviderResource extends ExternalProviderResource<OpenStackImageProvider> {
     @Path("images")
-    public OpenStackImagesResource getOpenStackImages();
+    OpenStackImagesResource getOpenStackImages();
+
+    @DELETE
+    Response remove();
+
 }

@@ -107,6 +107,19 @@ public class BackendOpenStackImageProviderResourceTest
         doTestBadUpdate(true, false, FAILURE);
     }
 
+    @Test
+    public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(1);
+        setUpActionExpectations(VdcActionType.RemoveProvider,
+                ProviderParameters.class,
+                new String[] { "Provider.Id" },
+                new Object[] { GUIDS[0] },
+                true,
+                true);
+        resource.remove();
+    }
+
     private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
         setUriInfo(
