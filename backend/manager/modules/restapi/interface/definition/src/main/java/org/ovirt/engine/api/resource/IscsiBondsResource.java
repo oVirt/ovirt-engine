@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,18 +13,13 @@ import org.ovirt.engine.api.model.IscsiBonds;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface IscsiBondsResource {
-
     @GET
-    public IscsiBonds list();
+    IscsiBonds list();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    public Response add(IscsiBond iscsiBond);
-
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id);
+    Response add(IscsiBond iscsiBond);
 
     @Path("{id}")
-    public IscsiBondResource getIscsiBondSubResource(@PathParam("id") String id);
+    IscsiBondResource getIscsiBondSubResource(@PathParam("id") String id);
 }

@@ -7,14 +7,18 @@ import org.ovirt.engine.api.resource.IscsiBondResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
+import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendIscsiBondResource extends AbstractBackendActionableResource<IscsiBond, org.ovirt.engine.core.common.businessentities.IscsiBond>
-        implements IscsiBondResource {
+import javax.ws.rs.core.Response;
+
+public class BackendIscsiBondResource
+    extends AbstractBackendActionableResource<IscsiBond, org.ovirt.engine.core.common.businessentities.IscsiBond>
+    implements IscsiBondResource {
 
     public  BackendIscsiBondResource(String id) {
         super(id, IscsiBond.class, org.ovirt.engine.core.common.businessentities.IscsiBond.class, SUB_COLLECTIONS);
@@ -53,5 +57,11 @@ public class BackendIscsiBondResource extends AbstractBackendActionableResource<
     @Override
     protected IscsiBond doPopulate(IscsiBond model, org.ovirt.engine.core.common.businessentities.IscsiBond entity) {
         return model;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveIscsiBond, new RemoveIscsiBondParameters(guid));
     }
 }

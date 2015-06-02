@@ -11,7 +11,6 @@ import org.ovirt.engine.api.resource.IscsiBondResource;
 import org.ovirt.engine.api.resource.IscsiBondsResource;
 import org.ovirt.engine.api.restapi.types.IscsiBondMapper;
 import org.ovirt.engine.core.common.action.AddIscsiBondParameters;
-import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -46,11 +45,6 @@ public class BackendIscsiBondsResource extends AbstractBackendCollectionResource
         return performCreate(VdcActionType.AddIscsiBond,
                 new AddIscsiBondParameters(entity),
                 new QueryIdResolver<Guid>(VdcQueryType.GetIscsiBondById, IdQueryParameters.class));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveIscsiBond, new RemoveIscsiBondParameters(asGuid(id)));
     }
 
     @Override
