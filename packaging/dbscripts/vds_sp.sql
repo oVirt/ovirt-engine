@@ -928,36 +928,6 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION UpdatePartialVdsDynamicCalc(
-        v_vds_guid UUID,
-        v_vmCount INTEGER,
-        v_pendingVcpusCount INTEGER,
-        v_pendingVmemSize INTEGER,
-        v_memCommited INTEGER,
-        v_vmsCoresCount INTEGER)
-RETURNS VOID
-   AS $procedure$
-DECLARE
-    sign int;
-BEGIN
-	IF (v_memCommited = 0 ) THEN
-	  sign = 0;
-	ELSEIF (v_memCommited > 0) THEN
-	  sign = 1;
-	ELSE
-	  sign = -1;
-	END IF;
-
-    UPDATE vds_dynamic
-    SET
-      vm_count = GREATEST(vm_count + v_vmCount, 0),
-      pending_vcpus_count = GREATEST(pending_vcpus_count + v_pendingVcpusCount, 0),
-      pending_vmem_size = GREATEST(pending_vmem_size + v_pendingVmemSize, 0),
-      mem_commited = GREATEST(mem_commited + sign * (abs(v_memCommited) + guest_overhead), 0),
-      vms_cores_count = GREATEST(vms_cores_count + v_vmsCoresCount, 0)
-    WHERE vds_id = v_vds_guid;
-END; $procedure$
-LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVdsByNetworkId(v_network_id UUID) RETURNS SETOF vds STABLE
    AS $procedure$
