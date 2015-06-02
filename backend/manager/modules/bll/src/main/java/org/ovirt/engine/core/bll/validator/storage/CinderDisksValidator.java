@@ -3,8 +3,10 @@ package org.ovirt.engine.core.bll.validator.storage;
 import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.cinder.model.Limits;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -61,6 +63,42 @@ public class CinderDisksValidator {
                 return ValidationResult.VALID;
             }
         });
+    }
+
+    private static class CinderStorageRelatedDisksAndProxy {
+        private Guid storageDomainId;
+        private List<CinderDisk> cinderDisks = new ArrayList<>();
+        private OpenStackVolumeProviderProxy proxy;
+
+        public CinderStorageRelatedDisksAndProxy(Guid storageDomainId, List<CinderDisk> cinderDisks, OpenStackVolumeProviderProxy proxy) {
+            setStorageDomainId(storageDomainId);
+            setCinderDisks(cinderDisks);
+            setProxy(proxy);
+        }
+
+        public Guid getStorageDomainId() {
+            return storageDomainId;
+        }
+
+        public void setStorageDomainId(Guid storageDomainId) {
+            this.storageDomainId = storageDomainId;
+        }
+
+        public List<CinderDisk> getCinderDisks() {
+            return cinderDisks;
+        }
+
+        public void setCinderDisks(List<CinderDisk> cinderDisks) {
+            this.cinderDisks = cinderDisks;
+        }
+
+        public OpenStackVolumeProviderProxy getProxy() {
+            return proxy;
+        }
+
+        public void setProxy(OpenStackVolumeProviderProxy proxy) {
+            this.proxy = proxy;
+        }
     }
 
     public ValidationResult validateCinderDisksAlreadyRegistered() {
