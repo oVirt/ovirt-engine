@@ -86,11 +86,11 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             List<GlusterVolumeEntity> volumes = getGlusterVolumeDao().getByClusterId(cluster.getId());
             for (final GlusterVolumeEntity volume : volumes) {
                 // check if the snapshot soft limit reached for the volume and alert
-                getGlusterUtil().alertVolumeSnapshotSoftLimitReached(volume);
+                getGlusterUtil().alertVolumeSnapshotLimitsReached(volume);
 
                 // Check and remove soft limit alert for the volume.
                 // It might have fallen below the soft limit as part of deletions of snapshots
-                getGlusterUtil().checkAndRemoveVolumeSnapshotSoftLimitAlert(volume);
+                getGlusterUtil().checkAndRemoveVolumeSnapshotLimitsAlert(volume);
             }
         } else {
             log.error("VDS Error {}", returnValue.getVdsError().getMessage());

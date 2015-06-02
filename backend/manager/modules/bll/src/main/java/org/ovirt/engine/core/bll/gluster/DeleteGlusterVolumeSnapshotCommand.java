@@ -77,14 +77,14 @@ public class DeleteGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCom
                         return;
                     }
                     // Check and remove soft limit alert for the volume
-                    getGlusterUtil().checkAndRemoveVolumeSnapshotSoftLimitAlert(slaveVolume);
+                    getGlusterUtil().checkAndRemoveVolumeSnapshotLimitsAlert(slaveVolume);
                 }
             }
         }
 
         deleteGlusterVolumeSnapshot(getUpServer().getId(), getGlusterVolumeName(), getSnapshot().getSnapshotName());
         // Check and remove soft limit alert for the volume
-        getGlusterUtil().checkAndRemoveVolumeSnapshotSoftLimitAlert(getGlusterVolume());
+        getGlusterUtil().checkAndRemoveVolumeSnapshotLimitsAlert(getGlusterVolume());
     }
 
     @Override

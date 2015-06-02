@@ -123,8 +123,8 @@ public class GlusterSnapshotSyncJobTest {
         when(glusterUtil.isGlusterSnapshotSupported(eq(Version.v3_4), any(Guid.class))).thenReturn(false);
         when(glusterUtil.isGlusterSnapshotSupported(eq(Version.v3_5), any(Guid.class))).thenReturn(true);
         doReturn(engineLock).when(syncJob).acquireVolumeSnapshotLock(any(Guid.class));
-        doNothing().when(glusterUtil).alertVolumeSnapshotSoftLimitReached(any(GlusterVolumeEntity.class));
-        doNothing().when(glusterUtil).checkAndRemoveVolumeSnapshotSoftLimitAlert(any(GlusterVolumeEntity.class));
+        doNothing().when(glusterUtil).alertVolumeSnapshotLimitsReached(any(GlusterVolumeEntity.class));
+        doNothing().when(glusterUtil).checkAndRemoveVolumeSnapshotLimitsAlert(any(GlusterVolumeEntity.class));
     }
 
     @Test

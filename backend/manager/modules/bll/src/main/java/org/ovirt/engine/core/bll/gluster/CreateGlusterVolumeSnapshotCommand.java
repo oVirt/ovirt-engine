@@ -115,7 +115,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                             getDbFacade().getGlusterVolumeSnapshotDao().save(slaveVolumeSnapshot);
 
                             // check if the snapshot soft limit reached now for the volume and alert
-                            getGlusterUtil().alertVolumeSnapshotSoftLimitReached(slaveVolume);
+                            getGlusterUtil().alertVolumeSnapshotLimitsReached(slaveVolume);
 
                         }
                     }
@@ -163,7 +163,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             getDbFacade().getGlusterVolumeSnapshotDao().save(createdSnapshot);
             addCustomValue(GlusterConstants.VOLUME_SNAPSHOT_NAME, createdSnapshot.getSnapshotName());
             // check if the snapshot soft limit reached now for the volume and alert
-            getGlusterUtil().alertVolumeSnapshotSoftLimitReached(getGlusterVolume());
+            getGlusterUtil().alertVolumeSnapshotLimitsReached(getGlusterVolume());
         }
 
         // Resume the snapshot sessions

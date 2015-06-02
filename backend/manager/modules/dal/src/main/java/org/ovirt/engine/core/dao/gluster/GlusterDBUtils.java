@@ -184,7 +184,7 @@ public class GlusterDBUtils {
         return getGlusterVolumeDao().getByName(vdsGroupId, volumeName);
     }
 
-    public boolean isSoftLimitReached(Guid volumeId) {
+    public boolean isVolumeSnapshotSoftLimitReached(Guid volumeId) {
         GlusterVolumeEntity volume = getGlusterVolumeDao().getById(volumeId);
 
         if (volume != null) {
@@ -201,6 +201,26 @@ public class GlusterDBUtils {
                 int snapMaxLimit = volume.getSnapMaxLimit();
 
                 return snapshotCount >= (snapMaxLimit * snapMaxSoftLimitPcnt) / 100;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isVolumeSnapshotHardLimitReached(Guid volumeId) {
+        GlusterVolumeEntity volume = getGlusterVolumeDao().getById(volumeId);
+
+        if (volume != null) {
+            GlusterVolumeSnapshotConfig config =
+                    getGlusterVolumeSnapshotConfigDao().getConfigByVolumeIdAndName(volume.getClusterId(),
+                            volumeId,
+                            "snap-max-hard-limit");
+
+            if (config != null) {
+                int snapMaxHardLimit = Integer.parseInt(config.getParamValue());
+                int snapshotCount = volume.getSnapshotsCount();
+
+                return snapshotCount >= snapMaxHardLimit;
             }
         }
 
