@@ -1898,6 +1898,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         getArchitecture().getSelectedItemChangedEvent().removeListener(this);
 
         ServerCpu oldSelectedCpu = clusterModel.getCPU().getSelectedItem();
+        ArchitectureType oldSelectedArch = clusterModel.getArchitecture().getSelectedItem();
 
         clusterModel.getCPU().setItems(cpus);
         initSupportedArchitectures(clusterModel);
@@ -1912,17 +1913,18 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
         if (clusterModel.getIsEdit()) {
             if (!canChangeArchitecture) {
-                getArchitecture().setItems(new ArrayList<ArchitectureType>(Arrays.asList(clusterModel.getEntity()
-                        .getArchitecture())));
+                getArchitecture().setItems(new ArrayList<ArchitectureType>(
+                        Arrays.asList(clusterModel.getEntity().getArchitecture())));
             }
-
-            ArchitectureType oldSelectedArch =
-                    clusterModel.getArchitecture().getSelectedItem();
 
             if (oldSelectedArch != null) {
                 getArchitecture().setSelectedItem(oldSelectedArch);
             } else {
-                getArchitecture().setSelectedItem(getEntity().getArchitecture());
+                if (clusterModel.getEntity() != null) {
+                    getArchitecture().setSelectedItem(clusterModel.getEntity().getArchitecture());
+                } else {
+                    getArchitecture().setSelectedItem(ArchitectureType.undefined);
+                }
             }
         } else {
             getArchitecture().setSelectedItem(ArchitectureType.undefined);
