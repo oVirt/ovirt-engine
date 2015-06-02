@@ -15,7 +15,6 @@ import org.ovirt.engine.api.model.LogSeverity;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddExternalEventParameters;
-import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -75,15 +74,6 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
         assertEquals(model.getCustomId(), CUSTOMER_EVENT_IDS[index]);
     }
 
-
-    @Test
-    public void testRemove() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpActionExpectations(VdcActionType.RemoveAuditLogById, RemoveAuditLogByIdParameters.class, new String[] {
-                "AuditLogId" }, new Object[] { LOG_IDS[0] }, true, true, false);
-        setUpQueryExpectations("");
-        verifyRemove(collection.remove(String.valueOf(LOG_IDS[0])));
-    }
 
     protected org.ovirt.engine.core.common.businessentities.AuditLog getEntity(int index) {
         AuditLog auditLogMock = control.createMock(org.ovirt.engine.core.common.businessentities.AuditLog.class);

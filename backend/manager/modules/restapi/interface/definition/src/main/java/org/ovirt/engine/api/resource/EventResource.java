@@ -16,13 +16,18 @@
 
 package org.ovirt.engine.api.resource;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Event;
 
 @Produces( { ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface EventResource {
-
     @GET
-    public Event get();
+    Event get();
+
+    @DELETE
+    Response remove();
 }

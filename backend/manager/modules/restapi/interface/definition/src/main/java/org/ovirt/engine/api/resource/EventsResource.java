@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -33,23 +32,18 @@ import org.ovirt.engine.api.model.Events;
 @Path("/events")
 @Produces( { ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface EventsResource {
-
     @GET
-    public Events list();
+    Events list();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    public Response add(Event event);
-
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id);
+    Response add(Event event);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("undelete")
-    public Response undelete(Action action);
+    Response undelete(Action action);
 
     /**
      * Sub-resource locator method, returns individual EventResource on which the remainder of the URI is dispatched.
@@ -58,5 +52,5 @@ public interface EventsResource {
      * @return matching subresource if found
      */
     @Path("{id}")
-    public EventResource getEventSubResource(@PathParam("id") String id);
+    EventResource getEventSubResource(@PathParam("id") String id);
 }

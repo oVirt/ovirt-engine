@@ -12,7 +12,6 @@ import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
 import org.ovirt.engine.api.restapi.types.HostMapper;
 import org.ovirt.engine.core.common.action.AddExternalEventParameters;
-import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -21,9 +20,10 @@ import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-public class BackendEventsResource extends
-AbstractBackendCollectionResource<Event, AuditLog> implements
-EventsResource {
+public class BackendEventsResource
+    extends AbstractBackendCollectionResource<Event, AuditLog>
+    implements EventsResource {
+
     public BackendEventsResource() {
         super(Event.class, AuditLog.class);
     }
@@ -49,7 +49,7 @@ EventsResource {
     @Override
     @SingleEntityResource
     public EventResource getEventSubResource(String id) {
-        return inject(new BackendEventResource(id, this));
+        return inject(new BackendEventResource(id));
     }
 
     private List<AuditLog> getBackendCollection() {
@@ -57,19 +57,6 @@ EventsResource {
             return getBackendCollection(VdcQueryType.GetAllEventMessages, new VdcQueryParametersBase());
         } else {
             return getBackendCollection(SearchType.AuditLog);
-        }
-    }
-
-    public Event lookupEvent(String id) {
-        try {
-            Long longId = Long.valueOf(id);
-            for (AuditLog auditLog : getBackendCollection()) {
-                if (auditLog.getAuditLogId() == longId)
-                    return addLinks(map(auditLog));
-            }
-            return notFound();
-        } catch (NumberFormatException e) {
-            return notFound();
         }
     }
 
@@ -89,11 +76,6 @@ EventsResource {
         return performCreate(VdcActionType.AddExternalEvent,
                 parameters,
                 new QueryIdResolver<Long>(VdcQueryType.GetAuditLogById, GetAuditLogByIdParameters.class));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveAuditLogById, new RemoveAuditLogByIdParameters(asLong(id)));
     }
 
     @Override
