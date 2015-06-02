@@ -16,8 +16,10 @@
 
 package org.ovirt.engine.api.resource.externalhostproviders;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.ExternalHostProvider;
 import org.ovirt.engine.api.resource.ApiMediaType;
@@ -25,15 +27,18 @@ import org.ovirt.engine.api.resource.ExternalProviderResource;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface ExternalHostProviderResource extends ExternalProviderResource<ExternalHostProvider> {
+    @DELETE
+    Response remove();
+
     @Path("computeresources")
-    public ExternalComputeResourcesResource getExternalComputeResources();
+    ExternalComputeResourcesResource getExternalComputeResources();
 
     @Path("discoveredhosts")
-    public ExternalDiscoveredHostsResource getExternalDiscoveredHosts();
+    ExternalDiscoveredHostsResource getExternalDiscoveredHosts();
 
     @Path("hostgroups")
-    public ExternalHostGroupsResource getExternalHostGroups();
+    ExternalHostGroupsResource getExternalHostGroups();
 
     @Path("hosts")
-    public ExternalHostsResource getExternalHosts();
+    ExternalHostsResource getExternalHosts();
 }

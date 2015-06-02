@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.resource.externalhostproviders;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -33,16 +32,12 @@ import org.ovirt.engine.api.resource.ApiMediaType;
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface ExternalHostProvidersResource {
     @GET
-    public ExternalHostProviders list();
+    ExternalHostProviders list();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    public Response add(ExternalHostProvider provider);
-
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id);
+    Response add(ExternalHostProvider provider);
 
     @Path("{id}")
-    public ExternalHostProviderResource getExternalHostProvider(@PathParam("id") String id);
+    ExternalHostProviderResource getExternalHostProvider(@PathParam("id") String id);
 }

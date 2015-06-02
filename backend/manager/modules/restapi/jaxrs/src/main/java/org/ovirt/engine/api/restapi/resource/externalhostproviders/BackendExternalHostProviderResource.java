@@ -25,6 +25,12 @@ import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostGroupsRes
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProviderResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
+import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
+import org.ovirt.engine.core.common.action.ProviderParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Provider;
+
+import javax.ws.rs.core.Response;
 
 public class BackendExternalHostProviderResource
         extends AbstractBackendExternalProviderResource<ExternalHostProvider>
@@ -51,5 +57,13 @@ public class BackendExternalHostProviderResource
     @Override
     public ExternalHostsResource getExternalHosts() {
         return inject(new BackendExternalHostsResource(id));
+    }
+
+
+    @Override
+    public Response remove() {
+        Provider provider = BackendExternalProviderHelper.getProvider(this, id);
+        ProviderParameters parameters = new ProviderParameters(provider);
+        return performAction(VdcActionType.RemoveProvider, parameters);
     }
 }
