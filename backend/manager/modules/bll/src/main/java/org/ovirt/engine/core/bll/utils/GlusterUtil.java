@@ -349,39 +349,57 @@ public class GlusterUtil {
         return new Time(calTo.get(Calendar.HOUR_OF_DAY), calTo.get(Calendar.MINUTE), calTo.get(Calendar.SECOND));
     }
 
-    public void alertVolumeSnapshotSoftLimitReached(final GlusterVolumeEntity volume) {
-        // Check if the alert already exists and if so dont alert again
-        List<AuditLog> alerts =
+    private boolean alertVolumeLimitReached(final GlusterVolumeEntity volume, boolean checkHardLimit) {
+        AuditLogType logType =
+                checkHardLimit ? AuditLogType.GLUSTER_VOLUME_SNAPSHOT_HARD_LIMIT_REACHED
+                        : AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED;
+
+        List<AuditLog> limitAlerts =
                 DbFacade.getInstance()
                         .getAuditLogDao()
-                        .getByVolumeIdAndType(volume.getId(),
-                                AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED.getValue());
-        if (!alerts.isEmpty()) {
-            for (AuditLog alert : alerts) {
+                        .getByVolumeIdAndType(volume.getId(), logType.getValue());
+        if (!limitAlerts.isEmpty()) {
+            for (AuditLog alert : limitAlerts) {
                 if (!alert.isDeleted()) {
-                    return;
+                    return true;
                 }
             }
         }
 
         // Alert
-        if (GlusterDBUtils.getInstance().isSoftLimitReached(volume.getId())) {
+        boolean limitReached =
+                checkHardLimit ? GlusterDBUtils.getInstance().isVolumeSnapshotHardLimitReached(volume.getId())
+                        : GlusterDBUtils.getInstance().isVolumeSnapshotSoftLimitReached(volume.getId());
+        if (limitReached) {
             GlusterAuditLogUtil.getInstance().logAuditMessage(volume.getClusterId(),
                     volume,
                     null,
-                    AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED,
+                    logType,
                     new HashMap<String, String>() {
                         {
                             put(GlusterConstants.VOLUME_NAME, volume.getName());
                             put(GlusterConstants.CLUSTER, volume.getVdsGroupName());
                         }
                     });
+            return true;
+        }
+
+        return false;
+    }
+
+    public void alertVolumeSnapshotLimitsReached(final GlusterVolumeEntity volume) {
+        if (!alertVolumeLimitReached(volume, true)) {
+            alertVolumeLimitReached(volume, false);
         }
     }
 
-    public void checkAndRemoveVolumeSnapshotSoftLimitAlert(final GlusterVolumeEntity volume) {
-        if (!GlusterDBUtils.getInstance().isSoftLimitReached(volume.getId())) {
+    public void checkAndRemoveVolumeSnapshotLimitsAlert(final GlusterVolumeEntity volume) {
+        if (!GlusterDBUtils.getInstance().isVolumeSnapshotSoftLimitReached(volume.getId())) {
             AlertDirector.removeVolumeAlert(volume.getId(), AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED);
+        }
+
+        if (!GlusterDBUtils.getInstance().isVolumeSnapshotHardLimitReached(volume.getId())) {
+            AlertDirector.removeVolumeAlert(volume.getId(), AuditLogType.GLUSTER_VOLUME_SNAPSHOT_HARD_LIMIT_REACHED);
         }
     }
 
