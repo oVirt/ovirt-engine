@@ -328,6 +328,8 @@ public enum HelpTag {
 
     configure_volume_snapshot_confirmation("configure_volume_snapshot_confirmation", HelpTagType.WEBADMIN, "Configure volume snapshot: confirmation dialog that appears when changing the volume snapshot configuration parameters."), //$NON-NLS-1$ //$NON-NLS-2$
 
+    remove_volume_snapshot_schedule_confirmation("remove_volume_snapshot_schedule_confirmation", HelpTagType.WEBADMIN, "Remove volume snapshot schedule: confirmation dialog that appears when None option selected while editing the gluster volume snapshot schedule."), //$NON-NLS-1$ //$NON-NLS-2$
+
     new_volume_snapshot("new_volume_snapshot", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Snapshot -> New"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_volume_snapshot_schedule("edit_volume_snapshot_schedule", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Snapshot -> Edit Schedule"), //$NON-NLS-1$ //$NON-NLS-2$
