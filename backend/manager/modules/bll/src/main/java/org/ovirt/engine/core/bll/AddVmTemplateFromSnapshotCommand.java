@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -157,7 +156,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
                 // Assumption - a snapshot can be locked only if in status OK, so if canDoAction passed
                 // this is the status of the snapshot. In addition the newly added VM is in down status
                 getCompensationContext().snapshotEntityStatus(getSnapshot());
-                getSnapshotDao().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.LOCKED);
+                getSnapshotDAO().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.LOCKED);
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -166,7 +165,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
 
     protected void unlockSnapshot() {
         // Assumption - this is last DB change of command, no need for compensation here
-        getSnapshotDao().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.OK);
+        getSnapshotDAO().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.OK);
     }
 
     private Snapshot getSnapshot() {
@@ -178,10 +177,6 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
 
     protected DiskImageDAO getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return getDbFacade().getSnapshotDao();
     }
 
     protected VM getVmFromConfiguration() {
