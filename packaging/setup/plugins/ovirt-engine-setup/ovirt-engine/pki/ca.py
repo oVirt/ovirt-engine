@@ -123,29 +123,31 @@ class Plugin(plugin.PluginBase):
             logStreams=False,
         )
 
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            filetransaction.FileTransaction(
-                name=os.path.join(
-                    oenginecons.FileLocations.OVIRT_ENGINE_PKICERTSDIR,
-                    '%s.cer' % name,
-                ),
-                content=self._extractPKCS12CertificateString(pkcs12),
-                mode=0o644,
-                modifiedList=uninstall_files,
+        localtransaction = transaction.Transaction()
+        with localtransaction:
+            localtransaction.append(
+                filetransaction.FileTransaction(
+                    name=os.path.join(
+                        oenginecons.FileLocations.OVIRT_ENGINE_PKICERTSDIR,
+                        '%s.cer' % name,
+                    ),
+                    content=self._extractPKCS12CertificateString(pkcs12),
+                    mode=0o644,
+                    modifiedList=uninstall_files,
+                )
             )
-        )
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            filetransaction.FileTransaction(
-                name=os.path.join(
-                    oenginecons.FileLocations.OVIRT_ENGINE_PKIKEYSDIR,
-                    '%s.key.nopass' % name,
-                ),
-                content=key,
-                mode=0o600,
-                owner=owner,
-                modifiedList=uninstall_files,
+            localtransaction.append(
+                filetransaction.FileTransaction(
+                    name=os.path.join(
+                        oenginecons.FileLocations.OVIRT_ENGINE_PKIKEYSDIR,
+                        '%s.key.nopass' % name,
+                    ),
+                    content=key,
+                    mode=0o600,
+                    owner=owner,
+                    modifiedList=uninstall_files,
+                )
             )
-        )
 
     def _enrollCertificate(self, name, uninstall_files, keepKey=False):
         self.execute(
