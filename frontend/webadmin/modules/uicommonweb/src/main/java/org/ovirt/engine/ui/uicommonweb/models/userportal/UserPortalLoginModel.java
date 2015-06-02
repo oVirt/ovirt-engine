@@ -22,6 +22,14 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.everyone;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.engineUser;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.userProfileEditor;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.userTemplateBasedVM;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.quotaConsumer;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.vnicProfileUser;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.diskProfileUser;
+
 public class UserPortalLoginModel extends LoginModel
 {
 
@@ -180,7 +188,7 @@ public class UserPortalLoginModel extends LoginModel
                         loginModel.getUserRoles(loginModel);
 
                     }
-                }), ApplicationGuids.engineUser.asGuid());
+                }), engineUser.asGuid());
     }
 
     // Get logged user's permissions and create a list of roles associated with the user (and proceed to Step3).
@@ -200,9 +208,12 @@ public class UserPortalLoginModel extends LoginModel
                             // ALL Everyone/UserPoralBasedVM permissions and
                             // ALL Everyone/QuotaConsumer persmissions
                             // ALL Everyone/NetworkUser persmissions
-                            if (isEveryoneUserPortalBasedVmPermission(permission)
-                                    || isEveryoneQuotaConsumerPermission(permission)
-                                    || isEveryoneVnicProfileUserPermission(permission)) {
+                            // ALL Everyone/DiskProfileUser permissions
+                            if (isPermissionOf(everyone, userTemplateBasedVM, permission)
+                                    || isPermissionOf(everyone, quotaConsumer, permission)
+                                    || isPermissionOf(everyone, vnicProfileUser, permission)
+                                    || isPermissionOf(everyone, diskProfileUser, permission)
+                                    || isPermissionOf(everyone, userProfileEditor, permission)) {
                                 continue;
                             }
                             if (!roleIdList.contains(permission.getRoleId()))
@@ -224,21 +235,9 @@ public class UserPortalLoginModel extends LoginModel
 
                     }
 
-                    private boolean isEveryoneVnicProfileUserPermission(Permission permission) {
-                        return permission.getAdElementId().equals(ApplicationGuids.everyone.asGuid()) &&
-                                permission.getRoleId().equals(ApplicationGuids.vnicProfileUser.asGuid());
-                    }
-
-                    private boolean isEveryoneUserPortalBasedVmPermission(Permission permission) {
-                        return permission.getAdElementId().equals(ApplicationGuids.everyone.asGuid())
-                                &&
-                                permission.getRoleId()
-                                        .equals(ApplicationGuids.userTemplateBasedVM.asGuid());
-                    }
-
-                    private boolean isEveryoneQuotaConsumerPermission(Permission permission) {
-                        return permission.getAdElementId().equals(ApplicationGuids.everyone.asGuid()) &&
-                                permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid());
+                    private boolean isPermissionOf(ApplicationGuids user, ApplicationGuids role, Permission permission) {
+                        return permission.getAdElementId().equals(user.asGuid())
+                                && permission.getRoleId().equals(role.asGuid());
                     }
                 }), loginModel.getLoggedUser().getId());
     }
