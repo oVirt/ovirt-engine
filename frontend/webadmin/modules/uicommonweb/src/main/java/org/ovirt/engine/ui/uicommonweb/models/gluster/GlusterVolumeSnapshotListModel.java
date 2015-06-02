@@ -239,6 +239,8 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
             editSnapshotSchedule();
         } else if (command.getName().equalsIgnoreCase("onEditSnapshotSchedule")) {//$NON-NLS-1$
             onEditSnapshotSchedule();
+        } else if (command.getName().equalsIgnoreCase("onEditSnapshotScheduleInternal")) {//$NON-NLS-1$
+            onEditSnapshotScheduleInternal();
         }
     }
 
@@ -684,12 +686,40 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         snapshotModel.getCommands().add(cancelCommand);
     }
 
+    private void confirmDeleteVolumeSnapshotSchedule() {
+        ConfirmationModel model = new ConfirmationModel();
+        setConfirmWindow(model);
+        model.setTitle(ConstantsManager.getInstance()
+                .getConstants()
+                .removeGlusterVolumeSnapshotScheduleConfirmationTitle());
+        model.setHelpTag(HelpTag.remove_volume_snapshot_schedule_confirmation);
+        model.setHashName("remove_volume_snapshot_schedule_confirmation"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().youAreAboutToRemoveSnapshotScheduleMsg());
+
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("onEditSnapshotScheduleInternal", this); //$NON-NLS-1$
+        model.getCommands().add(okCommand);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("cancelConfirmation", this); //$NON-NLS-1$
+        model.getCommands().add(cancelCommand);
+    }
+
     public void onEditSnapshotSchedule() {
+        final GlusterVolumeSnapshotModel snapshotModel = (GlusterVolumeSnapshotModel) getWindow();
+
+        if (snapshotModel.getRecurrence().getSelectedItem() == GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN) {
+            confirmDeleteVolumeSnapshotSchedule();
+        } else {
+            onEditSnapshotScheduleInternal();
+        }
+    }
+
+    private void onEditSnapshotScheduleInternal() {
         final GlusterVolumeSnapshotModel snapshotModel = (GlusterVolumeSnapshotModel) getWindow();
 
         if (!snapshotModel.validate(false)) {
             return;
         }
+
+        setConfirmWindow(null);
 
         scheduleSnapshot(snapshotModel, true);
     }

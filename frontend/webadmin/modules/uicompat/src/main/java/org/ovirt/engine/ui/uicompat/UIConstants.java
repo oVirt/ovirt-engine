@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import com.google.gwt.i18n.client.Constants;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 import com.google.gwt.i18n.client.Constants;
@@ -2676,10 +2675,16 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Update snapshot configuration options")
     String updateSnapshotConfigurationConfirmationTitle();
 
+    @DefaultStringValue("Remove Gluster Volume snapshot schedule")
+    String removeGlusterVolumeSnapshotScheduleConfirmationTitle();
+
     @DefaultStringValue("Configuring volume snapshot options\n\n"
             + "Changing configuration parameters will limit the creation of new snapshots if they exceed the new limit.\n\n"
             + "Do you want to continue?")
     String youAreAboutChangeSnapshotConfigurationMsg();
+
+    @DefaultStringValue("The snapshot schedule would be deleted. Do you want to continue?")
+    String youAreAboutToRemoveSnapshotScheduleMsg();
 
     @DefaultStringValue("existing")
     String existingDisk();
