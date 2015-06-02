@@ -18,12 +18,17 @@ package org.ovirt.engine.api.restapi.resource.openstack;
 
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.api.model.OpenStackNetwork;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.resource.openstack.OpenStackSubnetResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
+import org.ovirt.engine.core.common.action.ExternalSubnetParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.queries.GetExternalSubnetsOnProviderByExternalNetworkQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -34,11 +39,16 @@ public class BackendOpenStackSubnetResource
         implements OpenStackSubnetResource {
     private String providerId;
     private String networkId;
+    private BackendOpenStackSubnetsResource parent;
 
-    protected BackendOpenStackSubnetResource(String providerId, String networkId, String id) {
+    protected BackendOpenStackSubnetResource(String providerId,
+            String networkId,
+            String id,
+            BackendOpenStackSubnetsResource parent) {
         super(id, OpenStackSubnet.class, ExternalSubnet.class);
         this.providerId = providerId;
         this.networkId = networkId;
+        this.parent = parent;
     }
 
     @Override
@@ -78,6 +88,26 @@ public class BackendOpenStackSubnetResource
     @Override
     protected Guid asGuidOr404(String id) {
         // The identifier of an OpenStack subnet isn't a UUID.
+        return null;
+    }
+
+    @Override
+    public Response remove() {
+        ExternalSubnet subnet = lookupSubnetById(id);
+        if (subnet != null) {
+            ExternalSubnetParameters parameters = new ExternalSubnetParameters();
+            parameters.setSubnet(subnet);
+            return performAction(VdcActionType.RemoveSubnetFromProvider, parameters);
+        }
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    private ExternalSubnet lookupSubnetById(String id) {
+        for (ExternalSubnet subnet : parent.getSubnets()) {
+            if (ObjectUtils.equals(subnet.getId(), id)) {
+                return subnet;
+            }
+        }
         return null;
     }
 }

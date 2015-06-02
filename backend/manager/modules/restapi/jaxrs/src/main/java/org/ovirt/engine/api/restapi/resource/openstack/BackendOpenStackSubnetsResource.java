@@ -16,7 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
@@ -30,7 +29,6 @@ import org.ovirt.engine.api.resource.openstack.OpenStackSubnetsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.common.action.AddExternalSubnetParameters;
-import org.ovirt.engine.core.common.action.ExternalSubnetParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.queries.GetExternalSubnetsOnProviderByExternalNetworkQueryParameters;
@@ -96,7 +94,7 @@ public class BackendOpenStackSubnetsResource
         return performCreate(VdcActionType.AddSubnetToProvider, parameters, new SubnetNameResolver(subnet.getName()));
     }
 
-    private List<ExternalSubnet> getSubnets() {
+    protected List<ExternalSubnet> getSubnets() {
         GetExternalSubnetsOnProviderByExternalNetworkQueryParameters parameters =
                 new GetExternalSubnetsOnProviderByExternalNetworkQueryParameters();
         parameters.setProviderId(asGuid(providerId));
@@ -108,15 +106,6 @@ public class BackendOpenStackSubnetsResource
     private ExternalSubnet lookupSubnetByName(String name) {
         for (ExternalSubnet subnet : getSubnets()) {
             if (ObjectUtils.equals(subnet.getName(), name)) {
-                return subnet;
-            }
-        }
-        return null;
-    }
-
-    private ExternalSubnet lookupSubnetById(String id) {
-        for (ExternalSubnet subnet : getSubnets()) {
-            if (ObjectUtils.equals(subnet.getId(), id)) {
                 return subnet;
             }
         }
@@ -137,19 +126,8 @@ public class BackendOpenStackSubnetsResource
     }
 
     @Override
-    protected Response performRemove(String id) {
-        ExternalSubnet subnet = lookupSubnetById(id);
-        if (subnet != null) {
-            ExternalSubnetParameters parameters = new ExternalSubnetParameters();
-            parameters.setSubnet(subnet);
-            return performAction(VdcActionType.RemoveSubnetFromProvider, parameters);
-        }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
-
-    @Override
     @SingleEntityResource
     public OpenStackSubnetResource getOpenStackSubnet(String id) {
-        return inject(new BackendOpenStackSubnetResource(providerId, networkId, id));
+        return inject(new BackendOpenStackSubnetResource(providerId, networkId, id, this));
     }
 }

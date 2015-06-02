@@ -33,7 +33,7 @@ import java.util.List;
 public class BackendOpenStackSubnetResourceTest
         extends AbstractBackendSubResourceTest<OpenStackSubnet, ExternalSubnet, BackendOpenStackSubnetResource> {
     public BackendOpenStackSubnetResourceTest() {
-        super(new BackendOpenStackSubnetResource(GUIDS[0].toString(), string2hex(NAMES[1]), string2hex(NAMES[2])));
+        super(new BackendOpenStackSubnetResource(GUIDS[0].toString(), string2hex(NAMES[1]), string2hex(NAMES[2]), null));
     }
 
     @Test

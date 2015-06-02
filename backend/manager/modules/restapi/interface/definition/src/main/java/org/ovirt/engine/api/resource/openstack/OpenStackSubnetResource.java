@@ -16,8 +16,10 @@
 
 package org.ovirt.engine.api.resource.openstack;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.resource.ApiMediaType;
@@ -26,4 +28,8 @@ import org.ovirt.engine.api.resource.ApiMediaType;
 public interface OpenStackSubnetResource {
     @GET
     public OpenStackSubnet get();
+
+    @DELETE
+    public Response remove();
+
 }
