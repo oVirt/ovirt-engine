@@ -272,7 +272,7 @@ public abstract class SchedulerUtilBaseImpl implements SchedulerUtil {
         } catch (Exception se) {
             log.error("failed to schedule job: {}", se.getMessage());
             log.debug("Exception", se);
-            return null;
+            throw new RuntimeException(se);
         }
         return job.getKey().getName();
     }

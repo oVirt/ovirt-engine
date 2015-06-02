@@ -182,7 +182,7 @@ public class DBSchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl implements 
             Date startAt,
             Date endBy) {
         if (!validate(instance, inputTypes)) {
-            return null;
+            throw new RuntimeException("Failed to validate input parameters for scheduling. Only primitives or String values are allowed.");
         }
         return super.scheduleACronJob(instance, methodName, inputTypes, inputParams, cronExpression, startAt, endBy);
     }

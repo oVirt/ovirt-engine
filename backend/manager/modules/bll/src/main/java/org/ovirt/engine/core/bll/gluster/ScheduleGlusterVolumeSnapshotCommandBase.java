@@ -79,7 +79,7 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
 
         String cronExpression = GlusterUtil.getInstance().getCronExpression(schedule);
         if (cronExpression == null)
-            return null;
+            throw new RuntimeException("Unable to form cron expression for schedule. Invalid scheduling details.");
 
         return DBSchedulerUtilQuartzImpl.getInstance().scheduleACronJob(new GlusterSnapshotScheduleJob(),
                 "onTimer",
