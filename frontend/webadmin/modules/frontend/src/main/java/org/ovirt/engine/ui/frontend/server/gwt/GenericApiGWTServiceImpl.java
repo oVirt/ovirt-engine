@@ -2,11 +2,13 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.util.ArrayList;
 import java.util.Random;
+
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.gwt.user.client.rpc.SerializationException;
+
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
+import org.ovirt.engine.ui.frontend.server.gwt.hibernate.HibernateCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +54,9 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         log.debug("Server: RunQuery invoked!"); //$NON-NLS-1$
         debugQuery(search, searchParameters);
         searchParameters.setSessionId(getEngineSessionId());
-        return getBackend().runQuery(search, searchParameters);
+        VdcQueryReturnValue returnValue = getBackend().runQuery(search, searchParameters);
+        returnValue.setReturnValue(HibernateCleaner.doClean(returnValue.getReturnValue()));
+        return returnValue;
     }
 
     @Override
@@ -59,7 +64,9 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
             VdcQueryParametersBase params) {
         log.debug("Server: runPublicQuery invoked! '{}'", queryType); //$NON-NLS-1$
         debugQuery(queryType, params);
-        return getBackend().runPublicQuery(queryType, params);
+        VdcQueryReturnValue returnValue = getBackend().runPublicQuery(queryType, params);
+        returnValue = (VdcQueryReturnValue) HibernateCleaner.doClean(returnValue);
+        return returnValue;
     }
 
     @Override
