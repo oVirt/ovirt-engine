@@ -608,6 +608,8 @@ public enum HelpTag {
 
     host_devices("host_devices", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
+    vm_host_devices("vm_host_devices", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
     add_host_device("add_host_device", HelpTagType.WEBADMIN, "VMs Tab > Host Devices Sub-Tab > Add Host Device(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_host_device("remove_host_device", HelpTagType.WEBADMIN, "VMs Tab > Host Devices Sub-Tab > Remove Host Device(s)"), //$NON-NLS-1$ //$NON-NLS-2$

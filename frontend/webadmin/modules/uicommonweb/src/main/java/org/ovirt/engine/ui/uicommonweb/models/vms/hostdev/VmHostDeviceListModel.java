@@ -36,7 +36,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
         this.constants = constants;
 
         setTitle(constants.hostDevicesTitle());
-        setHelpTag(HelpTag.host_devices);
+        setHelpTag(HelpTag.vm_host_devices);
         setHashName("host_devices"); //$NON-NLS-1$
 
         setAddCommand(new UICommand("New", this)); //$NON-NLS-1$
