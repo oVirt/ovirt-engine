@@ -9,11 +9,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostStatus;
-import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -76,61 +74,6 @@ public class BackendHostsResourceTest
         }
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVds,
-                                           RemoveVdsParameters.class,
-                                           new String[] { "VdsId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { NON_EXISTANT_GUID },
-                null);
-        setUriInfo(setUpGetMatrixConstraintsExpectations(BackendHostResource.FORCE_CONSTRAINT, false, null));
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
-
-    @Test
-    public void testRemoveForced() throws Exception {
-        setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVds,
-                RemoveVdsParameters.class,
-                new String[] { "VdsId", "ForceAction" },
-                new Object[] { GUIDS[0], Boolean.TRUE },
-                true,
-                true));
-        Action action = new Action();
-        action.setForce(true);
-        verifyRemove(collection.remove(GUIDS[0].toString(), action));
-    }
-
-    @Test
-    public void testRemoveForcedIncomplete() throws Exception {
-        setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVds,
-                RemoveVdsParameters.class,
-                new String[] { "VdsId", "ForceAction" },
-                new Object[] { GUIDS[0], Boolean.FALSE },
-                true,
-                true));
-        verifyRemove(collection.remove(GUIDS[0].toString(), new Action(){{}}));
-    }
-
     private void setUpGetEntityExpectations() throws Exception {
         VDS vds = new VDS();
         vds.setId(GUIDS[0]);
@@ -140,34 +83,6 @@ public class BackendHostsResourceTest
                 new Object[] { GUIDS[0] },
                 vds);
     }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        setUpGetEntityExpectations();
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        setUpGetEntityExpectations();
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVds,
-                                           RemoveVdsParameters.class,
-                                           new String[] { "VdsId" },
-                                           new Object[] { GUIDS[0] },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
-    }
-
     @Test
     public void testAddHost() throws Exception {
         setUriInfo(setUpBasicUriExpectations());

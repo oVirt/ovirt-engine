@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
+import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -604,6 +605,109 @@ public class BackendHostResourceTest
         assertEquals(actionReturned.getStatus().getState(), CreationStatus.FAILED.value());
         assertNotNull(actionReturned.getFault());
         assertEquals(actionReturned.getFault().getReason(), "some_error");
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveVds,
+                RemoveVdsParameters.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception {
+        setUpGetEntityExpectations(
+            VdcQueryType.GetVdsByVdsId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { GUIDS[0] },
+            null
+        );
+        setUriInfo(setUpGetMatrixConstraintsExpectations(BackendHostResource.FORCE_CONSTRAINT, false, null));
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveForced() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveVds,
+                RemoveVdsParameters.class,
+                new String[] { "VdsId", "ForceAction" },
+                new Object[] { GUIDS[0], Boolean.TRUE },
+                true,
+                true
+            )
+        );
+        Action action = new Action();
+        action.setForce(true);
+        verifyRemove(resource.remove(action));
+    }
+
+    @Test
+    public void testRemoveForcedIncomplete() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveVds,
+                RemoveVdsParameters.class,
+                new String[] { "VdsId", "ForceAction" },
+                new Object[] { GUIDS[0], Boolean.FALSE },
+                true,
+                true
+            )
+        );
+        Action action = new Action();
+        verifyRemove(resource.remove(action));
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        setUpGetEntityExpectations(1);
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        setUpGetEntityExpectations(1);
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveVds,
+                RemoveVdsParameters.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] },
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
     }
 
     protected VDS setUpStatisticalExpectations() throws Exception {

@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
+import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -550,6 +551,23 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         parent.addStatistics(model, entity);
         parent.addCertificateInfo(model);
         return model;
+    }
+
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveVds, new RemoveVdsParameters(guid));
+    }
+
+    @Override
+    public Response remove(Action action) {
+        get();
+        boolean force = false;
+        if (action != null && action.isSetForce()) {
+            force = action.isForce();
+        }
+        return performAction(VdcActionType.RemoveVds, new RemoveVdsParameters(guid, force));
     }
 
     public BackendHostsResource getParent() {
