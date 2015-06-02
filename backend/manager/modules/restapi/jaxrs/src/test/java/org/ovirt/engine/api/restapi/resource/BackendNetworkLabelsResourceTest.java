@@ -12,21 +12,20 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.core.common.action.LabelNetworkParameters;
-import org.ovirt.engine.core.common.action.UnlabelNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendNetworkLabelsResourceTest extends AbstractBackendCollectionResourceTest<Label, NetworkLabel, BackendNetworkLabelsResource> {
+public class BackendNetworkLabelsResourceTest
+    extends AbstractBackendCollectionResourceTest<Label, NetworkLabel, BackendNetworkLabelsResource> {
 
-    public static Guid networkId = Guid.newGuid();
-    public static final String[] LABELS = { "lbl1", "lbl2", "lbl3" };
-    private static final String NON_EXISTANT_LABEL = "xxx";
+    private static final Guid NETWORK_ID = Guid.newGuid();
+    private static final String[] LABELS = { "lbl1", "lbl2", "lbl3" };
 
     public BackendNetworkLabelsResourceTest() {
-        super(new BackendNetworkLabelsResource(networkId), null, "");
+        super(new BackendNetworkLabelsResource(NETWORK_ID), null, "");
     }
 
     @Test
@@ -35,14 +34,14 @@ public class BackendNetworkLabelsResourceTest extends AbstractBackendCollectionR
         setUpCreationExpectations(VdcActionType.LabelNetwork,
                 LabelNetworkParameters.class,
                 new String[] { "NetworkId", "Label" },
-                new Object[] { networkId, LABELS[0] },
+                new Object[] {NETWORK_ID, LABELS[0] },
                 true,
                 true,
                 LABELS[0],
                 VdcQueryType.GetNetworkLabelsByNetworkId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
-                new Object[] { networkId },
+                new Object[] {NETWORK_ID},
                 asList(getEntity(0)));
         Response response = collection.add(getModel(0));
         assertEquals(201, response.getStatus());
@@ -64,7 +63,7 @@ public class BackendNetworkLabelsResourceTest extends AbstractBackendCollectionR
         setUriInfo(setUpActionExpectations(VdcActionType.LabelNetwork,
                 LabelNetworkParameters.class,
                 new String[] { "NetworkId", "Label" },
-                new Object[] { networkId, LABELS[0] },
+                new Object[] {NETWORK_ID, LABELS[0] },
                 canDo,
                 success));
         try {
@@ -88,65 +87,6 @@ public class BackendNetworkLabelsResourceTest extends AbstractBackendCollectionR
         }
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.UnlabelNetwork,
-                UnlabelNetworkParameters.class,
-                new String[] { "NetworkId" },
-                new Object[] { networkId },
-                true,
-                true));
-        verifyRemove(collection.remove(LABELS[0]));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception {
-        setUpGetEntityExpectations();
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_LABEL);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        setUpGetEntityExpectations();
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        setUpGetEntityExpectations();
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    private void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetNetworkLabelsByNetworkId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { networkId },
-                getEntityList());
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.UnlabelNetwork,
-                UnlabelNetworkParameters.class,
-                new String[] { "NetworkId" },
-                new Object[] { networkId },
-                canDo,
-                success));
-        try {
-            collection.remove(LABELS[0]);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
-    }
 
     @Override
     protected List<Label> getCollection() {
@@ -167,7 +107,7 @@ public class BackendNetworkLabelsResourceTest extends AbstractBackendCollectionR
         setUpEntityQueryExpectations(VdcQueryType.GetNetworkLabelsByNetworkId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
-                new Object[] { networkId },
+                new Object[] {NETWORK_ID},
                 getEntityList(),
                 failure);
 

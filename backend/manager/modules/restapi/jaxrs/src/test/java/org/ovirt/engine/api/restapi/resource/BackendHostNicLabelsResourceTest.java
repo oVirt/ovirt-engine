@@ -18,7 +18,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendHostNicLabelsResourceTest extends AbstractBackendCollectionResourceTest<Label, NetworkLabel, BackendHostNicLabelsResource> {
+public class BackendHostNicLabelsResourceTest
+    extends AbstractBackendCollectionResourceTest<Label, NetworkLabel, BackendHostNicLabelsResource> {
 
     public static Guid nicId = Guid.newGuid();
     public static String hostId = Guid.newGuid().toString();
@@ -85,66 +86,6 @@ public class BackendHostNicLabelsResourceTest extends AbstractBackendCollectionR
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             verifyIncompleteException(wae, "Label", "add", "id");
-        }
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.UnlabelNic,
-                LabelNicParameters.class,
-                new String[] { "NicId", "Label" },
-                new Object[] { nicId, LABELS[0] },
-                true,
-                true));
-        verifyRemove(collection.remove(LABELS[0]));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception {
-        setUpGetEntityExpectations();
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_LABEL);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        setUpGetEntityExpectations();
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        setUpGetEntityExpectations();
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    private void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetNetworkLabelsByHostNicId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { nicId },
-                getEntityList());
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.UnlabelNic,
-                LabelNicParameters.class,
-                new String[] { "NicId", "Label" },
-                new Object[] { nicId, LABELS[0] },
-                canDo,
-                success));
-        try {
-            collection.remove(LABELS[0]);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
         }
     }
 

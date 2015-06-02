@@ -3,7 +3,11 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.Labels;
 import org.ovirt.engine.api.resource.LabelResource;
+import org.ovirt.engine.core.common.action.LabelNicParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
+
+import javax.ws.rs.core.Response;
 
 public class BackendHostNicLabelResource extends AbstractBackendSubResource<Label, NetworkLabel> implements LabelResource {
 
@@ -38,5 +42,11 @@ public class BackendHostNicLabelResource extends AbstractBackendSubResource<Labe
     @Override
     protected Label doPopulate(Label model, NetworkLabel entity) {
         return model;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.UnlabelNic, new LabelNicParameters(parent.getHostNicId(), id));
     }
 }

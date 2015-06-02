@@ -11,7 +11,6 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.LabelResource;
 import org.ovirt.engine.api.resource.LabelsResource;
 import org.ovirt.engine.core.common.action.LabelNetworkParameters;
-import org.ovirt.engine.core.common.action.UnlabelNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -60,11 +59,6 @@ public class BackendNetworkLabelsResource extends AbstractBackendCollectionResou
     @Override
     public LabelResource getLabelSubResource(String id) {
         return inject(new BackendNetworkLabelResource(id, this));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.UnlabelNetwork, new UnlabelNetworkParameters(networkId));
     }
 
     @Override

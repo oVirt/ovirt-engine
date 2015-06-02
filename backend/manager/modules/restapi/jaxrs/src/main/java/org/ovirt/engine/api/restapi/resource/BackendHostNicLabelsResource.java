@@ -66,11 +66,6 @@ public class BackendHostNicLabelsResource extends AbstractBackendCollectionResou
     }
 
     @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.UnlabelNic, new LabelNicParameters(nicId, id));
-    }
-
-    @Override
     protected Label doPopulate(Label model, NetworkLabel entity) {
         return model;
     }
