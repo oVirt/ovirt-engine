@@ -4,6 +4,7 @@ import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.cinder.model.Limits;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -14,16 +15,19 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainDAO;
 
 public class CinderDisksValidator {
 
     private Iterable<CinderDisk> cinderDisks;
 
     private Map<Guid, OpenStackVolumeProviderProxy> diskProxyMap;
+    private Map<Guid, CinderStorageRelatedDisksAndProxy> cinderStorageToRelatedDisks;
 
     public CinderDisksValidator(Iterable<CinderDisk> cinderDisks) {
         this.cinderDisks = cinderDisks;
@@ -63,6 +67,63 @@ public class CinderDisksValidator {
                 return ValidationResult.VALID;
             }
         });
+    }
+
+    public ValidationResult validateCinderDiskSnapshotsLimits() {
+        return validate(new Callable<ValidationResult>() {
+            @Override
+            public ValidationResult call() {
+                Map<Guid, CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageMap =
+                        getRelatedCinderDisksToStorageDomainMap();
+                Collection<CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageCollection =
+                        relatedCinderDisksByStorageMap.values();
+                for (CinderStorageRelatedDisksAndProxy relatedCinderDisksByStorage : relatedCinderDisksByStorageCollection) {
+                    Limits limits = relatedCinderDisksByStorage.getProxy().getLimits();
+                    int numOfDisks = relatedCinderDisksByStorage.getCinderDisks().size();
+                    if (isLimitExceeded(limits, VolumeClassification.Snapshot, numOfDisks)) {
+                        String storageName =
+                                getStorageDomainDao().get(relatedCinderDisksByStorage.getStorageDomainId())
+                                        .getStorageName();
+                        return new ValidationResult(VdcBllMessages.CANNOT_ADD_CINDER_DISK_SNAPSHOT_LIMIT_EXCEEDED,
+                                String.format("$maxTotalSnapshots %d", limits.getAbsolute().getMaxTotalVolumes()),
+                                String.format("$storageName %s", storageName));
+                    }
+                }
+                return ValidationResult.VALID;
+            }
+        });
+    }
+
+    private boolean isLimitExceeded(Limits limits, VolumeClassification cinderType, int diskCount) {
+        if (cinderType == VolumeClassification.Snapshot) {
+            return (limits.getAbsolute().getTotalSnapshotsUsed() + diskCount >= limits.getAbsolute().getMaxTotalSnapshots());
+        }
+        if (cinderType == VolumeClassification.Volume) {
+            return (limits.getAbsolute().getTotalVolumesUsed() + diskCount >= limits.getAbsolute().getMaxTotalVolumes());
+        }
+        return false;
+    }
+
+    private Map<Guid, CinderStorageRelatedDisksAndProxy> getRelatedCinderDisksToStorageDomainMap() {
+        if (cinderStorageToRelatedDisks == null) {
+            cinderStorageToRelatedDisks = new HashMap<>();
+            for (CinderDisk cinderDisk : cinderDisks) {
+                Guid storageDomainId = cinderDisk.getStorageIds().get(0);
+                CinderStorageRelatedDisksAndProxy cinderRelatedDisksAndProxy =
+                        cinderStorageToRelatedDisks.get(storageDomainId);
+                if (cinderRelatedDisksAndProxy == null) {
+                    List cinderDisks = new ArrayList();
+                    cinderDisks.add(cinderDisk);
+                    OpenStackVolumeProviderProxy proxy = diskProxyMap.get(cinderDisk.getId());
+                    CinderStorageRelatedDisksAndProxy newCinderRelatedDisksAndProxy =
+                            new CinderStorageRelatedDisksAndProxy(storageDomainId, cinderDisks, proxy);
+                    cinderStorageToRelatedDisks.put(storageDomainId, newCinderRelatedDisksAndProxy);
+                } else {
+                    cinderRelatedDisksAndProxy.getCinderDisks().add(cinderDisk);
+                }
+            }
+        }
+        return cinderStorageToRelatedDisks;
     }
 
     private static class CinderStorageRelatedDisksAndProxy {
@@ -138,5 +199,9 @@ public class CinderDisksValidator {
 
     protected DiskDao getDiskDao() {
         return DbFacade.getInstance().getDiskDao();
+    }
+
+    protected StorageDomainDAO getStorageDomainDao() {
+        return DbFacade.getInstance().getStorageDomainDao();
     }
 }
