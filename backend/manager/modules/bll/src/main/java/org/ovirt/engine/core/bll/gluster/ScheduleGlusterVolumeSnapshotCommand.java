@@ -18,16 +18,16 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
         Time originalExecutionTime = getSchedule().getExecutionTime();
 
         // schedule the snapshot creation task
-        String jobId = scheduleJob();
-
-        if (jobId != null) {
+        try {
+            String jobId = scheduleJob();
             setSucceeded(true);
             getSchedule().setJobId(jobId);
             // reverting to original execution time in UI populated time zone
             getSchedule().setExecutionTime(originalExecutionTime);
             getGlusterVolumeSnapshotScheduleDao().save(getSchedule());
-        } else {
+        } catch (Exception ex) {
             setSucceeded(false);
+            handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SCHEDULE_FAILED, ex.getMessage());
         }
     }
 

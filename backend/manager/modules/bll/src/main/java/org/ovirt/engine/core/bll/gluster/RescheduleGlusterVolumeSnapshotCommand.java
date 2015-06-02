@@ -29,16 +29,16 @@ public class RescheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolum
             // Keep a copy of the execution time before conversion to engine time zone
             Time originalExecutionTime = schedule.getExecutionTime();
 
-            String newJobId = scheduleJob();
-
-            if (newJobId != null) {
+            try {
+                String newJobId = scheduleJob();
                 setSucceeded(true);
                 schedule.setJobId(newJobId);
                 // reverting to original execution time in UI populated time zone
                 schedule.setExecutionTime(originalExecutionTime);
                 getGlusterVolumeSnapshotScheduleDao().updateScheduleByVolumeId(volumeId, schedule);
-            } else {
+            } catch (Exception ex) {
                 setSucceeded(false);
+                handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESCHEDULE_FAILED, ex.getMessage());
             }
         } else {
             getGlusterVolumeSnapshotScheduleDao().removeByVolumeId(volumeId);

@@ -1,5 +1,17 @@
 package org.ovirt.engine.core.utils.timer;
 
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.ClassUtils;
 import org.ovirt.engine.core.utils.ResourceUtils;
 import org.quartz.JobDataMap;
@@ -8,17 +20,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Singleton;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
 
 @Singleton
 public class DBSchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl implements SchedulerUtil {
@@ -159,7 +160,7 @@ public class DBSchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl implements 
             Date startAt,
             Date endBy) {
         if (!validate(instance, inputTypes)) {
-            return null;
+            throw new RuntimeException("Failed to validate input parameters for scheduling. Only primitives or String values are allowed.");
         }
         return super.scheduleACronJob(instance, methodName, inputTypes, inputParams, cronExpression, startAt, endBy);
     }

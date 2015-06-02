@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.gluster;
 import java.sql.Time;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -13,8 +15,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 import org.ovirt.engine.core.utils.timer.DBSchedulerUtilQuartzImpl;
-
-import javax.inject.Inject;
 
 public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends ScheduleGlusterVolumeSnapshotParameters> extends GlusterSnapshotCommandBase<T> {
     private GlusterVolumeSnapshotSchedule schedule;
@@ -83,7 +83,7 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
 
         String cronExpression = GlusterUtil.getInstance().getCronExpression(schedule);
         if (cronExpression == null)
-            return null;
+            throw new RuntimeException("Unable to form cron expression for schedule. Invalid scheduling details.");
 
         return getDbSchedulUtil().scheduleACronJob(new GlusterSnapshotScheduleJob(),
                 "onTimer",
