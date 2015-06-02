@@ -25,9 +25,11 @@ import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -226,6 +228,100 @@ public class VmMapperTest extends
         assertNotNull(map.getGuestInfo().getFqdn());
         assertEquals(map.getGuestInfo().getFqdn(), "localhost.localdomain");
     }
+
+    @Test
+    public void testGuestTimezone() {
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setStatus(VMStatus.Up);
+        vmDynamic.setGuestOsTimezoneName("This is not a timezone");
+        vmDynamic.setGuestOsTimezoneOffset(-60);
+        vm.setDynamicData(vmDynamic);
+        VM map = VmMapper.map(vm, (VM) null);
+        assertNotNull(map.getGuestTimeZone());
+        assertEquals(map.getGuestTimeZone().getUtcOffset(), "-01:00");
+        assertEquals(map.getGuestTimeZone().getName(), "This is not a timezone");
+    }
+
+    @Test
+    public void testGuestOs() {
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setStatus(VMStatus.Up);
+
+        vmDynamic.setGuestOsType(OsType.Linux);
+        vmDynamic.setGuestOsCodename("Santiago");
+        vmDynamic.setGuestOsDistribution("Red Hat Enterprise Linux Server");
+        vmDynamic.setGuestOsVersion("6.5");
+        vmDynamic.setGuestOsArch(ArchitectureType.x86_64);
+        vmDynamic.setGuestOsKernelVersion("2.6.32-431.el6.x86_64");
+
+        vm.setDynamicData(vmDynamic);
+        VM map = VmMapper.map(vm, (VM) null);
+
+        assertNotNull(map.getGuestOperatingSystem());
+        assertEquals(map.getGuestOperatingSystem().getFamily(), "Linux");
+        assertEquals(map.getGuestOperatingSystem().getCodename(), "Santiago");
+        assertEquals(map.getGuestOperatingSystem().getDistribution(), "Red Hat Enterprise Linux Server");
+        assertEquals(map.getGuestOperatingSystem().getVersion().getFullVersion(), "6.5");
+        assertNotNull(map.getGuestOperatingSystem().getVersion().getMajor());
+        assertEquals((long) map.getGuestOperatingSystem().getVersion().getMajor(), 6);
+        assertNotNull(map.getGuestOperatingSystem().getVersion().getMinor());
+        assertEquals((long) map.getGuestOperatingSystem().getVersion().getMinor(), 5);
+        assertNull(map.getGuestOperatingSystem().getVersion().getBuild());
+        assertNull(map.getGuestOperatingSystem().getVersion().getRevision());
+        assertEquals(map.getGuestOperatingSystem().getArchitecture(), "x86_64");
+        assertEquals(map.getGuestOperatingSystem().getKernel().getVersion().getFullVersion(), "2.6.32-431.el6.x86_64");
+        assertEquals((long)map.getGuestOperatingSystem().getKernel().getVersion().getMajor(), 2);
+        assertEquals((long)map.getGuestOperatingSystem().getKernel().getVersion().getMinor(), 6);
+        assertEquals((long)map.getGuestOperatingSystem().getKernel().getVersion().getBuild(), 32);
+        assertEquals((long)map.getGuestOperatingSystem().getKernel().getVersion().getRevision(), 431);
+    }
+
+    @Test
+    public void testGuestOs2() {
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setStatus(VMStatus.Up);
+
+        vmDynamic.setGuestOsType(OsType.Windows);
+        vmDynamic.setGuestOsCodename("");
+        vmDynamic.setGuestOsDistribution("");
+        vmDynamic.setGuestOsVersion("6.2.4800");
+        vmDynamic.setGuestOsArch(ArchitectureType.x86_64);
+        vmDynamic.setGuestOsKernelVersion("");
+
+        vm.setDynamicData(vmDynamic);
+        VM map = VmMapper.map(vm, (VM) null);
+
+        assertNotNull(map.getGuestOperatingSystem());
+        assertEquals(map.getGuestOperatingSystem().getFamily(), "Windows");
+        assertEquals(map.getGuestOperatingSystem().getCodename(), "");
+        assertEquals(map.getGuestOperatingSystem().getDistribution(), "");
+        assertEquals(map.getGuestOperatingSystem().getVersion().getFullVersion(), "6.2.4800");
+        assertNotNull(map.getGuestOperatingSystem().getVersion().getMajor());
+        assertEquals((long) map.getGuestOperatingSystem().getVersion().getMajor(), 6);
+        assertNotNull(map.getGuestOperatingSystem().getVersion().getMinor());
+        assertEquals((long) map.getGuestOperatingSystem().getVersion().getMinor(), 2);
+        assertNotNull(map.getGuestOperatingSystem().getVersion().getBuild());
+        assertEquals((long) map.getGuestOperatingSystem().getVersion().getBuild(), 4800);
+        assertNull(map.getGuestOperatingSystem().getVersion().getRevision());
+        assertEquals(map.getGuestOperatingSystem().getArchitecture(), "x86_64");
+        assertNull(map.getGuestOperatingSystem().getKernel());
+    }
+
+    @Test
+    public void testGuestOs3() {
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setStatus(VMStatus.Up);
+
+        vm.setDynamicData(vmDynamic);
+        VM map = VmMapper.map(vm, (VM) null);
+
+        assertNull(map.getGuestInfo());
+    }
+
     @Test
     public void testGustIps() {
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();

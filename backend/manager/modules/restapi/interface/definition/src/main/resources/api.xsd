@@ -3310,6 +3310,23 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="Kernel">
+    <xs:sequence>
+      <xs:element name="version" type="Version" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GuestOperatingSystem">
+    <xs:sequence>
+      <xs:element name="architecture" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="codename" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="distribution" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="kernel" type="Kernel" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="family" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="version" type="Version" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="GuestInfo">
     <xs:sequence>
       <xs:element ref="ips" minOccurs="0" maxOccurs="1"/>
@@ -3447,6 +3464,8 @@
           <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="external_host_provider" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="katello_errata"  minOccurs="0" maxOccurs="1"/>
+          <xs:element name="guest_time_zone" type="TimeZone" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="guest_operating_system" type="GuestOperatingSystem" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

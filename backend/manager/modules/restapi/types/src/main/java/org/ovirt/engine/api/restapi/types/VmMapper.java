@@ -29,6 +29,7 @@ import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsType;
 import org.ovirt.engine.api.model.GuestInfo;
+import org.ovirt.engine.api.model.GuestOperatingSystem;
 import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.GuestNicsConfiguration;
 import org.ovirt.engine.api.model.HighAvailability;
@@ -37,6 +38,7 @@ import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.InstanceType;
+import org.ovirt.engine.api.model.Kernel;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.NumaTuneMode;
@@ -47,6 +49,7 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.User;
@@ -402,6 +405,49 @@ public class VmMapper extends VmBaseMapper {
                     }
                 }
             }
+
+            final boolean hasGuestOsVersion = entity.getGuestOsVersion() != null && !entity.getGuestOsVersion().isEmpty();
+            if (hasGuestOsVersion) {
+                GuestOperatingSystem os = model.getGuestOperatingSystem();
+                if(os == null) {
+                    os = new GuestOperatingSystem();
+                    model.setGuestOperatingSystem(os);
+                }
+                os.setArchitecture(entity.getGuestOsArch().name());
+                os.setCodename(entity.getGuestOsCodename());
+                os.setDistribution(entity.getGuestOsDistribution());
+                String kernelVersionString = entity.getGuestOsKernelVersion();
+                if(StringUtils.isNotEmpty(kernelVersionString)) {
+                    org.ovirt.engine.api.model.Version kernelVersion = VersionMapper.fromKernelVersionString(kernelVersionString);
+                    if(kernelVersion != null) {
+                        if(os.getKernel() == null) {
+                            os.setKernel(new Kernel());
+                        }
+                        os.getKernel().setVersion(kernelVersion);
+                        os.getKernel().getVersion().setFullVersion(entity.getGuestOsKernelVersion());
+                    }
+                }
+                String osVersionString = entity.getGuestOsVersion();
+                if(StringUtils.isNotEmpty(osVersionString)) {
+                    os.setVersion(VersionMapper.fromVersionString(osVersionString));
+                    if(os.getVersion() != null) {
+                        os.getVersion().setFullVersion(entity.getGuestOsVersion());
+                    }
+                }
+                os.setFamily(entity.getGuestOsType().name());
+            }
+
+            final boolean hasTimezoneName = entity.getGuestOsTimezoneName() != null && !entity.getGuestOsTimezoneName().isEmpty();
+            if (hasTimezoneName) {
+                TimeZone guestTz = model.getGuestTimeZone();
+                if(guestTz == null) {
+                    guestTz = new TimeZone();
+                    model.setGuestTimeZone(guestTz);
+                }
+                guestTz.setName(entity.getGuestOsTimezoneName());
+                guestTz.setUtcOffset(TimeZoneMapper.mapUtcOffsetToDisplayString(entity.getGuestOsTimezoneOffset()));
+            }
+
             if (entity.getLastStartTime() != null) {
                 model.setStartTime(DateMapper.map(entity.getLastStartTime(), null));
             }
