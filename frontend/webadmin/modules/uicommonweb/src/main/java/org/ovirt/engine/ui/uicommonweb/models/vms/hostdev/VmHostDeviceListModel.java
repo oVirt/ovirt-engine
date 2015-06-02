@@ -224,6 +224,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
 
     private void cancel() {
         setWindow(null);
+        setConfirmWindow(null);
     }
 
     public UICommand getAddCommand() {
