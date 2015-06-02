@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comparable<VmDynamic> {
     private static final long serialVersionUID = 7789482445091432555L;
@@ -74,7 +76,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private Long guestMemoryCached;
     private Long guestMemoryBuffered;
     private Long guestMemoryFree;
-
+    private String guestOsVersion;
+    private String guestOsDistribution;
+    private String guestOsCodename;
+    private ArchitectureType guestOsArch;
+    private OsType guestOsType;
+    private String guestOsKernelVersion;
+    private String guestOsTimezoneName;
+    private int guestOsTimezoneOffset;
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
     public static final String STATUS_FIELD_NAME = "status";
 
@@ -124,6 +133,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + (guestMemoryFree == null ? 0 : guestMemoryFree.hashCode());
         result = prime * result + (guestMemoryBuffered == null ? 0 : guestMemoryBuffered.hashCode());
         result = prime * result + (guestMemoryCached == null ? 0 : guestMemoryCached.hashCode());
+        result = prime * result + (guestOsTimezoneName == null ? 0 : guestOsTimezoneName.hashCode());
+        result = prime * result + guestOsTimezoneOffset;
+        result = prime * result + guestOsArch.hashCode();
+        result = prime * result + (guestOsCodename == null ? 0 : guestOsCodename.hashCode());
+        result = prime * result + (guestOsDistribution == null ? 0 : guestOsDistribution.hashCode());
+        result = prime * result + (guestOsKernelVersion == null ? 0 : guestOsKernelVersion.hashCode());
+        result = prime * result + (guestOsVersion == null ? 0 : guestOsVersion.hashCode());
+        result = prime * result + guestOsType.hashCode();
         return result;
     }
 
@@ -180,7 +197,15 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(graphicsInfos, other.getGraphicsInfos())
                 && ObjectUtils.objectsEqual(guestMemoryBuffered, other.guestMemoryBuffered)
                 && ObjectUtils.objectsEqual(guestMemoryCached, other.guestMemoryCached)
-                && ObjectUtils.objectsEqual(guestMemoryFree, other.guestMemoryFree);
+                && ObjectUtils.objectsEqual(guestMemoryFree, other.guestMemoryFree)
+                && ObjectUtils.objectsEqual(guestOsTimezoneName, other.guestOsTimezoneName)
+                && guestOsTimezoneOffset == other.guestOsTimezoneOffset
+                && ObjectUtils.objectsEqual(guestOsVersion, other.guestOsVersion)
+                && ObjectUtils.objectsEqual(guestOsDistribution, other.guestOsDistribution)
+                && ObjectUtils.objectsEqual(guestOsCodename, other.guestOsCodename)
+                && ObjectUtils.objectsEqual(guestOsKernelVersion, other.guestOsKernelVersion)
+                && ObjectUtils.objectsEqual(guestOsArch, other.guestOsArch)
+                && ObjectUtils.objectsEqual(guestOsType, other.guestOsType);
     }
 
     public String getExitMessage() {
@@ -244,6 +269,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         exitReason = VmExitReason.Unknown;
         graphicsInfos = new HashMap<GraphicsType, GraphicsInfo>();
         guestAgentStatus = GuestAgentStatus.DoesntExist;
+        guestOsTimezoneName = "";
+        guestOsTimezoneOffset = 0;
+        guestOsVersion = "";
+        guestOsDistribution = "";
+        guestOsCodename = "";
+        guestOsKernelVersion = "";
+        guestOsArch = ArchitectureType.undefined;
+        guestOsType = OsType.Other;
     }
 
     public String getAppList() {
@@ -566,5 +599,84 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setGuestMemoryFree(Long guestMemoryFree) {
         this.guestMemoryFree = guestMemoryFree;
+    }
+
+    public int getGuestOsTimezoneOffset() {
+        return guestOsTimezoneOffset;
+    }
+
+    public void setGuestOsTimezoneOffset(int guestOsTimezoneOffset) {
+        this.guestOsTimezoneOffset = guestOsTimezoneOffset;
+    }
+
+    public String getGuestOsTimezoneName() {
+        return guestOsTimezoneName;
+    }
+
+    public void setGuestOsTimezoneName(String guestOsTimezoneName) {
+        this.guestOsTimezoneName = guestOsTimezoneName;
+    }
+
+    public String getGuestOsVersion() {
+        return guestOsVersion;
+    }
+
+    public void setGuestOsVersion(String guestOsVersion) {
+        this.guestOsVersion = guestOsVersion;
+    }
+
+    public String getGuestOsDistribution() {
+        return guestOsDistribution;
+    }
+
+    public void setGuestOsDistribution(String guestOsDistribution) {
+        this.guestOsDistribution = guestOsDistribution;
+    }
+
+    public String getGuestOsCodename() {
+        return guestOsCodename;
+    }
+
+    public void setGuestOsCodename(String guestOsCodename) {
+        this.guestOsCodename = guestOsCodename;
+    }
+
+    public ArchitectureType getGuestOsArch() {
+        return guestOsArch;
+    }
+
+    public void setGuestOsArch(ArchitectureType guestOsArch) {
+        this.guestOsArch = guestOsArch;
+    }
+
+    @JsonIgnore
+    public void setGuestOsArch(Integer arch) {
+        this.guestOsArch = ArchitectureType.forValue(arch);
+    }
+
+    @JsonIgnore
+    public void setGuestOsArch(String arch) {
+        this.guestOsArch = ArchitectureType.valueOf(arch);
+    }
+
+    public OsType getGuestOsType() {
+        return guestOsType;
+    }
+
+    public void setGuestOsType(OsType guestOsType) {
+        this.guestOsType = guestOsType;
+    }
+
+    @JsonIgnore
+    public void setGuestOsType(String osType) {
+        this.guestOsType = EnumUtils.valueOf(OsType.class, osType, true);
+    }
+
+    public String getGuestOsKernelVersion() {
+        return guestOsKernelVersion;
+    }
+
+    public void setGuestOsKernelVersion(String guestOsKernelVersion) {
+        this.guestOsKernelVersion = guestOsKernelVersion;
     }
 }

@@ -276,7 +276,15 @@ Create or replace FUNCTION InsertVmDynamic(v_app_list text ,
   v_guest_agent_status INTEGER,
   v_guest_mem_free INTEGER,
   v_guest_mem_buffered INTEGER,
-  v_guest_mem_cached INTEGER
+  v_guest_mem_cached INTEGER,
+  v_guest_timezone_offset INTEGER,
+  v_guest_timezone_name VARCHAR(255),
+  v_guestos_arch INTEGER,
+  v_guestos_codename VARCHAR(255),
+  v_guestos_distribution VARCHAR(255),
+  v_guestos_kernel_version VARCHAR(255),
+  v_guestos_type VARCHAR(255),
+  v_guestos_version VARCHAR(255)
 )
 RETURNS VOID
    AS $procedure$
@@ -290,7 +298,15 @@ vnc_ip,
 guest_agent_status,
 guest_mem_buffered,
 guest_mem_cached,
-guest_mem_free
+guest_mem_free,
+guest_timezone_offset,
+guest_timezone_name,
+guestos_arch,
+guestos_codename,
+guestos_distribution,
+guestos_kernel_version,
+guestos_type,
+guestos_version
 )
 	VALUES(v_app_list, v_guest_cur_user_name, v_console_cur_user_name, v_console_user_id, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_last_start_time, v_last_stop_time, v_vm_pid, v_acpi_enable, v_session, v_kvm_enable, v_boot_sequence, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_exit_status, v_pause_status, v_exit_message, v_guest_agent_nics_hash, v_last_watchdog_event, v_last_watchdog_action, v_is_run_once, v_vm_fqdn, v_cpu_name, v_emulated_machine, v_current_cd, v_exit_reason,
          v_guest_cpu_count,
@@ -302,7 +318,15 @@ v_vnc_ip,
 v_guest_agent_status,
 v_guest_mem_buffered,
 v_guest_mem_cached,
-v_guest_mem_free
+v_guest_mem_free,
+v_guest_timezone_offset,
+v_guest_timezone_name,
+v_guestos_arch,
+v_guestos_codename,
+v_guestos_distribution,
+v_guestos_kernel_version,
+v_guestos_type,
+v_guestos_version
          );
 END; $procedure$
 LANGUAGE plpgsql;
@@ -354,7 +378,15 @@ Create or replace FUNCTION UpdateVmDynamic(v_app_list text ,
   v_guest_agent_status INTEGER,
   v_guest_mem_buffered INTEGER,
   v_guest_mem_free INTEGER,
-  v_guest_mem_cached INTEGER
+  v_guest_mem_cached INTEGER,
+  v_guest_timezone_offset INTEGER,
+  v_guest_timezone_name VARCHAR(255),
+  v_guestos_arch INTEGER,
+  v_guestos_codename VARCHAR(255),
+  v_guestos_distribution VARCHAR(255),
+  v_guestos_kernel_version VARCHAR(255),
+  v_guestos_type VARCHAR(255),
+  v_guestos_version VARCHAR(255)
 )
 RETURNS VOID
 
@@ -388,7 +420,15 @@ BEGIN
       guest_agent_status = v_guest_agent_status,
       guest_mem_buffered = v_guest_mem_buffered,
       guest_mem_free = v_guest_mem_free,
-      guest_mem_cached = v_guest_mem_cached
+      guest_mem_cached = v_guest_mem_cached,
+      guest_timezone_offset = v_guest_timezone_offset,
+      guest_timezone_name = v_guest_timezone_name,
+      guestos_arch  = v_guestos_arch,
+      guestos_codename = v_guestos_codename,
+      guestos_distribution = v_guestos_distribution,
+      guestos_kernel_version = v_guestos_kernel_version,
+      guestos_type = v_guestos_type,
+      guestos_version = v_guestos_version
 WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;

@@ -6,7 +6,11 @@ public enum ArchitectureType implements Identifiable {
 
     undefined(0),
     x86_64(1),
-    ppc64(2);
+    ppc64(2),
+    ppc(3),
+    x86(4),
+    ppc64le(5),
+    ppcle(6);
 
     private int value;
     private static final HashMap<Integer, ArchitectureType> valueToArchitecture =

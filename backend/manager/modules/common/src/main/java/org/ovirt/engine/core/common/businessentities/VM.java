@@ -741,6 +741,85 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         vmDynamic.setGuestAgentStatus(status);
     }
 
+    public int getGuestOsTimezoneOffset() {
+        return vmDynamic.getGuestOsTimezoneOffset();
+    }
+
+    public void setGuestOsTimezoneOffset(int timezoneOffset) {
+        vmDynamic.setGuestOsTimezoneOffset(timezoneOffset);
+    }
+
+    public String getGuestOsTimezoneName() {
+        return vmDynamic.getGuestOsTimezoneName();
+    }
+
+    public void setGuestOsTimezoneName(String timezoneName) {
+        vmDynamic.setGuestOsTimezoneName(timezoneName);
+    }
+
+    public String getGuestOsVersion() {
+        return vmDynamic.getGuestOsVersion();
+    }
+
+    public void setGuestOsVersion(String guestOsVersion) {
+        vmDynamic.setGuestOsVersion(guestOsVersion);
+    }
+
+    public String getGuestOsDistribution() {
+        return vmDynamic.getGuestOsDistribution();
+    }
+
+    public void setGuestOsDistribution(String guestOsDistribution) {
+        vmDynamic.setGuestOsDistribution(guestOsDistribution);
+    }
+
+    public String getGuestOsCodename() {
+        return vmDynamic.getGuestOsCodename();
+    }
+
+    public void setGuestOsCodename(String guestOsCodename) {
+        vmDynamic.setGuestOsCodename(guestOsCodename);
+    }
+
+    public ArchitectureType getGuestOsArch() {
+        return vmDynamic.getGuestOsArch();
+    }
+
+    public void setGuestOsArch(ArchitectureType guestOsArch) {
+        vmDynamic.setGuestOsArch(guestOsArch);
+    }
+
+    @JsonIgnore
+    public void setGuestOsArch(Integer arch) {
+        vmDynamic.setGuestOsArch(arch);
+    }
+
+    @JsonIgnore
+    public void setGuestOsArch(String arch) {
+        vmDynamic.setGuestOsArch(arch);
+    }
+
+    public OsType getGuestOsType() {
+        return vmDynamic.getGuestOsType();
+    }
+
+    public void setGuestOsType(OsType guestOsType) {
+        vmDynamic.setGuestOsType(guestOsType);
+    }
+
+    @JsonIgnore
+    public void setGuestOsType(String osType) {
+        vmDynamic.setGuestOsType(osType);
+    }
+
+    public String getGuestOsKernelVersion() {
+        return vmDynamic.getGuestOsKernelVersion();
+    }
+
+    public void setGuestOsKernelVersion(String guestOsKernelVersion) {
+        vmDynamic.setGuestOsKernelVersion(guestOsKernelVersion);
+    }
+
     public Double getCpuUser() {
         return this.vmStatistics.getcpu_user();
     }
@@ -1329,6 +1408,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         getDynamicData().setGuestMemoryBuffered(vm.getGuestMemoryBuffered());
         getDynamicData().setGuestMemoryCached(vm.getGuestMemoryCached());
         getDynamicData().setGuestMemoryFree(vm.getGuestMemoryFree());
+        setGuestOsArch(vm.getGuestOsArch());
+        setGuestOsCodename(vm.getGuestOsCodename());
+        setGuestOsDistribution(vm.getGuestOsDistribution());
+        setGuestOsKernelVersion(vm.getGuestOsKernelVersion());
+        setGuestOsType(vm.getGuestOsType());
+        setGuestOsVersion(vm.getGuestOsVersion());
+        setGuestOsTimezoneName(vm.getGuestOsTimezoneName());
+        setGuestOsTimezoneOffset(vm.getGuestOsTimezoneOffset());
         // TODO: check what to do with update disk data
         // updateDisksData(vm);
 

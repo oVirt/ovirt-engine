@@ -272,6 +272,17 @@ public final class VdsProperties {
 
     // reported by guest-agent
     public static final String GUEST_CPU_COUNT = "guestCPUCount";
+    public static final String GUEST_OS_INFO = "guestOsInfo";
+
+    public static final String GUEST_OS_INFO_VERSION = "version";
+    public static final String GUEST_OS_INFO_DISTRIBUTION = "distribution";
+    public static final String GUEST_OS_INFO_CODENAME = "codename";
+    public static final String GUEST_OS_INFO_ARCH = "arch";
+    public static final String GUEST_OS_INFO_TYPE = "type";
+    public static final String GUEST_OS_INFO_KERNEL = "kernel";
+    public static final String GUEST_TIMEZONE = "guestTimezone";
+    public static final String GUEST_TIMEZONE_OFFSET = "offset";
+    public static final String GUEST_TIMEZONE_ZONE = "zone";
 
     public static final String DriveC = "hda"; // drive C:
     public static final String DriveE = "hdb"; // drive E: (D: is the CD-ROM)

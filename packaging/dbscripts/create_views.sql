@@ -1113,7 +1113,15 @@ SELECT
     vm_static.small_icon_id as small_icon_id,
     vm_static.large_icon_id as large_icon_id,
     vm_static.provider_id as provider_id,
-    vm_static.console_disconnect_action as console_disconnect_action
+    vm_static.console_disconnect_action as console_disconnect_action,
+    vm_dynamic.guest_timezone_offset as guest_timezone_offset,
+    vm_dynamic.guest_timezone_name as guest_timezone_name,
+    vm_dynamic.guestos_arch as guestos_arch,
+    vm_dynamic.guestos_codename as guestos_codename,
+    vm_dynamic.guestos_distribution as guestos_distribution,
+    vm_dynamic.guestos_kernel_version as guestos_kernel_version,
+    vm_dynamic.guestos_type as guestos_type,
+    vm_dynamic.guestos_version as guestos_version
 FROM
     vm_static
 INNER JOIN vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid
@@ -1273,7 +1281,15 @@ SELECT
     vms.guest_mem_free as guest_mem_free,
     vms.small_icon_id as small_icon_id,
     vms.large_icon_id as large_icon_id,
-    vms.console_disconnect_action
+    vms.console_disconnect_action,
+    vms.guest_timezone_offset as guest_timezone_offset,
+    vms.guest_timezone_name as guest_timezone_name,
+    vms.guestos_arch as guestos_arch,
+    vms.guestos_codename as guestos_codename,
+    vms.guestos_distribution as guestos_distribution,
+    vms.guestos_kernel_version as guestos_kernel_version,
+    vms.guestos_type as guestos_type,
+    vms.guestos_version as guestos_version
 FROM
     vms
 LEFT

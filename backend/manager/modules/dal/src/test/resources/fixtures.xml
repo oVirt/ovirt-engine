@@ -3892,6 +3892,14 @@
         <column>vnc_port</column>
         <column>vnc_ip</column>
         <column>guest_agent_status</column>
+        <column>guest_timezone_offset</column>
+        <column>guest_timezone_name</column>
+        <column>guestos_arch</column>
+        <column>guestos_codename</column>
+        <column>guestos_distribution</column>
+        <column>guestos_kernel_version</column>
+        <column>guestos_type</column>
+        <column>guestos_version</column>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
             <value>5</value>
@@ -3930,7 +3938,15 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value> <!-- guest_agent_status -->
+            <null/>
+            <null/>
             <value>0</value>
+            <null/>
+            <null/>
+            <null/>
+            <value>Other</value>
+            <null/>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -3970,7 +3986,15 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value> <!-- guest_agent_status -->
+            <null/>
+            <null/>
             <value>0</value>
+            <null/>
+            <null/>
+            <null/>
+            <value>Other</value>
+            <null/>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -4010,7 +4034,15 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value> <!-- guest_agent_status -->
+            <null/>
+            <null/>
             <value>0</value>
+            <null/>
+            <null/>
+            <null/>
+            <value>Other</value>
+            <null/>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
@@ -4050,7 +4082,15 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value> <!-- guest_agent_status -->
+            <null/>
+            <null/>
             <value>0</value>
+            <null/>
+            <null/>
+            <null/>
+            <value>Other</value>
+            <null/>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -4090,7 +4130,15 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value> <!-- guest_agent_status -->
+            <null/>
+            <null/>
             <value>0</value>
+            <null/>
+            <null/>
+            <null/>
+            <value>Other</value>
+            <null/>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -4130,7 +4178,15 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value> <!-- guest_agent_status -->
+            <null/>
+            <null/>
             <value>0</value>
+            <null/>
+            <null/>
+            <null/>
+            <value>Other</value>
+            <null/>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
@@ -4170,7 +4226,15 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value> <!-- guest_agent_status -->
+            <null/>
+            <null/>
             <value>0</value>
+            <null/>
+            <null/>
+            <null/>
+            <value>Other</value>
+            <null/>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
@@ -4210,7 +4274,15 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value> <!-- guest_agent_status -->
+            <null/>
+            <null/>
             <value>0</value>
+            <null/>
+            <null/>
+            <null/>
+            <value>Other</value>
+            <null/>
         </row>
     </table>
 

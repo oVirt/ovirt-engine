@@ -215,7 +215,14 @@ public final class Cloner
         vm.setCustomProperties(instance.getCustomProperties());
         vm.setSingleQxlPci(instance.getSingleQxlPci());
         vm.setMinAllocatedMem(instance.getMinAllocatedMem());
-
+        vm.setGuestOsArch(instance.getGuestOsArch());
+        vm.setGuestOsCodename(instance.getGuestOsCodename());
+        vm.setGuestOsDistribution(instance.getGuestOsDistribution());
+        vm.setGuestOsKernelVersion(instance.getGuestOsKernelVersion());
+        vm.setGuestOsType(instance.getGuestOsType());
+        vm.setGuestOsVersion(instance.getGuestOsVersion());
+        vm.setGuestOsTimezoneName(instance.getGuestOsTimezoneName());
+        vm.setGuestOsTimezoneOffset(instance.getGuestOsTimezoneOffset());
         return vm;
     }
 

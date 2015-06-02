@@ -419,6 +419,46 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.GUEST_CPU_COUNT)) {
             vm.setGuestCpuCount(AssignIntValue(xmlRpcStruct, VdsProperties.GUEST_CPU_COUNT));
         }
+
+        // Guest OS Info
+        if (xmlRpcStruct.containsKey(VdsProperties.GUEST_OS_INFO)) {
+            updateGuestOsInfo(vm, xmlRpcStruct);
+        }
+
+        // Guest Timezone
+        if (xmlRpcStruct.containsKey(VdsProperties.GUEST_TIMEZONE)) {
+            Map<String, Object> guestTimeZoneStruct =
+                    (Map<String, Object>) xmlRpcStruct.get(VdsProperties.GUEST_TIMEZONE);
+            vm.setGuestOsTimezoneName(AssignStringValue(guestTimeZoneStruct, VdsProperties.GUEST_TIMEZONE_ZONE));
+            vm.setGuestOsTimezoneOffset(AssignIntValue(guestTimeZoneStruct, VdsProperties.GUEST_TIMEZONE_OFFSET));
+        }
+    }
+
+    private static void updateGuestOsInfo(VmDynamic vm, Map<String, Object> xmlRpcStruct) {
+        Map<String, Object> guestOsInfoStruct = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.GUEST_OS_INFO);
+        if(guestOsInfoStruct.containsKey(VdsProperties.GUEST_OS_INFO_ARCH)) {
+            String arch = AssignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_ARCH);
+            try {
+                vm.setGuestOsArch(arch);
+            } catch(IllegalArgumentException e) {
+                log.warn("Invalid or unknown guest architecture type '{}' received from guest agent", arch);
+            }
+        }
+
+        vm.setGuestOsCodename(AssignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_CODENAME));
+        vm.setGuestOsDistribution(AssignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_DISTRIBUTION));
+        vm.setGuestOsKernelVersion(AssignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_KERNEL));
+        if(guestOsInfoStruct.containsKey(VdsProperties.GUEST_OS_INFO_TYPE)) {
+            String osType = AssignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_TYPE);
+            try {
+                vm.setGuestOsType(osType);
+            } catch(IllegalArgumentException e) {
+                log.warn("Invalid or unknown guest os type '{}' received from guest agent", osType);
+            }
+        } else {
+            log.warn("Guest OS type not reported by guest agent but expected.");
+        }
+        vm.setGuestOsVersion(AssignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_VERSION));
     }
 
     /**
