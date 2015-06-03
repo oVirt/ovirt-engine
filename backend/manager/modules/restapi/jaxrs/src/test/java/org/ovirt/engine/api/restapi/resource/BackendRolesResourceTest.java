@@ -12,7 +12,6 @@ import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.Permits;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
-import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -33,67 +32,12 @@ public class BackendRolesResourceTest
     public void testQuery() throws Exception {
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveRole,
-                                           RolesParameterBase.class,
-                                           new String[] { "RoleId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(VdcQueryType.GetRoleById,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { NON_EXISTANT_GUID },
-                null);
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
-
     private void setUpGetEntityExpectations() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetRoleById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 getEntity(0));
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveRole,
-                                           RolesParameterBase.class,
-                                           new String[] { "RoleId" },
-                                           new Object[] { GUIDS[0] },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
     }
 
     @Test

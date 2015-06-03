@@ -12,7 +12,6 @@ import org.ovirt.engine.api.resource.RolesResource;
 import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
-import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -43,11 +42,6 @@ public class BackendRolesResource
         return performCreate(VdcActionType.AddRoleWithActionGroups,
                                new RoleWithActionGroupsParameters(map(role), mapPermits(role.getPermits().getPermits())),
                                new QueryIdResolver<Guid>(VdcQueryType.GetRoleById, IdQueryParameters.class));
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveRole, new RolesParameterBase(asGuid(id)));
     }
 
     @Override

@@ -2,12 +2,14 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.ovirt.engine.api.restapi.resource.BackendRolesResource.SUB_COLLECTIONS;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.PermitsResource;
-import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
+import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -16,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendRoleResource
     extends AbstractBackendSubResource<Role, org.ovirt.engine.core.common.businessentities.Role>
-    implements UpdatableRoleResource, RoleResource{
+    implements UpdatableRoleResource{
 
     private Guid userId;
 
@@ -71,5 +73,11 @@ public class BackendRoleResource
     @Override
     protected Role doPopulate(Role model, org.ovirt.engine.core.common.businessentities.Role entity) {
         return model;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveRole, new RolesParameterBase(guid));
     }
 }
