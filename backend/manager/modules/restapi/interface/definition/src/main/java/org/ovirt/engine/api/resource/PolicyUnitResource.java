@@ -1,7 +1,9 @@
 package org.ovirt.engine.api.resource;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
 
@@ -9,4 +11,7 @@ import org.ovirt.engine.api.model.BaseResource;
 public interface PolicyUnitResource<T extends BaseResource> {
     @GET
     public T get();
+
+    @DELETE
+    public Response remove();
 }

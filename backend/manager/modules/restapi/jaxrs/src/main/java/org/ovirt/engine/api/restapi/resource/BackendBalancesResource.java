@@ -30,7 +30,7 @@ public class BackendBalancesResource extends BackendPolicyUnitsResource<Balances
 
     @Override
     public BalanceResource getSubResource(String id) {
-        return inject(new BackendBalanceResource(id, schedulingPolicyId));
+        return inject(new BackendBalanceResource(id, this));
     }
 
     @SingleEntityResource
@@ -51,14 +51,6 @@ public class BackendBalancesResource extends BackendPolicyUnitsResource<Balances
                 return new ClusterPolicyCRUDParameters(entity.getId(), map(model, entity));
             }
         };
-    }
-
-    @Override
-    protected void updateEntityForRemove(ClusterPolicy entity, Guid id) {
-        if (entity.getBalance() == null || !entity.getBalance().equals(id)) {
-            return;
-        }
-        entity.setBalance(null);
     }
 
     @Override

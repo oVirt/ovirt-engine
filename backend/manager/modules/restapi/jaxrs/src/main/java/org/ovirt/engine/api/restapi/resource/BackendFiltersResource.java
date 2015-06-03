@@ -32,7 +32,7 @@ public class BackendFiltersResource extends BackendPolicyUnitsResource<Filters, 
 
     @Override
     public FilterResource getSubResource(String id) {
-        return inject(new BackendFilterResource(id, schedulingPolicyId));
+        return inject(new BackendFilterResource(id, this));
     }
 
     @SingleEntityResource
@@ -53,25 +53,6 @@ public class BackendFiltersResource extends BackendPolicyUnitsResource<Filters, 
                 return new ClusterPolicyCRUDParameters(entity.getId(), map(model, entity));
             }
         };
-    }
-
-    @Override
-    protected void updateEntityForRemove(ClusterPolicy entity, Guid id) {
-        int i = 0;
-        boolean found = false;
-        if (entity.getFilters() == null) {
-            return;
-        }
-        for (; i < entity.getFilters().size(); i++) {
-            if (entity.getFilters().get(i).equals(id)) {
-                found = true;
-                break;
-            }
-        }
-        if (found) {
-            entity.getFilters().remove(i);
-        }
-
     }
 
     @Override

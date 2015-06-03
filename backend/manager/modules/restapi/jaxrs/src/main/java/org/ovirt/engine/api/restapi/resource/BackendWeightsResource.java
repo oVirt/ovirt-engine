@@ -34,7 +34,7 @@ public class BackendWeightsResource extends BackendPolicyUnitsResource<Weights, 
 
     @Override
     public WeightResource getSubResource(String id) {
-        return inject(new BackendWeightResource(id, schedulingPolicyId));
+        return inject(new BackendWeightResource(id, this));
     }
 
     @SingleEntityResource
@@ -55,25 +55,6 @@ public class BackendWeightsResource extends BackendPolicyUnitsResource<Weights, 
                 return new ClusterPolicyCRUDParameters(entity.getId(), map(model, entity));
             }
         };
-    }
-
-    @Override
-    protected void updateEntityForRemove(ClusterPolicy entity, Guid id) {
-        int i = 0;
-        boolean found = false;
-        if (entity.getFunctions() == null) {
-            return;
-        }
-        for (; i < entity.getFunctions().size(); i++) {
-            if (entity.getFunctions().get(i).getFirst().equals(id)) {
-                found = true;
-                break;
-            }
-        }
-        if (found) {
-            entity.getFunctions().remove(i);
-        }
-
     }
 
     @Override
