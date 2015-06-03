@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -185,6 +186,24 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
                 new Object[] { GUIDS[0] }));
 
         verifyActionResponse(resource.resetAllOptions(new Action()));
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setupParentExpectations();
+        setUpGetEntityExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.DeleteGlusterVolume,
+                GlusterVolumeParameters.class,
+                new String[] { "VolumeId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true
+            )
+        );
+        resource.setParent(volumesResourceMock);
+        verifyRemove(resource.remove());
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,

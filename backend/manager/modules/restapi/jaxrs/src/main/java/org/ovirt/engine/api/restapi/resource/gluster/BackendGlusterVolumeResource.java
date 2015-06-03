@@ -193,4 +193,10 @@ public class BackendGlusterVolumeResource
             return false;
         }
     }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.DeleteGlusterVolume, new GlusterVolumeParameters(guid));
+    }
 }

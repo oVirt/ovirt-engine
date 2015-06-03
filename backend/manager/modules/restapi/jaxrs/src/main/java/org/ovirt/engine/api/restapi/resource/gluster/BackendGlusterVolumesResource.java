@@ -16,7 +16,6 @@ import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
-import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
@@ -120,11 +119,6 @@ public class BackendGlusterVolumesResource
             bricks.add(getMapper(GlusterBrick.class, GlusterBrickEntity.class).map(brick, null));
         }
         volumeEntity.setBricks(bricks);
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.DeleteGlusterVolume, new GlusterVolumeParameters(asGuid(id)));
     }
 
     @Override

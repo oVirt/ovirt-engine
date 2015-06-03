@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
-
 import static org.easymock.EasyMock.expect;
 
 import java.util.List;
@@ -20,7 +19,6 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTe
 import org.ovirt.engine.api.restapi.resource.BackendResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
-import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -208,17 +206,6 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
                                   new String[] { "Id" },
                                   new Object[] { volumeId },
                                   getEntity(1));
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.DeleteGlusterVolume,
-                                           GlusterVolumeParameters.class,
-                                           new String[] { "VolumeId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     /**
