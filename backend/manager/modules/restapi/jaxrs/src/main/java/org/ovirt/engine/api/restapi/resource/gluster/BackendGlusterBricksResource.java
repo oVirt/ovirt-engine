@@ -190,15 +190,6 @@ public class BackendGlusterBricksResource
     }
 
     @Override
-    protected Response performRemove(String id) {
-        GlusterBrick brick = new GlusterBrick();
-        brick.setId(id);
-        GlusterBricks bricks = new GlusterBricks();
-        bricks.getGlusterBricks().add(brick);
-        return remove(bricks);
-    }
-
-    @Override
     protected GlusterBrick doPopulate(GlusterBrick model, GlusterBrickEntity entity) {
         return populateAdvancedDetails(model, entity);
     }

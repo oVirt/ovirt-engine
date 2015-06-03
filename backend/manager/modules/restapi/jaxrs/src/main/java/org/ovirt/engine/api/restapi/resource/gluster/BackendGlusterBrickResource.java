@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.GlusterBrick;
+import org.ovirt.engine.api.model.GlusterBricks;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
@@ -109,5 +110,13 @@ public class BackendGlusterBrickResource
         return inject(new BackendStatisticsResource<GlusterBrick, GlusterBrickEntity>(GlusterBrickEntity.class, guid, query));
     }
 
-
+    @Override
+    public Response remove() {
+        get();
+        GlusterBrick brick = new GlusterBrick();
+        brick.setId(id);
+        GlusterBricks bricks = new GlusterBricks();
+        bricks.getGlusterBricks().add(brick);
+        return parent.remove(bricks);
+    }
 }

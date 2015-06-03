@@ -225,10 +225,10 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         setUriInfo(setUpActionExpectations(VdcActionType.GlusterVolumeRemoveBricks,
                 GlusterVolumeRemoveBricksParameters.class,
                 new String[] { "VolumeId", "Bricks" },
-                new Object[] { volumeId, getBricksToRemove() },
+                new Object[] { volumeId, getBrickEntitiesToRemove() },
                 true,
                 true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
+        verifyRemove(collection.remove(getBrickModelsToRemove()));
     }
 
     @Test
@@ -245,7 +245,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                 new Object[] {},
                 true,
                 true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
+        verifyRemove(collection.remove(getBrickModelsToRemove()));
     }
 
     @Test
@@ -332,12 +332,20 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         return brickIds;
     }
 
-    private List<GlusterBrickEntity> getBricksToRemove() {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+    private List<GlusterBrickEntity> getBrickEntitiesToRemove() {
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setId(GUIDS[0]);
         brick.setVolumeId(volumeId);
         bricks.add(brick);
+        return bricks;
+    }
+
+    private GlusterBricks getBrickModelsToRemove() {
+        GlusterBricks bricks = new GlusterBricks();
+        GlusterBrick brick = new GlusterBrick();
+        brick.setId(GUIDS[0].toString());
+        bricks.getGlusterBricks().add(brick);
         return bricks;
     }
 

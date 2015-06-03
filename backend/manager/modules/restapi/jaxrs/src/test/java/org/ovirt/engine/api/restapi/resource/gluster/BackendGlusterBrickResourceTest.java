@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.brickId;
@@ -19,6 +20,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.GlusterBrick;
+import org.ovirt.engine.api.model.GlusterBricks;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.StatisticsResource;
@@ -30,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
-
 
 public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceTest<GlusterBrick, GlusterBrickEntity, BackendGlusterBrickResource> {
 
@@ -125,6 +126,24 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
         StatisticsResource statRes = resource.getStatisticsResource();
         Statistics statistics = statRes.list();
         assertNotNull(statistics);
+    }
+
+    /**
+     * This test only checks that the {@code remove method} calls the {@code remove} method of the parent, the actual
+     * test of that logic is part of the parent tests.
+     */
+    @Test
+    public void testRemove() throws Exception {
+        resource.setParent(bricksResourceMock);
+        setupParentExpectations();
+        setUpGetEntityExpectations(1);
+        setUpCallParentRemoveExpectations();
+        control.replay();
+        verifyRemove(resource.remove());
+    }
+
+    private void setUpCallParentRemoveExpectations() {
+        expect(bricksResourceMock.remove(anyObject(GlusterBricks.class))).andReturn(Response.ok().build()).once();
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
@@ -248,6 +267,4 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
                 }).anyTimes();
 
     }
-
-
 }

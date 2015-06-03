@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.resource.gluster;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,23 +21,25 @@ import org.ovirt.engine.api.resource.MeasurableResource;
  */
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface GlusterBrickResource extends MeasurableResource{
-
     @Path("{action: (replace)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @GET
-    public GlusterBrick get();
+    GlusterBrick get();
 
     /**
-     * Replaces this brick with a new one. The property {@link Action#getNewBrick()} is required.
-     *
-     * @param action
-     * @return
+     * Removes this brick from the volume and deletes it from the database.
+     */
+    @DELETE
+    Response remove();
+
+    /**
+     * Replaces this brick with a new one. The property {@link Action#getBrick()} is required.
      */
     @Deprecated
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     @Actionable
     @Path("replace")
-    public Response replace(Action action);
+    Response replace(Action action);
 }
