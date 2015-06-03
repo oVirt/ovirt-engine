@@ -716,6 +716,13 @@ public final class ImagesHandler {
         updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(Collections.singletonList(diskId), status, statusForCompensation, compensationContext);
     }
 
+    public static DiskImage getSnapshotLeaf(Guid diskId) {
+        List<DiskImage> diskSnapshots =
+                DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(diskId);
+        sortImageList(diskSnapshots);
+        return diskSnapshots.get(diskSnapshots.size() - 1);
+    }
+
     public static void updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(final Collection<Guid> diskIds,
                                                                          final ImageStatus status,
                                                                          ImageStatus statusForCompensation,
