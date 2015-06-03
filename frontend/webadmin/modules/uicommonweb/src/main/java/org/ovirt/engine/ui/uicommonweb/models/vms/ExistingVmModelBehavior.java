@@ -184,13 +184,12 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     getModel().getCoresPerSocket().getSelectedItemChangedEvent().removeListener(getModel());
                     getModel().getNumOfSockets().getSelectedItemChangedEvent().removeListener(getModel());
 
-                    AsyncDataProvider.getInstance().getHostById(new AsyncQuery(this, new INewAsyncCallback() {
+                    AsyncDataProvider.getInstance().getHostById(new AsyncQuery(new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
-                            ExistingVmModelBehavior existingVmModelBehavior = (ExistingVmModelBehavior) model;
                             runningOnHost = (VDS) returnValue;
                             hostCpu = calculateHostCpus();
-                            existingVmModelBehavior.updateNumOfSockets();
+                            updateNumOfSockets();
                         }
                     }), vm.getRunOnVds());
                 }
