@@ -9,7 +9,6 @@ import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.model.QoSs;
 import org.ovirt.engine.api.resource.QoSsResource;
 import org.ovirt.engine.api.resource.QosResource;
-import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -67,13 +66,6 @@ public class BackendQossResource extends AbstractBackendCollectionResource<QoS, 
         return performCreate(addVdcActionType,
                 params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetQosById, IdQueryParameters.class));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        QosParametersBase<?> params = new QosParametersBase<>();
-        params.setQosId(GuidUtils.asGuid(id));
-        return performAction(VdcActionType.RemoveStorageQos, params);
     }
 
     @Override

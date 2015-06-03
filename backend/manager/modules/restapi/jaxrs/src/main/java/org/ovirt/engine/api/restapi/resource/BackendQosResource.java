@@ -1,7 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.resource.QosResource;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -80,5 +83,13 @@ public class BackendQosResource extends AbstractBackendSubResource<QoS, QosBase>
     @Override
     protected QoS doPopulate(QoS model, QosBase entity) {
         return model;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        QosParametersBase<?> params = new QosParametersBase<>();
+        params.setQosId(GuidUtils.asGuid(id));
+        return performAction(VdcActionType.RemoveStorageQos, params);
     }
 }
