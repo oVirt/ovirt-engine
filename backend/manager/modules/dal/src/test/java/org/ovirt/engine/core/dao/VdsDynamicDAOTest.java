@@ -11,12 +11,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
+import org.ovirt.engine.core.utils.RandomUtils;
 
 public class VdsDynamicDAOTest extends BaseDAOTestCase {
     private VdsDynamicDAO dao;
@@ -112,6 +114,20 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         dao.updateStatus(before.getId(), before.getStatus());
         VdsDynamic after = dao.get(existingVds.getId());
         assertEquals(before, after);
+    }
+
+    @Test
+    public void testUpdateStatusAndReasons() {
+        VdsDynamic before = dao.get(existingVds.getId());
+        before.setStatus(RandomUtils.instance().nextEnum(VDSStatus.class));
+        before.setNonOperationalReason(RandomUtils.instance().nextEnum(NonOperationalReason.class));
+        before.setMaintenanceReason(RandomUtils.instance().nextString(50));
+        dao.updateStatusAndReasons(before);
+        VdsDynamic after = dao.get(existingVds.getId());
+        assertEquals(before, after);
+        assertEquals(before.getStatus(), after.getStatus());
+        assertEquals(before.getNonOperationalReason(), after.getNonOperationalReason());
+        assertEquals(before.getMaintenanceReason(), after.getMaintenanceReason());
     }
 
     @Test

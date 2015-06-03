@@ -883,6 +883,24 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION UpdateVdsDynamicStatusAndReasons(
+        v_vds_guid UUID,
+        v_status INTEGER,
+        v_non_operational_reason INTEGER,
+        v_maintenance_reason TEXT)
+RETURNS VOID
+
+   AS $procedure$
+BEGIN
+      UPDATE vds_dynamic
+      SET
+      status = v_status,
+      non_operational_reason = v_non_operational_reason,
+      maintenance_reason = v_maintenance_reason
+      WHERE vds_id = v_vds_guid;
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION UpdateVdsDynamicNetConfigDirty(
         v_vds_guid UUID,
         v_net_config_dirty BOOLEAN)

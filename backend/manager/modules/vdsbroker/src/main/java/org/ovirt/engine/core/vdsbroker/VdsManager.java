@@ -433,6 +433,12 @@ public class VdsManager {
         cachedVds.setDynamicData(dynamicData);
     }
 
+    public void updatePartialDynamicData(NonOperationalReason nonOperationalReason, String maintenanceReason) {
+        cachedVds.getDynamicData().setNonOperationalReason(nonOperationalReason);
+        cachedVds.getDynamicData().setMaintenanceReason(maintenanceReason);
+        dbFacade.getVdsDynamicDao().updateStatusAndReasons(cachedVds.getDynamicData());
+    }
+
     /**
      * Save statistics data to cache and DB.
      *

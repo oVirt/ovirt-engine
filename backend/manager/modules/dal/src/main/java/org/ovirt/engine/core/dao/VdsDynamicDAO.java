@@ -49,4 +49,12 @@ public interface VdsDynamicDAO extends GenericDao<VdsDynamic, Guid>, StatusAware
      *            the new value to be updated
      */
     void updateUpdateAvailable(Guid id, boolean updateAvailable);
+
+    /**
+     * Updates the status and the reasons (maintenance and non-operational) for the given host
+     *
+     * @param host
+     *            the host to be updated
+     */
+     void updateStatusAndReasons(VdsDynamic host);
 }

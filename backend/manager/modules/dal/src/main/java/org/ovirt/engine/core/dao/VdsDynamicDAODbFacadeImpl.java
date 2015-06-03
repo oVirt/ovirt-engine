@@ -151,11 +151,24 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
 
     @Override
     public void updateStatus(Guid id, VDSStatus status) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_guid", id)
-                .addValue("status", status);
+        MapSqlParameterSource parameterSource = getStatusSqlParameterSource(id, status);
 
         getCallsHandler().executeModification("UpdateVdsDynamicStatus", parameterSource);
+    }
+
+    @Override
+    public void updateStatusAndReasons(VdsDynamic host) {
+        MapSqlParameterSource parameterSource = getStatusSqlParameterSource(host.getId(), host.getStatus());
+        parameterSource.addValue("non_operational_reason", host.getNonOperationalReason())
+                .addValue("maintenance_reason", host.getMaintenanceReason());
+
+        getCallsHandler().executeModification("UpdateVdsDynamicStatusAndReasons", parameterSource);
+    }
+
+    private MapSqlParameterSource getStatusSqlParameterSource(Guid id, VDSStatus status) {
+        return getCustomMapSqlParameterSource()
+                .addValue("vds_guid", id)
+                .addValue("status", status);
     }
 
     @Override

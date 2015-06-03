@@ -167,6 +167,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setMemShared(getMemShared());
         vds.setSoftwareVersion(getSoftwareVersion());
         vds.setVersionName(getVersionName());
+        vds.setVersion(getVersion());
         vds.setServerSslEnabled(isServerSslEnabled());
         vds.setCpuFlags(getCpuFlags());
         vds.setNetConfigDirty(getNetConfigDirty());

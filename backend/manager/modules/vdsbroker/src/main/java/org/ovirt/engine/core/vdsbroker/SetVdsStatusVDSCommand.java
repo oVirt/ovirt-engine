@@ -60,13 +60,13 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
 
             }
 
-            updateVdsFromParameters(parameters, vds);
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override
                 public Void runInTransaction() {
                     _vdsManager.setStatus(parameters.getStatus(), vds);
-                    _vdsManager.updateDynamicData(vds.getDynamicData());
+                    _vdsManager.updatePartialDynamicData(parameters.getNonOperationalReason(),
+                            parameters.getMaintenanceReason());
                     _vdsManager.updateStatisticsData(vds.getStatisticsData());
                     return null;
                 }
@@ -74,10 +74,5 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
         } else {
             getVDSReturnValue().setSucceeded(false);
         }
-    }
-
-    private void updateVdsFromParameters(SetVdsStatusVDSCommandParameters parameters, VDS vds) {
-        vds.getDynamicData().setNonOperationalReason(parameters.getNonOperationalReason());
-        vds.getDynamicData().setMaintenanceReason(parameters.getMaintenanceReason());
     }
 }
