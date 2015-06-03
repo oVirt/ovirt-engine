@@ -23,7 +23,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
     public static final String QUOTA = "QUOTA";
     public static final String ARCHITECTURE = "ARCHITECTURE";
     public static final String VMT_ID = "_VMT_ID";
-    public static final String VERSION_NAME_AND_NUMBER = "VERSION_NAME_AND_NUMBER";
+    public static final String VERSION_NAME = "VERSION_NAME";
 
     public VmTemplateConditionFieldAutoCompleter() {
         mVerbs.add(NAME);
@@ -38,7 +38,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         mVerbs.add(DATACENTER);
         mVerbs.add(QUOTA);
         mVerbs.add(ARCHITECTURE);
-        mVerbs.add(VERSION_NAME_AND_NUMBER);
+        mVerbs.add(VERSION_NAME);
 
         buildCompletions();
         mVerbs.add(VMT_ID);
@@ -57,7 +57,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         getTypeDictionary().put(VMT_ID, UUID.class);
         getTypeDictionary().put(DESCRIPTION, String.class);
         getTypeDictionary().put(ARCHITECTURE, ArchitectureType.class);
-        getTypeDictionary().put(VERSION_NAME_AND_NUMBER, String.class);
+        getTypeDictionary().put(VERSION_NAME, String.class);
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "name");
@@ -74,7 +74,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         columnNameDict.put(VMT_ID, "vmt_guid");
         columnNameDict.put(DESCRIPTION, "description");
         columnNameDict.put(ARCHITECTURE, "architecture");
-        columnNameDict.put(VERSION_NAME_AND_NUMBER, "template_version_name, template_version_number");
+        columnNameDict.put(VERSION_NAME, "template_version_name");
 
         notFreeTextSearchableFieldsList.add(OS);
         // Building the validation dict

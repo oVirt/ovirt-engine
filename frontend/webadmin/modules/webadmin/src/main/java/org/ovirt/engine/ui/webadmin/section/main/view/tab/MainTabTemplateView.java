@@ -64,7 +64,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                         object.getTemplateVersionNumber());
             }
         };
-        versionNameColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.VERSION_NAME_AND_NUMBER);
+        versionNameColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.VERSION_NAME);
         getTable().addColumn(versionNameColumn, constants.versionTemplate(), "150px"); //$NON-NLS-1$
 
         CommentColumn<VmTemplate> commentColumn = new CommentColumn<VmTemplate>();
