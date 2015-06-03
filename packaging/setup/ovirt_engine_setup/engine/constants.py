@@ -550,6 +550,14 @@ class PKIEnv(object):
 
     ENGINE_SSH_PUBLIC_KEY = 'OVESETUP_PKI/sshPublicKey'
 
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Renew PKI'),
+    )
+    def RENEW(self):
+        return 'OVESETUP_PKI/renew'
+
 
 @util.export
 @util.codegen
