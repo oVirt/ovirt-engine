@@ -40,6 +40,11 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
     WidgetStyle style;
 
     @UiField
+    @Ignore
+    @WithElementId
+    Label actionConfirmationMessage;
+
+    @UiField
     @Path("masterVolume.entity")
     @WithElementId
     StringEntityModelLabelEditor masterVolumeEditor;
@@ -86,7 +91,12 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
         localize();
         addStyles();
         driver.initialize(this);
+        initVisibilities();
+    }
+
+    private void initVisibilities() {
         errorMsg.setVisible(false);
+        geoRepForceHelpIcon.setVisible(false);
     }
 
     private void addStyles() {
@@ -101,8 +111,11 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
 
     @Override
     public void setForceLabelMessage(String forceLabelMessage) {
-        forceEditor.setLabel(forceLabelMessage == null ? constants.notAvailableLabel() : forceLabelMessage);
-        forceEditor.setVisible(forceLabelMessage != null);
+        boolean isNonEmptyForceLabelMessage = forceLabelMessage != null;
+        if (isNonEmptyForceLabelMessage) {
+            forceEditor.setLabel(forceLabelMessage);
+        }
+        forceEditor.setVisible(isNonEmptyForceLabelMessage);
     }
 
     private void initEditors() {
@@ -117,7 +130,11 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
 
     @Override
     public void setForceHelp(String forceHelpText) {
-        geoRepForceHelpIcon.setText(templates.italicText(forceHelpText));
+        boolean isForceHelpNonEmpty = forceHelpText != null;
+        if (isForceHelpNonEmpty) {
+            geoRepForceHelpIcon.setText(templates.italicText(forceHelpText));
+        }
+        geoRepForceHelpIcon.setVisible(isForceHelpNonEmpty);
     }
 
     @Override
@@ -125,10 +142,20 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
         return driver.flush();
     }
 
+    public void setActionConfirmationMessage(String message) {
+        boolean isNonEmptyMessage = message != null;
+        if (isNonEmptyMessage) {
+            actionConfirmationMessage.setText(message);
+        }
+    }
+
     @Override
     public void setErrorMessage(String errorMessage) {
-        errorMsg.setText(errorMessage);
-        errorMsg.setVisible(errorMessage != null);
+        boolean isNonEmptyErrorMessage = errorMessage != null;
+        if (isNonEmptyErrorMessage) {
+            errorMsg.setText(errorMessage);
+        }
+        errorMsg.setVisible(isNonEmptyErrorMessage);
     }
 
     interface WidgetStyle extends CssResource {

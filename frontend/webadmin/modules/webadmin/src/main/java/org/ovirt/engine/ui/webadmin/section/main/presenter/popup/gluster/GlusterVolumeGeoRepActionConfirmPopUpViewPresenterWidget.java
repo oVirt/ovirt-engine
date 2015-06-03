@@ -25,13 +25,13 @@ public class GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget extends Ab
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if(((PropertyChangedEventArgs)args).propertyName.equalsIgnoreCase("forceLabel")) {//$NON-NLS-1$
-                    if(model.getForceLabel() != null) {
-                        getView().setForceLabelMessage(model.getForceLabel());
-                    }
+                    getView().setForceLabelMessage(model.getForceLabel());
                 } else if(((PropertyChangedEventArgs)args).propertyName.equalsIgnoreCase("forceHelp")) {//$NON-NLS-1$
                     getView().setForceHelp(model.getForceHelp());
                 } else if (((PropertyChangedEventArgs)args).propertyName.equalsIgnoreCase("Message")) {//$NON-NLS-1$
                     getView().setErrorMessage(model.getMessage());
+                } else if(((PropertyChangedEventArgs)args).propertyName.equalsIgnoreCase("ActionConfirmationMessage")) {//$NON-NLS-1$
+                    getView().setActionConfirmationMessage(model.getMessage());
                 }
             }
         });
@@ -41,6 +41,7 @@ public class GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget extends Ab
         public void setForceLabelMessage(String forceLabelMessage);
         public void setForceHelp(String forceHelpText);
         public void setErrorMessage(String errorMessage);
+        public void setActionConfirmationMessage(String message);
     }
 
 }

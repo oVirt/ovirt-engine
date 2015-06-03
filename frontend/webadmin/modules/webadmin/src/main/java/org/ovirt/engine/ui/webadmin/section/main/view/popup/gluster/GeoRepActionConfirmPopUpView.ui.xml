@@ -28,6 +28,7 @@
 	<d:SimpleDialogPanel width="480px" height="300px">
 		<d:content>
 			<g:FlowPanel>
+				<g:Label ui:field="actionConfirmationMessage" addStyleNames="{style.messageLabel}" />
 				<ge:StringEntityModelLabelEditor ui:field="masterVolumeEditor" />
 				<ge:StringEntityModelLabelEditor ui:field="slaveVolumeEditor" />
 				<ge:StringEntityModelLabelEditor ui:field="slaveHostEditor" />
@@ -35,7 +36,7 @@
 					<ge:EntityModelCheckBoxEditor ui:field="forceEditor" />
 					<d:InfoIcon ui:field="geoRepForceHelpIcon" />
 				</g:HorizontalPanel>
-				<g:Label ui:field="errorMsg" addStyleNames="{style.messageLabel}"/>
+				<g:Label ui:field="errorMsg" addStyleNames="{style.messageLabel}" />
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

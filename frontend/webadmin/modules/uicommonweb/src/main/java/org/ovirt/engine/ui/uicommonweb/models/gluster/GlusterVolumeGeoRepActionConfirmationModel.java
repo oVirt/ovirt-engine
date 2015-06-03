@@ -12,6 +12,7 @@ public class GlusterVolumeGeoRepActionConfirmationModel extends Model {
     private EntityModel<Boolean> force;
     private String forceLabel;
     private String forceHelp;
+    private String message;
 
     public GlusterVolumeGeoRepActionConfirmationModel() {
         init();
@@ -23,6 +24,7 @@ public class GlusterVolumeGeoRepActionConfirmationModel extends Model {
         setSlaveHost(new EntityModel<String>());
         setForce(new EntityModel<Boolean>());
 
+        force.setIsAvailable(false);
     }
 
     protected void initWindow(String masterVolume, String slaveVolume, String slaveHost) {
@@ -75,6 +77,15 @@ public class GlusterVolumeGeoRepActionConfirmationModel extends Model {
     public void setForceHelp(String forceHelp) {
         this.forceHelp = forceHelp;
         onPropertyChanged(new PropertyChangedEventArgs("forceHelp"));//$NON-NLS-1$
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setActionConfirmationMessage(String message) {
+        this.message = message;
+        onPropertyChanged(new PropertyChangedEventArgs("ActionConfirmationMessage"));//$NON-NLS-1$
     }
 
     public void setForceLabel(String forceLabel) {

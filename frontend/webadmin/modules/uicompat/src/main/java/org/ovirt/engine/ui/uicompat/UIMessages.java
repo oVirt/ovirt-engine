@@ -419,6 +419,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Force {0} session")
     String geoRepForceTitle(String action);
 
+    @DefaultMessage("Are you sure you want to {0} geo-rep session")
+    String geoRepActionConfirmationMessage(String action);
+
     // Gluster Volume Snapshots
     @DefaultMessage("Value of cluster configuration parameter {0} is empty")
     String clusterSnapshotOptionValueEmpty(String option);
