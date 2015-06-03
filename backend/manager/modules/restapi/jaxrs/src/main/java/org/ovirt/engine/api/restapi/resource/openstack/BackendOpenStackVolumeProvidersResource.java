@@ -24,7 +24,6 @@ import org.ovirt.engine.api.model.OpenStackVolumeProviders;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.api.restapi.types.DataCenterMapper;
 import org.ovirt.engine.core.common.action.ProviderParameters;
@@ -107,13 +106,6 @@ public class BackendOpenStackVolumeProvidersResource
                 new ProviderParameters(map(provider)),
                 new QueryIdResolver<Guid>(VdcQueryType.GetProviderById, IdQueryParameters.class)
         );
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        Provider provider = BackendExternalProviderHelper.getProvider(this, id);
-        ProviderParameters parameters = new ProviderParameters(provider);
-        return performAction(VdcActionType.RemoveProvider, parameters);
     }
 
     @Override

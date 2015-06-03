@@ -157,6 +157,19 @@ public class BackendOpenStackVolumeProviderResourceTest
         }
     }
 
+    @Test
+    public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(1);
+        setUpActionExpectations(VdcActionType.RemoveProvider,
+                ProviderParameters.class,
+                new String[] { "Provider.Id" },
+                new Object[] { GUIDS[0] },
+                true,
+                true);
+        resource.remove();
+    }
+
     private OpenStackVolumeProvider getModel(int index) {
         OpenStackVolumeProvider model = new OpenStackVolumeProvider();
         model.setName(NAMES[index]);
