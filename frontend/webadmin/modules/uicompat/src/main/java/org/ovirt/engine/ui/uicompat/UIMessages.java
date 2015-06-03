@@ -431,6 +431,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Force {0} session")
     String geoRepForceTitle(String action);
 
+    @DefaultMessage("Are you sure you want to {0} geo-rep session")
+    String geoRepActionConfirmationMessage(String action);
+
     @DefaultMessage("Icon dimensions are too large: {0}x{1}, maximum allowed: {2}x{3}")
     String iconDimensionsTooLarge(int width, int height, int maxWidht, int maxHeight);
 
