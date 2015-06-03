@@ -674,11 +674,16 @@ public class VdsManager {
                     auditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
                 }
             }
-
-            if (vds.getSELinuxEnforceMode() == null || vds.getSELinuxEnforceMode().equals(SELinuxMode.DISABLED)) {
-                auditLogDirector.log(new AuditLogableBase(vds.getId()), AuditLogType.VDS_NO_SELINUX_ENFORCEMENT);
+            // For gluster nodes, SELinux needs to be in enforcing mode,
+            // hence warning in case of permissive as well.
+            if (vds.getSELinuxEnforceMode() == null || vds.getSELinuxEnforceMode().equals(SELinuxMode.DISABLED)
+                    || (vds.getVdsGroupSupportsGlusterService()
+                            && vds.getSELinuxEnforceMode().equals(SELinuxMode.PERMISSIVE))) {
+                auditLogDirector.log(new AuditLogableBase(vds.getId()).addCustomValue("Mode",
+                        vds.getSELinuxEnforceMode() == null ? "UNKNOWN" : vds.getSELinuxEnforceMode().name()),
+                        AuditLogType.VDS_NO_SELINUX_ENFORCEMENT);
                 if (vds.getSELinuxEnforceMode() != null) {
-                    log.warn("Host '{}' is running with disabled SELinux.", vds.getName());
+                    log.warn("Host '{}' is running with SELinux in '{}' mode", vds.getName(), vds.getSELinuxEnforceMode());
                 } else {
                     log.warn("Host '{}' does not report SELinux enforcement information.", vds.getName());
                 }
