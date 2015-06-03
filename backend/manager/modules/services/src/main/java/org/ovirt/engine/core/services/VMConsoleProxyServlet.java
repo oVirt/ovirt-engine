@@ -41,7 +41,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
     @Inject
     private BackendInternal backend;
 
-    private static final String VM_CONSOLE_PROXY_EKU = "1.2.1.1";
+    private static final String VM_CONSOLE_PROXY_EKU = "1.3.6.1.4.1.2312.13.1.2.1.1";
 
     private static final Logger log = LoggerFactory.getLogger(VMConsoleProxyServlet.class);
 
