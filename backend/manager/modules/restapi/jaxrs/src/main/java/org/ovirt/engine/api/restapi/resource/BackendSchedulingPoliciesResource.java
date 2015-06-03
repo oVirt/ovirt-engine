@@ -50,20 +50,6 @@ public class BackendSchedulingPoliciesResource extends AbstractBackendCollection
     }
 
     @Override
-    protected Response performRemove(String id) {
-        Response performAction = null;
-        try {
-
-            performAction =
-                    performAction(VdcActionType.RemoveClusterPolicy, new ClusterPolicyCRUDParameters(asGuid(id),
-                            queryIdResolver.lookupEntity(asGuid(id))));
-        } catch (BackendFailureException e) {
-            e.printStackTrace();
-        }
-        return performAction;
-    }
-
-    @Override
     protected SchedulingPolicy doPopulate(SchedulingPolicy model, ClusterPolicy entity) {
         return model;
     }

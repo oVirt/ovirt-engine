@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.resource.BalancesResource;
 import org.ovirt.engine.api.resource.FiltersResource;
@@ -64,6 +66,22 @@ public class BackendSchedulingPolicyResource extends AbstractBackendSubResource<
     @Override
     public BalancesResource getBalancesResource() {
         return inject(new BackendBalancesResource(guid));
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        Response performAction = null;
+        try {
+
+            performAction =
+                    performAction(VdcActionType.RemoveClusterPolicy, new ClusterPolicyCRUDParameters(asGuid(id),
+                            new QueryIdResolver<Guid>(VdcQueryType.GetClusterPolicyById,
+                                    IdQueryParameters.class).lookupEntity(asGuid(id))));
+        } catch (BackendFailureException e) {
+            e.printStackTrace();
+        }
+        return performAction;
     }
 
 }
