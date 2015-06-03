@@ -76,18 +76,14 @@ public class VmPool implements IVdcQueryable, Nameable, Commented {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((defaultEndTime == null) ? 0 : defaultEndTime.hashCode());
-        result = prime * result + ((defaultStartTime == null) ? 0 : defaultStartTime.hashCode());
         result = prime * result + defaultTimeInDays;
         result = prime * result + ((parameters == null) ? 0 : parameters.hashCode());
         result = prime * result + ((vdsGroupId == null) ? 0 : vdsGroupId.hashCode());
-        result = prime * result + ((vdsGroupName == null) ? 0 : vdsGroupName.hashCode());
-        result = prime * result + vmPoolAssignedCount;
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + vmPoolRunningCount;
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + maxAssignedVmsPerUser;
+        result = prime * result + ((spiceProxy == null) ? 0 : spiceProxy.hashCode());
         return result;
     }
 
@@ -112,7 +108,8 @@ public class VmPool implements IVdcQueryable, Nameable, Commented {
                 && ObjectUtils.objectsEqual(description, other.description)
                 && ObjectUtils.objectsEqual(name, other.name)
                 && ObjectUtils.objectsEqual(type, other.type)
-                && maxAssignedVmsPerUser == other.maxAssignedVmsPerUser);
+                && maxAssignedVmsPerUser == other.maxAssignedVmsPerUser
+                && ObjectUtils.objectsEqual(spiceProxy, other.spiceProxy));
     }
 
     public String getParameters() {
