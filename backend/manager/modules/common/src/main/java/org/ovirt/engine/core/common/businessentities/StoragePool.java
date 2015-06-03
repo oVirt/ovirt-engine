@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-public class StoragePool extends IVdcQueryable implements BusinessEntityWithStatus<Guid, StoragePoolStatus>, Nameable, Commented {
+public class StoragePool implements IVdcQueryable, BusinessEntityWithStatus<Guid, StoragePoolStatus>, Nameable, Commented {
     private static final long serialVersionUID = 6162262095329980112L;
 
     private Guid id;

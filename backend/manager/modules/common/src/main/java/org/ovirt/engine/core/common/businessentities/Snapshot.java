@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
  * <li>Any additional devices which were relevant</li>
  * </ul>
  */
-public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<Guid, Snapshot.SnapshotStatus> {
+public class Snapshot implements IVdcQueryable, BusinessEntityWithStatus<Guid, Snapshot.SnapshotStatus> {
 
     /**
      * Needed for java serialization/deserialization mechanism.

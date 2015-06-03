@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmGuestAgentInterface extends IVdcQueryable {
+public class VmGuestAgentInterface implements IVdcQueryable {
 
     private static final long serialVersionUID = -9164680367965630250L;
 
@@ -41,6 +41,11 @@ public class VmGuestAgentInterface extends IVdcQueryable {
 
     public void setVmId(Guid vmId) {
         this.vmId = vmId;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getVmId();
     }
 
     public String getInterfaceName() {

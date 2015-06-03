@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.scheduling;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * Bussiness entity for cluster policy, holds logic for host selections and load balancing logic.
  */
-public class ClusterPolicy extends IVdcQueryable implements BusinessEntity<Guid>, Serializable, Nameable {
+public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Nameable {
     private static final long serialVersionUID = 7739745365583134911L;
 
     /**

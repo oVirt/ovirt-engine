@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -14,7 +13,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TimeSpan;
 
-public class VmPool extends IVdcQueryable implements Serializable, Nameable, Commented {
+public class VmPool implements IVdcQueryable, Nameable, Commented {
 
     private static final long serialVersionUID = 4517650877696849024L;
 

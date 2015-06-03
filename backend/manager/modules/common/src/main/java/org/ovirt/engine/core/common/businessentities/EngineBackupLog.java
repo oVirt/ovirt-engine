@@ -10,7 +10,7 @@ import javax.persistence.IdClass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import java.io.Serializable;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -20,7 +20,7 @@ import java.util.Objects;
 @NamedQueries({
         @NamedQuery(name = "EngineBackupLog.getLatest", query = "select e from EngineBackupLog e where e.scope = :scope and passed = true order by doneAt DESC")
 })
-public class EngineBackupLog extends IVdcQueryable implements Serializable, BusinessEntity<EngineBackupLogId> {
+public class EngineBackupLog implements IVdcQueryable, BusinessEntity<EngineBackupLogId> {
 
     @Id
     @Column(name="scope")
@@ -126,6 +126,11 @@ public class EngineBackupLog extends IVdcQueryable implements Serializable, Busi
         key.setScope(scope);
         key.setDoneAt(doneAt);
         return key;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getId();
     }
 
     @Override

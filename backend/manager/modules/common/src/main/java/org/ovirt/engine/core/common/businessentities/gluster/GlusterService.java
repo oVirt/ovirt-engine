@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterService extends IVdcQueryable implements BusinessEntity<Guid> {
+public class GlusterService implements IVdcQueryable, BusinessEntity<Guid> {
     private static final long serialVersionUID = 2313305635486777212L;
 
     private Guid id;
@@ -20,6 +20,11 @@ public class GlusterService extends IVdcQueryable implements BusinessEntity<Guid
     @Override
     public void setId(Guid id) {
         this.id = id;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getId();
     }
 
     public ServiceType getServiceType() {

@@ -59,7 +59,7 @@ import org.ovirt.engine.core.compat.Guid;
                         + "and s.externalSystem.externalSystemType in :systemType")
 })
 
-public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
+public class Step implements IVdcQueryable, BusinessEntity<Guid> {
 
     /**
      * Automatic generated serial version ID

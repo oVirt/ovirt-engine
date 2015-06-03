@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-public class OvfEntityData extends IVdcQueryable implements Serializable {
+public class OvfEntityData implements IVdcQueryable {
     private static final long serialVersionUID = 3376648147702972152L;
 
     private Guid entityId;
@@ -47,6 +45,7 @@ public class OvfEntityData extends IVdcQueryable implements Serializable {
         this.entityId = entityId;
     }
 
+    @Override
     public Object getQueryableId() {
         return getEntityId();
     }

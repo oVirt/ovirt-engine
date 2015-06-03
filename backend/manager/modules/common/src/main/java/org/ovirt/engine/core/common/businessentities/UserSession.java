@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class UserSession extends IVdcQueryable implements Serializable {
+public class UserSession implements IVdcQueryable {
 
     private long id;
     private String userName;

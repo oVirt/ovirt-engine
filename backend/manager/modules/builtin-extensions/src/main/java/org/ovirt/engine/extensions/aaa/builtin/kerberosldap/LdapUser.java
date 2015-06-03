@@ -1,6 +1,5 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.StringHelper;
 
-public class LdapUser extends IVdcQueryable implements Serializable {
+public class LdapUser implements IVdcQueryable {
     // TODO - LocalAdministrative permissions ??? up to Miki to decide what it
     // is
     // TODO - Note ??? (Miki)

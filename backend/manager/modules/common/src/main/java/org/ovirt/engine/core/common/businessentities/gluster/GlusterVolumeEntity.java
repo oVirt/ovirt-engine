@@ -38,7 +38,7 @@ import org.ovirt.engine.core.compat.StringHelper;
  * @see GlusterVolumeOptionEntity
  * @see AccessProtocol
  */
-public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport {
+public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport {
     private static final long serialVersionUID = 2355384696827317277L;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { RemoveEntity.class })

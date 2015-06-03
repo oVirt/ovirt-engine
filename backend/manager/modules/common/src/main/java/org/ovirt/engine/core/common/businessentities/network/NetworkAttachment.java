@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class NetworkAttachment extends IVdcQueryable implements BusinessEntity<Guid> {
+public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -8052325342869681284L;
 

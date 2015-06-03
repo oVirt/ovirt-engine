@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -22,7 +20,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class Network extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, Nameable, Commented {
+public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Commented {
     private static final long serialVersionUID = 7357288865938773402L;
 
     private Guid id;

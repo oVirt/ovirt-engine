@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
-public class LdapGroup extends IVdcQueryable {
+public class LdapGroup implements IVdcQueryable {
     private static final long serialVersionUID = 6717840754119287059L;
 
     private String id;

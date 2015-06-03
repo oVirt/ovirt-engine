@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
 @SuppressWarnings("serial")
 @JsonTypeInfo(use = Id.CLASS, include = As.PROPERTY)
-public abstract class JsonIVdcQueryableMixIn extends IVdcQueryable {
+public abstract class JsonIVdcQueryableMixIn implements IVdcQueryable {
 
     @JsonIgnore
     public abstract Object getQueryableId();

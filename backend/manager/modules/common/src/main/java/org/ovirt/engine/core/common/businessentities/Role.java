@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class Role extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
+public class Role implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 1487620954798772886L;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)

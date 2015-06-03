@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 /**
  * A Pair that extends the {@link IVdcQueryable} class, to enable returning a Pair as the return value of a Query.
  */
-public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> extends IVdcQueryable {
+public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> implements IVdcQueryable {
     private static final long serialVersionUID = -8894728003078425184L;
 
     private Pair<T, K> pair;

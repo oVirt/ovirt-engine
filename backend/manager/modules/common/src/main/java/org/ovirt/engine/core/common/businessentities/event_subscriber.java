@@ -1,14 +1,12 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import org.hibernate.validator.constraints.Email;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 
-public class event_subscriber extends IVdcQueryable implements Serializable {
+public class event_subscriber implements IVdcQueryable {
     private static final long serialVersionUID = 5899827011779820180L;
 
     private event_subscriber_id id;

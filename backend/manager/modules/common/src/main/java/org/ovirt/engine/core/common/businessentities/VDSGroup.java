@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +20,7 @@ import org.ovirt.engine.core.compat.Version;
 
 @ValidVdsGroup(groups = { CreateEntity.class })
 @ValidSerialNumberPolicy(groups = {CreateEntity.class, UpdateEntity.class})
-public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>,
+public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStoragePool<Guid>,
         Nameable, Commented, HasSerialNumberPolicy, HasMigrationOptions {
 
     private static final long serialVersionUID = 5659359762655478095L;

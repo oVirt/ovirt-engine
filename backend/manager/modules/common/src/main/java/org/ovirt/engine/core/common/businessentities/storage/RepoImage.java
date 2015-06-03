@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -9,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * An entity class for repository files meta data. Using for caching VDSM list fetching results.
  */
-public class RepoImage extends IVdcQueryable implements Serializable {
+public class RepoImage implements IVdcQueryable {
     private static final long serialVersionUID = 566928138057530047L;
     private Guid storagePoolId;
     private Guid repoDomainId;

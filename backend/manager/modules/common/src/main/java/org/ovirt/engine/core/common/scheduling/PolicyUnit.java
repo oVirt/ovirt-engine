@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.scheduling;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -11,7 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * Policy unit BE represents scheduling unit with the following methods: filter, score & balance.
  */
-public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, Serializable, Nameable {
+public class PolicyUnit implements BusinessEntity<Guid>, IVdcQueryable, Nameable {
     private static final long serialVersionUID = 7739555364433134921L;
 
     /**

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterGeoRepSession extends IVdcQueryable implements BusinessEntityWithStatus<Guid, GeoRepSessionStatus>{
+public class GlusterGeoRepSession implements IVdcQueryable, BusinessEntityWithStatus<Guid, GeoRepSessionStatus>{
 
     private static final long serialVersionUID = 1L;
 

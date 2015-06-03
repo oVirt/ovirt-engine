@@ -50,6 +50,11 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
         return vmId;
     }
 
+    @Override
+    public Object getQueryableId() {
+        return getVmId();
+    }
+
     public void setVmTemplateId(Guid vmTemplateId) {
         this.vmTemplateId = vmTemplateId;
     }

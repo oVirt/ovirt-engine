@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.Date;
 import java.util.List;
 
-public class Erratum extends IVdcQueryable implements BusinessEntity<String> {
+public class Erratum implements IVdcQueryable, BusinessEntity<String> {
 
     private static final long serialVersionUID = 1297381071010863377L;
 
@@ -27,6 +27,7 @@ public class Erratum extends IVdcQueryable implements BusinessEntity<String> {
         this.id = id;
     }
 
+    @Override
     public Object getQueryableId() {
         return getId();
     }

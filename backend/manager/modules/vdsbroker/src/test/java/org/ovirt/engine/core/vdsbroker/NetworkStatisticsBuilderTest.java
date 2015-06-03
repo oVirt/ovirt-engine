@@ -264,6 +264,11 @@ public class NetworkStatisticsBuilderTest {
 
     private static class TestableNetworkInterface extends NetworkInterface<NetworkStatistics> {
         private static final long serialVersionUID = 3479879927558781006L;
+
+        @Override
+        public Object getQueryableId() {
+            return new Object();
+        }
     }
 
     private static class TestableNetworkStatistics extends NetworkStatistics {

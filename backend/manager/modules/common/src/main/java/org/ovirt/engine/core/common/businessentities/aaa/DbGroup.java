@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class DbGroup extends IVdcQueryable {
+public class DbGroup implements IVdcQueryable {
     private static final long serialVersionUID = 6717840754119287059L;
 
     /**

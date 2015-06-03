@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -17,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 
-public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWithStatus<Guid, VDSStatus>, HasStoragePool<Guid>, Commented, Nameable, Cloneable {
+public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSStatus>, HasStoragePool<Guid>, Commented, Nameable, Cloneable {
     private static final long serialVersionUID = -7893976203379789926L;
     private VdsStatic vdsStatic;
     private VdsDynamic vdsDynamic;

@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterVolumeSnapshotConfig extends IVdcQueryable {
+public class GlusterVolumeSnapshotConfig implements IVdcQueryable {
     private static final long serialVersionUID = 3432543544365L;
     private Guid clusterId;
     private Guid volumeId;
@@ -32,6 +32,11 @@ public class GlusterVolumeSnapshotConfig extends IVdcQueryable {
 
     public Guid getVolumeId() {
         return volumeId;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getVolumeId();
     }
 
     public void setVolumeId(Guid volumeId) {

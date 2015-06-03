@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterVolumeSnapshotEntity extends IVdcQueryable implements BusinessEntityWithStatus<Guid, GlusterSnapshotStatus> {
+public class GlusterVolumeSnapshotEntity implements IVdcQueryable, BusinessEntityWithStatus<Guid, GlusterSnapshotStatus> {
     private static final long serialVersionUID = 2355384696827317288L;
     private Guid snapshotId;
     private Guid clusterId;

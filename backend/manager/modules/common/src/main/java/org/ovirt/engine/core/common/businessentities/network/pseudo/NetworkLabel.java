@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities.network.pseudo;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
-public class NetworkLabel extends IVdcQueryable {
+public class NetworkLabel implements IVdcQueryable {
 
     private static final long serialVersionUID = -2906392515766833212L;
     private String id;
@@ -22,6 +22,7 @@ public class NetworkLabel extends IVdcQueryable {
         this.id = id;
     }
 
+    @Override
     public Object getQueryableId() {
         return getId();
     }

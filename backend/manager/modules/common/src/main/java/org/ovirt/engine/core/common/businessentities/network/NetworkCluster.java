@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithStatus<NetworkClusterId, NetworkStatus> {
+public class NetworkCluster implements IVdcQueryable, BusinessEntityWithStatus<NetworkClusterId, NetworkStatus> {
     private static final long serialVersionUID = -4900811332744926545L;
 
     private NetworkClusterId id;

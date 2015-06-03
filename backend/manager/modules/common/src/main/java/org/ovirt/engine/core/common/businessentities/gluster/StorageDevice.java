@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 /*
  * StorageDevice represents storage devices attached the hosts. It can be a disk or partition or pvs, lvs, etc.
  */
-public class StorageDevice extends IVdcQueryable implements BusinessEntity<Guid> {
+public class StorageDevice implements IVdcQueryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -1613957987974435240L;
 

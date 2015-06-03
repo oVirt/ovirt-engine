@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
@@ -8,7 +7,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AuditLog extends IVdcQueryable implements Serializable {
+public class AuditLog implements IVdcQueryable {
     private static final long serialVersionUID = -2808392095455280186L;
 
     private long auditLogId;

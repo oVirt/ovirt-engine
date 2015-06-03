@@ -57,7 +57,7 @@ import org.ovirt.engine.core.compat.Guid;
                 query = "delete from Job j where j.autoCleared = true and j.endTime < :sinceDate "
                         + "and j.status in (:statuses)")
 })
-public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
+public class Job implements IVdcQueryable, BusinessEntity<Guid> {
 
     /**
      * Automatic generated serial version ID

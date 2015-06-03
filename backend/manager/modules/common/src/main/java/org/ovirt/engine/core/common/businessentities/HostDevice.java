@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class HostDevice extends IVdcQueryable implements BusinessEntity<HostDeviceId>, Nameable {
+public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, Nameable {
 
     private Guid hostId;
     private String deviceName;

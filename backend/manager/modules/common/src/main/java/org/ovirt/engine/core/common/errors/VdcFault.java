@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.common.errors;
 
 import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
-public class VdcFault extends IVdcQueryable {
+public class VdcFault implements IVdcQueryable {
     private static final long serialVersionUID = -8004317251171749327L;
     private String privateSessionID;
 
@@ -78,6 +79,11 @@ public class VdcFault extends IVdcQueryable {
             ex = ex.getCause();
         }
         return result;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getMessage();
     }
 
 }

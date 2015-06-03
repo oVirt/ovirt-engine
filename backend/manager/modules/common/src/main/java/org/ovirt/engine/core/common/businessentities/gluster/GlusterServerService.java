@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * Represents a service on a gluster server
  */
-public class GlusterServerService extends IVdcQueryable implements BusinessEntity<Guid> {
+public class GlusterServerService implements IVdcQueryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = 108478798053613345L;
 

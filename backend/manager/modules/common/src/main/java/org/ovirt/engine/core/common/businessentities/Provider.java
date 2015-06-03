@@ -22,7 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
  * @param P
  *            The type of additional properties this provider holds.
  */
-public class Provider<P extends AdditionalProperties> extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
+public class Provider<P extends AdditionalProperties> implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
 
     private static final long serialVersionUID = 8279455368568715758L;
 

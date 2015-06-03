@@ -1,17 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmWatchdog extends IVdcQueryable implements Serializable {
-    public Object getQueryableId() {
-        return vmId;
-    }
+public class VmWatchdog implements IVdcQueryable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -4515288688595577429L;
     Guid vmId;
     Guid id;
@@ -26,6 +18,11 @@ public class VmWatchdog extends IVdcQueryable implements Serializable {
         setVmId(device.getVmId());
         setAction(VmWatchdogAction.getByName((String) device.getSpecParams().get("action")));
         setModel(VmWatchdogType.getByName((String) device.getSpecParams().get("model")));
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return vmId;
     }
 
     public Guid getVmId() {

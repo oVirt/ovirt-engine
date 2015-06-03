@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
+public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 1019016330475623259L;
 
     @NotNull(groups = { UpdateEntity.class, RemoveEntity.class })
@@ -102,6 +102,7 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
         this.description = description;
     }
 
+    @Override
     public Object getQueryableId() {
         return getId();
     }

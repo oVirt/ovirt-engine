@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
  * @see GlusterVolumeEntity
  * @see GlusterBrickStatus
  */
-public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport, Nameable {
+public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport, Nameable {
     private static final long serialVersionUID = 7119439284741452278L;
 
     @NotNull(message = "VALIDATION.GLUSTER.BRICK.ID.NOT_NULL", groups = { RemoveBrick.class })

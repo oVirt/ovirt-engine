@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class IscsiBond extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
+public class IscsiBond implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
 
     private static final long serialVersionUID = 6318808440502965971L;
 

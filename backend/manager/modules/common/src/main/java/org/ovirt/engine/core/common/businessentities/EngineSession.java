@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -11,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class EngineSession extends IVdcQueryable implements Serializable {
+public class EngineSession implements IVdcQueryable {
     private static final long serialVersionUID = 6964615561527013329L;
 
     private long id;

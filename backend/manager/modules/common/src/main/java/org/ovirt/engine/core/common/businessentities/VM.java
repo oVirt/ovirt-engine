@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,7 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-public class VM extends IVdcQueryable implements Serializable, BusinessEntityWithStatus<Guid, VMStatus>, HasStoragePool<Guid>, Nameable, Commented, Reasoned {
+public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatus>, HasStoragePool<Guid>, Nameable, Commented, Reasoned {
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
     private VmStatic vmStatic;

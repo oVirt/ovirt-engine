@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -10,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class HostNicVfsConfig extends IVdcQueryable implements Serializable, BusinessEntity<Guid> {
+public class HostNicVfsConfig implements IVdcQueryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = 2762897334386252961L;
 

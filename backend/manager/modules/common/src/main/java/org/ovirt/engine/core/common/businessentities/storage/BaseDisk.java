@@ -28,7 +28,7 @@ import org.ovirt.engine.core.compat.Guid;
  * image the Template represents).<br>
  * The active image can also be <code>null</code>, in case that it's missing but should be there.
  */
-public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
+public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
 
     /**
      * Needed for java serialization/deserialization mechanism.

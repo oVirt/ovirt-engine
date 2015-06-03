@@ -12,8 +12,8 @@ import org.ovirt.engine.core.compat.Guid;
  * <code>NetworkInterface</code> represents a network interface device.
  *
  */
-public abstract class NetworkInterface<T extends NetworkStatistics> extends IVdcQueryable
-        implements BusinessEntity<Guid>, Nameable {
+public abstract class NetworkInterface<T extends NetworkStatistics>
+        implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = -4926026587466645571L;
 
     protected Guid id;

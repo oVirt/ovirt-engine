@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.Min;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -10,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * <code>QuotaStorage</code> is a business entity that reflects storage limitation.
  */
-public class QuotaStorage extends IVdcQueryable implements Serializable {
+public class QuotaStorage implements IVdcQueryable  {
 
     public static final Long UNLIMITED = -1L;
     /**

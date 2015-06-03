@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.Min;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -10,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * The <code>QuotaVdsGroup</code> is a business entity that reflects vdsGroup limitation.
  */
-public class QuotaVdsGroup extends IVdcQueryable implements Serializable {
+public class QuotaVdsGroup implements IVdcQueryable {
 
     public static final Long UNLIMITED_MEM = -1L;
     public static final Integer UNLIMITED_VCPU = -1;

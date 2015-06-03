@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
  * @see GlusterHookStage
  * @see GlusterHookStatus
  */
-public class GlusterHookEntity extends IVdcQueryable implements BusinessEntity<Guid> {
+public class GlusterHookEntity implements IVdcQueryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -1139174348695506810L;
 

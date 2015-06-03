@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
  * This BE holds both managed (disk, network interface etc.) and unmanaged (sound, video etc.) devices.
  */
 
-public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId>, Comparable<VmDevice> {
+public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comparable<VmDevice> {
 
     /**
      * Needed for java serialization/deserialization mechanism.

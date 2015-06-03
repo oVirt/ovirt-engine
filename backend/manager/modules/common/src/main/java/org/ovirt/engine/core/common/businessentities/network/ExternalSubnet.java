@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -12,7 +11,7 @@ import org.ovirt.engine.core.common.validation.annotation.Cidr;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 
-public class ExternalSubnet extends IVdcQueryable implements Serializable, Nameable {
+public class ExternalSubnet implements IVdcQueryable, Nameable {
 
     private static final long serialVersionUID = 7357288865938773402L;
 

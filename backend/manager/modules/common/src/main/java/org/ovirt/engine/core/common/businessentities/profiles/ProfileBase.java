@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.businessentities.profiles;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -16,7 +14,7 @@ import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class ProfileBase extends IVdcQueryable implements BusinessEntity<Guid>, Nameable, Serializable {
+public abstract class ProfileBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 1055016330475623255L;
 
     @NotNull(groups = { UpdateEntity.class, RemoveEntity.class })

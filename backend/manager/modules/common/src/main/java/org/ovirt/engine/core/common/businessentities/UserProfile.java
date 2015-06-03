@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class UserProfile  extends IVdcQueryable {
+public class UserProfile  implements IVdcQueryable {
     private static final long serialVersionUID = 7251907866347833460L;
 
     private Guid id;
@@ -22,6 +22,11 @@ public class UserProfile  extends IVdcQueryable {
 
     public void setId(Guid id) {
         this.id = id;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getUserId();
     }
 
     public Guid getUserId() {

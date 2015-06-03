@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StorageDomain extends IVdcQueryable implements BusinessEntityWithStatus<Guid, StorageDomainStatus>, Nameable, Commented {
+public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Guid, StorageDomainStatus>, Nameable, Commented {
     private static final long serialVersionUID = -6162192446628804305L;
 
     public StorageDomain() {

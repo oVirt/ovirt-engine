@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
  * Object which represents host NUMA node information
  *
  */
-public class VdsNumaNode extends IVdcQueryable implements Serializable, BusinessEntity<Guid> {
+public class VdsNumaNode implements IVdcQueryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -683066053231559224L;
 

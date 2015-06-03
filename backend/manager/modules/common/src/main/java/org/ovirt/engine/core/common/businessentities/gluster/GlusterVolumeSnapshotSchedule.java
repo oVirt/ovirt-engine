@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterVolumeSnapshotSchedule extends IVdcQueryable {
+public class GlusterVolumeSnapshotSchedule implements IVdcQueryable {
     private static final long serialVersionUID = 2L;
     private Guid clusterId;
     private Guid volumeId;
@@ -44,6 +44,11 @@ public class GlusterVolumeSnapshotSchedule extends IVdcQueryable {
 
     public void setJobId(String id) {
         this.jobId = id;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getJobId();
     }
 
     public String getSnapshotNamePrefix() {

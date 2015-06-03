@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
-public class DirectoryEntry extends IVdcQueryable {
+public class DirectoryEntry implements IVdcQueryable {
     private static final long serialVersionUID = -5689096270467866486L;
 
     /**

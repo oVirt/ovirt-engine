@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.scheduling;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -19,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
  * Each VM can be associated with several groups.<br>
  * The VM will be scheduled according to its affinity groups (properties and members) rules
  */
-public class AffinityGroup extends IVdcQueryable implements BusinessEntity<Guid>, Serializable, Nameable {
+public class AffinityGroup implements BusinessEntity<Guid>, IVdcQueryable, Nameable {
     private static final long serialVersionUID = 6644745275483134922L;
 
     private Guid id;
