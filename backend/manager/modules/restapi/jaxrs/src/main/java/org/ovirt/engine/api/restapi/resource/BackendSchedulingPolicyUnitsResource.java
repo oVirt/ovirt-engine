@@ -2,17 +2,13 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.SchedulingPolicyUnit;
 import org.ovirt.engine.api.model.SchedulingPolicyUnits;
 import org.ovirt.engine.api.resource.SchedulingPolicyUnitResource;
 import org.ovirt.engine.api.resource.SchedulingPolicyUnitsResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.common.scheduling.parameters.RemoveExternalPolicyUnitParameters;
 
 public class BackendSchedulingPolicyUnitsResource extends AbstractBackendCollectionResource<SchedulingPolicyUnit, PolicyUnit> implements SchedulingPolicyUnitsResource {
 
@@ -33,11 +29,6 @@ public class BackendSchedulingPolicyUnitsResource extends AbstractBackendCollect
 
     public List<PolicyUnit> getCollection() {
         return getBackendCollection(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase());
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveExternalPolicyUnit, new RemoveExternalPolicyUnitParameters(asGuid(id)));
     }
 
     @Override
