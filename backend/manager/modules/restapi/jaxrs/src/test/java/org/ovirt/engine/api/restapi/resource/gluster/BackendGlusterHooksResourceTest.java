@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
-
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -18,8 +17,6 @@ import org.ovirt.engine.api.model.GlusterHook;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.api.restapi.resource.BackendClusterResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -192,16 +189,4 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
                 queryResult).anyTimes();
 
     }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveGlusterHook,
-                GlusterHookManageParameters.class,
-                new String[] { "HookId" },
-                new Object[] { GUIDS[0] },
-                true,
-                true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
 }

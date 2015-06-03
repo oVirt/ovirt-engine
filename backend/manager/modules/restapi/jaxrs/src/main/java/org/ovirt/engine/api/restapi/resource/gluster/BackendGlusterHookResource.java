@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookContentQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
+
 /**
  * Implementation of the "glusterhooks/{id}" resource
  */
@@ -109,5 +110,11 @@ public class BackendGlusterHookResource
 
     public String getId() {
        return this.id;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveGlusterHook, new GlusterHookManageParameters(guid));
     }
 }

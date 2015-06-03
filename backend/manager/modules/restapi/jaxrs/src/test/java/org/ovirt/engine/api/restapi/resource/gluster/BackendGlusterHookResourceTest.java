@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterHookContentQueryParam
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
-
 public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTest<GlusterHook, GlusterHookEntity, BackendGlusterHookResource> {
 
     private BackendGlusterHooksResource hooksResourceMock;
@@ -106,6 +105,21 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
         verifyActionResponse(resource.disable(action));
     }
 
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveGlusterHook,
+                GlusterHookManageParameters.class,
+                new String[] { "HookId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz,
@@ -127,7 +141,6 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
         return hookEntity;
     }
 
-
     /**
      * Overridden as {@link GlusterHookEntity} does not have description field
      */
@@ -139,7 +152,6 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
         assertEquals(CONTENT, model.getContent());
         verifyLinks(model);
     }
-
 
     protected void setUpGetEntityExpectations(int times) throws Exception {
         setUpGetEntityExpectations(times, false);
@@ -161,6 +173,4 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
             }
         }
     }
-
-
 }

@@ -2,16 +2,12 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.GlusterHook;
 import org.ovirt.engine.api.model.GlusterHooks;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
@@ -60,13 +56,6 @@ public class BackendGlusterHooksResource
     protected GlusterHook addParents(GlusterHook hook) {
         hook.setCluster(parent.get());
         return hook;
-    }
-
-
-
-    @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveGlusterHook, new GlusterHookManageParameters(asGuid(id)));
     }
 
     @Override
