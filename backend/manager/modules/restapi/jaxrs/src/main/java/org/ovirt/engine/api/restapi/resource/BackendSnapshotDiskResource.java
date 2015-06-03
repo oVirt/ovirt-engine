@@ -4,6 +4,11 @@ import javax.ws.rs.WebApplicationException;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.resource.SnapshotDiskResource;
+import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+
 import javax.ws.rs.core.Response;
 
 public class BackendSnapshotDiskResource extends BackendDiskResource implements SnapshotDiskResource {
@@ -30,5 +35,11 @@ public class BackendSnapshotDiskResource extends BackendDiskResource implements 
     @Override
     protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         return model;
+    }
+
+    @Override
+    public Response remove() {
+        DiskImage diskImage = (DiskImage) DiskMapper.map(get(), null);
+        return performAction(VdcActionType.RemoveDiskSnapshots, new RemoveDiskSnapshotsParameters(diskImage.getImageId()));
     }
 }

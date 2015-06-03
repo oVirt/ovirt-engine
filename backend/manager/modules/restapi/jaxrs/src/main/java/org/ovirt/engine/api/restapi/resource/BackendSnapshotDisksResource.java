@@ -6,12 +6,8 @@ import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.resource.SnapshotDiskResource;
 import org.ovirt.engine.api.resource.SnapshotDisksResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
-import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-
-import javax.ws.rs.core.Response;
 
 public class BackendSnapshotDisksResource extends AbstractBackendCollectionResource<Disk, Snapshot>  implements SnapshotDisksResource {
 
@@ -43,16 +39,7 @@ public class BackendSnapshotDisksResource extends AbstractBackendCollectionResou
 
     @Override
     public SnapshotDiskResource getDiskSubResource(String id) {
-        return new BackendSnapshotDiskResource(id, this);
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        getEntity(id); //verifies that entity exists, returns 404 otherwise.
-
-        DiskImage diskImage = (DiskImage) DiskMapper.map(getDiskSubResource(id).get(), null);
-
-        return performAction(VdcActionType.RemoveDiskSnapshots, new RemoveDiskSnapshotsParameters(diskImage.getImageId()));
+        return inject(new BackendSnapshotDiskResource(id, this));
     }
 
     @Override
