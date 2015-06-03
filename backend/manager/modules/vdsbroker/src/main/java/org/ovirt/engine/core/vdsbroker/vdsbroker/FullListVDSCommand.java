@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 
-public class FullListVdsCommand<P extends FullListVDSCommandParameters> extends VdsBrokerCommand<P> {
+public class FullListVDSCommand<P extends FullListVDSCommandParameters> extends VdsBrokerCommand<P> {
     private VMListReturnForXmlRpc fullVmListReturn;
 
-    public FullListVdsCommand(P parameters) {
+    public FullListVDSCommand(P parameters) {
         super(parameters, parameters.getVds());
     }
 
@@ -35,9 +35,5 @@ public class FullListVdsCommand<P extends FullListVDSCommandParameters> extends 
     @Override
     protected boolean getIsPrintReturnValue() {
         return false;
-    }
-
-    @Override
-    protected void logToAudit(){
     }
 }

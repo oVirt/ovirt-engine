@@ -35,13 +35,14 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.FullListVdsCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
@@ -626,8 +627,13 @@ public class VmsMonitoring {
         // TODO refactor commands to use vdsId only - the whole vds object here is useless
         VDS vds = new VDS();
         vds.setId(vdsManager.getVdsId());
-        return (Map[]) (new FullListVdsCommand<FullListVDSCommandParameters>(
-                new FullListVDSCommandParameters(vds, vmsToUpdate)).executeWithReturnValue());
+        Map[] result = {};
+        VDSReturnValue vdsReturnValue = getResourceManager().runVdsCommand(VDSCommandType.FullList,
+                new FullListVDSCommandParameters(vds, vmsToUpdate));
+        if (vdsReturnValue.getSucceeded()) {
+            result = (Map[]) (vdsReturnValue.getReturnValue());
+        }
+        return result;
     }
 
     private boolean shouldLogDeviceDetails(String deviceType) {

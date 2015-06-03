@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.FullListVdsCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,8 +93,9 @@ public class MergeStatusCommand<T extends MergeParameters>
         List<String> vmIds = new ArrayList<>();
         vmIds.add(getParameters().getVmId().toString());
         VDS vds = getVdsDao().get(getParameters().getVdsId());
-        Map[] vms = (Map[]) (new FullListVdsCommand<>(
-                new FullListVDSCommandParameters(vds, vmIds)).executeWithReturnValue());
+        Map[] vms = (Map[]) runVdsCommand(
+                VDSCommandType.FullList,
+                new FullListVDSCommandParameters(vds, vmIds)).getReturnValue();
 
         if (vms == null || vms.length == 0) {
             log.error("Failed to retrieve VM information");
