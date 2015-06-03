@@ -31,6 +31,7 @@ from otopi import filetransaction, plugin, transaction, util
 from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import dialog
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine import vdcoption
@@ -177,6 +178,39 @@ class Plugin(plugin.PluginBase):
             )
         )
 
+    _PKI_ENTRIES = (
+        {
+            'name': 'engine',
+            'extract': False,
+            'user': osetupcons.SystemEnv.USER_ENGINE,
+            'keepKey': True,
+        },
+        {
+            'name': 'jboss',
+            'extract': False,
+            'user': osetupcons.SystemEnv.USER_ENGINE,
+            'keepKey': False,
+        },
+        {
+            'name': 'websocket-proxy',
+            'extract': True,
+            'user': osetupcons.SystemEnv.USER_ENGINE,
+            'keepKey': False,
+        },
+        {
+            'name': 'apache',
+            'extract': True,
+            'user': oengcommcons.SystemEnv.USER_ROOT,
+            'keepKey': False,
+        },
+        {
+            'name': 'reports',
+            'extract': True,
+            'user': oengcommcons.SystemEnv.USER_ROOT,
+            'keepKey': False,
+        },
+    )
+
     def _expired(self, x509):
         #
         # LEGACY NOTE
@@ -194,39 +228,43 @@ class Plugin(plugin.PluginBase):
             )
         )
 
+    def _ok_to_renew_cert(self, pkcs12, name, extract):
+        res = False
+        if os.path.exists(pkcs12):
+            x509 = self._extractPKCS12Certificate(pkcs12)
+            if self._expired(x509):
+                if not extract:
+                    res = True
+                else:
+                    if x509.verify(
+                        X509.load_cert(
+                            oenginecons.FileLocations.
+                            OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+                        ).get_pubkey()
+                    ):
+                        self.logger.debug(
+                            'certificate is an internal certificate'
+                        )
+
+                        # sanity check, make sure user did not manually
+                        # change cert
+                        x509x = X509.load_cert(
+                            os.path.join(
+                                (
+                                    oenginecons.FileLocations.
+                                    OVIRT_ENGINE_PKICERTSDIR
+                                ),
+                                '%s.cer' % name,
+                            )
+                        )
+
+                        if x509x.as_pem() == x509.as_pem():
+                            self.logger.debug('certificate is sane')
+                            res = True
+        return res
+
     def _enrollCertificates(self, renew, uninstall_files):
-        for entry in (
-            {
-                'name': 'engine',
-                'extract': False,
-                'user': osetupcons.SystemEnv.USER_ENGINE,
-                'keepKey': True,
-            },
-            {
-                'name': 'jboss',
-                'extract': False,
-                'user': osetupcons.SystemEnv.USER_ENGINE,
-                'keepKey': False,
-            },
-            {
-                'name': 'websocket-proxy',
-                'extract': True,
-                'user': osetupcons.SystemEnv.USER_ENGINE,
-                'keepKey': False,
-            },
-            {
-                'name': 'apache',
-                'extract': True,
-                'user': oengcommcons.SystemEnv.USER_ROOT,
-                'keepKey': False,
-            },
-            {
-                'name': 'reports',
-                'extract': True,
-                'user': oengcommcons.SystemEnv.USER_ROOT,
-                'keepKey': False,
-            },
-        ):
+        for entry in self._PKI_ENTRIES:
             self.logger.debug(
                 "processing: '%s'[renew=%s]",
                 entry['name'],
@@ -248,36 +286,11 @@ class Plugin(plugin.PluginBase):
                 enroll = not renew
 
             if not enroll:
-                x509 = self._extractPKCS12Certificate(pkcs12)
-                if self._expired(x509):
-                    if not entry['extract']:
-                        enroll = True
-                    else:
-                        if x509.verify(
-                            X509.load_cert(
-                                oenginecons.FileLocations.
-                                OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-                            ).get_pubkey()
-                        ):
-                            self.logger.debug(
-                                'certificate is an internal certificate'
-                            )
-
-                            # sanity check, make sure user did not manually
-                            # change cert
-                            x509x = X509.load_cert(
-                                os.path.join(
-                                    (
-                                        oenginecons.FileLocations.
-                                        OVIRT_ENGINE_PKICERTSDIR
-                                    ),
-                                    '%s.cer' % entry['name'],
-                                )
-                            )
-
-                            if x509x.as_pem() == x509.as_pem():
-                                self.logger.debug('certificate is sane')
-                                enroll = True
+                enroll = self._ok_to_renew_cert(
+                    pkcs12,
+                    entry['name'],
+                    entry['extract']
+                )
 
                 if enroll:
                     self.logger.info(
@@ -336,6 +349,10 @@ class Plugin(plugin.PluginBase):
             oenginecons.PKIEnv.ORG,
             None
         )
+        self.environment.setdefault(
+            oenginecons.PKIEnv.RENEW,
+            None
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -379,13 +396,65 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            oengcommcons.Stages.DIALOG_TITLES_E_PKI,
+        ),
+        after=(
+            osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
+            oengcommcons.Stages.DIALOG_TITLES_S_PKI,
+        ),
         condition=lambda self: (
             self.environment[oenginecons.CoreEnv.ENABLE] and
             os.path.exists(
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
             )
         ),
+    )
+    def _customization_upgrade(self):
+        if True in [
+            self._expired(
+                X509.load_cert(
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+                )
+            )
+        ] + [
+            self._ok_to_renew_cert(
+                os.path.join(
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKIKEYSDIR,
+                    '%s.p12' % entry['name']
+                ),
+                entry['name'],
+                entry['extract']
+            )
+            for entry in self._PKI_ENTRIES
+        ]:
+            if self.environment[oenginecons.PKIEnv.RENEW] is None:
+                self.environment[
+                    oenginecons.PKIEnv.RENEW
+                ] = dialog.queryBoolean(
+                    dialog=self.dialog,
+                    name='OVESETUP_RENEW_PKI',
+                    note=_(
+                        'One or more of the certificates should be renewed, '
+                        'because they expire soon or include an invalid '
+                        'expiry date, which is rejected by recent browsers.\n'
+                        'See {url} for more details.\n'
+                        'Renew certificates? '
+                        '(@VALUES@) [@DEFAULT@]: '
+                    ).format(
+                        url=(
+                            'http://www.ovirt.org/OVirt_3.5.3_Release_Notes'
+                            '#PKI'
+                        ),
+                    ),
+                    prompt=True,
+                    default=None,
+                )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: self.environment[oenginecons.PKIEnv.RENEW],
         before=(
             oenginecons.Stages.CA_AVAILABLE,
         ),
