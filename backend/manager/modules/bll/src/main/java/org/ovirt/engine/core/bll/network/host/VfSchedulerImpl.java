@@ -47,8 +47,12 @@ public class VfSchedulerImpl implements VfScheduler {
     public List<String> validatePassthroughVnics(Guid vmId, Guid hostId,
             List<VmNetworkInterface> vnics) {
 
-        Map<Guid, Map<Guid, String>> hostToVnicToVfMap = new HashMap<>();
-        vmToHostToVnicToVfMap.put(vmId, hostToVnicToVfMap);
+        Map<Guid, Map<Guid, String>> hostToVnicToVfMap = vmToHostToVnicToVfMap.get(vmId);
+        if (hostToVnicToVfMap == null) {
+            hostToVnicToVfMap = new HashMap<>();
+            vmToHostToVnicToVfMap.put(vmId, hostToVnicToVfMap);
+        }
+
         Map<Guid, List<String>> nicToUsedVfs = new HashMap<>();
         Map<Guid, VdsNetworkInterface> fetchedNics = new HashMap<>();
         List<String> problematicVnics = new ArrayList<>();
