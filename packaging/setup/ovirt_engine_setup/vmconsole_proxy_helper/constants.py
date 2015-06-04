@@ -47,6 +47,9 @@ class Const(object):
 
     OVIRT_VMCONSOLE_GROUP = 'ovirt-vmconsole'
 
+    # this is also used for SSH keys enrollment
+    OVIRT_VMCONSOLE_PROXY_SERVICE_NAME = 'ovirt-vmconsole-proxy'
+
 
 @util.export
 class FileLocations(object):
@@ -111,6 +114,24 @@ class FileLocations(object):
 
     OVIRT_VMCONSOLE_PROXY_ENGINE_HELPER = \
         vmpconfig.VMCONSOLE_PROXY_HELPER_PATH
+
+    OVIRT_VMCONSOLE_PROXY_PKIDIR = \
+        '/etc/pki/ovirt-vmconsole/'
+
+    OVIRT_VMCONSOLE_PKI_CA_PUB = os.path.join(
+        OVIRT_VMCONSOLE_PROXY_PKIDIR,
+        'ca.pub'
+    )
+
+    OVIRT_VMCONSOLE_PKI_PROXY_HOST_CERT = os.path.join(
+        OVIRT_VMCONSOLE_PROXY_PKIDIR,
+        'proxy-ssh_host_rsa-cert.pub'
+    )
+
+    OVIRT_VMCONSOLE_PKI_PROXY_HOST_KEY = os.path.join(
+        OVIRT_VMCONSOLE_PROXY_PKIDIR,
+        'proxy-ssh_host_rsa'
+    )
 
 
 @util.export

@@ -296,5 +296,254 @@ class Plugin(plugin.PluginBase):
                 )
             )
 
+    def _enrollSSHKeys(self, host_mode, uninstall_files, pki_artifacts):
+        suffix = 'host' if host_mode else 'user'
+        name = '%s-%s' % (
+            ovmpcons.Const.VMCONSOLE_PROXY_PKI_NAME,
+            suffix
+        )
+
+        self.execute(
+            (
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
+                '--name=%s' % name,
+                '--password=%s' % (
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
+                ),
+                '--subject=/C=%s/O=%s/CN=%s' % (
+                    self._subjectComponentEscape(
+                        self.environment[oenginecons.PKIEnv.COUNTRY],
+                    ),
+                    self._subjectComponentEscape(
+                        self.environment[oenginecons.PKIEnv.ORG],
+                    ),
+                    self._subjectComponentEscape(
+                        name
+                    ),
+                ),
+            ),
+        )
+
+        self.execute(
+            (
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_SSH_ENROLL,
+                '--name=%s' % name,
+                '--id=%s' % name,
+                '--principals=%s' % (
+                    self._subjectComponentEscape(
+                        self.environment[osetupcons.ConfigEnv.FQDN]
+                        if host_mode else
+                        ovmpcons.Const.OVIRT_VMCONSOLE_PROXY_SERVICE_NAME,
+                    ),
+                ),
+            ) + (
+                ('--host',) if host_mode else ()
+            ),
+        )
+
+        cert = os.path.join(
+            ovmpcons.FileLocations.OVIRT_ENGINE_PKICERTSDIR,
+            '%s-cert.pub' % name
+        )
+        uninstall_files.append(cert)
+
+        # prepare final path in the engine pki directory.
+        # copy in the vmconsole pki directory later
+        pki_artifacts.append(
+            Artifact(
+                path=cert,
+                mode=0o644,
+                owner=ovmpcons.Const.OVIRT_VMCONSOLE_USER,
+                group=ovmpcons.Const.OVIRT_VMCONSOLE_GROUP,
+                destination='proxy-ssh_%s_rsa-cert.pub' % suffix,
+            )
+        )
+
+    def _expandPKCS12SSHKey(self, host_mode, uninstall_files, pki_artifacts):
+        suffix = 'host' if host_mode else 'user'
+
+        rc, key, stderr = self.execute(
+            args=(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                '--name=%s-%s' % (
+                    ovmpcons.Const.VMCONSOLE_PROXY_PKI_NAME,
+                    suffix,
+                ),
+                '--passin=%s' % (
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
+                ),
+                '--key=-',
+            ),
+        )
+
+        key_file = Artifact(
+            path=os.path.join(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKIDIR,
+                'proxy-ssh_%s_rsa' % suffix,
+            ),
+            mode=0o600,
+            owner=ovmpcons.Const.OVIRT_VMCONSOLE_USER,
+            group=ovmpcons.Const.OVIRT_VMCONSOLE_GROUP,
+            destination=None,
+        )
+
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            filetransaction.FileTransaction(
+                name=key_file.path,
+                content=key,
+                mode=key_file.mode,
+                modifiedList=uninstall_files,
+            )
+        )
+
+        pki_artifacts.append(key_file)
+
+    def _expandSSHCAKey(self, uninstall_files, pki_artifacts):
+        ca_file = Artifact(
+            path=os.path.join(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKIDIR,
+                'ca.pub',
+            ),
+            mode=0o644,
+            owner=None,
+            group=None,
+            destination=None,
+        )
+
+        pipe = [
+            {
+                'args': (
+                    self.command.get('openssl'),
+                    'x509',
+                    '-in',
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+                    '-noout',
+                    '-pubkey',
+                ),
+            },
+            {
+                'args': (
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_SSH_KEYGEN,
+                    '-i',
+                    '-m',
+                    'PKCS8',
+                    '-f',
+                    '/proc/self/fd/0',
+                ),
+            },
+        ]
+
+        res = self.executePipe(pipe)
+
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            filetransaction.FileTransaction(
+                name=ca_file.path,
+                content=res['stdout'],
+                mode=ca_file.mode,
+                modifiedList=uninstall_files,
+            )
+        )
+
+        pki_artifacts.append(ca_file)
+
+    def _copyVMConsoleProxyPKIArtifacts(self, pki_artifacts):
+        if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+            for artifact in pki_artifacts:
+                self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                    CopyFileInDirTransaction(
+                        src_name=artifact.path,
+                        dst_dir=ovmpcons.FileLocations.
+                        OVIRT_VMCONSOLE_PROXY_PKIDIR,
+                        mode=artifact.mode,
+                        owner=artifact.owner,
+                        group=artifact.group,
+                    )
+                )
+        else:
+            install_cmd = ''.join(
+                get_install_command(
+                    artifact=artifact,
+                    destination_path=ovmpcons.FileLocations.
+                    OVIRT_VMCONSOLE_PROXY_PKIDIR
+                )
+                for artifact in pki_artifacts
+            )
+
+            self.dialog.note(
+                _(
+                    'Manual intervention is required, because '
+                    'setup was run under unprivileged user.\n'
+                    'Cannot copy ovirt-vmconsole PKI artifacts'
+                    'into the proper PKI directory.\n'
+                    'Please make sure to run as root:\n'
+                    '\n'
+                    '{install_cmd}'.format(
+                        install_cmd=install_cmd
+                    )
+                )
+            )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        name=ovmpcons.Stages.CONFIG_VMCONSOLE_PKI_PROXY,
+        after=(
+            ovmpcons.Stages.CA_AVAILABLE,
+        ),
+        condition=lambda self: (
+            self.environment[
+                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
+            ] and os.path.exists(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            )
+        ),
+    )
+    def _miscPKIProxy(self):
+        self._enabled = True
+        uninstall_files = []
+        # files to copy in /etc/pki/ovirt-vmconsole
+        pki_artifacts = []
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].createGroup(
+            group='ca_pki_vmp_proxy',
+            description='VMP PKI Proxy keys',
+            optional=True,
+        ).addFiles(
+            group='ca_pki_vmp_proxy',
+            fileList=uninstall_files,
+        )
+
+        self.logger.info(_('Setting up ovirt-vmconsole SSH PKI artifacts'))
+
+        self._expandSSHCAKey(
+            uninstall_files=uninstall_files,
+            pki_artifacts=pki_artifacts,
+        )
+
+        self._enrollSSHKeys(
+            host_mode=True,
+            uninstall_files=uninstall_files,
+            pki_artifacts=pki_artifacts,
+        )
+        self._expandPKCS12SSHKey(
+            host_mode=True,
+            uninstall_files=uninstall_files,
+            pki_artifacts=pki_artifacts,
+        )
+
+        # user PKI artifacts
+        self._enrollSSHKeys(
+            host_mode=False,
+            uninstall_files=uninstall_files,
+            pki_artifacts=pki_artifacts,
+        )
+        self._expandPKCS12SSHKey(
+            host_mode=False,
+            uninstall_files=uninstall_files,
+            pki_artifacts=pki_artifacts,
+        )
+
+        self._copyVMConsoleProxyPKIArtifacts(pki_artifacts)
+
 
 # vim: expandtab tabstop=4 shiftwidth=4

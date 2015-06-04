@@ -152,6 +152,10 @@ class FileLocations(object):
         OVIRT_ENGINE_BINDIR,
         'pki-ssh-keygen.py',
     )
+    OVIRT_ENGINE_PKI_SSH_ENROLL = os.path.join(
+        OVIRT_ENGINE_BINDIR,
+        'pki-enroll-openssh-cert.sh',
+    )
 
     OVIRT_ENGINE_PKI_ENGINE_STORE = os.path.join(
         OVIRT_ENGINE_PKIKEYSDIR,
