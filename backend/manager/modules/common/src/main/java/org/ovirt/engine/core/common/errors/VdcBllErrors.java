@@ -445,6 +445,7 @@ public enum VdcBllErrors {
     GlusterSnapshotConfigSetFailedException(4707),
     GlusterSnapshotConfigGetFailedException(4708),
     GlusterSnapshotInfoFailedException(4709),
+    UnsupportedGlusterVolumeReplicaCountError(4710),
 
     UnicodeArgumentException(4900),
 
