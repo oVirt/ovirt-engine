@@ -35,7 +35,9 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
     interface Style extends CssResource {
         String container();
+        String container_legacy();
         String listBox();
+        String listBoxPatternfly();
         String labelContainer();
     }
 
@@ -154,15 +156,20 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
     }
 
     public void setUsePatternFly(boolean usePatternFly) {
+        getWidget().addStyleName(style.listBox());
         if (usePatternFly) {
             container.addStyleName(Styles.FORM_CONTROL);
             container.addStyleName(style.container());
-            getWidget().addStyleName(style.listBox());
+            getWidget().addStyleName(style.listBoxPatternfly());
             groupLabelContainer.addStyleName(style.labelContainer());
+        } else {
+            container.addStyleName(style.container_legacy());
         }
     }
 
     private void updateGroupLabel() {
-        groupLabel.setText(getGroupLabel(selectableObjects.get(getListBox().getSelectedIndex())));
+        if (selectableObjects.size() > getListBox().getSelectedIndex() && getListBox().getSelectedIndex() >= 0) {
+            groupLabel.setText(getGroupLabel(selectableObjects.get(getListBox().getSelectedIndex())));
+        }
     }
 }

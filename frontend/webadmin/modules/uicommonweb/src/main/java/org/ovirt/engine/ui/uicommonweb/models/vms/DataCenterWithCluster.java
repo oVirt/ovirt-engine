@@ -1,9 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 
-public class DataCenterWithCluster {
+public class DataCenterWithCluster implements Nameable {
 
     private StoragePool dataCenter;
 
@@ -28,5 +29,10 @@ public class DataCenterWithCluster {
 
     public VDSGroup getCluster() {
         return cluster;
+    }
+
+    @Override
+    public String getName() {
+        return getCluster().getName();
     }
 }

@@ -10,8 +10,13 @@
             padding: 0px;
         }
 
+        .container_legacy {
+            margin-bottom: 10px;
+        }
+
         .labelContainer_legacy {
             text-align: left;
+            border: none;
         }
 
         .labelContainer {
@@ -20,8 +25,11 @@
             font-style: italic;
         }
 
-        .listBox {
+        .listBoxPatternfly {
             height: 21px;
+        }
+
+        .listBox {
             width: 100%;
             border: none;
         }

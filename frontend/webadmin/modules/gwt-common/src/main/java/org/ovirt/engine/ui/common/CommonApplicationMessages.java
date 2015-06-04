@@ -127,9 +127,6 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("cluster")
     String consoleOverrideDefinedOnCluster();
 
-    @DefaultMessage("Data Center: {0}")
-    String hostDataCenter(String storagePoolName);
-
     @DefaultMessage("global configuration")
     String consoleOverrideDefinedInGlobalConfig();
 
@@ -191,4 +188,7 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("{0}: {1}")
     String migratingProgress(String status, String progress);
+
+    @DefaultMessage("Data Center: {0}")
+    String hostDataCenter(String name);
 }

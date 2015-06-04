@@ -437,7 +437,7 @@
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
         <t:header>
             <g:FlowPanel addStyleNames="{style.headerPanel}">
-                <e:ListModelTypeAheadListBoxEditor ui:field="dataCenterWithClusterEditor" />
+                <e:GroupedListModelListBoxEditor ui:field="dataCenterWithClusterEditor" />
                 <e:ListModelTypeAheadListBoxEditor ui:field="quotaEditor" />
                 <e:ListModelTypeAheadListBoxEditor ui:field="baseTemplateEditor"/>
                 <e:ListModelTypeAheadListBoxEditor ui:field="templateWithVersionEditor" />

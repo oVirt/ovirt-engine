@@ -6,9 +6,13 @@ import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetCon
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
@@ -31,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -50,6 +53,8 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox;
+import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.IconEditorWidget;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
@@ -174,7 +179,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "dataCenterWithClustersList.selectedItem")
     @WithElementId("dataCenterWithCluster")
-    public ListModelTypeAheadListBoxEditor<DataCenterWithCluster> dataCenterWithClusterEditor;
+    public GroupedListModelListBoxEditor<DataCenterWithCluster> dataCenterWithClusterEditor;
 
     @UiField(provided = true)
     @Path(value = "quota.selectedItem")
@@ -1150,29 +1155,71 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void initListBoxEditors() {
         // General tab
-        dataCenterWithClusterEditor = new ListModelTypeAheadListBoxEditor<DataCenterWithCluster>(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<DataCenterWithCluster>() {
-
-                    @Override
-                    public String getReplacementStringNullSafe(DataCenterWithCluster data) {
-                        return data.getCluster().getName() + "/" //$NON-NLS-1$
-                                + data.getDataCenter().getName();
+        dataCenterWithClusterEditor = new GroupedListModelListBoxEditor<>(
+                new GroupedListModelListBox<DataCenterWithCluster>(new NameRenderer<DataCenterWithCluster>()) {
+            @Override
+            public SortedMap<String, List<DataCenterWithCluster>> getGroupedList(List<DataCenterWithCluster> acceptableValues) {
+                SortedMap<String, List<DataCenterWithCluster>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+                Collections.sort(acceptableValues, new DataCenterWithClusterComparator());
+                String currentDataCenter = null;
+                List<DataCenterWithCluster> currentClusterWithDcList = null;
+                for (DataCenterWithCluster clusterWithDc: acceptableValues) {
+                    if (currentDataCenter == null || !currentDataCenter.equals(
+                            clusterWithDc.getDataCenter().getName())) {
+                        currentClusterWithDcList = new ArrayList<>();
+                        currentDataCenter = clusterWithDc.getDataCenter().getName();
+                        if (currentDataCenter != null) {
+                            result.put(currentDataCenter, currentClusterWithDcList);
+                        }
+                     }
+                    if (currentClusterWithDcList != null) {
+                        currentClusterWithDcList.add(clusterWithDc);
                     }
+                }
+                return result;
+            }
 
-                    @Override
-                    public String getDisplayStringNullSafe(DataCenterWithCluster data) {
-                        String dcDescription =
-                                data.getDataCenter().getdescription();
+            @Override
+            public String getModelLabel(DataCenterWithCluster model) {
+                return model.getCluster().getName();
+            }
 
-                        return typeAheadNameDescriptionTemplateNullSafe(
-                                data.getCluster().getName(),
-                                !StringHelper.isNullOrEmpty(dcDescription) ? dcDescription
-                                        : data.getDataCenter().getName()
-                        );
-                    }
+            @Override
+            public String getGroupLabel(DataCenterWithCluster model) {
+                return messages.hostDataCenter(model.getDataCenter().getName());
+            }
 
-                },
-                new ModeSwitchingVisibilityRenderer());
+            public Comparator<DataCenterWithCluster> getComparator() {
+                return new DataCenterWithClusterComparator();
+            }
+            /**
+             * Comparator that sorts on data center name first, and then cluster name. Ignoring case.
+             */
+            final class DataCenterWithClusterComparator implements Comparator<DataCenterWithCluster> {
+
+                 @Override
+                 public int compare(DataCenterWithCluster clusterWithDc1, DataCenterWithCluster clusterWithDc2) {
+                     if (clusterWithDc1.getDataCenter().getName() != null
+                             && clusterWithDc2.getDataCenter().getName() == null) {
+                         return -1;
+                     } else if (clusterWithDc2.getDataCenter().getName() != null
+                             && clusterWithDc1.getDataCenter().getName() == null) {
+                         return 1;
+                     } else if (clusterWithDc1.getDataCenter().getName() == null
+                             && clusterWithDc2.getDataCenter().getName() == null) {
+                         return 0;
+                     }
+                     if (clusterWithDc1.getDataCenter().getName().equals(clusterWithDc2.getDataCenter().getName())) {
+                         return clusterWithDc1.getCluster().getName().compareToIgnoreCase(
+                                 clusterWithDc2.getCluster().getName());
+                     } else {
+                         return clusterWithDc1.getDataCenter().getName().compareToIgnoreCase(
+                                 clusterWithDc2.getDataCenter().getName());
+                     }
+                 }
+             }
+
+        });
 
         quotaEditor = new ListModelTypeAheadListBoxEditor<Quota>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Quota>() {
