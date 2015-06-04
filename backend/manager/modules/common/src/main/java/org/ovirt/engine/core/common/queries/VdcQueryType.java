@@ -318,6 +318,7 @@ public enum VdcQueryType implements Serializable {
     GetUnregisteredCinderDisksByStorageDomainId,
     GetUnregisteredCinderDiskByIdAndStorageDomainId,
     GetAllLibvirtSecretsByProviderId,
+    GetLibvirtSecretById,
 
     // Event Notification
     GetEventSubscribersBySubscriberIdGrouped,
