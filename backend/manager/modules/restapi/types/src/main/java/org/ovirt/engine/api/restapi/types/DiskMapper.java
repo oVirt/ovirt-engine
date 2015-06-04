@@ -9,6 +9,7 @@ import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.DiskStorageType;
+import org.ovirt.engine.api.model.OpenStackVolumeType;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.Snapshot;
@@ -160,6 +161,9 @@ public class DiskMapper {
         if (disk.isSetDiskProfile() && disk.getDiskProfile().isSetId()) {
             diskImage.setDiskProfileId(GuidUtils.asGuid(disk.getDiskProfile().getId()));
         }
+        if (disk.isSetOpenstackVolumeType() && disk.getOpenstackVolumeType().isSetName()) {
+            diskImage.setCinderVolumeType(disk.getOpenstackVolumeType().getName());
+        }
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.Disk.class, to = Disk.class)
@@ -236,6 +240,14 @@ public class DiskMapper {
             DiskProfile diskProfile = new DiskProfile();
             diskProfile.setId(entity.getDiskProfileId().toString());
             model.setDiskProfile(diskProfile);
+        }
+        if (entity.getCinderVolumeType() != null) {
+            OpenStackVolumeType volumeType = model.getOpenstackVolumeType();
+            if (volumeType == null) {
+                volumeType = new OpenStackVolumeType();
+                model.setOpenstackVolumeType(volumeType);
+            }
+            volumeType.setName(entity.getCinderVolumeType());
         }
     }
 

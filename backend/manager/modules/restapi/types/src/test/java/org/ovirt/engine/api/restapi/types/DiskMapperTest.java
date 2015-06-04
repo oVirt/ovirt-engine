@@ -38,6 +38,7 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         assertEquals(model.isReadOnly(), transform.isReadOnly());
         assertEquals(model.getDescription(), transform.getDescription());
         assertEquals(model.getLogicalName(), transform.getLogicalName());
+        assertEquals(model.getOpenstackVolumeType().getName(), transform.getOpenstackVolumeType().getName());
         assertNotNull(model.getSnapshot());
         assertEquals(model.getSnapshot().getId(), transform.getSnapshot().getId());
         assertEquals("unexpected status", model.getStatus().getState(), transform.getStatus().getState());
