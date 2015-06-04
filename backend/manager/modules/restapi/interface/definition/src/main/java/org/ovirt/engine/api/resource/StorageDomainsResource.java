@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -38,11 +37,6 @@ public interface StorageDomainsResource {
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public Response add(StorageDomain storageDomains);
-
-    @DELETE
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id, StorageDomain storageDomain);
 
     /**
      * Sub-resource locator method, returns individual StorageDomainResource on which the

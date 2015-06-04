@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
-import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -23,9 +22,7 @@ import org.ovirt.engine.api.resource.StorageDomainsResource;
 import org.ovirt.engine.api.restapi.types.StorageDomainMapper;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
-import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
-import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -55,9 +52,6 @@ public class BackendStorageDomainsResource
 
     static final String[] SUB_COLLECTIONS = { "permissions", "files", "templates", "vms", "disks",
             "storageconnections", "images", "disksnapshots", "diskprofiles" };
-
-    private StorageDomain storageDomain = null; // utility variable; used in the context of a single activation of
-                                                // remove()
 
     private final EntityIdResolver<Guid> ID_RESOLVER =
             new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
@@ -323,18 +317,6 @@ public class BackendStorageDomainsResource
         return resp;
     }
 
-    @Override
-    public Response remove(String id, StorageDomain storageDomain) {
-        if (storageDomain == null) {
-            Fault fault = new Fault();
-            fault.setReason("storage-domain parameter is missing");
-            throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(fault).build());
-        }
-        validateParameters(storageDomain, "host.id|name");
-        this.storageDomain = storageDomain;
-        return super.remove(id);
-    }
-
     protected StorageDomainStatic mapToStatic(StorageDomain model) {
         return getMapper(modelType, StorageDomainStatic.class).map(model, null);
     }
@@ -525,22 +507,6 @@ public class BackendStorageDomainsResource
         params.setLunIds(lunIds);
         params.setForce(force);
         return params;
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        if (storageDomain.isSetDestroy() && storageDomain.isDestroy()) {
-            StorageDomainParametersBase parameters = new StorageDomainParametersBase(asGuidOr404(id));
-            parameters.setVdsId(getHostId(storageDomain));
-            return performAction(VdcActionType.ForceRemoveStorageDomain, parameters);
-        } else {
-            RemoveStorageDomainParameters parameters = new RemoveStorageDomainParameters(asGuidOr404(id));
-            parameters.setVdsId(getHostId(storageDomain));
-            if (storageDomain.isSetFormat()) {
-                parameters.setDoFormat(storageDomain.isFormat());
-            }
-            return performAction(VdcActionType.RemoveStorageDomain, parameters);
-        }
     }
 
     @Override

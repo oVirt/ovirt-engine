@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.Storage;
@@ -32,7 +35,9 @@ import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
+import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
+import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -100,6 +105,28 @@ public class BackendStorageDomainResource extends
                 new String[] { "templates", "vms" });
     }
 
+    @Override
+    public Response remove(StorageDomain storageDomain) {
+        if (storageDomain == null) {
+            Fault fault = new Fault();
+            fault.setReason("storage-domain parameter is missing");
+            throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(fault).build());
+        }
+        validateParameters(storageDomain, "host.id|name");
+        get();
+        if (storageDomain.isSetDestroy() && storageDomain.isDestroy()) {
+            StorageDomainParametersBase parameters = new StorageDomainParametersBase(guid);
+            parameters.setVdsId(getHostId(storageDomain));
+            return performAction(VdcActionType.ForceRemoveStorageDomain, parameters);
+        } else {
+            RemoveStorageDomainParameters parameters = new RemoveStorageDomainParameters(guid);
+            parameters.setVdsId(getHostId(storageDomain));
+            if (storageDomain.isSetFormat()) {
+                parameters.setDoFormat(storageDomain.isFormat());
+            }
+            return performAction(VdcActionType.RemoveStorageDomain, parameters);
+        }
+    }
 
     @Override
     public Response getIsAttached(Action action) {

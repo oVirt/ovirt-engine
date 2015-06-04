@@ -12,14 +12,19 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
+import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
+import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -184,6 +189,129 @@ public class BackendStorageDomainResourceTest
         }
     }
 
+    @Test
+    public void testRemoveStorageDomainNull() throws Exception {
+        control.replay();
+        try {
+            resource.remove(null); // GUIDS[0].toString()
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            assertEquals(400, wae.getResponse().getStatus());
+        }
+    }
+
+    public void testRemoveWithHostId() throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
+                RemoveStorageDomainParameters.class,
+                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+                new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
+                true,
+                true));
+
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setHost(new Host());
+        storageDomain.getHost().setId(GUIDS[1].toString());
+        verifyRemove(resource.remove(storageDomain));// GUIDS[0].toString()
+    }
+
+    @Test
+    public void testRemoveWithFormat() throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
+                RemoveStorageDomainParameters.class,
+                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+                new Object[] { GUIDS[0], GUIDS[1], Boolean.TRUE },
+                true,
+                true));
+
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setHost(new Host());
+        storageDomain.getHost().setId(GUIDS[1].toString());
+        storageDomain.setFormat(true);
+        verifyRemove(resource.remove(storageDomain));// GUIDS[0].toString()
+    }
+
+    @Test
+    public void testRemoveWithDestroy() throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(VdcActionType.ForceRemoveStorageDomain,
+                StorageDomainParametersBase.class,
+                new String[] { "StorageDomainId", "VdsId" },
+                new Object[] { GUIDS[0], GUIDS[1] },
+                true,
+                true));
+
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setHost(new Host());
+        storageDomain.getHost().setId(GUIDS[1].toString());
+        storageDomain.setDestroy(true);
+        verifyRemove(resource.remove(storageDomain));// GUIDS[0].toString()
+    }
+
+    @Test
+    public void testRemoveWithHostName() throws Exception {
+        setUpGetEntityExpectations();
+
+        setUpGetEntityExpectations(VdcQueryType.GetVdsStaticByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                setUpVDStatic(1));
+
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
+                RemoveStorageDomainParameters.class,
+                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+                new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
+                true,
+                true));
+
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setHost(new Host());
+        storageDomain.getHost().setName(NAMES[1]);
+        verifyRemove(resource.remove(storageDomain));// GUIDS[0].toString()
+    }
+
+    @Test
+    public void testIncompleteRemove() throws Exception {
+        control.replay();
+        try {
+            resource.remove(new StorageDomain());// GUIDS[0].toString()
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "StorageDomain", "remove", "host.id|name");
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
+                RemoveStorageDomainParameters.class,
+                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+                new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
+                canDo,
+                success));
+
+        try {
+            StorageDomain storageDomain = new StorageDomain();
+            storageDomain.setHost(new Host());
+            storageDomain.getHost().setId(GUIDS[1].toString());
+            resource.remove(storageDomain);// GUIDS[0].toString()
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
+    }
     protected void setUpGetEntityExpectations(int times, org.ovirt.engine.core.common.businessentities.StorageDomain entity) throws Exception {
         setUpGetEntityExpectations(times, false, entity);
     }
@@ -208,6 +336,14 @@ public class BackendStorageDomainResourceTest
         }
     }
 
+    private void setUpGetEntityExpectations() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                new org.ovirt.engine.core.common.businessentities.StorageDomain());
+    }
+
     @Override
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index) {
         return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class), index);
@@ -217,5 +353,12 @@ public class BackendStorageDomainResourceTest
     protected void verifyModel(StorageDomain model, int index) {
         verifyModelSpecific(model, index);
         verifyLinks(model);
+    }
+
+    protected VdsStatic setUpVDStatic(int index) {
+        VdsStatic vds = new VdsStatic();
+        vds.setId(GUIDS[index]);
+        vds.setName(NAMES[index]);
+        return vds;
     }
 }
