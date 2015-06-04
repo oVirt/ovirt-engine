@@ -36,7 +36,7 @@ public class PoolListModelTest extends BaseVmListModelTest {
 
         assertEquals(VM_NAME, vm.getName());
         assertEquals(USB_POLICY, vm.getUsbPolicy());
-        assertEquals(HOST_ID, vm.getDedicatedVmForVds());
+        assertEquals(HOST_ID, vm.getDedicatedVmForVdsList().get(0));
     }
 
 }

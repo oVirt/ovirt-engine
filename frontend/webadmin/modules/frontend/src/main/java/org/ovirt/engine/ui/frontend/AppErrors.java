@@ -3881,6 +3881,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM must be pinned to a host.")
     String ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VM must be pinned to a single host.")
+    String ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS();
+
     @DefaultStringValue("Cannot ${action} ${type}. One or more of specified host devices not found.")
     String ACTION_TYPE_FAILED_HOST_DEVICE_NOT_FOUND();
 

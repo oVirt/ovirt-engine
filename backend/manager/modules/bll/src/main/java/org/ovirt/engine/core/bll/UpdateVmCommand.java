@@ -563,7 +563,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private void addAddtionalParams(VmNumaNodeOperationParameters params) {
-        params.setDedicatedHost(getParameters().getVmStaticData().getDedicatedVmForVds());
+        params.setDedicatedHostList(getParameters().getVmStaticData().getDedicatedVmForVdsList());
         params.setNumaTuneMode(getParameters().getVmStaticData().getNumaTuneMode());
         params.setMigrationSupport(getParameters().getVmStaticData().getMigrationSupport());
     }
@@ -930,9 +930,24 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private boolean isDedicatedVmForVdsChanged() {
-        return !(getVm().getDedicatedVmForVds() == null ?
-                getParameters().getVmStaticData().getDedicatedVmForVds() == null :
-                getVm().getDedicatedVmForVds().equals(getParameters().getVmStaticData().getDedicatedVmForVds()));
+        List<Guid> paramList = getParameters().getVmStaticData().getDedicatedVmForVdsList();
+        List<Guid> vmList = getVm().getDedicatedVmForVdsList();
+        if (vmList == null && paramList == null){
+            return false;
+        }
+        if (vmList == null || paramList == null){
+            return true;
+        }
+        //  vmList.equals(paramList) not good enough, the lists order could change
+        if (vmList.size() != paramList.size()){
+            return true;
+        }
+        for (Guid origGuid : vmList) {
+            if (paramList.contains(origGuid) == false){
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isCpuPinningChanged() {

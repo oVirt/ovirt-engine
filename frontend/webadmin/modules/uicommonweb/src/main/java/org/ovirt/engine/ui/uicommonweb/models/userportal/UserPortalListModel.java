@@ -1264,8 +1264,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
             for (VDS item : model.getDefaultHost().getItems())
             {
-                if (item.getId().equals(((vm.getDedicatedVmForVds() != null) ? vm.getDedicatedVmForVds()
-                        : Guid.Empty)))
+                if (vm.getDedicatedVmForVdsList().contains(item.getId()))
                 {
                     host = item;
                     break;

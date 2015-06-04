@@ -112,7 +112,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                         vm,
                         blacklist, //blacklist only contains the host we're putting to maintenance
                         Collections.<Guid> emptyList(), //no whitelist
-                        vm.getDedicatedVmForVds(),
+                        vm.getDedicatedVmForVdsList(),
                         new ArrayList<String>()
                         );
     }

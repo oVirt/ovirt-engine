@@ -157,8 +157,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return lockProperties.withScope(Scope.Execution);
     }
 
-    protected Guid getPredefinedVdsIdToRunOn() {
-        return getVm().getDedicatedVmForVds();
+    protected List<Guid> getPredefinedVdsIdListToRunOn() {
+        return getVm().getDedicatedVmForVdsList();
     }
 
     private String getMemoryFromActiveSnapshot() {
@@ -297,13 +297,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private void acquireHostDevicesLock() {
         if (needsHostDevices) {
-            hostDeviceManager.acquireHostDevicesLock(getVm().getDedicatedVmForVds());
+            // Only single dedicated host allowed for host devices, verified on canDoActions
+            hostDeviceManager.acquireHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
         }
     }
 
     private void releaseHostDevicesLock() {
         if (needsHostDevices) {
-            hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVds());
+            // Only single dedicated host allowed for host devices, verified on canDoActions
+            hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
         }
     }
 
@@ -684,8 +686,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected boolean isVmRunningOnNonDefaultVds() {
-        return getVm().getDedicatedVmForVds() != null
-                && !getVm().getRunOnVds().equals(getVm().getDedicatedVmForVds());
+        return getVm().getDedicatedVmForVdsList().isEmpty() == false
+                && getVm().getDedicatedVmForVdsList().contains(getVm().getRunOnVds()) == false;
     }
 
     /**
@@ -833,7 +835,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         getVm(),
                         getRunVdssList(),
                         getVdsWhiteList(),
-                        getPredefinedVdsIdToRunOn(),
+                        getPredefinedVdsIdListToRunOn(),
                         new ArrayList<String>(),
                         new VdsFreeMemoryChecker(this),
                         getCorrelationId());
@@ -955,7 +957,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getStoragePool(),
                 getRunVdssList(),
                 getVdsWhiteList(),
-                getPredefinedVdsIdToRunOn(),
+                getPredefinedVdsIdListToRunOn(),
                 getVdsGroup())) {
             return false;
         }
@@ -993,8 +995,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                return failCanDoAction(VdcBllMessages.VMPAYLOAD_CDROM_WITH_CLOUD_INIT);
            }
         }
-
-        if (needsHostDevices && !hostDeviceManager.checkVmHostDeviceAvailability(getVm(), getVm().getDedicatedVmForVds())) {
+        if (needsHostDevices &&
+                // Only single dedicated host allowed for host devices, verified on canDoActions
+                !hostDeviceManager.checkVmHostDeviceAvailability(getVm(), getVm().getDedicatedVmForVdsList().get(0))) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE);
         }
 

@@ -633,7 +633,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
             setAlert(null);
         }
 
-        setHasDefaultHost(vm.getDedicatedVmForVds() != null);
+        setHasDefaultHost(vm.getDedicatedVmForVdsList().size() > 0);
         if (getHasDefaultHost())
         {
             Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getVdsGroupName() //$NON-NLS-1$
@@ -649,13 +649,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
                                 return;
                             }
                             ArrayList<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                            for (VDS host : hosts)
-                            {
-                                if (localVm.getDedicatedVmForVds() != null
-                                        && host.getId().equals(localVm.getDedicatedVmForVds()))
-                                {
-                                    model.setDefaultHost(host.getName());
-                                    break;
+                            if (localVm.getDedicatedVmForVdsList().size() > 0){
+                                for (VDS host : hosts){
+                                    if (localVm.getDedicatedVmForVdsList().contains(host.getId())){
+                                        model.setDefaultHost(host.getName());
+                                        break;
+                                    }
                                 }
                             }
 

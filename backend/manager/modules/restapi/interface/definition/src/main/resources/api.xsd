@@ -3347,6 +3347,7 @@
 
   <xs:complexType name="VmPlacementPolicy">
     <xs:sequence>
+      <xs:element ref="hosts" minOccurs="0" maxOccurs="1"/>
       <xs:element name="host" type="Host" minOccurs="0" maxOccurs="1"/>
       <xs:element name="affinity" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>

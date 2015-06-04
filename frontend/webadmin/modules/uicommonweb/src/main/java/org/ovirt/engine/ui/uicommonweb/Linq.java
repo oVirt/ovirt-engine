@@ -1672,9 +1672,9 @@ public final class Linq
         });
     }
 
-    public static VDS findHostById(Collection<VDS> items, Guid hostId) {
+    public static VDS findHostByIdFromIdList(Collection<VDS> items, List<Guid> hostIdList) {
         for (VDS host : items) {
-            if (host.getId().equals(hostId)) {
+            if (hostIdList.contains(host.getId())){
                 return host;
             }
         }

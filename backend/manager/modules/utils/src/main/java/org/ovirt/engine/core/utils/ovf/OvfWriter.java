@@ -366,10 +366,13 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteEndElement();
         }
 
-        if (vmBase.getDedicatedVmForVds() != null) {
-            _writer.WriteStartElement(OvfProperties.DEDICATED_VM_FOR_VDS);
-            _writer.WriteRaw(String.valueOf(vmBase.getDedicatedVmForVds()));
-            _writer.WriteEndElement();
+        // TODO dedicated to multiple hosts - are we breaking any standard here?
+        if (vmBase.getDedicatedVmForVdsList().size() > 0) {
+            for (Guid hostId : vmBase.getDedicatedVmForVdsList()) {
+                _writer.WriteStartElement(OvfProperties.DEDICATED_VM_FOR_VDS);
+                _writer.WriteRaw(String.valueOf(hostId));
+                _writer.WriteEndElement();
+            }
         }
 
         if (vmBase.getSerialNumberPolicy() != null) {

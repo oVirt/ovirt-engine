@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -268,7 +269,7 @@ public class SchedulingManager {
             VM vm,
             List<Guid> hostBlackList,
             List<Guid> hostWhiteList,
-            Guid destHostId,
+            List<Guid> destHostIdList,
             List<String> messages,
             VdsFreeMemoryChecker memoryChecker,
             String correlationId) {
@@ -300,7 +301,7 @@ public class SchedulingManager {
                 return null;
             }
 
-            Guid bestHost = selectBestHost(cluster, vm, destHostId, vdsList, policy, parameters);
+            Guid bestHost = selectBestHost(cluster, vm, destHostIdList, vdsList, policy, parameters);
 
             if (bestHost != null) {
                 getPendingResourceManager().addPending(new PendingCpuCores(bestHost, vm, vm.getNumOfCpus()));
@@ -363,35 +364,52 @@ public class SchedulingManager {
     }
 
     /**
-     * @param destHostId - used for RunAt preselection, overrides the ordering in vdsList
-     * @param vdsList - presorted list of hosts (better hosts first) that are available
+     * @param destHostIdList - used for RunAt preselection, overrides the ordering in vdsList
+     * @param availableVdsList - presorted list of hosts (better hosts first) that are available
      */
     private Guid selectBestHost(VDSGroup cluster,
             VM vm,
-            Guid destHostId,
-            List<VDS> vdsList,
+            List<Guid> destHostIdList,
+            List<VDS> availableVdsList,
             ClusterPolicy policy,
             Map<String, String> parameters) {
         // in case a default destination host was specified and
-        // it passed filters, return it
-        if (destHostId != null) {
-            for (VDS vds : vdsList) {
-                if (destHostId.equals(vds.getId())) {
-                    return destHostId;
+        // it passed filters, return the first found
+        List<VDS> runnableHosts = new LinkedList<>();
+        if (destHostIdList.size() > 0) {
+            // there are dedicated hosts
+            // intersect dedicated hosts list with available list
+            for (VDS vds : availableVdsList) {
+                for (Guid destHostId : destHostIdList) {
+                    if (destHostId.equals(vds.getId())) {
+                        runnableHosts.add(vds);
+                    }
+                }
+            }
+        } else { // no dedicated hosts
+            runnableHosts = availableVdsList;
+        }
+
+        switch (runnableHosts.size()){
+        case 0:
+            // no runnable hosts found, nothing found
+            return null;
+        case 1:
+            // found single available host, in available list return it
+            return runnableHosts.get(0).getId();
+        default:
+            // select best runnable host with scoring functions (from policy)
+            List<Pair<Guid, Integer>> functions = policy.getFunctions();
+            if (functions != null && !functions.isEmpty()
+                    && shouldWeighClusterHosts(cluster, runnableHosts)) {
+                Guid bestHostByFunctions = runFunctions(functions, runnableHosts, vm, parameters);
+                if (bestHostByFunctions != null) {
+                    return bestHostByFunctions;
                 }
             }
         }
-
-        List<Pair<Guid, Integer>> functions = policy.getFunctions();
-        if (functions != null && !functions.isEmpty()
-                && shouldWeighClusterHosts(cluster, vdsList)) {
-            Guid bestHostByFunctions = runFunctions(functions, vdsList, vm, parameters);
-            if (bestHostByFunctions != null) {
-                return bestHostByFunctions;
-            }
-        }
-
-        return vdsList.get(0).getId();
+        // failed select best runnable host using scoring functions, return the first
+        return runnableHosts.get(0).getId();
     }
 
     /**
@@ -446,7 +464,7 @@ public class SchedulingManager {
             VM vm,
             List<Guid> vdsBlackList,
             List<Guid> vdsWhiteList,
-            Guid destVdsId,
+            List<Guid> destVdsIdList,
             List<String> messages) {
         List<VDS> vdsList = getVdsDAO()
                 .getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);

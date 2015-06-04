@@ -51,7 +51,7 @@ public class ModelWithPinnedHost extends Model {
     }
 
     private void selectCurrentPinnedHost() {
-        VDS host = Linq.findHostById(getPinnedHost().getItems(), vm.getDedicatedVmForVds());
+        VDS host = Linq.findHostByIdFromIdList(getPinnedHost().getItems(), vm.getDedicatedVmForVdsList());
         if (host != null) {
             getPinnedHost().setSelectedItem(host);
         }

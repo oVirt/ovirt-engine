@@ -10,11 +10,13 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends VmCommand<T> {
@@ -78,8 +80,8 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             }
         }
 
-        if (vm.getDedicatedVmForVds() != null) {
-            vm.setDedicatedVmForVds(null);
+        if (vm.getDedicatedVmForVdsList().size() > 0) {
+            vm.setDedicatedVmForVdsList(Collections.<Guid>emptyList());
             dedicatedHostWasCleared = true;
         }
 

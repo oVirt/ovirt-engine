@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -409,7 +410,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
         // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
         if(!VmHandler.validateDedicatedVdsExistOnSameCluster(getVmTemplate(), null)){
-            getVmTemplate().setDedicatedVmForVds(null);
+            getVmTemplate().setDedicatedVmForVdsList(Collections.<Guid>emptyList());
         }
 
         getVmTemplate().setStatus(VmTemplateStatus.Locked);

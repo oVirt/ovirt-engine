@@ -58,8 +58,12 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
         }
 
-        if (getVm().getDedicatedVmForVds() == null) {
+        if (getVm().getDedicatedVmForVdsList().isEmpty()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
+        }
+
+        if (getVm().getDedicatedVmForVdsList().size() > 1) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
         }
 
         if (getHostDevices() == null) {
@@ -103,8 +107,8 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
         if (!hasIommu(hostDevice)) {
             return Collections.singleton(hostDevice);
         }
-
-        return hostDeviceDao.getHostDevicesByHostIdAndIommuGroup(getVm().getDedicatedVmForVds(),
+        // only single dedicated host allowed
+        return hostDeviceDao.getHostDevicesByHostIdAndIommuGroup(getVm().getDedicatedVmForVdsList().get(0),
                 hostDevice.getIommuGroup());
     }
 
@@ -114,7 +118,8 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
     }
 
     private HostDevice fetchHostDevice(String deviceName) {
-        return hostDeviceDao.getHostDeviceByHostIdAndDeviceName(getVm().getDedicatedVmForVds(), deviceName);
+        // single dedicated host allowed.
+        return hostDeviceDao.getHostDeviceByHostIdAndDeviceName(getVm().getDedicatedVmForVdsList().get(0), deviceName);
     }
 
     protected Map<String, VmHostDevice> getExistingVmHostDevicesByName() {

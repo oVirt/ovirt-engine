@@ -351,12 +351,21 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         vmStatic.setAutoStartup(value);
     }
 
-    public Guid getDedicatedVmForVds() {
-        return vmStatic.getDedicatedVmForVds();
+    public Guid fetchDedicatedVmForSingleHost(){
+        return vmStatic.fetchDedicatedVmForSingleHost();
     }
 
-    public void setDedicatedVmForVds(Guid value) {
-        vmStatic.setDedicatedVmForVds(value);
+    public List<Guid> getDedicatedVmForVdsList() {
+        return vmStatic.getDedicatedVmForVdsList();
+    }
+
+    @JsonIgnore
+    public void setDedicatedVmForVdsList(List<Guid> value) {
+        vmStatic.setDedicatedVmForVdsList(value);
+    }
+
+    public void setDedicatedVmForVdsList(Guid value) {
+        vmStatic.setDedicatedVmForVdsList(value);
     }
 
     public Guid getVdsGroupId() {

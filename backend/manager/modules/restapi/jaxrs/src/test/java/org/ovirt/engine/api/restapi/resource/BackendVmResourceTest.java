@@ -34,6 +34,7 @@ import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Floppies;
 import org.ovirt.engine.api.model.Floppy;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Payloads;
 import org.ovirt.engine.api.model.Snapshot;
@@ -375,7 +376,89 @@ public class BackendVmResourceTest
     }
 
     @Test
-    public void testUpdateVmPolicy() throws Exception {
+    public void testUpdateVmPolicySingleHostName() throws Exception {
+        setUpUdpateVm();
+        setUpGetHostByNameExpectations(1);
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+                VmManagementParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                true,
+                true));
+
+
+        VM model = getModel(0);
+        model.setPlacementPolicy(new VmPlacementPolicy());
+        model.getPlacementPolicy().setHost(new Host());
+        model.getPlacementPolicy().getHost().setName(NAMES[1]);
+        verifyModel(resource.update(model), 0);
+    }
+
+    @Test
+    public void testUpdateVmPolicySingleHostId() throws Exception {
+        setUpUdpateVm();
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+                VmManagementParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                true,
+                true));
+
+        VM model = getModel(0);
+        model.setPlacementPolicy(new VmPlacementPolicy());
+        model.getPlacementPolicy().setHost(new Host());
+        model.getPlacementPolicy().getHost().setId(GUIDS[1].toString());
+        verifyModel(resource.update(model), 0);
+    }
+
+    @Test
+    public void testUpdateVmPolicyHostsIds() throws Exception {
+        setUpUdpateVm();
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+                VmManagementParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                true,
+                true));
+
+        VM model = getModel(0);
+        model.setPlacementPolicy(new VmPlacementPolicy());
+        Hosts hosts = new Hosts();
+        for (int i =0; i < GUIDS.length; i++){
+            Host newHost = new Host();
+            newHost.setId(GUIDS[i].toString());
+            hosts.getHosts().add(newHost);
+        }
+        model.getPlacementPolicy().setHosts(hosts);
+        verifyModel(resource.update(model), 0);
+    }
+
+    @Test
+    public void testUpdateVmPolicyHostsNames() throws Exception {
+        setUpUdpateVm();
+        for (int i =0; i < NAMES.length; i++){
+            setUpGetHostByNameExpectations(i);
+        }
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+                VmManagementParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                true,
+                true));
+
+        VM model = getModel(0);
+        model.setPlacementPolicy(new VmPlacementPolicy());
+        Hosts hosts = new Hosts();
+        for (int i =0; i < NAMES.length; i++){
+            Host newHost = new Host();
+            newHost.setName(NAMES[i].toString());
+            hosts.getHosts().add(newHost);
+        }
+        model.getPlacementPolicy().setHosts(hosts);
+        verifyModel(resource.update(model), 0);
+    }
+
+    private void setUpUdpateVm() throws Exception {
         setUpGetEntityExpectations(3);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
             IdQueryParameters.class,
@@ -393,23 +476,6 @@ public class BackendVmResourceTest
         setUpGetSoundcardExpectations(new int[] {0});
         setUpGetRngDeviceExpectations(new int[]{0});
         setUpGetGraphicsExpectations(1);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsStaticByName,
-                NameQueryParameters.class,
-                new String[] { "Name" },
-                new Object[] { NAMES[1] },
-                getStaticHost());
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
-                                           VmManagementParametersBase.class,
-                                           new String[] {},
-                                           new Object[] {},
-                                           true,
-                                           true));
-
-        VM model = getModel(0);
-        model.setPlacementPolicy(new VmPlacementPolicy());
-        model.getPlacementPolicy().setHost(new Host());
-        model.getPlacementPolicy().getHost().setName(NAMES[1]);
-        verifyModel(resource.update(model), 0);
     }
 
     private VdsStatic getStaticHost() {
@@ -652,7 +718,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testStartWithHostName() throws Exception {
-        setUpGetHostIdExpectations(1);
+        setUpGetHostByNameExpectations(1);
 
         Host host = new Host();
         host.setName(NAMES[1]);
@@ -874,7 +940,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testMigrateWithHostName() throws Exception {
-        setUpGetHostIdExpectations(1);
+        setUpGetHostByNameExpectations(1);
 
         setUriInfo(setUpActionExpectations(VdcActionType.MigrateVmToServer,
                                            MigrateVmToServerParameters.class,
@@ -1181,15 +1247,6 @@ public class BackendVmResourceTest
         assertEquals(GUIDS[0].toString(), adopted.getVm().getId());
     }
 
-    protected void setUpGetHostIdExpectations(int idx) throws Exception {
-        VDS host = BackendHostsResourceTest.setUpEntityExpectations(control.createMock(VDS.class), idx);
-        setUpGetEntityExpectations(VdcQueryType.GetVdsByName,
-                NameQueryParameters.class,
-                new String[]{"Name"},
-                new Object[]{NAMES[idx]},
-                host);
-    }
-
     protected void setUpGetEntityExpectations(int times) throws Exception {
         setUpGetEntityExpectations(times, false);
     }
@@ -1373,5 +1430,14 @@ public class BackendVmResourceTest
                     new Object[] { GUIDS[idxs[i]], 0L },
                     "configuration");
         }
+    }
+
+    protected void setUpGetHostByNameExpectations(int idx) throws Exception {
+        VDS host = BackendHostsResourceTest.setUpEntityExpectations(control.createMock(VDS.class), idx);
+        setUpGetEntityExpectations(VdcQueryType.GetVdsByName,
+                NameQueryParameters.class,
+                new String[]{"Name"},
+                new Object[]{NAMES[idx]},
+                host);
     }
 }

@@ -105,45 +105,47 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         VDS dedicatedVds = null;
 
         // can not check if no dedicated vds was configured
-        if (vmStatic.getDedicatedVmForVds() != null) {
-            dedicatedVds = getVds(vmStatic.getDedicatedVmForVds());
-        } else {
+        if (vmStatic.getDedicatedVmForVdsList().isEmpty()){
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
         }
+        for (Guid dedicatedHostGuid : vmStatic.getDedicatedVmForVdsList()){
+            dedicatedVds = getVds(dedicatedHostGuid);
 
-        Collection<Integer> onlinePcpus = new HashSet<>();
+            Collection<Integer> onlinePcpus = new HashSet<>();
 
-        if (dedicatedVds.getOnlineCpus() != null) {
-            String[] onlinePcpusStr = dedicatedVds.getOnlineCpus().split(",");
+            if (dedicatedVds.getOnlineCpus() != null) {
+                String[] onlinePcpusStr = dedicatedVds.getOnlineCpus().split(",");
 
-            for (String Pcpu : onlinePcpusStr) {
-                onlinePcpus.add(Integer.parseInt(Pcpu));
+                for (String Pcpu : onlinePcpusStr) {
+                    onlinePcpus.add(Integer.parseInt(Pcpu));
+                }
+            }
+
+            for (String rule : rules) {
+                // [0] vcpu, [1] pcpu
+                String[] splitRule = rule.split("#");
+                int currVcpu = Integer.parseInt(splitRule[0]);
+                if (currVcpu >= maxvCPU) {
+                    // ERROR maps to a non existent vcpu
+                    return failCanDoAction(VdcBllMessages.VM_PINNING_VCPU_DOES_NOT_EXIST);
+                }
+                if (!vcpus.add(currVcpu)) {
+                    // ERROR contains more than one definition for the same vcpu
+                    return failCanDoAction(VdcBllMessages.VM_PINNING_DUPLICATE_DEFINITION);
+                }
+
+                Collection<Integer> currPcpus = parsePCpuPinningNumbers(splitRule[1]);
+                if (currPcpus == null) {
+                    return failCanDoAction(VdcBllMessages.VM_PINNING_FORMAT_INVALID);
+                }
+
+                if (currPcpus.size() == 0) {
+                    // definition of pcpus is no cpu, e.g 0#1,^1
+                    return failCanDoAction(VdcBllMessages.VM_PINNING_PINNED_TO_NO_CPU);
+                }
             }
         }
 
-        for (String rule : rules) {
-            // [0] vcpu, [1] pcpu
-            String[] splitRule = rule.split("#");
-            int currVcpu = Integer.parseInt(splitRule[0]);
-            if (currVcpu >= maxvCPU) {
-                // ERROR maps to a non existent vcpu
-                return failCanDoAction(VdcBllMessages.VM_PINNING_VCPU_DOES_NOT_EXIST);
-            }
-            if (!vcpus.add(currVcpu)) {
-                // ERROR contains more than one definition for the same vcpu
-                return failCanDoAction(VdcBllMessages.VM_PINNING_DUPLICATE_DEFINITION);
-            }
-
-            Collection<Integer> currPcpus = parsePCpuPinningNumbers(splitRule[1]);
-            if (currPcpus == null) {
-                return failCanDoAction(VdcBllMessages.VM_PINNING_FORMAT_INVALID);
-            }
-
-            if (currPcpus.size() == 0) {
-                // definition of pcpus is no cpu, e.g 0#1,^1
-                return failCanDoAction(VdcBllMessages.VM_PINNING_PINNED_TO_NO_CPU);
-            }
-        }
 
         return true;
     }

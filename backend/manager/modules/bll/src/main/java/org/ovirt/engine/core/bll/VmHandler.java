@@ -1024,9 +1024,7 @@ public class VmHandler {
      */
     public static boolean validateDedicatedVdsExistOnSameCluster(VmBase vm, ArrayList<String> canDoActionMessages) {
         boolean result = true;
-        if (vm.getDedicatedVmForVds() != null) {
-            // get dedicated host id
-            Guid vdsId = vm.getDedicatedVmForVds();
+        for (Guid vdsId : vm.getDedicatedVmForVdsList()) {
             // get dedicated host, checks if exists and compare its cluster to the VM cluster
             VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
             if (vds == null) {

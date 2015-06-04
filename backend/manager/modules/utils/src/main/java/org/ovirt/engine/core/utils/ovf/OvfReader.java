@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -664,12 +665,8 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
-        node = content.SelectSingleNode(OvfProperties.DEDICATED_VM_FOR_VDS);
-        if (node != null) {
-            if (StringUtils.isNotEmpty(node.innerText)) {
-                vmBase.setDedicatedVmForVds(Guid.createGuidFromString(node.innerText));
-            }
-        }
+        // TODO dedicated to multiple hosts
+        readDedicatedHostsList();
 
         node = content.SelectSingleNode(OvfProperties.SERIAL_NUMBER_POLICY);
         if (node != null) {
@@ -758,6 +755,17 @@ public abstract class OvfReader implements IOvfBuilder {
         readGeneralData(content);
 
         readVmInit(content);
+    }
+
+    private void readDedicatedHostsList() {
+        vmBase.setDedicatedVmForVdsList(new LinkedList<Guid>()); // initialize to empty list
+        // search all dedicated hosts with xPath
+        XmlNodeList hostsList = _document.SelectNodes("//*/Content/" + OvfProperties.DEDICATED_VM_FOR_VDS);
+        for (XmlNode hostNode : hostsList) {
+            if (hostNode != null && StringUtils.isNotEmpty(hostNode.innerText)) {
+                vmBase.getDedicatedVmForVdsList().add(Guid.createGuidFromString(hostNode.innerText));
+            }
+        }
     }
 
     private void readVmInit(XmlNode content) {

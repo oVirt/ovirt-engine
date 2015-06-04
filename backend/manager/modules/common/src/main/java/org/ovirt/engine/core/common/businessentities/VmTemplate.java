@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
@@ -79,7 +80,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             boolean smartcardEnabled, boolean deleteProtected, SsoMethod ssoMethod, Boolean tunnelMigration, String vncKeyboardLayout,
             int minAllocatedMem, boolean stateless, boolean runAndPause, Guid createdByUserId, VmEntityType templateType,
             boolean autoStartup, int priority, DisplayType defaultDisplayType, String initrdUrl, String kernelUrl,
-            String kernelParams, Guid quotaId, Guid dedicatedVmForVds, MigrationSupport migrationSupport,
+            String kernelParams, Guid quotaId, List<Guid> dedicatedVmForVdsList, MigrationSupport migrationSupport,
             boolean allowConsoleReconnect, String isoPath, Integer migrationDowntime,
             Guid baseTemplateId, String templateVersionName,
             SerialNumberPolicy serialNumberPolicy, String customSerialNumber,
@@ -132,7 +133,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 createdByUserId,
                 migrationSupport,
                 allowConsoleReconnect,
-                dedicatedVmForVds,
+                dedicatedVmForVdsList,
                 defaultDisplayType,
                 migrationDowntime,
                 null,

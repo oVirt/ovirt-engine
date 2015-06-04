@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -66,7 +68,8 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                 .addValue("kernel_params", entity.getKernelParams())
                 .addValue("quota_id", entity.getQuotaId())
                 .addValue("migration_support", entity.getMigrationSupport().getValue())
-                .addValue("dedicated_vm_for_vds", entity.getDedicatedVmForVds())
+                .addValue("dedicated_vm_for_vds", entity.getDedicatedVmForVdsList().isEmpty() ?
+                        null : StringUtils.join(entity.getDedicatedVmForVdsList(), BaseDAODbFacade.SEPARATOR))
                 .addValue("min_allocated_mem", entity.getMinAllocatedMem())
                 .addValue("is_run_and_pause", entity.isRunAndPause())
                 .addValue("created_by_user_id", entity.getCreatedByUserId())
@@ -138,7 +141,7 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
             entity.setSpiceFileTransferEnabled(rs.getBoolean("is_spice_file_transfer_enabled"));
             entity.setSpiceCopyPasteEnabled(rs.getBoolean("is_spice_copy_paste_enabled"));
             entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));
-            entity.setDedicatedVmForVds(getGuid(rs, "dedicated_vm_for_vds"));
+            entity.setDedicatedVmForVdsList(GuidUtils.getGuidListFromString(rs.getString("dedicated_vm_for_vds")));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setCpuProfileId(getGuid(rs, "cpu_profile_id"));

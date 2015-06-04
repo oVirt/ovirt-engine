@@ -105,7 +105,7 @@ public final class Cloner
         vm.setCpuPerSocket(instance.getCpuPerSocket());
         vm.setCpuSys(instance.getCpuSys());
         vm.setCpuUser(instance.getCpuUser());
-        vm.setDedicatedVmForVds(instance.getDedicatedVmForVds());
+        vm.setDedicatedVmForVdsList(instance.getDedicatedVmForVdsList());
         vm.setDefaultBootSequence(instance.getDefaultBootSequence());
         vm.setDefaultDisplayType(instance.getDefaultDisplayType());
         // TODO: 1. DiskList is an array - CopyTo should be considered (if it can be converted to java, otherwise a
@@ -497,7 +497,7 @@ public final class Cloner
         obj.setAutoStartup(instance.isAutoStartup());
         obj.setCpuPerSocket(instance.getCpuPerSocket());
         obj.setCreationDate(instance.getCreationDate());
-        obj.setDedicatedVmForVds(instance.getDedicatedVmForVds());
+        obj.setDedicatedVmForVdsList(instance.getDedicatedVmForVdsList());
         obj.setDescription(instance.getDescription());
         obj.setComment(instance.getComment());
         obj.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());

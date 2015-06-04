@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -406,7 +407,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
         if (!VmHandler.validateDedicatedVdsExistOnSameCluster(getVm().getStaticData(), null)) {
-            getVm().setDedicatedVmForVds(null);
+            getVm().setDedicatedVmForVdsList(Collections.<Guid>emptyList());
         }
 
         if (getVm().getOriginalTemplateGuid() != null && !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getOriginalTemplateGuid())) {

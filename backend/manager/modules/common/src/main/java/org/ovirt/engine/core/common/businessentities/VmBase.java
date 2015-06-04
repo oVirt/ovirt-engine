@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -334,7 +335,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
-    private Guid dedicatedVmForVds;
+    private List<Guid> dedicatedVmForVdsList;
 
     @EditableOnVmStatusField
     @EditableOnTemplate
@@ -445,7 +446,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 vmBase.getCreatedByUserId(),
                 vmBase.getMigrationSupport(),
                 vmBase.isAllowConsoleReconnect(),
-                vmBase.getDedicatedVmForVds(),
+                vmBase.getDedicatedVmForVdsList(),
                 vmBase.getDefaultDisplayType(),
                 vmBase.getMigrationDowntime(),
                 vmBase.getVmInit(),
@@ -508,7 +509,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
             Guid createdByUserId,
             MigrationSupport migrationSupport,
             boolean allowConsoleReconnect,
-            Guid dedicatedVmForVds,
+            List<Guid> dedicatedVmForVdsList,
             DisplayType defaultDisplayType,
             Integer migrationDowntime,
             VmInit vmInit,
@@ -570,7 +571,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         setQuotaId(quotaId);
         this.migrationSupport = migrationSupport;
         this.allowConsoleReconnect = allowConsoleReconnect;
-        this.dedicatedVmForVds = dedicatedVmForVds;
+        this.dedicatedVmForVdsList = dedicatedVmForVdsList;
         this.migrationDowntime = migrationDowntime;
         this.vmInit = vmInit;
         this.serialNumberPolicy = serialNumberPolicy;
@@ -948,7 +949,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         result = prime * result + ((vmType == null) ? 0 : vmType.hashCode());
         result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
         result = prime * result + (allowConsoleReconnect ? 1231 : 1237);
-        result = prime * result + ((dedicatedVmForVds == null) ? 0 : dedicatedVmForVds.hashCode());
+        result = prime * result + ((dedicatedVmForVdsList == null) ? 0 : dedicatedVmForVdsList.hashCode());
         result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
         result = prime * result + ((tunnelMigration == null) ? 0 : tunnelMigration.hashCode());
         result = prime * result + ((vncKeyboardLayout == null) ? 0 : vncKeyboardLayout.hashCode());
@@ -1015,7 +1016,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 && vmType == other.vmType
                 && ObjectUtils.objectsEqual(quotaId, other.quotaId)
                 && allowConsoleReconnect == other.allowConsoleReconnect
-                && ObjectUtils.objectsEqual(dedicatedVmForVds, other.dedicatedVmForVds)
+                && ObjectUtils.objectsEqual(dedicatedVmForVdsList, other.dedicatedVmForVdsList)
                 && migrationSupport == other.migrationSupport
                 && ObjectUtils.objectsEqual(tunnelMigration, other.tunnelMigration)
                 && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout)
@@ -1081,12 +1082,27 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this.migrationSupport = migrationSupport;
     }
 
-    public Guid getDedicatedVmForVds() {
-        return dedicatedVmForVds;
+    public Guid fetchDedicatedVmForSingleHost(){
+        if(getDedicatedVmForVdsList().size() == 0){
+            return null;
+        }
+        return getDedicatedVmForVdsList().get(0);
+    }
+    public List<Guid> getDedicatedVmForVdsList() {
+        if (dedicatedVmForVdsList == null){
+            dedicatedVmForVdsList = new LinkedList<Guid>();
+        }
+        return dedicatedVmForVdsList;
     }
 
-    public void setDedicatedVmForVds(Guid value) {
-        dedicatedVmForVds = value;
+    @JsonIgnore
+    public void setDedicatedVmForVdsList(List<Guid> value) {
+        dedicatedVmForVdsList = value;
+    }
+
+    public void setDedicatedVmForVdsList(Guid value) {
+        dedicatedVmForVdsList = new LinkedList<Guid>();
+        dedicatedVmForVdsList.add(value);
     }
 
     public DisplayType getDefaultDisplayType() {

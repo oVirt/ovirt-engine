@@ -3291,7 +3291,7 @@ SELECT host_device.*,
     (SELECT array_to_string(array_agg(vm_name), ',')
      FROM   vm_device INNER JOIN vm_static ON vm_device.vm_id = vm_static.vm_guid
      WHERE  vm_device.device = host_device.device_name
-     AND    vm_static.dedicated_vm_for_vds = host_device.host_id) AS attached_vm_names,
+     AND    vm_static.dedicated_vm_for_vds::text LIKE '%'||host_device.host_id::text||'%' ) AS attached_vm_names,
     (SELECT vm_name FROM vm_static WHERE vm_static.vm_guid = host_device.vm_id) AS running_vm_name
 FROM   host_device;
 
@@ -3304,5 +3304,5 @@ FROM vm_device
 INNER JOIN vm_static ON vm_device.vm_id = vm_static.vm_guid
 INNER JOIN host_device
     ON host_device.device_name = vm_device.device
-    AND vm_static.dedicated_vm_for_vds = host_device.host_id
+    AND vm_static.dedicated_vm_for_vds::text LIKE '%'||host_device.host_id::text||'%'
 WHERE vm_device.type = 'hostdev';

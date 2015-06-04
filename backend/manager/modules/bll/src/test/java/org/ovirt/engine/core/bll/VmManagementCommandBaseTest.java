@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.junit.Assert;
 
@@ -26,7 +27,7 @@ public class VmManagementCommandBaseTest {
         VmStatic vmStatic = new VmStatic();
         vmStatic.setNumOfSockets(6);
         vmStatic.setCpuPerSocket(2);
-        vmStatic.setDedicatedVmForVds(null);
+        vmStatic.setDedicatedVmForVdsList(new LinkedList<Guid>());
         Assert.assertFalse(test.isCpuPinningValid("0#0", vmStatic));
         Assert.assertFalse(test.getReturnValue()
                 .getCanDoActionMessages()
@@ -40,7 +41,7 @@ public class VmManagementCommandBaseTest {
         VmStatic vmStatic = new VmStatic();
         vmStatic.setNumOfSockets(6);
         vmStatic.setCpuPerSocket(2);
-        vmStatic.setDedicatedVmForVds(Guid.Empty);
+        vmStatic.setDedicatedVmForVdsList(Guid.Empty);
         final VDS dedicatedVds = new VDS();
         dedicatedVds.setCpuThreads(16);
         dedicatedVds.setOnlineCpus("0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15");

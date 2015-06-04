@@ -94,12 +94,12 @@ public class RunVmValidator {
      *            - hosts that we already tried to run on
      * @param vdsWhiteList
      *            - initial host list, mainly runOnSpecificHost (runOnce/migrateToHost)
-     * @param destVds
+     * @param destVdsList
      * @param vdsGroup
      * @return
      */
     public boolean canRunVm(List<String> messages, StoragePool storagePool, List<Guid> vdsBlackList,
-            List<Guid> vdsWhiteList, Guid destVds, VDSGroup vdsGroup) {
+            List<Guid> vdsWhiteList, List<Guid> destVdsList, VDSGroup vdsGroup) {
 
         if (vm.getStatus() == VMStatus.Paused) {
             // if the VM is paused, we should only check the VDS status
@@ -114,7 +114,7 @@ public class RunVmValidator {
                    validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
                    validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                    SchedulingManager.getInstance().canSchedule(
-                            vdsGroup, vm, vdsBlackList, vdsWhiteList, destVds, messages);
+                            vdsGroup, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
         }
 
         return
@@ -133,7 +133,7 @@ public class RunVmValidator {
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                 validate(validateMemorySize(vm), messages) &&
                 SchedulingManager.getInstance().canSchedule(
-                        vdsGroup, vm, vdsBlackList, vdsWhiteList, destVds, messages);
+                        vdsGroup, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
     }
 
     protected ValidationResult validateMemorySize(VM vm) {

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
@@ -117,7 +118,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVm(),
                         getVdsBlackList(),
                         getVdsWhiteList(),
-                        getDestinationVdsId(),
+                        getDestinationHostList(),
                         new ArrayList<String>(),
                         new VdsFreeMemoryChecker(this),
                         getCorrelationId());
@@ -136,6 +137,14 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
 
         return true;
+    }
+
+    private List<Guid> getDestinationHostList() {
+        List<Guid> destinationHostGuidList = new LinkedList<>();
+        if (getDestinationVdsId() != null){
+            destinationHostGuidList.add(getDestinationVdsId());
+        }
+        return destinationHostGuidList;
     }
 
     @Override
@@ -440,7 +449,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVm(),
                         getVdsBlackList(),
                         getParameters().getInitialHosts(),
-                        getDestinationVdsId(),
+                        getDestinationHostList(),
                         getReturnValue().getCanDoActionMessages());
     }
 

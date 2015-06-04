@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.InheritableBoolean;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
@@ -99,9 +102,18 @@ public class VmMapperTest extends
         from.setTimeZone(new TimeZone());
         from.getTimeZone().setName("Australia/Darwin");
         from.setTimezone(from.getTimeZone().getName());
-        from.setPlacementPolicy(new VmPlacementPolicy());
-        from.getPlacementPolicy().setHost(new Host());
-        from.getPlacementPolicy().getHost().setId(Guid.Empty.toString());
+        // VmPlacement - multiple hosts
+        VmPlacementPolicy placementPolicy = new VmPlacementPolicy();
+        Hosts hostsList = new Hosts();
+        String[] guidStrings = new String [] {Guid.EVERYONE.toString(), Guid.SYSTEM.toString()};
+        for (int i = 0; i < guidStrings.length; i++) {
+            Host newHost = new Host();
+            newHost.setId(guidStrings[i]);
+            hostsList.getHosts().add(newHost);
+        }
+        placementPolicy.setHosts(hostsList);
+        from.setPlacementPolicy(placementPolicy);
+        // Guest Nics configurations
         for (GuestNicConfiguration guestNic : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
             guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class).value());
         }
@@ -151,7 +163,10 @@ public class VmMapperTest extends
         assertEquals(model.getDisplay().getMonitors(), transform.getDisplay().getMonitors());
         assertEquals(model.getDisplay().isSingleQxlPci(), transform.getDisplay().isSingleQxlPci());
         assertEquals(model.getDisplay().isAllowOverride(), transform.getDisplay().isAllowOverride());
-        assertEquals(model.getPlacementPolicy().getHost().getId(), transform.getPlacementPolicy().getHost().getId());
+        // few hosts in Placement Policy, but unordered
+        List<Host> modelHostsList = model.getPlacementPolicy().getHosts().getHosts();
+        List<Host> trnsfHostsList = transform.getPlacementPolicy().getHosts().getHosts();
+        assertHostsListMatch(modelHostsList, trnsfHostsList);
         assertTrue(Math.abs(model.getMemoryPolicy().getGuaranteed() - transform.getMemoryPolicy().getGuaranteed()) <= (1024 * 1024));
         assertEquals(model.getTimezone(), transform.getTimezone());
         assertNotNull(model.getTimeZone());
@@ -169,6 +184,19 @@ public class VmMapperTest extends
         assertEquals(model.getMigration().getAutoConverge(), transform.getMigration().getAutoConverge());
         assertEquals(model.getMigration().getCompressed(), transform.getMigration().getCompressed());
         assertEquals(model.getDisplay().getDisconnectAction(), transform.getDisplay().getDisconnectAction());
+    }
+
+    private void assertHostsListMatch(List<Host> modelHostsList, List<Host> trnsfHostsList) {
+        for (Host host : modelHostsList){
+            boolean foundInTransformation = false;
+            for (Host otherHost : trnsfHostsList){
+                if (host.getId().equals(otherHost.getId())){
+                    foundInTransformation = true;
+                    break;
+                }
+            }
+            assertTrue("Umatching dedicated host in Placement Policy", foundInTransformation);
+        }
     }
 
     @Test

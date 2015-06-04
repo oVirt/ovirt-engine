@@ -648,6 +648,34 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 -- sets the v_val value for v_option_name in vdc_options for all versions before and up to v_version including v_version
+
+-- Remove a UUID value from a CSV string input, returns null on empty string
+Create or replace FUNCTION fn_db_remove_uuid_from_csv(v_csv_text text, v_uuid uuid)
+returns text STABLE
+AS $procedure$
+DECLARE
+v uuid[];
+e uuid;
+v_result text;
+v_sep varchar(1);
+BEGIN
+v_result := '';
+v_sep := '';
+    v := string_to_array(v_csv_text, ',');
+    FOR e in select unnest(v)
+    LOOP
+        IF (e != v_uuid) THEN
+            v_result := v_result || v_sep || e;
+            v_sep := ',';
+        END IF;
+    END LOOP;
+    IF (v_result = '') THEN
+        v_result := null;
+    END IF;
+    return v_result;
+END; $procedure$
+LANGUAGE plpgsql;
+
 -- please note that versions must be insync with  org.ovirt.engine.core.compat.Version
 create or replace FUNCTION  fn_db_add_config_value_for_versions_up_to(v_option_name varchar(100), v_val varchar(4000), v_version varchar(40))
 returns void

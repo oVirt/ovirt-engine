@@ -70,7 +70,7 @@ public class HostDeviceManager implements BackendService {
      * @return true if the specified VM is pinned to a host and has host devices directly attached to it
      */
     public boolean checkVmNeedsDirectPassthrough(VM vm) {
-        return vm.getDedicatedVmForVds() != null && supportsHostDevicePassthrough(vm) &&
+        return vm.getDedicatedVmForVdsList().size() > 0 && supportsHostDevicePassthrough(vm) &&
                 checkVmNeedsDirectPassthrough(vm.getId());
     }
 

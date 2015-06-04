@@ -22,6 +22,7 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.Snapshot;
@@ -48,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
@@ -791,33 +793,9 @@ public class BackendVmsResourceTest
     }
 
     @Test
-    public void testAddWithPlacementPolicy() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 2);
-        setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{2});
-        setUpGetVmOvfExpectations(new int[]{2});
-        setUpGetVirtioScsiExpectations(new int[]{2});
-        setUpGetSoundcardExpectations(new int[] { 1, 2 });
-        setUpGetRngDeviceExpectations(new int[] { 1, 2 });
-        setUpGetCertuficateExpectations(1, 2);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsStaticByName,
-                NameQueryParameters.class,
-                new String[]{"Name"},
-                new Object[]{NAMES[1]},
-                getStaticHost());
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
-                GetVmTemplateParameters.class,
-                new String[]{"Id"},
-                new Object[]{GUIDS[1]},
-                getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
+    public void testAddWithPlacementPolicySingleHostName() throws Exception {
+        setUpAddVm();
+        setUpGetHostByNameExpectations(1);
         setUpCreationExpectations(VdcActionType.AddVm,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
@@ -841,14 +819,98 @@ public class BackendVmsResourceTest
         verifyModel((VM) response.getEntity(), 2);
     }
 
-    private VdsStatic getStaticHost() {
-        VdsStatic vdsStatic = new VdsStatic();
-        vdsStatic.setId(GUIDS[2]);
-        return vdsStatic;
+    @Test
+    public void testAddWithPlacementPolicySingleHostId() throws Exception {
+        setUpAddVm();
+        setUpCreationExpectations(VdcActionType.AddVm,
+                AddVmParameters.class,
+                new String[]{"StorageDomainId"},
+                new Object[]{GUIDS[0]},
+                true,
+                true,
+                GUIDS[2],
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[]{"Id"},
+                new Object[]{GUIDS[2]},
+                getEntity(2));
+
+        VM model = createModel(null);
+        model.setPlacementPolicy(new VmPlacementPolicy());
+        model.getPlacementPolicy().setHost(new Host());
+        model.getPlacementPolicy().getHost().setId(GUIDS[1].toString());
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
     }
 
     @Test
-    public void testAddWithStorageDomain() throws Exception {
+    public void testAddWithPlacementPolicyHostsIds() throws Exception {
+        setUpAddVm();
+        setUpCreationExpectations(VdcActionType.AddVm,
+                AddVmParameters.class,
+                new String[]{"StorageDomainId"},
+                new Object[]{GUIDS[0]},
+                true,
+                true,
+                GUIDS[2],
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[]{"Id"},
+                new Object[]{GUIDS[2]},
+                getEntity(2));
+
+        VM model = createModel(null);
+        model.setPlacementPolicy(new VmPlacementPolicy());
+        Hosts hosts = new Hosts();
+        for (int i =0; i < GUIDS.length; i++){
+            Host newHost = new Host();
+            newHost.setId(GUIDS[i].toString());
+            hosts.getHosts().add(newHost);
+        }
+        model.getPlacementPolicy().setHosts(hosts);
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    @Test
+    public void testAddWithPlacementPolicyHostsNames() throws Exception {
+        setUpAddVm();
+        for (int i =0; i < NAMES.length; i++){
+            setUpGetHostByNameExpectations(i);
+        }
+        setUpCreationExpectations(VdcActionType.AddVm,
+                AddVmParameters.class,
+                new String[]{"StorageDomainId"},
+                new Object[]{GUIDS[0]},
+                true,
+                true,
+                GUIDS[2],
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[]{"Id"},
+                new Object[]{GUIDS[2]},
+                getEntity(2));
+
+        VM model = createModel(null);
+        model.setPlacementPolicy(new VmPlacementPolicy());
+        Hosts hosts = new Hosts();
+        for (int i =0; i < NAMES.length; i++){
+            Host newHost = new Host();
+            newHost.setName(NAMES[i].toString());
+            hosts.getHosts().add(newHost);
+        }
+        model.getPlacementPolicy().setHosts(hosts);
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    private void setUpAddVm() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
@@ -861,15 +923,26 @@ public class BackendVmsResourceTest
         setUpGetRngDeviceExpectations(new int[] { 1, 2 });
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
-                                     GetVmTemplateParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { GUIDS[1] },
+                GetVmTemplateParameters.class,
+                new String[]{"Id"},
+                new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
+    }
+
+    private VdsStatic getStaticHost() {
+        VdsStatic vdsStatic = new VdsStatic();
+        vdsStatic.setId(GUIDS[2]);
+        return vdsStatic;
+    }
+
+    @Test
+    public void testAddWithStorageDomain() throws Exception {
+        setUpAddVm();
         setUpCreationExpectations(VdcActionType.AddVm,
                                   AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
@@ -1613,5 +1686,14 @@ public class BackendVmsResourceTest
             vminits.add(vmInit);
         }
         return vminits;
+    }
+
+    protected void setUpGetHostByNameExpectations(int idx) throws Exception {
+        VDS host = BackendHostsResourceTest.setUpEntityExpectations(control.createMock(VDS.class), idx);
+        setUpGetEntityExpectations(VdcQueryType.GetVdsByName,
+                NameQueryParameters.class,
+                new String[]{"Name"},
+                new Object[]{NAMES[idx]},
+                host);
     }
 }

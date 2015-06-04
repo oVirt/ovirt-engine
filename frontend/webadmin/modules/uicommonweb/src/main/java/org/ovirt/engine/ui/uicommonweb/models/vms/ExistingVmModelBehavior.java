@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     public ExistingVmModelBehavior(VM vm)
     {
         this.vm = vm;
+        dedicatedHostsNames = Collections.<String>emptyList();
     }
 
     public VM getVm() {
@@ -88,6 +90,17 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         ExistingVmModelBehavior.this.getModel().updateNodeCount(nodes.size());
                     }
                 }));
+        // load dedicated host names into host names list
+        if (getVm().getDedicatedVmForVdsList().size() > 0) {
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllHostNamesPinnedToVmById,
+                    new IdQueryParameters(vm.getId()),
+                    new AsyncQuery(new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            setDedicatedHostsNames((List<String>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                        }
+                    }));
+        }
     }
 
     private void loadDataCenter() {
@@ -287,7 +300,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     @Override
     protected void changeDefualtHost() {
         super.changeDefualtHost();
-        doChangeDefautlHost(vm.getDedicatedVmForVds());
+        // TODO multiple dedicated hosts - redesign GUI for multiple hosts pinning
+        doChangeDefautlHost(vm.fetchDedicatedVmForSingleHost());
     }
 
     @Override

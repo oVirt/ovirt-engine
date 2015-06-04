@@ -179,7 +179,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         verifyBuiltKernelOptions(vm);
         verifyBuiltMigrationOptions(vm);
 
-        assertEquals(HOST_ID, vm.getDedicatedVmForVds());
+        assertEquals(HOST_ID, vm.getDedicatedVmForVdsList().get(0));
         assertEquals(VM_NAME, vm.getName());
         assertEquals(USB_POLICY, vm.getUsbPolicy());
 

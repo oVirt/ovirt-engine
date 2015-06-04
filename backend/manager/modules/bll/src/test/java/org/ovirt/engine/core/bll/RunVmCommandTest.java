@@ -504,7 +504,7 @@ public class RunVmCommandTest {
                 any(StoragePool.class),
                 Matchers.anyListOf(Guid.class),
                 Matchers.anyListOf(Guid.class),
-                any(Guid.class),
+                Matchers.anyListOf(Guid.class),
                 any(VDSGroup.class))).thenReturn(true);
         when(runVmValidator.validateNetworkInterfaces()).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();

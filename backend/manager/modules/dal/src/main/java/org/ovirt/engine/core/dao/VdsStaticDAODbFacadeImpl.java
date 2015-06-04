@@ -159,4 +159,8 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                         .addValue("host_name", vdsName));
     }
 
-}
+    @Override
+    public List<String> getAllHostNamesPinnedToVm(Guid vm) {
+        return getCallsHandler().executeReadList("GetNamesOfHostsDedicatedToVm", getStringMapper(),
+                getCustomMapSqlParameterSource().addValue("vm_guid", vm));
+    }}

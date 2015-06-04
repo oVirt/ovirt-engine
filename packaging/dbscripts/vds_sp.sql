@@ -506,9 +506,8 @@ RETURNS VOID
 BEGIN
    BEGIN
       UPDATE vm_static
-      SET dedicated_vm_for_vds = null,
-          migration_support = 0
-      WHERE dedicated_vm_for_vds = v_vds_id;
+      SET dedicated_vm_for_vds = fn_db_remove_uuid_from_csv(dedicated_vm_for_vds, v_vds_id)
+      WHERE dedicated_vm_for_vds LIKE '%'||v_vds_id::text||'%';
       DELETE FROM tags_vds_map
       WHERE vds_id = v_vds_id;
    -- Delete all Vds Alerts from the database
@@ -721,8 +720,8 @@ RETURNS VOID
 BEGIN
    BEGIN
       UPDATE vm_static
-      SET dedicated_vm_for_vds = null
-      WHERE dedicated_vm_for_vds = v_vds_id;
+      SET dedicated_vm_for_vds = fn_db_remove_uuid_from_csv(dedicated_vm_for_vds, v_vds_id)
+      WHERE dedicated_vm_for_vds LIKE '%'||v_vds_id::text||'%';
       DELETE FROM tags_vds_map
       WHERE vds_id = v_vds_id;
    -- Delete all Vds Alerts from the database
@@ -1113,3 +1112,22 @@ BEGIN
    RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+
+-- GetNamesOfHostsDedicatedToVm
+Create or replace FUNCTION GetNamesOfHostsDedicatedToVm(v_vm_guid UUID) RETURNS SETOF character varying
+   AS $procedure$
+BEGIN
+	BEGIN
+      RETURN QUERY
+      SELECT vds_name
+      FROM vds_static host
+      JOIN vm_static vm on vm.dedicated_vm_for_vds LIKE '%' || host.vds_id::text || '%' AND
+           vm.vm_guid = v_vm_guid;
+    END;
+    RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+
+

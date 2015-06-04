@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -15,7 +17,7 @@ public class VmNumaNodeOperationParameters extends VmOperationParameterBase {
     private List<VmNumaNode> vmNumaNodeList;
 
     private NumaTuneMode numaTuneMode;
-    private Guid dedicatedHost;
+    private List<Guid> dedicatedHostList;
     private MigrationSupport migrationSupport;
 
     public VmNumaNodeOperationParameters() {
@@ -44,12 +46,19 @@ public class VmNumaNodeOperationParameters extends VmOperationParameterBase {
         this.numaTuneMode = numaTuneMode;
     }
 
-    public Guid getDedicatedHost() {
-        return dedicatedHost;
+    public List<Guid> getDedicatedHostList() {
+        if (dedicatedHostList == null){
+            dedicatedHostList = new LinkedList<Guid>();
+        }
+        return dedicatedHostList;
     }
 
-    public void setDedicatedHost(Guid dedicatedHost) {
-        this.dedicatedHost = dedicatedHost;
+    public void setDedicatedHostList(List<Guid> dedicatedHosts) {
+        if (dedicatedHosts == null){
+            this.dedicatedHostList = Collections.<Guid>emptyList();
+            return;
+        }
+        this.dedicatedHostList = dedicatedHosts;
     }
 
     public MigrationSupport getMigrationSupport() {

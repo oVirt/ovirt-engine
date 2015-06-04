@@ -93,18 +93,21 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         boolean vmHasDirectPassthroughDevices = releaseUsedHostDevices();
 
         Guid hostId = cleanupVfs();
-        refreshHostIfNeeded(hostId == null ? (vmHasDirectPassthroughDevices ? getVm().getDedicatedVmForVds() : null)
-                : hostId);
+        // Only single dedicated host allowed for host devices, verified on canDoActions
+        Guid alternativeHostsList = vmHasDirectPassthroughDevices ? getVm().getDedicatedVmForVdsList().get(0) : null;
+        refreshHostIfNeeded(hostId == null ? alternativeHostsList : hostId);
 
     }
 
     private boolean releaseUsedHostDevices() {
         if (hostDeviceManager.checkVmNeedsDirectPassthrough(getVm())) {
             try {
-                hostDeviceManager.acquireHostDevicesLock(getVm().getDedicatedVmForVds());
+                // Only single dedicated host allowed for host devices, verified on canDoActions
+                hostDeviceManager.acquireHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
                 hostDeviceManager.freeVmHostDevices(getVmId());
             } finally {
-                hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVds());
+                // Only single dedicated host allowed for host devices, verified on canDoActions
+                hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
             }
             return true;
         }

@@ -457,7 +457,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
                     poolGeneralModel.setQuotaName(getvm().getQuotaName());
 
-                    poolGeneralModel.setHasDefaultHost(getvm().getDedicatedVmForVds() != null);
+                    poolGeneralModel.setHasDefaultHost(getvm().getDedicatedVmForVdsList().size() > 0);
                     if (poolGeneralModel.getHasDefaultHost())
                     {
                         AsyncQuery _asyncQuery1 = new AsyncQuery();
@@ -470,7 +470,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                                 ArrayList<VDS> hosts = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
                                 for (VDS host : hosts)
                                 {
-                                    if (host.getId().equals(poolGeneralModel1.getvm().getDedicatedVmForVds()))
+                                    if (poolGeneralModel1.getvm().getDedicatedVmForVdsList().contains(host.getId()))
                                     {
                                         poolGeneralModel1.setDefaultHost(host.getName());
                                         break;

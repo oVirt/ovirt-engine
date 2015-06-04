@@ -23,7 +23,7 @@ public class VmListModelTest extends BaseVmListModelTest {
 
         origVm = new VM();
         setUpOrigVm(origVm);
-        origVm.setDedicatedVmForVds(HOST_ID_2);
+        origVm.setDedicatedVmForVdsList(HOST_ID_2);
         origVm.setMigrationSupport(MIGRATION_SUPPORT_2);
         origVm.setMigrationDowntime(MIGRATION_DOWNTIME_2);
     }
@@ -35,7 +35,7 @@ public class VmListModelTest extends BaseVmListModelTest {
         verifyBuiltCommonVm(vm.getStaticData());
         verifyBuiltOrigVm(origVm, vm);
 
-        assertEquals(origVm.getDedicatedVmForVds(), vm.getDedicatedVmForVds());
+        assertEquals(origVm.getDedicatedVmForVdsList(), vm.getDedicatedVmForVdsList());
         assertEquals(origVm.getMigrationSupport(), vm.getMigrationSupport());
         assertEquals(origVm.getMigrationDowntime(), vm.getMigrationDowntime());
     }

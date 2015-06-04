@@ -6,6 +6,6 @@ import org.ovirt.engine.ui.uicommonweb.builders.BaseSyncBuilder;
 public class DedicatedVmForVdsVmBaseToVmBaseBuilder extends BaseSyncBuilder<VmBase, VmBase> {
     @Override
     protected void build(VmBase source, VmBase destination) {
-        destination.setDedicatedVmForVds(source.getDedicatedVmForVds());
+        destination.setDedicatedVmForVdsList(source.getDedicatedVmForVdsList());
     }
 }

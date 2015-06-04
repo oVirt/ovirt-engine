@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,12 +24,14 @@ public class PinToHostPolicyUnit extends PolicyUnitImpl {
     public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
             // host has been specified for pin to host.
-            if(vm.getDedicatedVmForVds() != null) {
+            if(vm.getDedicatedVmForVdsList().size() > 0) {
+                List<VDS> dedicatedHostsList = new LinkedList<>();
                 for (VDS host : hosts) {
-                    if (host.getId().equals(vm.getDedicatedVmForVds())) {
-                        return Arrays.asList(host);
+                    if (vm.getDedicatedVmForVdsList().contains(host.getId())) {
+                        dedicatedHostsList.add(host);
                     }
                 }
+                return dedicatedHostsList;
             } else {
                 // check pin to any (the VM should be down/ no migration allowed).
                 if (vm.getRunOnVds() == null) {
@@ -38,7 +40,7 @@ public class PinToHostPolicyUnit extends PolicyUnitImpl {
             }
 
             // if flow reaches here, the VM is pinned but there is no dedicated host.
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         return hosts;

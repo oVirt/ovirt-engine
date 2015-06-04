@@ -561,7 +561,7 @@ public class SnapshotsManager {
             }
             // if the required dedicated host is invalid -> use current VM dedicated host
             if (!VmHandler.validateDedicatedVdsExistOnSameCluster(vm.getStaticData(), null)) {
-                vm.setDedicatedVmForVds(oldVmStatic.getDedicatedVmForVds());
+                vm.setDedicatedVmForVdsList(oldVmStatic.getDedicatedVmForVdsList());
             }
             validateQuota(vm);
             return true;

@@ -32,12 +32,12 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
         return getDbFacade().getVmNumaNodeDAO();
     }
 
-    protected Guid getDedicatedHost() {
-        Guid dedicatedHost = getParameters().getDedicatedHost();
+    protected List<Guid> getDedicatedHostList() {
+        List<Guid> dedicatedHost = getParameters().getDedicatedHostList();
         if (dedicatedHost != null) {
             return dedicatedHost;
         }
-        return getVm().getDedicatedVmForVds();
+        return getVm().getDedicatedVmForVdsList();
     }
 
     protected NumaTuneMode getNumaTuneMode() {
@@ -69,20 +69,20 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
             return true;
         }
 
-        boolean pinHost = !Config.<Boolean> getValue(ConfigValues.SupportNUMAMigration);
-        Guid vdsId = getDedicatedHost();
-        if (pinHost && vdsId == null && getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-            return failCanDoAction(VdcBllMessages.VM_NUMA_PINNED_VDS_NOT_EXIST);
-        }
-
         List<VdsNumaNode> hostNumaNodes = new ArrayList<>();
-        if (pinHost) {
-            hostNumaNodes = getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vdsId);
-            if (hostNumaNodes == null || hostNumaNodes.size() == 0) {
+        if (!Config.<Boolean> getValue(ConfigValues.SupportNUMAMigration)) {// if unsupported NUMA migration
+            // validate - pinning is mandatory, since migration is not allowed
+            if (getMigrationSupport() != MigrationSupport.PINNED_TO_HOST || getDedicatedHostList().size() == 0) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
+            }
+            if (getDedicatedHostList().size() > 1) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
+            }
+            hostNumaNodes = getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(getDedicatedHostList().get(0));
+            if (hostNumaNodes == null || hostNumaNodes.isEmpty()) {
                 return failCanDoAction(VdcBllMessages.VM_NUMA_PINNED_VDS_NODE_EMPTY);
             }
         }
-
         boolean memStrict = getNumaTuneMode() == NumaTuneMode.STRICT;
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
             for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {

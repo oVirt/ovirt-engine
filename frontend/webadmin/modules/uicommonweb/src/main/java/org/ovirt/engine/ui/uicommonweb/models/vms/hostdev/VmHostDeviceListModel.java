@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.hostdev;
 
 import com.google.inject.Inject;
+
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -149,7 +150,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
         }
 
         model.startProgress(null);
-        if (getEntity().getDedicatedVmForVds() == null || !getEntity().getDedicatedVmForVds().equals(model.getPinnedHost().getSelectedItem().getId())) {
+        if (getEntity().getDedicatedVmForVdsList().isEmpty() || !getEntity().getDedicatedVmForVdsList().contains(model.getPinnedHost().getSelectedItem().getId())) {
             pinVmToHost(model.getPinnedHost().getSelectedItem().getId(), new IFrontendActionAsyncCallback() {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
@@ -179,7 +180,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
     }
 
     private void pinVmToHost(Guid hostId, IFrontendActionAsyncCallback callback) {
-        getEntity().setDedicatedVmForVds(hostId);
+        getEntity().setDedicatedVmForVdsList(hostId);
         Frontend.getInstance().runAction(VdcActionType.UpdateVm, new VmManagementParametersBase(getEntity().getStaticData()), callback);
     }
 

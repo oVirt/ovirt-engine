@@ -3,7 +3,9 @@ package org.ovirt.engine.api.restapi.types;
 import static org.ovirt.engine.core.compat.Guid.createGuidFromString;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +36,7 @@ import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.GuestNicsConfiguration;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.Initialization;
@@ -212,15 +215,39 @@ public class VmMapper extends VmBaseMapper {
             }
         }
 
-        if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetAffinity()) {
-            VmAffinity vmAffinity = VmAffinity.fromValue(vm.getPlacementPolicy().getAffinity());
-            if (vmAffinity!=null) {
-                staticVm.setMigrationSupport(map(vmAffinity, null));
+        if (vm.isSetPlacementPolicy()) {
+            if (vm.getPlacementPolicy().isSetAffinity()) {
+                // read migration policy
+                VmAffinity vmAffinity = VmAffinity.fromValue(vm.getPlacementPolicy().getAffinity());
+                if (vmAffinity != null) {
+                    staticVm.setMigrationSupport(map(vmAffinity, null));
+                }
             }
+           // reset previous dedicated host or hosts
+            Set<Guid> hostGuidsSet = new HashSet<>();
+
+            // read single host if exist
+            if (vm.getPlacementPolicy().isSetHost()) {
+                hostGuidsSet.add(createGuidFromString(vm.getPlacementPolicy().getHost().getId()));
+            }
+
+            // read multiple hosts if there are few
+            if (vm.getPlacementPolicy().isSetHosts()
+                    && vm.getPlacementPolicy().getHosts().getHosts().size() > 0) {
+                hostGuidsSet.addAll(staticVm.getDedicatedVmForVdsList());
+                for (Host currHost : vm.getPlacementPolicy().getHosts().getHosts()) {
+                    Guid hostGuid;
+                    if (currHost.isSetId()) {
+                        hostGuid = Guid.createGuidFromString(currHost.getId());
+                    } else {
+                        continue;
+                    }
+                    hostGuidsSet.add(hostGuid);
+                }
+            }
+            staticVm.setDedicatedVmForVdsList(new LinkedList<Guid>(hostGuidsSet));
         }
-        if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()) {
-            staticVm.setDedicatedVmForVds(createGuidFromString(vm.getPlacementPolicy().getHost().getId()));
-        }
+
         if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetGuaranteed()) {
             Long memGuaranteed = vm.getMemoryPolicy().getGuaranteed() / BYTES_PER_MB;
             staticVm.setMinAllocatedMem(memGuaranteed.intValue());
@@ -490,9 +517,18 @@ public class VmMapper extends VmBaseMapper {
             model.setOrigin(map(entity.getOrigin(), null));
         }
         model.setPlacementPolicy(new VmPlacementPolicy());
-        if(entity.getDedicatedVmForVds() !=null){
+        if (entity.getDedicatedVmForVdsList().size() == 1) {
             model.getPlacementPolicy().setHost(new Host());
-            model.getPlacementPolicy().getHost().setId(entity.getDedicatedVmForVds().toString());
+            model.getPlacementPolicy().getHost().setId(entity.getDedicatedVmForVdsList().get(0).toString());
+        }
+        else if (entity.getDedicatedVmForVdsList().size() > 1) {
+            Hosts hostsList = new Hosts();
+            for (Guid hostGuid : entity.getDedicatedVmForVdsList()) {
+                Host newHost = new Host();
+                newHost.setId(hostGuid.toString());
+                hostsList.getHosts().add(newHost);
+            }
+            model.getPlacementPolicy().setHosts(hostsList);
         }
         VmAffinity vmAffinity = map(entity.getMigrationSupport(), null);
         if(vmAffinity !=null){

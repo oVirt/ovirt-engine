@@ -86,7 +86,8 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         }
 
         setupWindowModelFrom(template);
-        doChangeDefautlHost(template.getDedicatedVmForVds());
+        // TODO multiple dedicated hosts - redesign GUI for multiple hosts pinning
+        doChangeDefautlHost(template.fetchDedicatedVmForSingleHost());
         updateRngDevice(template.getId());
         getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
     }

@@ -183,7 +183,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
             setAlert(null);
         }
 
-        setHasDefaultHost(vm.getDedicatedVmForVds() != null);
+        setHasDefaultHost(vm.getDedicatedVmForVdsList().isEmpty() == false);
         if (getHasDefaultHost()) {
             Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getVdsGroupName() //$NON-NLS-1$
                     + " sortby name", SearchType.VDS), new AsyncQuery(this, //$NON-NLS-1$
@@ -200,8 +200,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
                             ArrayList<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
                             for (VDS host : hosts)
                             {
-                                if (localVm.getDedicatedVmForVds() != null
-                                        && host.getId().equals(localVm.getDedicatedVmForVds()))
+                                if (localVm.getDedicatedVmForVdsList().contains(host.getId()))
                                 {
                                     model.setDefaultHost(host.getName());
                                     break;

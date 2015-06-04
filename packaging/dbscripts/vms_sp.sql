@@ -548,7 +548,7 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000),
  v_is_smartcard_enabled BOOLEAN,
  v_is_delete_protected BOOLEAN,
  v_sso_method VARCHAR(32),
- v_dedicated_vm_for_vds UUID ,
+ v_dedicated_vm_for_vds text ,
     v_fail_back BOOLEAN ,
     v_vm_type INTEGER ,
  v_nice_level INTEGER,
@@ -855,7 +855,7 @@ Create or replace FUNCTION UpdateVmStatic(v_description VARCHAR(4000) ,
  v_is_smartcard_enabled BOOLEAN,
  v_is_delete_protected BOOLEAN,
  v_sso_method VARCHAR(32),
- v_dedicated_vm_for_vds UUID ,
+ v_dedicated_vm_for_vds text ,
     v_fail_back BOOLEAN ,
     v_vm_type INTEGER ,
     v_nice_level INTEGER,
@@ -1047,7 +1047,7 @@ BEGIN
    RETURN QUERY
       SELECT vm_name
       FROM vm_static
-      WHERE dedicated_vm_for_vds = v_vds_id
+      WHERE dedicated_vm_for_vds LIKE '%'||v_vds_id::text||'%'
       AND   migration_support = 2
       AND   entity_type = 'VM';
 
@@ -1107,7 +1107,7 @@ Create or replace FUNCTION GetVmStaticWithFailbackByVdsId(v_vds_id UUID) RETURNS
 BEGIN
 RETURN QUERY SELECT vm_static.*
    FROM vm_static
-   WHERE dedicated_vm_for_vds = v_vds_id and fail_back = TRUE
+   WHERE dedicated_vm_for_vds LIKE '%'||v_vds_id::text||'%' and fail_back = TRUE
    AND   entity_type = 'VM';
 
 END; $procedure$

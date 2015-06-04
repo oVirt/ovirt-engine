@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -118,11 +118,14 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     }
 
     @Override
-    protected Guid getPredefinedVdsIdToRunOn() {
+    protected List<Guid> getPredefinedVdsIdListToRunOn() {
         // destination VDS ID has priority over the dedicated VDS
-        return getParameters().getDestinationVdsId() != null ?
-            getParameters().getDestinationVdsId()
-            : super.getPredefinedVdsIdToRunOn();
+        if (getParameters().getDestinationVdsId() != null){
+            List<Guid> destIdList = new LinkedList<Guid>();
+            destIdList.add(getParameters().getDestinationVdsId());
+            return destIdList;
+        }
+        return super.getPredefinedVdsIdListToRunOn();
     }
 
     /**
@@ -204,10 +207,10 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
     @Override
     protected List<Guid> getVdsWhiteList() {
-        Guid predefinedDestinationVdsId = getPredefinedVdsIdToRunOn();
-        return predefinedDestinationVdsId != null ?
-                Arrays.asList(predefinedDestinationVdsId)
-                : super.getVdsWhiteList();
+        if (getPredefinedVdsIdListToRunOn().size() > 0){
+            return getPredefinedVdsIdListToRunOn();
+        }
+        return super.getVdsWhiteList();
     }
 
     @Override
@@ -240,7 +243,8 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         // check, if user can override default target host for VM
         if (getVm() != null) {
             final Guid destinationVdsId = getParameters().getDestinationVdsId();
-            if (destinationVdsId != null && !destinationVdsId.equals(getVm().getDedicatedVmForVds())) {
+            if (destinationVdsId != null &&
+                getVm().getDedicatedVmForVdsList().contains(destinationVdsId) == false) {
                 permissionList.add(new PermissionSubject(getParameters().getVmId(),
                     VdcObjectType.VM,
                     ActionGroup.EDIT_ADMIN_VM_PROPERTIES));

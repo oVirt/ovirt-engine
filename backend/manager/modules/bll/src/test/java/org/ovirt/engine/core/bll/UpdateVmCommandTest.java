@@ -227,7 +227,7 @@ public class UpdateVmCommandTest {
         doReturn(vdsDAO).when(command).getVdsDAO();
         doReturn(false).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
 
-        vmStatic.setDedicatedVmForVds(Guid.newGuid());
+        vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
 
         assertFalse("canDoAction should have failed with invalid dedicated host.", command.canDoAction());
     }
@@ -242,7 +242,7 @@ public class UpdateVmCommandTest {
         doReturn(vdsDAO).when(command).getVdsDAO();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
         doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
-        vmStatic.setDedicatedVmForVds(Guid.newGuid());
+        vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
 
         assertTrue("canDoAction should have passed.", command.canDoAction());
     }

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -383,10 +384,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         if (getVmTemplate() != null && !isInstanceType() && !isBlankTemplate()) {
             // host-specific parameters can be changed by administration role only
-            if (!(getVmTemplate().getDedicatedVmForVds() == null ?
-                    getParameters().getVmTemplateData().getDedicatedVmForVds() == null :
-                    getVmTemplate().getDedicatedVmForVds().equals(getParameters().getVmTemplateData()
-                            .getDedicatedVmForVds()))) {
+            List<Guid> tmpltDdctHostsLst = getVmTemplate().getDedicatedVmForVdsList();
+            List<Guid> prmTmpltDdctHostsLst = getParameters().getVmTemplateData().getDedicatedVmForVdsList();
+            // tmpltDdctHostsLst.equals(prmTmpltDdctHostsLs is not good enough, lists order may change
+            if (CollectionUtils.isEqualCollection(tmpltDdctHostsLst, prmTmpltDdctHostsLst) == false) {
                 permissionList.add(
                         new PermissionSubject(getParameters().getVmTemplateId(),
                                 VdcObjectType.VmTemplate,

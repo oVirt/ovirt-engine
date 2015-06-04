@@ -415,8 +415,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean hostToRunExist() {
-        if (getParameters().getVmStaticData().getDedicatedVmForVds() != null) {
-            if (DbFacade.getInstance().getVdsDao().get(getParameters().getVmStaticData().getDedicatedVmForVds()) == null) {
+        List<Guid> dedicatedHostsList = getParameters().getVmStaticData().getDedicatedVmForVdsList();
+        if (dedicatedHostsList.isEmpty()){
+            return true;
+        }
+        for (Guid candidateHostGuid : dedicatedHostsList) {
+            if (DbFacade.getInstance().getVdsDao().get(candidateHostGuid) == null) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
                 return false;
             }
@@ -1049,7 +1053,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         List<VmNumaNode> numaNodes = getParameters().getVmStaticData().getvNumaNodeList();
         VmNumaNodeOperationParameters params = new VmNumaNodeOperationParameters(getVmId(), numaNodes);
         params.setNumaTuneMode(getParameters().getVmStaticData().getNumaTuneMode());
-        params.setDedicatedHost(getParameters().getVmStaticData().getDedicatedVmForVds());
+        params.setDedicatedHostList(getParameters().getVmStaticData().getDedicatedVmForVdsList());
         params.setMigrationSupport(getParameters().getVmStaticData().getMigrationSupport());
         if (numaNodes == null || numaNodes.isEmpty()) {
             return;
@@ -1305,7 +1309,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
 
             // host-specific parameters can be changed by administration role only
-            if (vmFromParams.getDedicatedVmForVds() != null || !StringUtils.isEmpty(vmFromParams.getCpuPinning())) {
+            if (vmFromParams.getDedicatedVmForVdsList().size() > 0 || !StringUtils.isEmpty(vmFromParams.getCpuPinning())) {
                 permissionList.add(new PermissionSubject(getVdsGroupId(),
                         VdcObjectType.VdsGroups, ActionGroup.EDIT_ADMIN_VM_PROPERTIES));
             }

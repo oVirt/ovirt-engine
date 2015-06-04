@@ -76,7 +76,6 @@ import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -147,11 +146,8 @@ public class BackendVmResource extends
             }
         }
         if (!isFiltered()) {
-            //if the user updated the host within placement-policy, but supplied host-name rather than the host-id (legal) -
-            //resolve the host's ID, because it will be needed down the line
-            if (incoming.isSetPlacementPolicy() && incoming.getPlacementPolicy().isSetHost()
-                    && incoming.getPlacementPolicy().getHost().isSetName() && !incoming.getPlacementPolicy().getHost().isSetId()) {
-                incoming.getPlacementPolicy().getHost().setId(getHostId(incoming.getPlacementPolicy().getHost().getName()));
+            if (incoming.isSetPlacementPolicy()) {
+                parent.validateAndUpdateHostsInPlacementPolicy(incoming.getPlacementPolicy());
             }
         } else {
             incoming.setPlacementPolicy(null);
@@ -203,13 +199,6 @@ public class BackendVmResource extends
                     localize(Messages.INVALID_ICON_PARAMETERS),
                     Response.Status.BAD_REQUEST);
         }
-    }
-
-    private String getHostId(String hostName) {
-        return getEntity(VdsStatic.class,
-                VdcQueryType.GetVdsStaticByName,
-                new NameQueryParameters(hostName),
-                "Hosts: name=" + hostName).getId().toString();
     }
 
     protected Guid lookupClusterId(VM vm) {
@@ -402,9 +391,12 @@ public class BackendVmResource extends
     private RunVmOnceParams createRunVmOnceParams(VM vm) {
         RunVmOnceParams params = map(vm, map(map(getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true), new VM()),
                 new RunVmOnceParams(guid)));
-        if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()) {
-            validateParameters(vm.getPlacementPolicy(), "host.id|name");
-            params.setDestinationVdsId(getHostId(vm.getPlacementPolicy().getHost()));
+        if (vm.isSetPlacementPolicy()) {
+            Set<Guid> hostsGuidsSet = parent.validateAndUpdateHostsInPlacementPolicy(vm.getPlacementPolicy());
+            if (hostsGuidsSet.size() > 0) {
+                // take the arbitrary first host for run destination
+                params.setDestinationVdsId(hostsGuidsSet.iterator().next());
+            }
         }
         if (vm.isSetInitialization() && vm.getInitialization().isSetCloudInit()) {
             CloudInit cloudInit = vm.getInitialization().getCloudInit();
@@ -419,7 +411,7 @@ public class BackendVmResource extends
                 }
             }
             params.setInitializationType(InitializationType.CloudInit);
-            ((RunVmOnceParams) params).setVmInit(
+            params.setVmInit(
                     getMapper(CloudInit.class, VmInit.class)
                     .map(cloudInit, null));
         }
@@ -508,7 +500,6 @@ public class BackendVmResource extends
         }
         return action.getTicket().getValue();
     }
-
 
     protected int getTicketExpiry(Action action) {
         if (!ensureTicket(action).isSetExpiry()) {

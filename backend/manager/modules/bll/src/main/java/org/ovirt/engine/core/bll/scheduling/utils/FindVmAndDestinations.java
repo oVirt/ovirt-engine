@@ -104,7 +104,7 @@ public class FindVmAndDestinations {
                 // The VM has to allow migrations and...
                 return v.getMigrationSupport() == MigrationSupport.MIGRATABLE
                         // must not be pinned to the host
-                        && !hostId.equals(v.getDedicatedVmForVds());
+                        && v.getDedicatedVmForVdsList().contains(hostId) == false;
             }
         });
 

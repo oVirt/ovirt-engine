@@ -3,6 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +21,7 @@ import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Display;
+import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.Nics;
@@ -31,6 +34,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.model.VirtIOSCSI;
+import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
@@ -49,7 +53,6 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmInit;
@@ -143,14 +146,9 @@ public class BackendVmsResource extends
                 staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(vm.getUsb(),
                         cluster.getCompatibilityVersion()));
 
-                if (!isFiltered()) {
-                    // if the user set the host-name within placement-policy, rather than the host-id (legal) -
-                    // resolve the host's ID, because it will be needed down the line
-                    if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()
-                            && vm.getPlacementPolicy().getHost().isSetName()
-                            && !vm.getPlacementPolicy().getHost().isSetId()) {
-                        staticVm.setDedicatedVmForVds(asGuid(getHostId(vm.getPlacementPolicy().getHost().getName())));
-                    }
+                if (!isFiltered() && vm.isSetPlacementPolicy()) {
+                    Set<Guid> hostGuidsSet = validateAndUpdateHostsInPlacementPolicy(vm.getPlacementPolicy());
+                    staticVm.setDedicatedVmForVdsList(new LinkedList<Guid>(hostGuidsSet));
                 } else {
                     vm.setPlacementPolicy(null);
                 }
@@ -295,13 +293,6 @@ public class BackendVmsResource extends
         return (snapshots.getSnapshots() != null && !snapshots.getSnapshots().isEmpty()) ? snapshots.getSnapshots()
                 .get(0)
                 .getId() : Guid.Empty.toString();
-    }
-
-    private String getHostId(String hostName) {
-        return getEntity(VdsStatic.class,
-                VdcQueryType.GetVdsStaticByName,
-                new NameQueryParameters(hostName),
-                "Hosts: name=" + hostName).getId().toString();
     }
 
     private Response cloneVmFromSnapshot(org.ovirt.engine.core.common.businessentities.VM configVm,
@@ -773,4 +764,41 @@ public class BackendVmsResource extends
         return false;
     }
 
+    /**
+     * Update and validate PlacementPolicy object
+     * Fill hostId for host elements specified by name
+     * Returns Set of dedicated hosts' Guids found by name or id in PlacementPolicy
+     */
+    protected Set<Guid> validateAndUpdateHostsInPlacementPolicy(VmPlacementPolicy placementPolicy) {
+        Set<Guid> hostsGuidsSet = new HashSet<Guid>();
+        // if there is single host element, with host name
+        if (placementPolicy.isSetHost()) {
+            validateParameters(placementPolicy, "host.id|name");
+            updateIdForSingleHost(placementPolicy.getHost(), hostsGuidsSet);
+        }
+        // or there is Hosts element containing any hosts
+        if (placementPolicy.isSetHosts()
+                && placementPolicy.getHosts().getHosts().size() > 0) {
+            for (Host host : placementPolicy.getHosts().getHosts()) {
+                validateParameters(host, "id|name");
+                // for each host that is specified by name or id
+                updateIdForSingleHost(host, hostsGuidsSet);
+            }
+        }
+        return hostsGuidsSet;
+    }
+
+    private void updateIdForSingleHost(Host host, Set<Guid> guidsSet) {
+        if (host.isSetName() && !host.isSetId()){
+            // find the corresponding host id
+            Guid hostGuid = getHostId(host);
+            if (hostGuid != null) {
+                guidsSet.add(hostGuid);
+                // add hostId element to host
+                host.setId(hostGuid.toString());
+            }
+        } else if (host.isSetId()){
+            guidsSet.add(Guid.createGuidFromString(host.getId()));
+        }
+    }
 }

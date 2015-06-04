@@ -22,7 +22,8 @@ public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
     protected void executeCommand() {
         Guid vmId = getParameters().getVmId();
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
-        Guid vdsId = getDedicatedHost();
+        // only single dedicated host allowed
+        Guid vdsId = getVm().getDedicatedVmForVdsList().get(0);
         List<VdsNumaNode> vdsNumaNodes = new ArrayList<>();
         if (vdsId != null) {
             vdsNumaNodes = getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vdsId);

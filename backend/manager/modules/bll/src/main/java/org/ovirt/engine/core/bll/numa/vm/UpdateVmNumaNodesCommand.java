@@ -21,7 +21,8 @@ public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
     @Override
     protected void executeCommand() {
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
-        Guid vdsId = getVm().getDedicatedVmForVds();
+        // only single dedicated host allowed
+        Guid vdsId = getVm().getDedicatedVmForVdsList().get(0);
         List<VdsNumaNode> vdsNumaNodes = new ArrayList<>();
         if (vdsId != null) {
             vdsNumaNodes = getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vdsId);
