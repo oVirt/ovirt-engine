@@ -71,38 +71,6 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
         }
     }
 
-    @Test
-    public void testDetachSuccess() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations();
-        setUpActionExpectations(VdcActionType.DetachStorageConnectionFromStorageDomain,
-                AttachDetachStorageConnectionParameters.class,
-                new String[] {},
-                new Object[] {},
-                true,
-                true);
-        Response response = collection.remove(GUIDS[3].toString());
-        assertEquals(200, response.getStatus());
-    }
-
-    @Test
-    public void testDetachFailure() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations();
-        setUpActionExpectations(VdcActionType.DetachStorageConnectionFromStorageDomain,
-                AttachDetachStorageConnectionParameters.class,
-                new String[] {},
-                new Object[] {},
-                false,
-                false);
-        try {
-            Response response = collection.remove(GUIDS[3].toString());
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(400, wae.getResponse().getStatus());
-        }
-    }
-
     @Override
     protected List<StorageConnection> getCollection() {
         return collection.list().getStorageConnections();

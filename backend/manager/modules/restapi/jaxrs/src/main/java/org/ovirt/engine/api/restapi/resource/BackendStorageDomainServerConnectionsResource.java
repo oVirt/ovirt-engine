@@ -61,14 +61,6 @@ public class BackendStorageDomainServerConnectionsResource extends AbstractBacke
     }
 
     @Override
-    public Response performRemove(String id) {
-        AttachDetachStorageConnectionParameters params =
-                new AttachDetachStorageConnectionParameters(storageDomainId, id);
-
-        return performAction(VdcActionType.DetachStorageConnectionFromStorageDomain, params);
-    }
-
-    @Override
     @SingleEntityResource
     public StorageDomainServerConnectionResource getStorageConnectionSubResource(String id) {
         return inject(new BackendStorageDomainServerConnectionResource(id, this));
