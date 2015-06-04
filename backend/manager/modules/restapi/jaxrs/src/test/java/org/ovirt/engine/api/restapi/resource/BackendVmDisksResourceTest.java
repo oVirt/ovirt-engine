@@ -70,7 +70,7 @@ public class BackendVmDisksResourceTest
                                            new Object[] { GUIDS[0] },
                                            true,
                                            true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
+        verifyRemove(collection.deprecatedRemove(GUIDS[0].toString()));
     }
 
     private void setUpGetEntityExpectations() {
@@ -100,7 +100,7 @@ public class BackendVmDisksResourceTest
                                            canDo,
                                            success));
         try {
-            collection.remove(GUIDS[0].toString());
+            collection.deprecatedRemove(GUIDS[0].toString());
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyFault(wae, detail);
@@ -177,7 +177,7 @@ public class BackendVmDisksResourceTest
                                            true));
         Action action = new Action();
         action.setDetach(true);
-        verifyRemove(collection.remove(DISK_ID.toString(), action));
+        verifyRemove(collection.deprecatedRemove(DISK_ID.toString(), action));
     }
 
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {

@@ -63,7 +63,7 @@ public class BackendNicsResourceTest
                                            new Object[] { PARENT_ID, GUIDS[0] },
                                            true,
                                            true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
+        verifyRemove(collection.deprecatedRemove(GUIDS[0].toString()));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class BackendNicsResourceTest
                 new LinkedList<VmNetworkInterface>());
         control.replay();
         try {
-            collection.remove(NON_EXISTANT_GUID.toString());
+            collection.deprecatedRemove(NON_EXISTANT_GUID.toString());
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             assertNotNull(wae.getResponse());
@@ -106,7 +106,7 @@ public class BackendNicsResourceTest
                                            canDo,
                                            success));
         try {
-            collection.remove(GUIDS[0].toString());
+            collection.deprecatedRemove(GUIDS[0].toString());
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyFault(wae, detail);

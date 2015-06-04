@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -30,23 +31,26 @@ import org.ovirt.engine.api.model.Disk;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface VmDiskResource extends DiskResource, DeviceResource<Disk>, MovableResource {
-
     @Path("{action: (activate|deactivate|move)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Actionable
     @Path("activate")
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    public Response activate(Action action);
+    Response activate(Action action);
 
     @POST
     @Actionable
     @Path("deactivate")
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    public Response deactivate(Action action);
+    Response deactivate(Action action);
 
     @PUT
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
-    public Disk update(Disk device);
+    Disk update(Disk device);
+
+    @DELETE
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    Response remove(Action action);
 }

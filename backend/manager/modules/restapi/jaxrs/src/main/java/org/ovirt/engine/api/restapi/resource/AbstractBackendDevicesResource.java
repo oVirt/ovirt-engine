@@ -47,8 +47,12 @@ public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C ext
                                getEntityIdResolver(device.getName()));
     }
 
-    @Override
-    public Response performRemove(String id) {
+    // This method should be part of the entity resource, but moving it requires too many changes, so it will be
+    // temporarily kept here. A new method is introduced in the entity resource that calls this one, and this
+    // one is removed from the collection interface.
+    @Deprecated
+    public Response deprecatedRemove(String id) {
+        getEntity(id);
         return performAction(removeAction, getRemoveParameters(id));
     }
 

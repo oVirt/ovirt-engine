@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.POST;
@@ -33,11 +32,7 @@ public interface DevicesResource<D extends BaseDevice, C extends BaseDevices>
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    public Response add(D device);
-
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id);
+    Response add(D device);
 
     // Note the departure from the usual convention of naming the path
     // parameter as "id". This is to work-around a RESTEasy bug in handling
@@ -46,5 +41,5 @@ public interface DevicesResource<D extends BaseDevice, C extends BaseDevices>
     // ReadOnlyDeviceResource to the DeviceResource sub-interface.
     @Path("{iden}")
     @Override
-    public DeviceResource<D> getDeviceSubResource(@PathParam("iden") String id);
+    DeviceResource<D> getDeviceSubResource(@PathParam("iden") String id);
 }

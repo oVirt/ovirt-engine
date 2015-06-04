@@ -81,8 +81,11 @@ public class BackendVmDisksResource
         }
     }
 
-    @Override
-    public Response remove(String id, Action action) {
+    // This method should be part of the entity resource, but moving it requires too many changes, so it will be
+    // temporarily kept here. A new method is introduced in the entity resource that calls this one, and this
+    // one is removed from the collection interface.
+    @Deprecated
+    public Response deprecatedRemove(String id, Action action) {
         getEntity(id); //verifies that entity exists, returns 404 otherwise.
         if (action.isSetDetach() && action.isDetach()) {
             return performAction(VdcActionType.DetachDiskFromVm,

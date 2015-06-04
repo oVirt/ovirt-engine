@@ -122,22 +122,29 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                                                             VdcQueryType.GetPermissionsForObject,
-                                                             new GetPermissionsForObjectParameters(guid),
-                                                             Disk.class,
-                                                             VdcObjectType.Disk));
+            VdcQueryType.GetPermissionsForObject,
+            new GetPermissionsForObjectParameters(guid),
+            Disk.class,
+            VdcObjectType.Disk));
     }
 
     @Override
     public Response doExport(Action action) {
         validateParameters(action, "storageDomain.id|name");
         return doAction(VdcActionType.ExportRepoImage,
-                new ExportRepoImageParameters(guid, getStorageDomainId(action)), action);
+            new ExportRepoImageParameters(guid, getStorageDomainId(action)), action);
     }
 
     @Override
     public Disk update(Disk resource) {
         validateEnums(Disk.class, resource);
         return super.update(resource);//explicit call solves REST-Easy confusion
+    }
+
+    // The code to remove the disk should be here, but moving it from the collection resource requires too many
+    // changes, so it is temporarily kept there.
+    @Override
+    public Response remove(Action action) {
+        return ((BackendVmDisksResource) collection).deprecatedRemove(id, action);
     }
 }

@@ -61,7 +61,7 @@ public class BackendVmNicsResourceTest
                                            new Object[] { PARENT_ID, GUIDS[0] },
                                            true,
                                            true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
+        verifyRemove(collection.deprecatedRemove(GUIDS[0].toString()));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class BackendVmNicsResourceTest
                                            canDo,
                                            success));
         try {
-            collection.remove(GUIDS[0].toString());
+            collection.deprecatedRemove(GUIDS[0].toString());
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyFault(wae, detail);

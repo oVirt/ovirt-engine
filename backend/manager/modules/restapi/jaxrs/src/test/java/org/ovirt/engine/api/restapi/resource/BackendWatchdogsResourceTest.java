@@ -45,7 +45,7 @@ public class BackendWatchdogsResourceTest extends AbstractBackendWatchdogsResour
                 new Object[] { PARENT_ID },
                 true,
                 true));
-        Response remove = collection.remove(GUIDS[0].toString());
+        Response remove = collection.deprecatedRemove(GUIDS[0].toString());
         verifyRemove(remove);
     }
 

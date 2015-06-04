@@ -9,8 +9,7 @@ import org.ovirt.engine.api.model.Nics;
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface VmNicsResource extends DevicesResource<NIC, Nics> {
-
     @Path("{iden}")
     @Override
-    public VmNicResource getDeviceSubResource(@PathParam("iden") String id);
+    VmNicResource getDeviceSubResource(@PathParam("iden") String id);
 }
