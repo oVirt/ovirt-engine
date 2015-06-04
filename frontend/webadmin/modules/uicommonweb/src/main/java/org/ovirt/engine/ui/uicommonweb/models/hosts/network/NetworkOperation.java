@@ -417,9 +417,11 @@ public enum NetworkOperation {
 
         @Override
         public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            for (LogicalNetworkModel network : ((NetworkLabelModel) op1).getNetworks()) {
-                if (ATTACH_NETWORK.isDisplayNetworkAffected(network, null)) {
-                    return true;
+            if (op1 != null && op1 instanceof NetworkLabelModel) {
+                for (LogicalNetworkModel network : ((NetworkLabelModel) op1).getNetworks()) {
+                    if (ATTACH_NETWORK.isDisplayNetworkAffected(network, null)) {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -458,9 +460,11 @@ public enum NetworkOperation {
 
         @Override
         public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            for (LogicalNetworkModel network : ((NetworkLabelModel) op1).getNetworks()) {
-                if (DETACH_NETWORK.isDisplayNetworkAffected(network, null)) {
-                    return true;
+            if (op1 != null && op1 instanceof NetworkLabelModel) {
+                for (LogicalNetworkModel network : ((NetworkLabelModel) op1).getNetworks()) {
+                    if (DETACH_NETWORK.isDisplayNetworkAffected(network, null)) {
+                        return true;
+                    }
                 }
             }
             return false;
