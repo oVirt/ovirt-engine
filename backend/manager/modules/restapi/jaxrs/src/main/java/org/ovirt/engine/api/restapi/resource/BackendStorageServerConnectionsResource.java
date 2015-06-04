@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
@@ -86,33 +85,6 @@ public class BackendStorageServerConnectionsResource extends AbstractBackendColl
         StorageServerConnectionParametersBase params = new StorageServerConnectionParametersBase(entity, hostId);
         params.setVdsId(hostId);
         return params;
-    }
-
-    @Override
-    public Response remove(String id, Action action) {
-        getEntity(id);
-        StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(id);
-        Guid hostId = Guid.Empty;
-
-        if (action != null && action.isSetHost()) {
-            hostId = getHostId(action.getHost());
-        }
-
-        StorageServerConnectionParametersBase parameters =
-                new StorageServerConnectionParametersBase(connection, hostId);
-        return performAction(VdcActionType.RemoveStorageServerConnection, parameters);
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(id);
-        Guid hostId = Guid.Empty;
-
-        StorageServerConnectionParametersBase parameters =
-                new StorageServerConnectionParametersBase(connection, hostId);
-        return performAction(VdcActionType.RemoveStorageServerConnection, parameters);
     }
 
     @Override

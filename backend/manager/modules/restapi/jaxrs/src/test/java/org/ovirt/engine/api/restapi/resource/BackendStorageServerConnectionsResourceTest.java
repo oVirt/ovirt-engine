@@ -10,7 +10,6 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -101,82 +100,6 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
             storageConnections.add(getEntity(i));
         }
         return storageConnections;
-    }
-
-    private void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
-                StorageServerConnectionQueryParametersBase.class,
-                new String[] { "ServerConnectionId" },
-                new Object[] { GUIDS[0].toString() },
-                getEntity(0));
-    }
-
-    private void setUpGetNotExistingEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
-                StorageServerConnectionQueryParametersBase.class,
-                new String[] { "ServerConnectionId" },
-                new Object[] { GUIDS[0].toString() },
-                null);
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations();
-        Host host = new Host();
-        host.setId(GUIDS[1].toString());
-        StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(GUIDS[0].toString());
-        connection.setconnection("/data1");
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
-                StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection", "VdsId" },
-                new Object[] { connection, GUIDS[1] },
-                true,
-                true));
-        Action action = new Action();
-        action.setHost(host);
-        verifyRemove(collection.remove(GUIDS[0].toString(), action));
-    }
-
-    @Test
-    public void testRemoveNotExisting() throws Exception {
-        setUpGetNotExistingEntityExpectations();
-        Host host = new Host();
-        host.setId(GUIDS[1].toString());
-        control.replay();
-        try {
-            Action action = new Action();
-            action.setHost(host);
-            collection.remove(GUIDS[0].toString(), action);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
-
-    @Test
-    public void testRemoveCanDoFail() throws Exception {
-        setUpGetEntityExpectations();
-        Host host = new Host();
-        host.setId(GUIDS[1].toString());
-        StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(GUIDS[0].toString());
-        connection.setconnection("/data1");
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
-                StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection", "VdsId" },
-                new Object[] { connection, GUIDS[1] },
-                false,
-                false));
-        try {
-            Action action = new Action();
-            action.setHost(host);
-            collection.remove(GUIDS[0].toString(), action);
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(400, wae.getResponse().getStatus());
-        }
     }
 
     @Test

@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.expect;
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -95,6 +96,66 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         } catch (WebApplicationException e) {
             assertNotNull(e.getResponse());
             assertEquals(400, e.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExpectations();
+        Host host = new Host();
+        host.setId(GUIDS[1].toString());
+        StorageServerConnections connection = new StorageServerConnections();
+        connection.setid(GUIDS[3].toString());
+        connection.setconnection("/data1");
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
+                StorageServerConnectionParametersBase.class,
+                new String[] { "StorageServerConnection", "VdsId" },
+                new Object[] { connection, GUIDS[1] },
+                true,
+                true));
+        Action action = new Action();
+        action.setHost(host);
+        verifyRemove(resource.remove(action));
+    }
+
+    @Test
+    public void testRemoveNotExisting() throws Exception {
+        setUpGetNotExistingEntityExpectations();
+        Host host = new Host();
+        host.setId(GUIDS[1].toString());
+        control.replay();
+        try {
+            Action action = new Action();
+            action.setHost(host);
+            resource.remove(action);
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveCanDoFail() throws Exception {
+        setUpGetEntityExpectations();
+        Host host = new Host();
+        host.setId(GUIDS[1].toString());
+        StorageServerConnections connection = new StorageServerConnections();
+        connection.setid(GUIDS[3].toString());
+        connection.setconnection("/data1");
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
+                StorageServerConnectionParametersBase.class,
+                new String[] { "StorageServerConnection", "VdsId" },
+                new Object[] { connection, GUIDS[1] },
+                false,
+                false));
+        try {
+            Action action = new Action();
+            action.setHost(host);
+            resource.remove(action);
+        } catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(400, wae.getResponse().getStatus());
         }
     }
 

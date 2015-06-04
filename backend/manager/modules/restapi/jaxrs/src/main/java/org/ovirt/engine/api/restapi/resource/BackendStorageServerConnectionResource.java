@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
@@ -43,6 +46,22 @@ public class BackendStorageServerConnectionResource extends
         return model;
     }
 
+    @Override
+    public Response remove(Action action) {
+        get();
+        StorageServerConnections connection = new StorageServerConnections();
+        connection.setid(id);
+        Guid hostId = Guid.Empty;
+
+        if (action != null && action.isSetHost()) {
+            hostId = getHostId(action.getHost());
+        }
+
+        StorageServerConnectionParametersBase parameters =
+                new StorageServerConnectionParametersBase(connection, hostId);
+        return performAction(VdcActionType.RemoveStorageServerConnection, parameters);
+    }
+
     public BackendStorageServerConnectionsResource getParent() {
         return parent;
     }
@@ -70,5 +89,16 @@ public class BackendStorageServerConnectionResource extends
                                     "Hosts: name=" + host.getName()).getId()
                             : null;
         }
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        StorageServerConnections connection = new StorageServerConnections();
+        connection.setid(id);
+        Guid hostId = Guid.Empty;
+        StorageServerConnectionParametersBase parameters =
+                new StorageServerConnectionParametersBase(connection, hostId);
+        return performAction(VdcActionType.RemoveStorageServerConnection, parameters);
     }
 }
