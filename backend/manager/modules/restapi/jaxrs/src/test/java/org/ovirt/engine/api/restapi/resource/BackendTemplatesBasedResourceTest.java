@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -30,63 +29,6 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
 
     protected BackendTemplatesBasedResourceTest(C collection, SearchType searchType, String prefix) {
         super(collection, searchType, prefix);
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations(0);
-        setUpGetGraphicsExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
-                VmTemplateParametersBase.class,
-                new String[] { "VmTemplateId" },
-                new Object[] { GUIDS[0] },
-                true,
-                true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(VdcQueryType.GetVmTemplate,
-                GetVmTemplateParameters.class,
-                new String[] { "Id" },
-                new Object[] { NON_EXISTANT_GUID },
-                null);
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(0);
-        setUpGetGraphicsExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
-                VmTemplateParametersBase.class,
-                new String[] { "VmTemplateId" },
-                new Object[] { GUIDS[0] },
-                canDo,
-                success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
     }
 
     @Test

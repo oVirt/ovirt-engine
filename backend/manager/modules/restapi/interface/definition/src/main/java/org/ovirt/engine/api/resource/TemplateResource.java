@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -42,6 +43,9 @@ public interface TemplateResource extends UpdatableResource<Template>, Asynchron
     @Actionable
     @Path("export")
     public Response export(Action action);
+
+    @DELETE
+    public Response remove();
 
     @Path("cdroms")
     public ReadOnlyDevicesResource<CdRom, CdRoms> getCdRomsResource();

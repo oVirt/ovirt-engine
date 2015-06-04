@@ -25,7 +25,6 @@ import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -195,11 +194,6 @@ public class BackendTemplatesResource
                         VdcQueryType.GetAllDisksByVmId,
                         new IdQueryParameters(asGuid(vm.getId())));
         return Entities.businessEntitiesById(vmDisks);
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveVmTemplate, new VmTemplateParametersBase(asGuid(id)));
     }
 
     protected Templates mapCollection(List<VmTemplate> entities) {

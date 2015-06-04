@@ -8,10 +8,12 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -56,6 +58,63 @@ public class BackendTemplateResourceTest
                 getVdsGroupEntity());
 
         super.doTestBadUpdate(canDo, success, detail);
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUpGetGraphicsExpectations(1);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
+                VmTemplateParametersBase.class,
+                new String[] { "VmTemplateId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true));
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetVmTemplate,
+                GetVmTemplateParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                null);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpGetEntityExpectations(1);
+        setUpGetGraphicsExpectations(1);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
+                VmTemplateParametersBase.class,
+                new String[] { "VmTemplateId" },
+                new Object[] { GUIDS[0] },
+                canDo,
+                success));
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
     }
 
     @Test

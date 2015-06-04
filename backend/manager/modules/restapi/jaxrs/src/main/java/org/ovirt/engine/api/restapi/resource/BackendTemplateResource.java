@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -57,6 +58,12 @@ public class BackendTemplateResource
             DisplayHelper.adjustDisplayData(this, template);
         }
         return template;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveVmTemplate, new VmTemplateParametersBase(guid));
     }
 
     @Override
