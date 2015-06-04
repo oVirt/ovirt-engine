@@ -11,6 +11,7 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.core.common.action.MoveTagParameters;
+import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
@@ -188,6 +189,69 @@ public class BackendTagResourceTest
         } catch (WebApplicationException wae) {
             verifyImmutabilityConstraint(wae);
         }
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExcpectations();
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveTag,
+                TagsActionParametersBase.class,
+                new String[] { "TagId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true));
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetTagByTagId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                null);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpGetEntityExcpectations();
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveTag,
+                TagsActionParametersBase.class,
+                new String[] { "TagId" },
+                new Object[] { GUIDS[0] },
+                canDo,
+                success));
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
+    }
+
+    private void setUpGetEntityExcpectations() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetTagByTagId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                getEntity(0));
     }
 
     protected void setUpGetEntityExpectations(int index) throws Exception {

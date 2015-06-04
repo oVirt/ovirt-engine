@@ -1,9 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.resource.TagResource;
 import org.ovirt.engine.core.common.action.MoveTagParameters;
+import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -51,6 +54,12 @@ public class BackendTagResource
                              new QueryIdResolver<Guid>(VdcQueryType.GetTagByTagId, IdQueryParameters.class),
                              VdcActionType.UpdateTag,
                              new UpdateParametersProvider());
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveTag, new TagsActionParametersBase(guid));
     }
 
     protected void moveTag(Guid newParentId) {

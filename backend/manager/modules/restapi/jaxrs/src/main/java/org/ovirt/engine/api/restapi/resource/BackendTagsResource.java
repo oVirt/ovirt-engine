@@ -7,7 +7,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.resource.TagResource;
 import org.ovirt.engine.api.resource.TagsResource;
-import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
@@ -48,11 +47,6 @@ public class BackendTagsResource
         return performCreate(VdcActionType.AddTag,
                                new TagsOperationParameters(map(tag)),
                                new TagNameResolver(tag.getName()));
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveTag, new TagsActionParametersBase(asGuid(id)));
     }
 
     protected List<Tags> getTags() {
