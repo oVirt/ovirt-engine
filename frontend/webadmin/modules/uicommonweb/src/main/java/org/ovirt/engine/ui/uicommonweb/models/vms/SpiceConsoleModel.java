@@ -30,8 +30,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
+import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -53,6 +55,8 @@ public class SpiceConsoleModel extends ConsoleModel {
     public static EventDefinition spiceDisconnectedEventDefinition;
     public static EventDefinition spiceConnectedEventDefinition;
     public static EventDefinition spiceMenuItemSelectedEventDefinition;
+
+    private static final DynamicMessages dynamicMessages = (DynamicMessages) TypeResolver.getInstance().resolve(DynamicMessages.class);
 
     private SpiceMenu menu;
 
@@ -302,9 +306,12 @@ public class SpiceConsoleModel extends ConsoleModel {
         final ConsoleOptions options = getspice().getOptions();
         options.setVmId(getEntity().getId());
         // configure options
+        ConfigureConsoleOptionsParams parameters = new ConfigureConsoleOptionsParams(options, true);
+        parameters.setEngineBaseUrl(FrontendUrlUtils.getRootURL());
+        parameters.setConsoleClientResourcesUrl(dynamicMessages.consoleClientResourcesUrl());
         Frontend.getInstance().runQuery(
                 VdcQueryType.ConfigureConsoleOptions,
-                new ConfigureConsoleOptionsParams(options, true),
+                parameters,
                 new AsyncQuery(new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {

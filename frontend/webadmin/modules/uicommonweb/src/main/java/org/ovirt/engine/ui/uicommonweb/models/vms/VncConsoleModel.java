@@ -11,8 +11,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
+import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -23,6 +25,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class VncConsoleModel extends ConsoleModel {
 
     public enum ClientConsoleMode { Native, NoVnc }
+
+    private static final DynamicMessages dynamicMessages = (DynamicMessages) TypeResolver.getInstance().resolve(DynamicMessages.class);
 
     private ClientConsoleMode consoleMode;
     private IVnc vncImpl;
@@ -108,9 +112,12 @@ public class VncConsoleModel extends ConsoleModel {
         });
 
         vncImpl.getOptions().setVmId(getEntity().getId());
+        ConfigureConsoleOptionsParams parameters = new ConfigureConsoleOptionsParams(vncImpl.getOptions(), true);
+        parameters.setEngineBaseUrl(FrontendUrlUtils.getRootURL());
+        parameters.setConsoleClientResourcesUrl(dynamicMessages.consoleClientResourcesUrl());
         Frontend.getInstance().runQuery(
                 VdcQueryType.ConfigureConsoleOptions,
-                new ConfigureConsoleOptionsParams(vncImpl.getOptions(), true),
+                parameters,
                 configureCallback);
     }
 
