@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -50,7 +51,13 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
         ProviderValidator validatorOld = new ProviderValidator(getOldProvider());
         ProviderValidator validatorNew = new ProviderValidator(getProvider());
         return validate(validatorOld.providerIsSet())
-                && (nameKept() || validate(validatorNew.nameAvailable()));
+                && (nameKept() || validate(validatorNew.nameAvailable()))
+                && validate(providerTypeNotChanged(getOldProvider(), getProvider()));
+    }
+
+    private ValidationResult providerTypeNotChanged(Provider<?> oldProvider, Provider<?> newProvider) {
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_PROVIDER_TYPE)
+                .when(oldProvider.getType() != newProvider.getType());
     }
 
     private boolean nameKept() {

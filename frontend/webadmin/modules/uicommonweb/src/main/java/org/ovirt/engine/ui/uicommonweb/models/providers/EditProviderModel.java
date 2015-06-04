@@ -47,6 +47,7 @@ public class EditProviderModel extends ProviderModel {
         getName().setEntity(provider.getName());
         getDescription().setEntity(provider.getDescription());
         getType().setSelectedItem(provider.getType());
+        getType().setIsChangeable(false);
         getUrl().setEntity(provider.getUrl());
         getRequiresAuthentication().setEntity(provider.isRequiringAuthentication());
         getUsername().setEntity(provider.getUsername());
