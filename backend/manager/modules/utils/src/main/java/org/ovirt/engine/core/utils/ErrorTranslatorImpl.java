@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +18,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
 
     private static final long ONE_HOUR = 60 * 60 * 1000L;
     private static final Logger log = LoggerFactory.getLogger(ErrorTranslatorImpl.class);
+    private static final Pattern startsWithVariableDefinitionPattern = Pattern.compile("^\\$[^{}\\s]+ .*");
     private List<String> messageSources;
     private Locale standardLocale;
     private Map<String, String> standardMessages;
@@ -110,7 +112,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
      * @see org.ovirt.engine.core.utils.ErrorTranslator#IsDynamicVariable(java.lang.String )
      */
     public final boolean IsDynamicVariable(String strMessage) {
-        return strMessage.startsWith("$");
+        return startsWithVariableDefinitionPattern.matcher(strMessage).matches();
     }
 
     /*
@@ -168,7 +170,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
         ArrayList<String> translatedErrors = new ArrayList<String>();
         HashMap<String, String> variables = new HashMap<String, String>();
         for (String currentMessage : translatedMessages) {
-            if (currentMessage.startsWith("$")) {
+            if (IsDynamicVariable(currentMessage)) {
                 AddVariable(currentMessage, variables);
             } else {
                 translatedErrors.add(currentMessage);
