@@ -48,7 +48,8 @@ public class BackendOpenStackVolumeProvidersResource
         implements OpenStackVolumeProvidersResource {
     static final String[] SUB_COLLECTIONS = {
         "volumetypes",
-        "certificates"
+        "certificates",
+        "authenticationkeys"
     };
 
     public BackendOpenStackVolumeProvidersResource() {

@@ -83,6 +83,7 @@ import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenStackVolumeType;
+import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
 import org.ovirt.engine.api.model.OperatingSystemInfo;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
@@ -274,6 +275,8 @@ import org.ovirt.engine.api.resource.openstack.OpenStackNetworkResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackNetworksResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackSubnetResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackSubnetsResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackVolumeAuthenticationKeyResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackVolumeAuthenticationKeysResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypeResource;
@@ -580,6 +583,10 @@ public class LinkHelper {
         map = new ParentToCollectionMap(OpenStackVolumeTypeResource.class, OpenStackVolumeTypesResource.class);
         map.add(OpenStackVolumeTypeResource.class, OpenStackVolumeTypesResource.class, OpenStackVolumeProvider.class);
         TYPES.put(OpenStackVolumeType.class, map);
+
+        map = new ParentToCollectionMap(OpenStackVolumeAuthenticationKeyResource.class, OpenStackVolumeAuthenticationKeysResource.class);
+        map.add(OpenStackVolumeAuthenticationKeyResource.class, OpenStackVolumeAuthenticationKeysResource.class, OpenStackVolumeProvider.class);
+        TYPES.put(OpenstackVolumeAuthenticationKey.class, map);
 
         // OpenStack network providers:
         map = new ParentToCollectionMap(OpenStackNetworkProviderResource.class, OpenStackNetworkProvidersResource.class);

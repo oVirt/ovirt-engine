@@ -16,9 +16,12 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
+import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackVolumeProvidersResource.SUB_COLLECTIONS;
+
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
+import org.ovirt.engine.api.resource.openstack.OpenStackVolumeAuthenticationKeysResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
@@ -26,8 +29,6 @@ import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
-
-import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackVolumeProvidersResource.SUB_COLLECTIONS;
 
 public class BackendOpenStackVolumeProviderResource
         extends AbstractBackendExternalProviderResource<OpenStackVolumeProvider>
@@ -43,6 +44,11 @@ public class BackendOpenStackVolumeProviderResource
     @Override
     public OpenStackVolumeTypesResource getOpenStackVolumeTypes() {
         return inject(new BackendOpenStackVolumeTypesResource(id));
+    }
+
+    @Override
+    public OpenStackVolumeAuthenticationKeysResource getOpenStackVolumeAuthenticationKeys() {
+        return inject(new BackendOpenStackVolumeAuthenticationKeysResource(id));
     }
 
     @Override

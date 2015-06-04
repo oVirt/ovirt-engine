@@ -5634,6 +5634,40 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="openstack_volume_authentication_key" type="OpenstackVolumeAuthenticationKey"/>
+
+  <xs:element name="openstack_volume_authentication_keys" type="OpenstackVolumeAuthenticationKeys"/>
+
+  <xs:complexType name="OpenstackVolumeAuthenticationKey">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="uuid" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="usage_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="creation_date" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="openstack_volume_provider" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="OpenstackVolumeAuthenticationKeys">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="openstack_volume_authentication_key" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="OpenstackVolumeAuthenticationKeys"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- OpenStack network providers: -->
   <xs:element name="openstack_network_provider" type="OpenStackNetworkProvider"/>
 

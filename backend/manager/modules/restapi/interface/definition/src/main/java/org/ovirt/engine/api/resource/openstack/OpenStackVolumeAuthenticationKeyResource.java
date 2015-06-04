@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015 Red Hat, Inc.
+* Copyright (c) 2014 Red Hat, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -16,22 +16,24 @@
 
 package org.ovirt.engine.api.resource.openstack;
 
-import org.ovirt.engine.api.model.OpenStackVolumeProvider;
-import org.ovirt.engine.api.resource.ApiMediaType;
-import org.ovirt.engine.api.resource.ExternalProviderResource;
-
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.Path;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface OpenStackVolumeProviderResource extends ExternalProviderResource<OpenStackVolumeProvider> {
-    @Path("volumetypes")
-    public OpenStackVolumeTypesResource getOpenStackVolumeTypes();
+import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
+import org.ovirt.engine.api.resource.ApiMediaType;
 
-    @Path("authenticationkeys")
-    public OpenStackVolumeAuthenticationKeysResource getOpenStackVolumeAuthenticationKeys();
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+public interface OpenStackVolumeAuthenticationKeyResource {
+    @GET
+    OpenstackVolumeAuthenticationKey get();
+
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    OpenstackVolumeAuthenticationKey update(OpenstackVolumeAuthenticationKey resource);
 
     @DELETE
     Response remove();
