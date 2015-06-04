@@ -140,7 +140,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             cinderDisk.setStorageIds(new ArrayList<>(Arrays.asList(getStorageDomainId())));
             StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
             CinderDisksValidator cinderDisksValidator = new CinderDisksValidator(cinderDisk);
-            return validate(storageDomainValidator.isDomainExistAndActive()) && validate(cinderDisksValidator.validateCinderDiskLimits());
+            return validate(storageDomainValidator.isDomainExistAndActive()) &&
+                    validate(cinderDisksValidator.validateCinderDiskLimits()) &&
+                    validate(cinderDisksValidator.validateCinderVolumeTypesExist());
         }
 
         return true;

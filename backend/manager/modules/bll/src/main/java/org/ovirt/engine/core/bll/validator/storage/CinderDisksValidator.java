@@ -11,9 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -177,6 +180,33 @@ public class CinderDisksValidator {
                         return new ValidationResult(VdcBllMessages.CINDER_DISK_ALREADY_REGISTERED,
                                 String.format("$diskAlias %s", diskFromDB.getDiskAlias()));
                     }
+                }
+                return ValidationResult.VALID;
+            }
+        });
+    }
+
+    /**
+     * Validates that the disk's volume type exists in Cinder
+     * (note that this method validates only against a single disk).
+     */
+    public ValidationResult validateCinderVolumeTypesExist() {
+        return validate(new Callable<ValidationResult>() {
+            @Override
+            public ValidationResult call() {
+                final CinderDisk disk = cinderDisks.iterator().next();
+                OpenStackVolumeProviderProxy proxy = diskProxyMap.get(disk.getId());
+                List<CinderVolumeType> volumeTypes = proxy.getVolumeTypes();
+                boolean volumeTypeExists = CollectionUtils.exists(volumeTypes, new Predicate() {
+                    @Override
+                    public boolean evaluate(Object o) {
+                        return ((CinderVolumeType) o).getName().equals(disk.getCinderVolumeType());
+                    }
+                });
+
+                if (!volumeTypeExists) {
+                    return new ValidationResult(VdcBllMessages.CINDER_VOLUME_TYPE_NOT_EXISTS,
+                            String.format("$cinderVolumeType %s", disk.getCinderVolumeType()));
                 }
                 return ValidationResult.VALID;
             }
