@@ -15,6 +15,7 @@ import java.util.MissingResourceException;
 import java.util.Set;
 
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
+import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 
 /**
  * Contains dynamic messages available to the application.
@@ -22,7 +23,7 @@ import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
  * This class defines all supported message keys as well as corresponding value accessor methods. Subclasses should
  * register sensible fallback values for supported message keys.
  */
-public class DynamicMessages {
+public class BaseDynamicMessages implements DynamicMessages {
 
     /**
      * This class defines keys used to look up messages from the {@code Dictionary}.
@@ -76,11 +77,11 @@ public class DynamicMessages {
      */
     private final Map<DynamicMessageKey, String> fallbackValues = new HashMap<DynamicMessageKey, String>();
 
-    public DynamicMessages() {
+    public BaseDynamicMessages() {
         this(Dictionary.getDictionary(MESSAGES_DICTIONARY_NAME));
     }
 
-    DynamicMessages(final Dictionary dictionary) {
+    BaseDynamicMessages(final Dictionary dictionary) {
         this.dictionary = dictionary;
     }
 
@@ -195,117 +196,57 @@ public class DynamicMessages {
         return LocaleInfo.getCurrentLocale().getLocaleName();
     }
 
-    /**
-     * Get the application title using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The application title string.
-     */
+    @Override
     public final String applicationTitle() {
         return getString(DynamicMessageKey.APPLICATION_TITLE);
     }
 
-    /**
-     * Get the application version message using the {@code Dictionary} in the host page. With a fall back to the
-     * standard GWT Message.
-     *
-     * @param version
-     *            The version string to use to replace the place holder in the message.
-     * @return The version about message
-     */
+    @Override
     public final String ovirtVersionAbout(final String version) {
         return formatString(DynamicMessageKey.VERSION_ABOUT, version);
     }
 
-    /**
-     * Get the copy right notice using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The copy right notice string.
-     */
+    @Override
     public final String copyRightNotice() {
         return getString(DynamicMessageKey.COPY_RIGHT_NOTICE);
     }
 
-    /**
-     * Get the feedback URL using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The feedback URL.
-     */
+    @Override
     public final String feedbackUrl(final String version) {
         return formatString(DynamicMessageKey.FEEDBACK_URL, version);
     }
 
-    /**
-     * Get the feedback link label using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The feedback link label.
-     */
+    @Override
     public final String feedbackLinkLabel() {
         return getString(DynamicMessageKey.FEEDBACK_LINK_LABEL);
     }
 
-    /**
-     * Get the feedback link tooltip using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The feedback link tooltip.
-     */
+    @Override
     public final String feedbackLinkTooltip() {
         return getString(DynamicMessageKey.FEEDBACK_LINK_TOOLTIP);
     }
 
-    /**
-     * Get the guide URL using the {@code Dictionary} in the host page. Uses current locale (e.g. "en_US")
-     * for placeholder {0}, if it exists. With a fall back to the standard GWT Constant.
-     *
-     * @return The guide URL.
-     */
+    @Override
     public final String guideUrl() {
         return formatString(DynamicMessageKey.GUIDE_URL, getCurrentLocaleAsString());
     }
 
-    /**
-     * Get the guide link label using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The guide link label.
-     */
+    @Override
     public final String guideLinkLabel() {
         return getString(DynamicMessageKey.GUIDE_LINK_LABEL);
     }
 
-    /**
-     *
-     * Get the console client resources link name using the {@code Dictionary} in the host page. With a fall back to
-     * the standard GWT Constant.
-     *
-     * @return The console client resources page name.
-     */
+    @Override
     public final String consoleClientResources() {
         return getString(DynamicMessageKey.CONSOLE_CLIENT_RESOURCES);
     }
 
-    /**
-     *
-     * Get the client resources link name using the {@code Dictionary} in the host page. With a fall back to
-     * the standard GWT Constant.
-     *
-     * @return The client resources page name.
-     */
+    @Override
     public final String clientResources() {
         return getString(DynamicMessageKey.CLIENT_RESOURCES);
     }
 
-    /**
-     *
-     * Get the console client resources page url using the {@code Dictionary} in the host page. With a fall back to
-     * the standard GWT Constant.
-     *
-     * @return The console client resources page url.
-     */
+    @Override
     public final String consoleClientResourcesUrl() {
         String url = getString(DynamicMessageKey.CONSOLE_CLIENT_RESOURCES_URL);
         boolean isAbsolute = UriUtils.extractScheme(url) != null;
@@ -315,23 +256,12 @@ public class DynamicMessages {
                  : "/" + BaseContextPathData.getInstance().getRelativePath() + url; //$NON-NLS-1$
     }
 
-    /**
-     *
-     * Get the vendor URL using the {@code Dictionary} in the host page. With a fall back to
-     * the standard GWT Constant.
-     *
-     * @return The vendor url.
-     */
+    @Override
     public final String vendorUrl() {
         return getString(DynamicMessageKey.VENDOR_URL);
     }
 
-    /**
-     * Get the application documentation title using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The application documentation title string.
-     */
+    @Override
     public final String applicationDocTitle() {
         return getString(DynamicMessageKey.DOC);
     }

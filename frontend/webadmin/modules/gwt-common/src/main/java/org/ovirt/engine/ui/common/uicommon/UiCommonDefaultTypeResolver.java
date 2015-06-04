@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.restapi.RestApiSessionAcquiredEvent;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
+import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.ITimer;
@@ -41,6 +42,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
     private final Provider<IRdpNative> rdpNativeProvider;
     private final Provider<IVncNative> vncNativeProvider;
     private final Provider<INoVnc> noVncProvider;
+    private final DynamicMessages dynamicMessages;
 
     private String sessionId;
 
@@ -56,7 +58,8 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
             Provider<IRdpPlugin> rdpPluginProvider,
             Provider<IRdpNative> rdpNativeProvider,
             Provider<IVncNative> vncNativeProvider,
-            Provider<INoVnc> noVncProvider) {
+            Provider<INoVnc> noVncProvider,
+            DynamicMessages dynamicMessages) {
         this.configurator = configurator;
         this.logger = logger;
         this.consoleOptionsFrontendPersister = consoleOptionsFrontendPersister;
@@ -71,6 +74,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
         this.rdpNativeProvider = rdpNativeProvider;
         this.vncNativeProvider = vncNativeProvider;
         this.noVncProvider = noVncProvider;
+        this.dynamicMessages = dynamicMessages;
 
         eventBus.addHandler(RestApiSessionAcquiredEvent.getType(), this);
     }
@@ -106,6 +110,8 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
             return errorPopupManager;
         } else if (type == CurrentUserRole.class) {
             return currentUserRole;
+        } else if (type == DynamicMessages.class) {
+            return dynamicMessages;
         }
 
         throw new RuntimeException("UiCommon Resolver cannot resolve type: " + type); //$NON-NLS-1$

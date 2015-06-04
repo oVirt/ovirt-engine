@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.userportal;
 
-import org.ovirt.engine.ui.common.utils.DynamicMessages;
+import org.ovirt.engine.ui.common.utils.BaseDynamicMessages;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 
-public class ApplicationDynamicMessages extends DynamicMessages {
+public class ApplicationDynamicMessages extends BaseDynamicMessages {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 

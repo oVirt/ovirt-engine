@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.common.system.ClientStorageImpl;
 import org.ovirt.engine.ui.common.system.ErrorPopupManagerImpl;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
-import org.ovirt.engine.ui.common.utils.DynamicMessages;
+import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.common.utils.HttpUtils;
 import org.ovirt.engine.ui.frontend.AppErrors;
 import org.ovirt.engine.ui.frontend.Frontend;

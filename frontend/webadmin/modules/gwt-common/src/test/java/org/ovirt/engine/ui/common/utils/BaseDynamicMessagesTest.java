@@ -11,16 +11,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.ui.common.utils.DynamicMessages.DynamicMessageKey;
+import org.ovirt.engine.ui.common.utils.BaseDynamicMessages.DynamicMessageKey;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DynamicMessagesTest {
+public class BaseDynamicMessagesTest {
 
-    DynamicMessages testMessages;
+    BaseDynamicMessages testMessages;
 
     @Before
     public void setUp() throws Exception {
-        testMessages = new DynamicMessages(null);
+        testMessages = new BaseDynamicMessages(null);
     }
 
     @Test
