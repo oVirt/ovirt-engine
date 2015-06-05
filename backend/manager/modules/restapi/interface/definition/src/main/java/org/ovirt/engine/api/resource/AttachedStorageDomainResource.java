@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -30,25 +31,27 @@ import org.ovirt.engine.api.model.StorageDomain;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface AttachedStorageDomainResource {
-
     @GET
-    public StorageDomain get();
+    StorageDomain get();
+
+    @DELETE
+    Response remove();
 
     @Path("{action: (activate|deactivate)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("activate")
-    public Response activate(Action action);
+    Response activate(Action action);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("deactivate")
-    public Response deactivate(Action action);
+    Response deactivate(Action action);
 
     @Path("disks")
-    public DisksResource getDisksResource();
+    DisksResource getDisksResource();
 }

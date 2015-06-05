@@ -15,8 +15,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
-import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
-import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -156,31 +154,6 @@ public class BackendAttachedStorageDomainsResourceTest
         }
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetConnection(2);
-        setUpGetEntityExpectations(GUIDS[0], 2, getEntity(0));
-        setUriInfo(setUpActionExpectations(VdcActionType.DetachStorageDomainFromPool,
-                                           DetachStorageDomainFromPoolParameters.class,
-                                           new String[] { "StorageDomainId", "StoragePoolId" },
-                                           new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveLocalStorage() throws Exception {
-        setUpGetConnection(2);
-        setUpGetEntityExpectations(GUIDS[0], 2, getEntity(0, StorageType.LOCALFS));
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
-                                           RemoveStorageDomainParameters.class,
-                                           new String[] { "StorageDomainId"},
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
 
     private void setUpGetConnection(int times) throws Exception {
         for (int i=0; i<times; i++) {
@@ -219,15 +192,6 @@ public class BackendAttachedStorageDomainsResourceTest
                 entity);
     }
 
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
 
     @Override
     @Test
@@ -245,22 +209,6 @@ public class BackendAttachedStorageDomainsResourceTest
         verifyCollection(getCollection());
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetConnection(2);
-        setUpGetEntityExpectations(GUIDS[0], 2, getEntity(0));
-        setUriInfo(setUpActionExpectations(VdcActionType.DetachStorageDomainFromPool,
-                                           DetachStorageDomainFromPoolParameters.class,
-                                           new String[] { "StorageDomainId", "StoragePoolId" },
-                                           new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
-    }
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
@@ -307,7 +255,7 @@ public class BackendAttachedStorageDomainsResourceTest
         return setUpEntityExpectations(entity, index, storageType);
     }
 
-    static org.ovirt.engine.core.common.businessentities.StorageDomainStatic setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity,
+    private static org.ovirt.engine.core.common.businessentities.StorageDomainStatic setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity,
             int index,
             StorageType storageType) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
@@ -317,7 +265,7 @@ public class BackendAttachedStorageDomainsResourceTest
         return entity;
     }
 
-    static org.ovirt.engine.core.common.businessentities.StorageDomain setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity, int index, StorageType storageType) {
+    private static org.ovirt.engine.core.common.businessentities.StorageDomain setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity, int index, StorageType storageType) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getStatus()).andReturn(StorageDomainStatus.Active).anyTimes();
         expect(entity.getStorageDomainType()).andReturn(StorageDomainType.Master).anyTimes();
@@ -332,7 +280,7 @@ public class BackendAttachedStorageDomainsResourceTest
         verifyLinks(model);
     }
 
-    static void verifyStorageDomain(StorageDomain model, int index) {
+    private static void verifyStorageDomain(StorageDomain model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertNotNull(model.getDataCenter());
         assertEquals(GUIDS[NAMES.length-1].toString(), model.getDataCenter().getId());
