@@ -1,0 +1,58 @@
+package org.ovirt.engine.api.restapi.resource;
+
+import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Tag;
+import org.ovirt.engine.api.resource.AssignedTagResource;
+import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Tags;
+import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
+
+import javax.ws.rs.core.Response;
+import java.util.List;
+
+public class BackendHostTagResource extends AbstractBackendSubResource<Tag, Tags> implements AssignedTagResource {
+    private Guid hostId;
+
+    public BackendHostTagResource(Guid hostId, String tagId) {
+        super(tagId, Tag.class, Tags.class);
+        this.hostId = hostId;
+    }
+
+    @Override
+    public Tag get() {
+        List<Tags> tags = getBackendCollection(
+            Tags.class,
+            VdcQueryType.GetTagsByVdsId,
+            new GetTagsByVdsIdParameters(hostId.toString())
+        );
+        for (Tags tag : tags) {
+            if (tag.gettag_id().equals(guid)) {
+                return addLinks(populate(map(tag, null), tag));
+            }
+        }
+        return notFound();
+    }
+
+    @Override
+    protected Tag doPopulate(Tag model, Tags entity) {
+        return model;
+    }
+
+
+    @Override
+    protected Tag addParents(Tag tag) {
+        Host host = new Host();
+        host.setId(hostId.toString());
+        tag.setHost(host);
+        return tag;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.DetachVdsFromTag, new AttachEntityToTagParameters(guid, asList(hostId)));
+    }
+}

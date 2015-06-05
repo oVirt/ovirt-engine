@@ -12,7 +12,6 @@ public class BackendVmTagsResourceTest extends AbstractBackendAssignedTagsResour
         queryType = VdcQueryType.GetTagsByVmId;
         queryParams = GetTagsByVmIdParameters.class;
         attachAction = VdcActionType.AttachVmsToTag;
-        detachAction = VdcActionType.DetachVmFromTag;
         attachParams = AttachEntityToTagParameters.class;
     }
 }

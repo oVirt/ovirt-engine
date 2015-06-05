@@ -12,7 +12,6 @@ public class BackendTemplateTagsResourceTest extends AbstractBackendAssignedTags
         queryType = VdcQueryType.GetTagsByTemplateId;
         queryParams = GetTagsByTemplateIdParameters.class;
         attachAction = VdcActionType.AttachTemplatesToTag;
-        detachAction = VdcActionType.DetachTemplateFromTag;
         attachParams = AttachEntityToTagParameters.class;
     }
 }

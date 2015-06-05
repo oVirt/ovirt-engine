@@ -12,7 +12,6 @@ public class BackendHostTagsResourceTest extends AbstractBackendAssignedTagsReso
         queryType = VdcQueryType.GetTagsByVdsId;
         queryParams = GetTagsByVdsIdParameters.class;
         attachAction = VdcActionType.AttachVdsToTag;
-        detachAction = VdcActionType.DetachVdsFromTag;
         attachParams = AttachEntityToTagParameters.class;
     }
 }

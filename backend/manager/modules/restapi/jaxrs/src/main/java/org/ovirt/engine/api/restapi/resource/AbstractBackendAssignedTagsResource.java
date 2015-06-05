@@ -8,7 +8,8 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Tag;
-import org.ovirt.engine.api.resource.AssignedTagResource;
+import org.ovirt.engine.api.resource.AssignedTagsResource;
+import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
@@ -18,39 +19,31 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendAssignedTagsResource
-    extends AbstractBackendCollectionResource<Tag, Tags> {
+    extends AbstractBackendCollectionResource<Tag, Tags>
+    implements AssignedTagsResource {
 
     protected Class<? extends BaseResource> parentType;
     protected String parentId;
     protected VdcActionType attachAction;
-    protected VdcActionType detachAction;
 
     public AbstractBackendAssignedTagsResource(Class<? extends BaseResource> parentType,
                                                String parentId,
-                                               VdcActionType attachAction,
-                                               VdcActionType detachAction) {
+                                               VdcActionType attachAction) {
         super(Tag.class, Tags.class);
         this.parentType = parentType;
         this.parentId = parentId;
         this.attachAction = attachAction;
-        this.detachAction = detachAction;
     }
 
     public String getParentId() {
         return parentId;
     }
 
-    public VdcActionType getAttachAction() {
-        return attachAction;
-    }
-
-    public VdcActionType getDetachAction() {
-        return detachAction;
-    }
-
     protected abstract List<Tags> getCollection();
 
-    protected abstract TagsActionParametersBase getAttachParams(String id);
+    private TagsActionParametersBase getAttachParams(String id) {
+        return new AttachEntityToTagParameters(asGuid(id), asList(asGuid(parentId)));
+    }
 
     public org.ovirt.engine.api.model.Tags list() {
         org.ovirt.engine.api.model.Tags ret = new org.ovirt.engine.api.model.Tags();
@@ -67,19 +60,13 @@ public abstract class AbstractBackendAssignedTagsResource
             tag = lookupTagByName(tag.getName());
         }
 
-        return performCreate(attachAction,
-                               getAttachParams(tag.getId()),
-                               new TagIdResolver(asGuid(tag.getId())));
+        return performCreate(attachAction, getAttachParams(tag.getId()), new TagIdResolver(asGuid(tag.getId())));
     }
+
 
     @Override
-    public Response performRemove(String id) {
-        return performAction(detachAction, getAttachParams(id));
-    }
-
-    @SingleEntityResource
-    public AssignedTagResource getAssignedTagSubResource(String id) {
-        return inject(new BackendAssignedTagResource(id, this));
+    protected Tag doPopulate(Tag model, Tags entity) {
+        return model;
     }
 
     @Override

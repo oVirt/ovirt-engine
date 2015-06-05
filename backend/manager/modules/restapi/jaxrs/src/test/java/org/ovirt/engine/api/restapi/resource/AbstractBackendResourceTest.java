@@ -10,7 +10,9 @@ public abstract class AbstractBackendResourceTest<R extends BaseResource, Q /* e
         initBackendResource(resource);
     }
 
-    protected abstract Q getEntity(int index);
+    protected Q getEntity(int index) {
+        throw new UnsupportedOperationException();
+    }
 
     protected void verifyModel(R model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());

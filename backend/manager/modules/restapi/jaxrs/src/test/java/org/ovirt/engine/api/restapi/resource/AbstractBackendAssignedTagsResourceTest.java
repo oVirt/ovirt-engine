@@ -26,7 +26,6 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     protected static VdcQueryType queryType;
     protected static Class<? extends VdcQueryParametersBase> queryParams;
     protected static VdcActionType attachAction;
-    protected static VdcActionType detachAction;
     protected static Class<? extends TagsActionParametersBase> attachParams;
 
     public AbstractBackendAssignedTagsResourceTest(C collection) {
@@ -43,76 +42,10 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     public void testBadGuid() throws Exception {
         control.replay();
         try {
-            new BackendAssignedTagResource("foo", null);
+            collection.getAssignedTagSubResource("foo");
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);
-        }
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations(GUIDS[0]);
-        setUriInfo(setUpActionExpectations(detachAction,
-                                           attachParams,
-                                           new String[] { "TagId", "EntitiesId" },
-                                           new Object[] { GUIDS[0], asList(PARENT_GUID) },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    private void setUpGetEntityExpectations(Guid guid) throws Exception {
-        setUpGetEntityExpectations(guid, false);
-    }
-
-    private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) throws Exception {
-        String[] names = {"Id"};
-        Object[] values = {entityId};
-        Tags tag = null;
-        if (!returnNull) {
-            tag = new Tags();
-            tag.settag_id(entityId);
-        }
-        setUpGetEntityExpectations(VdcQueryType.GetTagByTagId, IdQueryParameters.class, names, values, tag);
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(GUIDS[0]);
-        setUriInfo(setUpActionExpectations(detachAction,
-                                           attachParams,
-                                           new String[] { "TagId", "EntitiesId" },
-                                           new Object[] { GUIDS[0], asList(PARENT_GUID) },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(NON_EXISTANT_GUID, true);
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(wae.getResponse().getStatus(), 404);
         }
     }
 

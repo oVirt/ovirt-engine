@@ -12,7 +12,6 @@ public class BackendUserTagsResourceTest extends AbstractBackendAssignedTagsReso
         queryType = VdcQueryType.GetTagsByUserId;
         queryParams = GetTagsByUserIdParameters.class;
         attachAction = VdcActionType.AttachUserToTag;
-        detachAction = VdcActionType.DetachUserFromTag;
         attachParams = AttachEntityToTagParameters.class;
     }
 }
