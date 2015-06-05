@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Path;
@@ -30,17 +29,12 @@ import org.ovirt.engine.api.model.Snapshots;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface SnapshotsResource {
-
     @GET
-    public Snapshots list();
+    Snapshots list();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    public Response add(Snapshot snapshot);
-
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id);
+    Response add(Snapshot snapshot);
 
     /**
      * Sub-resource locator method, returns individual SnapshotResource on
@@ -50,5 +44,5 @@ public interface SnapshotsResource {
      * @return    matching subresource if found
      */
     @Path("{id}")
-    public SnapshotResource getSnapshotSubResource(@PathParam("id") String id);
+    SnapshotResource getSnapshotSubResource(@PathParam("id") String id);
 }

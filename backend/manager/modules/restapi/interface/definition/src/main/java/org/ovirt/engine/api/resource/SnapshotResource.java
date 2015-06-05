@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -30,25 +31,27 @@ import org.ovirt.engine.api.model.Snapshot;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface SnapshotResource extends AsynchronouslyCreatedResource {
-
     @GET
-    public Snapshot get();
+    Snapshot get();
+
+    @DELETE
+    Response remove();
 
     @Path("{action: (restore)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("restore")
-    public Response restore(Action action);
+    Response restore(Action action);
 
     @Path("cdroms")
-    public SnapshotCdRomsResource getSnapshotCdRomsResource();
+    SnapshotCdRomsResource getSnapshotCdRomsResource();
 
     @Path("disks")
-    public SnapshotDisksResource getSnapshotDisksResource();
+    SnapshotDisksResource getSnapshotDisksResource();
 
     @Path("nics")
-    public SnapshotNicsResource getSnapshotNicsResource();
+    SnapshotNicsResource getSnapshotNicsResource();
 }

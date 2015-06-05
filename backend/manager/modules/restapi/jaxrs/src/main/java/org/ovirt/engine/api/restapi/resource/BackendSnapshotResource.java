@@ -12,6 +12,7 @@ import org.ovirt.engine.api.resource.SnapshotCdRomsResource;
 import org.ovirt.engine.api.resource.SnapshotDisksResource;
 import org.ovirt.engine.api.resource.SnapshotNicsResource;
 import org.ovirt.engine.api.resource.SnapshotResource;
+import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
@@ -114,5 +115,11 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
     @Override
     protected Snapshot doPopulate(Snapshot model, org.ovirt.engine.core.common.businessentities.Snapshot entity) {
         return collection.doPopulate(model, entity);
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(guid, parentId));
     }
 }

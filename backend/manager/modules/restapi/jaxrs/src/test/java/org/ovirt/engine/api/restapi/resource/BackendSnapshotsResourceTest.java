@@ -8,7 +8,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -18,7 +17,6 @@ import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
-import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -88,47 +86,6 @@ public class BackendSnapshotsResourceTest
         collection.setUriInfo(uriInfo);
         control.replay();
         verifyCollection(getCollection());
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(1);
-        setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[1]);
-        setUpActionExpectations(VdcActionType.RemoveSnapshot,
-                                RemoveSnapshotParameters.class,
-                                new String[] { "SnapshotId", "VmId" },
-                                new Object[] { SNAPSHOT_IDS[1], VM_ID },
-                                true,
-                                true);
-        verifyRemove(collection.remove(SNAPSHOT_IDS[1].toString()));
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(1);
-        setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[1]);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveSnapshot,
-                                           RemoveSnapshotParameters.class,
-                                           new String[] { "SnapshotId", "VmId"},
-                                           new Object[] { SNAPSHOT_IDS[1], VM_ID },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(SNAPSHOT_IDS[1].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
     }
 
     @Test

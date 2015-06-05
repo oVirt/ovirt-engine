@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +11,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.Snapshot;
+import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -22,7 +22,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import static org.easymock.EasyMock.expect;
 
-public class BackendSnapshotResourceTest extends AbstractBackendSubResourceTest<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot, BackendSnapshotResource> {
+public class BackendSnapshotResourceTest
+    extends AbstractBackendSubResourceTest<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot, BackendSnapshotResource> {
 
     private final static Guid VM_ID = GUIDS[0];
     private final static Guid SNAPSHOT_ID = GUIDS[1];
@@ -113,6 +114,52 @@ public class BackendSnapshotResourceTest extends AbstractBackendSubResourceTest<
         setUpRestoreExpectations();
         control.replay();
         resource.restore(new Action());
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(asList(getEntity(1)));
+        setUpActionExpectations(
+            VdcActionType.RemoveSnapshot,
+            RemoveSnapshotParameters.class,
+            new String[] { "SnapshotId", "VmId" },
+            new Object[] { SNAPSHOT_ID, VM_ID },
+            true,
+            true
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpGetEntityExpectations(asList(getEntity(1)));
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveSnapshot,
+                RemoveSnapshotParameters.class,
+                new String[] { "SnapshotId", "VmId"},
+                new Object[] { SNAPSHOT_ID, VM_ID },
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
     }
 
     protected UriInfo setUpTryBackExpectations() {

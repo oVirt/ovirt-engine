@@ -16,7 +16,6 @@ import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.SnapshotMapper;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
-import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -73,12 +72,6 @@ public class BackendSnapshotsResource
             }
         }
         return diskImages;
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveSnapshot,
-                new RemoveSnapshotParameters(asGuid(id), parentId));
     }
 
     @Override
