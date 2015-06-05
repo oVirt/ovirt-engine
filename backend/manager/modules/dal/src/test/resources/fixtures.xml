@@ -8850,6 +8850,13 @@
              <value></value>
              <value>geo_replication</value>
          </row>
+         <row>
+             <value>use_meta_volume</value>
+             <value>Meta volume for the geo-replication session</value>
+             <value>3.5</value>
+             <value>true;false</value>
+             <value>geo_replication</value>
+         </row>
      </table>
 
      <table name="storage_device">

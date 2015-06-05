@@ -229,6 +229,17 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetGlusterGeoRepSessionUnSetConfig(v_session_id UUID)
+RETURNS SETOF gluster_config_master STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM  gluster_config_master
+    WHERE gluster_config_master.config_feature = 'geo_replication' AND gluster_config_master.config_key NOT IN
+    (SELECT config_key from gluster_georep_config WHERE gluster_georep_config.session_id = v_session_id);
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION GetGlusterGeoRepSessionConfigByKey(v_session_id UUID,
                                                               v_config_key VARCHAR(50))
 RETURNS SETOF gluster_geo_rep_config_view STABLE
