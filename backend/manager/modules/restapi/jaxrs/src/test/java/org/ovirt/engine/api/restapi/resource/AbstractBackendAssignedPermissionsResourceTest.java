@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
@@ -58,75 +57,6 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     @Ignore
     @Override
     public void testQuery() throws Exception {
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations(2, GUIDS[0], getEntity(0));
-        setUpEntityQueryExpectations(VdcQueryType.GetAllDbUsers,
-                VdcQueryParametersBase.class,
-                new String[] {},
-                new Object[] {},
-                getUsers());
-
-        setUriInfo(setUpActionExpectations(VdcActionType.RemovePermission,
-                                           PermissionsOperationsParameters.class,
-                                           new String[] { "Permission.Id" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetAllDbUsers,
-                VdcQueryParametersBase.class,
-                new String[] {},
-                new Object[] {},
-                getUsers());
-
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetAllDbUsers,
-                VdcQueryParametersBase.class,
-                new String[] {},
-                new Object[] {},
-                getUsers());
-
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(1, NON_EXISTANT_GUID, null);
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(wae.getResponse().getStatus(), 404);
-        }
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(2, GUIDS[0], getEntity(0));
-        setUriInfo(setUpActionExpectations(VdcActionType.RemovePermission,
-                                           PermissionsOperationsParameters.class,
-                                           new String[] { "Permission.Id" },
-                                           new Object[] { GUIDS[0] },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
     }
 
     @Test

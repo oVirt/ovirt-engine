@@ -10,6 +10,8 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -53,7 +55,7 @@ public class BackendPermissionResourceTest
     @Test
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(true);
+        setUpGetEntityExpectations(1, true);
         control.replay();
         try {
             resource.get();
@@ -73,22 +75,108 @@ public class BackendPermissionResourceTest
                 new Object[] { true, false },
                 getUsers());
 
-        setUpGetEntityExpectations();
+        setUpGetEntityExpectations(1);
 
         control.replay();
         verifyModel(resource.get(), 0);
     }
 
-    protected void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(false);
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExpectations(2);
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetAllDbUsers,
+            VdcQueryParametersBase.class,
+            new String[] { "Refresh", "Filtered" },
+            new Object[] { true, false },
+            getUsers()
+        );
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemovePermission,
+                PermissionsOperationsParameters.class,
+                new String[] { "Permission.Id" },
+                new Object[] { GUIDS[0] },
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
     }
 
-    protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetPermissionById,
-                                   IdQueryParameters.class,
-                                   new String[] { "Id" },
-                                   new Object[] { GUIDS[0] },
-                                   notFound ? null : getEntity(0));
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetAllDbUsers,
+            VdcQueryParametersBase.class,
+            new String[] {},
+            new Object[] {},
+            getUsers()
+        );
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetAllDbUsers,
+            VdcQueryParametersBase.class,
+            new String[] {},
+            new Object[] {},
+            getUsers()
+        );
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception{
+        setUpGetEntityExpectations(1, true);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(wae.getResponse().getStatus(), 404);
+        }
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpGetEntityExpectations(2);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemovePermission,
+                PermissionsOperationsParameters.class,
+                new String[] { "Permission.Id" },
+                new Object[] { GUIDS[0] },
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
+    }
+
+    protected void setUpGetEntityExpectations(int times) throws Exception {
+        setUpGetEntityExpectations(times, false);
+    }
+
+    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(
+                VdcQueryType.GetPermissionById,
+                IdQueryParameters.class,
+                new String[]{"Id"},
+                new Object[]{GUIDS[0]},
+                notFound ? null : getEntity(0)
+            );
+        }
     }
 
     @Override

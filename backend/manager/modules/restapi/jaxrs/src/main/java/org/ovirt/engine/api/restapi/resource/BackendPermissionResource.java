@@ -6,10 +6,14 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.resource.PermissionResource;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+
+import javax.ws.rs.core.Response;
 
 public class BackendPermissionResource
         extends AbstractBackendSubResource<Permission, org.ovirt.engine.core.common.businessentities.Permission>
@@ -52,5 +56,20 @@ public class BackendPermissionResource
     @Override
     protected Permission doPopulate(Permission model, org.ovirt.engine.core.common.businessentities.Permission entity) {
         return model;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemovePermission, new PermissionsOperationsParameters(getPermissions()));
+    }
+
+    private org.ovirt.engine.core.common.businessentities.Permission getPermissions() {
+        return getEntity(
+            org.ovirt.engine.core.common.businessentities.Permission.class,
+            VdcQueryType.GetPermissionById,
+            new IdQueryParameters(guid),
+            guid.toString()
+        );
     }
 }

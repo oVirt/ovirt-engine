@@ -112,11 +112,6 @@ public class BackendAssignedPermissionsResource
     }
 
     @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemovePermission, new PermissionsOperationsParameters(getPermissions(id)));
-    }
-
-    @Override
     @SingleEntityResource
     public PermissionResource getPermissionSubResource(String id) {
         return inject(new BackendPermissionResource(id, this, suggestedParentType));
@@ -278,13 +273,6 @@ public class BackendAssignedPermissionsResource
 
     protected boolean isGroupSubCollection() {
         return Group.class.equals(suggestedParentType);
-    }
-
-    protected org.ovirt.engine.core.common.businessentities.Permission getPermissions(String id) {
-        return getEntity(org.ovirt.engine.core.common.businessentities.Permission.class,
-                         VdcQueryType.GetPermissionById,
-                new IdQueryParameters(asGuid(id)),
-                         id);
     }
 
     @Override
