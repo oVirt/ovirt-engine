@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
+import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class AttachVdsToTagCommand<T extends AttachVdsToTagParameters> extends VdsTagMapBase<T> {
+public class AttachVdsToTagCommand<T extends AttachEntityToTagParameters> extends VdsTagMapBase<T> {
 
     public AttachVdsToTagCommand(T parameters) {
         super(parameters);

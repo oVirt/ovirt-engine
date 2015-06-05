@@ -14,7 +14,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
+import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
@@ -592,14 +592,14 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         ArrayList<VdcActionParametersBase> prmsToAttach = new ArrayList<VdcActionParametersBase>();
         for (Guid tag_id : tagsToAttach)
         {
-            prmsToAttach.add(new AttachVdsToTagParameters(tag_id, hostIds));
+            prmsToAttach.add(new AttachEntityToTagParameters(tag_id, hostIds));
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.AttachVdsToTag, prmsToAttach);
 
         ArrayList<VdcActionParametersBase> prmsToDetach = new ArrayList<VdcActionParametersBase>();
         for (Guid tag_id : tagsToDetach)
         {
-            prmsToDetach.add(new AttachVdsToTagParameters(tag_id, hostIds));
+            prmsToDetach.add(new AttachEntityToTagParameters(tag_id, hostIds));
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.DetachVdsFromTag, prmsToDetach);
 

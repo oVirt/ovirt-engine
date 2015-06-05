@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
+import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class BackendHostTagsResourceTest extends AbstractBackendAssignedTagsResourceTest<BackendHostTagsResource> {
@@ -13,6 +13,6 @@ public class BackendHostTagsResourceTest extends AbstractBackendAssignedTagsReso
         queryParams = GetTagsByVdsIdParameters.class;
         attachAction = VdcActionType.AttachVdsToTag;
         detachAction = VdcActionType.DetachVdsFromTag;
-        attachParams = AttachVdsToTagParameters.class;
+        attachParams = AttachEntityToTagParameters.class;
     }
 }

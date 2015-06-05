@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.core.common.businessentities.Tags;
-import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
+import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
@@ -25,7 +25,7 @@ public class BackendHostTagsResource
     }
 
     protected TagsActionParametersBase getAttachParams(String id) {
-        return new AttachVdsToTagParameters(asGuid(id), asList(asGuid(parentId)));
+        return new AttachEntityToTagParameters(asGuid(id), asList(asGuid(parentId)));
     }
 
     @Override
