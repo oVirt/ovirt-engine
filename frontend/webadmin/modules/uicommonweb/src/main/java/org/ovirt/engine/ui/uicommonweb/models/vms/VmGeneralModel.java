@@ -637,7 +637,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         if (getHasDefaultHost())
         {
             Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getVdsGroupName() //$NON-NLS-1$
-                    + " sortby name", SearchType.VDS), new AsyncQuery(this, //$NON-NLS-1$
+                    + " sortby name", SearchType.VDS).withoutRefresh(), new AsyncQuery(this, //$NON-NLS-1$
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
