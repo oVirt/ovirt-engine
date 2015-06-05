@@ -1416,6 +1416,16 @@ public enum ConfigValues {
     SpiceProxyDefault,
 
     @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    RemoteViewerSupportedVersions,
+
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    RemoteViewerNewerVersionUrl,
+
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     RemapCtrlAltDelDefault,

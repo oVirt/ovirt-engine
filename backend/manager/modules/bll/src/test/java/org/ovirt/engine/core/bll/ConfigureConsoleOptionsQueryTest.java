@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -142,6 +143,90 @@ public class ConfigureConsoleOptionsQueryTest {
         query.getQueryReturnValue().setSucceeded(true);
         query.executeQueryCommand();
         assertTrue(query.getQueryReturnValue().getSucceeded());
+    }
+
+    @Test
+    public void fillRemoteViewerUrl_nothingToReplace() {
+        testFillRemoteViewerUrl(
+                "some",
+                "s",
+                "o",
+                "some"
+        );
+    }
+
+    @Test
+    public void fillRemoteViewerUrl_replaceBaseUrl_invalidUrlNotReplaced() {
+        testFillRemoteViewerUrl(
+                "some" + ConfigureConsoleOptionsQuery.ENGINE_BASE_URL + "other",
+                " replaced ",
+                "o",
+                "some" + ConfigureConsoleOptionsQuery.ENGINE_BASE_URL + "other"
+        );
+    }
+
+    @Test
+    public void fillRemoteViewerUrl_replaceBaseUrl() {
+        testFillRemoteViewerUrl(
+                "some" + ConfigureConsoleOptionsQuery.ENGINE_BASE_URL + "other",
+                "http://www.ovirt.org/a/b",
+                "",
+                "some" + "http://www.ovirt.org/a/b" + "other"
+        );
+    }
+
+    @Test
+    public void fillRemoteViewerUrl_absoluteUrl() {
+        testFillRemoteViewerUrl(
+                "some" + ConfigureConsoleOptionsQuery.CONSOLE_CLIENT_RESOURCES_URL + "other",
+                "o",
+                "http://www.ovirt.org/a/b",
+                "some" + "http://www.ovirt.org/a/b" + "other"
+        );
+    }
+
+    @Test
+    public void fillRemoteViewerUrl_relativeUrl_baseUrlMalformed() {
+        testFillRemoteViewerUrl(
+                "some" + ConfigureConsoleOptionsQuery.CONSOLE_CLIENT_RESOURCES_URL + "other",
+                "o s w",
+                "b/c",
+                "some" + "b/c" + "other"
+        );
+    }
+
+    @Test
+    public void fillRemoteViewerUrl_relativeUrl_baseUrlCorrect() {
+        testFillRemoteViewerUrl(
+                "some" + ConfigureConsoleOptionsQuery.CONSOLE_CLIENT_RESOURCES_URL + "other",
+                "http://www.ovirt.org",
+                "b/c",
+                "some" + "http://www.ovirt.org/b/c" + "other"
+        );
+    }
+
+    @Test
+    public void fillRemoteViewerUrl_relativeUrl_baseUrlCorrect_slashsAround() {
+        testFillRemoteViewerUrl(
+                "some" + ConfigureConsoleOptionsQuery.CONSOLE_CLIENT_RESOURCES_URL + "other",
+                "http://www.ovirt.org/",
+                "/b/c",
+                "some" + "http://www.ovirt.org/b/c" + "other"
+        );
+    }
+
+    private void testFillRemoteViewerUrl(String toRepalce, String baseUrl, String resourceUrl, String expected) {
+        ConsoleOptions options = new ConsoleOptions();
+        ConfigureConsoleOptionsParams params = new ConfigureConsoleOptionsParams(getValidOptions(GraphicsType.SPICE), false);
+        ConfigureConsoleOptionsQuery query = new ConfigureConsoleOptionsQuery(params);
+        query.fillRemoteViewerUrl(
+                options,
+                toRepalce,
+                baseUrl,
+                resourceUrl
+        );
+
+        assertEquals(expected, options.getRemoteViewerNewerVersionUrl());
     }
 
     private void mockSpiceRelatedConfig(ConfigureConsoleOptionsQuery query) {

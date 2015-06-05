@@ -17,6 +17,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 /**
  * Query for filling required backend data to given ConsoleOptions.
  * Clients (frontend and restapi) use this query before initiating console session.
@@ -28,6 +33,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParams> extends QueriesCommandBase<P> {
 
     private VM cachedVm;
+
+    static final String ENGINE_BASE_URL = "${engine_base_url}";
+
+    static final String CONSOLE_CLIENT_RESOURCES_URL = "${console_client_resources_url}";
 
     public ConfigureConsoleOptionsQuery(P parameters) {
         super(parameters);
@@ -106,6 +115,75 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         options.setToggleFullscreenHotKey((String) getConfigValue(ConfigValues.ConsoleToggleFullScreenKeys));
         options.setReleaseCursorHotKey((String) getConfigValue(ConfigValues.ConsoleReleaseCursorKeys));
         options.setRemapCtrlAltDelete((Boolean) getConfigValue(ConfigValues.RemapCtrlAltDelDefault));
+
+        fillRemoteViewerVersions(options);
+    }
+
+    private void fillRemoteViewerVersions(ConsoleOptions options) {
+        String remoteViewerSupportedVersions = getConfigValue(ConfigValues.RemoteViewerSupportedVersions);
+        String remoteViewerNewerVersionUrl = getConfigValue(ConfigValues.RemoteViewerNewerVersionUrl);
+        if (StringUtils.isEmpty(remoteViewerSupportedVersions) || StringUtils.isEmpty(remoteViewerNewerVersionUrl)) {
+            return;
+        }
+
+        String engineBaseUrlString = sanitizeUrl(getParameters().getEngineBaseUrl());
+        String consoleClientResourcesUrl = sanitizeUrl(getParameters().getConsoleClientResourcesUrl());
+
+        options.setRemoteViewerSupportedVersions(remoteViewerSupportedVersions);
+
+        fillRemoteViewerUrl(options, remoteViewerNewerVersionUrl, engineBaseUrlString, consoleClientResourcesUrl);
+    }
+
+    private String sanitizeUrl(String url) {
+        if (StringUtils.isEmpty(url)) {
+            return "";
+        }
+
+        if (url.endsWith("/")) {
+            return url.substring(0, url.length() - 1);
+        }
+
+        return url;
+    }
+
+    void fillRemoteViewerUrl(ConsoleOptions options, String remoteViewerNewerVersionUrl, String engineBaseUrlString, String consoleClientResourcesUrl) {
+        URL engineBaseUrl = null;
+        try {
+            engineBaseUrl = new URL(engineBaseUrlString);
+        } catch (MalformedURLException e) {
+            log.warn("Malformed engineBaseUrl sent '{}'", engineBaseUrlString);
+            engineBaseUrlString = null;
+        }
+
+        URI consoleClientResourcesUri = null;
+        try {
+            consoleClientResourcesUri = new URI(consoleClientResourcesUrl);
+        } catch (URISyntaxException e) {
+            log.warn("Malformed consoleClientResourcesUrl '{}'", consoleClientResourcesUrl);
+            consoleClientResourcesUrl = null;
+        }
+
+        if (engineBaseUrlString != null) {
+            remoteViewerNewerVersionUrl = StringUtils.replace(remoteViewerNewerVersionUrl, ENGINE_BASE_URL, engineBaseUrlString);
+        }
+
+        if (consoleClientResourcesUrl != null) {
+            if (!consoleClientResourcesUri.isAbsolute() && engineBaseUrlString != null) {
+                try {
+                    consoleClientResourcesUrl = new URL(engineBaseUrl, consoleClientResourcesUrl).toString();
+                } catch (MalformedURLException e) {
+                    log.warn("Can not create a join engineBaseUrl '{}' with consoleClientResourcesUrl '{}'", engineBaseUrlString, consoleClientResourcesUrl);
+                }
+            } else if (!consoleClientResourcesUri.isAbsolute()) {
+                log.warn("ConsoleClientResourcesUrl is relative but the engineBaseUrl is not set");
+            }
+        }
+
+        if (consoleClientResourcesUrl != null) {
+            remoteViewerNewerVersionUrl = StringUtils.replace(remoteViewerNewerVersionUrl, CONSOLE_CLIENT_RESOURCES_URL, consoleClientResourcesUrl);
+        }
+
+        options.setRemoteViewerNewerVersionUrl(remoteViewerNewerVersionUrl);
     }
 
     /**

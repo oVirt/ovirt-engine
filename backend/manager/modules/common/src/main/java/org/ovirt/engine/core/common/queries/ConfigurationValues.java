@@ -25,6 +25,8 @@ public enum ConfigurationValues {
     ConsoleReleaseCursorKeys(ConfigAuthType.User),
     ConsoleToggleFullScreenKeys(ConfigAuthType.User),
     SpiceProxyDefault(ConfigAuthType.User),
+    RemoteViewerSupportedVersions(ConfigAuthType.User),
+    RemoteViewerNewerVersionUrl(ConfigAuthType.User),
     RemapCtrlAltDelDefault(ConfigAuthType.User),
     ClientModeSpiceDefault(ConfigAuthType.User),
     ClientModeVncDefault(ConfigAuthType.User),

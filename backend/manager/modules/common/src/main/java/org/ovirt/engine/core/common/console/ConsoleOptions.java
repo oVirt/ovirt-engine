@@ -21,7 +21,8 @@ public class ConsoleOptions implements Serializable{
     private boolean remapCtrlAltDelete;
     private String toggleFullscreenHotKey;
     private String releaseCursorHotKey;
-
+    private String remoteViewerNewerVersionUrl;
+    private String remoteViewerSupportedVersions;
     // spice
     private boolean fullScreen;
     private int numberOfMonitors;
@@ -322,6 +323,22 @@ public class ConsoleOptions implements Serializable{
 
     public void setWanDisableEffects(List<WanDisableEffects> wanDisableEffects) {
         this.wanDisableEffects = wanDisableEffects;
+    }
+
+    public String getRemoteViewerNewerVersionUrl() {
+        return remoteViewerNewerVersionUrl;
+    }
+
+    public void setRemoteViewerNewerVersionUrl(String remoteViewerNewerVersionUrl) {
+        this.remoteViewerNewerVersionUrl = remoteViewerNewerVersionUrl;
+    }
+
+    public String getRemoteViewerSupportedVersions() {
+        return remoteViewerSupportedVersions;
+    }
+
+    public void setRemoteViewerSupportedVersions(String remoteViewerSupportedVersions) {
+        this.remoteViewerSupportedVersions = remoteViewerSupportedVersions;
     }
 
     public enum WanColorDepth {

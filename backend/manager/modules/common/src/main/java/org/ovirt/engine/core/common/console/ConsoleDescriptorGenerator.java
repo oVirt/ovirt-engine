@@ -37,6 +37,13 @@ public class ConsoleDescriptorGenerator {
             configBuilder.append(generateSpicePart(options));
         }
 
+        String remoteViewerSupportedVersions = options.getRemoteViewerSupportedVersions();
+        String remoteViewerNewerVersionUrl = options.getRemoteViewerNewerVersionUrl();
+        if (!StringHelper.isNullOrEmpty(remoteViewerSupportedVersions) && !StringHelper.isNullOrEmpty(remoteViewerNewerVersionUrl)) {
+            configBuilder.append("\nversions=").append(remoteViewerSupportedVersions);
+            configBuilder.append("\nnewer-version-url=").append(remoteViewerNewerVersionUrl);
+        }
+
         return configBuilder.append("\n").toString();
     }
 
