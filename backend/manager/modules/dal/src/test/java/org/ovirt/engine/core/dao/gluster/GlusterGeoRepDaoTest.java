@@ -136,6 +136,14 @@ public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
     }
 
     @Test
+    public void testGetGlusterGeoRepSessionUnSetConfig() {
+        GlusterGeoRepSessionConfiguration sessionConfig = getGlusterGeoRepSessionConfig();
+        dao.saveConfig(sessionConfig);
+        List<GlusterGeoRepSessionConfiguration> unsetSessionConfig = dao.getGlusterGeoRepSessionUnSetConfig(FixturesTool.GLUSTER_GEOREP_SESSION_ID);
+        assertEquals("use_meta_volume", unsetSessionConfig.get(0).getKey());
+    }
+
+    @Test
     public void testUpdateConfig() {
         GlusterGeoRepSessionConfiguration sessionConfig = getGlusterGeoRepSessionConfig();
         dao.saveConfig(sessionConfig);
@@ -172,5 +180,4 @@ public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
         assertNotNull(session);
         assertEquals(FixturesTool.GLUSTER_GEOREP_SESSION_ID, session.getId());
     }
-
 }

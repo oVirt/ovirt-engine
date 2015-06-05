@@ -28,6 +28,7 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     private static final RowMapper<GlusterGeoRepSession> georepSessionRowMapper = new GeoRepSessionRowMapper();
     private static final RowMapper<GlusterGeoRepSessionConfiguration> georepSessionConfigRowMapper = new GeoRepSessionConfigRowMapper();
     private static final RowMapper<GlusterGeoRepSessionDetails> georepSessionDetailsRowMapper = new GeoRepSessionDetailsRowMapper();
+    private static final RowMapper<GlusterGeoRepSessionConfiguration> geoRepSessionConfigMasterRowMapper = new GeoRepSessionConfigMasterRowMapper();
 
     public GlusterGeoRepDaoDbFacadeImpl() {
         super("GlusterGeoRepSession");
@@ -53,14 +54,30 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         }
     }
 
-    private static final class GeoRepSessionConfigRowMapper implements RowMapper<GlusterGeoRepSessionConfiguration> {
+    private static final class GeoRepSessionConfigRowMapper extends GeoRepSessionConfigMasterRowMapper implements RowMapper<GlusterGeoRepSessionConfiguration> {
+        @Override
+        public GlusterGeoRepSessionConfiguration mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            GlusterGeoRepSessionConfiguration entity = super.mapRow(rs, rowNum);
+            entity.setId(getGuidDefaultEmpty(rs, "session_id"));
+            entity.setValue(rs.getString("config_value"));
+            return entity;
+        }
+    }
+
+    private static class GeoRepSessionConfigMasterRowMapper implements RowMapper<GlusterGeoRepSessionConfiguration> {
+        private Guid sessionId;
+
+        public void setSessionId(Guid sessionId) {
+            this.sessionId = sessionId;
+        }
+
         @Override
         public GlusterGeoRepSessionConfiguration mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             GlusterGeoRepSessionConfiguration entity = new GlusterGeoRepSessionConfiguration();
-            entity.setId(getGuidDefaultEmpty(rs, "session_id"));
+            entity.setId(sessionId);
             entity.setKey(rs.getString("config_key"));
-            entity.setValue(rs.getString("config_value"));
             entity.setDescription(rs.getString("config_description"));
             entity.setAllowedValues(rs.getString("config_possible_values") != null ? Arrays.asList(rs.getString("config_possible_values")
                     .split(";"))
@@ -160,6 +177,12 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     public List<GlusterGeoRepSessionConfiguration> getGeoRepSessionConfig(Guid sessionId) {
         return getCallsHandler().executeReadList("GetGlusterGeoRepSessionConfig", georepSessionConfigRowMapper,
                 createIdParameterMapper(sessionId));
+    }
+
+    @Override
+    public List<GlusterGeoRepSessionConfiguration> getGlusterGeoRepSessionUnSetConfig(Guid sessionId) {
+        ((GeoRepSessionConfigMasterRowMapper)geoRepSessionConfigMasterRowMapper).setSessionId(sessionId);
+        return getCallsHandler().executeReadList("GetGlusterGeoRepSessionUnSetConfig", geoRepSessionConfigMasterRowMapper, createIdParameterMapper(sessionId));
     }
 
     @Override
