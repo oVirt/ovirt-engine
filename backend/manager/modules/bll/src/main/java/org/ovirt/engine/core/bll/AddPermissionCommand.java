@@ -168,7 +168,6 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                         paramPermission.getObjectId());
 
         if (permission == null) {
-            paramPermission.setId(Guid.newGuid());
             paramPermission.setAdElementId(principalId);
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {

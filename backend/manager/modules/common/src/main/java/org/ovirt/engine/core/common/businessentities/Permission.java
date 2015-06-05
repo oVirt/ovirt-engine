@@ -21,18 +21,10 @@ public class Permission implements IVdcQueryable, BusinessEntity<Guid> {
     /** timestamp taken when that permission was created, in seconds from EPOCH **/
     private long creationDate;
 
-    /**
-     * WARNING: When this constructor is invoked inside GWT compiled code, please set {@code id} to
-     * {@code Guid.Empty} before sending this instance to backend, otherwise nasty NPE will be raised.
-     */
     public Permission() {
         this (Guid.Empty, Guid.Empty, null, null);
     }
 
-    /**
-     * WARNING: When this constructor is invoked inside GWT compiled code, please set {@code id} to
-     * {@code Guid.Empty} before sending this instance to backend, otherwise nasty NPE will be raised.
-     */
     public Permission(Guid adElementId, Guid roleId, Guid objectId, VdcObjectType objectType) {
         this.id = Guid.newGuid();
         this.adElementId = adElementId;

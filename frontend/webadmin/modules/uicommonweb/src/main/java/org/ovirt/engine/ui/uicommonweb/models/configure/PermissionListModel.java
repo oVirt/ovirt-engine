@@ -238,9 +238,6 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         for (DbUser user : items)
         {
             Permission perm = new Permission(user.getId(), role.getId(), getEntityGuid(), getObjectType());
-            // set id to Guid.Empty as GWT cannot generate new random UUID, AddPermissionCommand will replace
-            // Guid.Empty with correct Guid
-            perm.setId(Guid.Empty);
             if (user.isGroup())
             {
                 DbGroup group = new DbGroup();
