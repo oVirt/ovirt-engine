@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePres
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.GlusterCapacityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MenuCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityCompositeCell;
@@ -142,7 +143,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
             }
         });
 
-        Column<GlusterVolumeEntity, GlusterVolumeEntity> capacityColumn = new Column<GlusterVolumeEntity, GlusterVolumeEntity>(new VolumeCapacityCell()) {
+        GlusterCapacityColumn<GlusterVolumeEntity, GlusterVolumeEntity> capacityColumn = new GlusterCapacityColumn<GlusterVolumeEntity, GlusterVolumeEntity>(new VolumeCapacityCell()) {
             @Override
             public GlusterVolumeEntity getValue(GlusterVolumeEntity object) {
                 return object;

@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.widget.table.column.CellWithElementId;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils.VolumeStatus;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -15,13 +17,17 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
+public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> implements CellWithElementId<GlusterVolumeEntity>{
 
     ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
 
     ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
 
     ApplicationTemplates applicationTemplates = ClientGinjectorProvider.getApplicationTemplates();
+
+    private String elementIdPrefix;
+
+    private String columnId;
 
     protected ImageResource downImage = resources.downImage();
     protected ImageResource upImage = resources.upImage();
@@ -69,9 +75,32 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
         VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
         ImageResource statusImage = getStatusImage(status);
         String tooltip = getToolTip(status);
+
+        String id = ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context);
+
         // Generate the HTML for the image:
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
-        sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip));
+        sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip, id));
+    }
+
+    @Override
+    public void setElementIdPrefix(String elementIdPrefix) {
+        this.elementIdPrefix = elementIdPrefix;
+    }
+
+    @Override
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
+    }
+
+    @Override
+    public String getElementIdPrefix() {
+        return elementIdPrefix;
+    }
+
+    @Override
+    public String getColumnId() {
+        return columnId;
     }
 }

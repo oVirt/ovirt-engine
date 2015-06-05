@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickCapacityCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.GlusterCapacityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MenuCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityCompositeCell;
@@ -71,7 +72,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
 
         getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick(), "400px"); //$NON-NLS-1$
 
-        getTable().addColumn(new Column<GlusterBrickEntity, BrickProperties>( new BrickCapacityCell()) {
+        getTable().addColumn(new GlusterCapacityColumn<GlusterBrickEntity, BrickProperties>( new BrickCapacityCell()) {
             @Override
             public BrickProperties getValue(GlusterBrickEntity object) {
                 return object.getBrickProperties();

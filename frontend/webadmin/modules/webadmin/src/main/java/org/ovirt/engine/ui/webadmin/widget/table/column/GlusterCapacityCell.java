@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.widget.table.column.CellWithElementId;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -13,11 +15,14 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
-public abstract class GlusterCapacityCell<P> extends AbstractCell<P>{
+public abstract class GlusterCapacityCell<P> extends AbstractCell<P> implements CellWithElementId<P> {
 
     protected static final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
     protected static final ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
     protected static final ApplicationMessages messages = GWT.create(ApplicationMessages.class);
+
+    private String elementIdPrefix;
+    private String columnId;
 
     private Double freeSize;
     private Double totalSize;
@@ -88,7 +93,28 @@ public abstract class GlusterCapacityCell<P> extends AbstractCell<P>{
         String sizeString = getProgressText(freeSize, totalSize);
         String color = progress < 70 ? "#669966" : progress < 95 ? "#FF9900" : "#FF0000"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String toolTip = messages.glusterCapacityInfo(getSizeString(freeSize, inUnit), getSizeString(usedSize, inUnit), getSizeString(totalSize, inUnit));
-        SafeHtml safeHtml = templates.glusterCapcityProgressBar(progress, sizeString, color, toolTip);
+        String id = ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context);
+        SafeHtml safeHtml = templates.glusterCapcityProgressBar(progress, sizeString, color, toolTip, id);
         sb.append(safeHtml);
+    }
+
+    @Override
+    public void setElementIdPrefix(String elementIdPrefix) {
+        this.elementIdPrefix = elementIdPrefix;
+    }
+
+    @Override
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
+    }
+
+    @Override
+    public String getElementIdPrefix() {
+        return elementIdPrefix;
+    }
+
+    @Override
+    public String getColumnId() {
+        return columnId;
     }
 }

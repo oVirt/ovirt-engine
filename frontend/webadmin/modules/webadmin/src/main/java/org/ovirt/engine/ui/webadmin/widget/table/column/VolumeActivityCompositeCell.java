@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.widget.table.column.CellWithElementId;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CompositeCell;
@@ -11,9 +13,12 @@ import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
-public class VolumeActivityCompositeCell<T extends GlusterTaskSupport> extends CompositeCell<T> {
+public class VolumeActivityCompositeCell<T extends GlusterTaskSupport> extends CompositeCell<T> implements CellWithElementId<T>{
 
     private final List<HasCell<T, ?>> hasCells;
+
+    private String elementIdPrefix;
+    private String columnId;
 
     public VolumeActivityCompositeCell(List<HasCell<T, ?>> hasCells) {
         super(hasCells);
@@ -26,7 +31,8 @@ public class VolumeActivityCompositeCell<T extends GlusterTaskSupport> extends C
             return;
         }
 
-        sb.appendHtmlConstant("<table style=\"margin:0 auto\"><tr>"); //$NON-NLS-1$
+        String id = ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context);
+        sb.appendHtmlConstant("<table id='" +id + "' style=\"margin:0 auto\"><tr>"); //$NON-NLS-1$//$NON-NLS-2$
         Iterator<HasCell<T, ?>> iterator = hasCells.iterator();
         while (iterator.hasNext()) {
             render(context, value, sb, iterator.next());
@@ -59,5 +65,25 @@ public class VolumeActivityCompositeCell<T extends GlusterTaskSupport> extends C
                 .getFirstChildElement()
                 .getFirstChildElement()
                 .getFirstChildElement();
+    }
+
+    @Override
+    public void setElementIdPrefix(String elementIdPrefix) {
+        this.elementIdPrefix = elementIdPrefix;
+    }
+
+    @Override
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
+    }
+
+    @Override
+    public String getElementIdPrefix() {
+        return elementIdPrefix;
+    }
+
+    @Override
+    public String getColumnId() {
+        return columnId;
     }
 }

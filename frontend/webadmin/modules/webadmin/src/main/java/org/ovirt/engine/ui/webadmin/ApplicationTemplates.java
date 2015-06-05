@@ -19,10 +19,10 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             "<div class='engine-progress-text'>{1}</div></div>")
     SafeHtml progressBar(int progress, String text, String color);
 
-    @Template("<div title='{3}' class='engine-progress-box'>" +
+    @Template("<div id='{4}' title='{3}' class='engine-progress-box'>" +
             "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
             "<div class='engine-progress-text'>{1}</div></div>")
-    SafeHtml glusterCapcityProgressBar(int progress, String sizeString, String color, String toolTip);
+    SafeHtml glusterCapcityProgressBar(int progress, String sizeString, String color, String toolTip, String id);
 
     /**
      * Creates a tree-item HTML
@@ -89,6 +89,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style=\"text-align: center;\">{0}{1}</div>")
     SafeHtml statusWithAlertTemplate(SafeHtml statusImage, SafeHtml alertImage);
 
+    @Template("<div id='{2}' title=\"{1}\" style=\"text-align: center;\">{0}</div>")
+    SafeHtml statusTemplate(SafeHtml statusImage, String title, String id);
+
     @Template("<div title=\"{1}\" style=\"text-align: center;\">{0}</div>")
     SafeHtml statusTemplate(SafeHtml statusImage, String title);
 
@@ -136,13 +139,13 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
     SafeHtml image(SafeHtml statusImage);
 
-    @Template("<table> <tr> " +
+    @Template("<table id='{4}'> <tr> " +
             "<td> <div>{0}</div> </td>" +
             "<td> {1} </td>" +
             "<td> <div> {2} </div> </td>" +
             "<td> {3} </td>" +
             "</tr> </table>")
-    SafeHtml volumeBrickStatusTemplate(SafeHtml upImage, int upCount, SafeHtml downImage, int downCount);
+    SafeHtml volumeBrickStatusTemplate(SafeHtml upImage, int upCount, SafeHtml downImage, int downCount, String id);
 
     @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
     SafeHtml volumeSnapshotsStatusTemplate(int snapshotCount);
