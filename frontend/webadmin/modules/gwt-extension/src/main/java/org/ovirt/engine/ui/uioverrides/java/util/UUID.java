@@ -71,6 +71,11 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      */
     private static final long serialVersionUID = -4856846361193249489L;
 
+    /**
+     * Characters used in to emulate "random" UUID generation
+     */
+    private static final char[] CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
+
     /*
      * The most significant 64 bits of this UUID.
      *
@@ -158,8 +163,22 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      * @return  a randomly generated <tt>UUID</tt>.
      */
     public static UUID randomUUID() {
-        //Not implemented.
-        return null;
+        char[] uuid = new char[36];
+        int r;
+
+        // rfc4122 requires these characters
+        uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+        uuid[14] = '4';
+
+        // Fill in random data.  At i==19 set the high bits of clock sequence as
+        // per rfc4122, sec. 4.1.5
+        for (int i = 0; i < 36; i++) {
+            if (uuid[i] == 0) {
+                r = (int) (Math.random()*16);
+                uuid[i] = CHARS[(i == 19) ? (r & 0x3) | 0x8 : r & 0xf];
+            }
+        }
+        return fromString(new String(uuid));
     }
 
     /**
