@@ -24,7 +24,6 @@ public class BackendVmNumaNodesResource
         implements VmNumaNodesResource {
 
     private VdcActionType addAction;
-    private VdcActionType removeAction;
     private VdcActionType updateType;
     protected Class<VirtualNumaNodes> collectionType;
     protected Guid parentId;
@@ -34,7 +33,6 @@ public class BackendVmNumaNodesResource
     public BackendVmNumaNodesResource(Guid parentId) {
         super(VirtualNumaNode.class, VmNumaNode.class);
         this.addAction = VdcActionType.AddVmNumaNodes;
-        this.removeAction = VdcActionType.RemoveVmNumaNodes;
         this.updateType = VdcActionType.UpdateVmNumaNodes;
         this.collectionType = VirtualNumaNodes.class;
         this.parentId = parentId;
@@ -56,13 +54,6 @@ public class BackendVmNumaNodesResource
 
     private VdcActionParametersBase getAddParameters(VmNumaNode entity, VirtualNumaNode device) {
         VmNumaNodeOperationParameters parameters = new VmNumaNodeOperationParameters(parentId, map(device, entity));
-        return parameters;
-    }
-
-    private VdcActionParametersBase getRemoveParameters(String id) {
-        VmNumaNode entity = new VmNumaNode();
-        entity.setId(asGuid(id));
-        VmNumaNodeOperationParameters parameters = new VmNumaNodeOperationParameters(parentId, entity);
         return parameters;
     }
 
@@ -147,10 +138,5 @@ public class BackendVmNumaNodesResource
             }
             return null;
         }
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return performAction(removeAction, getRemoveParameters(id));
     }
 }
