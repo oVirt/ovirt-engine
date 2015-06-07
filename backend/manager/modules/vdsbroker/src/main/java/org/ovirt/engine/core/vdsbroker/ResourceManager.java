@@ -449,11 +449,7 @@ public class ResourceManager implements BackendService {
                     ReflectionUtils.findConstructor(type, parameters.getClass());
 
             if (constructor != null) {
-                VDSCommandBase<P> cmd = constructor.newInstance(new Object[] { parameters });
-                InjectionTarget injectionTarget =
-                        beanManager.createInjectionTarget(beanManager.createAnnotatedType(cmd.getClass()));
-                injectionTarget.inject(cmd, beanManager.createCreationalContext(null));
-                return cmd;
+                return instantiateInjectedCommand(parameters, constructor);
             }
         } catch (Exception e) {
             if (e.getCause() != null) {
@@ -467,17 +463,24 @@ public class ResourceManager implements BackendService {
         return null;
     }
 
+    private <P extends VDSParametersBase, T extends VDSCommandBase<P>> T instantiateInjectedCommand(P parameters,
+            Constructor<T> constructor) throws Exception {
+        T cmd = constructor.newInstance(new Object[] { parameters });
+        InjectionTarget injectionTarget =
+                beanManager.createInjectionTarget(beanManager.createAnnotatedType(cmd.getClass()));
+        injectionTarget.inject(cmd, beanManager.createCreationalContext(null));
+        return cmd;
+    }
+
     private <P extends VdsIdVDSCommandParametersBase> FutureVDSCommand createFutureCommand(FutureVDSCommandType commandType,
             P parameters) {
         try {
             Class<FutureVDSCommand> type =
                     (Class<FutureVDSCommand>) Class.forName(commandType.getFullyQualifiedClassName());
-            Constructor<FutureVDSCommand> constructor =
-                    ReflectionUtils.findConstructor(type,
-                            parameters.getClass());
+            Constructor<FutureVDSCommand> constructor = ReflectionUtils.findConstructor(type, parameters.getClass());
 
             if (constructor != null) {
-                return constructor.newInstance(new Object[] { parameters });
+                return instantiateInjectedCommand(parameters, constructor);
             }
         } catch (Exception e) {
             if (e.getCause() != null) {

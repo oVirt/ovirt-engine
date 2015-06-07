@@ -61,6 +61,8 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_VDS_NOT_FOUND,
                     String.format("Vds with id: %1$s was not found", vdsId));
         }
+
+        setVdsAndVdsStatic(vdsmanager.getCopyVds());
         return vdsmanager.getVdsProxy();
     }
 
