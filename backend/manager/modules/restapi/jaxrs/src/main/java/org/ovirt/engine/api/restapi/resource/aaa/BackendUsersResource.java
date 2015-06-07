@@ -24,7 +24,6 @@ import org.ovirt.engine.api.restapi.utils.aaa.AuthzUtils;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.action.AddUserParameters;
-import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -121,11 +120,6 @@ public class BackendUsersResource
                         constraint);
 
         return sb.toString();
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveUser, new IdParameters(asGuid(id)));
     }
 
     protected Users mapDbUserCollection(List<DbUser> entities) {

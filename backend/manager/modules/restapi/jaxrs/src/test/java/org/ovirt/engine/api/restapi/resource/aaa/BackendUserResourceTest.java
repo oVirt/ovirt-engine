@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
+import org.ovirt.engine.core.common.action.IdParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -73,6 +75,64 @@ public class BackendUserResourceTest
                 getEntity(0));
         control.replay();
         verifyModel(resource.getUserByNameAndDomain("admin", "internal"), 0);
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(
+                VdcActionType.RemoveUser,
+                IdParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                true,
+                true));
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception {
+        setUpGetEntityExpectations(
+                VdcQueryType.GetDbUserByUserId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                null);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(
+                VdcActionType.RemoveUser,
+                IdParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                canDo,
+                success));
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
     }
 
     protected void setUpGetEntityExpectations() throws Exception {

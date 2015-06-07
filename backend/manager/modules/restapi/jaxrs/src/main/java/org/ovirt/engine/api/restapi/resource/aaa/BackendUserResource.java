@@ -2,6 +2,8 @@ package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource.SUB_COLLECTIONS;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -12,6 +14,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedRolesResource;
 import org.ovirt.engine.api.restapi.resource.BackendUserTagsResource;
+import org.ovirt.engine.core.common.action.IdParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -72,5 +76,11 @@ public class BackendUserResource
         return performGet(VdcQueryType.GetDbUserByUserNameAndDomain,
                 new GetDbUserByUserNameAndDomainQueryParameters(userName, domainName),
                 BaseResource.class);
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveUser, new IdParameters(guid));
     }
 }
