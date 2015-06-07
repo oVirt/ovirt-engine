@@ -6,14 +6,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
-import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -116,83 +113,6 @@ public class BackendTemplateDisksResourceTest
             verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
         } finally {
             locales.clear();
-        }
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
-                                           RemoveDiskParameters.class,
-                                           new String[] { "DiskId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveByStorageDomain() throws Exception {
-        setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
-                                           RemoveDiskParameters.class,
-                                           new String[] { "DiskId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        Action action = new Action();
-        action.setStorageDomain(new StorageDomain());
-        action.getStorageDomain().setId(GUIDS[0].toString());
-        verifyRemove(collection.remove(GUIDS[0].toString(), action));
-    }
-
-    @Test
-    public void testRemoveForced() throws Exception {
-        setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
-                                           RemoveDiskParameters.class,
-                                           new String[] { "DiskId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        Action action = new Action();
-        action.setForce(true);
-        verifyRemove(collection.remove(GUIDS[0].toString(), action));
-    }
-
-    private void setUpGetEntityExpectations(int times) {
-        for(int i=0;i<times;i++){
-            setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { PARENT_ID },
-                    getEntityList());
-        }
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
-                                           RemoveDiskParameters.class,
-                                           new String[] { "DiskId" },
-                                           new Object[] { GUIDS[0] },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
         }
     }
 }

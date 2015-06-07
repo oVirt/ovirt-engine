@@ -20,6 +20,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -165,6 +166,83 @@ public class BackendTemplateDiskResourceTest
     @Test
     public void testCopyBySdNameWithFilter() throws Exception {
         testCopyBySdName(true);
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
+                RemoveDiskParameters.class,
+                new String[] { "DiskId" },
+                new Object[] { GUIDS[1] },
+                true,
+                true));
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveByStorageDomain() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
+                RemoveDiskParameters.class,
+                new String[] { "DiskId" },
+                new Object[] { GUIDS[1] },
+                true,
+                true));
+        Action action = new Action();
+        action.setStorageDomain(new StorageDomain());
+        action.getStorageDomain().setId(GUIDS[0].toString());
+        verifyRemove(resource.remove(action));
+    }
+
+    @Test
+    public void testRemoveForced() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
+                RemoveDiskParameters.class,
+                new String[] { "DiskId" },
+                new Object[] { GUIDS[1] },
+                true,
+                true));
+        Action action = new Action();
+        action.setForce(true);
+        verifyRemove(resource.remove(action));
+    }
+
+    private void setUpGetEntityExpectations(int times) {
+        for (int i = 0; i < times; i++) {
+            setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { PARENT_ID },
+                    getEntityList());
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
+                RemoveDiskParameters.class,
+                new String[] { "DiskId" },
+                new Object[] { GUIDS[1] },
+                canDo,
+                success));
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
     }
 
     protected void testCopyBySdName(boolean isFiltered) throws Exception {

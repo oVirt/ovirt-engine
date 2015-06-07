@@ -16,31 +16,16 @@
 
 package org.ovirt.engine.api.resource;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface TemplateDisksResource extends ReadOnlyDevicesResource<Disk, Disks>{
-
-    // used for direct lun disk removal
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id);
-
-    // used for removing disk from specific SD or forcing disk removal
-    @DELETE
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id, Action action);
 
     /**
      * Sub-resource locator method, returns individual DeviceResource on which the

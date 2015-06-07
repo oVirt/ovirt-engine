@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.resource.TemplateDiskResource;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -52,4 +53,22 @@ public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<D
                 new ExportRepoImageParameters(guid, getStorageDomainId(action)), action);
     }
 
+    @Override
+    public Response remove(Action action) {
+        get(); // will throw 404 if entity not found.
+        RemoveDiskParameters params = new RemoveDiskParameters(asGuid(id));
+        if (action.isSetForce()) {
+            params.setForceDelete(action.isForce());
+        }
+        if (action.isSetStorageDomain() && action.getStorageDomain().isSetId()) {
+            params.setStorageDomainId(asGuid(action.getStorageDomain().getId()));
+        }
+        return performAction(VdcActionType.RemoveDisk, params);
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(guid));
+    }
 }
