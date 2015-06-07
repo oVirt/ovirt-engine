@@ -143,6 +143,13 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
             }
         });
 
+        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.syncAllHostNetworks()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getSyncAllHostNetworksCommand();
+            }
+        });
+
         // The table items are in the form, so the table itself will never have items, so don't display the 'empty
         // message'
         table.table.setEmptyTableWidget(null);

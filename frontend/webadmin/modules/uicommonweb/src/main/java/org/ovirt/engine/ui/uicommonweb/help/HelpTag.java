@@ -40,6 +40,8 @@ public enum HelpTag {
 
     assign_networks("assign_networks", HelpTagType.WEBADMIN, "Cluster Tab > Logical Network Sub-Tab > Manage Networks"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    sync_all_host_networks("sync_all_host_networks", HelpTagType.WEBADMIN, "Host main tab > Networks Interfaces Sub-Tab > Sync All Networks"), //$NON-NLS-1$ //$NON-NLS-2$
+
     assign_tags_hosts("assign_tags_hosts", HelpTagType.WEBADMIN, "Host Tab > Assign Tags"), //$NON-NLS-1$ //$NON-NLS-2$
 
     assign_tags_users("assign_tags_users", HelpTagType.WEBADMIN, "Users Tab > Assign Tags"), //$NON-NLS-1$ //$NON-NLS-2$

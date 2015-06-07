@@ -2425,6 +2425,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Setup Host Networks")
     String setupHostNetworksInterface();
 
+    @DefaultStringValue("Sync All Networks")
+    String syncAllHostNetworks();
+
     @DefaultStringValue("Date Created")
     String dateCreatedInterface();
 
