@@ -450,11 +450,6 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     }
 
     @Override
-    protected Object provideDetailModelEntity(Object selectedItem) {
-        return selectedItem;
-    }
-
-    @Override
     protected void activeDetailModelChanged() {
         super.activeDetailModelChanged();
     }

@@ -11,12 +11,14 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -28,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -40,6 +43,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private ListModel<EntityModel<VM>> importedVmModels;
 
     private StorageDomain exportDomain;
+    private String exportPath;
+    private String exportName;
+    private String exportDescription;
 
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
@@ -121,9 +127,24 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             public void onSuccess(Object model, Object ReturnValue) {
                 List<StorageDomain> storageDomains = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
-               Guid exportDomainId = findExportDomainId(storageDomains);
-               if (exportDomainId != null) {
-                   getVmsFromExportDomain(dataCenter.getId(), exportDomainId);
+               exportDomain = getExportDomain(storageDomains);
+               if (exportDomain != null) {
+                   setExportName(exportDomain.getName());
+                   setExportDescription(exportDomain.getDescription());
+
+                   AsyncQuery _asyncQuery = new AsyncQuery();
+                   _asyncQuery.setModel(this);
+                   _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                       @Override
+                       public void onSuccess(Object model, Object ReturnValue)
+                       {
+                           StorageServerConnections connection = (StorageServerConnections) ReturnValue;
+                           setExportPath(connection == null ? null : connection.getconnection());
+                           getVmsFromExportDomain(dataCenter.getId(), exportDomain.getId());
+                       }
+                   };
+                   AsyncDataProvider.getInstance().getStorageConnectionById(_asyncQuery, exportDomain.getStorage(), true);
+
                }
                else {
                    setErrorToFetchData(ConstantsManager.getInstance().getConstants().notAvailableWithNoActiveExportDomain());
@@ -154,14 +175,13 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         };
     }
 
-    private Guid findExportDomainId(List<StorageDomain> storageDomains) {
+    private static StorageDomain getExportDomain(List<StorageDomain> storageDomains) {
         for (StorageDomain storageDomain : storageDomains) {
             if (storageDomain.getStorageDomainType() == StorageDomainType.ImportExport
                     && storageDomain.getStatus() == StorageDomainStatus.Active) {
-                return (exportDomain = storageDomain).getId();
+                return storageDomain;
             }
         }
-
         return null;
     }
 
@@ -284,5 +304,38 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     public void setErrorToFetchData(String msg) {
         getImportSourceValid().setMessage(msg);
         getImportSourceValid().setEntity(false);
+    }
+
+    public String getExportPath() {
+        return exportPath;
+    }
+
+    public void setExportPath(String exportPath) {
+        if (!ObjectUtils.objectsEqual(this.exportPath, exportPath)) {
+            this.exportPath = exportPath;
+            onPropertyChanged(new PropertyChangedEventArgs("ExportPath")); //$NON-NLS-1$
+        }
+    }
+
+    public String getExportName() {
+        return exportName;
+    }
+
+    public void setExportName(String exportName) {
+        if (!ObjectUtils.objectsEqual(this.exportName, exportName)) {
+            this.exportName = exportName;
+            onPropertyChanged(new PropertyChangedEventArgs("ExportName")); //$NON-NLS-1$
+        }
+    }
+
+    public String getExportDescription() {
+        return exportDescription != null ? exportDescription : ""; //$NON-NLS-1$
+    }
+
+    public void setExportDescription(String exportDescription) {
+        if (!ObjectUtils.objectsEqual(this.exportDescription, exportDescription)) {
+            this.exportDescription = exportDescription;
+            onPropertyChanged(new PropertyChangedEventArgs("ExportDescription")); //$NON-NLS-1$
+        }
     }
 }

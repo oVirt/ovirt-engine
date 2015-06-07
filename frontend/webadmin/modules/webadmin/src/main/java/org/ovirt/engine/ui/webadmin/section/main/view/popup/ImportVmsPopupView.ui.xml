@@ -2,7 +2,9 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+	xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form"
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
@@ -12,16 +14,23 @@
 		}
 
 		.section {
-			margin-bottom: 5px;
+			margin-top: 5px;
+			margin-bottom: 10px;
+		}
+
+		.sourceInfoSection {
+			margin-top: 10px;
+			margin-bottom: 10px;
+			height: 135px;
 		}
 
         .refreshButton {
-            float: right;
+            float: left;
             font-size: 12px;
             height: 14px;
             width: 12px;
             margin-right: 5px;
-            margin-left: 2px;
+            margin-left: 200px;
             margin-up: 10px;
             padding: 2px;
             background: transparent;
@@ -37,18 +46,23 @@
         }
 	</ui:style>
 
-	<d:SimpleDialogPanel ui:field="mainPanel" width="800px" height="470px">
+	<d:SimpleDialogPanel ui:field="mainPanel" width="800px" height="625px">
 		<d:content>
-			<g:VerticalPanel>
+			<g:VerticalPanel width="100%">
 				<g:FlowPanel addStyleNames="{style.section}">
 					<e:ListModelListBoxEditor ui:field="DataCentersEditor" />
-					<g:HorizontalPanel>
-					    <e:ListModelListBoxEditor ui:field="importSourcesEditor" />
-					    <g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton} avmpw_refreshButton_pfly_fix">
-                             <g:upFace image='{resources.refreshButtonImage}' />
-                        </g:PushButton>
-					</g:HorizontalPanel>
+					<e:ListModelListBoxEditor ui:field="importSourcesEditor" />
 				</g:FlowPanel>
+
+				<g:FlowPanel ui:field="exportPanel" addStyleNames="{style.sourceInfoSection}">
+					<ge:StringEntityModelLabelEditor ui:field="exportDomainName"/>
+					<ge:StringEntityModelLabelEditor ui:field="exportDomainPath"/>
+					<ge:StringEntityModelLabelEditor ui:field="exportDomainDescription"/>
+					<g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton} avmpw_refreshButton_pfly_fix">
+						<g:upFace image='{resources.refreshButtonImage}' />
+					</g:PushButton>
+				</g:FlowPanel>
+
 				<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
 				<w:VerticalSplitTable ui:field="splitTable" />
 			</g:VerticalPanel>

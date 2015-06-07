@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.VerticalSplitTable;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -33,6 +34,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
@@ -74,11 +76,27 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
     @UiField
     @Ignore
+    FlowPanel exportPanel;
+
+    @UiField
+    @Ignore
     public ButtonBase refreshButton;
 
     @UiField
     @Ignore
     Label message;
+
+    @UiField
+    @Path("exportPath")
+    StringEntityModelLabelEditor exportDomainPath;
+
+    @UiField
+    @Path("exportName")
+    StringEntityModelLabelEditor exportDomainName;
+
+    @UiField
+    @Path("exportDescription")
+    StringEntityModelLabelEditor exportDomainDescription;
 
     private ImportVmsModel model;
 
@@ -113,10 +131,19 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                         constants.importedVms());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTables();
+
         DataCentersEditor.setLabel(constants.dataCenter());
         DataCentersEditor.addWrapperStyleName(style.providersStyle());
         importSourcesEditor.setLabel(constants.hostPopupSourceText());
         importSourcesEditor.addWrapperStyleName(style.providersStyle());
+
+        exportDomainName.setLabel(constants.nameLabel());
+        exportDomainName.addWrapperStyleName(style.providersStyle());
+        exportDomainPath.setLabel(constants.pathStorageGeneral());
+        exportDomainPath.addWrapperStyleName(style.providersStyle());
+        exportDomainDescription.setLabel(constants.descriptionLabel());
+        exportDomainDescription.addWrapperStyleName(style.providersStyle());
+
         driver.initialize(this);
     }
 

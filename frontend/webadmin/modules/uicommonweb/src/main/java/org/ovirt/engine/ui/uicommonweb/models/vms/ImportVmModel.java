@@ -264,4 +264,9 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                 AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
                 : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
     }
+
+    @Override
+    protected Object provideDetailModelEntity(Object selectedItem) {
+        return selectedItem;
+    }
 }
