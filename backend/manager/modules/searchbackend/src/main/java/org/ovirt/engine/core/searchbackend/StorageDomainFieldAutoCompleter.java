@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -7,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public static final String NAME = "NAME";
     public static final String STATUS = "STATUS";
+    public static final String EXTERNAL_STATUS = "EXTERNAL_STATUS";
     public static final String DATACENTER = "DATACENTER";
     public static final String TYPE = "TYPE";
     public static final String SIZE = "SIZE";
@@ -22,6 +24,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         // Building the basic vervs Dict
         mVerbs.add(NAME);
         mVerbs.add(STATUS);
+        mVerbs.add(EXTERNAL_STATUS);
         mVerbs.add(DATACENTER);
         mVerbs.add(TYPE);
         mVerbs.add(SIZE);
@@ -38,6 +41,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         // Building the types dict
         getTypeDictionary().put(NAME, String.class);
         getTypeDictionary().put(STATUS, StorageDomainStatus.class);
+        getTypeDictionary().put(EXTERNAL_STATUS, ExternalStatus.class);
         getTypeDictionary().put(DATACENTER, String.class);
         getTypeDictionary().put(TYPE, StorageType.class);
         getTypeDictionary().put(SIZE, Integer.class);
@@ -52,6 +56,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         // building the ColumnName Dict
         columnNameDict.put(NAME, "storage_name");
         columnNameDict.put(STATUS, "storage_domain_shared_status");
+        columnNameDict.put(EXTERNAL_STATUS, "external_status");
         columnNameDict.put(DATACENTER, "storage_pool_name::text");
         columnNameDict.put(TYPE, "storage_type");
         columnNameDict.put(SIZE, "available_disk_size");
@@ -85,6 +90,9 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         }
         else if (STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(StorageDomainSharedStatus.class);
+        }
+        else if (EXTERNAL_STATUS.equals(fieldName)) {
+            retval = new EnumValueAutoCompleter(ExternalStatus.class);
         }
         else if (WIPE_AFTER_DELETE.equals(fieldName)) {
             retval = new BitValueAutoCompleter();
