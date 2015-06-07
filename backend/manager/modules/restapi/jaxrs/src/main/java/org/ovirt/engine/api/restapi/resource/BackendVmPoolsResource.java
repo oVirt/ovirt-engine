@@ -13,7 +13,6 @@ import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -79,11 +78,6 @@ public class BackendVmPoolsResource
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmPoolById,
                                                    IdQueryParameters.class));
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveVmPool, new VmPoolParametersBase(asGuid(id)));
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -41,5 +42,8 @@ public interface VmPoolResource extends UpdatableResource<VmPool>, Asynchronousl
 
     @Path("permissions")
     public AssignedPermissionsResource getPermissionsResource();
+
+    @DELETE
+    public Response remove();
 
 }

@@ -14,6 +14,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -79,6 +80,18 @@ public class BackendVmPoolResourceTest
                                            GUIDS[0]));
 
         verifyTestAllocateVmActionResponse(resource.allocatevm(new Action()));
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmPool,
+                VmPoolParametersBase.class,
+                new String[] { "VmPoolId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true));
+        verifyRemove(resource.remove());
     }
 
     private void setUpGetVmExpectations(int times) throws Exception {
