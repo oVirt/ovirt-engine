@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
+import org.ovirt.engine.api.model.EntityExternalStatus;
 import org.ovirt.engine.api.model.NfsVersion;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainType;
@@ -25,6 +26,9 @@ public class StorageDomainValidator implements Validator<StorageDomain> {
             }
             if (storageDomain.isSetStorage() && storageDomain.getStorage().isSetNfsVersion()) {
                 validateEnum(NfsVersion.class, storageDomain.getStorage().getNfsVersion(), true);
+            }
+            if (storageDomain.isSetExternalStatus() && storageDomain.getExternalStatus().getState() != null) {
+                validateEnum(EntityExternalStatus.class, storageDomain.getExternalStatus().getState().toUpperCase());
             }
         }
     }

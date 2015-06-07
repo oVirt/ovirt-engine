@@ -47,7 +47,6 @@ import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
-import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -201,7 +200,7 @@ public class HostMapper {
         HostStatus status = map(entity.getStatus(), null);
         model.setStatus(StatusUtils.create(status));
         if (entity.getExternalStatus() != null) {
-            EntityExternalStatus entityExternalStatus = map(entity.getExternalStatus(), null);
+            EntityExternalStatus entityExternalStatus = ExternalStatusMapper.map(entity.getExternalStatus(), null);
             Status hostStatus = new Status();
             hostStatus.setState(entityExternalStatus.value());
             model.setExternalStatus(hostStatus);
@@ -702,41 +701,4 @@ public class HostMapper {
                 return null;
         }
     }
-
-    @Mapping(from = ExternalStatus.class, to = EntityExternalStatus.class)
-    public static EntityExternalStatus map(ExternalStatus entityStatus, EntityExternalStatus template) {
-        switch (entityStatus) {
-        case Ok:
-            return EntityExternalStatus.OK;
-        case Info:
-            return EntityExternalStatus.INFO;
-        case Warning:
-            return EntityExternalStatus.WARNING;
-        case Error:
-            return EntityExternalStatus.ERROR;
-        case Failure:
-            return EntityExternalStatus.FAILURE;
-        default:
-            return null;
-        }
-    }
-
-
-    @Mapping(from = EntityExternalStatus.class, to = ExternalStatus.class)
-    public static ExternalStatus map(EntityExternalStatus entityStatus, ExternalStatus template) {
-        switch (entityStatus) {
-        case OK:
-            return ExternalStatus.Ok;
-        case INFO:
-            return ExternalStatus.Info;
-        case WARNING:
-            return ExternalStatus.Warning;
-        case  ERROR:
-            return ExternalStatus.Error;
-        case FAILURE:
-            return ExternalStatus.Failure;
-        default:
-            return null;
-        }
-    }
-}
+ }

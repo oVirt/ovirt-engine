@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.Events;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
-import org.ovirt.engine.api.restapi.types.HostMapper;
+import org.ovirt.engine.api.restapi.types.ExternalStatusMapper;
 import org.ovirt.engine.core.common.action.AddExternalEventParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -64,22 +64,38 @@ public class BackendEventsResource
     public Response add(Event event) {
         validateParameters(event, "origin", "severity", "customId", "description");
         validateEnums(Event.class, event);
-        boolean isExternalStateDefined = event.isSetHost() &&
-                event.getHost().isSetExternalStatus() &&
-                event.getHost().getExternalStatus().isSetState();
-        AddExternalEventParameters parameters = isExternalStateDefined
-                ? new AddExternalEventParameters(map(event),
-                      HostMapper.map(EntityExternalStatus.fromValue(
-                              event.getHost().getExternalStatus().getState()), null))
-                : new AddExternalEventParameters(map(event), null);
-
         return performCreate(VdcActionType.AddExternalEvent,
-                parameters,
+                getParameters(event),
                 new QueryIdResolver<Long>(VdcQueryType.GetAuditLogById, GetAuditLogByIdParameters.class));
     }
 
     @Override
     protected Event doPopulate(Event model, AuditLog entity) {
         return model;
+    }
+
+    private AddExternalEventParameters getParameters(Event event) {
+
+        AddExternalEventParameters parameters;
+        boolean isHostExternalStateDefined = event.isSetHost() &&
+                event.getHost().isSetExternalStatus() &&
+                event.getHost().getExternalStatus().isSetState();
+        boolean isStorageDomainExternalStateDefined = event.isSetStorageDomain() &&
+                event.getStorageDomain().isSetExternalStatus() &&
+                event.getStorageDomain().getExternalStatus().isSetState();
+        if (isHostExternalStateDefined) {
+            parameters = new AddExternalEventParameters(map(event),
+                    ExternalStatusMapper.map(EntityExternalStatus.fromValue(
+                            event.getHost().getExternalStatus().getState()), null));
+        }
+        else if (isStorageDomainExternalStateDefined) {
+            parameters = new AddExternalEventParameters(map(event),
+                    ExternalStatusMapper.map(EntityExternalStatus.fromValue(
+                            event.getStorageDomain().getExternalStatus().getState()), null));
+        }
+        else{
+            parameters =  new AddExternalEventParameters(map(event), null);
+        }
+        return parameters;
     }
 }

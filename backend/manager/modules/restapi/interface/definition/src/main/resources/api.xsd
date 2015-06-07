@@ -2821,6 +2821,7 @@
 
           <xs:element name="type" type="xs:string" minOccurs="0"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="external_status" type="Status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="master" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="storage" minOccurs="0"/>
           <!-- host is only relevant at creation and deletion time -->

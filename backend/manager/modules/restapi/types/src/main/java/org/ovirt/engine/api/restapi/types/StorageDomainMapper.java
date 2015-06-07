@@ -2,7 +2,9 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.EntityExternalStatus;
 import org.ovirt.engine.api.model.NfsVersion;
+import org.ovirt.engine.api.model.Status;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -140,6 +142,12 @@ public class StorageDomainMapper {
         if (entity.getStatus() != null) {
             StorageDomainStatus status = map(entity.getStatus(), null);
             model.setStatus(status==null ? null : StatusUtils.create(status));
+        }
+        if (entity.getExternalStatus() != null) {
+            EntityExternalStatus entityExternalStatus = ExternalStatusMapper.map(entity.getExternalStatus(), null);
+            Status externalStatus = new Status();
+            externalStatus.setState(entityExternalStatus.value());
+            model.setExternalStatus(externalStatus);
         }
         model.setStorage(new Storage());
         model.getStorage().setType(map(entity.getStorageType(), null));

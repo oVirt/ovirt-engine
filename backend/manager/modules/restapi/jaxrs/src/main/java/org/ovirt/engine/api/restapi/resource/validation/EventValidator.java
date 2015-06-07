@@ -9,6 +9,7 @@ import org.ovirt.engine.api.model.LogSeverity;
 public class EventValidator implements Validator<Event> {
 
     private HostValidator hostValidator = new HostValidator();
+    private StorageDomainValidator storageDomainValidator = new StorageDomainValidator();
 
     @Override
     public void validateEnums(Event event) {
@@ -17,6 +18,9 @@ public class EventValidator implements Validator<Event> {
         }
         if (event.isSetHost()) {
             hostValidator.validateEnums(event.getHost());
+        }
+        if (event.isSetStorageDomain()) {
+            storageDomainValidator.validateEnums(event.getStorageDomain());
         }
     }
 }
