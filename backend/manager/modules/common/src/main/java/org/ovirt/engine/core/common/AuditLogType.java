@@ -679,6 +679,7 @@ public enum AuditLogType {
     HOST_UPGRADE_STARTED(840),
     HOST_UPGRADE_FAILED(841, AuditLogSeverity.ERROR),
     HOST_UPGRADE_FINISHED(842),
+    HOST_UPDATES_ARE_AVAILABLE(843, AuditLogSeverity.NORMAL, AuditLogTimeInterval.DAY.getValue() * 1),
     CERTIFICATE_FILE_NOT_FOUND(817, AuditLogSeverity.ERROR),
     RUN_VM_FAILED(818, AuditLogSeverity.ERROR),
     MAC_ADDRESSES_POOL_NOT_INITIALIZED(837, AuditLogSeverity.WARNING,

@@ -33,7 +33,9 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
             return updatesAvailable;
         } catch (final Exception e) {
-            log.error("Failed to refresh host '{}' packages '{}'.", host.getName(), StringUtils.join(packages, ", "));
+            log.error("Failed to refresh host '{}' packages '{}' availability.",
+                    host.getName(),
+                    StringUtils.join(packages, ", "));
             log.error("Exception", e);
 
             throw new RuntimeException(e.getMessage(), e);

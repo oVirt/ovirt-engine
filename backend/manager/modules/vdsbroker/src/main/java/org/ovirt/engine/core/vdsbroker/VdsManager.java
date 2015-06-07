@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -310,10 +311,9 @@ public class VdsManager {
             updateAvailable = resourceManager.isUpdateAvailable(cachedVds);
         } catch (Exception e) {
             log.error("Failed to check if updates are available for host '{}'", cachedVds.getName());
-
             AuditLogableBase auditLog = new AuditLogableBase();
             auditLog.setVds(cachedVds);
-            auditLog.addCustomValue("Message", e.getMessage());
+            auditLog.addCustomValue("Message", StringUtils.defaultString(e.getMessage(), e.getCause().toString()));
             auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FAILED);
             return;
         }
@@ -323,6 +323,12 @@ public class VdsManager {
                 cachedVds.getDynamicData().setUpdateAvailable(updateAvailable);
                 dbFacade.getVdsDynamicDao().updateUpdateAvailable(cachedVds.getId(), updateAvailable);
             }
+        }
+
+        if (updateAvailable) {
+            AuditLogableBase auditLog = new AuditLogableBase();
+            auditLog.setVds(cachedVds);
+            auditLogDirector.log(auditLog, AuditLogType.HOST_UPDATES_ARE_AVAILABLE);
         }
     }
 
