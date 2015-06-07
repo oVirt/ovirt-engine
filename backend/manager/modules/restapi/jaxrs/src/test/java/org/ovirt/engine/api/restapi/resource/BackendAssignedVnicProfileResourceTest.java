@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendAssignedVnicProfileResourceTest
-        extends AbstractBackendSubResourceTest<VnicProfile, org.ovirt.engine.core.common.businessentities.network.VnicProfile, BackendAssignedVnicProfileResource> {
+        extends AbstractBackendVnicProfileResourceTest<BackendAssignedVnicProfileResource> {
 
     public BackendAssignedVnicProfileResourceTest() {
         super(new BackendAssignedVnicProfileResource(GUIDS[0].toString(),

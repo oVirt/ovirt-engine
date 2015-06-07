@@ -77,18 +77,6 @@ public abstract class AbstractBackendVnicProfilesResource
     protected abstract void validateParameters(VnicProfile vnicProfile);
 
     @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveVnicProfile, new VnicProfileParameters(getVnicProfile(id)));
-    }
-
-    protected org.ovirt.engine.core.common.businessentities.network.VnicProfile getVnicProfile(String id) {
-        return getEntity(org.ovirt.engine.core.common.businessentities.network.VnicProfile.class,
-                VdcQueryType.GetVnicProfileById,
-                new IdQueryParameters(asGuidOr404(id)),
-                "VnicProfiles");
-    }
-
-    @Override
     protected VnicProfile doPopulate(VnicProfile model,
             org.ovirt.engine.core.common.businessentities.network.VnicProfile entity) {
         return model;

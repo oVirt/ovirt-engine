@@ -1,10 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -50,5 +54,17 @@ public abstract class AbstractBackendVnicProfileResource
             model.getQos().getDataCenter().setId(qos.getStoragePoolId().toString());
         }
         return super.addLinks(model, suggestedParent, subCollectionMembersToExclude);
+    }
+
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveVnicProfile, new VnicProfileParameters(getVnicProfile(id)));
+    }
+
+    protected org.ovirt.engine.core.common.businessentities.network.VnicProfile getVnicProfile(String id) {
+        return getEntity(org.ovirt.engine.core.common.businessentities.network.VnicProfile.class,
+                VdcQueryType.GetVnicProfileById,
+                new IdQueryParameters(guid),
+                "VnicProfiles");
     }
 }

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendVnicProfileResourceTest
-        extends AbstractBackendSubResourceTest<VnicProfile, org.ovirt.engine.core.common.businessentities.network.VnicProfile, BackendVnicProfileResource> {
+        extends AbstractBackendVnicProfileResourceTest<BackendVnicProfileResource> {
 
     public BackendVnicProfileResourceTest() {
         super(new BackendVnicProfileResource(GUIDS[0].toString()));
@@ -55,7 +55,7 @@ public class BackendVnicProfileResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
-
+        BackendVnicProfileResource resource = (BackendVnicProfileResource) this.resource;
         control.replay();
         try {
             resource.update(getModel(0));
@@ -75,7 +75,7 @@ public class BackendVnicProfileResourceTest
                 new Object[] {},
                 true,
                 true));
-
+        BackendVnicProfileResource resource = (BackendVnicProfileResource) this.resource;
         verifyModel(resource.update(getModel(0)), 0);
     }
 
@@ -100,6 +100,7 @@ public class BackendVnicProfileResourceTest
                 success));
 
         try {
+            BackendVnicProfileResource resource = (BackendVnicProfileResource) this.resource;
             resource.update(getModel(0));
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
@@ -116,6 +117,7 @@ public class BackendVnicProfileResourceTest
         VnicProfile model = getModel(1);
         model.setId(GUIDS[1].toString());
         try {
+            BackendVnicProfileResource resource = (BackendVnicProfileResource) this.resource;
             resource.update(model);
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
