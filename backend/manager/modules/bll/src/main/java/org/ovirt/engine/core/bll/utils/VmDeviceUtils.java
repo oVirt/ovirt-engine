@@ -1153,18 +1153,20 @@ public class VmDeviceUtils {
      * @param vmId
      */
     public static void updateBootOrder(Guid vmId) {
-        // Returns the devices sorted in ascending order
-        List<VmDevice> devices = dao.getVmDeviceByVmId(vmId);
-        // Reset current boot order
-        for (VmDevice device: devices) {
-            device.setBootOrder(0);
-        }
         VM vm = dbFacade.getVmDao().get(vmId);
-        VmHandler.updateDisksForVm(vm, dbFacade.getDiskDao().getAllForVm(vmId));
-        VmHandler.updateNetworkInterfacesFromDb(vm);
-        boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getVdsGroupCompatibilityVersion());
-        VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices, isOldCluster);
-        dao.updateBootOrderInBatch(devices);
+        if (vm != null) {
+            // Returns the devices sorted in ascending order
+            List<VmDevice> devices = dao.getVmDeviceByVmId(vmId);
+            // Reset current boot order
+            for (VmDevice device: devices) {
+                device.setBootOrder(0);
+            }
+            VmHandler.updateDisksForVm(vm, dbFacade.getDiskDao().getAllForVm(vmId));
+            VmHandler.updateNetworkInterfacesFromDb(vm);
+            boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getVdsGroupCompatibilityVersion());
+            VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices, isOldCluster);
+            dao.updateBootOrderInBatch(devices);
+        }
     }
 
     /*
@@ -1852,14 +1854,14 @@ public class VmDeviceUtils {
 
                 vmManagedDeviceMap.put(device.getDeviceId(), device);
             } else {
+                VmDevice device;
                 if (update.getType() != VmDeviceType.UNKNOWN) {
-                    vmManagedDeviceMap.remove(
-                            VmDeviceCommonUtils.findVmDeviceByType(
-                                    vmManagedDeviceMap, update.getType()).getDeviceId());
+                    device = VmDeviceCommonUtils.findVmDeviceByType(vmManagedDeviceMap, update.getType());
                 } else {
-                    vmManagedDeviceMap.remove(
-                            VmDeviceCommonUtils.findVmDeviceByGeneralType(
-                                    vmManagedDeviceMap, update.getGeneralType()).getDeviceId());
+                    device = VmDeviceCommonUtils.findVmDeviceByGeneralType(vmManagedDeviceMap, update.getGeneralType());
+                }
+                if (device != null) {
+                    vmManagedDeviceMap.remove(device.getDeviceId());
                 }
             }
         }
