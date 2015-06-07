@@ -2079,6 +2079,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Invalid operation, an out-of-sync network can only be detached.")
     String nullOperationOutOfSyncNetwork();
 
+    @DefaultStringValue("Synchronize all host networks")
+    String syncAllHostNetworkConfirmationDialogTitle();
+
+    @DefaultStringValue("Are you sure you want to synchronize all host's networks?")
+    String areYouSureYouWantToSyncAllHostNetworksMsg();
+
     @DefaultStringValue("Cannot have more than one non-VLAN network on one interface.")
     String nullOperationTooManyNonVlans();
 

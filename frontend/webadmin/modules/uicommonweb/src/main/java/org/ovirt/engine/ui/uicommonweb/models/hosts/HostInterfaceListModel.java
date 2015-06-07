@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -136,6 +137,16 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             onPropertyChanged(new PropertyChangedEventArgs("isSelectionAvailable")); //$NON-NLS-1$
         }
     }
+
+    public UICommand getSyncAllHostNetworksCommand() {
+        return syncAllHostNetworksCommand;
+    }
+
+    public void setSyncAllHostNetworksCommand(UICommand privateSyncAllHostNetworkCommand) {
+        this.syncAllHostNetworksCommand = privateSyncAllHostNetworkCommand;
+    }
+
+    private UICommand syncAllHostNetworksCommand;
 
     @Override
     public Collection getItems() {
@@ -285,6 +296,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
         setDetachCommand(new UICommand("Detach", this)); //$NON-NLS-1$
         setSaveNetworkConfigCommand(new UICommand("SaveNetworkConfig", this)); //$NON-NLS-1$
         setSetupNetworksCommand(new UICommand("SetupNetworks", this)); //$NON-NLS-1$
+        setSyncAllHostNetworksCommand(new UICommand("SyncAllHostNetworks", this)); //$NON-NLS-1$
 
         updateActionAvailability();
     }
@@ -1236,12 +1248,13 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 Linq.findInterfaceNetworkNameNotEmpty(getSelectedItemsWithVlans());
 
         innerBondModel.getCheckConnectivity().setIsChangeable(interfaceWithNetwork != null);
-        innerBondModel.getCheckConnectivity().setIsAvailable(interfaceWithNetwork != null
-                && interfaceWithNetwork.getIsManagement());
+        innerBondModel.getCheckConnectivity().setIsAvailable(
+                interfaceWithNetwork != null && interfaceWithNetwork.getIsManagement());
 
-        innerBondModel.getCheckConnectivity().setEntity(interfaceWithNetwork != null
-                && interfaceWithNetwork.getIsManagement());
-        innerBondModel.setNoneBootProtocolAvailable(!(interfaceWithNetwork != null && interfaceWithNetwork.getIsManagement()));
+        innerBondModel.getCheckConnectivity().setEntity(
+                interfaceWithNetwork != null && interfaceWithNetwork.getIsManagement());
+        innerBondModel.setNoneBootProtocolAvailable(!(interfaceWithNetwork != null
+                && interfaceWithNetwork.getIsManagement()));
 
         if (interfaceWithNetwork != null) {
             innerBondModel.setBootProtocol(!innerBondModel.getNoneBootProtocolAvailable()
@@ -1884,10 +1897,10 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             }
         }
 
-        getDetachCommand().setIsExecutionAllowed(host != null
-                && host.getStatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
-                && selectedItem != null && !StringHelper.isNullOrEmpty(selectedItem.getNetworkName())
-                && !selectedItem.getIsManagement());
+        getDetachCommand().setIsExecutionAllowed(
+                host != null && host.getStatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
+                        && selectedItem != null && !StringHelper.isNullOrEmpty(selectedItem.getNetworkName())
+                        && !selectedItem.getIsManagement());
 
         getSaveNetworkConfigCommand().setIsExecutionAllowed(host != null
                 && (host.getNetConfigDirty() == null ? false : host.getNetConfigDirty()));
@@ -1932,6 +1945,42 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
         return false;
     }
 
+    public void syncAllHostNetworks() {
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().syncAllHostNetworkConfirmationDialogTitle());
+        model.setHelpTag(HelpTag.sync_all_host_networks);
+        model.setHashName("sync_all_host_networks"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToSyncAllHostNetworksMsg());
+
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSyncAllHostNetworkConfirm", this); //$NON-NLS-1$
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        model.getCommands().add(tempVar2);
+    }
+
+    private void onSyncAllHostNetworkConfirm(){
+        ConfirmationModel model = (ConfirmationModel) getWindow();
+        if (model.getProgress() != null) {
+            return;
+        }
+        getWindow().startProgress(null);
+        Frontend.getInstance().runAction(VdcActionType.SyncAllHostNetworks,
+                new VdsActionParameters(getEntity().getId()),
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        getWindow().stopProgress();
+                        cancel();
+                    }
+                },
+                null);
+    }
+
+    private void onSyncAllHostNetworkCancelConfirm(){
+        cancelConfirm();
+    }
+
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
@@ -1953,6 +2002,9 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
         }
         else if (command == getSaveNetworkConfigCommand()) {
             saveNetworkConfig();
+        }
+        else if (command == getSyncAllHostNetworksCommand()) {
+            syncAllHostNetworks();
         }
 
         else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
@@ -1993,6 +2045,10 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
 
         else if ("OnSaveNetworkConfig".equals(command.getName())) { //$NON-NLS-1$
             onSaveNetworkConfig();
+        }
+
+        else if ("OnSyncAllHostNetworkConfirm".equals(command.getName())) { //$NON-NLS-1$
+            onSyncAllHostNetworkConfirm();
         }
 
     }
