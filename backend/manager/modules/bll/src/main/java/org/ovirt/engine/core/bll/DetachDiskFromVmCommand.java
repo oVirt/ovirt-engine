@@ -61,7 +61,8 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         }
 
         // Check if disk has no snapshots before detaching it.
-        if (retValue && DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+        if (retValue && DiskStorageType.IMAGE == disk.getDiskStorageType() ||
+                retValue && DiskStorageType.CINDER == disk.getDiskStorageType()) {
             // A "regular" disk cannot be detached if it's part of the vm snapshots
             // when a disk snapshot is being detached, it will always be part of snapshots - but of it's "original" vm,
             // therefore for attached disk snapshot it shouldn't be checked whether it has snapshots or not.
