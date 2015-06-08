@@ -92,10 +92,17 @@ public class NumaMapper {
         if (model.isSetIndex()) {
             entity.setIndex(model.getIndex());
         }
-        if (model.isSetCpu()) {
-            List<Integer> ids = new ArrayList<Integer>();
-            for (Core core : model.getCpu().getCores().getCore()) {
-                ids.add(core.getIndex());
+        CPU cpu = model.getCpu();
+        if (cpu != null) {
+            List<Integer> ids = new ArrayList<>();
+            Cores cores = cpu.getCores();
+            if (cores != null) {
+                for (Core core : cores.getCore()) {
+                    Integer index = core.getIndex();
+                    if (index != null) {
+                        ids.add(index);
+                    }
+                }
             }
             entity.setCpuIds(ids);
         }
