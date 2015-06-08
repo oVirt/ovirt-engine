@@ -24,25 +24,18 @@
 			height: 135px;
 		}
 
-        .refreshButton {
-            float: left;
-            font-size: 12px;
-            height: 14px;
-            width: 12px;
-            margin-right: 5px;
-            margin-left: 200px;
-            margin-up: 10px;
-            padding: 2px;
-            background: transparent;
-            border: 1px solid transparent;
-        }
-
         .labelStyle {
             color: red;
             vertical-align: bottom;
             height: 20px;
             line-height: 15px;
             margin-left: 5px;
+        }
+
+		.loadButton {
+			margin-top: 15px;
+            float: right;
+            margin-right: 5px;
         }
 	</ui:style>
 
@@ -58,9 +51,11 @@
 					<ge:StringEntityModelLabelEditor ui:field="exportDomainName"/>
 					<ge:StringEntityModelLabelEditor ui:field="exportDomainPath"/>
 					<ge:StringEntityModelLabelEditor ui:field="exportDomainDescription"/>
-					<g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton} avmpw_refreshButton_pfly_fix">
-						<g:upFace image='{resources.refreshButtonImage}' />
-					</g:PushButton>
+				    <g:FlowPanel addStyleNames="{style.providersStyle}">
+					    <g:FlowPanel addStyleNames="{style.loadButton}">
+					        <w:UiCommandButton ui:field="loadVmsFromExportDomainButton"/>
+					    </g:FlowPanel>
+				    </g:FlowPanel>
 				</g:FlowPanel>
 
 				<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />

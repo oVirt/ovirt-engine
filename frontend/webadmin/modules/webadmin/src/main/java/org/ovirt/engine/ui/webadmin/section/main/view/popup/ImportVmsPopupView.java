@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.VerticalSplitTable;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -20,20 +21,17 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
@@ -79,8 +77,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     FlowPanel exportPanel;
 
     @UiField
-    @Ignore
-    public ButtonBase refreshButton;
+    UiCommandButton loadVmsFromExportDomainButton;
 
     @UiField
     @Ignore
@@ -98,16 +95,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @Path("exportDescription")
     StringEntityModelLabelEditor exportDomainDescription;
 
-    private ImportVmsModel model;
-
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
     private final static ApplicationConstants constants = AssetProvider.getConstants();
-
-    @UiHandler("refreshButton")
-    void handleRefreshButtonClick(ClickEvent event) {
-        model.reload();
-    }
 
     @Inject
     public ImportVmsPopupView(EventBus eventBus) {
@@ -122,8 +110,8 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                 return new EnumRenderer<ImportSource>().render(is);
             }
         });
-        externalVms = new EntityModelCellTable<ListModel<EntityModel<VM>>>(true, false, true);
-        importedVms = new EntityModelCellTable<ListModel<EntityModel<VM>>>(true, false, true);
+        externalVms = new EntityModelCellTable<>(true, false, true);
+        importedVms = new EntityModelCellTable<>(true, false, true);
         splitTable =
                 new VerticalSplitTable<EntityModel<VM>>(externalVms,
                         importedVms,
@@ -144,6 +132,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         exportDomainDescription.setLabel(constants.descriptionLabel());
         exportDomainDescription.addWrapperStyleName(style.providersStyle());
 
+        loadVmsFromExportDomainButton.setLabel(constants.loadLabel());
         driver.initialize(this);
     }
 
@@ -165,7 +154,6 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
     @Override
     public void edit(final ImportVmsModel model) {
-        this.model = model;
         splitTable.edit(
                 model.getExternalVmModels(),
                 model.getImportedVmModels(),
@@ -179,6 +167,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                     message.setText(model.getImportSourceValid().getMessage());
                 }
             };
+        });
+
+        loadVmsFromExportDomainButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                model.loadVmsFromExportDomain();
+            }
         });
     }
 

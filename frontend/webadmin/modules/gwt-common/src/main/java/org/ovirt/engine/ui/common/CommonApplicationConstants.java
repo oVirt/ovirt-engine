@@ -388,6 +388,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("General")
     String generalLabel();
 
+    @DefaultStringValue("Load")
+    String loadLabel();
+
     @DefaultStringValue("Disks")
     String disksLabel();
 

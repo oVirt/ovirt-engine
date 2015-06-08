@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -30,6 +29,9 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
@@ -94,33 +96,6 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         initDataCenters();
     }
 
-    private void onImportSourceChanged() {
-        final ImportSource source = importSources.getSelectedItem();
-        if (source == null) {
-            return;
-        }
-
-        importedVmModels.setItems(null);
-        externalVmModels.setItems(null);
-
-        switch(source) {
-        case EXPORT_DOMAIN:
-            onExportDomainChosen();
-            break;
-        default:
-        }
-    }
-
-    private void onExportDomainChosen() {
-        StoragePool dataCenter = dataCenters.getSelectedItem();
-
-        startProgress(null);
-        Frontend.getInstance().runQuery(
-                VdcQueryType.GetStorageDomainsByStoragePoolId,
-                new IdQueryParameters(dataCenter.getId()),
-                new AsyncQuery(this, createGetStorageDomainsByStoragePoolIdCallback(dataCenter)));
-    }
-
     private INewAsyncCallback createGetStorageDomainsByStoragePoolIdCallback(final StoragePool dataCenter) {
         return new INewAsyncCallback() {
             @Override
@@ -128,10 +103,13 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 List<StorageDomain> storageDomains = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                exportDomain = getExportDomain(storageDomains);
-               if (exportDomain != null) {
+               if (exportDomain == null) {
+                   setErrorToFetchData(ConstantsManager.getInstance().getConstants().notAvailableWithNoActiveExportDomain());
+                   stopProgress();
+               } else {
                    setExportName(exportDomain.getName());
                    setExportDescription(exportDomain.getDescription());
-
+                   // get export-path
                    AsyncQuery _asyncQuery = new AsyncQuery();
                    _asyncQuery.setModel(this);
                    _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -140,37 +118,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                        {
                            StorageServerConnections connection = (StorageServerConnections) ReturnValue;
                            setExportPath(connection == null ? null : connection.getconnection());
-                           getVmsFromExportDomain(dataCenter.getId(), exportDomain.getId());
+                           stopProgress();
                        }
                    };
                    AsyncDataProvider.getInstance().getStorageConnectionById(_asyncQuery, exportDomain.getStorage(), true);
-
                }
-               else {
-                   setErrorToFetchData(ConstantsManager.getInstance().getConstants().notAvailableWithNoActiveExportDomain());
-                   stopProgress();
-               }
-            }
-        };
-    }
-
-    private void getVmsFromExportDomain(Guid dataCenterId, Guid storageDomainId) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
-                new GetAllFromExportDomainQueryParameters(dataCenterId, storageDomainId),
-                new AsyncQuery(this, createGetVmsFromExportDomainCallback()));
-    }
-
-    private INewAsyncCallback createGetVmsFromExportDomainCallback() {
-        return new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<EntityModel<VM>> externalVms = new ArrayList<EntityModel<VM>>();
-                for (VM vm : ((VdcQueryReturnValue) returnValue).<List<VM>>getReturnValue()) {
-                    externalVms.add(new EntityModel<VM>(vm));
-                }
-
-                ImportVmsModel.this.externalVmModels.setItems(externalVms);
-                stopProgress();
             }
         };
     }
@@ -186,6 +138,17 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private void initDataCenters() {
+        getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                StoragePool dataCenter = dataCenters.getSelectedItem();
+                Frontend.getInstance().runQuery(
+                        VdcQueryType.GetStorageDomainsByStoragePoolId,
+                        new IdQueryParameters(dataCenter.getId()),
+                        new AsyncQuery(this, createGetStorageDomainsByStoragePoolIdCallback(dataCenter)));
+            }
+        });
+
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -212,7 +175,18 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private void initImportSources() {
         importSources.setItems(Arrays.asList(ImportSource.values()));
-        onImportSourceChanged();
+        importSources.setSelectedItem(ImportSource.EXPORT_DOMAIN);
+        importSources.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                clearVms();
+            }
+        });
+    }
+
+    private void clearVms() {
+        importedVmModels.setItems(null);
+        externalVmModels.setItems(null);
     }
 
     @Override
@@ -226,8 +200,31 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         }
     }
 
+    public void loadVmsFromExportDomain() {
+        startProgress(null);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
+                new GetAllFromExportDomainQueryParameters(getDataCenters().getSelectedItem().getId(), exportDomain.getId()),
+                new AsyncQuery(this, new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        updateVms(((VdcQueryReturnValue) returnValue).<List<VM>>getReturnValue());
+                    }
+                }));
+    }
+
+    private void updateVms(List<VM> vms) {
+        clearVms();
+        List<EntityModel<VM>> externalVms = new ArrayList<>();
+        for (VM vm : vms) {
+            externalVms.add(new EntityModel<VM>(vm));
+        }
+
+        externalVmModels.setItems(externalVms);
+        stopProgress();
+    }
+
     public List<VM> getVmsToImport() {
-        List<VM> vmsToImport = new ArrayList<VM>();
+        List<VM> vmsToImport = new ArrayList<>();
         for (EntityModel<VM> externalVm : importedVmModels.getItems()) {
             vmsToImport.add(externalVm.getEntity());
         }
@@ -287,10 +284,6 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private void setImportedVmModels(ListModel<EntityModel<VM>> importedVmModels) {
         this.importedVmModels = importedVmModels;
-    }
-
-    public void reload() {
-        onImportSourceChanged();
     }
 
     public EntityModel<Boolean> getImportSourceValid() {
