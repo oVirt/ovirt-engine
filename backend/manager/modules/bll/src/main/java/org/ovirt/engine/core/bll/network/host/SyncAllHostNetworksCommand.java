@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.predicate.NetworkNotInSyncPredicate;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
+import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -34,7 +34,7 @@ public class SyncAllHostNetworksCommand extends VdsCommand {
 
     @Override
     protected void executeCommand() {
-        HostSetupNetworksParameters parameters = generateSyncAllHostNetworksParameters();
+        PersistentHostSetupNetworksParameters parameters = generateSyncAllHostNetworksParameters();
         VdcReturnValueBase retVal = runInternalAction(VdcActionType.PersistentHostSetupNetworks,
                 parameters,
                 cloneContextAndDetachFromParent());
@@ -52,8 +52,8 @@ public class SyncAllHostNetworksCommand extends VdsCommand {
                 : AuditLogType.HOST_SYNC_ALL_NETWORKS_FAILED;
     }
 
-    private HostSetupNetworksParameters generateSyncAllHostNetworksParameters() {
-        HostSetupNetworksParameters parameters = new HostSetupNetworksParameters(getVdsId());
+    private PersistentHostSetupNetworksParameters generateSyncAllHostNetworksParameters() {
+        PersistentHostSetupNetworksParameters parameters = new PersistentHostSetupNetworksParameters(getVdsId());
         VdcQueryReturnValue returnValue = runInternalQuery(VdcQueryType.GetNetworkAttachmentsByHostId,
                 new IdQueryParameters(getVdsId()));
         List<NetworkAttachment> networkAttachments = returnValue.getReturnValue();
@@ -63,6 +63,8 @@ public class SyncAllHostNetworksCommand extends VdsCommand {
             networkAttachment.setOverrideConfiguration(true);
         }
         parameters.setNetworkAttachments(unSyncNetworkAttachments);
+        parameters.setSequence(parameters.getSequence() + 1);
+        parameters.setTotal(parameters.getTotal() + 1);
         return parameters;
     }
 }
