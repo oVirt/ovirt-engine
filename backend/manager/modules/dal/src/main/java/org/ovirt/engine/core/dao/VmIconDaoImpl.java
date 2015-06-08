@@ -85,4 +85,15 @@ public class VmIconDaoImpl extends DefaultGenericDaoDbFacade<VmIcon, Guid> imple
         getCallsHandler().executeModification("DeleteAllUnusedVmIcons",
                 getCustomMapSqlParameterSource());
     }
+
+    @Override
+    public boolean exists(Guid id) {
+        return getCallsHandler().executeRead("IsVmIconExist",
+                new RowMapper<Boolean>() {
+                    @Override public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        return rs.getBoolean(1);
+                    }
+                },
+                getCustomMapSqlParameterSource().addValue(ID_COLUMN, id));
+    }
 }

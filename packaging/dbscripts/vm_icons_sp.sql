@@ -104,6 +104,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION IsVmIconExist(v_id UUID)
+    RETURNS BOOLEAN STABLE
+AS $procedure$
+BEGIN
+    RETURN (
+    SELECT EXISTS(
+        SELECT 1
+        FROM vm_icons
+        WHERE id = v_id
+    ));
+END; $procedure$
+LANGUAGE plpgsql;
 
 -- VmIconDefaults vm_icon_defaults
 
@@ -184,6 +196,17 @@ BEGIN
     SELECT *
     FROM vm_icon_defaults
     WHERE large_icon_id = v_large_icon_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetVmIconDefaultByVmIconDefaultOsId(v_os_id INTEGER)
+    RETURNS SETOF vm_icon_defaults STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM vm_icon_defaults
+    WHERE os_id = v_os_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

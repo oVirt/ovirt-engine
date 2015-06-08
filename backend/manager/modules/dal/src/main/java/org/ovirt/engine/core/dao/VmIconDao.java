@@ -24,4 +24,6 @@ public interface VmIconDao extends GenericDao<VmIcon, Guid> {
     public Guid ensureIconInDatabase(final String icon);
 
     public void removeAllUnusedIcons();
+
+    public boolean exists(Guid id);
 }

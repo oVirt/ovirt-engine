@@ -9,5 +9,7 @@ public interface VmIconDefaultDao extends GenericDao<VmIconDefault, Guid> {
 
     List<VmIconDefault> getByLargeIconId(Guid largeIconId);
 
+    VmIconDefault getByOperatingSystemId(int osId);
+
     void removeAll();
 }

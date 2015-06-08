@@ -6,6 +6,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class VmIconDefaultDaoTest extends BaseGenericDaoTestCase<Guid, VmIconDefault, VmIconDefaultDao> {
@@ -63,5 +65,17 @@ public class VmIconDefaultDaoTest extends BaseGenericDaoTestCase<Guid, VmIconDef
     public void testGetByLargeIconId() {
         final List<VmIconDefault> result = prepareDao().getByLargeIconId(LARGE_ICON_ID);
         assertTrue(result.contains(OTHER_OS_VM_ICON_DEFAULT));
+    }
+
+    @Test
+    public void testGetByOperatingSystemIdExisting() {
+        final VmIconDefault vmIconDefault = prepareDao().getByOperatingSystemId(OTHER_OS_VM_ICON_DEFAULT.getOsId());
+        assertEquals(OTHER_OS_VM_ICON_DEFAULT, vmIconDefault);
+    }
+
+    @Test
+    public void testGetByOperatingSystemIdNonExisting() {
+        final VmIconDefault vmIconDefault = prepareDao().getByOperatingSystemId(-1);
+        assertNull(vmIconDefault);
     }
 }

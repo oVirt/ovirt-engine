@@ -37,6 +37,11 @@ public class VmIconDefaultDaoImpl extends DefaultGenericDaoDbFacade<VmIconDefaul
         getCallsHandler().executeModification("DeleteAllFromVmIconDefaults", getCustomMapSqlParameterSource());
     }
 
+    @Override public VmIconDefault getByOperatingSystemId(int osId) {
+        return getCallsHandler().executeRead("GetVmIconDefaultByVmIconDefaultOsId", createEntityRowMapper(),
+                getCustomMapSqlParameterSource().addValue(OS_ID_COLUMN, osId));
+    }
+
     @Override
     protected MapSqlParameterSource createFullParametersMapper(VmIconDefault entity) {
         return createIdParameterMapper(entity.getId())
