@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Entity corresponding to <strong>vm_icons</strong> database table.
@@ -26,6 +29,41 @@ public class VmIcon implements BusinessEntity<Guid> {
 
     public void setDataUrl(String dataUrl) {
         this.dataUrl = dataUrl;
+    }
+
+    public void setTypeAndData(String mediaType, String data) {
+        this.dataUrl = typeAndDataToDataUrl(mediaType, data);
+    }
+
+    public Pair<String, String> getTypeAndData() {
+        return dataUrlToTypeAndData(this.dataUrl);
+    }
+
+    /**
+     * It converts icon from dataurl form to separate media type and data.
+     * @param dataUrl icon in dataurl form
+     * @return icon in form of (media_type, base64 encoded data)
+     */
+    public static Pair<String, String> dataUrlToTypeAndData(String dataUrl) {
+        final String dataUrlRegex = "^data:(\\w+/\\w+);base64,([\\w+/]+={0,2})$";
+        final Matcher matcher = Pattern.compile(dataUrlRegex).matcher(dataUrl);
+        final boolean matches = matcher.find();
+        if (!matches) {
+            throw new IllegalStateException("DataUrl has invalid format.");
+        }
+        final String mimeType = matcher.group(1);
+        final String base64Data = matcher.group(2);
+        return new Pair<>(mimeType, base64Data);
+    }
+
+    /**
+     * It converts icon from couple (media type, base64 data) to dataurl form.
+     * @param mediaType mime type
+     * @param data base64 encoded icon data
+     * @return icon in dataurl
+     */
+    public static String typeAndDataToDataUrl(String mediaType, String data) {
+        return  "data:" + mediaType + ";base64," + data;
     }
 
     @Override

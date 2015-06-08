@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddVmTemplateParameters extends VmTemplateParametersBase {
+public class AddVmTemplateParameters extends VmTemplateParametersBase implements HasVmIcon {
 
     private static final long serialVersionUID = 2114985552063499069L;
 
@@ -28,6 +28,7 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
     private Guid destinationStorageDomainId;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private VmEntityType templateType;
+    private String vmLargeIcon;
 
     @Size(min = 1, max = 40, message = "VALIDATION.VM_TEMPLATE.NAME.MAX", groups = { CreateEntity.class, UpdateEntity.class })
     @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS")
@@ -170,4 +171,11 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
         this.baseTemplateId = baseTemplateId;
     }
 
+    @Override public String getVmLargeIcon() {
+        return vmLargeIcon;
+    }
+
+    @Override public void setVmLargeIcon(String vmLargeIcon) {
+        this.vmLargeIcon = vmLargeIcon;
+    }
 }

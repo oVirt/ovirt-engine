@@ -4,7 +4,7 @@ import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
-public class UpdateVmTemplateParameters extends VmTemplateParametersBase {
+public class UpdateVmTemplateParameters extends VmTemplateParametersBase implements HasVmIcon {
     private static final long serialVersionUID = 7250355162926369307L;
     @Valid
     private VmTemplate _vmTemplate;

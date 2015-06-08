@@ -131,6 +131,18 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return false;
         }
 
+        if (getParameters().getVmTemplateData() != null
+                && getParameters().getVmTemplateData().getSmallIconId() != null
+                && !validate(IconValidator.validateIconId(getParameters().getVmTemplateData().getSmallIconId(), "Small"))) {
+            return false;
+        }
+
+        if (getParameters().getVmTemplateData() != null
+                && getParameters().getVmTemplateData().getLargeIconId() != null
+                && !validate(IconValidator.validateIconId(getParameters().getVmTemplateData().getLargeIconId(), "Large"))) {
+            return false;
+        }
+
         if (!isInstanceType && !isBlankTemplate && returnValue) {
             return doClusterRelatedChecks();
         } else {

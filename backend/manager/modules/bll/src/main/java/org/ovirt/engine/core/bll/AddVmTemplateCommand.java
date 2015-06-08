@@ -27,8 +27,10 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -71,6 +73,7 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -491,6 +494,22 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
+        if (getParameters().getVmLargeIcon() != null && !validate(IconValidator.validate(
+                IconValidator.DimensionsType.LARGE_CUSTOM_ICON,
+                getParameters().getVmLargeIcon()))) {
+            return false;
+        }
+
+        if (getParameters().getMasterVm().getSmallIconId() != null
+                && !validate(IconValidator.validateIconId(getParameters().getMasterVm().getSmallIconId(), "Small"))) {
+            return false;
+        }
+
+        if (getParameters().getMasterVm().getLargeIconId() != null
+                && !validate(IconValidator.validateIconId(getParameters().getMasterVm().getLargeIconId(), "Large"))) {
+            return false;
+        }
+
         if (isInstanceType) {
             return true;
         } else {
@@ -709,6 +728,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getLargeIconId(),
                         getParameters().getMasterVm().getNumOfIoThreads(),
                         getParameters().getMasterVm().getConsoleDisconnectAction()));
+        updateVmIcons();
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
@@ -716,6 +736,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         VmHandler.updateVmInitFromDB(getParameters().getMasterVm(), false);
         getVmTemplate().setVmInit(getParameters().getMasterVm().getVmInit());
         VmHandler.addVmInitToDB(getVmTemplate());
+    }
+
+    private void updateVmIcons() {
+        if (getParameters().getVmLargeIcon() != null) {
+            final VmIconIdSizePair iconIdPair =
+                    IconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
+            getVmTemplate().setSmallIconId(iconIdPair.getSmall());
+            getVmTemplate().setLargeIconId(iconIdPair.getLarge());
+        }
     }
 
     protected void addVmInterfaces(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {

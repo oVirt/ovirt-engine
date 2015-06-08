@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.validator;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -63,6 +65,13 @@ public class IconValidator {
         return new IconValidator(iconType, dataUrl).getValidationResult();
     }
 
+    public static ValidationResult validateIconId(Guid iconId, String nameForErrorMessage) {
+        if (DbFacade.getInstance().getVmIconDao().exists(iconId)) {
+            return ValidationResult.VALID;
+        }
+        return new ValidationResult(VdcBllMessages.ICON_OF_PROVIDED_ID_DOES_NOT_EXIST,
+                "$iconName " + nameForErrorMessage);
+    }
 
     public ValidationResult getValidationResult() {
         return validationResult;
@@ -112,7 +121,7 @@ public class IconValidator {
     private void validateParsability() {
         try {
             image = ImageIO.read(new ByteArrayInputStream(rawImageData));
-        } catch (IOException e) {
+        } catch (RuntimeException | IOException e) {
             validationResult = new ValidationResult(VdcBllMessages.PROVIDED_VM_ICON_CANT_BE_READ);
         }
     }

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmManagementParametersBase extends VmOperationParameterBase implements HasGraphicsDevices {
+public class VmManagementParametersBase extends VmOperationParameterBase implements HasGraphicsDevices, HasVmIcon {
 
     private static final long serialVersionUID = -7695630335738521510L;
 

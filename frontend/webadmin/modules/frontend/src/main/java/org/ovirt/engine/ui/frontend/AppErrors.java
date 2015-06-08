@@ -3878,11 +3878,14 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Vm icon has invalid dimensions (${currentDimensions}). Allowed dimmension: ${allowedDimensions}")
     String PROVIDED_VM_ICON_HAS_INVALID_DIMENSIONS();
 
-    @DefaultStringValue("Data size of provided icon (${$currentSize}) is to big. Maximum allowd is ${$maxSize}")
+    @DefaultStringValue("Data size of provided icon (${currentSize}) is to big. Maximum allowd is ${maxSize}")
     String DATA_SIZE_OF_PROVIDED_VM_ICON_TOO_LARGE();
 
     @DefaultStringValue("Base64 part of vm icon is malformed.")
     String VM_ICON_BASE64_PART_MALFORMED();
+
+    @DefaultStringValue("${iconName} icon of provided id does not exists.")
+    String ICON_OF_PROVIDED_ID_DOES_NOT_EXIST();
 
     @DefaultStringValue("Cannot ${action} ${type}. Cinder volume type '${cinderVolumeType}' does not exist.")
     String CINDER_VOLUME_TYPE_NOT_EXISTS();

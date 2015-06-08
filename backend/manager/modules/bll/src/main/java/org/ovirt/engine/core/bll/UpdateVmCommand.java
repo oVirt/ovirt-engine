@@ -824,6 +824,18 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        if (getParameters().getVmStaticData() != null
+                && getParameters().getVmStaticData().getSmallIconId() != null
+                && !validate(IconValidator.validateIconId(getParameters().getVmStaticData().getSmallIconId(), "Small"))) {
+            return false;
+        }
+
+        if (getParameters().getVmStaticData() != null
+                && getParameters().getVmStaticData().getLargeIconId() != null
+                && !validate(IconValidator.validateIconId(getParameters().getVmStaticData().getLargeIconId(), "Large"))) {
+            return false;
+        }
+
         if (vmFromParams.getProviderId() != null) {
             Provider<?> provider = providerDao.get(vmFromParams.getProviderId());
             if (provider == null) {

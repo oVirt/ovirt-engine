@@ -666,6 +666,16 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
+        if (getSmallIconId() != null
+                && !validate(IconValidator.validateIconId(getSmallIconId(), "Small"))) {
+            return false;
+        }
+
+        if (getLargeIconId() != null
+                && !validate(IconValidator.validateIconId(getLargeIconId(), "Large"))) {
+            return false;
+        }
+
         // validate NUMA nodes count not more than CPUs
         if (getParameters().getVm().getMigrationSupport() == MigrationSupport.PINNED_TO_HOST &&
                 !validate(VmHandler.checkVmNumaNodesIntegrity(getParameters().getVm(),
@@ -675,6 +685,20 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         return true;
+    }
+
+    protected Guid getSmallIconId() {
+        if (getParameters().getVmStaticData() != null) {
+            return getParameters().getVmStaticData().getSmallIconId();
+        }
+        return null;
+    }
+
+    protected Guid getLargeIconId() {
+        if (getParameters().getVmStaticData() != null) {
+            return getParameters().getVmStaticData().getLargeIconId();
+        }
+        return null;
     }
 
     protected boolean setAndValidateDiskProfiles() {
@@ -1510,7 +1534,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      *         Predefined icons should not be sent in parameters.</li>
      *     <li>If there are no icon in parameters && both (small and large) icon ids are set then those ids are used.
      *         </li>
-     *     <li>Otherwise (at least one icon id is null) both icon ids are coppied from template.</li>
+     *     <li>Otherwise (at least one icon id is null) both icon ids are copied from template.</li>
      * </ul>
      * @param vmStatic
      */
