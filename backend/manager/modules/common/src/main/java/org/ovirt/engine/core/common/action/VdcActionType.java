@@ -462,6 +462,7 @@ public enum VdcActionType {
     AddLibvirtSecret(3209, false, QuotaDependency.NONE),
     UpdateLibvirtSecret(3210, false, QuotaDependency.NONE),
     RemoveLibvirtSecret(3211, false, QuotaDependency.NONE),
+    TryBackToCinderSnapshot(3212, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
