@@ -114,6 +114,7 @@ public enum VdcActionType {
 
     @Deprecated
     SetupNetworks(158, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    @Deprecated
     PersistentSetupNetworks(159, QuotaDependency.NONE),
 
     // VnicProfile Commands
@@ -493,7 +494,8 @@ public enum VdcActionType {
     HostSetupNetworks(5200, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     AddNetworkAttachment(5201, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     UpdateNetworkAttachment(5202, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
-    RemoveNetworkAttachment(5203, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE);
+    RemoveNetworkAttachment(5203, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    PersistentHostSetupNetworks(5204, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;
