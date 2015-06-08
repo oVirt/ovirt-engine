@@ -22,14 +22,12 @@
 from otopi import util
 
 
-from . import jboss
-from . import firewall
+from . import java
 
 
 @util.export
 def createPlugins(context):
-    jboss.Plugin(context=context)
-    firewall.Plugin(context=context)
+    java.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
