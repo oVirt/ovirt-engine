@@ -242,6 +242,7 @@
         <include name="common/businessentities/storage/StorageType.java" />
         <include name="common/businessentities/storage/VolumeFormat.java" />
         <include name="common/businessentities/storage/VolumeType.java" />
+        <include name="common/businessentities/storage/VolumeClassification.java" />
         <include name="common/businessentities/storage/CinderDisk.java" />
         <include name="common/businessentities/storage/CinderVolumeType.java" />
         <include name="common/businessentities/storage/CinderConnectionInfo.java" />

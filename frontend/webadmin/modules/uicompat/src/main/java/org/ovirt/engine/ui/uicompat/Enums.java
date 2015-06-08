@@ -224,6 +224,12 @@ public interface Enums extends LocalizedEnums {
 
     String VolumeType___Unassigned();
 
+    String VolumeClassification___Volume();
+
+    String VolumeClassification___Snapshot();
+
+    String VolumeClassification___Invalid();
+
     String VmPoolType___Automatic();
 
     String VmPoolType___Manual();
