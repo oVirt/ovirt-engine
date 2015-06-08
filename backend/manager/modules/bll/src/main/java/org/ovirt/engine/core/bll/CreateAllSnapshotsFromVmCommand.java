@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.validator.LiveSnapshotValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -31,6 +34,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
+import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
@@ -47,7 +51,9 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -215,12 +221,16 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         setActionReturnValue(createdSnapshotId);
 
         MemoryImageBuilder memoryImageBuilder = getMemoryImageBuilder();
-        addSnapshotToDB(createdSnapshotId, memoryImageBuilder);
         createSnapshotsForDisks();
+        addSnapshotToDB(createdSnapshotId, memoryImageBuilder);
         fastForwardDisksToActiveSnapshot();
         memoryImageBuilder.build();
 
-        if (getTaskIdList().isEmpty()) {
+        // means that there are no asynchronous tasks to execute and that we can
+        // end the command synchronously
+        boolean pendingAsyncTasks = !getTaskIdList().isEmpty() ||
+                !CommandCoordinatorUtil.getChildCommandIds(getCommandId()).isEmpty();
+        if (!pendingAsyncTasks) {
             getParameters().setTaskGroupSuccess(true);
             incrementVmGeneration();
         }
@@ -256,6 +266,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private Snapshot addSnapshotToDB(Guid snapshotId, MemoryImageBuilder memoryImageBuilder) {
+        // Reset cachedSelectedActiveDisks so new Cinder volumes can be fetched when calling getDisksList.
+        cachedSelectedActiveDisks = null;
         boolean taskExists = !getDisksList().isEmpty() || memoryImageBuilder.isCreateTasks();
         return new SnapshotsManager().addSnapshot(snapshotId,
                 getParameters().getDescription(),
@@ -269,10 +281,29 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private void createSnapshotsForDisks() {
-        for (DiskImage image : getDisksList()) {
+        for (DiskImage disk : getDisksList()) {
+            if (disk.getDiskStorageType() == DiskStorageType.CINDER) {
+                ImagesContainterParametersBase params = buildChildCommandParameters(disk);
+
+                Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                        VdcActionType.CreateCinderSnapshot,
+                        params,
+                        cloneContextAndDetachFromParent());
+                try {
+                    VdcReturnValueBase vdcReturnValueBase = future.get();
+                    if (!vdcReturnValueBase.getSucceeded()) {
+                        log.error("Error creating snapshot for Cinder disk '{}'", disk.getDiskAlias());
+                        throw new VdcBLLException(VdcBllErrors.CINDER_ERROR, "Failed to create snapshot!");
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    log.error("Error creating snapshot for Cinder disk '{}': {}", disk.getDiskAlias(), e.getMessage());
+                    throw new VdcBLLException(VdcBllErrors.CINDER_ERROR, "Failed to create snapshot!");
+                }
+                continue;
+            }
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                     VdcActionType.CreateSnapshot,
-                    buildCreateSnapshotParameters(image),
+                    buildCreateSnapshotParameters(disk),
                     ExecutionHandler.createDefaultContextForTasks(getContext()));
 
             if (vdcReturnValue.getSucceeded()) {
@@ -282,6 +313,13 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                         "Failed to create snapshot!");
             }
         }
+    }
+
+    private ImagesContainterParametersBase buildChildCommandParameters(DiskImage cinderDisk) {
+        ImagesContainterParametersBase createParams = new ImagesContainterParametersBase(cinderDisk.getId());
+        createParams.setVmSnapshotId(newActiveSnapshotId);
+        createParams.setParentHasTasks(!cachedImagesDisks.isEmpty());
+        return withRootCommandInfo(createParams, getActionType());
     }
 
     private void fastForwardDisksToActiveSnapshot() {
@@ -324,6 +362,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void endVmCommand() {
+        if (CommandCoordinatorUtil.getChildCommandIds(getCommandId()).size() > 1) {
+            log.info("There are still running CoCo tasks");
+            return;
+        }
         Snapshot createdSnapshot = getSnapshotDao().get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
         // if the snapshot was not created in the DB
         // the command should also be handled as a failure
