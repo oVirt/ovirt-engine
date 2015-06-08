@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -91,14 +90,12 @@ public class AddExistingBlockStorageDomainCommandTest {
     }
 
     @Test
-    public void testAddHostedEngineStorageFails() {
+    public void testAddHostedEngineStorageSucceeds() {
         doReturn(getLUNs()).when(command).getLUNsFromVgInfo(parameters.getStorageDomain().getStorage());
         doReturn(Collections.emptyList()).when(command).getAllLuns();
 
         parameters.getStorageDomain().setStorageName(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME);
-        assertFalse(command.canAddDomain());
-        CanDoActionTestUtils.assertCanDoActionMessages("Add self hosted engine storage domain succeeded where it should have failed",
-                command, EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
+        assertTrue(command.canAddDomain());
     }
 
     private static StorageDomainStatic getStorageDomain() {

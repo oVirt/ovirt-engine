@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -56,11 +55,6 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
     protected boolean canAddDomain() {
         if (getStorageDomainStaticDao().get(getStorageDomain().getId()) != null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
-        }
-
-        StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
-        if (!validate(validator.isHostedEngineStorage())) {
-            return false;
         }
 
         List<LUNs> lunsOnStorage = getLUNsFromVgInfo(getStorageDomain().getStorage());

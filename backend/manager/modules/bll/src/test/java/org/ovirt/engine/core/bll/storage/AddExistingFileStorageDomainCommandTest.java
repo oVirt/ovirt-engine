@@ -138,7 +138,7 @@ public class AddExistingFileStorageDomainCommandTest {
     }
 
     @Test
-    public void testAddHostedEngineStorageFails() {
+    public void testAddHostedEngineStorageSucceeds() {
         parameters.getStorageDomain().setStorageName(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME);
 
         when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(null);
@@ -147,7 +147,7 @@ public class AddExistingFileStorageDomainCommandTest {
         doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     private static StorageDomainStatic getStorageDomain() {
