@@ -199,7 +199,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
      * @param disk
      * @return
      */
-    private VM getVmForNonShareableDiskImage(DiskImage disk) {
+    protected VM getVmForNonShareableDiskImage(DiskImage disk) {
         if (!disk.isShareable()) {
             List<VM> vms = getVmDAO().getVmsListForDisk(disk.getId(), false);
             if (!vms.isEmpty()) {
@@ -232,7 +232,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     /**
      * Prepare a {@link List} of {@link Snapshot} objects with the given disk (image group) removed from it.
      */
-    private List<Snapshot> prepareSnapshotConfigWithoutImage(Guid imageGroupToRemove) {
+    protected List<Snapshot> prepareSnapshotConfigWithoutImage(Guid imageGroupToRemove) {
         List<Snapshot> result = new LinkedList<>();
         List<DiskImage> snapshotDisks = getDiskImageDao().getAllSnapshotsForImageGroup(imageGroupToRemove);
         for (DiskImage snapshotDisk : snapshotDisks) {
