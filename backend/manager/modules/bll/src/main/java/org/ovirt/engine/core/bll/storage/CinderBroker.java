@@ -84,11 +84,11 @@ public class CinderBroker extends AuditLogableBase {
         });
     }
 
-    public Void deleteDisk(final CinderDisk cinderDisk) {
+    public Void deleteVolume(final CinderDisk cinderDisk) {
         return execute(new Callable<Void>() {
             @Override
             public Void call() {
-                proxy.deleteVolume(cinderDisk.getId().toString());
+                proxy.deleteVolume(cinderDisk.getImageId().toString());
                 return null;
             }
         });
