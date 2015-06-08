@@ -456,6 +456,7 @@ public enum VdcActionType {
     CloneCinderDisks(3205, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     RegisterCinderDisk(3206, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
     CreateCinderSnapshot(3207, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
+    RemoveCinderSnapshotDisk(3208, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
