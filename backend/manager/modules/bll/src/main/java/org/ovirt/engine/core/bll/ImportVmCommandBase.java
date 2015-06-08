@@ -4,21 +4,29 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
+import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
+import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -32,6 +40,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.BaseDiskDao;
@@ -49,6 +58,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
     private Guid sourceDomainId = Guid.Empty;
     private StorageDomain sourceDomain;
+    private ImportValidator importValidator;
 
     private final List<String> macsAdded = new ArrayList<>();
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
@@ -68,6 +78,105 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         return true;
+    }
+
+    protected ImportValidator getImportValidator() {
+        if (importValidator == null) {
+            importValidator = new ImportValidator(getParameters());
+        }
+        return importValidator;
+    }
+
+    protected boolean canAddVm() {
+        // Checking if a desktop with same name already exists
+        if (VmHandler.isVmWithSameNameExistStatic(getVm().getName())) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_NAME_EXISTS);
+        }
+        return true;
+    }
+
+    /**
+     * Validates that there is no duplicate VM.
+     * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
+     */
+    protected boolean validateNoDuplicateVm() {
+        VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
+        return duplicateVm == null ? true :
+            failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS, String.format("$VmName %1$s", duplicateVm.getName()));
+    }
+
+    /**
+     * Validates if the VM being imported has a valid architecture.
+     * @return
+     */
+    protected boolean validateVmArchitecture () {
+        return getVm().getClusterArch() == ArchitectureType.undefined ?
+            failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_WITH_NOT_SUPPORTED_ARCHITECTURE)
+            : true;
+    }
+
+    /**
+     * Validates that that the required cluster exists and is compatible
+     * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
+     */
+    protected boolean validateVdsCluster() {
+        VDSGroup vdsGroup = getVdsGroupDAO().get(getVdsGroupId());
+        return vdsGroup == null ?
+                failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID)
+                : vdsGroup.getArchitecture() != getVm().getClusterArch() ?
+                        failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER)
+                        : true;
+    }
+
+    /**
+     * Validates the USB policy.
+     * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
+     */
+    protected boolean validateUsbPolicy() {
+        VM vm = getParameters().getVm();
+        VmHandler.updateImportedVmUsbPolicy(vm.getStaticData());
+        return VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(),
+                vm.getOs(),
+                getVdsGroup(),
+                getReturnValue().getCanDoActionMessages());
+    }
+
+    protected boolean validateGraphicsAndDisplay() {
+        return VmHandler.isGraphicsAndDisplaySupported(getParameters().getVm().getOs(),
+                getGraphicsTypesForVm(),
+                getParameters().getVm().getDefaultDisplayType(),
+                getReturnValue().getCanDoActionMessages(),
+                getVdsGroup().getCompatibilityVersion());
+    }
+
+    Set<GraphicsType> getGraphicsTypesForVm() {
+        Set<GraphicsType> graphicsTypes = new HashSet<>();
+
+        for (VmDevice graphics : getDevicesOfType(VmDeviceGeneralType.GRAPHICS)) {
+            graphicsTypes.add(GraphicsType.fromVmDeviceType(VmDeviceType.getByName(graphics.getDevice())));
+        }
+
+        return graphicsTypes;
+    }
+
+    private List<VmDevice> getDevicesOfType(VmDeviceGeneralType type) {
+        List<VmDevice> devices = new ArrayList<>();
+
+        if (getVm() != null && getVm().getStaticData() != null && getVm().getStaticData().getManagedDeviceMap() != null) {
+            for (VmDevice vmDevice : getVm().getStaticData().getManagedDeviceMap().values()) {
+                if (vmDevice.getType() == type) {
+                    devices.add(vmDevice);
+                }
+            }
+        }
+        return devices;
+    }
+
+    protected boolean setAndValidateCpuProfile() {
+        getVm().getStaticData().setVdsGroupId(getVdsGroupId());
+        getVm().getStaticData().setCpuProfileId(getParameters().getCpuProfileId());
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(),
+                getVdsGroup().getCompatibilityVersion()));
     }
 
     protected boolean validateBallonDevice() {

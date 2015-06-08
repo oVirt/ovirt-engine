@@ -18,7 +18,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -42,20 +40,14 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -79,7 +71,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
@@ -106,8 +97,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
 
-    private ImportValidator importValidator;
-
     public ImportVmCommand(T parameters) {
         this(parameters, null);
     }
@@ -133,19 +122,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 getVdsGroup() != null ? getVdsGroup().getCompatibilityVersion() : null);
     }
 
-    private List<VmDevice> getDevicesOfType(VmDeviceGeneralType type) {
-        List<VmDevice> devices = new ArrayList<>();
-
-        if (getVm() != null && getVm().getStaticData() != null && getVm().getStaticData().getManagedDeviceMap() != null) {
-            for (VmDevice vmDevice : getVm().getStaticData().getManagedDeviceMap().values()) {
-                if (vmDevice.getType() == type) {
-                    devices.add(vmDevice);
-                }
-            }
-        }
-        return devices;
-    }
-
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         return Collections.singletonMap(getParameters().getContainerId().toString(),
@@ -160,13 +136,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     public ImportVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-    }
-
-    protected ImportValidator getImportValidator() {
-        if (importValidator == null) {
-            importValidator = new ImportValidator(getParameters());
-        }
-        return importValidator;
     }
 
     @Override
@@ -443,12 +412,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
-        // Check if the display type is supported
-        if (!VmHandler.isGraphicsAndDisplaySupported(vmFromParams.getOs(),
-                getGraphicsTypesForVm(),
-                vmFromParams.getDefaultDisplayType(),
-                getReturnValue().getCanDoActionMessages(),
-                getVdsGroup().getCompatibilityVersion())) {
+        if (!validateGraphicsAndDisplay()) {
             return false;
         }
 
@@ -465,16 +429,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         return true;
-    }
-
-    Set<GraphicsType> getGraphicsTypesForVm() {
-        Set<GraphicsType> graphicsTypes = new HashSet<>();
-
-        for (VmDevice graphics : getDevicesOfType(VmDeviceGeneralType.GRAPHICS)) {
-            graphicsTypes.add(GraphicsType.fromVmDeviceType(VmDeviceType.getByName(graphics.getDevice())));
-        }
-
-        return graphicsTypes;
     }
 
     protected boolean handleDestStorageDomains() {
@@ -548,19 +502,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return disksDummies;
     }
 
-    /**
-     * Validates that there is no duplicate VM.
-     * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
-     */
-    protected boolean validateNoDuplicateVm() {
-        VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
-        if (duplicateVm != null) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS,
-                    String.format("$VmName %1$s", duplicateVm.getName()));
-        }
-        return true;
-    }
-
     protected boolean validateDiskInterface(Iterable<DiskImage> images) {
         for (DiskImage diskImage : images) {
             if (diskImage.getDiskInterface() == DiskInterface.VirtIO_SCSI &&
@@ -579,47 +520,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         return true;
-    }
-
-    /**
-     * Validates that that the required cluster exists and is compatible
-     * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
-     */
-    protected boolean validateVdsCluster() {
-        List<VDSGroup> groups = getVdsGroupDAO().getAllForStoragePool(getParameters().getStoragePoolId());
-        for (VDSGroup group : groups) {
-            if (group.getId().equals(getParameters().getVdsGroupId())) {
-                if (group.getArchitecture() != getVm().getClusterArch()) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER);
-                }
-                return true;
-            }
-        }
-        return failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
-    }
-
-    /**
-     * Validates if the VM being imported has a valid architecture.
-     * @return
-     */
-    protected boolean validateVmArchitecture () {
-        if (getVm().getClusterArch() == ArchitectureType.undefined) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_WITH_NOT_SUPPORTED_ARCHITECTURE);
-        }
-        return true;
-    }
-
-    /**
-     * Validates the USB policy.
-     * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
-     */
-    protected boolean validateUsbPolicy() {
-        VM vm = getParameters().getVm();
-        VmHandler.updateImportedVmUsbPolicy(vm.getStaticData());
-        return VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(),
-                vm.getOs(),
-                getVdsGroup(),
-                getReturnValue().getCanDoActionMessages());
     }
 
     private boolean isTemplateExistsOnExportDomain() {
@@ -691,14 +591,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             if (Boolean.FALSE.equals(retValue.getReturnValue())) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
             }
-        }
-        return true;
-    }
-
-    protected boolean canAddVm() {
-        // Checking if a desktop with same name already exists
-        if (VmHandler.isVmWithSameNameExistStatic(getVm().getName())) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_NAME_EXISTS);
         }
         return true;
     }
@@ -1184,13 +1076,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     getStoragePool().getCompatibilityVersion(), getCurrentUser()));
         }
         return true;
-    }
-
-    protected boolean setAndValidateCpuProfile() {
-        getVm().getStaticData().setVdsGroupId(getVdsGroupId());
-        getVm().getStaticData().setCpuProfileId(getParameters().getCpuProfileId());
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(),
-                getVdsGroup().getCompatibilityVersion()));
     }
 
     @Override
