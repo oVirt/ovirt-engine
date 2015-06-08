@@ -160,7 +160,7 @@ public class CinderBroker extends AuditLogableBase {
                 cinderVolume.setName(cinderDisk.getDiskAlias());
                 cinderVolume.setDescription(cinderDisk.getDiskDescription());
                 cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
-                cinderVolume.setSourceVolid(cinderDisk.getId().toString());
+                cinderVolume.setVolumeType(cinderDisk.getCinderVolumeType());
                 cinderVolume.setSnapshotId(snapshotId.toString());
                 return proxy.cloneVolumeFromSnapshot(cinderVolume);
             }
