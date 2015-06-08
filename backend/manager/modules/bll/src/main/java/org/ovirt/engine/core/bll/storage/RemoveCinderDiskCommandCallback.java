@@ -1,50 +1,64 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.bll.ImagesHandler;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.compat.CommandStatus;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-
 import java.util.List;
 
-public class RemoveCinderDiskCommandCallback extends AbstractCinderDiskCommandCallback<RemoveCinderDiskCommand<RemoveDiskParameters>> {
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
+import org.ovirt.engine.core.compat.CommandStatus;
+import org.ovirt.engine.core.compat.Guid;
+
+public class RemoveCinderDiskCommandCallback extends AbstractCinderDiskCommandCallback<RemoveCinderDiskCommand<RemoveCinderDiskParameters>> {
 
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
         super.doPolling(cmdId, childCmdIds);
-        CinderBroker cinderBroker = getCinderBroker();
-        if (!cinderBroker.isDiskExist(getDiskId())) {
+        CinderDisk removedVolume = getCommand().getParameters().getRemovedVolume();
+        if (!checkIfVolumeExists(removedVolume)) {
             // Disk has been deleted successfully
             getCommand().setCommandStatus(CommandStatus.SUCCEEDED);
             return;
         }
 
-        ImageStatus imageStatus = cinderBroker.getDiskStatus(getDiskId());
-        DiskImage disk = getDisk();
+        ImageStatus imageStatus = checkImageStatus(removedVolume);
         if (imageStatus != null && imageStatus != disk.getImageStatus()) {
             switch (imageStatus) {
-                case ILLEGAL:
-                    getCommand().getParameters().setShouldBeLogged(true);
-                    getCommand().setCommandStatus(CommandStatus.FAILED);
-                    break;
+            case ILLEGAL:
+                getCommand().setCommandStatus(CommandStatus.FAILED);
+                break;
             }
+        }
+    }
+
+    private ImageStatus checkImageStatus(CinderDisk removedVolume) {
+        if (removedVolume.getVolumeClassification() == VolumeClassification.Volume) {
+            return getCinderBroker().getDiskStatus(removedVolume.getImageId());
+        } else if (removedVolume.getVolumeClassification() == VolumeClassification.Snapshot) {
+            return getCinderBroker().getSnapshotStatus(removedVolume.getImageId());
+        } else {
+            log.error("No valid cinder volume type enum has been initialized in the Cinder disk business entity.");
+            return ImageStatus.ILLEGAL;
+        }
+    }
+
+    private boolean checkIfVolumeExists(CinderDisk removedVolume) {
+        if (removedVolume.getVolumeClassification() == VolumeClassification.Volume) {
+            return getCinderBroker().isDiskExist(removedVolume.getImageId());
+        } else if (removedVolume.getVolumeClassification() == VolumeClassification.Snapshot) {
+            return getCinderBroker().isSnapshotExist(removedVolume.getImageId());
+        } else {
+            log.error("No valid cinder volume type enum has been initialized in the Cinder disk business entity.");
+            return true;
         }
     }
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
         super.onFailed(cmdId, childCmdIds);
-        log.error("Failed deleting disk from Cinder. ID: {}", getDiskId());
-        if (getCommand().getParameters().getShouldBeLogged()) {
-            new AuditLogDirector().log(getCommand(), AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK);
-        }
-        ImagesHandler.updateImageStatus(getDiskId(), ImageStatus.ILLEGAL);
+        getCommand().getParameters().setTaskGroupSuccess(false);
+        log.error("Failed deleting volume/snapshot from Cinder. ID: {}", getDiskId());
         getCommand().endAction();
         CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
@@ -52,26 +66,19 @@ public class RemoveCinderDiskCommandCallback extends AbstractCinderDiskCommandCa
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
         super.onSucceeded(cmdId, childCmdIds);
-        log.info("Disk has been successfully deleted from Cinder. ID: {}", getDiskId());
-        if (getCommand().getParameters().getShouldBeLogged()) {
-            new AuditLogDirector().log(getCommand(), AuditLogType.USER_FINISHED_REMOVE_DISK);
-        }
-        getCommand().removeDiskFromDb();
+        log.info("Volume/Snapshot has been successfully deleted from Cinder. ID: {}", getDiskId());
         getCommand().endAction();
         CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
     protected Guid getDiskId() {
-        return getCommand().getParameters().getDiskId();
+        return getCommand().getParameters().getRemovedVolume().getImageId();
     }
 
     @Override
     protected CinderDisk getDisk() {
-        if (disk == null) {
-            disk = (CinderDisk) getCommand().getDiskDao().get(getDiskId());
-        }
-        return disk;
+        return getCommand().getParameters().getRemovedVolume();
     }
 
     @Override

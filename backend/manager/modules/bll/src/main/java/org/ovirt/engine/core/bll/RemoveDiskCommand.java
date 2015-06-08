@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -39,9 +40,10 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
@@ -306,9 +308,14 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 removeLunDisk();
                 break;
             case CINDER:
+                RemoveCinderDiskParameters params = new RemoveCinderDiskParameters(getParameters().getDiskId());
+                if ( ((CinderDisk)getDisk()).getImageStatus() == ImageStatus.ILLEGAL) {
+                    params.setFaultTolerant(true);
+                }
+
                 Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                         VdcActionType.RemoveCinderDisk,
-                        new RemoveDiskParameters(getParameters().getDiskId()),
+                        params,
                         cloneContextAndDetachFromParent(),
                         new SubjectEntity(VdcObjectType.Storage, getParameters().getStorageDomainId()));
                 try {
