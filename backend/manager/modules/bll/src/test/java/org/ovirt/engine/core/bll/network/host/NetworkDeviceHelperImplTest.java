@@ -35,13 +35,14 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HostNicVfsConfigHelperImplTest {
+public class NetworkDeviceHelperImplTest {
 
     private static final String NIC_NAME = RandomUtils.instance().nextString(5);
     private static final Guid NIC_ID = Guid.newGuid();
     private static final Guid HOST_ID = Guid.newGuid();
     private static final String NET_DEVICE_NAME = RandomUtils.instance().nextString(5);
     private static final String PCI_DEVICE_NAME = RandomUtils.instance().nextString(5);
+    private static final String PCI_DEVICE_NAME_2 = RandomUtils.instance().nextString(5);
     private static int TOTAL_NUM_OF_VFS = 7;
 
     @Mock
@@ -71,11 +72,11 @@ public class HostNicVfsConfigHelperImplTest {
     @Captor
     private ArgumentCaptor<Guid> vmIdCaptor;
 
-    private HostNicVfsConfigHelperImpl hostNicVfsConfigHelper;
+    private NetworkDeviceHelperImpl networkDeviceHelper;
 
     @Before
     public void setUp() {
-        hostNicVfsConfigHelper = new HostNicVfsConfigHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao);
+        networkDeviceHelper = new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao);
 
         when(netDevice.getHostId()).thenReturn(HOST_ID);
         when(netDevice.getDeviceName()).thenReturn(NET_DEVICE_NAME);
@@ -103,7 +104,7 @@ public class HostNicVfsConfigHelperImplTest {
 
     @Test
     public void getNicByPciDeviceNotParentOfNetDevice() {
-        assertNull(hostNicVfsConfigHelper.getNicByPciDevice(netDevice));
+        assertNull(networkDeviceHelper.getNicByPciDevice(netDevice));
     }
 
     @Test
@@ -112,13 +113,13 @@ public class HostNicVfsConfigHelperImplTest {
         newNic.setName(netDevice.getNetworkInterfaceName() + "not");
         mockNics(Collections.singletonList(newNic), false);
 
-        assertNull(hostNicVfsConfigHelper.getNicByPciDevice(pciDevice));
+        assertNull(networkDeviceHelper.getNicByPciDevice(pciDevice));
     }
 
     @Test
     public void getNicByNetDeviceValid() {
         mockNics(Collections.<VdsNetworkInterface> emptyList(), true);
-        assertEquals(nic, hostNicVfsConfigHelper.getNicByPciDevice(pciDevice));
+        assertEquals(nic, networkDeviceHelper.getNicByPciDevice(pciDevice));
     }
 
     @Test
@@ -127,7 +128,7 @@ public class HostNicVfsConfigHelperImplTest {
         Collection<HostDevice> devices = new ArrayList<>();
         devices.add(pciDevice);
 
-        assertNull(hostNicVfsConfigHelper.getNicByPciDevice(pciDevice, devices));
+        assertNull(networkDeviceHelper.getNicByPciDevice(pciDevice, devices));
     }
 
     @Test
@@ -143,17 +144,17 @@ public class HostNicVfsConfigHelperImplTest {
     private void commonIsSriovDevice(boolean isSriov) {
         when(pciDevice.getTotalVirtualFunctions()).thenReturn(isSriov ? TOTAL_NUM_OF_VFS : null);
 
-        assertEquals(isSriov, hostNicVfsConfigHelper.isSriovDevice(pciDevice));
+        assertEquals(isSriov, networkDeviceHelper.isSriovDevice(pciDevice));
     }
 
     @Test
     public void isNetworkDevicePossitive() {
-        assertFalse(hostNicVfsConfigHelper.isNetworkDevice(pciDevice));
+        assertFalse(networkDeviceHelper.isNetworkDevice(pciDevice));
     }
 
     @Test
     public void isNetworkDeviceNegtive() {
-        assertTrue(hostNicVfsConfigHelper.isNetworkDevice(netDevice));
+        assertTrue(networkDeviceHelper.isNetworkDevice(netDevice));
     }
 
     @Test
@@ -171,7 +172,7 @@ public class HostNicVfsConfigHelperImplTest {
         List<HostDevice> vfs = mockVfsOnNetDevice(numOfVfs);
         mockHostDevices(vfs);
 
-        hostNicVfsConfigHelper.updateHostNicVfsConfigWithNumVfsData(hostNicVfsConfig);
+        networkDeviceHelper.updateHostNicVfsConfigWithNumVfsData(hostNicVfsConfig);
 
         verify(hostNicVfsConfig).setMaxNumOfVfs(TOTAL_NUM_OF_VFS);
         verify(hostNicVfsConfig).setNumOfVfs(numOfVfs);
@@ -186,7 +187,7 @@ public class HostNicVfsConfigHelperImplTest {
         mockHostDevices(vfs);
 
         List<HostNicVfsConfig> vfsConfigList =
-                hostNicVfsConfigHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(HOST_ID);
+                networkDeviceHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(HOST_ID);
 
         assertEquals(1, vfsConfigList.size());
         assertEquals(hostNicVfsConfig, vfsConfigList.get(0));
@@ -227,49 +228,49 @@ public class HostNicVfsConfigHelperImplTest {
     @Test(expected = UnsupportedOperationException.class)
     public void areAllVfsFreeNotSriovNic() {
         commonIsSriovDevice(false);
-        hostNicVfsConfigHelper.areAllVfsFree(nic);
+        networkDeviceHelper.areAllVfsFree(nic);
     }
 
     @Test
     public void areAllVfsFreeTrueNoVfs() {
         freeVfCommon(0, 0, 0, 0, 0);
-        assertTrue(hostNicVfsConfigHelper.areAllVfsFree(nic));
+        assertTrue(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeFalseAttachedToVm() {
         freeVfCommon(7, 3, 0, 0, 0);
-        assertFalse(hostNicVfsConfigHelper.areAllVfsFree(nic));
+        assertFalse(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeFalseNoNic() {
         freeVfCommon(6, 0, 1, 0, 0);
-        assertFalse(hostNicVfsConfigHelper.areAllVfsFree(nic));
+        assertFalse(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeFalseHasNetwork() {
         freeVfCommon(2, 0, 0, 3, 0);
-        assertFalse(hostNicVfsConfigHelper.areAllVfsFree(nic));
+        assertFalse(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeFalseHasVlanDevice() {
         freeVfCommon(4, 0, 0, 0, 3);
-        assertFalse(hostNicVfsConfigHelper.areAllVfsFree(nic));
+        assertFalse(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeTrue() {
         freeVfCommon(5, 0, 0, 0, 0);
-        assertTrue(hostNicVfsConfigHelper.areAllVfsFree(nic));
+        assertTrue(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
     public void areAllVfsFreeFalseMix() {
         freeVfCommon(1, 2, 3, 4, 5);
-        assertFalse(hostNicVfsConfigHelper.areAllVfsFree(nic));
+        assertFalse(networkDeviceHelper.areAllVfsFree(nic));
     }
 
     private List<HostDevice> freeVfCommon(int numOfFreeVfs,
@@ -277,7 +278,7 @@ public class HostNicVfsConfigHelperImplTest {
             int numOfVfsHasNoNic,
             int numOfVfsHasNetworkAttached,
             int numOfVfsHasVlanDeviceAttached) {
-        hostNicVfsConfigHelper = spy(new HostNicVfsConfigHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao));
+        networkDeviceHelper = spy(new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao));
 
         List<HostDevice> devices = new ArrayList<>();
         List<HostDevice> freeVfs = new ArrayList<>();
@@ -306,10 +307,10 @@ public class HostNicVfsConfigHelperImplTest {
                     vfNic.setNetworkName("netName");
                 } else if (numOfVfsHasVlanDeviceAttached != 0) {
                     --numOfVfsHasVlanDeviceAttached;
-                    doReturn(true).when(hostNicVfsConfigHelper)
+                    doReturn(true).when(networkDeviceHelper)
                             .isVlanDeviceAttached(vfNic);
                 } else {
-                    doReturn(false).when(hostNicVfsConfigHelper)
+                    doReturn(false).when(networkDeviceHelper)
                             .isVlanDeviceAttached(vfNic);
                     freeVfs.add(vfPciDevice);
                 }
@@ -325,33 +326,33 @@ public class HostNicVfsConfigHelperImplTest {
     @Test(expected = UnsupportedOperationException.class)
     public void getFreeVfNotSriovNic() {
         commonIsSriovDevice(false);
-        hostNicVfsConfigHelper.getFreeVf(nic, null);
+        networkDeviceHelper.getFreeVf(nic, null);
     }
 
     @Test
     public void getFreeVfNoVfs() {
         freeVfCommon(0, 0, 0, 0, 0);
-        assertNull(hostNicVfsConfigHelper.getFreeVf(nic, null));
+        assertNull(networkDeviceHelper.getFreeVf(nic, null));
     }
 
     @Test
     public void getFreeVfNoFreeVf() {
         freeVfCommon(0, 1, 2, 3, 4);
-        assertNull(hostNicVfsConfigHelper.getFreeVf(nic, null));
+        assertNull(networkDeviceHelper.getFreeVf(nic, null));
     }
 
     @Test
     public void getFreeVfOneFreeVf() {
         List<HostDevice> freeVfs = freeVfCommon(1, 4, 3, 2, 1);
         assertEquals(1, freeVfs.size());
-        assertTrue(freeVfs.contains(hostNicVfsConfigHelper.getFreeVf(nic, null)));
+        assertTrue(freeVfs.contains(networkDeviceHelper.getFreeVf(nic, null)));
     }
 
     @Test
     public void getFreeVfMoreThanOneFreeVf() {
         List<HostDevice> freeVfs = freeVfCommon(5, 2, 2, 2, 2);
         assertEquals(5, freeVfs.size());
-        assertTrue(freeVfs.contains(hostNicVfsConfigHelper.getFreeVf(nic, null)));
+        assertTrue(freeVfs.contains(networkDeviceHelper.getFreeVf(nic, null)));
     }
 
     @Test
@@ -362,7 +363,42 @@ public class HostNicVfsConfigHelperImplTest {
         excludedVfs.add(freeVfs.get(0).getDeviceName());
         excludedVfs.add(freeVfs.get(1).getDeviceName());
         freeVfs.removeAll(excludedVfs);
-        assertTrue(freeVfs.contains(hostNicVfsConfigHelper.getFreeVf(nic, excludedVfs)));
+        assertTrue(freeVfs.contains(networkDeviceHelper.getFreeVf(nic, excludedVfs)));
+    }
+
+    @Test
+    public void isNonNetworkDeviceNetworkFree() {
+        HostDevice device = new HostDevice();
+        device.setHostId(HOST_ID);
+        device.setDeviceName(PCI_DEVICE_NAME_2);
+
+        assertTrue(networkDeviceHelper.isDeviceNetworkFree(device));
+    }
+
+    @Test
+    public void isNetworkDeviceNonNetworkFree() {
+        freeVfCommon(0, 0, 0, 1, 0);
+        HostDevice hostDevice = getSingleMockedNonFreeDevice();
+        assertFalse(networkDeviceHelper.isDeviceNetworkFree(hostDevice));
+    }
+
+    @Test
+    public void isVlanDeviceNonNetworkFree() {
+        freeVfCommon(0, 0, 0, 0, 1);
+        HostDevice hostDevice = getSingleMockedNonFreeDevice();
+        assertFalse(networkDeviceHelper.isDeviceNetworkFree(hostDevice));
+    }
+
+    /**
+     * Helper method for cases when a single non-free device is mocked by {@link #freeVfCommon}
+     */
+    private HostDevice getSingleMockedNonFreeDevice() {
+        List<HostDevice> devices = hostDeviceDao.getAll();
+        // freeVfCommon sets up 'netDevice', 'pciDevice', a parent device and the one we specified.
+        assertEquals(4, devices.size());
+
+        // the device we are interested in, is the 'parent'
+        return devices.get(2);
     }
 
     private VdsNetworkInterface mockNicForNetDevice(HostDevice netDeviceParam) {
@@ -397,7 +433,7 @@ public class HostNicVfsConfigHelperImplTest {
 
     @Test
     public void getPciDeviceNameByNic() {
-        assertEquals(PCI_DEVICE_NAME, hostNicVfsConfigHelper.getPciDeviceNameByNic(nic));
+        assertEquals(PCI_DEVICE_NAME, networkDeviceHelper.getPciDeviceNameByNic(nic));
     }
 
     @Test
@@ -408,7 +444,7 @@ public class HostNicVfsConfigHelperImplTest {
         HostDevice vf = vfs.get(0);
         Guid vmId = Guid.newGuid();
         vf.setVmId(vmId);
-        hostNicVfsConfigHelper.setVmIdOnVfs(HOST_ID, vmId, Collections.singleton(vf.getDeviceName()));
+        networkDeviceHelper.setVmIdOnVfs(HOST_ID, vmId, Collections.singleton(vf.getDeviceName()));
 
         verify(hostDeviceDao).setVmIdOnHostDevice(hostDeviceIdCaptor.capture(), vmIdCaptor.capture());
 
@@ -459,7 +495,7 @@ public class HostNicVfsConfigHelperImplTest {
             assertEquals(vmId, vf.getVmId());
         }
 
-        hostNicVfsConfigHelper.removeVmIdFromVfs(vmId);
+        networkDeviceHelper.removeVmIdFromVfs(vmId);
 
         for (HostDevice vf : vfs) {
             vf.setVmId(null);

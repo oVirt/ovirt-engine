@@ -25,7 +25,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHostNicVfsConfigParameters> {
 
     @Inject
-    private HostNicVfsConfigHelper hostNicVfsConfigHelper;
+    private NetworkDeviceHelper networkDeviceHelper;
 
     private HostNicVfsConfig hostNicVfsConfig;
 
@@ -59,7 +59,7 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
         boolean shouldRefreshHost = false;
         if (wasNumOfVfsChanged()) {
             shouldRefreshHost = true;
-            String deviceName = hostNicVfsConfigHelper.getPciDeviceNameByNic(getNic());
+            String deviceName = networkDeviceHelper.getPciDeviceNameByNic(getNic());
             VDSReturnValue returnValue = null;
             try {
                 returnValue = runVdsCommand(VDSCommandType.HostDevChangeNumVfs,
@@ -106,7 +106,7 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
     protected boolean canDoAction() {
         boolean isValid = super.canDoAction();
         if (isValid && wasNumOfVfsChanged()) {
-            isValid = validate(getVfsConfigValidator().allVfsAreFree(hostNicVfsConfigHelper))
+            isValid = validate(getVfsConfigValidator().allVfsAreFree(networkDeviceHelper))
                     && validate(getVfsConfigValidator().numOfVfsInValidRange(getNumOfVfs()));
         }
 
@@ -141,7 +141,7 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
     public HostNicVfsConfig getVfsConfig() {
         HostNicVfsConfig tmpVfsConfig = super.getVfsConfig();
         if (hostNicVfsConfig == null) {
-            hostNicVfsConfigHelper.updateHostNicVfsConfigWithNumVfsData(tmpVfsConfig);
+            networkDeviceHelper.updateHostNicVfsConfigWithNumVfsData(tmpVfsConfig);
         }
 
         hostNicVfsConfig = tmpVfsConfig;

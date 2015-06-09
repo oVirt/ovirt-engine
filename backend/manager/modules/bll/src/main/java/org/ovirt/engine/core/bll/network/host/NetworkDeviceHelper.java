@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface HostNicVfsConfigHelper {
+public interface NetworkDeviceHelper {
 
     /**
      * Retrieves the <code>VdsNetworkInterface</code> that the specified <code>pciDevice</code> represents.
@@ -75,6 +75,14 @@ public interface HostNicVfsConfigHelper {
      * @throws <code>UnsupportedOperationException</code> in case the nic is not SR-IOV enabled
      */
     public boolean areAllVfsFree(VdsNetworkInterface nic);
+
+    /**
+     * Retrieves whether the device is occupied by virtual network or VLAN
+     *
+     * @param hostDevice arbitrary physical host device (not only network)
+     * @return whether this device is not occupied for networking purposes
+     */
+    public boolean isDeviceNetworkFree(HostDevice hostDevice);
 
     /**
      * Retrieves the first free VF on the nic

@@ -12,17 +12,21 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,6 +53,9 @@ public class HostDeviceManager implements BackendService {
 
     @Inject
     private BackendInternal backend;
+
+    @Inject
+    private NetworkDeviceHelper networkDeviceHelper;
 
     @PostConstruct
     private void init() {
@@ -87,8 +94,20 @@ public class HostDeviceManager implements BackendService {
     }
 
     public boolean checkVmHostDeviceAvailability(VM vm, Guid vdsId) {
-        // if vm's cluster doesn't support hostdev, it's requirements for host devices are trivially fulfilled
-        return !supportsHostDevicePassthrough(vm) || hostDeviceDao.checkVmHostDeviceAvailability(vm.getId(), vdsId);
+        if (!hostDeviceDao.checkVmHostDeviceAvailability(vm.getId(), vdsId)) {
+            return false;
+        }
+
+        List<HostDevice> devices = backend.runInternalQuery(VdcQueryType.GetExtendedVmHostDevicesByVmId,
+                new IdQueryParameters(vm.getId())).getReturnValue();
+
+        for (HostDevice device : devices) {
+            if (!networkDeviceHelper.isDeviceNetworkFree(device)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void allocateVmHostDevices(VM vm) {

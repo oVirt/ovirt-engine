@@ -37,7 +37,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class VfSchedulerImplTest {
 
     @Mock
-    private HostNicVfsConfigHelper hostNicVfsConfigHelper;
+    private NetworkDeviceHelper networkDeviceHelper;
 
     @Mock
     private InterfaceDao interfaceDao;
@@ -60,13 +60,13 @@ public class VfSchedulerImplTest {
 
     @Before
     public void setUp() {
-        vfScheduler = new VfSchedulerImpl(networkDao, interfaceDao, hostDeviceDao, hostNicVfsConfigHelper);
+        vfScheduler = new VfSchedulerImpl(networkDao, interfaceDao, hostDeviceDao, networkDeviceHelper);
         expectedVnicToVfMap = new HashMap<>();
     }
 
     @Test
     public void hostNotHaveSriovNics() {
-        when(hostNicVfsConfigHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId)).thenReturn(new ArrayList<HostNicVfsConfig>());
+        when(networkDeviceHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId)).thenReturn(new ArrayList<HostNicVfsConfig>());
         VmNetworkInterface vnic = mockVnic(true);
         assertHostNotValid(Collections.singletonList(vnic), Collections.singletonList(vnic.getName()));
     }
@@ -149,8 +149,8 @@ public class VfSchedulerImplTest {
         HostNicVfsConfig hostNicVfsConfig2 = new HostNicVfsConfig();
         updateVfsConfig(hostNicVfsConfig2, vnic2, 1, false, allNicsValid, false, allNicsValid);
 
-        when(hostNicVfsConfigHelper.getFreeVf(eq(getNic(hostNicVfsConfig1)), isNull(List.class))).thenReturn(vf);
-        when(hostNicVfsConfigHelper.getFreeVf(eq(getNic(hostNicVfsConfig1)),
+        when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig1)), isNull(List.class))).thenReturn(vf);
+        when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig1)),
                 eq(Collections.singletonList(vf.getDeviceName())))).thenReturn(null);
 
         mockVfsConfigsOnHost(Arrays.asList(hostNicVfsConfig1, hostNicVfsConfig2));
@@ -374,12 +374,12 @@ public class VfSchedulerImplTest {
     private HostDevice createFreeVf(VmNetworkInterface vnic,
             HostNicVfsConfig hostNicVfsConfig) {
         HostDevice vf = createVf();
-        when(hostNicVfsConfigHelper.getFreeVf(eq(getNic(hostNicVfsConfig)), anyListOf(String.class))).thenReturn(vf);
+        when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig)), anyListOf(String.class))).thenReturn(vf);
         return vf;
     }
 
     private void mockVfsConfigsOnHost(List<HostNicVfsConfig> vfsConfigs) {
-        when(hostNicVfsConfigHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId)).thenReturn(vfsConfigs);
+        when(networkDeviceHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId)).thenReturn(vfsConfigs);
     }
 
     private VdsNetworkInterface getNic(HostNicVfsConfig hostNicVfsConfig) {

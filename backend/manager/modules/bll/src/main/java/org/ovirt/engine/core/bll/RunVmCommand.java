@@ -20,7 +20,7 @@ import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
-import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
+import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
@@ -115,7 +115,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private boolean needsHostDevices = false;
 
     @Inject
-    private HostNicVfsConfigHelper hostNicVfsConfigHelper;
+    private NetworkDeviceHelper networkDeviceHelper;
 
     @Inject
     private VfScheduler vfScheduler;
@@ -335,7 +335,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private void cleanupPassthroughVnics() {
         Map<Guid, String> vnicToVfMap = getVnicToVfMap();
         if (vnicToVfMap != null) {
-            hostNicVfsConfigHelper.setVmIdOnVfs(getVdsId(), null, new HashSet<>(vnicToVfMap.values()));
+            networkDeviceHelper.setVmIdOnVfs(getVdsId(), null, new HashSet<>(vnicToVfMap.values()));
         }
 
         vfScheduler.cleanVmData(getVmId());

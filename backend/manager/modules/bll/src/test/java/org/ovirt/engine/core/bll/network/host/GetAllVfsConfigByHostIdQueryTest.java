@@ -20,12 +20,12 @@ import org.ovirt.engine.core.compat.Guid;
 public class GetAllVfsConfigByHostIdQueryTest extends AbstractQueryTest<IdQueryParameters, GetAllVfsConfigByHostIdQuery<IdQueryParameters>> {
 
     @Mock
-    private HostNicVfsConfigHelper hostNicVfsConfigHelper;
+    private NetworkDeviceHelper networkDeviceHelper;
 
     @Test
     public void testExecuteQuery() {
 
-        doReturn(hostNicVfsConfigHelper).when(getQuery()).getHostNicVfsConfigHelper();
+        doReturn(networkDeviceHelper).when(getQuery()).getNetworkDeviceHelper();
 
         Guid hostId = Guid.newGuid();
         IdQueryParameters paramsMock = getQueryParameters();
@@ -33,7 +33,7 @@ public class GetAllVfsConfigByHostIdQueryTest extends AbstractQueryTest<IdQueryP
 
         List<HostNicVfsConfig> vfsConfigs = new ArrayList<>();
         vfsConfigs.add(new HostNicVfsConfig());
-        when(hostNicVfsConfigHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId)).thenReturn(vfsConfigs);
+        when(networkDeviceHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId)).thenReturn(vfsConfigs);
 
         getQuery().executeQueryCommand();
 

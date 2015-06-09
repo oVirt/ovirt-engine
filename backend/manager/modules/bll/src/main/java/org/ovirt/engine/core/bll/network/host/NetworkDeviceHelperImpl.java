@@ -22,16 +22,16 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 @Singleton
-class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
+class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
 
     private final InterfaceDao interfaceDao;
     private final HostDeviceDao hostDeviceDao;
     private final HostNicVfsConfigDao hostNicVfsConfigDao;
 
     @Inject
-    HostNicVfsConfigHelperImpl(InterfaceDao interfaceDao,
-            HostDeviceDao hostDeviceDao,
-            HostNicVfsConfigDao hostNicVfsConfigDao) {
+    NetworkDeviceHelperImpl(InterfaceDao interfaceDao,
+                            HostDeviceDao hostDeviceDao,
+                            HostNicVfsConfigDao hostNicVfsConfigDao) {
         this.interfaceDao = interfaceDao;
         this.hostDeviceDao = hostDeviceDao;
         this.hostNicVfsConfigDao = hostNicVfsConfigDao;
@@ -44,7 +44,7 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
 
     @Override
     public VdsNetworkInterface getNicByPciDevice(final HostDevice pciDevice, Collection<HostDevice> devices) {
-        final HostDevice netDevice = getNetDeviceByPciDevice(pciDevice, devices);
+        final HostDevice netDevice = getFirstChildDevice(pciDevice, devices);
 
         if (netDevice == null || !isNetworkDevice(netDevice)) {
             return null;
@@ -61,7 +61,7 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
         });
     }
 
-    private HostDevice getNetDeviceByPciDevice(final HostDevice pciDevice, Collection<HostDevice> devices) {
+    private HostDevice getFirstChildDevice(final HostDevice pciDevice, Collection<HostDevice> devices) {
         Collection<HostDevice> hostDevices = devices == null ? getDevicesByHostId(pciDevice.getHostId()) : devices;
         return LinqUtils.firstOrNull(hostDevices, new Predicate<HostDevice>() {
 
@@ -169,15 +169,29 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
         return nonFreeVf == null;
     }
 
+    @Override
+    public boolean isDeviceNetworkFree(HostDevice hostDevice) {
+        HostDevice firstChild = getFirstChildDevice(hostDevice, null);
+        if (firstChild == null || !isNetworkDevice(firstChild)) {
+            return true;
+        }
+
+        return isNetworkDeviceFree(firstChild);
+    }
+
     private boolean isVfFree(HostDevice vf) {
         // Check if the VF is attached directly to a VM
         if (vf.getVmId() != null) {
             return false;
         }
 
+        return isNetworkDeviceFree(vf);
+    }
+
+    private boolean isNetworkDeviceFree(HostDevice networkDevice) {
         // Check that there is no macvtap device on top of the VM-
         // nics with macvtap attached are not reported via the getVdsCaps
-        VdsNetworkInterface vfNic = getNicByPciDevice(vf);
+        VdsNetworkInterface vfNic = getNicByPciDevice(networkDevice);
 
         return vfNic != null && !isNetworkAttached(vfNic) && !isVlanDeviceAttached(vfNic);
     }

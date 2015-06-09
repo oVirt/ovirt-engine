@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
+import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.DetachUserFromVmFromPoolParameters;
@@ -51,7 +51,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     private HostDeviceManager hostDeviceManager;
 
     @Inject
-    private HostNicVfsConfigHelper hostNicVfsConfigHelper;
+    private NetworkDeviceHelper networkDeviceHelper;
 
     private VmPool vmPoolCached;
 
@@ -141,7 +141,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     }
 
     private Guid cleanupVfs() {
-        Guid hostId = hostNicVfsConfigHelper.removeVmIdFromVfs(getVmId());
+        Guid hostId = networkDeviceHelper.removeVmIdFromVfs(getVmId());
         return hostId;
     }
 
