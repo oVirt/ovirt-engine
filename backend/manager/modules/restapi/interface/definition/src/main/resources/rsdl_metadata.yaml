@@ -1282,6 +1282,7 @@ actions:
           cluster.fencing_policy.skip_if_connectivity_broken.threshold: xs:int
           cluster.maintenance_reason_required: xs:boolean
           cluster.management_network.id|name: xs:string
+          cluster.ha_reservation: xs:boolean
         description: update the specified cluster in the system. The capabilities like virt service, cluster service, tarnsparent huge pages etc can be changed.
 - name: /clusters|rel=add
   description: add a new cluster to the system
