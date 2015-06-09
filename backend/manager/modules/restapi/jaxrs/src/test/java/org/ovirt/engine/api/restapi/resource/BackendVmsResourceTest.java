@@ -16,7 +16,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -36,7 +35,6 @@ import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
-import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -125,136 +123,6 @@ public class BackendVmsResourceTest
             verifyCollection(vms);
         } finally {
             accepts.clear();
-        }
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        mockUniqueOsNames();
-        setUpGetEntityExpectations();
-        setUpGetPayloadExpectations(1, 0);
-        setUpGetBallooningExpectations(1);
-        setUpGetGraphicsExpectations(1);
-        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
-                "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    protected void setUpGetGraphicsExpectations(int times) throws Exception {
-        for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
-                    IdQueryParameters.class,
-                    new String[] {},
-                    new Object[] {},
-                    Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
-        }
-    }
-
-    @Test
-    public void testRemoveForced() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        mockUniqueOsNames();
-        setUpGetEntityExpectations();
-        setUpGetPayloadExpectations(1, 0);
-        setUpGetBallooningExpectations(1);
-        setUpGetGraphicsExpectations(1);
-        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[]{
-                "VmId", "Force"}, new Object[]{GUIDS[0], Boolean.TRUE}, true, true);
-        verifyRemove(collection.remove(GUIDS[0].toString(), new Action(){{setForce(true);}}));
-    }
-
-    @Test
-    public void testRemoveDetachOnly() throws Exception {
-        mockUniqueOsNames();
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations();
-        setUpGetPayloadExpectations(1, 0);
-        setUpGetBallooningExpectations(1);
-        setUpGetGraphicsExpectations(1);
-        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
-                "VmId", "RemoveDisks" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
-
-        Action action = new Action();
-        action.setVm(new VM());
-        action.getVm().setDisks(new Disks());
-        action.getVm().getDisks().setDetachOnly(true);
-        verifyRemove(collection.remove(GUIDS[0].toString(), action));
-    }
-
-    private void mockUniqueOsNames() {
-        HashMap<Integer, String> uniqueOsNames = new HashMap<>();
-        expect(osRepository.getUniqueOsNames()).andReturn(uniqueOsNames);
-        uniqueOsNames.put(0, "Fedora20");
-    }
-
-    @Test
-    public void testRemoveForcedIncomplete() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        mockUniqueOsNames();
-        setUpGetEntityExpectations();
-        setUpGetPayloadExpectations(1, 0);
-        setUpGetBallooningExpectations(1);
-        setUpGetGraphicsExpectations(1);
-        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
-                                "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
-        verifyRemove(collection.remove(GUIDS[0].toString(), new Action() {{
-        }}));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                IdQueryParameters.class,
-                new String[]{"Id"},
-                new Object[]{NON_EXISTANT_GUID},
-                null);
-        setUriInfo(setUpBasicUriExpectations());
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
-
-    private void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                IdQueryParameters.class,
-                new String[]{"Id"},
-                new Object[]{GUIDS[0]},
-                new org.ovirt.engine.core.common.businessentities.VM());
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations();
-        mockUniqueOsNames();
-        setUpGetPayloadExpectations(1, 0);
-        setUpGetBallooningExpectations(1);
-        setUpGetGraphicsExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVm,
-                                           RemoveVmParameters.class,
-                                           new String[] { "VmId", "Force" },
-                                           new Object[] { GUIDS[0], Boolean.FALSE },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
         }
     }
 
@@ -1635,6 +1503,16 @@ public class BackendVmsResourceTest
 
         // Add the default expectations:
         super.setUpQueryExpectations(query, failure);
+    }
+
+    protected void setUpGetGraphicsExpectations(int times) throws Exception {
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
+                    IdQueryParameters.class,
+                    new String[] {},
+                    new Object[] {},
+                    Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
+        }
     }
 
     private List<VmInit> setUpVmInit() {

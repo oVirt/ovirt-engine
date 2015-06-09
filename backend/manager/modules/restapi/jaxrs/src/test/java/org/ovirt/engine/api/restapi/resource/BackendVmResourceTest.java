@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -28,6 +27,7 @@ import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.File;
@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
+import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -88,7 +89,6 @@ public class BackendVmResourceTest
     private static final String FLOPPY_ID = "bar.vfd";
     public static final String CERTIFICATE = "O=Redhat,CN=X.Y.Z.Q";
     private static final String PAYLOAD_COMTENT = "payload";
-    private static HashMap<Integer, String> osNames = new HashMap<>();
 
     public BackendVmResourceTest() {
         super(new BackendVmResource(GUIDS[0].toString(), new BackendVmsResource()));
@@ -967,6 +967,121 @@ public class BackendVmResourceTest
         Action action = new Action();
         action.setMaintenanceEnabled(true);
         verifyActionResponse(resource.maintenance(action));
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations();
+        setUpGetPayloadExpectations(0, 1);
+        setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
+        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
+                "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveForced() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations();
+        setUpGetPayloadExpectations(0, 1);
+        setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
+        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
+                "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.TRUE }, true, true);
+        verifyRemove(resource.remove(new Action() {
+            {
+                setForce(true);
+            }
+        }));
+    }
+
+    @Test
+    public void testRemoveDetachOnly() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations();
+        setUpGetPayloadExpectations(0, 1);
+        setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
+        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
+                "VmId", "RemoveDisks" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
+
+        Action action = new Action();
+        action.setVm(new VM());
+        action.getVm().setDisks(new Disks());
+        action.getVm().getDisks().setDetachOnly(true);
+        verifyRemove(resource.remove(action));
+    }
+
+    @Test
+    public void testRemoveForcedIncomplete() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations();
+        setUpGetPayloadExpectations(0, 1);
+        setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
+        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
+                "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
+        verifyRemove(resource.remove(new Action() {
+            {
+            }
+        }));
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                null);
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    private void setUpGetEntityExpectations() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                new org.ovirt.engine.core.common.businessentities.VM());
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpGetEntityExpectations();
+        setUpGetPayloadExpectations(0, 1);
+        setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVm,
+                RemoveVmParameters.class,
+                new String[] { "VmId", "Force" },
+                new Object[] { GUIDS[0], Boolean.FALSE },
+                canDo,
+                success));
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM setUpStatisticalExpectations() throws Exception {

@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
+import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -167,6 +168,25 @@ public class BackendVmResource extends
         }
 
         return vm;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveVm, new RemoveVmParameters(guid, false));
+    }
+
+    @Override
+    public Response remove(Action action) {
+        get();
+        boolean forceRemove = action != null && action.isSetForce() ? action.isForce() : false;
+        RemoveVmParameters params = new RemoveVmParameters(guid, forceRemove);
+        // If detach only is set we do not remove the VM disks
+        if (action != null && action.isSetVm() && action.getVm().isSetDisks()
+                && action.getVm().getDisks().isSetDetachOnly()) {
+            params.setRemoveDisks(false);
+        }
+        return performAction(VdcActionType.RemoveVm, params);
     }
 
     private void validateParameters(VM incoming) {

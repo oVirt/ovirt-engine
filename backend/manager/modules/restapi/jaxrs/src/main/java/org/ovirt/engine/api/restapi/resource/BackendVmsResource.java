@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
@@ -43,7 +42,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
-import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -534,23 +532,6 @@ public class BackendVmsResource extends
                 new IdQueryParameters(Guid.createGuidFromStringDefaultEmpty(vm.getId()))));
         Disks disks = disksResource.list();
         vm.setDisks(disks);
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveVm, new RemoveVmParameters(asGuid(id), false));
-    }
-
-    @Override
-    public Response remove(String id, Action action) {
-        getEntity(id);
-        boolean forceRemove = action != null && action.isSetForce() ? action.isForce() : false;
-        RemoveVmParameters params = new RemoveVmParameters(asGuid(id), forceRemove);
-        // If detach only is set we do not remove the VM disks
-        if (action != null && action.isSetVm() && action.getVm().isSetDisks() && action.getVm().getDisks().isSetDetachOnly()) {
-            params.setRemoveDisks(false);
-        }
-        return performAction(VdcActionType.RemoveVm, params);
     }
 
     protected VMs mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities, boolean isFiltered) {

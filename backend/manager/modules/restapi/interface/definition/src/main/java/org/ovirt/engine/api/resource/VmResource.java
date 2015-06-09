@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -35,6 +36,13 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
 
     @Path("{action: (start|stop|shutdown|reboot|suspend|detach|migrate|export|move|ticket|cancelmigration|preview_snapshot|commit_snapshot|undo_snapshot|clone|maintenance)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
+
+    @DELETE
+    public Response remove();
+
+    @DELETE
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    public Response remove(Action action);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
