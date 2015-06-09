@@ -1,14 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.DiskSnapshots;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.DiskSnapshotResource;
 import org.ovirt.engine.api.resource.DiskSnapshotsResource;
-import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -46,11 +43,6 @@ public class BackendStorageDomainDiskSnapshotsResource
             collection.getDiskSnapshots().add(addLinks(populate(diskSnapshot, disk)));
         }
         return collection;
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveDiskSnapshots, new RemoveDiskSnapshotsParameters(Guid.createGuidFromString(id)));
     }
 
     @Override

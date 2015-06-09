@@ -1,7 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.DiskSnapshot;
+import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -31,6 +35,25 @@ public class BackendStorageDomainDiskSnapshotResourceTest
 
         DiskSnapshot diskSnapshot = resource.get();
         verifyModelSpecific(diskSnapshot, 1);
+    }
+
+    @Test
+    public void testRemove() {
+        // setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(VdcQueryType.GetDiskSnapshotByImageId, IdQueryParameters.class,
+                new String[] { "Id" }, new Object[] { IMAGE_ID },
+                getEntity(1));
+        ArrayList<Guid> ids = new ArrayList<>();
+        ids.add(GUIDS[1]);
+        setUriInfo(setUpActionExpectations(
+                VdcActionType.RemoveDiskSnapshots,
+                RemoveDiskSnapshotsParameters.class,
+                new String[] { "ImageIds" },
+                new Object[] { ids },
+                true,
+                true));
+        verifyRemove(resource.remove());
+
     }
 
     @Override
