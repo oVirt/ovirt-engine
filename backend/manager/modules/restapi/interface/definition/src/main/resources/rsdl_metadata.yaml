@@ -1114,6 +1114,7 @@ actions:
         optionalArguments:
           action.import_as_template: xs:boolean
           action.cluster.id|name: xs:string
+          action.disk.alias|name: xs:string
 - name: /storagedomains/{storagedomain:id}/permissions|rel=get
   description: get the list of permissions for the storage domain
 - name: /storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=get

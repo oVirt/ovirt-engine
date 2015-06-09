@@ -77,6 +77,14 @@ public class BackendOpenStackImageResource
             }
             parameters.setImportAsTemplate(action.isImportAsTemplate());
         }
+        if (action.isSetDisk()) {
+            if (action.getDisk().isSetName()) {
+                parameters.setDiskAlias(action.getDisk().getName());
+            }
+            if (action.getDisk().isSetAlias()) {
+                parameters.setDiskAlias(action.getDisk().getAlias());
+            }
+        }
         EntityResolver resolver = new SimpleIdResolver(
                 Disk.class,
                 org.ovirt.engine.core.common.businessentities.storage.Disk.class,
