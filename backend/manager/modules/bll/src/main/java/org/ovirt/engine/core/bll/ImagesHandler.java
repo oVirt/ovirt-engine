@@ -723,6 +723,15 @@ public final class ImagesHandler {
         return diskSnapshots.get(diskSnapshots.size() - 1);
     }
 
+    public static List<DiskImage> getCinderLeafImages(List<Disk> disks, boolean onlyPluggedDisks) {
+        List<DiskImage> leafCinderDisks = new ArrayList<>();
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(disks, onlyPluggedDisks);
+        for (CinderDisk cinder : cinderDisks) {
+            leafCinderDisks.add(ImagesHandler.getSnapshotLeaf(cinder.getId()));
+        }
+        return leafCinderDisks;
+    }
+
     public static void updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(final Collection<Guid> diskIds,
                                                                          final ImageStatus status,
                                                                          ImageStatus statusForCompensation,
