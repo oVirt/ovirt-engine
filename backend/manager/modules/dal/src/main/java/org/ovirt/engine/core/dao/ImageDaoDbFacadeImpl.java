@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -62,7 +63,8 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
                 .addValue("volume_type", entity.getVolumeType())
                 .addValue("volume_format", entity.getVolumeFormat())
                 .addValue("image_group_id", entity.getDiskId())
-                .addValue("active", entity.isActive());
+                .addValue("active", entity.isActive())
+                .addValue("volume_classification", entity.getVolumeClassification().getValue());
     }
 
     @Override
@@ -97,6 +99,7 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
             entity.setVolumeFormat(VolumeFormat.forValue(rs.getInt("volume_format")));
             entity.setDiskId(getGuidDefaultEmpty(rs, "image_group_id"));
             entity.setActive((Boolean) rs.getObject("active"));
+            entity.setVolumeClassification(VolumeClassification.forValue(rs.getInt("volume_classification")));
             return entity;
         }
     }

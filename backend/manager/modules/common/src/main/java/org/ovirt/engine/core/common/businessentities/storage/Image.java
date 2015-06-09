@@ -18,6 +18,8 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     private boolean active;
 
+    private VolumeClassification volumeClassification;
+
     private Date creationDate;
 
     private Date lastModified;
@@ -148,6 +150,17 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     public void setVolumeFormat(VolumeFormat volumeFormat) {
         this.volumeFormat = volumeFormat;
+    }
+
+    public VolumeClassification getVolumeClassification() {
+        if (volumeClassification == null) {
+            return (active ? VolumeClassification.Volume : VolumeClassification.Snapshot);
+        }
+        return volumeClassification;
+    }
+
+    public void setVolumeClassification(VolumeClassification volumeClassification) {
+        this.volumeClassification = volumeClassification;
     }
 
     @Override

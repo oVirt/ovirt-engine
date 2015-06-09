@@ -90,6 +90,14 @@ public class DiskImage extends DiskImageBase implements IImage {
         getImage().setActive(active);
     }
 
+    public VolumeClassification getVolumeClassification() {
+        return getImage().getVolumeClassification();
+    }
+
+    public void setVolumeClassification(VolumeClassification volumeClassification) {
+        getImage().setVolumeClassification(volumeClassification);
+    }
+
     @Override
     public Date getCreationDate() {
         return getImage().getCreationDate();

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -45,6 +46,7 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
 
         cinderDisk.setId(Guid.createGuidFromString(volumeId));
         cinderDisk.setImageId(Guid.createGuidFromString(volumeId));
+        cinderDisk.setVolumeClassification(VolumeClassification.Volume);
         addCinderDiskToDB(cinderDisk);
 
         getParameters().setDiskInfo(cinderDisk);

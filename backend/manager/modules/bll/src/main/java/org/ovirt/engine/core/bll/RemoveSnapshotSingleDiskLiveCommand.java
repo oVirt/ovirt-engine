@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -313,7 +314,13 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
             boolean oldTopIsActive = topImage.getImage().isActive();
             topImage.getImage().setActive(baseImage.getImage().isActive());
+            VolumeClassification baseImageVolumeClassification =
+                    VolumeClassification.getVolumeClassificationByActiveFlag(baseImage.getImage().isActive());
+            topImage.getImage().setVolumeClassification(baseImageVolumeClassification);
             baseImage.getImage().setActive(oldTopIsActive);
+            VolumeClassification oldTopVolumeClassification =
+                    VolumeClassification.getVolumeClassificationByActiveFlag(oldTopIsActive);
+            topImage.getImage().setVolumeClassification(oldTopVolumeClassification);
 
             topImage.setImageStatus(ImageStatus.OK);
             getBaseDiskDao().update(topImage);
