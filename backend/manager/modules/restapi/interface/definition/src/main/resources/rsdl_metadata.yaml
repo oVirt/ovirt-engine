@@ -570,6 +570,8 @@ actions:
         optionalArguments:
           size: xs:int #deprecated, replaced by 'provisioned_size'
           provisioned_size: xs:int
+          disk.name: xs:string
+          disk.alias: xs:string
           disk.interface: xs:string
           disk.format: xs:string
           disk.sparse: xs:boolean
