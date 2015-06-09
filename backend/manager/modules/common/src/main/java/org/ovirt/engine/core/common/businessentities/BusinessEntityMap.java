@@ -26,7 +26,14 @@ public class BusinessEntityMap<E extends BusinessEntity<Guid> & Nameable> {
         if (entities != null) {
             int nullValuedNames = 0;
             int nullValuedIds = 0;
+            int nonNullEntities = 0;
+
             for (E e : entities) {
+                if (e == null) {
+                    continue;
+                }
+
+                nonNullEntities++;
                 if (e.getName() == null) {
                     nullValuedNames++;
                 } else {
@@ -40,8 +47,8 @@ public class BusinessEntityMap<E extends BusinessEntity<Guid> & Nameable> {
                 }
             }
 
-            if (entitiesByName.size() + nullValuedNames < entities.size() ||
-                    entitiesById.size() + nullValuedIds < entities.size()) {
+            if (entitiesByName.size() + nullValuedNames < nonNullEntities ||
+                entitiesById.size() + nullValuedIds < nonNullEntities) {
                 throw new IllegalArgumentException("duplicates in input.");
             }
         }
