@@ -2,6 +2,8 @@ package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.ovirt.engine.api.restapi.resource.aaa.BackendGroupsResource.SUB_COLLECTIONS;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -12,6 +14,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedRolesResource;
 import org.ovirt.engine.api.restapi.resource.BackendGroupTagsResource;
+import org.ovirt.engine.core.common.action.IdParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -69,5 +73,11 @@ public class BackendGroupResource
     @Override
     protected Group doPopulate(Group model, DbGroup entity) {
         return model;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveGroup, new IdParameters(guid));
     }
 }

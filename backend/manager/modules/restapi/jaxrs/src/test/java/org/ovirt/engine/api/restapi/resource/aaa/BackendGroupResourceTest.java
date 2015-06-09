@@ -5,9 +5,12 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
+import org.ovirt.engine.core.common.action.IdParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGroupResourceTest
     extends AbstractBackendSubResourceTest<Group, DbGroup, BackendGroupResource> {
@@ -51,6 +54,68 @@ public class BackendGroupResourceTest
         setUpGetEntityExpectations();
         control.replay();
         verifyModel(resource.get(), 0);
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(
+                VdcActionType.RemoveGroup,
+                IdParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                true,
+                true));
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception {
+        setUpGetEntityExpectations(GUIDS[0], true);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) throws Exception {
+        setUpGetEntityExpectations(
+                VdcQueryType.GetDbGroupById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { entityId },
+                returnNull ? null : getEntity(0));
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(
+                VdcActionType.RemoveGroup,
+                IdParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                canDo,
+                success));
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
     }
 
     private void setUpGetEntityExpectations() throws Exception {

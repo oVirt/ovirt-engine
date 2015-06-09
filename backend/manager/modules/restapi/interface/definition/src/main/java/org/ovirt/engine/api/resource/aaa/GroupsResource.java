@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.resource.aaa;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -39,10 +38,6 @@ public interface GroupsResource {
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public Response add(Group Group);
-
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id);
 
     /**
      * Sub-resource locator method, returns individual GroupResource on which
