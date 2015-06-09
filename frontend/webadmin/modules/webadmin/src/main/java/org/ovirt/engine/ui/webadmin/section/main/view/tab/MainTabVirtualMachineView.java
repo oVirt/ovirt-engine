@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinitio
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractLineChartProgressBarColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ImportProgressColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MigrationProgressColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
@@ -194,11 +195,17 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                     return null;
                 }
 
+                if (vm.getBackgroundOperationDescription() != null) {
+                    // will be rendered by progress column
+                    return null;
+                }
+
                 return super.getValue(vm);
             }
         };
 
         MigrationProgressColumn migrationProgressColumn = new MigrationProgressColumn();
+        ImportProgressColumn importProgressColumn = new ImportProgressColumn();
 
         ReasonColumn<VM> reasonColumn = new ReasonColumn<VM>() {
 
@@ -213,6 +220,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         list.add(statusColumn);
         list.add(reasonColumn);
         list.add(migrationProgressColumn);
+        list.add(importProgressColumn);
 
         Cell<VM> compositeCell = new StatusCompositeCell<VM>(list);
 
