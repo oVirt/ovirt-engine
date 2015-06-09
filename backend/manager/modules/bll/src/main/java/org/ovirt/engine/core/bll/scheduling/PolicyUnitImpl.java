@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionBal
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HostDeviceFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
@@ -115,6 +116,8 @@ public class PolicyUnitImpl {
             }
         case "Emulated-Machine":
             return new EmulatedMachineFilterPolicyUnit(policyUnit, pendingResourceManager);
+        case "HostDevice":
+            return new HostDeviceFilterPolicyUnit(policyUnit, pendingResourceManager);
         default:
             break;
         }
