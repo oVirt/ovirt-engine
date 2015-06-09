@@ -2,11 +2,14 @@ package org.ovirt.engine.ui.common.widget.editor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
 import org.gwtbootstrap3.client.ui.constants.Styles;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.OptGroupElement;
@@ -93,7 +96,7 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
     public void setAcceptableValues(Collection<T> newValues) {
         if (newValues instanceof List) {
             List<T> sortedValues = (List<T>) newValues;
-
+            Collections.sort(sortedValues, getComparator());
             //Get the internal state of the ValueListBox correct.
             super.setAcceptableValues(sortedValues);
             //Store the current selected index.
@@ -139,6 +142,8 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
      * @return The label as a {@code String}
      */
     public abstract String getGroupLabel(T model);
+
+    public abstract Comparator<T> getComparator();
 
     /**
      * Get the {@code ListBox} widget.

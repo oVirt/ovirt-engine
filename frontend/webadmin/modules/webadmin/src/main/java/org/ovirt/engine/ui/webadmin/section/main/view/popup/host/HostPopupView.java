@@ -573,6 +573,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
                 return messages.hostDataCenter(model.getStoragePoolName());
             }
 
+            public Comparator<VDSGroup> getComparator() {
+                return new DataCenterClusterComparator();
+            }
+
             /**
              * Comparator that sorts on data center name first, and then cluster name. Ignoring case.
              */
