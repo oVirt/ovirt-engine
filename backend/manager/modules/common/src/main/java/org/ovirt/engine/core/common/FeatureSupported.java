@@ -558,4 +558,13 @@ public class FeatureSupported {
     public static boolean liveStorageMigrationBetweenDifferentStorageTypesSupported(Version version) {
         return supportedInConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if data center without spm is supported for the given version
+     */
+    public static boolean dataCenterWithoutSpm(Version version) {
+        return supportedInConfig(ConfigValues.DataCenterWithoutSpm, version);
+    }
 }

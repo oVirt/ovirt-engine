@@ -237,6 +237,7 @@ select fn_db_add_config_value_for_versions_up_to('SerialNumberPolicySupported', 
 select fn_db_add_config_value_for_versions_up_to('ReportWhetherDomainMonitoringResultIsActual', 'false', '3.4');
 
 select fn_db_add_config_value_for_versions_up_to('OvfStoreOnAnyDomain', 'false', '3.4');
+select fn_db_add_config_value_for_versions_up_to('DataCenterWithoutSpm', 'false', '3.6');
 select fn_db_add_config_value_for_versions_up_to('BootMenuSupported', 'false', '3.4');
 
 select fn_db_add_config_value_for_versions_up_to('IscsiMultipathingSupported', 'false', '3.3');
