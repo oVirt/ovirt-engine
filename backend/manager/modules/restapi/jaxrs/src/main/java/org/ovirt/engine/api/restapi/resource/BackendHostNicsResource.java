@@ -26,7 +26,6 @@ import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddBondParameters;
-import org.ovirt.engine.core.common.action.RemoveBondParameters;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -84,13 +83,6 @@ public class BackendHostNicsResource
                                                      lookupNetwork(nic.getNetwork()),
                                                      lookupSlaves(nic)){{setBondingOptions(map(nic, null).getBondOptions());}},
                                new HostNicResolver(nic.getName()));
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveBond,
-                             new RemoveBondParameters(asGuid(hostId),
-                                                      lookupInterface(id).getName()));
     }
 
     @Override

@@ -4,7 +4,6 @@ import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -23,7 +22,6 @@ import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Slaves;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.core.common.action.AddBondParameters;
-import org.ovirt.engine.core.common.action.RemoveBondParameters;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -42,8 +40,8 @@ public class BackendHostNicsResourceTest
     public static final Guid NETWORK_GUID = new Guid("33333333-3333-3333-3333-333333333333");
     public static final String NETWORK_NAME = "skynet";
     public static final NetworkBootProtocol BOOT_PROTOCOL = NetworkBootProtocol.STATIC_IP;
-    private static final Guid MASTER_GUID = new Guid("99999999-9999-9999-9999-999999999999");
-    private static final String MASTER_NAME = "master";
+    public static final Guid MASTER_GUID = new Guid("99999999-9999-9999-9999-999999999999");
+    public static final String MASTER_NAME = "master";
     private static final Guid SLAVE_GUID = new Guid("66666666-6666-6666-6666-666666666666");
     private static final String SLAVE_NAME = "slave";
     private static final int SINGLE_NIC_IDX = GUIDS.length - 2;
@@ -189,48 +187,6 @@ public class BackendHostNicsResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
-        setGetVdsQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
-        setUpEntityQueryExpectations(2);
-
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveBond,
-                                           RemoveBondParameters.class,
-                                           new String[] { "VdsId", "BondName" },
-                                           new Object[] { PARENT_GUID, MASTER_NAME },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(MASTER_GUID.toString()));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { PARENT_GUID },
-                new LinkedList<VdsNetworkInterface>());
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    @Test
     public void testSetupNetworksNotSyncsNetwork() throws Exception {
         setUpNetworkQueryExpectations(1);
         setUpEntityQueryExpectations(1);
@@ -302,24 +258,6 @@ public class BackendHostNicsResourceTest
         assertEquals(list.getActions().getLinks().get(0).getRel(), SETUPNETWORKS_ACTION_REL);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setGetVdsQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
-        setUpEntityQueryExpectations(2);
-
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveBond,
-                                           RemoveBondParameters.class,
-                                           new String[] { "VdsId", "BondName" },
-                                           new Object[] { PARENT_GUID, MASTER_NAME },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(MASTER_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
-    }
 
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         setUpEntityQueryExpectations(times, null);

@@ -11,6 +11,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
+import org.ovirt.engine.core.common.action.RemoveBondParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -40,6 +42,7 @@ public class BackendHostNicResourceTest
 
     private static final int NIC_IDX = 1;
     private static final Guid NIC_ID = GUIDS[NIC_IDX];
+    private static final String NIC_NAME = NAMES[NIC_IDX];
 
     private static final String[] IPS = new String[]{"10.35.1.1", "10.35.1.2", "10.35.1.3", "10.35.1.4"};
     private static final String[] GATEWAYS = new String[]{"10.35.1.254", "10.35.1.126", "10.35.1.254", "10.35.1.126"};
@@ -236,6 +239,73 @@ public class BackendHostNicResourceTest
         assertEquals(result.getIp().getAddress(), IPS[2]);
         assertEquals(result.getIp().getNetmask(), MASKS[2]);
         assertEquals(result.getIp().getGateway(), GATEWAYS[2]);
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpEntityQueryExpectations();
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveBond,
+                RemoveBondParameters.class,
+                new String[] { "VdsId", "BondName" },
+                new Object[] { PARENT_GUID, NIC_NAME },
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception{
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetVdsInterfacesByVdsId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { PARENT_GUID },
+            Collections.emptyList()
+        );
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpEntityQueryExpectations();
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveBond,
+                RemoveBondParameters.class,
+                new String[] { "VdsId", "BondName" },
+                new Object[] { PARENT_GUID, NIC_NAME },
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
     }
 
     private void setUpVlanQueryExpectations(VdsNetworkInterface hostNicModel) {

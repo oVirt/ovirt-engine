@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -30,25 +31,27 @@ import org.ovirt.engine.api.model.HostNIC;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface HostNicResource extends UpdatableResource<HostNIC>, MeasurableResource {
-
     @GET
-    public HostNIC get();
+    HostNIC get();
+
+    @DELETE
+    Response remove();
 
     @Path("{action: (attach|detach)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("attach")
-    public Response attach(Action action);
+    Response attach(Action action);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("detach")
-    public Response detach(Action action);
+    Response detach(Action action);
 
     @Path("labels")
-    public LabelsResource getLabelsResource();
+    LabelsResource getLabelsResource();
 }

@@ -17,6 +17,7 @@ import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.LabelsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
+import org.ovirt.engine.core.common.action.RemoveBondParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -202,5 +203,14 @@ public class BackendHostNicResource
     @Override
     public LabelsResource getLabelsResource() {
         return inject(new BackendHostNicLabelsResource(asGuid(id), parent.getHostId()));
+    }
+
+    @Override
+    public Response remove() {
+        // No need to call "get" here, as the call to "lookupInterface" already generates a 404 error if there is no
+        // such network interface.
+        Guid hostId = asGuid(parent.getHostId());
+        String nicName = parent.lookupInterface(id).getName();
+        return performAction(VdcActionType.RemoveBond, new RemoveBondParameters(hostId, nicName));
     }
 }

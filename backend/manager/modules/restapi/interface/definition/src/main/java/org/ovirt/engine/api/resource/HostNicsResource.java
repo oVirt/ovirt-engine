@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -32,20 +31,15 @@ import org.ovirt.engine.api.model.HostNics;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface HostNicsResource {
-
     @Path("{action: (setupnetworks)}")
-    public ActionResource getActionSubresource(@PathParam("action") String action);
+    ActionResource getActionSubresource(@PathParam("action") String action);
 
     @GET
-    public HostNics list();
+    HostNics list();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    public Response add(HostNIC nic);
-
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") String id);
+    Response add(HostNIC nic);
 
     /**
      * Sub-resource locator method, returns individual HostNicResource on which the
@@ -55,12 +49,11 @@ public interface HostNicsResource {
      * @return    matching subresource if found
      */
     @Path("{id}")
-    public HostNicResource getHostNicSubResource(@PathParam("id") String id);
+    HostNicResource getHostNicSubResource(@PathParam("id") String id);
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("setupnetworks")
-    public Response setupNetworks(Action action);
-
+    Response setupNetworks(Action action);
 }
