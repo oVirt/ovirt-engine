@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.uutils.ssh;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -44,6 +46,28 @@ public class OpenSSHUtilsTest {
             testKeyString(key[0], key[3]);
         }
     }
+
+    @Test
+    public void testGoodKeyIsPublicKeyValid() throws Exception {
+        for (String[] key : KEYS) {
+            assertTrue(OpenSSHUtils.isPublicKeyValid(key[3]));
+        }
+    }
+
+    @Test
+    public void testBadKeyNotIsPublicKeyValid() throws Exception {
+        for (String key : BAD_SSH_KEYS) {
+            assertFalse(OpenSSHUtils.isPublicKeyValid(key));
+        }
+    }
+
+    @Test
+    public void testNotRsaKeyIsPublicKeyValid() throws Exception {
+        for (String key : EXTRA_SSH_KEYS) {
+            assertTrue(OpenSSHUtils.isPublicKeyValid(key));
+        }
+    }
+
 
     /**
      * This test data has been generated as follows:
@@ -243,4 +267,22 @@ public class OpenSSHUtilsTest {
         },
     };
 
+    private static final String[] EXTRA_SSH_KEYS = {
+        // DSA
+        "ssh-dss AAAAB3NzaC1kc3MAAACBAMIf8c7Sv8j/NwXIzTLByHrB24cFexOJkTxFv+HMoBdgzr8BAIQojpIRq9z0xm9HJgWGR6Njla1wEEJVC2rj+XP8el4+doTo1jfgAPZIZBeh80PvnX6dgm/JkKNLgAeHZqEFa68UmOk+vOio/Z2guPam93Yt3MAlVHSYMKrylXI9AAAAFQCJDsrpr6isE/BVGn/4utGX5EArRwAAAIA/hLqJPr00s4uORq49c8jegg+Zqgawpf9fnnI4PUelhG+tGDzW7aWwVYntMvkQNBbG8oww7GCQFTuAbPSU/RNh4HUZTlWFJq47RVGtEtPTYmR0dMloMwQTmxP8ObTFRPoR+NX3XLcOCuXHUW6MExpbL7RD9IiZK9xMXU4oop0wEgAAAIBY+WxFurd0VchCJWPFbXkqUxGQ0VPvxOAcBlf+rGs+hmHMQYc792b+AEml6t2UzXTX1tIh0W5q++65sIPDC7jVRfrrSEn+mtM3/N+p36902dtyRzvp0UMv/Kq/IIiwSZPn5FBHATj0ssb9wSb9uYNLvcigMThKrAbNlCdSE5In8g== ",
+        // DSA with third field
+        "ssh-dss AAAAB3NzaC1kc3MAAACBAMIf8c7Sv8j/NwXIzTLByHrB24cFexOJkTxFv+HMoBdgzr8BAIQojpIRq9z0xm9HJgWGR6Njla1wEEJVC2rj+XP8el4+doTo1jfgAPZIZBeh80PvnX6dgm/JkKNLgAeHZqEFa68UmOk+vOio/Z2guPam93Yt3MAlVHSYMKrylXI9AAAAFQCJDsrpr6isE/BVGn/4utGX5EArRwAAAIA/hLqJPr00s4uORq49c8jegg+Zqgawpf9fnnI4PUelhG+tGDzW7aWwVYntMvkQNBbG8oww7GCQFTuAbPSU/RNh4HUZTlWFJq47RVGtEtPTYmR0dMloMwQTmxP8ObTFRPoR+NX3XLcOCuXHUW6MExpbL7RD9IiZK9xMXU4oop0wEgAAAIBY+WxFurd0VchCJWPFbXkqUxGQ0VPvxOAcBlf+rGs+hmHMQYc792b+AEml6t2UzXTX1tIh0W5q++65sIPDC7jVRfrrSEn+mtM3/N+p36902dtyRzvp0UMv/Kq/IIiwSZPn5FBHATj0ssb9wSb9uYNLvcigMThKrAbNlCdSE5In8g== test@ovirt.org",
+        // ECDSA
+        "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHUkn6B7HOUceagWGLynYOHZ4QtH/OhHc5URksntfUrSbxMQNKfws1aVgzymFqFrninzcyBgaHOcG/LK+U2EwXU= ",
+        // ECDSA with third field
+        "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHUkn6B7HOUceagWGLynYOHZ4QtH/OhHc5URksntfUrSbxMQNKfws1aVgzymFqFrninzcyBgaHOcG/LK+U2EwXU= test@ovirt.org",
+    };
+
+    private static final String[] BAD_SSH_KEYS = {
+        // RSA with broken identifier (first field)
+        "1RandomTextWith2NumbersWithin",
+        "ssh%rsa%corrupted AAAAB3NzaC1yc2EAAAADAQABAAAAgQC3Cz4oruqQv9fz+NOZnhvGugWvPpuwh44aGVdYm0iXJZCq76bgw0ajDF6XhVs5xYagWEO31vVKVu7lTMIv7OcoAw3VC3giBDJotkkXO7uR3iAQAGZrARxRrOOhUNqVKIuslw/+YcvgsQl5TdgflvrdH2zQyVm2/0qLjdCN8lYahw==\n",
+        // RSA with not-base64 data
+        "ssh-rsa \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
+    };
 }

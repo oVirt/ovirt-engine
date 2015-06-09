@@ -16,8 +16,6 @@ import org.ovirt.engine.core.uutils.ssh.OpenSSHUtils;
 
 public abstract class UserProfilesOperationCommandBase<T extends UserProfileParameters> extends CommandBase<T> {
 
-    static final private String SSH_RSA = "ssh-rsa";
-
     @Inject
     protected UserProfileDao userProfileDao;
 
