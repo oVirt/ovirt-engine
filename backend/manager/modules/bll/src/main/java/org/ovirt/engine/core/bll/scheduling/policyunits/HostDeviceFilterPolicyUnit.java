@@ -40,12 +40,17 @@ public class HostDeviceFilterPolicyUnit extends PolicyUnitImpl {
 
         List<VDS> list = new ArrayList<>();
         for (VDS host : hosts) {
-            if (host.isHostDevicePassthroughEnabled()) {
-                list.add(host);
-            } else {
+            if (!host.isHostDevicePassthroughEnabled()) {
                 messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__HOSTDEV_DISABLED.toString());
                 log.debug("Host '{}' does not support host device passthrough", host.getName());
+                continue;
             }
+            if (!hostDeviceManager.checkVmHostDeviceAvailability(vm, host.getId())) {
+                messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__HOST_DEVICE_UNAVAILABLE.toString());
+                log.debug("Some of the devices on host '{}' are unavailable", host.getName());
+                continue;
+            }
+            list.add(host);
         }
 
         return list;

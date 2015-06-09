@@ -3485,6 +3485,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$detailMessage it does not support host device passthrough.")
     String VAR__DETAIL__HOSTDEV_DISABLED();
 
+    @DefaultStringValue("$detailMessage some of the required host devices are unavailable.")
+    String VAR__DETAIL__HOST_DEVICE_UNAVAILABLE();
+
     @DefaultStringValue("There are no hosts to use. Check that the cluster contains at least one host in Up state.")
     String SCHEDULING_NO_HOSTS();
 

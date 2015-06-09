@@ -134,7 +134,7 @@ public class UpdateHostNicVfsConfigCommandTest {
     }
 
     private void allVfsAreFree(boolean isValid) {
-        when(validator.allVfsAreFree(any(HostNicVfsConfigHelper.class))).thenReturn(isValid ? ValidationResult.VALID
+        when(validator.allVfsAreFree(any(NetworkDeviceHelper.class))).thenReturn(isValid ? ValidationResult.VALID
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED));
     }
 

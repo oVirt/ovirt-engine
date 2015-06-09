@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
+import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
@@ -66,10 +66,10 @@ public class VfsConfigValidator {
     /**
      * @return An error iff there are non-free VFs of the nic
      */
-    public ValidationResult allVfsAreFree(HostNicVfsConfigHelper hostNicVfsConfigHelper) {
+    public ValidationResult allVfsAreFree(NetworkDeviceHelper networkDeviceHelper) {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED,
                 getNicNameReplacement())
-                .unless(hostNicVfsConfigHelper.areAllVfsFree(getNic()));
+                .unless(networkDeviceHelper.areAllVfsFree(getNic()));
     }
 
     /**

@@ -24,7 +24,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
+import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
@@ -345,8 +345,8 @@ public class SchedulingManager implements BackendService {
     }
 
     private void markVfsAsUsedByVm(Guid hostId, Guid vmId, Map<Guid, String> passthroughVnicToVfMap) {
-        HostNicVfsConfigHelper hostNicVfsConfigHelper = Injector.get(HostNicVfsConfigHelper.class);
-        hostNicVfsConfigHelper.setVmIdOnVfs(hostId, vmId, new HashSet<>(passthroughVnicToVfMap.values()));
+        NetworkDeviceHelper networkDeviceHelper = Injector.get(NetworkDeviceHelper.class);
+        networkDeviceHelper.setVmIdOnVfs(hostId, vmId, new HashSet<>(passthroughVnicToVfMap.values()));
     }
 
     /**

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 public class GetAllVfsConfigByHostIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
-    private HostNicVfsConfigHelper hostNicVfsConfigHelper;
+    private NetworkDeviceHelper networkDeviceHelper;
 
     public GetAllVfsConfigByHostIdQuery(P parameters) {
         super(parameters);
@@ -16,10 +16,10 @@ public class GetAllVfsConfigByHostIdQuery<P extends IdQueryParameters> extends Q
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getHostNicVfsConfigHelper().getHostNicVfsConfigsWithNumVfsDataByHostId(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(getNetworkDeviceHelper().getHostNicVfsConfigsWithNumVfsDataByHostId(getParameters().getId()));
     }
 
-    public HostNicVfsConfigHelper getHostNicVfsConfigHelper() {
-        return hostNicVfsConfigHelper;
+    public NetworkDeviceHelper getNetworkDeviceHelper() {
+        return networkDeviceHelper;
     }
 }

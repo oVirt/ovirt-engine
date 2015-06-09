@@ -28,7 +28,7 @@ public class VfSchedulerImpl implements VfScheduler {
 
     private HostDeviceDao hostDeviceDao;
 
-    private HostNicVfsConfigHelper vfsConfigHelper;
+    private NetworkDeviceHelper vfsConfigHelper;
 
     private Map<Guid, Map<Guid, Map<Guid, String>>> vmToHostToVnicToVfMap = new ConcurrentHashMap<>();
 
@@ -36,7 +36,7 @@ public class VfSchedulerImpl implements VfScheduler {
     public VfSchedulerImpl(NetworkDao networkDao,
             InterfaceDao interfaceDao,
             HostDeviceDao hostDeviceDao,
-            HostNicVfsConfigHelper vfsConfigHelper) {
+            NetworkDeviceHelper vfsConfigHelper) {
         this.networkDao = networkDao;
         this.interfaceDao = interfaceDao;
         this.hostDeviceDao = hostDeviceDao;

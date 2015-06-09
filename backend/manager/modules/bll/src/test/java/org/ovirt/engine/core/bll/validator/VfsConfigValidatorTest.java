@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
+import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -81,7 +81,7 @@ public class VfsConfigValidatorTest {
     private VdsDao vdsDao;
 
     @Mock
-    private HostNicVfsConfigHelper hostNicVfsConfigHelper;
+    private NetworkDeviceHelper networkDeviceHelper;
 
     @Mock
     private NetworkDao networkDao;
@@ -196,7 +196,7 @@ public class VfsConfigValidatorTest {
     @Test
     public void notAllVfsAreFree() {
         allVfsAreFreeTest(false);
-        assertThat(validator.allVfsAreFree(hostNicVfsConfigHelper),
+        assertThat(validator.allVfsAreFree(networkDeviceHelper),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED,
                         String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName())));
     }
@@ -204,12 +204,12 @@ public class VfsConfigValidatorTest {
     @Test
     public void allVfsAreFree() {
         allVfsAreFreeTest(true);
-        assertThat(validator.allVfsAreFree(hostNicVfsConfigHelper), isValid());
+        assertThat(validator.allVfsAreFree(networkDeviceHelper), isValid());
     }
 
     private void allVfsAreFreeTest(boolean areAllVfsFree) {
         simulateNicExists();
-        when(hostNicVfsConfigHelper.areAllVfsFree(nic)).thenReturn(areAllVfsFree);
+        when(networkDeviceHelper.areAllVfsFree(nic)).thenReturn(areAllVfsFree);
 
     }
 
