@@ -1,6 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
+import org.junit.Test;
 import org.ovirt.engine.api.model.InstanceType;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
 import static org.ovirt.engine.api.restapi.resource.BackendInstanceTypesResourceTest.getModel;
@@ -12,6 +17,21 @@ public class BackendInstanceTypeResourceTest
 
     public BackendInstanceTypeResourceTest() {
         super(new BackendInstanceTypeResource(GUIDS[0].toString()));
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpGetGraphicsExpectations(1);
+        setUpGetEntityExpectations(1);
+        setUriInfo(setUpActionExpectations(
+                VdcActionType.RemoveVmTemplate,
+                VmTemplateParametersBase.class,
+                new String[] { "VmTemplateId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true));
+        Response response = resource.remove();
+        verifyRemove(response);
     }
 
     @Override

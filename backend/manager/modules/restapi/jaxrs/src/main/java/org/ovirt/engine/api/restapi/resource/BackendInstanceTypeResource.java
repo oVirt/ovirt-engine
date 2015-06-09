@@ -2,6 +2,9 @@ package org.ovirt.engine.api.restapi.resource;
 
 
 import java.util.List;
+
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.NIC;
@@ -18,6 +21,7 @@ import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -49,6 +53,12 @@ public class BackendInstanceTypeResource
                              new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
                              VdcActionType.UpdateVmTemplate,
                              new UpdateParametersProvider());
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveVmTemplate, new VmTemplateParametersBase(guid));
     }
 
     @Override
@@ -121,4 +131,5 @@ public class BackendInstanceTypeResource
             return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, updateParams);
         }
     }
+
 }

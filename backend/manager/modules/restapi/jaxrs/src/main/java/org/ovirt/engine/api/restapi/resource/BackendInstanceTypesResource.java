@@ -11,7 +11,6 @@ import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -90,11 +89,6 @@ public class BackendInstanceTypesResource
     @SingleEntityResource
     public InstanceTypeResource getInstanceTypeSubResource(String id) {
         return inject(new BackendInstanceTypeResource(id));
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveVmTemplate, new VmTemplateParametersBase(asGuid(id)));
     }
 
     protected InstanceTypes mapCollection(List<org.ovirt.engine.core.common.businessentities.InstanceType> entities) {
