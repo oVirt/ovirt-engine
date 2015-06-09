@@ -140,7 +140,7 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
     }
 
     public Integer getWarningLowSpaceIndicator() {
-        return staticData.getWarningLowSpaceIndicator();
+        return staticData == null ? null : staticData.getWarningLowSpaceIndicator();
     }
 
     public void setWarningLowSpaceIndicator(Integer warningLowSpaceIndicator) {
@@ -148,7 +148,8 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
     }
 
     public int getWarningLowSpaceSize() {
-        return getWarningLowSpaceIndicator() == null ? 0 : getTotalDiskSize() * getWarningLowSpaceIndicator() / 100;
+        return getWarningLowSpaceIndicator() == null || getTotalDiskSize() == null ?
+                0 : getTotalDiskSize() * getWarningLowSpaceIndicator() / 100;
     }
 
     public Integer getCriticalSpaceActionBlocker() {
@@ -217,8 +218,8 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
     }
 
     private void UpdateTotalDiskSize() {
-        Integer available = getStorageDynamicData().getAvailableDiskSize();
-        Integer used = getStorageDynamicData().getUsedDiskSize();
+        Integer available = getStorageDynamicData() == null ? null : getStorageDynamicData().getAvailableDiskSize();
+        Integer used = getStorageDynamicData() == null ? null : getStorageDynamicData().getUsedDiskSize();
 
         if (available != null && used != null) {
             setTotalDiskSize(available + used);
