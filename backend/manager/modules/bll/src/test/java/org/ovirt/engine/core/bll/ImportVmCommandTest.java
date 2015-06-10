@@ -216,36 +216,63 @@ public class ImportVmCommandTest {
     }
 
     protected ImportVmParameters createParameters() {
-        final VM v = createVM();
+        final VM v = createVmWithSnapshots();
         v.setName("testVm");
         return new ImportVmParameters(v, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid());
     }
 
-    protected VM createVM() {
+    protected VM createVmWithSnapshots() {
         final VM v = new VM();
         v.setId(Guid.newGuid());
 
-        Guid imageGroupId = Guid.newGuid();
-        DiskImage baseImage = new DiskImage();
-        baseImage.setId(imageGroupId);
-        baseImage.setImageId(Guid.newGuid());
-        baseImage.setSizeInGigabytes(1);
-        baseImage.setVmSnapshotId(Guid.newGuid());
-        baseImage.setActive(false);
+        Snapshot baseSnapshot = new Snapshot();
+        baseSnapshot.setVmId(v.getId());
 
-        DiskImage activeImage = new DiskImage();
-        activeImage.setId(imageGroupId);
-        activeImage.setImageId(Guid.newGuid());
-        activeImage.setSizeInGigabytes(1);
-        activeImage.setVmSnapshotId(Guid.newGuid());
-        activeImage.setActive(true);
-        activeImage.setParentId(baseImage.getImageId());
+        Snapshot activeSnapshot = new Snapshot();
+        activeSnapshot.setVmId(v.getId());
 
-        v.setDiskMap(Collections.<Guid, Disk> singletonMap(activeImage.getId(), activeImage));
+        DiskImage baseImage = createDiskImage(Guid.newGuid(), Guid.newGuid(), baseSnapshot.getId(), false);
+        DiskImage activeImage =
+                createDiskImage(baseImage.getId(), baseImage.getImageId(), activeSnapshot.getId(), true);
+
+        baseSnapshot.setDiskImages(Collections.singletonList(baseImage));
+        activeSnapshot.setDiskImages(Collections.singletonList(activeImage));
+
+        v.setDiskMap(Collections.<Guid, Disk>singletonMap(activeImage.getId(), activeImage));
         v.setImages(new ArrayList<DiskImage>(Arrays.asList(baseImage, activeImage)));
+        v.setSnapshots(new ArrayList<Snapshot>(Arrays.asList(baseSnapshot, activeSnapshot)));
         v.setVdsGroupId(Guid.Empty);
 
         return v;
+    }
+
+    protected VM createVmWithNoSnapshots() {
+        final VM v = new VM();
+        v.setId(Guid.newGuid());
+
+        Snapshot activeSnapshot = new Snapshot();
+        activeSnapshot.setVmId(v.getId());
+        DiskImage activeImage = createDiskImage(Guid.newGuid(), Guid.newGuid(), activeSnapshot.getId(), true);
+        activeSnapshot.setDiskImages(Collections.singletonList(activeImage));
+
+        v.setImages(new ArrayList<DiskImage>(Collections.singletonList(activeImage)));
+        v.setSnapshots(new ArrayList<Snapshot>(Collections.singletonList(activeSnapshot)));
+        v.setDiskMap(Collections.<Guid, Disk> singletonMap(activeImage.getId(), activeImage));
+        v.setVdsGroupId(Guid.Empty);
+
+        return v;
+    }
+
+    private DiskImage createDiskImage(Guid imageGroupId, Guid parentImageId, Guid vmSnapshoId, boolean active) {
+        DiskImage disk = new DiskImage();
+        disk.setId(imageGroupId);
+        disk.setImageId(Guid.newGuid());
+        disk.setSizeInGigabytes(1);
+        disk.setVmSnapshotId(vmSnapshoId);
+        disk.setActive(active);
+        disk.setParentId(parentImageId);
+
+        return disk;
     }
 
     protected StorageDomain createSourceDomain() {
@@ -455,6 +482,32 @@ public class ImportVmCommandTest {
         doNothing().when(cmd).updateImage(activeDisk);
         doNothing().when(cmd).saveBaseDisk(activeDisk);
         doNothing().when(cmd).updateActiveSnapshot(any(Guid.class));
+
+        cmd.addVmImagesAndSnapshots();
+        assertEquals("Disk alias not generated", "testVm_Disk1", activeDisk.getDiskAlias());
+    }
+
+    @Test
+    public void testCDANoCollapseNoSnapshots() {
+        final VM v = createVmWithNoSnapshots();
+        v.setName("testVm");
+        ImportVmParameters params =
+                new ImportVmParameters(v, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid());
+
+        params.setCopyCollapse(false);
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params) {
+            @Override
+            public VDSGroup getVdsGroup() {
+                return null;
+            }
+        });
+        cmd.postConstruct();
+
+        DiskImage activeDisk = params.getVm().getImages().get(0);
+        doNothing().when(cmd).saveImage(activeDisk);
+        doNothing().when(cmd).saveDiskImageDynamic(activeDisk);
+        doNothing().when(cmd).saveBaseDisk(activeDisk);
+        doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any(Guid.class));
 
         cmd.addVmImagesAndSnapshots();
         assertEquals("Disk alias not generated", "testVm_Disk1", activeDisk.getDiskAlias());

@@ -218,8 +218,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             domainsMap.put(destGuid, storageDomain);
         }
 
-        if (!isImagesAlreadyOnTarget() && getParameters().isImportAsNewEntity() && !getParameters().getCopyCollapse()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED);
+        if (!isImagesAlreadyOnTarget() && getParameters().isImportAsNewEntity()
+                && isCopyCollapseDisabledWithSnapshots()) {
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED,
+                    String.format("$VmName %1$s", getVmName()));
         }
 
         // Register can never happen with copyCollapse = true since there's no copy operation involved.
@@ -244,6 +246,16 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         return true;
+    }
+
+    private boolean isCopyCollapseDisabledWithSnapshots() {
+        // If there are no snapshots we may not care if copyCollapse = false
+        // There's always at least one snapshot (Active).
+        return getParameters().getVm().getSnapshots().size() > 1 && !getParameters().getCopyCollapse();
+    }
+
+    private boolean isCopyCollapseOrNoSnapshots() {
+        return !isCopyCollapseDisabledWithSnapshots();
     }
 
     protected boolean validateAndSetVmFromExportDomain() {
@@ -758,7 +770,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected void addVmImagesAndSnapshots() {
         Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getImages());
 
-        if (getParameters().getCopyCollapse()) {
+        if (isCopyCollapseOrNoSnapshots()) {
             Guid snapshotId = Guid.newGuid();
             int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
