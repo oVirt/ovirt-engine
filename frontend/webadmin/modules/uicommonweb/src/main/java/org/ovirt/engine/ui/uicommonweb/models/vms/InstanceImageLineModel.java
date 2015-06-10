@@ -193,6 +193,11 @@ public class InstanceImageLineModel extends EntityModel {
             protected void updateBootableDiskAvailable() {
                 updateBootableFrom(parentModel.getAllCurrentDisks());
             }
+
+            @Override
+            protected List<Disk> getAttachedNotSubmittedDisks() {
+                return parentModel.getNotYetAttachedNotAttachableDisks();
+            }
         };
 
         VM realOrFakeVm = vm;

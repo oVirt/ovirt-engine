@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -243,6 +244,39 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
             }
 
             res.add(line.getDisk());
+        }
+
+        return res;
+    }
+
+    /**
+     * Returns a list of non-sharable disks which have been set as to attach in the new/edit VM dialog but the dialog has not yet been submitted
+     * @return
+     */
+    public List<Disk> getNotYetAttachedNotAttachableDisks() {
+        List<Disk> res = new ArrayList<>();
+        for (InstanceImageLineModel line : getItems()) {
+            if (line.isGhost()) {
+                continue;
+            }
+
+            EntityModel<AbstractDiskModel> diskModel = line.getDiskModel();
+            if (diskModel == null) {
+                continue;
+            }
+
+            // it will be InstanceImagesAttachDiskModel only if not yet submitted
+            if (!(diskModel.getEntity() instanceof InstanceImagesAttachDiskModel)) {
+                continue;
+            }
+
+            Disk disk = line.getDisk();
+            if (disk == null || disk.isShareable()) {
+                continue;
+            }
+
+            res.add(disk);
+
         }
 
         return res;

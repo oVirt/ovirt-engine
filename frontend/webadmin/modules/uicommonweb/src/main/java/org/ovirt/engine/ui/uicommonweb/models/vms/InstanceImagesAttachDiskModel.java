@@ -2,12 +2,14 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class InstanceImagesAttachDiskModel extends AttachDiskModel {
@@ -73,20 +75,19 @@ public class InstanceImagesAttachDiskModel extends AttachDiskModel {
         @Override
         protected List<Disk> adjustReturnValue(Object returnValue) {
             List<Disk> disksFromServer = (List<Disk>) returnValue;
-
-            if (prevSelectedDisk == null) {
-                return disksFromServer;
-            }
-
-            if (prevSelectedDisk.getDiskStorageType() != diskStorageType) {
-                return disksFromServer;
-            }
+            List<Guid> inDialogIds = asIds(getAttachedNotSubmittedDisks());
 
             List<Disk> res = new ArrayList<>();
 
             for (Disk diskFromServer : disksFromServer) {
-                if (!diskFromServer.getId().equals(prevSelectedDisk.getId())) {
-                    res.add(diskFromServer);
+                boolean selectedDisk = prevSelectedDisk != null &&
+                        diskFromServer.getId().equals(prevSelectedDisk.getId()) &&
+                        prevSelectedDisk.getDiskStorageType() != diskStorageType;
+
+                if (!selectedDisk) {
+                    if (!inDialogIds.contains(diskFromServer.getId())) {
+                        res.add(diskFromServer);
+                    }
                 } else {
                     res.add(prevSelectedDisk);
                 }
@@ -94,7 +95,19 @@ public class InstanceImagesAttachDiskModel extends AttachDiskModel {
 
             return res;
         }
+
+        private List<Guid> asIds(List<Disk> attachedNotSubmittedDisks) {
+            List<Guid> res = new ArrayList<>();
+
+            for (Disk disk : attachedNotSubmittedDisks) {
+                res.add(disk.getId());
+            }
+
+            return res;
+        }
     }
 
-
+    protected List<Disk> getAttachedNotSubmittedDisks() {
+        return Collections.EMPTY_LIST;
+    }
 }
