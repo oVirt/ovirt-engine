@@ -53,11 +53,6 @@ public class HostAdditionalStatusColumn extends EntityAdditionalStatusColumn<VDS
 
     @Override
     protected VDS getEntityObject(VDS object) {
-        if (object instanceof VDS){
-            return object;
-        }
-        else {
-            return null;
-        }
+        return object;
     }
 }
