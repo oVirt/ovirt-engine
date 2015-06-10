@@ -229,7 +229,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
         return getDbFacade().getImageStorageDomainMapDao();
     }
 
-    protected String getDiskAlias() {
+    public String getDiskAlias() {
         if (getDisk() != null) {
             return getDisk().getDiskAlias();
         }
