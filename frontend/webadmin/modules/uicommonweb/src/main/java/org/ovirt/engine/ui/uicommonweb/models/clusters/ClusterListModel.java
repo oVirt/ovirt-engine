@@ -397,6 +397,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         clusterModel.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
         clusterModel.getEnableGlusterService().setIsChangeable(true);
         clusterModel.getEnableKsm().setEntity(cluster.isEnableKsm());
+        clusterModel.setKsmPolicyForNuma(cluster.isKsmMergeAcrossNumaNodes());
         clusterModel.getEnableBallooning().setEntity(cluster.isEnableBallooning());
         clusterModel.getArchitecture().setSelectedItem(cluster.getArchitecture());
         clusterModel.getSerialNumberPolicy().setSelectedSerialNumberPolicy(cluster.getSerialNumberPolicy());
@@ -748,6 +749,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         cluster.setCountThreadsAsCores(Boolean.TRUE.equals(model.getVersionSupportsCpuThreads().getEntity())
                 && Boolean.TRUE.equals(model.getCountThreadsAsCores().getEntity()));
         cluster.setEnableKsm(Boolean.TRUE.equals(model.getEnableKsm().getEntity()));
+        cluster.setKsmMergeAcrossNumaNodes(model.getKsmPolicyForNuma());
         cluster.setEnableBallooning(Boolean.TRUE.equals(model.getEnableBallooning().getEntity())
                 && version.compareTo(Version.v3_3) >= 0);
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$

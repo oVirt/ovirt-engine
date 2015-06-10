@@ -574,6 +574,16 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         this.enableKsm = enableKsm;
     }
 
+    private ListModel<KsmPolicyForNuma> ksmPolicyForNumaSelection;
+
+    public ListModel<KsmPolicyForNuma> getKsmPolicyForNumaSelection() {
+        return ksmPolicyForNumaSelection;
+    }
+
+    private void setKsmPolicyForNumaSelection(ListModel<KsmPolicyForNuma> value) {
+        ksmPolicyForNumaSelection = value;
+    }
+
     private EntityModel<Boolean> enableBallooning;
 
     public EntityModel<Boolean> getEnableBallooning() {
@@ -886,6 +896,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
     public ClusterModel()
     {
         super();
+        ListModel<KsmPolicyForNuma> ksmPolicyForNumaSelection = new ListModel<KsmPolicyForNuma>();
+        ksmPolicyForNumaSelection.setItems(Arrays.asList(KsmPolicyForNuma.values()));
+        setKsmPolicyForNumaSelection(ksmPolicyForNumaSelection);
     }
 
     public void initTunedProfiles() {
@@ -1111,8 +1124,22 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         tempVar7.setEntity(false);
         setMigrateOnErrorOption_HA_ONLY(tempVar7);
         getMigrateOnErrorOption_HA_ONLY().getEntityChangedEvent().addListener(this);
+        // KSM feature
         setEnableKsm(new EntityModel<Boolean>());
         getEnableKsm().setEntity(false);
+        getKsmPolicyForNumaSelection().setIsChangeable(false);
+        getEnableKsm().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                if (getEnableKsm().getEntity() == null)
+                    return;
+                if (getEnableKsm().getEntity() == true)
+                    getKsmPolicyForNumaSelection().setIsChangeable(true);
+                if (getEnableKsm().getEntity() == false)
+                    getKsmPolicyForNumaSelection().setIsChangeable(false);
+            }
+        });
+
         setEnableBallooning(new EntityModel<Boolean>());
         getEnableBallooning().setEntity(false);
         // Optimization methods:
@@ -1439,6 +1466,13 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             }
         };
         AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
+        // inactive KsmPolicyForNuma if KSM disabled
+        if (getEnableKsm().getEntity() == false)
+            getKsmPolicyForNumaSelection().setIsChangeable(false);
+        // hide KsmPolicyForNuma is cluseter version bellow 3.4
+        Version version = getEntity().getCompatibilityVersion();
+        if (version.compareTo(Version.v3_4) < 0)
+            getKsmPolicyForNumaSelection().setIsAvailable(false);
     }
 
     private void loadCurrentClusterManagementNetwork() {
@@ -1669,18 +1703,35 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
         updateFencingPolicyContent(version);
 
-        boolean isSmallerThanVersion3_4 = version.compareTo(Version.v3_4) < 0;
-        getEnableKsm().setIsChangeable(!isSmallerThanVersion3_4);
-        getEnableKsm().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ksmNotAvailable());
-        if (isSmallerThanVersion3_4) {
-            getEnableKsm().setEntity(true);
-        }
+        updateKSMPolicy(version);
 
         updateMigrateOnError();
 
         updateMigrationOptions();
 
         refreshAdditionalClusterFeaturesList();
+    }
+
+    private void updateKSMPolicy(Version version) {
+        // enable KSM control from version 3.4
+        boolean isSmallerThanVersion3_4 = version.compareTo(Version.v3_4) < 0;
+        getEnableKsm().setIsChangeable(!isSmallerThanVersion3_4);
+        getEnableKsm().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ksmNotAvailable());
+        // default is false (disabled)
+        getEnableKsm().setEntity(false);
+        // for version 3.3 and lower the default is true.
+        if (isSmallerThanVersion3_4) {
+            getEnableKsm().setEntity(true);
+        }
+
+        // allow KSM with NUMA awareness only from version 3.4
+        boolean isLowerVersionThen3_4 = version.compareTo(Version.v3_4) < 0;
+        getKsmPolicyForNumaSelection().setIsAvailable(!isLowerVersionThen3_4);
+        getKsmPolicyForNumaSelection().setChangeProhibitionReason(ConstantsManager.getInstance()
+                .getConstants()
+                .ksmWithNumaAwarnessNotAvailable());
+        // enable NUMA aware KSM by default (matching kernel's default)
+        setKsmPolicyForNuma(true);
     }
 
     private void refreshAdditionalClusterFeaturesList() {
@@ -2124,4 +2175,43 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 ? ""
                 : srcs;
     }
+
+    public boolean getKsmPolicyForNuma() {
+        switch (getKsmPolicyForNumaSelection().getSelectedItem()) {
+        case shareAcrossNumaNodes:
+            return true;
+        case shareInsideEachNumaNode:
+            return false;
+        }
+        return true;
+    }
+
+    public void setKsmPolicyForNuma(Boolean ksmPolicyForNumaFlag) {
+        if (ksmPolicyForNumaFlag == null)
+            return;
+        KsmPolicyForNuma ksmPolicyForNuma = KsmPolicyForNuma.shareAcrossNumaNodes;
+        if (ksmPolicyForNumaFlag == false)
+            ksmPolicyForNuma = KsmPolicyForNuma.shareInsideEachNumaNode;
+
+        getKsmPolicyForNumaSelection().setSelectedItem(ksmPolicyForNuma);
+        return;
+    }
+
+    public enum KsmPolicyForNuma {
+
+        shareAcrossNumaNodes(ConstantsManager.getInstance().getConstants().shareKsmAcrossNumaNodes()),
+        shareInsideEachNumaNode(ConstantsManager.getInstance().getConstants().shareKsmInsideEachNumaNode());
+
+        private String description;
+
+        private KsmPolicyForNuma(String description) {
+            this.description = description;
+        }
+
+        @Override
+        public String toString() {
+            return description;
+        }
+    }
+
 }

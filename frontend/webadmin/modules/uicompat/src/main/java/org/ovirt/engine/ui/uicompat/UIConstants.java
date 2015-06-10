@@ -2358,8 +2358,18 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Scheduling Policy")
     String removeClusterPolicyTitle();
 
+    // MoM
     @DefaultStringValue("KSM control is only available for Cluster compatibility version 3.4 and higher")
     String ksmNotAvailable();
+
+    @DefaultStringValue("KSM with NUMA optimization control is only available for Cluster compatibility version 3.6 and higher")
+    String ksmWithNumaAwarnessNotAvailable();
+
+    @DefaultStringValue("Share memory pages across all available memory (best KSM effectivness)")
+    String shareKsmAcrossNumaNodes();
+
+    @DefaultStringValue("Share memory pages inside NUMA nodes (best NUMA performance)")
+    String shareKsmInsideEachNumaNode();
 
     @DefaultStringValue("Ballooning is only available for Cluster compatibility version 3.3 and higher")
     String ballooningNotAvailable();

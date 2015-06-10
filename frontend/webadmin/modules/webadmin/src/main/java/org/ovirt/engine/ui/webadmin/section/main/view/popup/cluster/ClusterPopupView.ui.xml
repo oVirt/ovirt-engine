@@ -161,6 +161,17 @@
             display: none;
         }
 
+        .overrideRadioButtonPanelWidth {
+            padding: 0px 30px;
+            width: 100%;
+            margin-top: 15px;
+            line-height: 25px !important;
+        }
+
+        .overideRadioButtonLabel {
+            padding: 0px;
+        }
+
     </ui:style>
 
     <d:SimpleDialogPanel width="800px" height="560px">
@@ -234,6 +245,7 @@
                                 <g:FlowPanel addStyleNames="{style.nestedSubsequentPanel}">
                                     <g:Label text="{constants.ksmLabelTitle}" addStyleNames="{style.panelTitle}" />
                                     <ge:EntityModelCheckBoxEditor ui:field="enableKsm" />
+                                    <e:ListModelRadioGroupEditor  ui:field="ksmPolicyForNumaEditor" />
                                 </g:FlowPanel>
                             </g:FlowPanel>
                         </t:content>

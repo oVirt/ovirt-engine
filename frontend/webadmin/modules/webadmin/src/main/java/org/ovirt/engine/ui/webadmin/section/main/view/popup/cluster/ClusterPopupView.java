@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelCheckBoxGroup;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
@@ -432,6 +433,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
     private final Driver driver = GWT.create(Driver.class);
 
+    @UiField
+    @Path(value = "ksmPolicyForNumaSelection.selectedItem")
+    public ListModelRadioGroupEditor<ClusterModel.KsmPolicyForNuma> ksmPolicyForNumaEditor;
+
+
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
     private final static ApplicationResources resources = AssetProvider.getResources();
     private final static ApplicationConstants constants = AssetProvider.getConstants();
@@ -484,6 +490,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         enableOptionalReasonEditor.setContentWidgetContainerStyleName(style.fullWidth());
         enableHostMaintenanceReasonEditor.setContentWidgetContainerStyleName(style.fullWidth());
         additionalFeaturesExpanderContent.setStyleName(style.additionalFeaturesExpanderContent());
+        ksmPolicyForNumaEditor.addContentWidgetContainerStyleName(style.overrideRadioButtonPanelWidth());
+        ksmPolicyForNumaEditor.addLabelStyleName(style.overideRadioButtonLabel());
     }
 
     private void localize() {
@@ -857,7 +865,12 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         String optimizationTabPanel();
 
+
         String additionalFeaturesExpanderContent();
+
+        String overrideRadioButtonPanelWidth();
+
+        String overideRadioButtonLabel();
     }
 
     @Override
