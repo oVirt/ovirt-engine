@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AddVmHostDevicesModel extends ModelWithPinnedHost   {
+public class AddVmHostDevicesModel extends ModelWithPinnedHost {
 
     private ListModel<String> capability;
 
@@ -86,7 +86,9 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost   {
             public void onSuccess(Object model, Object returnValue) {
                 List<VmHostDevice> devices = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 for (VmHostDevice device : devices) {
-                    alreadyAttachedDevices.add(device.getDevice());
+                    if (!device.isIommuPlaceholder()) {
+                        alreadyAttachedDevices.add(device.getDevice());
+                    }
                 }
                 // initHosts must be called after alreadyAttachedDevices are initialized
                 initHosts();

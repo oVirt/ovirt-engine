@@ -13,32 +13,45 @@ import java.util.Set;
 
 public class AddVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHostDevicesParameters> {
 
-    private List<String> namesAdded;
-
     public AddVmHostDevicesCommand(VmHostDevicesParameters parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeCommand() {
-        List<VmDevice> addDevicesBatch = getAddDevicesBatch();
-        getVmDeviceDao().saveAllInBatch(addDevicesBatch);
-        setSucceeded(true);
-        setActionReturnValue(namesAdded);
-    }
 
-    private List<VmDevice> getAddDevicesBatch() {
-        namesAdded = new ArrayList<>();
         Set<HostDevice> affectedHostDevices = getAffectedHostDevices();
-        Map<String, VmDevice> existingDevices = getExistingVmHostDevicesByName();
+        Map<String, VmHostDevice> existingDevices = getExistingVmHostDevicesByName();
+
         List<VmDevice> devicesToAdd = new ArrayList<>();
+        List<VmDevice> devicesToUpdate = new ArrayList<>();
+
         for (HostDevice hostDevice : affectedHostDevices) {
             if (!existingDevices.containsKey(hostDevice.getDeviceName())) {
-                devicesToAdd.add(new VmHostDevice(getVmId(), hostDevice));
-                namesAdded.add(hostDevice.getDeviceName());
+                VmHostDevice device = new VmHostDevice(getVmId(), hostDevice);
+
+                // if the device was not explicitly intended by the user (only added due to the IOMMU group
+                // we mark it as as placeholder
+                boolean required = getPrimaryDeviceNames().contains(device.getDevice());
+                device.setIommuPlaceholder(!required);
+
+                devicesToAdd.add(device);
+            } else {
+                VmHostDevice device = new VmHostDevice(existingDevices.get(hostDevice.getDeviceName()));
+                // if the device was previously only added as placeholder we update the flag
+                // as it is now explicitly requested by the user
+                if (getPrimaryDeviceNames().contains(device.getDevice()) && device.isIommuPlaceholder()) {
+                    device.setIommuPlaceholder(false);
+
+                    devicesToUpdate.add(device);
+                }
             }
         }
-        return devicesToAdd;
+
+        getVmDeviceDao().saveAllInBatch(devicesToAdd);
+        getVmDeviceDao().updateAllInBatch(devicesToUpdate);
+
+        setSucceeded(true);
     }
 
     @Override
@@ -47,7 +60,7 @@ public class AddVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHost
     }
 
     public List<String> getNamesAdded() {
-        return namesAdded;
+        return new ArrayList<>(getPrimaryDeviceNames());
     }
 }
 

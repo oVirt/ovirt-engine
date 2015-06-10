@@ -2,7 +2,16 @@ package org.ovirt.engine.core.common.businessentities;
 
 import org.ovirt.engine.core.compat.Guid;
 
+import java.util.HashMap;
+
 public class VmHostDevice extends VmDevice {
+
+    /**
+     * Spec param flag that distinguishes devices that are intended
+     * by user from those that are just placeholders to satisfy the
+     * IOMMU group restriction
+     */
+    public static final String IOMMU_PLACEHOLDER = "iommuPlaceholder";
 
     public VmHostDevice() {
         setType(VmDeviceGeneralType.HOSTDEV);
@@ -10,6 +19,7 @@ public class VmHostDevice extends VmDevice {
         setIsManaged(true);
         setIsPlugged(true);
         setId(new VmDeviceId());
+        setSpecParams(new HashMap<String, Object>());
     }
 
     public VmHostDevice(VmDevice device) {
@@ -24,5 +34,13 @@ public class VmHostDevice extends VmDevice {
         setDeviceId(Guid.newGuid());
         setVmId(vmId);
         setDevice(device.getDeviceName());
+    }
+
+    public void setIommuPlaceholder(boolean placeholder) {
+        getSpecParams().put(IOMMU_PLACEHOLDER, placeholder);
+    }
+
+    public boolean isIommuPlaceholder() {
+        return Boolean.TRUE.equals(getSpecParams().get(IOMMU_PLACEHOLDER));
     }
 }

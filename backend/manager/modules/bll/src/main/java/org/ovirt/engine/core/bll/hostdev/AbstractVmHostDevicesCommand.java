@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -32,8 +33,14 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
 
     private List<HostDevice> hostDevices;
 
+    /**
+     * Contains device names that are explicitly passed in the command parameters
+     */
+    private Set<String> primaryDeviceNames;
+
     public AbstractVmHostDevicesCommand(P parameters) {
         super(parameters);
+        primaryDeviceNames = new HashSet<>(parameters.getDeviceNames());
     }
 
     @Override
@@ -60,6 +67,10 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
         }
 
         return true;
+    }
+
+    protected Set<String> getPrimaryDeviceNames() {
+        return primaryDeviceNames;
     }
 
     protected VmDeviceDAO getVmDeviceDao() {
@@ -89,8 +100,7 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
     }
 
     private Collection<HostDevice> getDeviceAtomicGroup(HostDevice hostDevice) {
-        // iommu group restriction only applicable to 'pci' devices
-        if (!CAPABILITY_PCI.equals(hostDevice.getCapability()) || hostDevice.getIommuGroup() == null) {
+        if (!hasIommu(hostDevice)) {
             return Collections.singleton(hostDevice);
         }
 
@@ -98,12 +108,21 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
                 hostDevice.getIommuGroup());
     }
 
+    protected boolean hasIommu(HostDevice hostDevice) {
+        // iommu group restriction only applicable to 'pci' devices
+        return CAPABILITY_PCI.equals(hostDevice.getCapability()) && hostDevice.getIommuGroup() != null;
+    }
+
     private HostDevice fetchHostDevice(String deviceName) {
         return hostDeviceDao.getHostDeviceByHostIdAndDeviceName(getVm().getDedicatedVmForVds(), deviceName);
     }
 
-    protected Map<String, VmDevice> getExistingVmHostDevicesByName() {
+    protected Map<String, VmHostDevice> getExistingVmHostDevicesByName() {
         List<VmDevice> existingDevices = vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
-        return Entities.vmDevicesByDevice(existingDevices);
+        List<VmHostDevice> result = new ArrayList<>();
+        for (VmDevice device : existingDevices) {
+            result.add(new VmHostDevice(device));
+        }
+        return Entities.vmDevicesByDevice(result);
     }
 }
