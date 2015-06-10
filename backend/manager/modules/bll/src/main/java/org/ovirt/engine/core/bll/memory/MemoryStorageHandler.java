@@ -16,15 +16,20 @@ import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainAvailableDisk
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainNumberOfVmDisksComparator;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageTypeComparator;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MemoryStorageHandler {
 
     private static final MemoryStorageHandler instance = new MemoryStorageHandler();
+
+    private static final Logger log = LoggerFactory.getLogger(MemoryStorageHandler.class);
 
     private MemoryStorageHandler() {
     }
@@ -43,16 +48,25 @@ public class MemoryStorageHandler {
      *           Disks for which space is needed
      * @param vmDisks
      *           The vm's active snapshot disks.
+     * @param vmForLogging
+     *           The VM which the memory volumes being created belong to.<br/>
+     *           Note: This parameter is used for logging purposed only.
      * @return storage domain in the given pool with at least the required amount of free space,
      *         or null if no such storage domain exists in the pool
      */
     public StorageDomain findStorageDomainForMemory(Guid storagePoolId, List<DiskImage> memoryDisks,
-            Collection<DiskImage> vmDisks) {
+            Collection<DiskImage> vmDisks, VM vmForLogging) {
         List<StorageDomain> domainsInPool =
                 DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(storagePoolId);
         StorageDomain storageDomainForMemory = findStorageDomainForMemory(domainsInPool, memoryDisks, vmDisks);
         if (storageDomainForMemory != null) {
             updateDisksStorage(storageDomainForMemory, memoryDisks);
+            if (vmForLogging != null) {
+                log.info("The memory volumes of VM (name '{}', id '{}') will be " +
+                                "stored in storage domain (name '{}', id '{}')",
+                        vmForLogging.getName(), vmForLogging.getId(), storageDomainForMemory.getName(),
+                        storageDomainForMemory.getId());
+            }
         }
         return storageDomainForMemory;
     }
