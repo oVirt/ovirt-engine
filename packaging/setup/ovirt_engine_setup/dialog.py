@@ -77,7 +77,7 @@ def queryEnvKey(
     'is_error' -- True (default) if a failure is an error, else a warning
         If True and a test failed, ask user again. Otherwise prompt user
         to accept value anyway.
-    'warn_note' -- Message displayed if warning, defaults to 'Accept?'
+    'warn_note' -- Message displayed if warning
     'interactive_only' -- Do not run test if env[key] is already set
     """
 
@@ -215,6 +215,10 @@ def queryPassword(
                 'is_error': False,
                 'warn_note': 'Use weak password? ',
             },
+        ) + (
+            tests
+            if tests is not None
+            else ()
         ),
     )
 
