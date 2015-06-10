@@ -12,6 +12,7 @@ import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.IO;
+import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmBase;
@@ -127,7 +128,19 @@ public class VmBaseMapper {
                 entity.setConsoleDisconnectAction(map(action, null));
             }
         }
-        if (model.isSetTimezone()) {
+
+        if (model.isSetTimeZone()) {
+            if (model.getTimeZone().isSetName()) {
+                String timezone = model.getTimeZone().getName();
+                if (timezone.isEmpty()) {
+                    timezone = null; // normalize default timezone representation
+                }
+                entity.setTimeZone(timezone);
+            }
+        }
+        // timezone is deprecated and should be removed in 4.x
+        // now only accepted for backwards compatibility
+        else if (model.isSetTimezone()) {
             String timezone = model.getTimezone();
             if (timezone.isEmpty()) {
                 timezone = null;  // normalize default timezone representation
@@ -213,6 +226,11 @@ public class VmBaseMapper {
         model.getBios().setBootMenu(new BootMenu());
         model.getBios().getBootMenu().setEnabled(entity.isBootMenuEnabled());
 
+        if(entity.getTimeZone() != null) {
+            model.setTimeZone(new TimeZone());
+            model.getTimeZone().setName(entity.getTimeZone());
+        }
+        // Deprecated: Should be removed in 4.x, use the TimeZone complex type instead
         model.setTimezone(entity.getTimeZone());
 
         if (entity.getCreationDate() != null) {

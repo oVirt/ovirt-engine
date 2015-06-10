@@ -6,6 +6,7 @@ import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.InheritableBoolean;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -37,7 +38,9 @@ public class TemplateMapperTest
         while (from.getCpu().getTopology().getCores() == 0) {
             from.getCpu().getTopology().setCores(MappingTestHelper.rand(100));
         }
-        from.setTimezone("Australia/Darwin");
+        from.setTimeZone(new TimeZone());
+        from.getTimeZone().setName("Australia/Darwin");
+        from.setTimezone(from.getTimeZone().getName());
         from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
         from.getMigration().setAutoConverge(InheritableBoolean.TRUE.value());
         from.getMigration().setCompressed(InheritableBoolean.TRUE.value());

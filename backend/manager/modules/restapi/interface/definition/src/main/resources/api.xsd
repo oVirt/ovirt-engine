@@ -3303,6 +3303,13 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="TimeZone">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="utc_offset" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="GuestInfo">
     <xs:sequence>
       <xs:element ref="ips" minOccurs="0" maxOccurs="1"/>
@@ -3363,6 +3370,7 @@
           <xs:element ref="sso" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="rng_device" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="console" minOccurs="0" maxOccurs="1"/>
+          <!-- timzeone is deprecated and shall be removed in 4.x -->
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
@@ -3379,6 +3387,7 @@
           <xs:element name="custom_emulated_machine" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="custom_cpu_model" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="graphics_consoles" type="GraphicsConsoles" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="time_zone" type="TimeZone" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

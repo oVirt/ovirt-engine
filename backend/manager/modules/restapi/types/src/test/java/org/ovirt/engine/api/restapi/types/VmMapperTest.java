@@ -17,6 +17,7 @@ import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
+import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
@@ -93,7 +94,9 @@ public class VmMapperTest extends
         pin.setCpuSet("1-4,6");
         cpuTune.getVCpuPin().add(pin);
         from.getCpu().setCpuTune(cpuTune);
-        from.setTimezone("Australia/Darwin");
+        from.setTimeZone(new TimeZone());
+        from.getTimeZone().setName("Australia/Darwin");
+        from.setTimezone(from.getTimeZone().getName());
         from.setPlacementPolicy(new VmPlacementPolicy());
         from.getPlacementPolicy().setHost(new Host());
         from.getPlacementPolicy().getHost().setId(Guid.Empty.toString());
@@ -149,6 +152,8 @@ public class VmMapperTest extends
         assertEquals(model.getPlacementPolicy().getHost().getId(), transform.getPlacementPolicy().getHost().getId());
         assertTrue(Math.abs(model.getMemoryPolicy().getGuaranteed() - transform.getMemoryPolicy().getGuaranteed()) <= (1024 * 1024));
         assertEquals(model.getTimezone(), transform.getTimezone());
+        assertNotNull(model.getTimeZone());
+        assertEquals(model.getTimeZone().getName(), transform.getTimezone());
         assertEquals(model.getDisplay().isSmartcardEnabled(), transform.getDisplay().isSmartcardEnabled());
         assertEquals(model.getDisplay().getKeyboardLayout(), transform.getDisplay().getKeyboardLayout());
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
