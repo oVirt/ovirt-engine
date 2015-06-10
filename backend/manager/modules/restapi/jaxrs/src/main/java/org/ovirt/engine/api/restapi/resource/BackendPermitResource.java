@@ -1,20 +1,23 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
 import org.ovirt.engine.api.resource.PermitResource;
+import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendPermitResource
-    extends AbstractBackendResource<Permit, ActionGroup>
+        extends AbstractBackendSubResource<Permit, ActionGroup>
     implements PermitResource {
 
-    protected String id;
     protected BackendPermitsResource parent;
 
     public BackendPermitResource(String id, BackendPermitsResource parent) {
-        super(Permit.class, ActionGroup.class);
-        this.id = id;
+        super(id, Permit.class, ActionGroup.class);
         this.parent = parent;
     }
 
@@ -50,5 +53,23 @@ public class BackendPermitResource
     @Override
     protected Permit doPopulate(Permit model, ActionGroup entity) {
         return model;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        ActionGroup entity = parent.lookupId(id);
+        if (entity == null) {
+            notFound();
+            return null;
+        }
+        return performAction(VdcActionType.DetachActionGroupsFromRole,
+                new ActionGroupsToRoleParameter(parent.roleId, asList(entity)));
+    }
+
+    @Override
+    protected Guid asGuidOr404(String id) {
+        // Permit ID is not a GUID
+        return null;
     }
 }

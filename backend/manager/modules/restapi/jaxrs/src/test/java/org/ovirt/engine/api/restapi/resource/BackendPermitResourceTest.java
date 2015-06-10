@@ -1,29 +1,25 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
-import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
-import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.PermitMapper;
+import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendPermitResourceTest extends Assert {
+public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Permit, ActionGroup, BackendPermitResource> {
 
     private static final Guid ROLE_ID = new Guid("11111111-1111-1111-1111-111111111111");
 
-    private MappingLocator mapperLocator;
-    private ValidatorLocator validatorLocator;
-
     public BackendPermitResourceTest() {
-        mapperLocator = new MappingLocator();
-        mapperLocator.populate();
-        validatorLocator = new ValidatorLocator();
-        validatorLocator.populate();
+        super(new BackendPermitResource("1", new BackendPermitsResource(ROLE_ID)));
     }
 
     @Test
@@ -40,6 +36,7 @@ public class BackendPermitResourceTest extends Assert {
         BackendPermitResource resource = new BackendPermitResource(id, new BackendPermitsResource(ROLE_ID));
         resource.getParent().setMappingLocator(mapperLocator);
         try {
+            control.replay();
             resource.get();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
@@ -49,23 +46,91 @@ public class BackendPermitResourceTest extends Assert {
 
     @Test
     public void testGet() {
+        initResource(resource.parent);
+        control.replay();
         for (ActionGroup action : ActionGroup.values()) {
-            BackendPermitResource resource =
-                new BackendPermitResource(Integer.toString(action.getId()), new BackendPermitsResource(ROLE_ID));
-            resource.setMappingLocator(mapperLocator);
-            resource.getParent().setMappingLocator(mapperLocator);
-            resource.setValidatorLocator(validatorLocator);
-            resource.getParent().setValidatorLocator(validatorLocator);
+            resource.id = Integer.toString(action.getId());
             verifyPermit(resource.get(), action);
         }
+        resource.id = "1"; // reset id, because 'resource' is used for multiple tests.
     }
 
+    @Test
+    public void testRemoveBadId() throws Exception {
+        doTestRemoveNotFound("foo");
+    }
+
+    @Test
+    public void testRemoveNotFound() throws Exception {
+        doTestRemoveNotFound("11111");
+    }
+
+    private void doTestRemoveNotFound(String id) throws Exception {
+        initResource(resource.parent);
+        resource.id = id;
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyNotFoundException(wae);
+        }
+        resource.id = "1";
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        initResource(resource.parent);
+        List<ActionGroup> actionGroups = new ArrayList<ActionGroup>();
+        actionGroups.add(ActionGroup.forValue(1));
+        setUriInfo(setUpActionExpectations(VdcActionType.DetachActionGroupsFromRole,
+                ActionGroupsToRoleParameter.class,
+                new String[] { "RoleId", "ActionGroups" },
+                new Object[] { GUIDS[1], actionGroups },
+                true,
+                true));
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        initResource(resource.parent);
+        List<ActionGroup> actionGroups = new ArrayList<ActionGroup>();
+        actionGroups.add(ActionGroup.forValue(1));
+        setUriInfo(setUpActionExpectations(VdcActionType.DetachActionGroupsFromRole,
+                ActionGroupsToRoleParameter.class,
+                new String[] { "RoleId", "ActionGroups" },
+                new Object[] { GUIDS[1], actionGroups },
+                canDo,
+                success));
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
+    }
     private void verifyPermit(Permit permit, ActionGroup action) {
         assertEquals(Integer.toString(action.getId()), permit.getId());
         PermitType permitType = PermitMapper.map(action, (PermitType)null);
         assertEquals(permitType.value(), permit.getName());
         assertNotNull(permit.getRole());
         assertEquals(ROLE_ID.toString(), permit.getRole().getId());
+    }
+
+    @Override
+    protected ActionGroup getEntity(int index) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
 

@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
@@ -28,67 +27,6 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
     @Override
     public void testQuery() throws Exception {
     }
-
-    @Test
-    public void testRemoveBadId() throws Exception {
-        doTestRemoveNotFound("foo");
-    }
-
-    @Test
-    public void testRemoveNotFound() throws Exception {
-        doTestRemoveNotFound("11111");
-    }
-
-    private void doTestRemoveNotFound(String id) throws Exception {
-        control.replay();
-        try {
-            collection.remove(id);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        List<ActionGroup> actionGroups = new ArrayList<ActionGroup>();
-        actionGroups.add(ActionGroup.forValue(1));
-        setUriInfo(setUpActionExpectations(VdcActionType.DetachActionGroupsFromRole,
-                                           ActionGroupsToRoleParameter.class,
-                                           new String[] { "RoleId", "ActionGroups" },
-                                           new Object[] { GUIDS[1], actionGroups  },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove("1"));
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        List<ActionGroup> actionGroups = new ArrayList<ActionGroup>();
-        actionGroups.add(ActionGroup.forValue(1));
-        setUriInfo(setUpActionExpectations(VdcActionType.DetachActionGroupsFromRole,
-                                           ActionGroupsToRoleParameter.class,
-                                           new String[] { "RoleId", "ActionGroups" },
-                                           new Object[] { GUIDS[1], actionGroups  },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove("1");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
-    }
-
 
     @Test
     public void testAddPermit() throws Exception {
