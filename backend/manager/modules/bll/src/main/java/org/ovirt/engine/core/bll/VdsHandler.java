@@ -111,7 +111,7 @@ public class VdsHandler extends BaseHandler {
         if (StringUtils.isNotEmpty(result.getExceptionString())) {
             throw new EngineException(
                     result.getVdsError() != null ? result.getVdsError().getCode() : EngineError.ENGINE,
-                    result.getExceptionString());
+                    result.getExceptionString(), result);
         }
         return result;
     }

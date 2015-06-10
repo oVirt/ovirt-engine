@@ -14,6 +14,10 @@ public class VdsIdVDSCommandParametersBase extends VDSParametersBase {
         return _vdsId;
     }
 
+    public void setVdsId(Guid _vdsId) {
+        this._vdsId = _vdsId;
+    }
+
     public VdsIdVDSCommandParametersBase() {
     }
 

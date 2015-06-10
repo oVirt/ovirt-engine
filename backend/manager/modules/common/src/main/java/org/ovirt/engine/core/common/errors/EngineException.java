@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.errors;
 
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+
 public class EngineException extends RuntimeException {
 
     private static final long serialVersionUID = 9070362191178977106L;
@@ -25,6 +27,11 @@ public class EngineException extends RuntimeException {
         setVdsError(tempVar);
     }
 
+    public EngineException(EngineError errCode, String errorStr, VDSReturnValue vdsReturnValue) {
+        this(errCode, errorStr);
+        setVdsReturnValue(vdsReturnValue);
+    }
+
     private VDSError privateVdsError;
 
     public VDSError getVdsError() {
@@ -37,6 +44,16 @@ public class EngineException extends RuntimeException {
 
     public EngineError getErrorCode() {
         return getVdsError().getCode();
+    }
+
+    private VDSReturnValue vdsReturnValue;
+
+    public VDSReturnValue getVdsReturnValue() {
+        return vdsReturnValue;
+    }
+
+    public void setVdsReturnValue(VDSReturnValue vdsReturnValue) {
+        this.vdsReturnValue = vdsReturnValue;
     }
 
     public EngineException() {
