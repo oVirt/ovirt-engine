@@ -847,7 +847,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                 localModel.stopProgress();
                 setWindow(null);
             }
-        }, model);
+        }, model, true);
     }
 
     private void stopRemoveBricks() {

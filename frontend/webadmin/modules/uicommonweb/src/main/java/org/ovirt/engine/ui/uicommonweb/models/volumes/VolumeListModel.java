@@ -789,7 +789,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeRebalanceParameters(volume.getId(), false, false));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.StartRebalanceGlusterVolume, list);
+        Frontend.getInstance().runMultipleAction(VdcActionType.StartRebalanceGlusterVolume, list, null, true, true);
     }
 
     private void stopRebalance() {
