@@ -117,7 +117,7 @@ public class CinderDisksValidator {
                 CinderStorageRelatedDisksAndProxy cinderRelatedDisksAndProxy =
                         cinderStorageToRelatedDisks.get(storageDomainId);
                 if (cinderRelatedDisksAndProxy == null) {
-                    List cinderDisks = new ArrayList();
+                    List<CinderDisk> cinderDisks = new ArrayList<>();
                     cinderDisks.add(cinderDisk);
                     OpenStackVolumeProviderProxy proxy = diskProxyMap.get(cinderDisk.getId());
                     CinderStorageRelatedDisksAndProxy newCinderRelatedDisksAndProxy =
