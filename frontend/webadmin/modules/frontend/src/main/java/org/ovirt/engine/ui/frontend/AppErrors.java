@@ -3041,6 +3041,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The VM Network Interface is plugged to a running VM.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The VM ${VmName} has sanpshots that must be collapsed.")
+    String ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Unregistered VM can not be collapsed.")
     String ACTION_TYPE_FAILED_IMPORT_UNREGISTERED_NOT_COLLAPSED();
 
