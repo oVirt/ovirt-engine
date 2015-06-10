@@ -119,7 +119,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
             addTextBoxToPanel(panel, new TextBoxLabel(), "", "80px"); //$NON-NLS-1$ //$NON-NLS-2$
             addTextBoxToPanel(panel, new TextBoxLabel(), "", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
             addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "110px"); //$NON-NLS-1$
-            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(SizeConverter.SizeUnit.GB), disk.getActualSize(), "110px"); //$NON-NLS-1$
+            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(SizeConverter.SizeUnit.GiB), disk.getActualSize(), "110px"); //$NON-NLS-1$
             addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getCreationDate(), "140px"); //$NON-NLS-1$
 
             panel.setSpacing(1);
@@ -160,7 +160,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
                     (long) (((LunDisk) disk).getLun().getDeviceSize() * Math.pow(1024, 3));
 
             addValueLabelToPanel(panel, new DiskSizeLabel<Long>(SizeConverter.SizeUnit.BYTES), virtualSize, "110px"); //$NON-NLS-1$
-            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(SizeConverter.SizeUnit.GB), actualSize, "110px"); //$NON-NLS-1$
+            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(SizeConverter.SizeUnit.GiB), actualSize, "110px"); //$NON-NLS-1$
             addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getDiskStorageType() == DiskStorageType.IMAGE ?
                     ((DiskImage) disk).getCreationDate() : null, "140px"); //$NON-NLS-1$
 

@@ -69,7 +69,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusStorage(), "160px"); //$NON-NLS-1$
 
-        DiskSizeColumn<StorageDomain> freeColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
+        DiskSizeColumn<StorageDomain> freeColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GiB) {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long availableDiskSize = object.getAvailableDiskSize() != null ? object.getAvailableDiskSize() : 0;
@@ -79,7 +79,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         freeColumn.makeSortable();
         getTable().addColumn(freeColumn, constants.freeSpaceStorage(), "160px"); //$NON-NLS-1$
 
-        DiskSizeColumn<StorageDomain> usedColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
+        DiskSizeColumn<StorageDomain> usedColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GiB) {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long usedDiskSize = object.getUsedDiskSize() != null ? object.getUsedDiskSize() : 0;
@@ -89,7 +89,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         usedColumn.makeSortable();
         getTable().addColumn(usedColumn, constants.usedSpaceStorage(), "160px"); //$NON-NLS-1$
 
-        DiskSizeColumn<StorageDomain> totalColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
+        DiskSizeColumn<StorageDomain> totalColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GiB) {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long totalDiskSize = object.getTotalDiskSize() != null ? object.getTotalDiskSize() : 0;

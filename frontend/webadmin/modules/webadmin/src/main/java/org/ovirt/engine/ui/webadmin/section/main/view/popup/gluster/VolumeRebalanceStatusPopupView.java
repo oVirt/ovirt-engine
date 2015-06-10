@@ -150,7 +150,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             }
         }, getColumnHeaderForFilesMoved());
 
-        rebalanceHostsTable.addEntityModelColumn(new RebalanceFileSizeColumn<EntityModel>(messages) {
+        rebalanceHostsTable.addEntityModelColumn(new RebalanceFileSizeColumn<EntityModel>() {
 
             @Override
             protected Long getRawValue(EntityModel object) {

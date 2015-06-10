@@ -33,3 +33,4 @@ public class VolumeCapacityRenderer<T extends Number> extends AbstractRenderer<T
         return NumberFormat.getFormat("#.##").format(size);//$NON-NLS-1$
     }
 }
+

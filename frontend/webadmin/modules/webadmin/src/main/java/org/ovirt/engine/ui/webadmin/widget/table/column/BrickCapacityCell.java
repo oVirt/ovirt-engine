@@ -13,7 +13,7 @@ public class BrickCapacityCell extends GlusterCapacityCell<BrickProperties> {
             setFreeSize(value.getFreeSize());
             setTotalSize(value.getTotalSize());
             setUsedSize(value.getTotalSize() - value.getFreeSize());
-            setInUnit(SizeUnit.MB);
+            setInUnit(SizeUnit.MiB);
         }
         super.render(context, value == null ? null : value, sb);
     }
