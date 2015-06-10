@@ -104,4 +104,9 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("Volume data from {0} of cluster {1} is replicated to this volume.")
     String geoRepSlaveVolumeToolTip(String mastervolName, String clusterName);
 
+    @DefaultMessage("Stripe Size {0} KB is recommended for {1} device")
+    String stripSizeInfoForGlusterBricks(int stripeSize, String raidType);
+
+    @DefaultMessage("(Choose storage devices of RAID type: {0})")
+    String getStorageDeviceSelectionInfo(String raidType);
 }

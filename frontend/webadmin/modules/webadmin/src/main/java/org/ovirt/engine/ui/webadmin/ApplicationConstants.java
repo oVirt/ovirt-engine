@@ -4104,6 +4104,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Extend Brick")
     String extendBrick();
 
+    @DefaultStringValue("RAID Parameters")
+    String raidParameters();
+
     @DefaultStringValue("RAID Type")
     String raidType();
 
@@ -4113,8 +4116,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Stripe Size (KB)")
     String stripeSize();
 
-    @DefaultStringValue("Choose storage devices of RAID type: ")
-    String getStorageDeviceSelectionInfo();
+    @DefaultStringValue("RAID parameters should match exactly with RAID Controller setup for RAID volumes")
+    String raidConfigurationWarning();
 
     @DefaultStringValue("Auto-start geo-replication session after creation")
     String geoRepSessionCreateAndStart();

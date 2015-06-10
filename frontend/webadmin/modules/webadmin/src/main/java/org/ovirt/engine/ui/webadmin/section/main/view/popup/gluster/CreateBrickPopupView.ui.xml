@@ -3,12 +3,13 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<ui:style>
-		.headerLabel {
+		.headerDeviceLabel {
 			font-weight: bold;
-			padding: 5px;
+			paddin: 5px;
 		}
 		.messageLabel {
 			color: #FF0000;
@@ -22,6 +23,17 @@
 			padding-bottom: 15px;
 			border: 1px solid #CED8DF;
 		}
+		.headerRaidParamsLabel {
+			font-weight: bold;
+			font-size: 14px;
+			padding-left: 3px;
+			padding-bottom: 10px;
+			display: inline-block;
+		}
+		.raidParamsWarning {
+			display: inline-block;
+			margin-left: 5px;
+		}
 		.explanationLabel {
 			font-style: italic;
 			padding-bottom: 10px;
@@ -33,10 +45,12 @@
 			<g:FlowPanel>
 				<ge:StringEntityModelTextBoxEditor ui:field="lvNameEditor" />
 				<ge:StringEntityModelTextBoxEditor ui:field="mountPointEditor" />
+				<g:Label ui:field="raidParamsLabel" addStyleNames="{style.headerRaidParamsLabel}"/>
+				<d:InfoIcon ui:field="raidParamsInfoIcon" addStyleNames="{style.raidParamsWarning}"/>
 				<e:ListModelListBoxEditor  ui:field="raidTypeEditor" />
 				<ge:IntegerEntityModelTextBoxEditor ui:field="noOfPhysicalDisksEditor" />
-				<ge:IntegerEntityModelTextBoxEditor ui:field="stripeSizeEditor" />
-				<g:Label ui:field="deviceHeader" addStyleNames="{style.headerLabel}"/>
+				<w:EntityModelWidgetWithInfo ui:field="stripeSizeWithInfo"/>
+				<g:Label ui:field="deviceHeader" addStyleNames="{style.headerDeviceLabel}"/>
 				<g:Label ui:field="deviceSelectionInfo" addStyleNames="{style.explanationLabel}"/>
 				<g:HorizontalPanel spacing="5" verticalAlignment="ALIGN_MIDDLE">
 					<g:VerticalPanel>
