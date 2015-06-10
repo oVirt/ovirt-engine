@@ -8,14 +8,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -177,43 +174,4 @@ public class BackendStorageDomainTemplatesResourceTest
         }
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
-        setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplateFromImportExport,
-                                           VmTemplateImportExportParameters.class,
-                                           new String[] { "VmTemplateId", "StorageDomainId", "StoragePoolId" },
-                                           new Object[] { GUIDS[0], GUIDS[3], GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
-        setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplateFromImportExport,
-                                           VmTemplateImportExportParameters.class,
-                                           new String[] { "VmTemplateId", "StorageDomainId", "StoragePoolId" },
-                                           new Object[] { GUIDS[0], GUIDS[3], GUIDS[0] },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
-    }
 }

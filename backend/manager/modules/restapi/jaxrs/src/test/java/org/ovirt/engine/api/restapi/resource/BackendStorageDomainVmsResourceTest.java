@@ -9,8 +9,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -74,17 +72,6 @@ public class BackendStorageDomainVmsResourceTest
         setUpQueryExpectations("", null, StorageDomainType.ImportExport, true);
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
-        setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
-        String[] names = new String[]{"VmId", "StorageDomainId", "StoragePoolId"};
-        Object[] values = new Object[]{GUIDS[0], GUIDS[3], DATA_CENTER_ID};
-        setUpActionExpectations(VdcActionType.RemoveVmFromImportExport, RemoveVmFromImportExportParameters.class, names, values, true, true);
-        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     @Override

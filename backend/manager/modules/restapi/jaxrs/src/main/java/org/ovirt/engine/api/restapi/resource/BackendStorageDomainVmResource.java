@@ -9,6 +9,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -120,6 +121,16 @@ public class BackendStorageDomainVmResource
     @Override
     protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
         return model;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        RemoveVmFromImportExportParameters params = new RemoveVmFromImportExportParameters(
+                guid,
+                parent.storageDomainId,
+                getDataCenterId(parent.storageDomainId));
+        return performAction(VdcActionType.RemoveVmFromImportExport, params);
     }
 
 }

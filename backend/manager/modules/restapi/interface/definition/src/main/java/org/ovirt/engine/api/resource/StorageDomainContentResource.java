@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.POST;
@@ -51,4 +52,7 @@ public interface StorageDomainContentResource<R extends BaseResource> {
 
     @Path("disks")
     public StorageDomainContentDisksResource getDisksResource();
+
+    @DELETE
+    public Response remove();
 }

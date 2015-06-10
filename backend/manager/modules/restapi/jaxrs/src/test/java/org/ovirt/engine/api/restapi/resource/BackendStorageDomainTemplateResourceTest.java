@@ -7,6 +7,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -22,6 +23,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -198,12 +200,58 @@ public class BackendStorageDomainTemplateResourceTest
         doTestImport(storageDomain, cluster, true);
     }
 
+    @Test
+    public void testRemove() throws Exception {
+        setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
+        setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplateFromImportExport,
+                VmTemplateImportExportParameters.class,
+                new String[] { "VmTemplateId", "StorageDomainId", "StoragePoolId" },
+                new Object[] { GUIDS[1], GUIDS[3], GUIDS[0] },
+                true,
+                true));
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
+        setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplateFromImportExport,
+                VmTemplateImportExportParameters.class,
+                new String[] { "VmTemplateId", "StorageDomainId", "StoragePoolId" },
+                new Object[] { GUIDS[1], GUIDS[3], GUIDS[0] },
+                canDo,
+                success));
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
+    }
+
+    private void setUpGetDataCenterByStorageDomainExpectations(Guid id, int times) {
+        while (times-->0) {
+            setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { id },
+                    setUpStoragePool());
+        }
+    }
+
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id) {
-        setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { id },
-                setUpStoragePool());
+        setUpGetDataCenterByStorageDomainExpectations(id, 1);
     }
 
     public void doTestImport(StorageDomain storageDomain, Cluster cluster, boolean importAsNewEntity) throws Exception {
@@ -381,4 +429,57 @@ public class BackendStorageDomainTemplateResourceTest
         cluster.setId(GUIDS[idx]);
         return cluster;
     }
+
+    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType, boolean replay)
+            throws Exception {
+        assertEquals("", query);
+
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { STORAGE_DOMAIN_ID },
+                setUpStorageDomain(domainType));
+
+        switch (domainType) {
+        case Data:
+            setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesFromStorageDomain,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { STORAGE_DOMAIN_ID },
+                    setUpTemplates(),
+                    failure);
+            break;
+        case ImportExport:
+            setUpEntityQueryExpectations(VdcQueryType.GetTemplatesFromExportDomain,
+                    GetAllFromExportDomainQueryParameters.class,
+                    new String[] { "StoragePoolId", "StorageDomainId" },
+                    new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID },
+                    setUpExportTemplates(),
+                    failure);
+            break;
+        default:
+            break;
+        }
+
+        if (replay) {
+            control.replay();
+        }
+    }
+
+    protected List<VmTemplate> setUpTemplates() {
+        List<VmTemplate> ret = new ArrayList<VmTemplate>();
+        for (int i = 0; i < NAMES.length; i++) {
+            ret.add(getEntity(i));
+        }
+        return ret;
+    }
+
+    protected HashMap<VmTemplate, List<DiskImage>> setUpExportTemplates() {
+        HashMap<VmTemplate, List<DiskImage>> ret = new LinkedHashMap<VmTemplate, List<DiskImage>>();
+        for (int i = 0; i < NAMES.length; i++) {
+            ret.put(getEntity(i), new ArrayList<DiskImage>());
+        }
+        return ret;
+    }
+
 }

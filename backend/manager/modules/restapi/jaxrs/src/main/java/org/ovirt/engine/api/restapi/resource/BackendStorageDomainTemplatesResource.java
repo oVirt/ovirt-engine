@@ -5,15 +5,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
-import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
+import org.ovirt.engine.api.resource.StorageDomainContentsResource;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -23,7 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainTemplatesResource
     extends AbstractBackendStorageDomainContentsResource<Templates, Template, VmTemplate>
-    implements RemovableStorageDomainContentsResource<Templates, Template> {
+        implements StorageDomainContentsResource<Templates, Template> {
 
     static final String[] SUB_COLLECTIONS = { "disks" };
 
@@ -73,14 +70,6 @@ public class BackendStorageDomainTemplatesResource
     @SingleEntityResource
     public StorageDomainContentResource<Template> getStorageDomainContentSubResource(String id) {
         return inject(new BackendStorageDomainTemplateResource(this, id));
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveVmTemplateFromImportExport,
-                             new VmTemplateImportExportParameters(asGuid(id),
-                                                                  storageDomainId,
-                                                                  getDataCenterId(storageDomainId)));
     }
 
     @Override

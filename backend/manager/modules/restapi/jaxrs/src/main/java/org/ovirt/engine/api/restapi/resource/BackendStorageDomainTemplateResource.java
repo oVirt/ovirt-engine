@@ -10,6 +10,7 @@ import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -121,5 +122,14 @@ public class BackendStorageDomainTemplateResource
     @Override
     public StorageDomainContentDisksResource getDisksResource() {
         return inject(new BackendExportDomainDisksResource(this));
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveVmTemplateFromImportExport,
+                new VmTemplateImportExportParameters(guid,
+                        parent.storageDomainId,
+                        getDataCenterId(parent.storageDomainId)));
     }
 }

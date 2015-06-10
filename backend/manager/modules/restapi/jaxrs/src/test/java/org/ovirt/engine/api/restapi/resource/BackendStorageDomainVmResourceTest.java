@@ -20,6 +20,7 @@ import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -178,12 +179,73 @@ public class BackendStorageDomainVmResourceTest
         doTestImport(storageDomain, cluster, false, true);
     }
 
+    @Test
+    public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
+        setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
+        String[] names = new String[] { "VmId", "StorageDomainId", "StoragePoolId" };
+        Object[] values = new Object[] { GUIDS[1], GUIDS[3], DATA_CENTER_ID };
+        setUpActionExpectations(VdcActionType.RemoveVmFromImportExport,
+                RemoveVmFromImportExportParameters.class,
+                names,
+                values,
+                true,
+                true);
+        verifyRemove(resource.remove());
+    }
+
+    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType, boolean replay) throws Exception {
+        assertEquals("", query);
+
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
+                                     new Object[] { STORAGE_DOMAIN_ID },
+                                     setUpStorageDomain(domainType));
+
+        switch (domainType) {
+        case Data:
+            break;
+        case ImportExport:
+            setUpEntityQueryExpectations(VdcQueryType.GetVmsFromExportDomain,
+                                         GetAllFromExportDomainQueryParameters.class,
+                                         new String[] { "StoragePoolId", "StorageDomainId"},
+                                         new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID},
+                                         setUpVms(),
+                                         failure);
+            break;
+        default:
+            break;
+        }
+
+        if (replay) {
+            control.replay();
+        }
+    }
+
+
+    protected List<org.ovirt.engine.core.common.businessentities.VM> setUpVms() {
+        List<org.ovirt.engine.core.common.businessentities.VM> ret =
+                new ArrayList<org.ovirt.engine.core.common.businessentities.VM>();
+        for (int i = 0; i < NAMES.length; i++) {
+            ret.add(getEntity(i));
+        }
+        return ret;
+    }
+
+    private void setUpGetDataCenterByStorageDomainExpectations(Guid id, int times) {
+        while (times-- > 0) {
+            setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { id },
+                    setUpStoragePool());
+        }
+    }
+
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id) {
-        setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { id },
-                setUpStoragePool());
+        setUpGetDataCenterByStorageDomainExpectations(id, 1);
     }
 
     public void doTestImport(StorageDomain storageDomain, Cluster cluster, boolean collapseSnapshots, boolean importAsNewEntity) throws Exception {

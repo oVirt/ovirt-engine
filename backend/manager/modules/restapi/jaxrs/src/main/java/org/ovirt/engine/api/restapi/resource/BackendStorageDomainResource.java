@@ -28,7 +28,7 @@ import org.ovirt.engine.api.resource.DiskSnapshotsResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.ImagesResource;
-import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
+import org.ovirt.engine.api.resource.StorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionsResource;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
@@ -363,12 +363,12 @@ public class BackendStorageDomainResource extends
     }
 
     @Override
-    public RemovableStorageDomainContentsResource<Templates, Template> getStorageDomainTemplatesResource() {
+    public StorageDomainContentsResource<Templates, Template> getStorageDomainTemplatesResource() {
         return inject(new BackendStorageDomainTemplatesResource(guid));
     }
 
     @Override
-    public RemovableStorageDomainContentsResource<VMs, VM> getStorageDomainVmsResource() {
+    public StorageDomainContentsResource<VMs, VM> getStorageDomainVmsResource() {
         return inject(new BackendStorageDomainVmsResource(guid));
     }
 
