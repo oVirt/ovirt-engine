@@ -4,7 +4,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
-public class HttpLocationInfo extends LocationInfo {
+public class HttpLocationInfo extends ExternalLocationInfo {
+
     String url;
     Map<String, String> headers;
 

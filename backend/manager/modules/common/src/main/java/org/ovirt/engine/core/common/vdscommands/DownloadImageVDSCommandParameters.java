@@ -1,16 +1,16 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.common.businessentities.LocationInfo;
+import org.ovirt.engine.core.common.businessentities.HttpLocationInfo;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DownloadImageVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
-    private LocationInfo downloadInfo;
+    private HttpLocationInfo downloadInfo;
 
     public DownloadImageVDSCommandParameters(Guid storagePoolId,
                                              Guid storageDomainId,
                                              Guid imageGroupId,
                                              Guid imageId,
-                                             LocationInfo downloadInfo) {
+                                             HttpLocationInfo downloadInfo) {
         super(storagePoolId, storageDomainId, imageGroupId, imageId);
         this.downloadInfo = downloadInfo;
     }
@@ -18,11 +18,11 @@ public class DownloadImageVDSCommandParameters extends AllStorageAndImageIdVDSCo
     public DownloadImageVDSCommandParameters() {
     }
 
-    public LocationInfo getDownloadInfo() {
+    public HttpLocationInfo getDownloadInfo() {
         return downloadInfo;
     }
 
-    public void setDownloadInfo(LocationInfo downloadInfo) {
+    public void setDownloadInfo(HttpLocationInfo downloadInfo) {
         this.downloadInfo = downloadInfo;
     }
 }
