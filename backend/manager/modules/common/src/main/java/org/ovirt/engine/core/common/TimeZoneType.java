@@ -32,6 +32,7 @@ public enum TimeZoneType {
             generalTimeZones.put("Atlantic/Cape_Verde", "(GMT-01:00) Cape Verde Standard Time");
             generalTimeZones.put("Asia/Yerevan", "(GMT+04:00) Caucasus Standard Time");
             generalTimeZones.put("Australia/Adelaide", "(GMT+09:30) Cen. Australia Standard Time");
+            generalTimeZones.put("Australia/Darwin", "(GMT+09:30) Cen. Australia Standard Time");
             generalTimeZones.put("America/Guatemala", "(GMT-06:00) Central America Standard Time");
             generalTimeZones.put("Asia/Almaty", "(GMT+06:00) Central Asia Standard Time");
             // generalTimeZones.put("America/Cuiaba", "(GMT-04:00) Central Brazilian Standard Time "); // Not in Sysprep documentation
