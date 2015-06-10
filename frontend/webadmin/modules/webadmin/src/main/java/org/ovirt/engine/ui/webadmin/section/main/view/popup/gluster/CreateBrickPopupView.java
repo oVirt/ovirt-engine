@@ -8,10 +8,14 @@ import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -21,6 +25,8 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.CreateBrickModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.CreateBrickPopupPresenterWidget;
 
@@ -78,6 +84,14 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     @WithElementId
     StringEntityModelLabelEditor sizeEditor;
 
+    @UiField
+    @Ignore
+    Label raidParamsLabel;
+
+    @UiField(provided = true)
+    @Ignore
+    InfoIcon raidParamsInfoIcon;
+
     @UiField(provided = true)
     @Path(value = "raidTypeList.selectedItem")
     @WithElementId
@@ -92,10 +106,17 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     @WithElementId
     IntegerEntityModelTextBoxEditor noOfPhysicalDisksEditor;
 
-    @UiField
+    @UiField(provided = true)
+    @WithElementId("stripeSize")
+    public EntityModelWidgetWithInfo<String> stripeSizeWithInfo;
+
+    @Ignore
+    @WithElementId("stripeSizeLabel")
+    public StringEntityModelLabel stripeSizeLabel;
+
     @Path(value = "stripeSize.entity")
-    @WithElementId
-    IntegerEntityModelTextBoxEditor stripeSizeEditor;
+    @WithElementId("stripeSizeEditor")
+    IntegerEntityModelTextBoxOnlyEditor stripeSizeEditor;
 
     @UiField
     @Ignore
@@ -103,6 +124,8 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
     private final static UIMessages messages = ConstantsManager.getInstance().getMessages();
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationMessages applicationMessages = AssetProvider.getMessages();
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -110,7 +133,11 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     public CreateBrickPopupView(EventBus eventBus) {
         super(eventBus);
         initListBoxEditors();
+        initInfoIcon();
         deviceTable = new ListModelObjectCellTable<StorageDevice, ListModel<StorageDevice>>(true, false);
+        stripeSizeLabel = new StringEntityModelLabel();
+        stripeSizeEditor = new IntegerEntityModelTextBoxOnlyEditor();
+        stripeSizeWithInfo = new EntityModelWidgetWithInfo<String>(stripeSizeLabel, stripeSizeEditor);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize();
@@ -151,11 +178,15 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
         lvNameEditor.setLabel(constants.logicalVolume());
         mountPointEditor.setLabel(constants.mountPoint());
         sizeEditor.setLabel(constants.lvSize());
+        raidParamsLabel.setText(constants.raidParameters());
         raidTypeEditor.setLabel(constants.raidType());
         noOfPhysicalDisksEditor.setLabel(constants.noOfPhysicalDisksInRaidVolume());
-        stripeSizeEditor.setLabel(constants.stripeSize());
+        stripeSizeLabel.setText(constants.stripeSize());
         deviceHeader.setText(constants.storageDevices());
-        deviceSelectionInfo.setText(constants.getStorageDeviceSelectionInfo());
+    }
+
+    private void initInfoIcon() {
+        raidParamsInfoIcon = new InfoIcon(templates.italicText(constants.raidConfigurationWarning()));
     }
 
     @Override
@@ -163,7 +194,7 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
         deviceTable.asEditor().edit(object.getStorageDevices());
         driver.edit(object);
         deviceSelectionInfo.setText(null);
-        setDeviceInfoVisibility(false);
+        setRaidParamsVisibility(false);
     }
 
     @Override
@@ -177,13 +208,17 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     }
 
     @Override
-    public void setDeviceInfoText(String raidType) {
-        deviceSelectionInfo.setText("(" + constants.getStorageDeviceSelectionInfo() + raidType + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+    public void setRaidInfoMessages(String raidType, int stripeSize) {
+        deviceSelectionInfo.setText(applicationMessages.getStorageDeviceSelectionInfo(raidType)); //$NON-NLS-1$ //$NON-NLS-2$
+        this.stripeSizeWithInfo.setExplanation(templates.italicText(applicationMessages.stripSizeInfoForGlusterBricks(stripeSize,
+                raidType)));
+
     }
 
     @Override
-    public void setDeviceInfoVisibility(boolean isVisiable) {
+    public void setRaidParamsVisibility(boolean isVisiable) {
         deviceSelectionInfo.setVisible(isVisiable);
+        stripeSizeWithInfo.setVisible(isVisiable);
     }
 
     @Override

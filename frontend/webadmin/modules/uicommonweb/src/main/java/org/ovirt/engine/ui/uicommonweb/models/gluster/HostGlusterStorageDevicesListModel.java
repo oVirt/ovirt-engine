@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.gluster.CreateBrickParameters;
+import org.ovirt.engine.core.common.businessentities.RaidType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
@@ -132,6 +133,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
         lvModel.setHashName("create_brick"); //$NON-NLS-1$
         lvModel.startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());
         setWindow(lvModel);
+        lvModel.getRaidTypeList().setSelectedItem(RaidType.RAID6);
         List<StorageDevice> selectedDevices = getSelectedItems();
         lvModel.getStorageDevices().setItems(selectedDevices);
         lvModel.setSelectedDevices(selectedDevices);

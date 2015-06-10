@@ -115,4 +115,10 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("{0}% ({1} GB)")
     String percentWithValueInGB(int percent, int value);
+
+    @DefaultMessage("Stripe Size {0} KB is recommended for {1} device")
+    String stripSizeInfoForGlusterBricks(int stripeSize, String raidType);
+
+    @DefaultMessage("(Choose storage devices of RAID type: {0})")
+    String getStorageDeviceSelectionInfo(String raidType);
 }

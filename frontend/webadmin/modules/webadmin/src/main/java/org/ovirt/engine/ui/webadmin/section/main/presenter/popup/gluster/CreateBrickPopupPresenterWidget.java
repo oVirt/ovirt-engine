@@ -13,8 +13,8 @@ import com.google.inject.Inject;
 public class CreateBrickPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<CreateBrickModel, CreateBrickPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<CreateBrickModel> {
-        void setDeviceInfoText(String raidType);
-        void setDeviceInfoVisibility(boolean isVisiable);
+        public void setRaidInfoMessages(String raidType, int stripeSize);
+        void setRaidParamsVisibility(boolean isVisiable);
     }
 
     @Inject
@@ -34,10 +34,11 @@ public class CreateBrickPopupPresenterWidget extends AbstractModelBoundPopupPres
                 if ("raidTypeChanged".equals(propName)) { //$NON-NLS-1$
                     if (model.getRaidTypeList().getSelectedItem() != RaidType.NONE
                             && model.getRaidTypeList().getSelectedItem() != RaidType.RAID0) {
-                        getView().setDeviceInfoText(model.getRaidTypeList().getSelectedItem().name());
-                        getView().setDeviceInfoVisibility(true);
+                        getView().setRaidInfoMessages(model.getRaidTypeList().getSelectedItem().name(),
+                                model.getStripeSize().getEntity());
+                        getView().setRaidParamsVisibility(true);
                     } else {
-                        getView().setDeviceInfoVisibility(false);
+                        getView().setRaidParamsVisibility(false);
                     }
                 }
             }
