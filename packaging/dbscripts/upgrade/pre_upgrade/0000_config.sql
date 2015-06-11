@@ -184,8 +184,8 @@ select fn_db_add_config_value('GlusterRefreshRateSnapshotDiscovery', '300', 'gen
 
 -- Gluster Disk Provisioning --
 select fn_db_add_config_value_for_versions_up_to('GlusterBrickProvisioningEnabled', 'false', '3.5');
-select fn_db_add_config_value('GlusterStorageDeviceListMountPointsToIgore','/,/home,/boot','general');
-select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgore','swap','general');
+select fn_db_add_config_value('GlusterStorageDeviceListMountPointsToIgnore','/,/home,/boot,/run/gluster/snaps/.*','general');
+select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgnore','swap','general');
 select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks','general');
 
 -- Gluster Network Role --
@@ -917,7 +917,6 @@ select fn_db_update_default_config_value('ExternalCommunicationProtocol','SSLv3'
 -- Adding no-TSX Intel processors and power8e in 3.6
 select fn_db_update_default_config_value('ServerCPUList', '3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; 8:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64; 5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; 6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; 3:IBM POWER 8:powernv,model_power8:power8:ppc64;', '3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; 8:Intel Haswell-noTSX Family:vmx,nx,model_Haswell-noTSX:Haswell-noTSX:x86_64; 9:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; 10:Intel Broadwell-noTSX Family:vmx,nx,model_Broadwell-noTSX:Broadwell-noTSX:x86_64; 11:Intel Broadwell Family:vmx,nx,model_Broadwell:Broadwell:x86_64; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64; 5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; 6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; 3:IBM POWER 8:powernv,model_power8:power8:ppc64; 4:IBM POWER 8E:powernv,model_power8e:power8e:ppc64;', '3.6', FALSE);
 
-
 ------------------------------------------------------------------------------------
 --              Cleanup deprecated configuration values section
 ------------------------------------------------------------------------------------
@@ -979,6 +978,8 @@ select fn_db_delete_config_value('VdsFenceOptionMapping','general');
 select fn_db_delete_config_value('MountPointsToIgoreInGlusterStorageList','general');
 select fn_db_delete_config_value('FileSystemTypesToIgoreInGlusterStorageList','general');
 select fn_db_delete_config_value('DefaultGlusterBrickMountPoint','general');
+select fn_db_delete_config_value('GlusterStorageDeviceListMountPointsToIgore','general');
+select fn_db_delete_config_value('GlusterStorageDeviceListFileSystemTypesToIgore','general');
 -- removing power client
 select fn_db_delete_config_value('PowerClientAllowUsingAsIRS','general');
 select fn_db_delete_config_value('PowerClientGUI','general');
