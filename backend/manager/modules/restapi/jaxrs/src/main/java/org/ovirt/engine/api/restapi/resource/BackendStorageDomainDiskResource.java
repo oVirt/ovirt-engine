@@ -3,12 +3,16 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+
+import javax.ws.rs.core.Response;
 
 public class BackendStorageDomainDiskResource extends BackendDiskResource {
 
@@ -62,5 +66,11 @@ public class BackendStorageDomainDiskResource extends BackendDiskResource {
 
     public String getStorageDomainId() {
         return storageDomainId;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(guid, asGuid(storageDomainId)));
     }
 }

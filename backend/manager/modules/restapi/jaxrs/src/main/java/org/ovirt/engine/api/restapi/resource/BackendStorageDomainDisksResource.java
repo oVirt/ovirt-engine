@@ -11,7 +11,6 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
-import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -70,13 +69,6 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
             params.setStorageDomainId(this.storageDomainId);
             return performCreate(VdcActionType.AddDisk, params, ID_RESOLVER);
         }
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        RemoveDiskParameters params = new RemoveDiskParameters(asGuid(id));
-        params.setStorageDomainId(this.storageDomainId);
-        return performAction(VdcActionType.RemoveDisk, params);
     }
 
     @Override

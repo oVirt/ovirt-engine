@@ -16,6 +16,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -29,21 +30,22 @@ import org.ovirt.engine.api.model.Disk;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface DiskResource extends ReadOnlyDeviceResource<Disk>, MeasurableResource {
-
     @Path("{action: (export)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
+    ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @GET
     @Override
-    public Disk get();
+    Disk get();
+
+    @DELETE
+    Response remove();
 
     @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
+    AssignedPermissionsResource getPermissionsResource();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("export")
-    public Response doExport(Action action);
-
+    Response doExport(Action action);
 }

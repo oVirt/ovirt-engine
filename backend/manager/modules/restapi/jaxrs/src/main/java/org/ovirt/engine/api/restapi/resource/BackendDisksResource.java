@@ -14,7 +14,6 @@ import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -118,11 +117,6 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     @SingleEntityResource
     public MovableCopyableDiskResource getDeviceSubResource(String id) {
         return inject(new BackendDiskResource(id));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(asGuid(id)));
     }
 
     protected Disks mapCollection(List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities) {

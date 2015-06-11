@@ -22,6 +22,7 @@ import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
@@ -149,5 +150,11 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
             model.setVms(modelVms);
         }
         return model;
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(guid));
     }
 }
