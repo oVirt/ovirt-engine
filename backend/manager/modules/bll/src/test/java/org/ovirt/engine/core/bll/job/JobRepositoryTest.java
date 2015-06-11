@@ -52,6 +52,22 @@ public class JobRepositoryTest {
     }
 
     @Test
+    public void getJobWithSteps() {
+        Job jobWithSteps = jobRepository.getJobWithSteps(job.getId());
+        assertNotNull(jobWithSteps);
+        assertNotNull(jobWithSteps.getSteps());
+        assertTrue(!jobWithSteps.getSteps().isEmpty());
+        assertEquals(JOB_SUBJECT_ENTITIES_MAP, jobWithSteps.getJobSubjectEntities());
+    }
+
+    @Test
+    public void loadJobSteps() {
+        jobRepository.loadJobSteps(job);
+        assertNotNull(job.getSteps());
+        assertTrue(!job.getSteps().isEmpty());
+    }
+
+    @Test
     public void getJobById() {
         assertNotNull(jobRepository.getJob(job.getId()));
         assertEquals(JOB_SUBJECT_ENTITIES_MAP, job.getJobSubjectEntities());

@@ -53,6 +53,7 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
         if (parentStep == null) { // A step that is directly under a job
                 context.setJob(job);
                 context.setExecutionMethod(ExecutionMethod.AsJob);
+                JobRepositoryFactory.getJobRepository().loadJobSteps(job);
                 Step step = ExecutionHandler.addStep(context, getParameters().getStepType(), getParameters().getDescription(), true);
                 setActionReturnValue(step.getId());
                 setSucceeded(true);

@@ -21,11 +21,10 @@ import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -146,7 +145,7 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
     /**
      * A collection which holds the entities associated with the Job
      */
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @MapKey(name = "entity_id")
     @CollectionTable(schema = "jpa", name = "job_subject_entity",
             joinColumns = @JoinColumn(name = "job_id"))
@@ -156,9 +155,8 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
      * A collection which stores the steps of the Job
      */
 
-    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "jobId", orphanRemoval = true, fetch = FetchType.EAGER)
-    @OrderColumn(name = "step_number")
-    @Fetch(FetchMode.SELECT)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "jobId", orphanRemoval = true)
     private List<Step> steps;
 
     /**
