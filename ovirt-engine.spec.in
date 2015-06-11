@@ -331,6 +331,7 @@ Summary:	Engine core of %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-extensions-api-impl >= %{version}-%{release}
+Requires:	%{name}-extension-aaa-jdbc
 Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	ebay-cors-filter
 Requires:	httpd
