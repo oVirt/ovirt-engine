@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
     <ui:with field='resources'
         type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
@@ -45,22 +47,6 @@
             margin-left: 5px;
         }
 
-        .checkboxEditor {
-            width: 20px;
-            padding: 0px;
-        }
-
-        .collapseEditor {
-            padding: 0px;
-         }
-
-        .imageStyle {
-            vertical-align: bottom;
-            height: 30px;
-            line-height: 25px;
-            margin-left: 10px;
-        }
-
         .cellSelectBox {
             width: 100%;
         }
@@ -70,8 +56,19 @@
         }
 
         .listBoxEditor {
-            width: 515px;
+            width: 450px;
         }
+
+        .cdAttachedLabelWidth {
+            width: 30px;
+            margin-left: 50px;
+        }
+
+        .generalConfigurationColumn {
+            margin-left: 10px;
+            margin-right: 5px;
+        }
+
     </ui:style>
     <d:SimpleDialogPanel height="575px" width="1000px">
         <d:content>
@@ -79,21 +76,24 @@
                 <g:HorizontalPanel>
                     <g:VerticalPanel>
                         <g:HorizontalPanel>
-                            <g:VerticalPanel>
+                            <g:VerticalPanel addStyleNames="{style.generalConfigurationColumn}">
                                 <e:ListModelListBoxEditor ui:field="destStorageEditor" addStyleNames="{style.listBoxEditor}"/>
                                 <e:ListModelListBoxEditor ui:field="destClusterEditor" addStyleNames="{style.listBoxEditor}"/>
                                 <e:ListModelListBoxEditor ui:field="cpuProfileEditor" addStyleNames="{style.listBoxEditor}"/>
                             </g:VerticalPanel>
-                            <g:VerticalPanel>
-                                <e:ListModelListBoxEditor ui:field="disksAllocationEditor" />
-                                <e:ListModelListBoxEditor ui:field="destClusterQuotaEditor" />
+                            <g:VerticalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.generalConfigurationColumn}">
+                                <e:ListModelListBoxEditor ui:field="disksAllocationEditor" addStyleNames="{style.listBoxEditor}" />
+                                <g:HorizontalPanel>
+                                    <ge:EntityModelCheckBoxEditor ui:field="attachDriversEditor" />
+                                    <e:ListModelListBoxOnlyEditor ui:field="cdImageEditor" addStyleNames="avmpw_cdImageEditor_pfly_fix" />
+                                </g:HorizontalPanel>
+                                <e:ListModelListBoxEditor ui:field="destClusterQuotaEditor" addStyleNames="{style.destStorageQuotaEditor}" />
                             </g:VerticalPanel>
                         </g:HorizontalPanel>
                     </g:VerticalPanel>
                 </g:HorizontalPanel>
                 <g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
-                <g:SplitLayoutPanel ui:field="splitLayoutPanel"
-                    height="360px" addStyleNames="{style.splitLayoutPanelStyle}" />
+                <g:SplitLayoutPanel ui:field="splitLayoutPanel" height="360px" addStyleNames="{style.splitLayoutPanelStyle}" />
             </g:VerticalPanel>
         </d:content>
     </d:SimpleDialogPanel>

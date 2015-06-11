@@ -775,6 +775,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Attach CD")
     String attachCdVmPopup();
 
+    @DefaultStringValue("Attach VirtIO-Drivers")
+    String attachVirtioDrivers();
+
     @DefaultStringValue("Linux Boot Options:")
     String linuxBootOptionsVmPopup();
 

@@ -15,14 +15,19 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
@@ -104,6 +109,16 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     @Path(value = "allocation.selectedItem")
     ListModelListBoxEditor<VolumeType> disksAllocationEditor;
 
+    @UiField(provided = true)
+    @Path(value = "iso.selectedItem")
+    @WithElementId("iso")
+    public ListModelListBoxOnlyEditor<String> cdImageEditor;
+
+    @UiField(provided = true)
+    @Path(value = "attachDrivers.entity")
+    @WithElementId("attachDrivers")
+    public EntityModelCheckBoxEditor attachDriversEditor;
+
     @UiField
     SplitLayoutPanel splitLayoutPanel;
 
@@ -148,10 +163,14 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
 
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-
+        applyStyles();
         localize(constants);
         initTables();
         driver.initialize(this);
+    }
+
+    protected void applyStyles() {
+        attachDriversEditor.addContentWidgetContainerStyleName(style.cdAttachedLabelWidth());
     }
 
     private void initTables() {
@@ -265,6 +284,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         destStorageEditor.setLabel(constants.storageDomainDisk());
         cpuProfileEditor.setLabel(constants.cpuProfileLabel());
         disksAllocationEditor.setLabel(constants.allocationDisk());
+        attachDriversEditor.setLabel(constants.attachVirtioDrivers());
     }
 
     private void initListBoxEditors() {
@@ -296,6 +316,9 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
                 return new EnumRenderer<VolumeType>().render(object);
             }
         });
+
+        attachDriversEditor = new EntityModelCheckBoxEditor(Align.LEFT);
+        cdImageEditor = new ListModelListBoxOnlyEditor<>(new StringRenderer<String>());
     }
 
     @Override
@@ -534,10 +557,8 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     }
 
     interface WidgetStyle extends CssResource {
-        String checkboxEditor();
-
-        String collapseEditor();
-
         String cellSelectBox();
+
+        String cdAttachedLabelWidth();
     }
 }

@@ -41,7 +41,10 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import com.google.inject.Inject;
@@ -56,6 +59,8 @@ public class ImportVmFromExternalProviderModel extends ImportVmModel {
     private VmImportDiskListModel importDiskListModel;
     private List<Network> networks;
     private List<VnicProfileView> networkProfiles;
+    private ListModel<String> iso;
+    private EntityModel<Boolean> attachDrivers;
 
     private String url;
     private String username;
@@ -70,6 +75,15 @@ public class ImportVmFromExternalProviderModel extends ImportVmModel {
         setStorage(new ListModel<StorageDomain>());
         setAllocation(new ListModel<VolumeType>());
         getAllocation().setItems(Arrays.asList(VolumeType.Sparse, VolumeType.Preallocated));
+        setIso(new ListModel<String>());
+        getIso().setIsChangeable(false);
+        setAttachDrivers(new EntityModel<Boolean>(false));
+        getAttachDrivers().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                getIso().setIsChangeable(getAttachDrivers().getEntity());
+            }
+        });
         getClusterQuota().setIsAvailable(false);
         setDetailList(vmImportGeneralModel, vmImportInterfaceListModel, importDiskListModel);
     }
@@ -225,11 +239,35 @@ public class ImportVmFromExternalProviderModel extends ImportVmModel {
                         importVmData.getCollapseSnapshots());
             }
         }
+        initIsoImages();
         postInitDisks();
     }
 
     private void postInitDisks() {
         stopProgress();
+    }
+
+    private void initIsoImages() {
+        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        List<String> images = (List<String>) returnValue;
+                        getIso().setItems(images);
+                        getIso().setSelectedItem(tryToFindVirtioTools(images));
+                    }
+                }),
+                getStoragePool().getId(),
+                false);
+    }
+
+    private String tryToFindVirtioTools(List<String> isos) {
+        for (String iso : isos) {
+            if (iso.startsWith("virtio-win")) { //$NON-NLS-1$
+                return iso;
+            }
+        }
+        return isos.isEmpty() ? null : isos.get(0);
     }
 
     private void initQuotaForStorageDomains() {
@@ -317,6 +355,7 @@ public class ImportVmFromExternalProviderModel extends ImportVmModel {
             prm.setDestDomainId(getStorage().getSelectedItem().getId());
             prm.setStoragePoolId(getStoragePool().getId());
             prm.setVdsGroupId(((VDSGroup) getCluster().getSelectedItem()).getId());
+            prm.setVirtioIsoName(getIso().getIsChangable() ? getIso().getSelectedItem() : null);
 
             if (getClusterQuota().getSelectedItem() != null &&
                     getClusterQuota().getIsAvailable()) {
@@ -384,5 +423,21 @@ public class ImportVmFromExternalProviderModel extends ImportVmModel {
 
     void setProxyHostId(Guid proxyHostId) {
         this.proxyHostId = proxyHostId;
+    }
+
+    public ListModel<String> getIso() {
+        return iso;
+    }
+
+    public void setIso(ListModel<String> iso) {
+        this.iso = iso;
+    }
+
+    public EntityModel<Boolean> getAttachDrivers() {
+        return attachDrivers;
+    }
+
+    public void setAttachDrivers(EntityModel<Boolean> attachTools) {
+        this.attachDrivers = attachTools;
     }
 }
