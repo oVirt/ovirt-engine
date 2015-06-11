@@ -1474,11 +1474,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/,/home,/boot")
-    GlusterStorageDeviceListMountPointsToIgore,
+    GlusterStorageDeviceListMountPointsToIgnore,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("swap")
-    GlusterStorageDeviceListFileSystemTypesToIgore,
+    GlusterStorageDeviceListFileSystemTypesToIgnore,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
