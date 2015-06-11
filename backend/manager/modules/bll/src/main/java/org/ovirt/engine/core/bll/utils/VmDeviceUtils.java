@@ -320,10 +320,22 @@ public class VmDeviceUtils {
                 new VmDeviceId(Guid.newGuid(), vmId),
                 VmDeviceGeneralType.CONSOLE,
                 VmDeviceType.CONSOLE,
-                EMPTY_SPEC_PARAMS,
+                getConsoleDeviceSpecParams(),
                 true,
                 false);
     }
+
+    /**
+     * Returns console device spec params.
+     *
+     * @return
+     */
+    private static Map<String, Object> getConsoleDeviceSpecParams() {
+        Map<String, Object> specParams = new HashMap<>();
+        specParams.put("enableSocket", "true");
+        return specParams;
+    }
+
 
     /*
      * VirtIO-SCSI controller
