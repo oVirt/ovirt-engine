@@ -50,6 +50,7 @@ import org.ovirt.engine.api.restapi.resource.BackendStorageServerConnectionsReso
 import org.ovirt.engine.api.restapi.resource.BackendSystemPermissionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendTagsResource;
 import org.ovirt.engine.api.restapi.resource.BackendTemplatesResource;
+import org.ovirt.engine.api.restapi.resource.BackendIconsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVnicProfilesResource;
@@ -130,6 +131,7 @@ public class BackendApplication extends Application {
         addResource(new BackendDisksResource());
         addResource(new BackendTagsResource());
         addResource(new BackendBookmarksResource());
+        addResource(new BackendIconsResource());
         addResource(new BackendRolesResource());
         addResource(new BackendUsersResource());
         addResource(new BackendGroupsResource());

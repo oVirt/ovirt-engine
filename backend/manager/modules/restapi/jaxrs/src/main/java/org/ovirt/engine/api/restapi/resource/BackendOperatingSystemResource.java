@@ -18,7 +18,11 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.OperatingSystemInfo;
 import org.ovirt.engine.api.resource.OperatingSystemResource;
+import org.ovirt.engine.api.restapi.util.IconHelper;
+import org.ovirt.engine.core.common.businessentities.VmIconDefault;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.queries.GetVmIconDefaultParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -43,6 +47,14 @@ public class BackendOperatingSystemResource
         String name = repository.getOsNames().get(key);
         if (name != null) {
             model.setDescription(name);
+        }
+        final VmIconDefault vmIconDefault = getEntity(VmIconDefault.class,
+                VdcQueryType.GetVmIconDefault,
+                new GetVmIconDefaultParameters(key),
+                "VmIconDefault");
+        if (vmIconDefault != null) {
+            model.setSmallIcon(IconHelper.createIcon(vmIconDefault.getSmallIconId()));
+            model.setLargeIcon(IconHelper.createIcon(vmIconDefault.getLargeIconId()));
         }
         return addLinks(model);
     }

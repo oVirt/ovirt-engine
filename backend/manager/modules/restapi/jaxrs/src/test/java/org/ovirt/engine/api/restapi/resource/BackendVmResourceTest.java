@@ -285,6 +285,79 @@ public class BackendVmResourceTest
         verifyModelClearingPayloads(resource.update(getModelClearingPayloads(0)), 0);
     }
 
+    @Test
+    public void testUpdateUploadIcon() throws Exception {
+        setUpGetEntityExpectations(3);
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+
+        setUpGetPayloadExpectations(0, 2);
+        setUpGetBallooningExpectations();
+        setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(2);
+        setUpGetConsoleExpectations(new int[]{0});
+        setUpGetVmOvfExpectations(new int[]{0});
+        setUpGetVirtioScsiExpectations(new int[] {0});
+        setUpGetSoundcardExpectations(new int[] {0});
+        setUpGetRngDeviceExpectations(new int[]{0});
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+                VmManagementParametersBase.class,
+                new String[]{},
+                new Object[]{},
+                true,
+                true));
+        final VM model = getModel(0);
+        model.setLargeIcon(IconTestHelpler.createIconWithData());
+        verifyModel(resource.update(model), 0);
+    }
+
+    @Test
+    public void testUpdateUseExistingIcons() throws Exception {
+        setUpGetEntityExpectations(3);
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+
+        setUpGetPayloadExpectations(0, 2);
+        setUpGetBallooningExpectations();
+        setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(2);
+        setUpGetConsoleExpectations(new int[]{0});
+        setUpGetVmOvfExpectations(new int[]{0});
+        setUpGetVirtioScsiExpectations(new int[] {0});
+        setUpGetSoundcardExpectations(new int[] {0});
+        setUpGetRngDeviceExpectations(new int[]{0});
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+                VmManagementParametersBase.class,
+                new String[]{},
+                new Object[]{},
+                true,
+                true));
+        final VM model = getModel(0);
+        model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
+        model.setLargeIcon(IconTestHelpler.createIcon(GUIDS[3]));
+        verifyModel(resource.update(model), 0);
+    }
+
+    @Test
+    public void testUpdateSetAndUploadIconFailure() throws Exception {
+        control.replay();
+        final VM model = getModel(0);
+        model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
+        model.setLargeIcon(IconTestHelpler.createIconWithData());
+        try {
+            verifyModel(resource.update(model), 0);
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, BAD_REQUEST);
+        }
+    }
+
     protected void verifyModelClearingPayloads(VM model, int index) {
         verifyModel(model, index);
         assertNull(model.getPayloads());

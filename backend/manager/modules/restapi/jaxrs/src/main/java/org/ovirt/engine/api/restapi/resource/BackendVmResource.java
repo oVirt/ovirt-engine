@@ -47,6 +47,7 @@ import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendVmKate
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
+import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
@@ -194,6 +195,11 @@ public class BackendVmResource extends
             throw new WebFaultException(null,
                     localize(Messages.INCOMPLETE_PARAMS_REASON),
                     localize(Messages.INCOMPLETE_PARAMS_CONDITIONAL, "Domain", "Domain name"),
+                    Response.Status.BAD_REQUEST);
+        }
+        if (!IconHelper.validateIconParameters(incoming)) {
+            throw new BaseBackendResource.WebFaultException(null,
+                    localize(Messages.INVALID_ICON_PARAMETERS),
                     Response.Status.BAD_REQUEST);
         }
     }
@@ -609,6 +615,7 @@ public class BackendVmResource extends
                 // this means that the instance type should be unset
                 updated.setInstanceTypeId(null);
             }
+            IconHelper.setIconToParams(incoming, params);
             return params;
         }
     }

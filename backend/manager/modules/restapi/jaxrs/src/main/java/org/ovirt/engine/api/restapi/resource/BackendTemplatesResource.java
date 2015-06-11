@@ -18,11 +18,13 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
+import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -73,6 +75,7 @@ public class BackendTemplatesResource
     public Response add(Template template) {
         validateParameters(template, "name", "vm.id|name");
         validateEnums(Template.class, template);
+        validateIconParameters(template);
         Guid clusterId = null;
         VDSGroup cluster = null;
         if (namedCluster(template)) {
@@ -125,6 +128,7 @@ public class BackendTemplatesResource
             isDomainSet));
 
         setupCloneVmPermissions(template, params);
+        IconHelper.setIconToParams(template, params);
 
         Response response = performCreate(
             VdcActionType.AddVmTemplate,
@@ -138,6 +142,14 @@ public class BackendTemplatesResource
         }
 
         return response;
+    }
+
+    private void validateIconParameters(Template incoming) {
+        if (!IconHelper.validateIconParameters(incoming)) {
+            throw new BaseBackendResource.WebFaultException(null,
+                    localize(Messages.INVALID_ICON_PARAMETERS),
+                    Response.Status.BAD_REQUEST);
+        }
     }
 
     void setupCloneVmPermissions(Template template, AddVmTemplateParameters params) {

@@ -510,11 +510,15 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected void verifyFault(WebApplicationException wae, String reason, String detail, int status) {
-        assertEquals(status, wae.getResponse().getStatus());
-        assertTrue(wae.getResponse().getEntity() instanceof Fault);
+        verifyFault(wae, status);
         Fault fault = (Fault) wae.getResponse().getEntity();
         assertEquals(reason, fault.getReason());
         assertEquals(detail, fault.getDetail());
+    }
+
+    protected void verifyFault(WebApplicationException wae, int status) {
+        assertEquals(status, wae.getResponse().getStatus());
+        assertTrue(wae.getResponse().getEntity() instanceof Fault);
     }
 
     protected void verifyFault(WebApplicationException wae, String reason, Throwable t) {

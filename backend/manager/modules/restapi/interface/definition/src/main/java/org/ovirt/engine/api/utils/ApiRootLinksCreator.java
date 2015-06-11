@@ -41,6 +41,7 @@ public class ApiRootLinksCreator {
         links.add(createLink("storagedomains", LinkFlags.SEARCHABLE, baseUri));
         links.add(createLink("tags", baseUri));
         links.add(createLink("bookmarks", baseUri));
+        links.add(createLink("icons", baseUri));
         links.add(createLink("templates", LinkFlags.SEARCHABLE, baseUri));
         links.add(createLink("instancetypes", LinkFlags.SEARCHABLE, baseUri));
         links.add(createLink("users", LinkFlags.SEARCHABLE, baseUri));

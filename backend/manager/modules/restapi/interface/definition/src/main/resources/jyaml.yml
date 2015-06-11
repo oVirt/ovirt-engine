@@ -75,6 +75,7 @@ transfers:
   parent: org.ovirt.engine.api.model.TagParent
   tags: org.ovirt.engine.api.model.Tags
   bookmarks: org.ovirt.engine.api.models.Bookmarks
+  icons: org.ovirt.engine.api.models.VmIcons
   template: org.ovirt.engine.api.model.Template
   templates: org.ovirt.engine.api.model.Templates
   instance_type: org.ovirt.engine.api.model.InstanceType
@@ -183,6 +184,8 @@ handlers:
   org.ovirt.engine.api.model.SystemVersion: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Bookmark: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Bookmarks: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.VmIcon: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.VmIcons: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Tag: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.TagParent: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Tags: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper

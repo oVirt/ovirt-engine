@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -521,6 +522,108 @@ public class BackendTemplatesResourceTest
         }
     }
 
+    @Test
+    public void testAddUploadIcon() throws Exception {
+        setUpGetGraphicsExpectations(1);
+        setUpGetConsoleExpectations(new int[]{0, 0, 0});
+        setUpGetSoundcardExpectations(new int[]{0});
+
+        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[1] },
+                setUpVm(GUIDS[1]));
+
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+
+        setUpAddExpectations();
+
+        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+                AddVmTemplateParameters.class,
+                new String[] { "Name", "Description", "VmLargeIcon"},
+                new Object[] { NAMES[0], DESCRIPTIONS[0],
+                        VmIcon.typeAndDataToDataUrl(IconTestHelpler.MEDIA_TYPE, IconTestHelpler.DATA_URL) },
+                true,
+                true,
+                GUIDS[0],
+                asList(GUIDS[2]),
+                asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
+                VdcQueryType.GetVmTemplate,
+                GetVmTemplateParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                getEntity(0));
+
+        final Template restModel = getRestModel(0);
+        restModel.setLargeIcon(IconTestHelpler.createIconWithData());
+        Response response = doAdd(restModel);
+        assertEquals(201, response.getStatus());
+        verifyModel((Template)response.getEntity(), 0);
+        assertNull(((Template) response.getEntity()).getCreationStatus());
+    }
+
+    @Test
+    public void testAddUseExistingIcons() throws Exception {
+        setUpGetGraphicsExpectations(1);
+        setUpGetConsoleExpectations(new int[]{0, 0, 0});
+        setUpGetSoundcardExpectations(new int[]{0});
+
+        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[1] },
+                setUpVm(GUIDS[1]));
+
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+
+        setUpAddExpectations();
+
+        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+                AddVmTemplateParameters.class,
+                new String[] { "Name", "Description"},
+                new Object[] { NAMES[0], DESCRIPTIONS[0] },
+                true,
+                true,
+                GUIDS[0],
+                asList(GUIDS[2]),
+                asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
+                VdcQueryType.GetVmTemplate,
+                GetVmTemplateParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                getEntity(0));
+
+        final Template restModel = getRestModel(0);
+        restModel.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
+        restModel.setLargeIcon(IconTestHelpler.createIcon(GUIDS[3]));
+        Response response = doAdd(restModel);
+        assertEquals(201, response.getStatus());
+        verifyModel((Template)response.getEntity(), 0);
+        assertNull(((Template) response.getEntity()).getCreationStatus());
+    }
+
+    @Test
+    public void testAddSetAndUploadIconFailure() throws Exception {
+        control.replay();
+        final Template restModel = getRestModel(0);
+        restModel.setLargeIcon(IconTestHelpler.createIconWithData());
+        restModel.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
+        try {
+            collection.add(restModel);
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, BAD_REQUEST);
+        }
+    }
+
     protected org.ovirt.engine.core.common.businessentities.VM setUpVm(Guid id) {
         org.ovirt.engine.core.common.businessentities.VM vm =
             control.createMock(org.ovirt.engine.core.common.businessentities.VM.class);
@@ -552,6 +655,8 @@ public class BackendTemplatesResourceTest
             expect(entity.getBaseTemplateId()).andReturn(GUIDS[index]).anyTimes();
             expect(entity.isBaseTemplate()).andReturn(true).anyTimes();
         }
+        expect(entity.getSmallIconId()).andReturn(GUIDS[2]).anyTimes();
+        expect(entity.getLargeIconId()).andReturn(GUIDS[3]).anyTimes();
         return entity;
     }
 
@@ -616,6 +721,8 @@ public class BackendTemplatesResourceTest
             assertNotNull(model.getVersion());
             assertNotSame(model.getVersion().getBaseTemplate().getId(), model.getId());
         }
+        assertEquals(GUIDS[2].toString(), model.getSmallIcon().getId());
+        assertEquals(GUIDS[3].toString(), model.getLargeIcon().getId());
     }
 
     @Override

@@ -21,13 +21,17 @@ import org.ovirt.engine.api.model.OperatingSystemInfo;
 import org.ovirt.engine.api.model.OperatingSystemInfos;
 import org.ovirt.engine.api.resource.OperatingSystemResource;
 import org.ovirt.engine.api.resource.OperatingSystemsResource;
+import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.Map;
 
 public class BackendOperatingSystemsResource
         extends AbstractBackendCollectionResource<OperatingSystemInfo, Integer>
@@ -39,6 +43,7 @@ public class BackendOperatingSystemsResource
     @Override
     public OperatingSystemInfos list() {
         OsRepository repository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+        final Map<Integer, VmIconIdSizePair> iconDefaults = getIconDefaults();
         ArrayList<Integer> ids = repository.getOsIds();
         HashMap<Integer, String> uniqueNames = repository.getUniqueOsNames();
         HashMap<Integer, String> names = repository.getOsNames();
@@ -46,6 +51,11 @@ public class BackendOperatingSystemsResource
         for (Integer id : ids) {
             OperatingSystemInfo model = new OperatingSystemInfo();
             model.setId(id.toString());
+            if (iconDefaults.containsKey(id)) {
+                final VmIconIdSizePair iconDefault = iconDefaults.get(id);
+                model.setSmallIcon(IconHelper.createIcon(iconDefault.getSmall()));
+                model.setLargeIcon(IconHelper.createIcon(iconDefault.getLarge()));
+            }
             String uniqueName = uniqueNames.get(id);
             if (uniqueName != null) {
                 model.setName(uniqueName);
@@ -57,6 +67,12 @@ public class BackendOperatingSystemsResource
             collection.getOperatingSystemInfos().add(addLinks(model));
         }
         return collection;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<Integer, VmIconIdSizePair> getIconDefaults() {
+        return (Map<Integer, VmIconIdSizePair>) getEntity(
+                Map.class, VdcQueryType.GetVmIconDefaults, new VdcQueryParametersBase(), "Icon defaults");
     }
 
     @Override

@@ -22,10 +22,12 @@ import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
+import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
@@ -69,6 +71,7 @@ public class BackendTemplateResource
     @Override
     public Template update(Template incoming) {
         validateEnums(Template.class, incoming);
+        validateIconParams(incoming);
         Template result = performUpdate(
             incoming,
             new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
@@ -79,6 +82,14 @@ public class BackendTemplateResource
             DisplayHelper.adjustDisplayData(this, result);
         }
         return result;
+    }
+
+    private void validateIconParams(Template incoming) {
+        if (!IconHelper.validateIconParameters(incoming)) {
+            throw new BaseBackendResource.WebFaultException(null,
+                    localize(Messages.INVALID_ICON_PARAMETERS),
+                    Response.Status.BAD_REQUEST);
+        }
     }
 
     @Override
@@ -154,6 +165,7 @@ public class BackendTemplateResource
                 params.setSoundDeviceEnabled(incoming.isSoundcardEnabled());
             }
 
+            IconHelper.setIconToParams(incoming, params);
             DisplayHelper.setGraphicsToParams(incoming.getDisplay(), params);
 
             return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, params);

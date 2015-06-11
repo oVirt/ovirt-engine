@@ -102,6 +102,10 @@ actions:
           vm.migration.auto_converge: xs:string
           vm.migration.compressed: xs:string
           vm.external_host_provider.id: xs:string
+          vm.small_icon.id: xs:string
+          vm.large_icon.id: xs:string
+          vm.large_icon.media_type: xs:string
+          vm.large_icon.data: xs:string
         description: update the virtual machine in the system for the given virtual machine id with the values specified in the request
 - name: /vms/{vm:id}/applications|rel=get
   description: get all the applications installed on the vm identified by the given id
@@ -188,6 +192,10 @@ actions:
           vm.cpu_profile.id: xs:string
           vm.migration.auto_converge: xs:string
           vm.migration.compressed: xs:string
+          vm.small_icon.id: xs:string
+          vm.large_icon.id: xs:string
+          vm.large_icon.media_type: xs:string
+          vm.large_icon.data: xs:string
         description: add a virtual machine to the system from scratch
       # the following signature is for clone VM from a Snapshot - requires the Snapshot ID
       - mandatoryArguments: {vm.name: 'xs:string', vm.template.id|name: 'xs:string', vm.cluster.id|name: 'xs:string',
@@ -252,6 +260,10 @@ actions:
           vm.cpu_profile.id: xs:string
           vm.migration.auto_converge: xs:string
           vm.migration.compressed: xs:string
+          vm.small_icon.id: xs:string
+          vm.large_icon.id: xs:string
+          vm.large_icon.media_type: xs:string
+          vm.large_icon.data: xs:string
         description: add a virtual machine to the system by cloning from a snapshot
       # the following signature is for adding VM from a configuration - requires the configuration type and the configuration data
       - mandatoryArguments: {vm.initialization.configuration.type: 'xs:string', vm.initialization.configuration.data: 'xs:string'}
@@ -316,6 +328,10 @@ actions:
                 vm.cpu_profile.id: xs:string
                 vm.migration.auto_converge: xs:string
                 vm.migration.compressed: xs:string
+                vm.small_icon.id: xs:string
+                vm.large_icon.id: xs:string
+                vm.large_icon.media_type: xs:string
+                vm.large_icon.data: xs:string
         description: add a virtual machine to the system from a configuration - requires the configuration type and the configuration data
 - name: /vms/{vm:id}/shutdown|rel=shutdown
   description: shutdown a virtual machine in the system identified by the given id
@@ -2300,6 +2316,10 @@ actions:
       signatures:
       - mandatoryArguments: {permit.id|name: 'xs:string'}
         optionalArguments: {}
+- name: /icons|rel=get
+  description: get the list of all icons in the system
+- name: /icons/{icon:id}|rel=get
+  description: get the detailed of the specified icon in the system
 - name: /bookmarks|rel=get
   description: get the list of bookmarks in the system
 - name: /bookmarks/{bookmark:id}|rel=get
@@ -2424,6 +2444,10 @@ actions:
           template.cpu_profile.id: xs:string
           template.migration.auto_converge: xs:string
           template.migration.compressed: xs:string
+          template.small_icon.id: xs:string
+          template.large_icon.id: xs:string
+          template.large_icon.media_type: xs:string
+          template.large_icon.data: xs:string
         description: update the specified template in the system
 - name: /templates|rel=add
   description: add a new template to the system
@@ -2494,6 +2518,10 @@ actions:
           template.cpu_profile.id: xs:string
           template.migration.auto_converge: xs:string
           template.migration.compressed: xs:string
+          template.small_icon.id: xs:string
+          template.large_icon.id: xs:string
+          template.large_icon.media_type: xs:string
+          template.large_icon.data: xs:string
         description: add a new template to the system
 - name: /templates/{template:id}/export|rel=export
   description: export the specified template to the export domain

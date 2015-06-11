@@ -33,13 +33,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
 
     @Test
     public void testAdd() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpHttpHeaderExpectations("Expect", "201-created");
-
-        setUpGetVirtioScsiExpectations(new int[]{0, 0});
-        setUpGetSoundcardExpectations(new int[]{0, 0});
-        setUpGetRngDeviceExpectations(new int[]{0, 0});
-        setUpGetEntityExpectations(0);
+        setUpAddExpectations();
 
         setUpCreationExpectations();
 
@@ -99,6 +93,16 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
     @Test
     public void testListAllContentIsNotConsolePopulated() throws Exception {
         testListAllConsoleAware(false);
+    }
+
+    protected void setUpAddExpectations() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpHttpHeaderExpectations("Expect", "201-created");
+
+        setUpGetVirtioScsiExpectations(new int[]{0, 0});
+        setUpGetSoundcardExpectations(new int[]{0, 0});
+        setUpGetRngDeviceExpectations(new int[]{0, 0});
+        setUpGetEntityExpectations(0);
     }
 
     protected void testListAllConsoleAware(boolean allContent) throws Exception {

@@ -13,6 +13,7 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.IO;
 import org.ovirt.engine.api.model.TimeZone;
+import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmBase;
@@ -192,6 +193,12 @@ public class VmBaseMapper {
         if (model.isSetCustomCpuModel()) {
             entity.setCustomCpuName(model.getCustomCpuModel());
         }
+        if (model.isSetLargeIcon() && model.getLargeIcon().isSetId()) {
+            entity.setLargeIconId(GuidUtils.asGuid(model.getLargeIcon().getId()));
+        }
+        if (model.isSetSmallIcon() && model.getSmallIcon().isSetId()) {
+            entity.setSmallIconId(GuidUtils.asGuid(model.getSmallIcon().getId()));
+        }
     }
 
     protected static void mapVmBaseEntityToModel(VmBase model, org.ovirt.engine.core.common.businessentities.VmBase entity) {
@@ -294,6 +301,18 @@ public class VmBaseMapper {
 
         if (entity.getCustomCpuName() != null) {
             model.setCustomCpuModel(entity.getCustomCpuName());
+        }
+        if (entity.getLargeIconId() != null) {
+            if (!model.isSetLargeIcon()) {
+                model.setLargeIcon(new Icon());
+            }
+            model.getLargeIcon().setId(entity.getLargeIconId().toString());
+        }
+        if (entity.getSmallIconId() != null) {
+            if (!model.isSetSmallIcon()) {
+                model.setSmallIcon(new Icon());
+            }
+            model.getSmallIcon().setId(entity.getSmallIconId().toString());
         }
     }
 

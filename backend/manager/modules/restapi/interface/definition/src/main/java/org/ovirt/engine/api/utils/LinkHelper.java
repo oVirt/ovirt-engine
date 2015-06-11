@@ -64,6 +64,7 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.IscsiBond;
@@ -220,6 +221,8 @@ import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
+import org.ovirt.engine.api.resource.IconResource;
+import org.ovirt.engine.api.resource.IconsResource;
 import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmNumaNodeResource;
 import org.ovirt.engine.api.resource.VmNumaNodesResource;
@@ -434,6 +437,9 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(BookmarkResource.class, BookmarksResource.class);
         TYPES.put(Bookmark.class, map);
+
+        map = new ParentToCollectionMap(IconResource.class, IconsResource.class);
+        TYPES.put(Icon.class, map);
 
         map = new ParentToCollectionMap(TemplateResource.class, TemplatesResource.class);
         map.add(StorageDomainContentResource.class, StorageDomainContentsResource.class, StorageDomain.class);
@@ -1063,7 +1069,7 @@ public class LinkHelper {
      *
      * @param url to append to and combine search dialect
      * @param resource to add links to
-     * @param rel link ro add
+     * @param rel link to add
      */
     public static void addLink(String url, BaseResource resource, String rel) {
         Link link = new Link();

@@ -33,11 +33,13 @@ import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
+import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
@@ -99,6 +101,7 @@ public class BackendVmsResource extends
     public Response add(VM vm) {
         validateParameters(vm, "cluster.id|name");
         validateEnums(VM.class, vm);
+        validateIconParameters(vm);
         Response response = null;
         if (vm.isSetInitialization() && vm.getInitialization().isSetConfiguration()) {
             validateParameters(vm, "initialization.configuration.type", "initialization.configuration.data");
@@ -181,6 +184,14 @@ public class BackendVmsResource extends
         }
 
         return response;
+    }
+
+    private void validateIconParameters(VM vm) {
+        if (!IconHelper.validateIconParameters(vm)) {
+            throw new BaseBackendResource.WebFaultException(null,
+                    localize(Messages.INVALID_ICON_PARAMETERS),
+                    Response.Status.BAD_REQUEST);
+        }
     }
 
     private boolean shouldMakeCreatorExplicitOwner() {
@@ -333,6 +344,7 @@ public class BackendVmsResource extends
         params.setVmPayload(getPayload(vm));
 
         addDevicesToParams(params, vm, template, instanceType, staticVm.getOsId(), cluster);
+        IconHelper.setIconToParams(vm, params);
 
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         setupCloneTemplatePermissions(vm, params);
@@ -456,6 +468,7 @@ public class BackendVmsResource extends
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         setupCloneTemplatePermissions(vm, params);
         addDevicesToParams(params, vm, template, instanceType, staticVm.getOsId(), cluster);
+        IconHelper.setIconToParams(vm, params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
         return performCreate(VdcActionType.AddVm,
@@ -474,6 +487,7 @@ public class BackendVmsResource extends
         params.setVmPayload(getPayload(vm));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         addDevicesToParams(params, vm, null, instanceType, staticVm.getOsId(), cluster);
+        IconHelper.setIconToParams(vm, params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
         return performCreate(VdcActionType.AddVmFromScratch,

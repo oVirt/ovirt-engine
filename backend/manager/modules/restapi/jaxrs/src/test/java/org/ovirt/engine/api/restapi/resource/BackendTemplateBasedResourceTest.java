@@ -146,11 +146,7 @@ public abstract class BackendTemplateBasedResourceTest<
 
     @Test
     public void testUpdate() throws Exception {
-        setUpGetEntityExpectations(2);
-        setUpGetConsoleExpectations(new int[]{0});
-        setUpGetVirtioScsiExpectations(new int[]{0});
-        setUpGetSoundcardExpectations(new int[]{0});
-        setUpGetRngDeviceExpectations(new int[]{0});
+        setUpUpdateExpectations();
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
@@ -203,6 +199,14 @@ public abstract class BackendTemplateBasedResourceTest<
         } catch (WebApplicationException wae) {
             verifyImmutabilityConstraint(wae);
         }
+    }
+
+    protected void setUpUpdateExpectations() throws Exception {
+        setUpGetEntityExpectations(2);
+        setUpGetConsoleExpectations(new int[]{0});
+        setUpGetVirtioScsiExpectations(new int[]{0});
+        setUpGetSoundcardExpectations(new int[]{0});
+        setUpGetRngDeviceExpectations(new int[]{0});
     }
 
     protected abstract R getRestModel(int index);

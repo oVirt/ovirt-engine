@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.ConfigurationType;
+import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -536,6 +537,18 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
         setupAddExpectations();
+        setUpCreationExpectations(VdcActionType.AddVm,
+                AddVmParameters.class,
+                new String[] { "StorageDomainId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true,
+                GUIDS[2],
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getEntity(2));
         Response response = collection.add(createModel(null));
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof VM);
@@ -550,6 +563,18 @@ public class BackendVmsResourceTest
                 new Object[] { NAMES[1], GUIDS[3] },
                 getTemplateEntity(1));
         setupAddExpectations();
+        setUpCreationExpectations(VdcActionType.AddVm,
+                AddVmParameters.class,
+                new String[] { "StorageDomainId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true,
+                GUIDS[2],
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getEntity(2));
         VM model = getModel(2);
         model.setTemplate(new Template());
         model.getTemplate().setName(NAMES[1].toString());
@@ -575,18 +600,6 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
                 getVdsGroupEntity());
-        setUpCreationExpectations(VdcActionType.AddVm,
-                AddVmParameters.class,
-                new String[] { "StorageDomainId" },
-                new Object[] { GUIDS[0] },
-                true,
-                true,
-                GUIDS[2],
-                VdcQueryType.GetVmByVmId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getEntity(2));
     }
 
 
@@ -1211,6 +1224,79 @@ public class BackendVmsResourceTest
         }
     }
 
+    @Test
+    public void testAddUploadIcon() throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+                GetVmTemplateParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[1] },
+                getTemplateEntity(1));
+        setupAddExpectations();
+        setUpCreationExpectations(VdcActionType.AddVm,
+                AddVmParameters.class,
+                new String[] { "StorageDomainId", "VmLargeIcon" },
+                new Object[] { GUIDS[0],
+                        VmIcon.typeAndDataToDataUrl(IconTestHelpler.MEDIA_TYPE, IconTestHelpler.DATA_URL) },
+                true,
+                true,
+                GUIDS[2],
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getEntity(2));
+
+        final VM model = createModel(null);
+        model.setLargeIcon(IconTestHelpler.createIconWithData());
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    @Test
+    public void testAddUseExistingIcons() throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+                GetVmTemplateParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[1] },
+                getTemplateEntity(1));
+        setupAddExpectations();
+        setUpCreationExpectations(VdcActionType.AddVm,
+                AddVmParameters.class,
+                new String[] { "StorageDomainId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true,
+                GUIDS[2],
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getEntity(2));
+        final VM model = createModel(null);
+        model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
+        model.setLargeIcon(IconTestHelpler.createIcon(GUIDS[3]));
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    @Test
+    public void testAddSetAndUploadIconFailure() throws Exception {
+        control.replay();
+        final VM model = createModel(null);
+        model.setLargeIcon(IconTestHelpler.createIconWithData());
+        model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
+        try {
+            collection.add(model);
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, BAD_REQUEST);
+        }
+    }
+
     private void setUpTemplateDisksExpectations(Guid templateId) {
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
                                      IdQueryParameters.class,
@@ -1241,6 +1327,8 @@ public class BackendVmsResourceTest
         entity.setRunOnVdsName(NAMES[NAMES.length - 1]);
         entity.setOrigin(index == 0 ? OriginType.HOSTED_ENGINE : OriginType.OVIRT);
         entity.setBootSequence(null);
+        entity.getStaticData().setSmallIconId(GUIDS[2]);
+        entity.getStaticData().setLargeIconId(GUIDS[3]);
         setUpStatisticalEntityExpectations(entity, statistics);
         return entity;
     }
@@ -1319,6 +1407,9 @@ public class BackendVmsResourceTest
         assertNotNull(model.getCpu().getTopology());
         assertEquals(4, model.getCpu().getTopology().getCores().intValue());
         assertEquals(2, model.getCpu().getTopology().getSockets().intValue());
+        assertEquals(GUIDS[2].toString(), model.getSmallIcon().getId());
+        assertEquals(GUIDS[3].toString(), model.getLargeIcon().getId());
+
     }
 
     private VM createModel(Disks disks) {

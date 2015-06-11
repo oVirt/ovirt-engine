@@ -148,6 +148,8 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setCustomEmulatedMachine(entity.getCustomEmulatedMachine());
         staticVm.setCustomCpuName(entity.getCustomCpuName());
         staticVm.setConsoleDisconnectAction(entity.getConsoleDisconnectAction());
+        staticVm.setSmallIconId(entity.getSmallIconId());
+        staticVm.setLargeIconId(entity.getLargeIconId());
         return doMapVmBaseHwPartToVmStatic(entity, staticVm, version);
     }
 

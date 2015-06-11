@@ -3424,6 +3424,8 @@
           <xs:element name="custom_cpu_model" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="graphics_consoles" type="GraphicsConsoles" minOccurs="0" maxOccurs="unbounded"/>
           <xs:element name="time_zone" type="TimeZone" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="small_icon" type="Icon"  minOccurs="0" maxOccurs="1"/>
+          <xs:element name="large_icon" type="Icon"  minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -3500,6 +3502,36 @@
             </xs:appinfo>
           </xs:annotation>
           <xs:element ref="vm" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="icon" type="Icon" />
+  <xs:element name="icons" type="Icons" />
+
+  <xs:complexType name="Icon">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="media_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="data" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Icons">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="icon" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="icons"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -5307,7 +5339,12 @@
 
   <xs:complexType name="OperatingSystemInfo">
     <xs:complexContent>
-      <xs:extension base="BaseResource"/>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="large_icon" type="Icon" minOccurs="0" maxOccurs="1" />
+          <xs:element name="small_icon" type="Icon" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 

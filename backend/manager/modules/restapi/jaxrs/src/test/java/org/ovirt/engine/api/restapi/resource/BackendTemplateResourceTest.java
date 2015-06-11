@@ -6,12 +6,14 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
+import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -186,6 +188,65 @@ public class BackendTemplateResourceTest
     @Test
     public void testExportAsyncFinished() throws Exception {
         doTestExportAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
+    }
+
+    @Test
+    public void testUpdateUploadIcon() throws Exception {
+        setUpGetGraphicsExpectations(1);
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                IdQueryParameters.class,
+                new String[]{"Id"},
+                new Object[]{GUIDS[2] },
+                getVdsGroupEntity());
+        setUpUpdateExpectations();
+
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
+                UpdateVmTemplateParameters.class,
+                new String[] { "VmLargeIcon" },
+                new Object[] { VmIcon.typeAndDataToDataUrl(IconTestHelpler.MEDIA_TYPE, IconTestHelpler.DATA_URL) },
+                true,
+                true));
+
+        final Template model = getRestModel(0);
+        model.setLargeIcon(IconTestHelpler.createIconWithData());
+        verifyModel(resource.update(model), 0);
+    }
+
+    @Test
+    public void testUpdateUseExistingIcons() throws Exception {
+        setUpGetGraphicsExpectations(1);
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                IdQueryParameters.class,
+                new String[]{"Id"},
+                new Object[]{GUIDS[2] },
+                getVdsGroupEntity());
+        setUpUpdateExpectations();
+
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
+                UpdateVmTemplateParameters.class,
+                new String[] {},
+                new Object[] {},
+                true,
+                true));
+
+        final Template model = getRestModel(0);
+        model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
+        model.setLargeIcon(IconTestHelpler.createIcon(GUIDS[3]));
+        verifyModel(resource.update(model), 0);
+    }
+
+    @Test
+    public void testUpdateSetAndUploadIconFailure() throws Exception {
+        control.replay();
+        final Template model = getRestModel(0);
+        model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
+        model.setLargeIcon(IconTestHelpler.createIconWithData());
+        try {
+            verifyModel(resource.update(model), 0);
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, BAD_REQUEST);
+        }
     }
 
     private void doTestExportAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) throws Exception {
