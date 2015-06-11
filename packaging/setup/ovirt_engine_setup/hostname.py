@@ -23,6 +23,7 @@ import socket
 from otopi import base, util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import dialog
 
 
 def _(m):
@@ -311,48 +312,44 @@ class Hostname(base.Base):
         ])
 
     def getHostname(self, envkey, whichhost, supply_default, prompttext=None):
-        interactive = self.environment[envkey] is None
-        validFQDN = False
+
+        def test_hostname(name):
+            res = ''
+            try:
+                self._validateFQDN(name)
+                self._validateFQDNresolvability(name)
+            except RuntimeError as e:
+                res = _('Host name is not valid: {e}').format(e=e)
+                self.logger.debug('test_hostname exception', exc_info=True)
+            return res
+
         if prompttext is None:
             prompttext = _(
                 'Host fully qualified DNS name of {whichhost} server'
             ).format(
                 whichhost=whichhost,
             )
-        while not validFQDN:
-            if interactive:
-                fqdn = socket.getfqdn()
-                self.environment[
-                    envkey
-                ] = self.dialog.queryString(
-                    name='OVESETUP_NETWORK_FQDN_{whichhost}'.format(
-                        whichhost=whichhost.replace(' ', '_'),
-                    ),
-                    note=_(
-                        '{prompt} [@DEFAULT@]: '
-                    ).format(
-                        prompt=prompttext,
-                    ),
-                    prompt=True,
-                    default=fqdn if supply_default else '',
-                )
-            try:
-                self._validateFQDN(
-                    self.environment[envkey]
-                )
-                self._validateFQDNresolvability(
-                    self.environment[envkey]
-                )
-                validFQDN = True
-            except RuntimeError as e:
-                self.logger.error(
-                    _('Host name is not valid: {error}').format(
-                        error=e,
-                    ),
-                )
-                self.logger.debug('exception', exc_info=True)
-                if not interactive:
-                    break
+        return dialog.queryEnvKey(
+            name='OVESETUP_NETWORK_FQDN_{whichhost}'.format(
+                whichhost=whichhost.replace(' ', '_'),
+            ),
+            dialog=self.dialog,
+            logger=self.logger,
+            env=self.environment,
+            key=envkey,
+            note=_(
+                '{prompt} [@DEFAULT@]: '
+            ).format(
+                prompt=prompttext,
+            ),
+            prompt=True,
+            default=socket.getfqdn() if supply_default else '',
+            tests=(
+                {
+                    'test': test_hostname,
+                },
+            ),
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

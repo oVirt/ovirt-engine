@@ -61,6 +61,7 @@ def queryEnvKey(
     hidden=False,
     prompt=False,
     default=None,
+    name=None,
 ):
     """Query string and validate it.
     Params:
@@ -78,6 +79,7 @@ def queryEnvKey(
         If True and a test failed, ask user again. Otherwise prompt user
         to accept value anyway.
     'warn_note' -- Message displayed if warning
+    'warn_name' -- warn dialog name
     'interactive_only' -- Do not run test if env[key] is already set
     """
 
@@ -86,7 +88,11 @@ def queryEnvKey(
     while not valid:
         if interactive:
             value = dialog.queryString(
-                name='queryEnvKey_input:{key}'.format(key=key),
+                name=(
+                    'queryEnvKey_input:{key}'.format(key=key)
+                    if name is None
+                    else name
+                ),
                 note=note,
                 validValues=validValues,
                 caseSensitive=caseSensitive,
@@ -111,8 +117,11 @@ def queryEnvKey(
                         logger.warning(msg)
                         if not queryBoolean(
                             dialog=dialog,
-                            name='queryEnvKey_warnverify:{key}'.format(
-                                key=key
+                            name=(
+                                'queryEnvKey_warnverify:{key}'.format(
+                                    key=key
+                                ) if test.get('warn_name') is None
+                                else test['warn_name']
                             ),
                             note='{msg} (@VALUES@) [@DEFAULT@]: '.format(
                                 msg=test.get('warn_note', _('OK? ')),
