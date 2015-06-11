@@ -352,35 +352,17 @@ public class RsdlBuilder {
     }
 
     private void handleDelete(String prefix, Collection<DetailedLink> results, Method m) {
-        boolean collectionLevel = m.getAnnotation(Path.class) == null;
-        if (m.getParameterTypes().length>1) {
-            Class<?>[] parameterTypes = m.getParameterTypes();
-            Annotation[][] parameterAnnotations = m.getParameterAnnotations();
-            for (int i=0; i<parameterTypes.length; i++) {
-                //ignore the id parameter (string), that's annotated with @PathParam
-                if (!( parameterTypes[i].equals(String.class) && (!(parameterAnnotations[i].length==0)))) {
-                    DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix
-                            + (collectionLevel ? "" : "/{" + getSingleForm(prefix) + ":id}"))
-                            .rel(DELETE)
-                            .requestParameter(parameterTypes[i].getSimpleName())
-                            .httpMethod(HttpMethod.DELETE)
-                            .build();
-                    addCommonActionParameters(link);
-                    addAsyncMatrixParameter(link);
-                    results.add(link);
-                    return; //we can break, because we excpect only one parameter.
-                }
-            }
-        } else {
-            DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix
-                    + (collectionLevel ? "" : "/{" + getSingleForm(prefix) + ":id}"))
-                    .rel(DELETE)
-                    .httpMethod(HttpMethod.DELETE)
-                    .build();
-            addCommonActionParameters(link);
-            addAsyncMatrixParameter(link);
-            results.add(link);
+        DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix)
+            .rel(DELETE)
+            .httpMethod(HttpMethod.DELETE)
+            .build();
+        Class<?>[] parameterTypes = m.getParameterTypes();
+        if (parameterTypes.length > 0) {
+            link.getRequest().getBody().setType(parameterTypes[0].getSimpleName());
         }
+        addCommonActionParameters(link);
+        addAsyncMatrixParameter(link);
+        results.add(link);
     }
 
     private void handlePut(String prefix, Collection<DetailedLink> results, Class<?> returnType) {
