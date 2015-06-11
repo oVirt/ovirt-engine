@@ -39,13 +39,6 @@ public class BackendIscsiBondNetworksResource extends BackendNetworksResource {
     }
 
     @Override
-    public Response performRemove(String id) {
-        IscsiBond iscsiBond = getIscsiBond();
-        iscsiBond.getNetworkIds().remove(Guid.createGuidFromString(id));
-        return performAction(VdcActionType.EditIscsiBond, new EditIscsiBondParameters(iscsiBond));
-    }
-
-    @Override
     protected Network doPopulate(Network model, org.ovirt.engine.core.common.businessentities.network.Network entity) {
         return model;
     }

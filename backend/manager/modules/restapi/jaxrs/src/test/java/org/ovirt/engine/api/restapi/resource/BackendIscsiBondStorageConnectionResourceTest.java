@@ -1,9 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.StorageConnection;
+import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -79,6 +82,30 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
         }
     }
 
+    @Test
+    public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(2, getIscsiBondContainingStorageConnection());
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetStorageServerConnectionById,
+            StorageServerConnectionQueryParametersBase.class,
+            new String[] { "ServerConnectionId" },
+            new Object[] { STORAGE_CONNECTION_ID.toString() },
+            getEntity(0)
+        );
+        setUpActionExpectations(
+            VdcActionType.EditIscsiBond,
+            EditIscsiBondParameters.class,
+            new String[] { "IscsiBond" },
+            new Object[] { getIscsiBond() },
+            true,
+            true,
+            null
+        );
+        Response response = resource.remove();
+        assertEquals(200, response.getStatus());
+    }
+
     protected void setUpEntityQueryExpectations(int times, IscsiBond iscsiBond) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetIscsiBondById,
@@ -111,5 +138,12 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
         cnx.setid(GUIDS[index].toString());
         cnx.setconnection("10.11.12.13" + ":" + "/1");
         return cnx;
+    }
+
+    private org.ovirt.engine.core.common.businessentities.IscsiBond getIscsiBond() {
+        org.ovirt.engine.core.common.businessentities.IscsiBond iscsiBond =
+            new org.ovirt.engine.core.common.businessentities.IscsiBond();
+        iscsiBond.setId(ISCSI_BOND_ID);
+        return iscsiBond;
     }
 }

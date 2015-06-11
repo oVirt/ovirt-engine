@@ -46,13 +46,6 @@ public class BackendIscsiBondStorageConnectionsResource extends BackendStorageSe
         return inject(new BackendIscsiBondStorageConnectionResource(id, this));
     }
 
-    @Override
-    protected Response performRemove(String id) {
-        IscsiBond iscsiBond = getIscsiBond();
-        iscsiBond.getStorageConnectionIds().remove(id);
-        return performAction(VdcActionType.EditIscsiBond, new EditIscsiBondParameters(iscsiBond));
-    }
-
     protected IscsiBond getIscsiBond() {
         return getEntity(IscsiBond.class, VdcQueryType.GetIscsiBondById, new IdQueryParameters(iscsiBondId), iscsiBondId.toString());
     }

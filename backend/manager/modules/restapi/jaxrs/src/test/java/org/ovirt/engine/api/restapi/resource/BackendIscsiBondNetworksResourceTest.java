@@ -68,31 +68,6 @@ public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetwork
         assertEquals(200, response.getStatus());
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        Network network = new Network();
-        network.setId(NETWORK_ID.toString());
-
-        setUpGetEntityExpectations(VdcQueryType.GetIscsiBondById,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { ISCSI_BOND_ID },
-                getIscsiBondContainingNetwork());
-
-        setUpActionExpectations(VdcActionType.EditIscsiBond,
-                EditIscsiBondParameters.class,
-                new String[] { "IscsiBond" },
-                new Object[] { getIscsiBondWithNoNetworks() },
-                true,
-                true,
-                null);
-
-        Response response = collection.performRemove(network.getId());
-        assertNotNull(response);
-        assertEquals(200, response.getStatus());
-    }
-
     @Override
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {

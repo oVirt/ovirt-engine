@@ -65,30 +65,6 @@ public class BackendIscsiBondStorageConnectionsResourceTest
         assertEquals(200, response.getStatus());
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        StorageConnection storageConnection = new StorageConnection();
-        storageConnection.setId(STORAGE_CONNECTION_ID.toString());
-
-        setUpGetEntityExpectations(VdcQueryType.GetIscsiBondById,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { ISCSI_BOND_ID },
-                getIscsiBondContainingStorageConnection());
-
-        setUpActionExpectations(VdcActionType.EditIscsiBond,
-                EditIscsiBondParameters.class,
-                new String[] { "IscsiBond" },
-                new Object[] { getIscsiBond() },
-                true,
-                true,
-                null);
-
-        Response response = collection.performRemove(storageConnection.getId());
-        assertEquals(200, response.getStatus());
-    }
-
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetStorageServerConnectionByIscsiBondId,
