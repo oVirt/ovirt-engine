@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -29,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -43,6 +43,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
@@ -271,6 +272,13 @@ public class VmsMonitoring {
                 ResourceManager.getInstance().RemoveAsyncRunningVm(vmUpdater.getDbVm().getId());
             }
 
+            if (vmUpdater.isHostedEngineUnmanaged()) {
+                // @since 3.6 - we take existing HE VM and reimport it
+                importHostedEngineVM(getVmInfo(Collections.singletonList(vmUpdater.getVdsmVm()
+                        .getVmDynamic()
+                        .getId()
+                        .toString()))[0]);
+            }
         }
 
         getVdsEventListener().updateSlaPolicies(succeededToRunVms, vdsManager.getVdsId());
@@ -282,6 +290,17 @@ public class VmsMonitoring {
         getVdsEventListener().processOnVmStop(movedToDownVms, vdsManager.getVdsId());
 
         getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
+    }
+
+    private void importHostedEngineVM(Map vmStruct) {
+        VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
+        vm.setImages(VdsBrokerObjectsBuilder.BuildDiskImagesFromDevices(vmStruct));
+        vm.setInterfaces(VdsBrokerObjectsBuilder.BuildVmNetworkInterfacesFromDevices(vmStruct));
+        for (DiskImage diskImage : vm.getImages()) {
+            vm.getDiskMap().put(Guid.newGuid(), diskImage);
+        }
+        vm.setVdsGroupId(getVdsManager().getVdsGroupId());
+        getVdsEventListener().importHostedEngineVm(vm);
     }
 
     private void processVmsWithDevicesChange() {
@@ -347,9 +366,9 @@ public class VmsMonitoring {
                 String vmNameOnHost = (String) vmInfo.get(VdsProperties.vm_name);
 
                 if (StringUtils.equals(HOSTED_ENGINE_VM_NAME, vmNameOnHost)) {
-                    vmStatic.setName(vmNameOnHost);
-                    vmStatic.setOrigin(OriginType.HOSTED_ENGINE);
-                    vmStatic.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
+                    // its a hosted engine VM -> import it and skip the external VM phase
+                    importHostedEngineVM(vmInfo);
+                    continue;
                 } else {
                     vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
                     vmStatic.setOrigin(OriginType.EXTERNAL);

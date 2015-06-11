@@ -160,6 +160,8 @@ public class VmHandler {
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.CancelMigrateVm);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.SetVmTicket);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.VmLogon);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.UpdateVm);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.RemoveVm);
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {

@@ -83,4 +83,6 @@ public interface IVdsEventListener {
     void refreshHostIfAnyVmHasHostDevices(List<Guid> vmIds, Guid hostId);
 
     boolean isUpdateAvailable(VDS host);
+
+    void importHostedEngineVm(VM vm);
 }

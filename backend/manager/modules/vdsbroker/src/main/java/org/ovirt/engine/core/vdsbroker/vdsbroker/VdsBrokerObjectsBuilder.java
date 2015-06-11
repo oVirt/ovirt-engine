@@ -68,8 +68,11 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
@@ -129,6 +132,82 @@ public class VdsBrokerObjectsBuilder {
         return vm;
     }
 
+    /**
+     * Convert the devices map and make a list of {@linkplain DiskImage}
+     * Mainly used to import the Hosted Engine Vm disks.
+     *
+     * @param vmStruct
+     * @return A List of Disk Images {@linkplain DiskImage}
+     */
+    public static ArrayList<DiskImage> BuildDiskImagesFromDevices(Map<String, Object> vmStruct) {
+        ArrayList<DiskImage> diskImages = new ArrayList<>();
+        Object[] devices = (Object[]) vmStruct.get("devices");
+        if (devices != null) {
+            for (Object device : devices) {
+                Map <String, Object> deviceMap = (Map<String, Object>) device;
+                if (VdsProperties.Disk.equals(deviceMap.get(VdsProperties.Device))) {
+                    DiskImage image = new DiskImage();
+                    image.setDiskAlias((String) deviceMap.get(VdsProperties.Alias));
+                    image.setSize(Long.parseLong((String) deviceMap.get("apparentsize")));
+                    image.setActualSize(Long.parseLong((String) deviceMap.get("truesize")));
+                    image.setId(Guid.newGuid());
+                    image.setvolumeFormat(VolumeFormat.valueOf(((String) deviceMap.get(VdsProperties.Format)).toUpperCase()));
+                    image.setShareable(false);
+                    image.setId(Guid.createGuidFromString((String) deviceMap.get(VdsProperties.DeviceId)));
+                    image.setImageId(Guid.createGuidFromString((String) deviceMap.get(VdsProperties.VolumeId)));
+                    // TODO not sure how to extract that info
+                    image.setVolumeType(VolumeType.Preallocated);
+                    switch ((String) deviceMap.get("iface")) {
+                    case "virtio":
+                        image.setDiskInterface(DiskInterface.VirtIO);
+                    case "iscsi":
+                        image.setDiskInterface(DiskInterface.VirtIO_SCSI);
+                    case "ide":
+                        image.setDiskInterface(DiskInterface.IDE);
+                    }
+                    diskImages.add(image);
+                }
+            }
+        }
+        return diskImages;
+    }
+    /**
+     * Convert the devices map and make a list of {@linkplain VmNetworkInterface}
+     * Mainly used to import the Hosted Engine Vm disks.
+     *
+     * @param vmStruct
+     * @return A List of VM network interfaces {@linkplain VmNetworkInterface}
+     */
+    public static ArrayList<VmNetworkInterface> BuildVmNetworkInterfacesFromDevices(Map<String, Object> vmStruct) {
+        ArrayList<VmNetworkInterface> nics = new ArrayList<>();
+        Object[] devices = (Object[]) vmStruct.get("devices");
+        if (devices != null) {
+            for (Object device : devices) {
+                Map<String, Object> deviceMap = (Map<String, Object>) device;
+                if (VdsProperties.INTERFACE.equals(deviceMap.get(VdsProperties.Type))) {
+                    VmNetworkInterface nic = new VmNetworkInterface();
+                    nic.setMacAddress((String) deviceMap.get(VdsProperties.MAC_ADDR));
+                    nic.setName((String) deviceMap.get(VdsProperties.Name));
+                    // FIXME we can't deduce the network profile by the network name. its many to many.
+                    nic.setNetworkName((String) deviceMap.get(VdsProperties.NETWORK));
+                    nic.setType(VmInterfaceType.valueOf((String) deviceMap.get(VdsProperties.NIC_TYPE)).getValue());
+                    if (deviceMap.containsKey(VdsProperties.Model)) {
+                        String model = (String) deviceMap.get(VdsProperties.Model);
+                        for (VmInterfaceType type : VmInterfaceType.values()) {
+                            if (model.equals(type.getInternalName())) {
+                                nic.setType(type.getValue());
+                                break;
+                            }
+                        }
+                    }
+                    nics.add(nic);
+                }
+
+            }
+        }
+        return nics;
+    }
+
     private static VmStatic buildVmStaticDataFromExternalProvider(Map<String, Object> xmlRpcStruct) {
         if (!xmlRpcStruct.containsKey(VdsProperties.vm_guid) || !xmlRpcStruct.containsKey(VdsProperties.vm_name)
                 || !xmlRpcStruct.containsKey(VdsProperties.mem_size_mb)
@@ -141,6 +220,8 @@ public class VdsBrokerObjectsBuilder {
         vmStatic.setName((String) xmlRpcStruct.get(VdsProperties.vm_name));
         vmStatic.setMemSizeMb((int) xmlRpcStruct.get(VdsProperties.mem_size_mb));
         vmStatic.setNumOfSockets((int) xmlRpcStruct.get(VdsProperties.num_of_cpus));
+        vmStatic.setCustomCpuName((String) xmlRpcStruct.get(VdsProperties.cpu_model));
+        vmStatic.setCustomEmulatedMachine((String) xmlRpcStruct.get(VdsProperties.emulatedMachine));
 
         if (xmlRpcStruct.containsKey(VdsProperties.vm_disks)) {
             for (Object disk : (Object[]) xmlRpcStruct.get(VdsProperties.vm_disks)) {

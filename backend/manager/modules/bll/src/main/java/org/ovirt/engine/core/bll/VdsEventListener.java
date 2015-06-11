@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -103,6 +104,8 @@ public class VdsEventListener implements IVdsEventListener {
     private VdsDao vdsDao;
     @Inject
     private BackendInternal backend;
+    @Inject
+    private Instance<HostedEngineImporter> hostedEngineImporterProvider;
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
@@ -572,5 +575,14 @@ public class VdsEventListener implements IVdsEventListener {
         // run all VDSCommands concurrently with executor
         if (callables.size() > 0)
             ThreadPoolUtil.invokeAll(callables);
+    }
+
+    @Override
+    public void importHostedEngineVm(final VM vm) {
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override public void run() {
+                hostedEngineImporterProvider.get().doImport(vm);
+            }
+        });
     }
 }

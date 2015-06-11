@@ -1210,6 +1210,10 @@ public enum AuditLogType {
     // Hosted Engine
     USER_SET_HOSTED_ENGINE_MAINTENANCE(10450),
     USER_FAILED_TO_SET_HOSTED_ENGINE_MAINTENANCE(10451, AuditLogSeverity.ERROR),
+    HOSTED_ENGINE_VM_IMPORT_SUCCEEDED(10456, AuditLogSeverity.NORMAL),
+    HOSTED_ENGINE_VM_IMPORT_FAILED(10457, AuditLogSeverity.ERROR, AuditLogTimeInterval.HOUR.getValue() * 2),
+    HOSTED_ENGINE_SD_NOT_EXIT(10458, AuditLogSeverity.WARNING, AuditLogTimeInterval.HOUR.getValue() * 2),
+    HOSTED_ENGINE_SD_NOT_ACTIVE(10459, AuditLogSeverity.WARNING, AuditLogTimeInterval.HOUR.getValue() * 2),
 
     // External scheduler
     EXTERNAL_SCHEDULER_PLUGIN_ERROR(10500, AuditLogSeverity.ERROR),

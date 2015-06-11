@@ -11,7 +11,9 @@ public enum OriginType {
     // VMs that externally run on the host (not created by the engine)
     EXTERNAL(4),
     // VMs that were created by the hosted engine setup
-    HOSTED_ENGINE(5);
+    HOSTED_ENGINE(5),
+    // managed means we allow limited provisioning on this VM by the engine
+    MANAGED_HOSTED_ENGINE(6);
 
     private int intValue;
     private static Map<Integer, OriginType> mappings;

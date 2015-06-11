@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UnchangeableByVdsm;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -74,6 +75,7 @@ public class VmAnalyzer {
     private boolean stable;
     private boolean autoVmToRun;
     private boolean externalVm;
+    private boolean hostedEngineUnmanaged;
 
     //dependencies
     private final VmsMonitoring vmsMonitoring; // aggregate all data using it.
@@ -120,6 +122,7 @@ public class VmAnalyzer {
         updateLunDisks();
         updateVmJobs();
         analyzeExternalVms();
+        analyzeHostedEngineVm();
         if (vmDynamicToSave != null) {
             vmsMonitoring.addVmDynamicToList(vmDynamicToSave);
         }
@@ -136,6 +139,14 @@ public class VmAnalyzer {
             if (getDbFacade().getVmStaticDao().get(vdsmVm.getVmDynamic().getId()) == null) {
                 externalVm = true;
             }
+        }
+    }
+
+    private void analyzeHostedEngineVm() {
+        if (dbVm != null
+                && vdsmVm != null
+                && dbVm.getOrigin() == OriginType.HOSTED_ENGINE) {
+            hostedEngineUnmanaged = true;
         }
     }
 
@@ -1024,5 +1035,9 @@ public class VmAnalyzer {
 
     public VdsManager getVdsManager() {
         return vmsMonitoring.getVdsManager();
+    }
+
+    public boolean isHostedEngineUnmanaged() {
+        return hostedEngineUnmanaged;
     }
 }
