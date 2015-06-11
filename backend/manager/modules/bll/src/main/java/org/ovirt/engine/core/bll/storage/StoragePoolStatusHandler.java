@@ -2,39 +2,42 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 public final class StoragePoolStatusHandler {
     private static final Logger log = LoggerFactory.getLogger(StoragePoolStatusHandler.class);
 
     private static HashMap<Guid, StoragePoolStatusHandler> _nonOperationalPools = new HashMap<>();
 
-    private Guid poolId;
-    private String timerId;
-    @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
+    private final Guid poolId;
+    private final SchedulerUtilQuartzImpl schedulerUtil;
 
-    private StoragePoolStatusHandler(Guid poolId) {
+    private String timerId;
+
+    private StoragePoolStatusHandler(Guid poolId, SchedulerUtilQuartzImpl schedulerUtil) {
+        Objects.requireNonNull(schedulerUtil, "schedulerUtil cannot be null");
+
         this.poolId = poolId;
-        timerId = null;
+        this.schedulerUtil = schedulerUtil;
+        this.timerId = null;
     }
 
     protected SchedulerUtil getScheduler() {
@@ -85,7 +88,11 @@ public final class StoragePoolStatusHandler {
             }
         } else if (status == StoragePoolStatus.NotOperational) {
             synchronized (_nonOperationalPools) {
-                _nonOperationalPools.put(poolId, new StoragePoolStatusHandler(poolId).scheduleTimeout());
+                final SchedulerUtilQuartzImpl schedulerUtil = Injector.get(SchedulerUtilQuartzImpl.class);
+                final StoragePoolStatusHandler storagePoolStatusHandler = new StoragePoolStatusHandler(
+                        poolId,
+                        schedulerUtil);
+                _nonOperationalPools.put(poolId, storagePoolStatusHandler.scheduleTimeout());
             }
         }
     }
