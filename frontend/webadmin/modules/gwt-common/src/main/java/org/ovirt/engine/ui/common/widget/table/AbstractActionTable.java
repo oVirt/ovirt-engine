@@ -168,15 +168,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             public void setRowData(int start, final List<? extends T> values) {
                 super.setRowData(start, values);
                 selectionModel.resolveChanges();
-                if (values.size() == 1 && selectionModel.getSelectedList().isEmpty() && doAutoSelect) {
-                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                        @Override
-                        public void execute() {
-                            selectionModel.setSelected(values.get(0), true);
-                        }
-                    });
-                    doAutoSelect = false;
+                if (isAttached() && isVisible()) {
+                    autoSelectFirst();
                 }
                 updateTableControls();
                 enforceScrollPosition();
@@ -264,6 +257,25 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         }
         addModelSearchStringChangeListener(dataProvider.getModel());
         addScrollSelectionModelChangeListener();
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        autoSelectFirst();
+    }
+
+    private void autoSelectFirst() {
+        if (table.getRowCount() == 1 && selectionModel.getSelectedList().isEmpty() && doAutoSelect) {
+            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+                @Override
+                public void execute() {
+                    selectionModel.setSelected(table.getVisibleItems().get(0), true);
+                }
+            });
+            doAutoSelect = false;
+        }
     }
 
     private void addScrollSelectionModelChangeListener() {
@@ -458,7 +470,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
         // Reset main table container's scroll position
         enforceScrollPosition();
-        this.doAutoSelect = true;
     }
 
     void initSortHandler() {
