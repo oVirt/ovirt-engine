@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.businessentities;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
+import java.util.Objects;
+
 public class StorageDomainDynamic implements BusinessEntity<Guid> {
     private static final long serialVersionUID = -5305319985243261293L;
 
@@ -14,9 +16,11 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         this.availableDiskSize = availableDiskSize;
         this.id = id;
         this.usedDiskSize = usedDiskSize;
+        this.externalStatus = ExternalStatus.Ok;
     }
 
     private Integer availableDiskSize;
+    private  ExternalStatus externalStatus;
 
     public Integer getAvailableDiskSize() {
         return availableDiskSize;
@@ -55,6 +59,14 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         return totalSize != 0 ? (availableDiskSize / totalSize) * 100 : 0.0;
     }
 
+    public ExternalStatus getExternalStatus() {
+        return externalStatus;
+    }
+
+    public void setExternalStatus(ExternalStatus externalStatus) {
+        this.externalStatus = externalStatus;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -62,6 +74,8 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((availableDiskSize == null) ? 0 : availableDiskSize.hashCode());
         result = prime * result + ((usedDiskSize == null) ? 0 : usedDiskSize.hashCode());
+        result = prime * result
+                + ((externalStatus == null) ? 0 : Objects.hashCode(externalStatus));
         return result;
     }
 
@@ -79,6 +93,7 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         StorageDomainDynamic other = (StorageDomainDynamic) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(availableDiskSize, other.availableDiskSize)
-                && ObjectUtils.objectsEqual(usedDiskSize, other.usedDiskSize));
+                && ObjectUtils.objectsEqual(usedDiskSize, other.usedDiskSize)
+                && Objects.equals(externalStatus, other.externalStatus));
     }
 }

@@ -249,6 +249,14 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
         getStoragePoolIsoMapData().setStatus(status);
     }
 
+    public ExternalStatus getExternalStatus() {
+        return dynamicData.getExternalStatus();
+    }
+
+    public void setExternalStatus(ExternalStatus externalStatus) {
+        dynamicData.setExternalStatus(externalStatus);
+    }
+
     private String storagePoolName;
 
     public String getStoragePoolName() {
