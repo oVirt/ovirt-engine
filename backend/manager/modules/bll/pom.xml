@@ -84,6 +84,12 @@
 
     <dependency>
       <groupId>${engine.groupId}</groupId>
+      <artifactId>branding</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
       <artifactId>scheduler</artifactId>
       <version>${engine.version}</version>
       <scope>provided</scope>

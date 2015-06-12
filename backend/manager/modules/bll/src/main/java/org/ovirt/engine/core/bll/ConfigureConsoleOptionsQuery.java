@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -128,11 +129,19 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         }
 
         String engineBaseUrlString = calculateEngineBaseUrl(sanitizeUrl(getParameters().getEngineBaseUrl()));
-        String consoleClientResourcesUrl = sanitizeUrl(getParameters().getConsoleClientResourcesUrl());
+        String consoleClientResourcesUrl = calculateResourcesUrl(sanitizeUrl(getParameters().getConsoleClientResourcesUrl()));
 
         options.setRemoteViewerSupportedVersions(remoteViewerSupportedVersions);
 
         fillRemoteViewerUrl(options, remoteViewerNewerVersionUrl, engineBaseUrlString, consoleClientResourcesUrl);
+    }
+
+    private String calculateResourcesUrl(String passedUrl) {
+        if (!StringUtils.isEmpty(passedUrl)) {
+            return passedUrl;
+        }
+
+        return sanitizeUrl(BrandingManager.getInstance().getMessage("obrand.common.console_client_resources_url"));
     }
 
     /**
