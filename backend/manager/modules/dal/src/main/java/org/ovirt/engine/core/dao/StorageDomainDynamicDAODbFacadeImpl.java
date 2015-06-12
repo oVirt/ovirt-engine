@@ -7,6 +7,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
@@ -28,6 +29,7 @@ public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade impleme
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setUsedDiskSize((Integer) rs
                     .getObject("used_disk_size"));
+            entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
             return entity;
         }
     }
@@ -63,6 +65,13 @@ public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade impleme
                 .addValue("used_disk_size", domain.getUsedDiskSize());
 
         getCallsHandler().executeModification("Updatestorage_domain_dynamic", parameterSource);
+    }
+
+    @Override
+    public void updateExternalStatus(Guid id, ExternalStatus status) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_id", id)
+                .addValue("external_status", status);
+        getCallsHandler().executeModification("UpdateStorageDomainExternalStatus", parameterSource);
     }
 
     @Override

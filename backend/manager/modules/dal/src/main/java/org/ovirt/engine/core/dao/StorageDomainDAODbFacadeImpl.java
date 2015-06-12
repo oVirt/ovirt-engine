@@ -8,6 +8,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -173,6 +174,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
             entity.setActualImagesSize(rs.getInt("actual_images_size"));
             entity.setCommittedDiskSize(rs.getInt("commited_disk_size"));
             entity.setStatus(StorageDomainStatus.forValue(rs.getInt("status")));
+            entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
             entity.setStorageDomainSharedStatus(
                     StorageDomainSharedStatus.forValue(rs.getInt("storage_domain_shared_status")));
             entity.setAutoRecoverable(rs.getBoolean("recoverable"));

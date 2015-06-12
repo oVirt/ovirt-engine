@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -88,5 +89,13 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
         assertEquals(existingDynamic, result);
     }
 
+    @Test
+    public void testUpdateStorageDomainExternalStatus() {
+        StorageDomainDynamic before = dao.get(existingDynamic.getId());
+        before.setExternalStatus(ExternalStatus.Error);
+        dao.updateExternalStatus(before.getId(), before.getExternalStatus());
+        StorageDomainDynamic after = dao.get(existingDynamic.getId());
+        assertEquals(before.getExternalStatus(), after.getExternalStatus());
+    }
     // testRemove is already tested as part of the StorageDomainStaticDAOTest
 }
