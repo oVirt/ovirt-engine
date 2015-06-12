@@ -476,7 +476,8 @@ SELECT
     storage_domain_static.recoverable AS recoverable,
     unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
-    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker
+    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker,
+    storage_domain_dynamic.external_status as external_status
 FROM
     storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
@@ -516,7 +517,8 @@ SELECT
     storage_domain_static.recoverable AS recoverable,
     unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
-    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker
+    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker,
+    storage_domain_dynamic.external_status as external_status
 FROM
     storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
@@ -558,7 +560,8 @@ SELECT
     storage_domain_static.recoverable AS recoverable,
     unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
-    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker
+    storage_domain_static.critical_space_action_blocker as critical_space_action_blocker,
+    storage_domain_dynamic.external_status as external_status
 FROM
     storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id

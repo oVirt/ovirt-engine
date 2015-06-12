@@ -163,7 +163,19 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION UpdateStorageDomainExternalStatus(
+        v_storage_id UUID,
+        v_external_status INTEGER)
+RETURNS VOID
 
+   AS $procedure$
+BEGIN
+      UPDATE storage_domain_dynamic
+      SET
+      external_status = v_external_status
+      WHERE id = v_storage_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 
