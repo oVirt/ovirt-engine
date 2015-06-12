@@ -7,7 +7,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.LogicalUnit;
@@ -19,7 +18,6 @@ import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
-import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -61,50 +59,12 @@ public class BackendVmDisksResourceTest
         }
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
-                                           RemoveDiskParameters.class,
-                                           new String[] { "DiskId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.deprecatedRemove(GUIDS[0].toString()));
-    }
-
     private void setUpGetEntityExpectations() {
         setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { PARENT_ID },
                 getEntityList());
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
-                                           RemoveDiskParameters.class,
-                                           new String[] { "DiskId" },
-                                           new Object[] { GUIDS[0] },
-                                           canDo,
-                                           success));
-        try {
-            collection.deprecatedRemove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
     }
 
     @Test
@@ -164,20 +124,6 @@ public class BackendVmDisksResourceTest
                 true);
         Response response = collection.add(model);
         assertEquals(200, response.getStatus());
-    }
-
-    @Test
-    public void testDetachDisk() throws Exception {
-        setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.DetachDiskFromVm,
-                                           AttachDetachVmDiskParameters.class,
-                                           new String[] { "VmId", "EntityInfo" },
-                                           new Object[] { PARENT_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
-                                           true,
-                                           true));
-        Action action = new Action();
-        action.setDetach(true);
-        verifyRemove(collection.deprecatedRemove(DISK_ID.toString(), action));
     }
 
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {

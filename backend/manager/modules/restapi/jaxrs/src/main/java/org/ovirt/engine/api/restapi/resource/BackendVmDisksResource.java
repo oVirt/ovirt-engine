@@ -6,7 +6,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Snapshot;
@@ -81,29 +80,20 @@ public class BackendVmDisksResource
         }
     }
 
-    // This method should be part of the entity resource, but moving it requires too many changes, so it will be
-    // temporarily kept here. A new method is introduced in the entity resource that calls this one, and this
-    // one is removed from the collection interface.
-    @Deprecated
-    public Response deprecatedRemove(String id, Action action) {
-        getEntity(id); //verifies that entity exists, returns 404 otherwise.
-        if (action.isSetDetach() && action.isDetach()) {
-            return performAction(VdcActionType.DetachDiskFromVm,
-                    new AttachDetachVmDiskParameters(parentId, Guid.createGuidFromStringDefaultEmpty(id)));
-        } else {
-            return remove(id);
-        }
-    }
-
     @Override
     @SingleEntityResource
     public VmDiskResource getDeviceSubResource(String id) {
-        return inject(new BackendVmDiskResource(id,
-                                              this,
-                                              updateType,
-                                              getUpdateParametersProvider(),
-                                              getRequiredUpdateFields(),
-                                              subCollections));
+        return inject(
+            new BackendVmDiskResource(
+                parentId,
+                id,
+                this,
+                updateType,
+                getUpdateParametersProvider(),
+                getRequiredUpdateFields(),
+                subCollections
+            )
+        );
     }
 
     @Override

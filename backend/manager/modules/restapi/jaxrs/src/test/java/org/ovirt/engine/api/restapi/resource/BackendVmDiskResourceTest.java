@@ -21,12 +21,16 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.VmDiskResource;
+import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -39,11 +43,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDiskResourceTest
-        extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendVmDiskResource> {
+    extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendVmDiskResource> {
 
     protected static final Guid DISK_ID = GUIDS[1];
-
-    protected static BackendVmDisksResource collection;
 
     public BackendVmDiskResourceTest() {
         super((BackendVmDiskResource)getCollection().getDeviceSubResource(DISK_ID.toString()));
@@ -229,6 +231,73 @@ public class BackendVmDiskResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             verifyIncompleteException(wae, "Action", "doExport", "storageDomain.id|name");
+        }
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveDisk,
+                RemoveDiskParameters.class,
+                new String[] { "DiskId" },
+                new Object[] { DISK_ID },
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testDetach() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.DetachDiskFromVm,
+                AttachDetachVmDiskParameters.class,
+                new String[] { "VmId", "EntityInfo" },
+                new Object[] { PARENT_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
+                true,
+                true
+            )
+        );
+        Action action = new Action();
+        action.setDetach(true);
+        verifyRemove(resource.remove(action));
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveDisk,
+                RemoveDiskParameters.class,
+                new String[] { "DiskId" },
+                new Object[] { DISK_ID },
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
         }
     }
 

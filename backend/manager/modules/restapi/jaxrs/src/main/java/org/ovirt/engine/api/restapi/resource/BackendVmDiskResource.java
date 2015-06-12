@@ -13,38 +13,48 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+public class BackendVmDiskResource
+    extends BackendDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.storage.Disk>
+    implements VmDiskResource {
 
-public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.storage.Disk> implements VmDiskResource {
-    protected BackendVmDiskResource(String id,
-                                  AbstractBackendReadOnlyDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.storage.Disk> collection,
-                                  VdcActionType updateType,
-                                  ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> updateParametersProvider,
-                                  String[] requiredUpdateFields,
-                                  String... subCollections) {
-        super(Disk.class,
-              org.ovirt.engine.core.common.businessentities.storage.Disk.class,
-              collection.asGuidOr404(id),
-              collection,
-              updateType,
-              updateParametersProvider,
-              requiredUpdateFields,
-              SUB_COLLECTIONS);
+    private Guid vmId;
+
+    protected BackendVmDiskResource(
+            Guid vmId,
+            String diskId,
+            AbstractBackendReadOnlyDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.storage.Disk> collection,
+            VdcActionType updateType,
+            ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> updateParametersProvider,
+            String[] requiredUpdateFields,
+            String... subCollections) {
+        super(
+            Disk.class,
+            org.ovirt.engine.core.common.businessentities.storage.Disk.class,
+            collection.asGuidOr404(diskId),
+            collection,
+            updateType,
+            updateParametersProvider,
+            requiredUpdateFields,
+            SUB_COLLECTIONS
+        );
+        this.vmId = vmId;
     }
 
     @Override
     public StatisticsResource getStatisticsResource() {
         EntityIdResolver<Guid> resolver = new EntityIdResolver<Guid>() {
-
             @Override
             public org.ovirt.engine.core.common.businessentities.storage.Disk lookupEntity(
                     Guid guid) throws BackendFailureException {
@@ -52,7 +62,7 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
             }
         };
         DiskStatisticalQuery query = new DiskStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<>(entityType, guid, query));
     }
 
     @Override
@@ -141,10 +151,20 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
         return super.update(resource);//explicit call solves REST-Easy confusion
     }
 
-    // The code to remove the disk should be here, but moving it from the collection resource requires too many
-    // changes, so it is temporarily kept there.
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(guid));
+    }
+
     @Override
     public Response remove(Action action) {
-        return ((BackendVmDisksResource) collection).deprecatedRemove(id, action);
+        get();
+        if (action.isSetDetach() && action.isDetach()) {
+            return performAction(VdcActionType.DetachDiskFromVm, new AttachDetachVmDiskParameters(vmId, guid));
+        }
+        else {
+            return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(guid));
+        }
     }
 }
