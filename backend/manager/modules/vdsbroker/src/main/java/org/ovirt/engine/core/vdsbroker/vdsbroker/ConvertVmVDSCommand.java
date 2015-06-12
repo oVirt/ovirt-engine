@@ -39,6 +39,9 @@ public class ConvertVmVDSCommand<T extends ConvertVmVDSParameters> extends VdsBr
             map.put(VdsProperties.DISK_ALLOCATION, diskImage.getVolumeType().toString());
             break;
         }
+        if (getParameters().getVirtioIsoPath() != null) {
+            map.put(VdsProperties.VIRTIO_ISO_PATH, getParameters().getVirtioIsoPath());
+        }
         return map;
     }
 

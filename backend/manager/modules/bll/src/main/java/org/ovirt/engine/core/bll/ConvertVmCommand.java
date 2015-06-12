@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConvertVmVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -182,7 +184,18 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         parameters.setVmName(getVmName());
         parameters.setStoragePoolId(getStoragePoolId());
         parameters.setStorageDomainId(getStorageDomainId());
+        parameters.setVirtioIsoPath(getVirtioIsoPath());
         return parameters;
+    }
+
+    private String getVirtioIsoPath() {
+        return getParameters().getVirtioIsoName() == null ? null :
+            new File(getIsoPrefix(), getParameters().getVirtioIsoName()).getPath();
+    }
+
+    private String getIsoPrefix() {
+        return (String) runVdsCommand(VDSCommandType.IsoPrefix,
+                new VdsAndPoolIDVDSParametersBase(getVdsId(), getStoragePoolId())).getReturnValue();
     }
 
     ////////////////////

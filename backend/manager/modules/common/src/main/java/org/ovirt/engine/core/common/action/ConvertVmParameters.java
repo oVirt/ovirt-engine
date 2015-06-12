@@ -16,6 +16,7 @@ public class ConvertVmParameters extends VmOperationParameterBase {
     private Guid storageDomainId;
     private Guid proxyHostId;
     private Guid vdsGroupId;
+    private String virtioIsoName;
 
     public ConvertVmParameters() {
     }
@@ -94,5 +95,13 @@ public class ConvertVmParameters extends VmOperationParameterBase {
 
     public void setVdsGroupId(Guid vdsGroupId) {
         this.vdsGroupId = vdsGroupId;
+    }
+
+    public String getVirtioIsoName() {
+        return virtioIsoName;
+    }
+
+    public void setVirtioIsoName(String virtioIsoName) {
+        this.virtioIsoName = virtioIsoName;
     }
 }

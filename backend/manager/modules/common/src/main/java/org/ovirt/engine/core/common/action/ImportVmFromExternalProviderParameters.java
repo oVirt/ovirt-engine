@@ -11,6 +11,7 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
     private String password;
     private Guid proxyHostId;
     private ArrayList<Guid> disks;
+    private String virtioIsoName;
 
     public ImportVmFromExternalProviderParameters() {
     }
@@ -53,5 +54,13 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
 
     public void setDisks(ArrayList<Guid> disks) {
         this.disks = disks;
+    }
+
+    public String getVirtioIsoName() {
+        return virtioIsoName;
+    }
+
+    public void setVirtioIsoName(String virtioIsoPath) {
+        this.virtioIsoName = virtioIsoPath;
     }
 }

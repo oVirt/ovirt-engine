@@ -121,6 +121,10 @@ implements QuotaStorageDependent {
             return false;
         }
 
+        if (getParameters().getVirtioIsoName() != null && getActiveIsoDomainId() == null) {
+            return failCanDoAction(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
+        }
+
         return true;
     }
 
@@ -271,6 +275,7 @@ implements QuotaStorageDependent {
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());
         parameters.setVdsGroupId(getVdsGroupId());
+        parameters.setVirtioIsoName(getParameters().getVirtioIsoName());
         return parameters;
     }
 
@@ -336,5 +341,13 @@ implements QuotaStorageDependent {
                 VdcObjectType.Storage,
                 getActionType().getActionGroup()));
         return new ArrayList<>(permissionSet);
+    }
+
+    protected Guid getActiveIsoDomainId() {
+        return getIsoDomainListSyncronizer().findActiveISODomain(getStoragePoolId());
+    }
+
+    protected IsoDomainListSyncronizer getIsoDomainListSyncronizer() {
+        return IsoDomainListSyncronizer.getInstance();
     }
 }

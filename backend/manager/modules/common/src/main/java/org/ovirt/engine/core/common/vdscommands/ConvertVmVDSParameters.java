@@ -16,6 +16,7 @@ public class ConvertVmVDSParameters extends VdsIdVDSCommandParametersBase {
     private Guid storagePoolId;
     private Guid storageDomainId;
     private Guid vmId;
+    private String virtioIsoPath;
 
     public ConvertVmVDSParameters() {
     }
@@ -83,6 +84,14 @@ public class ConvertVmVDSParameters extends VdsIdVDSCommandParametersBase {
         this.vmId = vmId;
     }
 
+    public String getVirtioIsoPath() {
+        return virtioIsoPath;
+    }
+
+    public void setVirtioIsoPath(String virtioIsoPath) {
+        this.virtioIsoPath = virtioIsoPath;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         ToStringBuilder builder = super.appendAttributes(tsb)
@@ -91,7 +100,8 @@ public class ConvertVmVDSParameters extends VdsIdVDSCommandParametersBase {
                 .append("vmId", getVmId())
                 .append("vmName", getVmName())
                 .append("storageDomainId", getStorageDomainId())
-                .append("storagePoolId", getStoragePoolId());
+                .append("storagePoolId", getStoragePoolId())
+                .append("virtioIsoPath", getVirtioIsoPath());
         for (int i=0; i<getDisks().size(); ++i) {
             builder.append(String.format("Disk%d", i), getDisks().get(i).getId());
         }
