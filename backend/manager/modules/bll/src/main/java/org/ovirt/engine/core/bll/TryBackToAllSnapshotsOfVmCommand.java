@@ -5,13 +5,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskSnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -19,6 +24,7 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.CloneCinderDisksParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -29,7 +35,9 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -147,7 +155,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         // Images list without those that are excluded from preview
         final List<DiskImage> filteredImages = (List<DiskImage>) CollectionUtils.subtract(
                 images, getImagesExcludedFromPreview(images, previousActiveSnapshotId, newActiveSnapshotId));
-
+        final List<CinderDisk> cinderDisks = new ArrayList<>();
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
@@ -184,6 +192,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 @Override
                 public Void runInTransaction() {
                     for (DiskImage image : filteredImages) {
+                        if (image.getDiskStorageType() == DiskStorageType.CINDER) {
+                            cinderDisks.add((CinderDisk)image);
+                            continue;
+                        }
                         VdcReturnValueBase vdcReturnValue =
                                 runInternalActionWithTasksContext(VdcActionType.TryBackToSnapshot,
                                         buildTryBackToSnapshotParameters(newActiveSnapshotId, image));
@@ -198,6 +210,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                             log.error("Cannot create snapshot");
                             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
                         }
+                    }
+                    if (!cinderDisks.isEmpty() &&
+                            !tryBackAllCinderDisks(cinderDisks, newActiveSnapshotId)) {
+                        throw new VdcBLLException(VdcBllErrors.CINDER_ERROR, "Failed to preview a snapshot!");
                     }
                     return null;
                 }
@@ -217,12 +233,43 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         setSucceeded(true);
     }
 
+    protected boolean tryBackAllCinderDisks( List<CinderDisk> cinderDisks, Guid newSnapshotId) {
+        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                VdcActionType.TryBackToAllCinderSnapshots,
+                buildCinderChildCommandParameters(cinderDisks, newSnapshotId),
+                cloneContextAndDetachFromParent(),
+                CINDERStorageHelper.getStorageEntities(cinderDisks));
+        try {
+            VdcReturnValueBase vdcReturnValueBase = future.get();
+            if (!vdcReturnValueBase.getSucceeded()) {
+                getReturnValue().setFault(vdcReturnValueBase.getFault());
+                log.error("Error preview snapshot");
+                return false;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error cloning Cinder disks for preview snapshot", e);
+            return false;
+        }
+        return true;
+    }
+
+    private CloneCinderDisksParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks, Guid newSnapshotId) {
+        CloneCinderDisksParameters createParams = new CloneCinderDisksParameters();
+        createParams.setCinderDisks(cinderDisks);
+        createParams.setVmSnapshotId(newSnapshotId);
+        createParams.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
+        return withRootCommandInfo(createParams, getActionType());
+    }
+
     private List<DiskImage> getImagesToPreview() {
         if (imagesToPreview == null) {
             imagesToPreview = getParameters().getDisks() != null ? getParameters().getDisks() :
                     getDbFacade().getDiskImageDao().getAllSnapshotsForVmSnapshot(getDstSnapshot().getId());
+
             // Filter out shareable/nonsnapable disks
+            List<CinderDisk> CinderImagesToPreview = ImagesHandler.filterDisksBasedOnCinder(imagesToPreview);
             imagesToPreview = ImagesHandler.filterImageDisks(imagesToPreview, true, true, false);
+            imagesToPreview.addAll(CinderImagesToPreview);
         }
         return imagesToPreview;
     }
@@ -234,7 +281,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         List<DiskImage> excludedImages = new ArrayList<>();
 
         for (DiskImage image : images) {
-            if (image.getVmSnapshotId().equals(previousActiveSnapshotId)) {
+            if (image.getDiskStorageType().isSupportsSnapshots() && image.getVmSnapshotId().equals(previousActiveSnapshotId)) {
                 // Image is already active, hence only update snapshot ID.
                 getImageDao().updateImageVmSnapshotId(image.getImageId(), newActiveSnapshotId);
                 excludedImages.add(image);
@@ -277,6 +324,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         updateVmDisksFromDb();
         List<DiskImage> diskImages =
                 ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, true, true);
+        diskImages.addAll(ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values(), true));
         if (!diskImages.isEmpty()) {
           if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
               return false;
@@ -297,11 +345,12 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
           Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(diskImages);
           MultipleStorageDomainsValidator storageValidator =
                     new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
-          if (!validate(new StoragePoolValidator(getStoragePool()).isUp())
-                  || !validate(storageValidator.allDomainsExistAndActive())
-                    || !validate(storageValidator.allDomainsWithinThresholds())) {
-              return false;
-          }
+            if (!validate(new StoragePoolValidator(getStoragePool()).isUp())
+                    || !validate(storageValidator.allDomainsExistAndActive())
+                    || !validate(storageValidator.allDomainsWithinThresholds())
+                    || !validateCinder()) {
+                return false;
+            }
         }
 
         DiskSnapshotsValidator diskSnapshotsValidator = new DiskSnapshotsValidator(getParameters().getDisks());
@@ -310,6 +359,19 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         }
 
         return true;
+    }
+
+    public boolean validateCinder() {
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()));
+        if (!cinderDisks.isEmpty()) {
+            CinderDisksValidator cinderDisksValidator = getCinderDisksValidator(cinderDisks);
+            return validate(cinderDisksValidator.validateCinderDiskLimits());
+        }
+        return true;
+    }
+
+    protected CinderDisksValidator getCinderDisksValidator(List<CinderDisk> cinderDisks) {
+        return new CinderDisksValidator(cinderDisks);
     }
 
     private Snapshot getDstSnapshot() {
