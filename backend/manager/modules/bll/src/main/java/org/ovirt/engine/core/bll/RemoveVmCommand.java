@@ -207,7 +207,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             case Suspended:
                 return failCanDoAction(EngineMessage.VM_CANNOT_REMOVE_VM_WHEN_STATUS_IS_NOT_DOWN);
             default:
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+                return (getVm().isHostedEngine() && isInternalExecution()) || failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
 
         if (getVm().getVmPoolId() != null) {
