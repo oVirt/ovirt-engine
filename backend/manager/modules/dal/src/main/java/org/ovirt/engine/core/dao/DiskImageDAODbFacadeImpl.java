@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -216,6 +217,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             entity.setDiskProfileIds(getGuidListFromStringPreserveAllTokens(rs.getString("disk_profile_id")));
             entity.setDiskProfileNames(splitPreserveAllTokens(rs.getString("disk_profile_name")));
+            entity.setVolumeClassification(VolumeClassification.forValue(rs.getInt("volume_classification")));
         }
 
         @Override
