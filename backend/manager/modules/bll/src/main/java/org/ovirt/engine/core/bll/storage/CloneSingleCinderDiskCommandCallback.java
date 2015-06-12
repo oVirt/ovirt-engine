@@ -63,7 +63,7 @@ public class CloneSingleCinderDiskCommandCallback<T extends BaseImagesCommand<? 
     @Override
     protected CinderDisk getDisk() {
         if (disk == null) {
-            disk = (CinderDisk) getDiskDao().get(getCommand().getParameters().getDestinationImageId());
+            disk = (CinderDisk) getDiskDao().get(getCommand().getParameters().getContainerId());
         }
         return disk;
     }

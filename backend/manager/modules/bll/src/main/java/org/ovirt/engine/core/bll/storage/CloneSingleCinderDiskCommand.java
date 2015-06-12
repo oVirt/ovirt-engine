@@ -43,6 +43,7 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
 
         getReturnValue().setActionReturnValue(cinderDisk.getId());
         getParameters().setDestinationImageId(Guid.createGuidFromString(volumeId));
+        getParameters().setContainerId(Guid.createGuidFromString(volumeId));
         persistCommand(getParameters().getParentCommand(), true);
         setSucceeded(true);
     }
