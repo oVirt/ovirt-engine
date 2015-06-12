@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 
 import javax.inject.Inject;
@@ -20,6 +21,8 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
     private static final String OVIRT="oVirt";
 
     @Inject VdsDynamicDAO hostDao;
+
+    @Inject StorageDomainDynamicDAO storageDomainDynamicDao;
 
     public AddExternalEventCommand(T parameters) {
         super(parameters);
@@ -66,6 +69,11 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
         if (hasHostExternalStatus()) {
             hostDao.updateExternalStatus(getParameters().getEvent().getVdsId(), getParameters().getExternalStatus());
         }
+        // update storage domain external status if set
+        if (hasStorageDomainExternalStatus()) {
+            storageDomainDynamicDao.updateExternalStatus(getParameters().getEvent().getStorageDomainId(),
+                    getParameters().getExternalStatus());
+        }
     }
 
     @Override
@@ -76,10 +84,20 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
             permissionList.add(new PermissionSubject(getParameters().getEvent().getVdsId(),
                     VdcObjectType.VDS, ActionGroup.EDIT_HOST_CONFIGURATION));
         }
+        // check for external storage domain status modification
+        if (hasStorageDomainExternalStatus()) {
+            permissionList.add(new PermissionSubject(getParameters().getEvent().getStorageDomainId(),
+                    VdcObjectType.Storage, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION));
+        }
         return permissionList;
     }
 
     private boolean hasHostExternalStatus() {
         return getParameters().getEvent().getVdsId() != null && getParameters().getExternalStatus() != null;
+    }
+
+    private boolean hasStorageDomainExternalStatus() {
+        return getParameters().getEvent().getStorageDomainId() != null &&
+                getParameters().getExternalStatus() != null;
     }
 }
