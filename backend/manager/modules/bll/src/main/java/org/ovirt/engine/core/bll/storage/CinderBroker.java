@@ -84,12 +84,19 @@ public class CinderBroker extends AuditLogableBase {
         });
     }
 
-    public Void deleteVolume(final CinderDisk cinderDisk) {
-        return execute(new Callable<Void>() {
+    public boolean deleteVolume(final CinderDisk cinderDisk) {
+        return execute(new Callable<Boolean>() {
             @Override
-            public Void call() {
-                proxy.deleteVolume(cinderDisk.getImageId().toString());
-                return null;
+            public Boolean call() {
+                try {
+                    proxy.deleteVolume(cinderDisk.getImageId().toString());
+                    return true;
+                } catch (OpenStackResponseException ex) {
+                    if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
+                        return false;
+                    }
+                    throw ex;
+                }
             }
         });
     }
@@ -128,12 +135,19 @@ public class CinderBroker extends AuditLogableBase {
         });
     }
 
-    public Void deleteSnapshot(final Guid snapshotId) {
-        return execute(new Callable<Void>() {
+    public boolean deleteSnapshot(final Guid snapshotId) {
+        return execute(new Callable<Boolean>() {
             @Override
-            public Void call() {
-                proxy.deleteSnapshot(snapshotId.toString());
-                return null;
+            public Boolean call() {
+                try {
+                    proxy.deleteSnapshot(snapshotId.toString());
+                    return true;
+                } catch (OpenStackResponseException ex) {
+                    if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
+                        return false;
+                    }
+                    throw ex;
+                }
             }
         });
     }
