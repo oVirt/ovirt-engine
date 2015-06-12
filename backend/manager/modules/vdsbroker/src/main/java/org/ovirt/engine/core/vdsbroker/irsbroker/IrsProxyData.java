@@ -185,8 +185,8 @@ public class IrsProxyData {
                     StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao()
                             .get(_storagePoolId);
 
-                    boolean poolStatusDeterminedByHostsStatus = FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion());
                     if (storagePool != null) {
+                        boolean poolStatusDeterminedByHostsStatus = FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion());
                         // when there are no hosts in status up, it means that there shouldn't be domain monitoring
                         // so all the domains need to move to "unknown" status as otherwise their status won't change.
                         if (DbFacade.getInstance()
