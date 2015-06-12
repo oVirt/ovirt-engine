@@ -206,7 +206,7 @@ def queryPassword(
         hidden=True,
         tests=(
             {
-                'test': lambda(value): (
+                'test': lambda value: (
                     '' if value == queryEnvKey(
                         dialog=dialog,
                         logger=logger,
