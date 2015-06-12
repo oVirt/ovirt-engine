@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -126,12 +127,27 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             return;
         }
 
-        String engineBaseUrlString = sanitizeUrl(getParameters().getEngineBaseUrl());
+        String engineBaseUrlString = calculateEngineBaseUrl(sanitizeUrl(getParameters().getEngineBaseUrl()));
         String consoleClientResourcesUrl = sanitizeUrl(getParameters().getConsoleClientResourcesUrl());
 
         options.setRemoteViewerSupportedVersions(remoteViewerSupportedVersions);
 
         fillRemoteViewerUrl(options, remoteViewerNewerVersionUrl, engineBaseUrlString, consoleClientResourcesUrl);
+    }
+
+    /**
+     * If passed explicitly, just return it. If not, return the one calculated from ENGINE_FQDN and ENGINE_PROXY_HTTPS_PORT
+     */
+    private String calculateEngineBaseUrl(String passedUrl) {
+        if (!StringUtils.isEmpty(passedUrl)) {
+            return passedUrl;
+        }
+
+        try {
+            return EngineLocalConfig.getInstance().getExternalHttpsBaseUrl("").toString();
+        } catch (MalformedURLException e) {
+            return "";
+        }
     }
 
     private String sanitizeUrl(String url) {

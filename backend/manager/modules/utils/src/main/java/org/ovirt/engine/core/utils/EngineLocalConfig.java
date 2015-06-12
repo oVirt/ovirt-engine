@@ -189,7 +189,11 @@ public class EngineLocalConfig extends ShellLikeConfd {
      *     number of the URL
      */
     public URL getExternalHttpsUrl(String path) throws MalformedURLException {
-        return new URL("https", getHost(), getExternalHttpsPort(), getEngineURI() + path);
+        return getExternalHttpsBaseUrl(getEngineURI() + path);
+    }
+
+    public URL getExternalHttpsBaseUrl(String path) throws MalformedURLException {
+        return new URL("https", getHost(), getExternalHttpsPort(), path);
     }
 
     public File getPKIDir() {
