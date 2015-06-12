@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.List;
+
+import org.ovirt.engine.core.bll.BaseImagesCommand;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -11,9 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 
-import java.util.List;
-
-public class CloneSingleCinderDiskCommandCallback extends AbstractCinderDiskCommandCallback<CloneSingleCinderDiskCommand<ImagesContainterParametersBase>> {
+public class CloneSingleCinderDiskCommandCallback<T extends BaseImagesCommand<? extends ImagesContainterParametersBase>> extends AbstractCinderDiskCommandCallback<T> {
 
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
