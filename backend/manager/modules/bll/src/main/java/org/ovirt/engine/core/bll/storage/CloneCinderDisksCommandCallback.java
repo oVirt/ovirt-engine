@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.List;
+
+import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.CloneCinderDisksParameters;
@@ -8,9 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
-public class CloneCinderDisksCommandCallback<T extends CloneCinderDisksCommand<CloneCinderDisksParameters>> extends CommandCallback {
+public class CloneCinderDisksCommandCallback<T extends CommandBase<CloneCinderDisksParameters>> extends CommandCallback {
     private static final Logger log = LoggerFactory.getLogger(CloneCinderDisksCommandCallback.class);
 
     @Override
