@@ -127,7 +127,8 @@ public class VdsBrokerObjectsBuilder {
         for (DiskImage image : vm.getImages()) {
             vm.getDiskMap().put(Guid.newGuid(), image);
         }
-        vm.setClusterArch(ArchitectureType.valueOf((String) xmlRpcStruct.get(VdsProperties.vm_arch)));
+
+        vm.setClusterArch(parseArchitecture(xmlRpcStruct));
 
         return vm;
     }
@@ -218,8 +219,8 @@ public class VdsBrokerObjectsBuilder {
         VmStatic vmStatic = new VmStatic();
         vmStatic.setId(Guid.createGuidFromString((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
         vmStatic.setName((String) xmlRpcStruct.get(VdsProperties.vm_name));
-        vmStatic.setMemSizeMb((int) xmlRpcStruct.get(VdsProperties.mem_size_mb));
-        vmStatic.setNumOfSockets((int) xmlRpcStruct.get(VdsProperties.num_of_cpus));
+        vmStatic.setMemSizeMb(parseIntVdsProperty(xmlRpcStruct.get(VdsProperties.mem_size_mb)));
+        vmStatic.setNumOfSockets(parseIntVdsProperty(xmlRpcStruct.get(VdsProperties.num_of_cpus)));
         vmStatic.setCustomCpuName((String) xmlRpcStruct.get(VdsProperties.cpu_model));
         vmStatic.setCustomEmulatedMachine((String) xmlRpcStruct.get(VdsProperties.emulatedMachine));
 
@@ -655,6 +656,28 @@ public class VdsBrokerObjectsBuilder {
         try {
             return Integer.parseInt(s);
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Some properties were changed recently from String to Integer
+     * This method checks what type is the property, and returns int
+     * @param vdsProperty
+     * @return
+     */
+    public static int parseIntVdsProperty(Object vdsProperty) {
+        if (vdsProperty instanceof Integer) {
+            return (Integer) vdsProperty;
+        } else {
+            return Integer.parseInt((String) vdsProperty);
+        }
+    }
+
+    protected static ArchitectureType parseArchitecture(Map<String, Object> xmlRpcStruct) {
+        try {
+            return ArchitectureType.valueOf((String) xmlRpcStruct.get(VdsProperties.vm_arch));
+        } catch (NullPointerException e) {
             return null;
         }
     }

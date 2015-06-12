@@ -374,8 +374,8 @@ public class VmsMonitoring {
                     vmStatic.setOrigin(OriginType.EXTERNAL);
                 }
 
-                vmStatic.setNumOfSockets(parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
-                vmStatic.setMemSizeMb(parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
+                vmStatic.setNumOfSockets(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
+                vmStatic.setMemSizeMb(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
                 vmStatic.setSingleQxlPci(false);
 
                 externalVmsToAdd.add(vmStatic);
@@ -624,16 +624,6 @@ public class VmsMonitoring {
     private static Guid getDeviceId(Map device) {
         String deviceId = (String) device.get(VdsProperties.DeviceId);
         return deviceId == null ? null : new Guid(deviceId);
-    }
-
-    // Some properties were changed recently from String to Integer
-    // This method checks what type is the property, and returns int
-    private int parseIntVdsProperty(Object vdsProperty) {
-        if (vdsProperty instanceof Integer) {
-            return (Integer) vdsProperty;
-        } else {
-            return Integer.parseInt((String) vdsProperty);
-        }
     }
 
     /**
