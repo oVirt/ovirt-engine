@@ -56,17 +56,15 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommand extends GlusterComman
 
     @Override
     protected void executeCommand() {
-        VDSReturnValue writePubKeysReturnValue =
+        final VDSReturnValue writePubKeysReturnValue =
                 runVdsCommand(VDSCommandType.UpdateGlusterGeoRepKeys,
                         new UpdateGlusterGeoRepKeysVDSParameters(getParameters().getId(),
                                 getParameters().getPubKeys(),
                                 getParameters().getRemoteUserName()));
         setSucceeded(writePubKeysReturnValue.getSucceeded());
         if (!writePubKeysReturnValue.getSucceeded()) {
-            handleVdsError(AuditLogType.GLUSTER_GEOREP_PUBLIC_KEY_WRITE_FAILED, writePubKeysReturnValue.getVdsError()
-                    .getMessage());
+            propagateFailure(convertToVdcReturnValueBase(writePubKeysReturnValue));
             return;
         }
     }
-
 }

@@ -101,15 +101,13 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
         if (mountBrokerReturnValue.getSucceeded()) {
             VDSReturnValue restartGlusterdReturnValue = restartGlusterd(getParameters().getId());
             if (!restartGlusterdReturnValue.getSucceeded()) {
-                handleVdsError(AuditLogType.GLUSTER_GEOREP_SETUP_MOUNT_BROKER_FAILED,
-                        restartGlusterdReturnValue.getVdsError().getMessage());
+                propagateFailure(convertToVdcReturnValueBase(restartGlusterdReturnValue));
                 return;
             } else {
                 setSucceeded(restartGlusterdReturnValue.getSucceeded());
             }
         } else {
-            handleVdsError(AuditLogType.GLUSTER_GEOREP_SETUP_MOUNT_BROKER_FAILED, mountBrokerReturnValue.getVdsError()
-                    .getMessage());
+            propagateFailure(convertToVdcReturnValueBase(mountBrokerReturnValue));
             return;
         }
     }
