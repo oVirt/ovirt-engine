@@ -138,6 +138,10 @@ public class VdcReturnValueBase implements Serializable {
         return endActionTryAgain;
     }
 
+    public void setExecuteFailedMessages(ArrayList<String> value) {
+        executeFailedMessages = value;
+    }
+
     public void setEndActionTryAgain(boolean value) {
         endActionTryAgain = value;
     }

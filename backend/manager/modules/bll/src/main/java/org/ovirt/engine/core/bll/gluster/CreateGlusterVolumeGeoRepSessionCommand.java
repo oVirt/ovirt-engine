@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.action.gluster.SetUpMountBrokerParameters;
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterHostPubKeyToSlaveParameters;
@@ -127,9 +129,16 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         Set<Guid> remoteServerIds = getServerIds(remoteServersSet);
         Guid slaveHostId = getParameters().getSlaveHostId();
         if (!rootSession) {
-            succeeded = setUpMountBrokerOnSlave();
+            VdcReturnValueBase mountBrokerOnSlaveReturnValue = setUpMountBrokerOnSlave();
+            succeeded =
+                    evaluateReturnValues(AuditLogType.GLUSTER_GEOREP_SETUP_MOUNT_BROKER_FAILED,
+                            Collections.singletonList(mountBrokerOnSlaveReturnValue));
             remoteServerIds.remove(slaveHostId);
-            succeeded = setUpPartialMountBrokerOnSlaves(remoteServerIds);
+            if (succeeded) {
+                succeeded =
+                        evaluateReturnValues(AuditLogType.GLUSTER_GEOREP_SETUP_MOUNT_BROKER_FAILED,
+                                setUpPartialMountBrokerOnSlaves(remoteServerIds));
+            }
         }
         if (succeeded) {
             remoteServerIds.add(slaveHostId);
@@ -158,71 +167,62 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         return remoteServerIds;
     }
 
-    protected boolean setUpMountBrokerOnSlave() {
-        return getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
+    protected VdcReturnValueBase setUpMountBrokerOnSlave() {
+        VdcReturnValueBase mountBrokerOnSlaveReturnValue = getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
                 new SetUpMountBrokerParameters(getParameters().getSlaveHostId(),
                         getParameters().getSlaveVolumeName(),
                         getParameters().getUserName(),
-                        getParameters().getUserGroup())).getSucceeded();
+                        getParameters().getUserGroup()));
+        return mountBrokerOnSlaveReturnValue;
     }
 
-    protected boolean setUpPartialMountBrokerOnSlaves(Set<Guid> remoteServerIds) {
+    protected List<VdcReturnValueBase> setUpPartialMountBrokerOnSlaves(Set<Guid> remoteServerIds) {
         if (remoteServerIds == null || remoteServerIds.isEmpty()) {
-            return true;
+            return null;
         }
-        List<Callable<Boolean>> mountBrokerPartialSetupReturnStatuses = new ArrayList<Callable<Boolean>>();
+        List<Callable<VdcReturnValueBase>> mountBrokerPartialSetupReturnStatuses = new ArrayList<Callable<VdcReturnValueBase>>();
         for (final Guid currentSlaveServerId : remoteServerIds) {
-            mountBrokerPartialSetupReturnStatuses.add(new Callable<Boolean>() {
+            mountBrokerPartialSetupReturnStatuses.add(new Callable<VdcReturnValueBase>() {
                 @Override
-                public Boolean call() throws Exception {
+                public VdcReturnValueBase call() throws Exception {
                     return getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
                             new SetUpMountBrokerParameters(currentSlaveServerId,
                                     getParameters().getSlaveVolumeName(),
                                     getParameters().getUserName(),
                                     getParameters().getUserGroup(),
-                                    true)).getSucceeded();
+                                    true));
                 }
             });
         }
-        List<Boolean> returnStatuses = ThreadPoolUtil.invokeAll(mountBrokerPartialSetupReturnStatuses);
-        for (Boolean currentReturnStatus : returnStatuses) {
-            if (!currentReturnStatus) {
-                return false;
-            }
-        }
-        return true;
+        List<VdcReturnValueBase> returnStatuses = ThreadPoolUtil.invokeAll(mountBrokerPartialSetupReturnStatuses);
+        return returnStatuses;
     }
 
     protected boolean setUpPasswordlessSSH(Guid masterUpServerId, Set<Guid> remoteServerSet, String userName) {
         List<String> pubKeys = readPubKey(masterUpServerId);
         boolean canProceed = pubKeys != null && pubKeys.size() > 0;
         if (canProceed) {
-            canProceed = updatePubKeysToRemoteHosts(pubKeys, remoteServerSet, userName);
+            canProceed = evaluateReturnValues(AuditLogType.GLUSTER_GEOREP_PUBLIC_KEY_WRITE_FAILED, updatePubKeysToRemoteHosts(pubKeys, remoteServerSet, userName));
         }
         return canProceed;
     }
 
-    private boolean updatePubKeysToRemoteHosts(final List<String> pubKeys,
+    private List<VdcReturnValueBase> updatePubKeysToRemoteHosts(final List<String> pubKeys,
             Set<Guid> remoteServersSet,
             final String userName) {
-        List<Callable<Boolean>> slaveWritePubKeyList = new ArrayList<Callable<Boolean>>();
+        List<Callable<VdcReturnValueBase>> slaveWritePubKeyList = new ArrayList<Callable<VdcReturnValueBase>>();
         for (final Guid currentRemoteHostId : remoteServersSet) {
-            slaveWritePubKeyList.add(new Callable<Boolean>() {
+            slaveWritePubKeyList.add(new Callable<VdcReturnValueBase>() {
                 @Override
-                public Boolean call() throws Exception {
+                public VdcReturnValueBase call() throws Exception {
                     return getBackend().runInternalAction(VdcActionType.UpdateGlusterHostPubKeyToSlaveInternal,
                             new UpdateGlusterHostPubKeyToSlaveParameters(currentRemoteHostId,
-                                    pubKeys, userName)).getSucceeded();
+                                    pubKeys, userName));
                 }
             });
         }
-        List<Boolean> returnStatuses = ThreadPoolUtil.invokeAll(slaveWritePubKeyList);
-        for (Boolean currentReturnStatus : returnStatuses) {
-            if (!currentReturnStatus) {
-                return false;
-            }
-        }
-        return true;
+        List<VdcReturnValueBase> returnStatuses = ThreadPoolUtil.invokeAll(slaveWritePubKeyList);
+        return returnStatuses;
     }
 
     @SuppressWarnings("unchecked")
@@ -278,5 +278,21 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
 
     protected GlusterUtil getGlusterUtil() {
         return GlusterUtil.getInstance();
+    }
+
+    private boolean evaluateReturnValues(AuditLogType auditLogType, List<VdcReturnValueBase> returnValues) {
+        boolean succeeded = true;
+        List<String> errors = new ArrayList<>();
+        for (VdcReturnValueBase currentReturnValue : returnValues) {
+            boolean currentExecutionStatus = currentReturnValue.getSucceeded();
+            succeeded = succeeded && currentExecutionStatus;
+            if (!currentExecutionStatus) {
+                errors.addAll(currentReturnValue.getExecuteFailedMessages());
+            }
+        }
+        if (!succeeded) {
+            handleVdsErrors(auditLogType, errors);
+        }
+        return succeeded;
     }
 }

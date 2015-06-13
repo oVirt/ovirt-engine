@@ -471,13 +471,11 @@ public class VolumeGeoRepListModel extends SearchableListModel{
                                         VolumeGeoRepListModel.this,
                                         false);
                             }
-                        } else {
-                            createModel.setQueryFailureMessage(result.getReturnValue().getFault().getMessage());
                         }
                     }
                 },
                 this,
-                false);
+                true);
     }
 
     private void createGeoRepSession() {
