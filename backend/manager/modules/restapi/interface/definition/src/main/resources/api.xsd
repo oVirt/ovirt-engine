@@ -1174,6 +1174,34 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="host_states" type="HostStates"/>
+
+  <xs:complexType name="HostStates">
+    <xs:sequence>
+      <xs:element name="host_state" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="HostStates"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="external_statuses" type="ExternalStatuses"/>
+
+  <xs:complexType name="ExternalStatuses">
+    <xs:sequence>
+      <xs:element name="external_status" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="ExternalStatus"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Architecture Capabilities -->
 
   <xs:element name="architecture_capability" type="ArchitectureCapability"/>
@@ -2036,34 +2064,6 @@
       <xs:element name="score" type="xs:int" minOccurs="0" maxOccurs="1"/>
       <xs:element name="global_maintenance" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <xs:element name="local_maintenance" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:element name="host_states" type="HostStates"/>
-
-  <xs:complexType name="HostStates">
-    <xs:sequence>
-      <xs:element name="host_state" type="xs:string" minOccurs="0" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="HostStates"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:element name="external_statuses" type="ExternalStatuses"/>
-
-  <xs:complexType name="ExternalStatuses">
-    <xs:sequence>
-      <xs:element name="external_status" type="xs:string" minOccurs="0" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="ExternalStatus"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
