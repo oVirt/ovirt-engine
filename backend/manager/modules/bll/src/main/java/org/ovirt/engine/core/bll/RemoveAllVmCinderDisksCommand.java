@@ -67,8 +67,10 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
     }
 
     private RemoveDiskParameters buildChildCommandParameters(CinderDisk cinderDisk) {
-        RemoveDiskParameters param = new RemoveDiskParameters(cinderDisk.getId(), cinderDisk.getStorageIds().get(0));
-        return withRootCommandInfo(param, getParameters().getParentCommand());
+        RemoveDiskParameters removeDiskParams = new RemoveDiskParameters(cinderDisk.getId(), cinderDisk.getStorageIds().get(0));
+        removeDiskParams.setParentCommand(getActionType());
+        removeDiskParams.setParentParameters(getParameters());
+        return removeDiskParams;
     }
 
     @Override
