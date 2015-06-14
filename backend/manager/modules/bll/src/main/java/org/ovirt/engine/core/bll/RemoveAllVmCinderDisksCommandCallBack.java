@@ -18,16 +18,21 @@ public class RemoveAllVmCinderDisksCommandCallBack<T extends RemoveAllVmCinderDi
 
         boolean anyFailed = false;
         for (Guid childCmdId : childCmdIds) {
-            switch (CommandCoordinatorUtil.getCommandStatus(childCmdId)) {
+            CommandStatus commandStatus = CommandCoordinatorUtil.getCommandStatus(childCmdId);
+            switch (commandStatus) {
+                case NOT_STARTED:
                 case ACTIVE:
                     log.info("Waiting for child commands to complete");
                     return;
+                case SUCCEEDED:
+                    break;
                 case FAILED:
                 case FAILED_RESTARTED:
                 case UNKNOWN:
                     anyFailed = true;
                     break;
                 default:
+                    log.error("Invalid command status: '{}", commandStatus);
                     break;
             }
         }
