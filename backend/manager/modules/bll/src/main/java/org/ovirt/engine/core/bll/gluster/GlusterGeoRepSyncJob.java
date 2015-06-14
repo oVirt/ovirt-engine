@@ -415,9 +415,13 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
             return null;
         }
         try {
-            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus,
-                    new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(),
-                            session.getMasterVolumeName(), session.getSlaveHostName(), session.getSlaveVolumeName()));
+            VDSReturnValue returnValue =
+                    runVdsCommand(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus,
+                            new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(),
+                                    session.getMasterVolumeName(),
+                                    session.getSlaveHostName(),
+                                    session.getSlaveVolumeName(),
+                                    session.getUserName()));
             if (returnValue.getSucceeded()) {
                 return (List<GlusterGeoRepSessionDetails>) returnValue.getReturnValue();
             } else {
