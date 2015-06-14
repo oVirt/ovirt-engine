@@ -69,7 +69,9 @@ public class CloneCinderDisksCommand<T extends CloneCinderDisksParameters> exten
         cinderDisk.setDiskAlias(templateDisk.getDiskAlias());
         createParams.setStorageDomainId(templateDisk.getStorageIds().get(0));
         createParams.setEntityInfo(getParameters().getEntityInfo());
-        return withRootCommandInfo(createParams, getParameters().getParentCommand());
+        createParams.setParentCommand(getActionType());
+        createParams.setParentParameters(getParameters());
+        return createParams;
     }
 
     @Override

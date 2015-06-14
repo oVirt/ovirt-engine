@@ -21,9 +21,12 @@ public class CloneCinderDisksCommandCallback<T extends CommandBase<CloneCinderDi
         for (Guid childCmdId : childCmdIds) {
             CommandStatus commandStatus = CommandCoordinatorUtil.getCommandStatus(childCmdId);
             switch (commandStatus) {
+            case NOT_STARTED:
             case ACTIVE:
                 log.info("Waiting on CloneCinderDisksCommandCallback child commands to complete");
                 return;
+            case SUCCEEDED:
+                break;
             case FAILED:
             case FAILED_RESTARTED:
             case UNKNOWN:
