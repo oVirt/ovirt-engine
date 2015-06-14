@@ -175,6 +175,29 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     /**
+     * Update the old image that represents the disk of the command's image to be in the given active state.
+     *
+     * @param snapshotType
+     *            The type of snapshot to look for the same image in.
+     * @param active
+     *            The active state.
+     */
+    protected void updateOldImageAsActive(SnapshotType snapshotType, boolean active) {
+        Guid oldImageId = findImageForSameDrive(snapshotType);
+        if (oldImageId == null) {
+            log.error("Can't find image to update to active '{}', snapshot type '{}', original image id '{}'",
+                    active,
+                    snapshotType,
+                    getImageId());
+            return;
+        }
+
+        DiskImage oldImage = getDiskImageDao().getSnapshotById(oldImageId);
+        oldImage.setActive(active);
+        getImageDao().update(oldImage.getImage());
+    }
+
+    /**
      * Find the image for the same drive by the snapshot ID:<br>
      * The image is the image from the given snapshot, which represents the same drive.
      *
