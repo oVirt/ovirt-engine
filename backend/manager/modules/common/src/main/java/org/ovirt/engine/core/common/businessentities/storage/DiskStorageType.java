@@ -20,4 +20,9 @@ public enum DiskStorageType implements Identifiable {
     public static DiskStorageType forValue(int value) {
         return values()[value];
     }
+
+    public boolean isSupportsSnapshots() {
+        return this == IMAGE || this == CINDER;
+    }
+
 }
