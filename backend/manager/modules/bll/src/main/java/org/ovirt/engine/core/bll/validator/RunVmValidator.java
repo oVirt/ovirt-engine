@@ -551,6 +551,7 @@ public class RunVmValidator {
     private List<DiskImage> getVmImageDisks() {
         if (cachedVmImageDisks == null) {
             cachedVmImageDisks = ImagesHandler.filterImageDisks(getVmDisks(), true, false, false);
+            cachedVmImageDisks.addAll(ImagesHandler.filterDisksBasedOnCinder(getVmDisks(), true));
         }
 
         return cachedVmImageDisks;
