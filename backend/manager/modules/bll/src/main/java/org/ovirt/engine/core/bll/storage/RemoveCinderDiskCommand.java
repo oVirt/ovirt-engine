@@ -112,7 +112,9 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
                         getImageStorageDomainMapDao().remove(lastCinderVolume.getImageId());
                         getImageDao().remove(lastCinderVolume.getImageId());
                         getDiskImageDynamicDAO().remove(lastCinderVolume.getImageId());
-                        getSnapshotDao().update(updated);
+                        if (updated != null) {
+                            getSnapshotDao().update(updated);
+                        }
                         return null;
                     }
                 });
@@ -123,8 +125,10 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
         Snapshot updated = null;
         if (vmSnapshotId != null && !Guid.Empty.equals(vmSnapshotId)) {
             Snapshot snapshot = getSnapshotDao().get(vmSnapshotId);
-            updated = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
-                    lastCinderVolume.getImageId());
+            if (snapshot != null) {
+                updated = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
+                        lastCinderVolume.getImageId());
+            }
         }
         return updated;
     }

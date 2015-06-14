@@ -12,7 +12,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
-import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
@@ -66,8 +66,8 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
         return null;
     }
 
-    private RemoveDiskParameters buildChildCommandParameters(CinderDisk cinderDisk) {
-        RemoveDiskParameters removeDiskParams = new RemoveDiskParameters(cinderDisk.getId(), cinderDisk.getStorageIds().get(0));
+    private RemoveCinderDiskParameters buildChildCommandParameters(CinderDisk cinderDisk) {
+        RemoveCinderDiskParameters removeDiskParams = new RemoveCinderDiskParameters(cinderDisk.getId());
         removeDiskParams.setParentCommand(getActionType());
         removeDiskParams.setParentParameters(getParameters());
         return removeDiskParams;
