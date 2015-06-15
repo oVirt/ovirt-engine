@@ -45,6 +45,8 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -706,6 +708,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // need to be changed due to configuration option change
         VmDeviceUtils.updateVmDevicesOnRun(getVm().getStaticData());
 
+        updateGraphicsInfos();
+
         getVm().setKvmEnable(getParameters().getKvmEnable());
         getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
         getVm().setAcpiEnable(getParameters().getAcpiEnable());
@@ -774,6 +778,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         getVm().setHibernationVolHandle(getMemoryFromActiveSnapshot());
+    }
+
+    /**
+     * This methods sets graphics infos of a VM to correspond to graphics devices set in DB
+     */
+    protected void updateGraphicsInfos() {
+        for (VmDevice vmDevice : getVmDeviceDao()
+                .getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.GRAPHICS)) {
+            getVm().getGraphicsInfos().put(GraphicsType.fromString(vmDevice.getDevice()), new GraphicsInfo());
+        }
     }
 
     protected boolean isPayloadExists(VmDeviceType deviceType) {
