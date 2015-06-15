@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -19,7 +20,10 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -27,12 +31,19 @@ public class AttachDiskModel extends NewDiskModel {
     protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private Map<DiskStorageType, ListModel<EntityModel<DiskModel>>> attachableDisksMap;
+    private EntityModel<String> messageLabel;
+    private EntityModel<String> warningLabel;
 
     public AttachDiskModel() {
         attachableDisksMap = new HashMap<DiskStorageType, ListModel<EntityModel<DiskModel>>>();
         attachableDisksMap.put(DiskStorageType.IMAGE, new ListModel<EntityModel<DiskModel>>());
         attachableDisksMap.put(DiskStorageType.LUN, new ListModel<EntityModel<DiskModel>>());
         attachableDisksMap.put(DiskStorageType.CINDER, new ListModel<EntityModel<DiskModel>>());
+        setWarningLabel(new EntityModel<String>());
+        getWarningLabel().setIsAvailable(false);
+        setMessageLabel(new EntityModel<String>());
+        getMessageLabel().setIsAvailable(false);
+        addListeners();
     }
 
     public Map<DiskStorageType, ListModel<EntityModel<DiskModel>>> getAttachableDisksMap() {
@@ -138,8 +149,10 @@ public class AttachDiskModel extends NewDiskModel {
             DiskModel disk = disksToAttach.get(i).getEntity();
             // Disk is attached to VM as read only or not, null is applicable only for floating disks
             // but this is not a case here.
+            boolean activate = getIsPlugged().getEntity() &&
+                    disk.getDisk().getDiskInterface() != DiskInterface.IDE;
             AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(
-                    getVm().getId(), disk.getDisk().getId(), getIsPlugged().getEntity(),
+                    getVm().getId(), disk.getDisk().getId(), activate,
                     Boolean.TRUE.equals(disk.getDisk().getReadOnly()));
 
             actionTypes.add(VdcActionType.AttachDiskToVm);
@@ -150,6 +163,22 @@ public class AttachDiskModel extends NewDiskModel {
         startProgress(null);
 
         Frontend.getInstance().runMultipleActions(actionTypes, paramerterList, callbacks, null, this);
+    }
+
+    public EntityModel<String> getWarningLabel() {
+        return warningLabel;
+    }
+
+    public void setWarningLabel(EntityModel<String> value) {
+        warningLabel = value;
+    }
+
+    public EntityModel<String> getMessageLabel() {
+        return messageLabel;
+    }
+
+    public void setMessageLabel(EntityModel<String> messageLabel) {
+        this.messageLabel = messageLabel;
     }
 
     private boolean isNoSelection() {
@@ -177,4 +206,51 @@ public class AttachDiskModel extends NewDiskModel {
         return selectedDisks;
     }
 
+    private boolean isSelectedDiskInterfaceIDE(List<EntityModel<DiskModel>> selectedDisks) {
+        for (EntityModel<DiskModel> selectedDisk : selectedDisks) {
+            if (selectedDisk.getEntity().getDisk().getDiskInterface() == DiskInterface.IDE) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void addListeners() {
+        addSelectedItemsChangedListener();
+        addIsPluggedEntityChangedListener();
+    }
+
+    private void updateWarningLabel() {
+        getWarningLabel().setIsAvailable(false);
+        if (getIsPlugged().getEntity().equals(Boolean.TRUE)) {
+            List<EntityModel<DiskModel>> selectedDisks = getSelectedDisks();
+            if (selectedDisks != null && isSelectedDiskInterfaceIDE(selectedDisks)) {
+                getWarningLabel().setEntity(constants.ideDisksWillBeAttachedButNotActivated());
+                getWarningLabel().setIsAvailable(true);
+            }
+        }
+    }
+
+    private void addSelectedItemsChangedListener() {
+        IEventListener<EventArgs> selectionChangedListener = new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                updateWarningLabel();
+            }
+        };
+        attachableDisksMap.get(DiskStorageType.IMAGE).
+                getSelectedItemsChangedEvent().addListener(selectionChangedListener);
+        attachableDisksMap.get(DiskStorageType.LUN).
+                getSelectedItemsChangedEvent().addListener(selectionChangedListener);
+    }
+
+    private void addIsPluggedEntityChangedListener() {
+        IEventListener<EventArgs> entityChangedListener = new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                updateWarningLabel();
+            }
+        };
+        getIsPlugged().getEntityChangedEvent().addListener(entityChangedListener);
+    }
 }

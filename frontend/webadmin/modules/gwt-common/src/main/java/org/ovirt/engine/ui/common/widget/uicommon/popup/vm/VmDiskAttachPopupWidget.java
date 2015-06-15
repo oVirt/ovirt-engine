@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import com.google.gwt.user.client.ui.HTML;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -30,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -43,8 +45,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<AttachDiskModel> {
 
@@ -87,13 +89,19 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
     @WithElementId
     EntityModelCellTable<ListModel> cinderDiskTable;
 
-    @UiField
-    Label message;
-
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    @Ignore
     @UiField(provided = true)
-    final CommonApplicationConstants constants = AssetProvider.getConstants();
+    HTML messageLabel;
+
+    @Ignore
+    @UiField(provided = true)
+    HTML warningLabel;
+
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
+
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     boolean isNewLunDiskEnabled;
 
@@ -113,6 +121,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
 
     private void localize() {
         isPluggedEditor.setLabel(constants.activateVmDiskPopup());
+        isPluggedEditor.setWidgetTooltip(constants.activateVmDiskPopupToolTip());
+        isPluggedEditor.getContentWidgetContainer().setWidth("90px"); //$NON-NLS-1$
     }
 
     private void initManualWidgets(boolean allowMultipleSelection) {
@@ -120,6 +130,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         imageDiskTable = new EntityModelCellTable<>(allowMultipleSelection);
         lunDiskTable = new EntityModelCellTable<>(allowMultipleSelection);
         cinderDiskTable = new EntityModelCellTable<>(allowMultipleSelection);
+        messageLabel = new HTML();
+        warningLabel = new HTML();
     }
 
     private void initAttachPanelWidget() {
@@ -528,11 +540,43 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                     } else {
                         attachDiskPanel.markAsInvalid(disk.getInvalidityReasons());
                     }
+                } else if ("Message".equals(propName)) { //$NON-NLS-1$
+                    if (StringUtils.isNotEmpty(disk.getMessage())) {
+                        messageLabel.setHTML(wrapInUnorderedList(disk.getMessage()));
+                    } else {
+                        messageLabel.setHTML(""); //$NON-NLS-1$
+                    }
                 }
             }
         });
 
+        disk.getWarningLabel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev,
+                    Object sender,
+                    PropertyChangedEventArgs args) {
+                EntityModel ownerModel = (EntityModel) sender;
+                String propName = args.propertyName;
+
+                if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
+                    warningLabel.setVisible(ownerModel.getIsAvailable());
+                }
+            }
+        });
+
+        disk.getWarningLabel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                warningLabel.setHTML(wrapInUnorderedList(disk.getWarningLabel().getEntity()));
+            }
+        });
+
         revealDiskPanel(disk);
+    }
+
+    private SafeHtml wrapInUnorderedList(String message) {
+        SafeHtml listItem = templates.listItem(message);
+        return templates.unorderedList(listItem);
     }
 
     private void revealDiskPanel(final AttachDiskModel disk) {

@@ -3,19 +3,24 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
-    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
-
     <ui:style>
         .container {
             width: 100%;
         }
 
-        .errorMessageLabel {
+        .messagesLabel {
             color: #CD2127;
-            width: 100%;
-            text-align: center;
+            width: 99%;
+            height: 60px;
             position: absolute;
-            bottom: 25px;
+            bottom: 30px;
+            line-height: 18px;
+            overflow-y: auto;
+        }
+
+        .messagesLabel ul {
+            padding-left: 20px;
+            margin: 0;
         }
 
         @external obrand_diskTypePanel;
@@ -41,17 +46,22 @@
         .attachDiskPanel {
             position: absolute;
             top: 40px;
-            bottom: 60px;
+            bottom: 100px;
+            right: 2px;
+            left: 2px;
             padding: 2px;
-            margin-right: 2px;
         }
+
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.container}">
         <w:RadioButtonsHorizontalPanel ui:field="diskTypePanel" name="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel}"/>
         <g:VerticalPanel ui:field="attachDiskContainer" addStyleNames="{style.mainPanel}">
             <w:ValidatedPanelWidget ui:field="attachDiskPanel" addStyleNames="{style.attachDiskPanel}" />
-            <g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
+            <g:FlowPanel ui:field="warningPanel" addStyleNames="{style.messagesLabel}">
+                <g:HTML ui:field="messageLabel" />
+                <g:HTML ui:field="warningLabel" visible="false" />
+            </g:FlowPanel>
             <ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
         </g:VerticalPanel>
     </g:FlowPanel>

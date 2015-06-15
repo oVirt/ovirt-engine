@@ -1253,6 +1253,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Activate")
     String activateVmDiskPopup();
 
+    @DefaultStringValue("When the VM is running, disks attached with an IDE interface won't be activated.")
+    String activateVmDiskPopupToolTip();
+
     @DefaultStringValue("Alias")
     String aliasVmDiskTable();
 
