@@ -23,6 +23,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
+import java.util.ArrayList;
+
 @RunWith(MockitoJUnitRunner.class)
 public class EditAffinityGroupCommandTest {
     private static final String AFFINITY_GROUP_NAME = "test123";
@@ -99,6 +101,7 @@ public class EditAffinityGroupCommandTest {
         affinityGroup = new AffinityGroup();
         affinityGroup.setName(AFFINITY_GROUP_NAME);
         affinityGroup.setClusterId(clusterId);
+        affinityGroup.setEntityIds(new ArrayList<Guid>());
         return affinityGroup;
     }
 }
