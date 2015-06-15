@@ -167,8 +167,13 @@ public class ClusterMapper {
         model.setOptionalReason(entity.isOptionalReasonRequired());
         model.setMaintenanceReasonRequired(entity.isMaintenanceReasonRequired());
         model.setBallooningEnabled(entity.isEnableBallooning());
-        model.setKsm(new KSM());
-        model.getKsm().setEnabled(entity.isEnableKsm());
+        KSM ksm = model.getKsm();
+        if (ksm == null) {
+          ksm = new KSM();
+          model.setKsm(ksm);
+        }
+        ksm.setEnabled(entity.isEnableKsm());
+        ksm.setMergeAcrossNodes(entity.isKsmMergeAcrossNumaNodes());
         if (StringUtils.isNotBlank(entity.getSpiceProxy())) {
             Display display = new Display();
             display.setProxy(entity.getSpiceProxy());
