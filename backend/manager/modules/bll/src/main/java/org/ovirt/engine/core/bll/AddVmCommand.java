@@ -1217,7 +1217,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void addVmPermission() {
         UniquePermissionsSet permissionsToAdd = new UniquePermissionsSet();
-        if ((getParameters()).isMakeCreatorExplicitOwner()) {
+        if (isMakeCreatorExplicitOwner()) {
             permissionsToAdd.addPermission(getCurrentUser().getId(), PredefinedRoles.VM_OPERATOR.getId(),
                     getVmId(), VdcObjectType.VM);
         }
@@ -1232,6 +1232,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
             getCompensationContext().snapshotNewEntities(permissionsList);
         }
+    }
+
+    private boolean isMakeCreatorExplicitOwner() {
+        return getParameters().isMakeCreatorExplicitOwner() ||
+                !checkUserAuthorization(
+                        getCurrentUser().getId(), ActionGroup.MANIPULATE_PERMISSIONS, getVmId(), VdcObjectType.VM);
     }
 
     private void copyTemplatePermissions(UniquePermissionsSet permissionsToAdd) {
