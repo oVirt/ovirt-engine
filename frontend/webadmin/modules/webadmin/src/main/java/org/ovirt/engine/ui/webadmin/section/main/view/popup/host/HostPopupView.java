@@ -554,7 +554,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
                     if (currentDataCenter == null || !currentDataCenter.equals(cluster.getStoragePoolName())) {
                         currentClusterList = new ArrayList<>();
                         currentDataCenter = cluster.getStoragePoolName();
-                        result.put(currentDataCenter, currentClusterList);
+                        if (currentDataCenter != null) {
+                            result.put(currentDataCenter, currentClusterList);
+                        }
                     }
                     if (currentClusterList != null) {
                         currentClusterList.add(cluster);
