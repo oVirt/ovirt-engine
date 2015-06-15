@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemoveAllVmCinderDisksCommandCallBack<T extends RemoveAllVmCinderDisksCommand<RemoveAllVmCinderDisksParameters>> extends CommandCallback {
-    private static final Logger log = LoggerFactory.getLogger(RemoveAllVmCinderDisksCommandCallBack.class);
+public class RemoveAllCinderDisksCommandCallBack<T extends CommandBase, S extends VmOperationParameterBase> extends CommandCallback {
+    private static final Logger log = LoggerFactory.getLogger(RemoveAllCinderDisksCommandCallBack.class);
 
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {

@@ -99,6 +99,6 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
 
     @Override
     public CommandCallback getCallback() {
-        return new RemoveAllVmCinderDisksCommandCallBack<>();
+        return new RemoveAllCinderDisksCommandCallBack<>();
     }
 }
