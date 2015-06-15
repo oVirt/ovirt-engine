@@ -83,6 +83,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteAttributeString(OVF_URI, "id", image.getImageId().toString());
             _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(image.getSize()));
             _writer.WriteAttributeString(OVF_URI, "description", StringUtils.defaultString(image.getDescription()));
+            _writer.WriteAttributeString(OVF_URI, "disk_storage_type", image.getDiskStorageType().name());
             _writer.WriteEndElement();
 
         }

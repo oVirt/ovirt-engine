@@ -875,15 +875,12 @@ public abstract class OvfReader implements IOvfBuilder {
             DiskImage disk = new DiskImage();
 
             // If the OVF is old and does not contain any storage type reference then we assume we can only have disk image.
-            XmlNode xmlDiskStorageType = node.SelectSingleNode("rasd:DiskStorageType", _xmlNS);
-            String diskStorageTypeFromOvf = xmlDiskStorageType != null ? xmlDiskStorageType.innerText : null;
-            if (StringUtils.isNotEmpty(diskStorageTypeFromOvf)) {
-                DiskStorageType diskStorageType = DiskStorageType.valueOf(diskStorageTypeFromOvf);
-                if (diskStorageType == DiskStorageType.CINDER) {
+            if (node.attributes.get("ovf:disk_storage_type") != null) {
+                String diskStorageType = node.attributes.get("ovf:disk_storage_type").getValue();
+                if (diskStorageType != null && diskStorageType.equals(DiskStorageType.CINDER.name())) {
                     disk = new CinderDisk();
                 }
             }
-
             disk.setImageId(new Guid(node.attributes.get("ovf:id").getValue()));
             disk.setId(OvfParser.GetImageGrupIdFromImageFile(node.attributes.get("ovf:href").getValue()));
             // Default values:
