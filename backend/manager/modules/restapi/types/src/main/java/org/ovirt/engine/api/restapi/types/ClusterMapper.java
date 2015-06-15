@@ -177,8 +177,8 @@ public class ClusterMapper {
         model.setBallooningEnabled(entity.isEnableBallooning());
         Ksm ksm = model.getKsm();
         if (ksm == null) {
-          ksm = new Ksm();
-          model.setKsm(ksm);
+            ksm = new Ksm();
+            model.setKsm(ksm);
         }
         ksm.setEnabled(entity.isEnableKsm());
         ksm.setMergeAcrossNodes(entity.isKsmMergeAcrossNumaNodes());
