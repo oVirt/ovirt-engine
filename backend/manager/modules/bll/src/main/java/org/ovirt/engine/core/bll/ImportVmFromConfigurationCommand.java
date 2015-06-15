@@ -168,6 +168,12 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     }
 
     @Override
+    protected boolean validateAndSetVmFromExportDomain() {
+        // We have the VM configuration so there is no need to get it from the export domain.
+        return true;
+    }
+
+    @Override
     protected Guid getSourceDomainId(DiskImage image) {
         return image.getStorageIds().get(0);
     }
