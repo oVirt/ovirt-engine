@@ -1390,19 +1390,6 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION RenameManagementNetwork(v_name varchar(50)) RETURNS VOID
-   AS $procedure$
-DECLARE
-    v_old_name  varchar(4000);
-BEGIN
-    select option_value into v_old_name from vdc_options where option_name = 'DefaultManagementNetwork' and version = 'general';
-    perform fn_db_update_config_value('DefaultManagementNetwork', v_name, 'general');
-    update network set name = v_name where name = v_old_name;
-    update vnic_profiles set name = v_name where name = v_old_name;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
 ----------------------------------------------------------------------
 --  hostNicVfsConfig
 ----------------------------------------------------------------------
