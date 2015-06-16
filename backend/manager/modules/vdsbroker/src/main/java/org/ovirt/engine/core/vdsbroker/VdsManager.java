@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -63,14 +62,12 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VdsManager {
     private static Logger log = LoggerFactory.getLogger(VdsManager.class);
-    private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<Guid, String>();
-    private final ConcurrentMap<Guid, Double> vmStatusUpdated = new ConcurrentHashMap<Guid, Double>();
+    private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<>();
     private final Object lockObj = new Object();
     private final AtomicInteger mFailedToRunVmAttempts;
     private final AtomicInteger mUnrespondedAttempts;
@@ -168,29 +165,6 @@ public class VdsManager {
 
     private SchedulerUtil getSchedulUtil() {
         return Injector.get(SchedulerUtilQuartzImpl.class);
-    }
-
-    public boolean shouldUpdateVmStatus(VmInternalData vmInternalData) {
-        if (vmInternalData == null) {
-            // VM disappeared from VDSM, we need to have monitoring cycle
-            return true;
-        }
-        Guid id = vmInternalData.getVmDynamic().getId();
-        if (!vmStatusUpdated.containsKey(id)) {
-            vmStatusUpdated.put(id, vmInternalData.getTimestamp());
-            return true;
-        }
-        Double knownStatusUpdate = vmStatusUpdated.get(id);
-        Double statusUpdateTime = vmInternalData.getTimestamp();
-        if (knownStatusUpdate <= statusUpdateTime) {
-            vmStatusUpdated.replace(id, statusUpdateTime);
-            return true;
-        }
-        return false;
-    }
-
-    public void resetStatusUpdateTime(Guid id) {
-        vmStatusUpdated.remove(id);
     }
 
     private void initVdsBroker() {

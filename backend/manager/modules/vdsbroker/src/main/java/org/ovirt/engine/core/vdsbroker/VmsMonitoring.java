@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -148,8 +149,12 @@ public class VmsMonitoring {
         if (vmId != null) {
             VmManager vmManager = getResourceManager().getVmManager(vmId);
 
-            if (vdsManager.shouldUpdateVmStatus(pair.getSecond()) && vmManager.trylock()) {
-                if (vmManager.getVmDataChangedTime() != null && fetchTime - vmManager.getVmDataChangedTime() <= 0) {
+            if (vmManager.trylock()) {
+                if (!vmManager.isLatestData(pair.getSecond(), vdsManager.getVdsId())) {
+                    log.warn("skipping VM '{}' from this monitoring cycle" +
+                            " - newer VM data was already processed", vmId);
+                    vmManager.unlock();
+                } else if (vmManager.getVmDataChangedTime() != null && fetchTime - vmManager.getVmDataChangedTime() <= 0) {
                     log.warn("skipping VM '{}' from this monitoring cycle" +
                             " - the VM data has changed since fetching the data", vmId);
                     vmManager.unlock();

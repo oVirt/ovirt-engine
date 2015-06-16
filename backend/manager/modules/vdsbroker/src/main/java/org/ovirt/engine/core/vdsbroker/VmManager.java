@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.util.concurrent.locks.ReentrantLock;
+
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.dao.VmStatisticsDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
 public class VmManager {
 
@@ -21,6 +23,9 @@ public class VmManager {
 
     private int convertOperationProgress;
     private String convertOperationDescription;
+
+    private Double lastStatusEventTimestamp;
+    private Guid lastStatusEventReporterId;
 
     public VmManager(Guid id) {
         this.id = id;
@@ -105,5 +110,25 @@ public class VmManager {
      */
     public final void updateVmDataChangedTime() {
         vmDataChangedTime = System.nanoTime();
+    }
+
+    /**
+     * Check whether the given data is the latest we got from the given host
+     * @param vmInternalData - the data received
+     * @param vdsId - the host that sent the data
+     * @return false if newer data was already processed, true otherwise
+     */
+    boolean isLatestData(VmInternalData vmInternalData, Guid vdsId) {
+        if (vmInternalData == null) {
+            // VM disappeared from VDSM, we need to have monitoring cycle
+            return true;
+        }
+        Double statusEventTimestamp = vmInternalData.getTimestamp();
+        if (!vdsId.equals(lastStatusEventReporterId) || lastStatusEventTimestamp <= statusEventTimestamp) {
+            lastStatusEventTimestamp = statusEventTimestamp;
+            lastStatusEventReporterId = vdsId;
+            return true;
+        }
+        return false;
     }
 }

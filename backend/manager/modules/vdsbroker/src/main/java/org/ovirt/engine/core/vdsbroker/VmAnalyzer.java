@@ -642,8 +642,6 @@ public class VmAnalyzer {
                         : VMStatus.MigratingTo;
 
         // handing over the VM to the DST by marking it running on it. it will now be its SRC host.
-        VdsManager manager = getVdsManager();
-        manager.resetStatusUpdateTime(vmToRemove.getId());
         vmToRemove.setRunOnVds(destinationHostId);
 
         log.info("Handing over VM '{}'({}) to Host '{}'. Setting VM to status '{}'",
@@ -694,9 +692,6 @@ public class VmAnalyzer {
         // is not MigratingFrom, it means the migration failed
         if (oldVmStatus == VMStatus.MigratingFrom && currentVmStatus != VMStatus.MigratingFrom
                 && currentVmStatus.isRunning()) {
-            VdsManager manager = getVdsManager();
-            manager.resetStatusUpdateTime(vmToUpdate.getId());
-
             rerun = true;
             log.info("Adding VM '{}' to re-run list", runningVm.getId());
             vmToUpdate.setMigratingToVds(null);
