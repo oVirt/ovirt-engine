@@ -210,7 +210,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     MainModelProvider<DbUser, UserListModel> getMainTabUserModelProvider();
 
-    MainModelProvider<AuditLog, EventListModel> getMainTabEventModelProvider();
+    MainModelProvider<AuditLog, EventListModel<Void>> getMainTabEventModelProvider();
 
     MainModelProvider<Void, ReportsListModel> getMainTabReportsModelProvider();
 

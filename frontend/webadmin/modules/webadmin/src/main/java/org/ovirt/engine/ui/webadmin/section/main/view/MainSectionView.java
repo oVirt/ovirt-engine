@@ -40,6 +40,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.name.Named;
 
 public class MainSectionView extends AbstractView implements MainSectionPresenter.ViewDef {
 
@@ -93,7 +94,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             BookmarkModelProvider bookmarkModelProvider,
             TagModelProvider tagModelProvider,
             AlertModelProvider alertModelProvider,
-            EventModelProvider eventModelProvider,
+            @Named("footer") EventModelProvider eventModelProvider,
             TaskModelProvider taskModelProvider,
             EventBus eventBus,
             ClientStorage clientStorage) {

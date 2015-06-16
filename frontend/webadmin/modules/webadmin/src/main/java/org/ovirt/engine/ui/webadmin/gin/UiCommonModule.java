@@ -43,7 +43,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyClusterModelProv
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CpuProfilePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DiskProfilePermissionModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
@@ -104,9 +103,6 @@ public class UiCommonModule extends BaseUiCommonModule {
 
         // TaskListModel
         bind(TaskModelProvider.class).in(Singleton.class);
-
-        // EventListModel
-        bind(EventModelProvider.class).in(Singleton.class);
 
         // RoleListModel
         bind(RoleModelProvider.class).in(Singleton.class);

@@ -29,7 +29,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventListModel> implements MainTabEventPresenter.ViewDef {
+public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventListModel<Void>>
+    implements MainTabEventPresenter.ViewDef {
 
     interface ViewUiBinder extends UiBinder<Widget, MainTabEventView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -51,7 +52,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
     private AbstractTextColumn<AuditLog> messageColumn;
 
     @Inject
-    public MainTabEventView(MainModelProvider<AuditLog, EventListModel> modelProvider) {
+    public MainTabEventView(MainModelProvider<AuditLog, EventListModel<Void>> modelProvider) {
         super(modelProvider);
         initTable();
 

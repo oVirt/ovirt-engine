@@ -64,6 +64,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 public class CommonModel extends ListModel<SearchableListModel> {
 
@@ -94,7 +95,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
     private final PoolListModel poolListModel;
     private final TemplateListModel templateListModel;
     private final UserListModel userListModel;
-    private final EventListModel eventListModel;
+    private final EventListModel<Void> eventListModel;
     private final QuotaListModel quotaListModel;
     private final ReportsListModel reportsListModel;
     private final VolumeListModel volumeListModel;
@@ -124,7 +125,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
             final PoolListModel poolListModel,
             final TemplateListModel templateListModel,
             final UserListModel userListModel,
-            final EventListModel eventListModel,
+            @Named("footer") final EventListModel<Void> eventListModel,
             final QuotaListModel quotaListModel,
             final ReportsListModel reportsListModel,
             final VolumeListModel volumeListModel,

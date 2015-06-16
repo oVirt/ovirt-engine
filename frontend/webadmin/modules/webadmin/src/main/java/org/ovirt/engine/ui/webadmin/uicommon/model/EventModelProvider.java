@@ -12,7 +12,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class EventModelProvider extends SearchableTabModelProvider<AuditLog, EventListModel> {
+public class EventModelProvider extends SearchableTabModelProvider<AuditLog, EventListModel<Void>> {
 
     @Inject
     public EventModelProvider(EventBus eventBus,
@@ -21,7 +21,7 @@ public class EventModelProvider extends SearchableTabModelProvider<AuditLog, Eve
     }
 
     @Override
-    protected void initializeModelHandlers(final EventListModel model) {
+    protected void initializeModelHandlers(final EventListModel<Void> model) {
         super.initializeModelHandlers(model);
 
         // Add necessary property change handlers

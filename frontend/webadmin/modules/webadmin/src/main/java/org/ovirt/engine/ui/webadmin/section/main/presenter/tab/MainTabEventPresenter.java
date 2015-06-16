@@ -25,7 +25,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<AuditLog, EventListModel, MainTabEventPresenter.ViewDef, MainTabEventPresenter.ProxyDef> {
+public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<AuditLog, EventListModel<Void>,
+    MainTabEventPresenter.ViewDef, MainTabEventPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -46,13 +47,13 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(
-            MainModelProvider<AuditLog, EventListModel> modelProvider) {
+            MainModelProvider<AuditLog, EventListModel<Void>> modelProvider) {
         return new ModelBoundTabData(constants.eventMainTabLabel(), 14, modelProvider, Align.RIGHT);
     }
 
     @Inject
     public MainTabEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<AuditLog, EventListModel> modelProvider) {
+            PlaceManager placeManager, MainModelProvider<AuditLog, EventListModel<Void>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 
