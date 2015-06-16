@@ -217,8 +217,8 @@ public enum VmTestPairs {
         ArrayList<VmGuestAgentInterface> vmGuestAgentInterfaces = new ArrayList<VmGuestAgentInterface>();
         HashMap<String, LUNs> lunsMap = new HashMap<String, LUNs>();
         VmInternalData vmInternalData =
-                new VmInternalData(vmDynamic,
-                        vmStatistics, vmGuestAgentInterfaces, lunsMap);
+                new VmInternalData(vmDynamic, vmStatistics,
+                        vmGuestAgentInterfaces, lunsMap, -1d);
         return vmInternalData;
     }
 

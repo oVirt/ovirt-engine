@@ -33,7 +33,8 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
         return new VmInternalData(vmDynamic,
                 VdsBrokerObjectsBuilder.buildVMStatisticsData(xmlRpcStruct),
                 VdsBrokerObjectsBuilder.buildVmGuestAgentInterfacesData(vmDynamic.getId(), xmlRpcStruct),
-                VdsBrokerObjectsBuilder.buildVmLunDisksData(xmlRpcStruct));
+                VdsBrokerObjectsBuilder.buildVmLunDisksData(xmlRpcStruct),
+                VdsBrokerObjectsBuilder.getVdsmCallTimestamp(xmlRpcStruct));
     }
 
     /**

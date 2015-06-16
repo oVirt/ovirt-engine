@@ -236,7 +236,7 @@ public class VmAnalyzerTest {
         //then
         assertTrue(vmAnalyzer.isClientIpChanged());
         verify(vmsMonitoring.getResourceManager(), never()).InternalSetVmStatus(data.dbVm(),
-                VMStatus.MigratingTo, data.dbVm().getStatusUpdatedTime());
+                VMStatus.MigratingTo);
     }
 
     @Theory
@@ -250,7 +250,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         //then
         verify(vmsMonitoring.getResourceManager(), times(1)).InternalSetVmStatus(data.dbVm(),
-                VMStatus.MigratingTo, data.dbVm().getStatusUpdatedTime());
+                VMStatus.MigratingTo);
         verify(vmsMonitoring, atLeastOnce()).addVmDynamicToList(data.dbVm().getDynamicData());
         verify(vmsMonitoring, atLeastOnce()).addVmStatisticsToList(data.dbVm().getStatisticsData());
         assertTrue(data.dbVm().getRunOnVds().equals(VmTestPairs.DST_HOST_ID));

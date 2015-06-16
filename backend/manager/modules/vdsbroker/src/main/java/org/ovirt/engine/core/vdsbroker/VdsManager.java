@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -64,6 +63,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,14 +170,14 @@ public class VdsManager {
         return Injector.get(SchedulerUtilQuartzImpl.class);
     }
 
-    public boolean shouldUpdateVmStatus(VmDynamic vmDynamic) {
-        Guid id = vmDynamic.getId();
+    public boolean shouldUpdateVmStatus(VmInternalData vmInternalData) {
+        Guid id = vmInternalData.getVmDynamic().getId();
         if (!vmStatusUpdated.containsKey(id)) {
-            vmStatusUpdated.put(id, vmDynamic.getStatusUpdatedTime());
+            vmStatusUpdated.put(id, vmInternalData.getTimestamp());
             return true;
         }
         Double knownStatusUpdate = vmStatusUpdated.get(id);
-        Double statusUpdateTime = vmDynamic.getStatusUpdatedTime();
+        Double statusUpdateTime = vmInternalData.getTimestamp();
         if (knownStatusUpdate <= statusUpdateTime) {
             vmStatusUpdated.replace(id, statusUpdateTime);
             return true;

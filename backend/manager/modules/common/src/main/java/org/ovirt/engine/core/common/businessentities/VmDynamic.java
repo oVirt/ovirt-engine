@@ -2,15 +2,15 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comparable<VmDynamic> {
     private static final long serialVersionUID = 7789482445091432555L;
@@ -76,7 +76,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private Long guestMemoryCached;
     private Long guestMemoryBuffered;
     private Long guestMemoryFree;
-    private Double statusUpdatedTime;
     private String guestOsVersion;
     private String guestOsDistribution;
     private String guestOsCodename;
@@ -271,7 +270,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         exitReason = VmExitReason.Unknown;
         graphicsInfos = new HashMap<GraphicsType, GraphicsInfo>();
         guestAgentStatus = GuestAgentStatus.DoesntExist;
-        statusUpdatedTime = -1d;
         guestOsTimezoneName = "";
         guestOsTimezoneOffset = 0;
         guestOsVersion = "";
@@ -328,7 +326,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         guestMemoryCached = template.getGuestMemoryCached();
         guestMemoryBuffered = template.getGuestMemoryBuffered();
         guestMemoryFree = template.getGuestMemoryFree();
-        statusUpdatedTime = template.getStatusUpdatedTime();
         guestOsVersion = template.getGuestOsVersion();
         guestOsDistribution = template.getGuestOsDistribution();
         guestOsCodename = template.getGuestOsCodename();
@@ -659,14 +656,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setGuestMemoryFree(Long guestMemoryFree) {
         this.guestMemoryFree = guestMemoryFree;
-    }
-
-    public void setStatusUpdatedTime(Double statusUpdatedTime) {
-        this.statusUpdatedTime = statusUpdatedTime;
-    }
-
-    public Double getStatusUpdatedTime() {
-        return this.statusUpdatedTime;
     }
 
     public int getGuestOsTimezoneOffset() {

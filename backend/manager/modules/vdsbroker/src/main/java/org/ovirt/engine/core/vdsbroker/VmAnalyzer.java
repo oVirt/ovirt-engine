@@ -151,14 +151,13 @@ public class VmAnalyzer {
 
                 // when going to suspend, delete vm from cache later
                 if (status == VMStatus.SavingState) {
-                    vmsMonitoring.getResourceManager().InternalSetVmStatus(dbVm, VMStatus.Suspended, vdsmVm.getVmDynamic().getStatusUpdatedTime());
+                    vmsMonitoring.getResourceManager().InternalSetVmStatus(dbVm, VMStatus.Suspended);
 
                 }
 
                 clearVm(vdsmVm.getVmDynamic().getExitStatus(),
                         vdsmVm.getVmDynamic().getExitMessage(),
-                        vdsmVm.getVmDynamic().getExitReason(),
-                        vdsmVm.getVmDynamic().getStatusUpdatedTime());
+                        vdsmVm.getVmDynamic().getExitReason());
             }
 
             VmStatistics vmStatistics = vmsMonitoring.getDbFacade().getVmStatisticsDao().get(vdsmVm.getVmDynamic()
@@ -237,7 +236,7 @@ public class VmAnalyzer {
         ResourceManager.getInstance().RemoveAsyncRunningVm(vm.getId());
     }
 
-    private void clearVm(VmExitStatus exitStatus, String exitMessage, VmExitReason vmExistReason, Double statusUpdatedTime) {
+    private void clearVm(VmExitStatus exitStatus, String exitMessage, VmExitReason vmExistReason) {
         if (dbVm.getStatus() != VMStatus.MigratingFrom) {
             // we must check that vm.getStatus() != VMStatus.Down because if it was set to down
             // the exit status and message were set, and we don't want to override them here.
@@ -247,8 +246,7 @@ public class VmAnalyzer {
                         VMStatus.Down,
                         exitStatus,
                         exitMessage,
-                        vmExistReason,
-                        statusUpdatedTime);
+                        vmExistReason);
             }
             saveDynamic(dbVm.getDynamicData());
             saveStatistics();
@@ -294,8 +292,7 @@ public class VmAnalyzer {
                             VMStatus.Down,
                             vdsmVm.getVmDynamic().getExitStatus(),
                             vdsmVm.getVmDynamic().getExitMessage(),
-                            vdsmVm.getVmDynamic().getExitReason(),
-                            vdsmVm.getVmDynamic().getStatusUpdatedTime());
+                            vdsmVm.getVmDynamic().getExitReason());
                     saveDynamic(dbVm.getDynamicData());
                     saveStatistics();
                     saveVmInterfaces();
@@ -611,7 +608,7 @@ public class VmAnalyzer {
                 clearVm(VmExitStatus.Error,
                         String.format("Could not find VM %s on host, assuming it went down unexpectedly",
                                 dbVm.getName()),
-                        VmExitReason.GenericError, dbVm.getStatusUpdatedTime());
+                        VmExitReason.GenericError);
             }
 
             log.info("VM '{}({}) is running in db and not running in VDS '{}'",
@@ -656,7 +653,7 @@ public class VmAnalyzer {
                 newVmStatus);
 
         // if the DST host goes unresponsive it will take care all MigratingTo and unknown VMs
-        vmsMonitoring.getResourceManager().InternalSetVmStatus(vmToRemove, newVmStatus, vmToRemove.getStatusUpdatedTime());
+        vmsMonitoring.getResourceManager().InternalSetVmStatus(vmToRemove, newVmStatus);
 
         // save the VM state
         saveDynamic(vmToRemove.getDynamicData());

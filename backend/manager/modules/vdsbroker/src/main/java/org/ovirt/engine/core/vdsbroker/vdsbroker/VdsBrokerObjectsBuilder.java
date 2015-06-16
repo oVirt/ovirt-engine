@@ -198,11 +198,14 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.status)) {
             vmdynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.statusTime)) {
-            vmdynamic.setStatusUpdatedTime(VdsBrokerObjectsBuilder.AssignDoubleValue(xmlRpcStruct,
-                    VdsProperties.statusTime));
-        }
         return vmdynamic;
+    }
+
+    public static Double getVdsmCallTimestamp(Map<String, Object> xmlRpcStruct) {
+        if (xmlRpcStruct.containsKey(VdsProperties.statusTime)) {
+            return AssignDoubleValue(xmlRpcStruct, VdsProperties.statusTime);
+        }
+        return -1d;
     }
 
     public static VmDynamic buildVMDynamicData(Map<String, Object> xmlRpcStruct) {
@@ -281,10 +284,6 @@ public class VdsBrokerObjectsBuilder {
         }
         if (xmlRpcStruct.containsKey(VdsProperties.status)) {
             vm.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
-        }
-        if (xmlRpcStruct.containsKey(VdsProperties.statusTime)) {
-            vm.setStatusUpdatedTime(VdsBrokerObjectsBuilder.AssignDoubleValue(xmlRpcStruct,
-                    VdsProperties.statusTime));
         }
 
         boolean hasGraphicsInfo = updateGraphicsInfo(vm, xmlRpcStruct);

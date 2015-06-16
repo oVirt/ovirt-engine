@@ -24,8 +24,9 @@ public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> exten
         proceedProxyReturnValue();
         Map<Guid, VmInternalData> returnVMs = new HashMap<Guid, VmInternalData>();
         for (int idx = 0; idx < mVmListReturn.mVmList.length; ++idx) {
-            VmDynamic dynamicData = VdsBrokerObjectsBuilder.buildVMDynamicDataFromList(mVmListReturn.mVmList[idx]);
-            VmInternalData vmData = new VmInternalData(dynamicData);
+            Map<String, Object> vm = mVmListReturn.mVmList[idx];
+            VmDynamic dynamicData = VdsBrokerObjectsBuilder.buildVMDynamicDataFromList(vm);
+            VmInternalData vmData = new VmInternalData(dynamicData, VdsBrokerObjectsBuilder.getVdsmCallTimestamp(vm));
             returnVMs.put(dynamicData.getId(), vmData);
         }
         setReturnValue(returnVMs);

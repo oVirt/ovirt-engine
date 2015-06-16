@@ -104,8 +104,6 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
                     vmDynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
                 }
 
-                vmDynamic.setStatusUpdatedTime(notifyTime);
-
                 if (xmlRpcStruct.containsKey(VdsProperties.hash)) {
                     vmDynamic.setHash((String) xmlRpcStruct.get(VdsProperties.hash));
                 }
@@ -125,7 +123,7 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
                     vmDynamic.setExitReason(VmExitReason.forValue(Integer.parseInt(exitReasonStr)));
                 }
 
-                return new VmInternalData(vmDynamic, dbVm.getStatisticsData());
+                return new VmInternalData(vmDynamic, dbVm.getStatisticsData(), notifyTime);
             }
 
             private Double parseDouble(Object value) {

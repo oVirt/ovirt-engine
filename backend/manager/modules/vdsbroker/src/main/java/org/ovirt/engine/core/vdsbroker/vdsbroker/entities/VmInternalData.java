@@ -18,26 +18,30 @@ public class VmInternalData {
     private VmDynamic vmDynamic;
     private VmStatistics vmStatistics;
     private List<VmGuestAgentInterface> vmGuestAgentInterfaces;
+    /** Timestamp on the dynamic data we get from VDSM */
+    private Double timestamp;
 
     // A map represents VM's LUN disks (LUN ID -> LUNs object)
     private Map<String, LUNs> lunsMap;
 
-    public VmInternalData(VmDynamic vmDynamic) {
-        this(vmDynamic, null, null, null);
+    public VmInternalData(VmDynamic vmDynamic, Double timestamp) {
+        this(vmDynamic, null, timestamp);
     }
 
-    public VmInternalData(VmDynamic vmDynamic, VmStatistics vmStatistics) {
-        this(vmDynamic, vmStatistics, null, Collections.<String, LUNs>emptyMap());
+    public VmInternalData(VmDynamic vmDynamic, VmStatistics vmStatistics, Double timestamp) {
+        this(vmDynamic, vmStatistics, null, Collections.<String, LUNs>emptyMap(), timestamp);
     }
 
     public VmInternalData(VmDynamic vmDynamic,
             VmStatistics vmStatistics,
             List<VmGuestAgentInterface> vmGuestAgentInterfaces,
-            Map<String, LUNs> lunsMap) {
+            Map<String, LUNs> lunsMap,
+            Double timestamp) {
         this.vmDynamic = vmDynamic;
         this.vmStatistics = vmStatistics;
         this.vmGuestAgentInterfaces = vmGuestAgentInterfaces;
         this.lunsMap = lunsMap;
+        this.timestamp = timestamp;
     }
 
     public VmDynamic getVmDynamic() {
@@ -126,4 +130,11 @@ public class VmInternalData {
         return true;
     }
 
+    public Double getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Double timestamp) {
+        this.timestamp = timestamp;
+    }
 }

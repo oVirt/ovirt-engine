@@ -647,14 +647,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmDynamic.setSession(value);
     }
 
-    public Double getStatusUpdatedTime() {
-        return this.vmDynamic.getStatusUpdatedTime();
-    }
-
-    public void setStatusUpdatedTime(Double statusUpdatedTime) {
-        this.vmDynamic.setStatusUpdatedTime(statusUpdatedTime);
-    }
-
     public BootSequence getBootSequence() {
         return this.vmDynamic.getBootSequence();
     }
@@ -1418,7 +1410,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         getDynamicData().setGuestMemoryBuffered(vm.getGuestMemoryBuffered());
         getDynamicData().setGuestMemoryCached(vm.getGuestMemoryCached());
         getDynamicData().setGuestMemoryFree(vm.getGuestMemoryFree());
-        getDynamicData().setStatusUpdatedTime(vm.getStatusUpdatedTime());
         setGuestOsArch(vm.getGuestOsArch());
         setGuestOsCodename(vm.getGuestOsCodename());
         setGuestOsDistribution(vm.getGuestOsDistribution());
