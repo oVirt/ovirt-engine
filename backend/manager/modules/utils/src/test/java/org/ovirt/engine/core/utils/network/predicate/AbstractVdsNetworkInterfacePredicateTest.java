@@ -7,8 +7,8 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 abstract public class AbstractVdsNetworkInterfacePredicateTest {
 
-    private final String VALID = "VALID";
-    private final String INVALID = "INVALID";
+    private static final String VALID = "VALID";
+    private static final String INVALID = "INVALID";
     private Predicate<VdsNetworkInterface> underTest;
 
     protected String getVALID() {
