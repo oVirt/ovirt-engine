@@ -171,6 +171,10 @@ public class VdsManager {
     }
 
     public boolean shouldUpdateVmStatus(VmInternalData vmInternalData) {
+        if (vmInternalData == null) {
+            // VM disappeared from VDSM, we need to have monitoring cycle
+            return true;
+        }
         Guid id = vmInternalData.getVmDynamic().getId();
         if (!vmStatusUpdated.containsKey(id)) {
             vmStatusUpdated.put(id, vmInternalData.getTimestamp());
