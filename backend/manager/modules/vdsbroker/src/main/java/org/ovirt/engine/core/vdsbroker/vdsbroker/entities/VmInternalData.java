@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker.entities;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,10 @@ public class VmInternalData {
 
     public VmInternalData(VmDynamic vmDynamic) {
         this(vmDynamic, null, null, null);
+    }
+
+    public VmInternalData(VmDynamic vmDynamic, VmStatistics vmStatistics) {
+        this(vmDynamic, vmStatistics, null, Collections.<String, LUNs>emptyMap());
     }
 
     public VmInternalData(VmDynamic vmDynamic,

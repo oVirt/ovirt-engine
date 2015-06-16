@@ -4,7 +4,6 @@ import static org.ovirt.engine.core.vdsbroker.VmsListFetcher.isDevicesChanged;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.convertToVmStatus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
-import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -129,7 +127,7 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
                     vmDynamic.setExitReason(VmExitReason.Unknown);
                 }
 
-                return new VmInternalData(vmDynamic, dbVm.getStatisticsData(), null, new HashMap<String, LUNs>());
+                return new VmInternalData(vmDynamic, dbVm.getStatisticsData());
             }
 
             private Double parseDouble(Object value) {
