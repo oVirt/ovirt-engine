@@ -580,7 +580,6 @@ public abstract class AbstractDiskModel extends DiskModel
                 for (CinderVolumeType cinderVolumeType : cinderVolumeTypes) {
                     volumeTypesNames.add(cinderVolumeType.getName());
                 }
-                volumeTypesNames.add(constants.noCinderVolumeType());
                 diskModel.getCinderVolumeType().setItems(volumeTypesNames);
             }
         }), storageDomain.getId());

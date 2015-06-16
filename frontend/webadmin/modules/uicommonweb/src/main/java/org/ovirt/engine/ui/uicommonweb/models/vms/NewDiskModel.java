@@ -165,8 +165,7 @@ public class NewDiskModel extends AbstractDiskModel
                 CinderDisk cinderDisk = (CinderDisk) getDisk();
                 cinderDisk.setSizeInGigabytes(getSize().getEntity());
                 cinderDisk.setvolumeFormat(VolumeFormat.RAW);
-                cinderDisk.setCinderVolumeType(getCinderVolumeType().getSelectedItem().equals(
-                        constants.noCinderVolumeType()) ? "" : getCinderVolumeType().getSelectedItem()); //$NON-NLS-1$
+                cinderDisk.setCinderVolumeType(getCinderVolumeType().getSelectedItem());
                 break;
             default:
                 DiskImage diskImage = (DiskImage) getDisk();

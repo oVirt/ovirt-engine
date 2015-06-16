@@ -2786,9 +2786,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Changing management network is only permitted via the 'Manage Cluster Networks' dialog.")
     String prohibitManagementNetworkChangeInEditClusterInfoMessage();
 
-    @DefaultStringValue("No volume type")
-    String noCinderVolumeType();
-
     @DefaultStringValue("New Geo-Replication Session")
     String newGeoRepSessionTitle();
 
