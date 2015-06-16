@@ -717,7 +717,7 @@ public class VdsDeploy extends VdsDeployBase {
                     "Enrolling serial console certificate"
                 );
                 String name = String.format("%s-ssh", _vds.getHostName());
-                String cer = OpenSslCAWrapper.signCertificateRequest(
+                OpenSslCAWrapper.signCertificateRequest(
                     StringUtils.join(event.value, "\n"),
                     name
                 );
