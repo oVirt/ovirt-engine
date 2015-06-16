@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.GlusterConfigAwareColumn;
+import org.ovirt.engine.ui.common.widget.table.column.ScrollableTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeGeoReplicationSessionConfigModel;
@@ -72,18 +73,17 @@ public class GlusterVolumeGeoReplicationSessionConfigPopupView extends AbstractM
         },
                 constants.optionKeyVolumeParameter());
 
-        geoReplicationConfigTable.addEntityModelColumn(new EntityModelTextColumn<Pair<Boolean, GlusterGeoRepSessionConfiguration>>() {
+        geoReplicationConfigTable.addColumn(new ScrollableTextColumn<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>>() {
             @Override
-            protected String getText(Pair<Boolean, GlusterGeoRepSessionConfiguration> entity) {
-                return entity.getSecond().getDescription() == null ? constants.notAvailableLabel() : entity.getSecond()
-                        .getDescription();
+            public String getValue(EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>> object) {
+                return object.getEntity().getSecond().getDescription() == null ? constants.notAvailableLabel()
+                        : object.getEntity().getSecond().getDescription();
             }
-        },
-                constants.descriptionVolumeParameter());
+        }, constants.descriptionVolumeParameter(), "300px");//$NON-NLS-1$
 
         geoReplicationConfigTable.addColumn(new GlusterConfigAwareColumn(),
                 constants.optionValueVolumeParameter(),
-                "100px");//$NON-NLS-1$
+                "200px");//$NON-NLS-1$
 
         geoReplicationConfigTable.addColumn(new CheckboxColumn<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>>(true, new FieldUpdater<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>, Boolean>() {
 

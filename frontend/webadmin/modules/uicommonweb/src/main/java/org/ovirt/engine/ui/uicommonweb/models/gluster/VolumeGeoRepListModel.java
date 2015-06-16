@@ -212,7 +212,8 @@ public class VolumeGeoRepListModel extends SearchableListModel{
                     sessionStatus == GeoRepSessionStatus.ACTIVE || sessionStatus == GeoRepSessionStatus.INITIALIZING;
             allowSessionOptionsCommand = true;
             allowNewGeoRepSessionCommand = volumeEntity.getStatus() == GlusterStatus.UP;
-            allowRemoveSessionCommand = true;
+            allowRemoveSessionCommand =
+                    sessionStatus == GeoRepSessionStatus.STOPPED || sessionStatus == GeoRepSessionStatus.CREATED;
             allowSessionDetailsCommand = true;
         }
         getNewSessionCommand().setIsExecutionAllowed(allowNewGeoRepSessionCommand);
@@ -380,11 +381,15 @@ public class VolumeGeoRepListModel extends SearchableListModel{
                 .getItems()) {
             Pair<Boolean, GlusterGeoRepSessionConfiguration> newConfigPair = newConfigEntity.getEntity();
             GlusterGeoRepSessionConfiguration newConfig = newConfigPair.getSecond();
+            boolean isOldConfigNull = newConfig == null ? true : oldConfigs.get(newConfig.getKey()) == null;
+            boolean isNewConfigNull = newConfig == null || newConfig.getValue() == null;
+            if ((!isNewConfigNull && !newConfig.getValue().isEmpty())
+                    && (isOldConfigNull || !newConfig.getValue().equals(oldConfigs.get(newConfig.getKey())))) {
+                actionTypes.add(VdcActionType.SetGeoRepConfig);
+                parameters.add(geoRepConfigModel.formGeoRepConfigParameters(newConfig));
+            }
             if (newConfigPair.getFirst()) {
                 actionTypes.add(VdcActionType.ResetDefaultGeoRepConfig);
-                parameters.add(geoRepConfigModel.formGeoRepConfigParameters(newConfig));
-            } else if (!newConfig.getValue().equals(oldConfigs.get(newConfig.getKey()))) {
-                actionTypes.add(VdcActionType.SetGeoRepConfig);
                 parameters.add(geoRepConfigModel.formGeoRepConfigParameters(newConfig));
             }
         }

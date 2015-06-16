@@ -2,10 +2,11 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 public enum GeoRepCrawlStatus {
 
-    CHANGELOG_CRAWL,
+    CHANGELOG_CRAWL("Changelog Crawl"),
     UNKNOWN,
     NOT_APPLICABLE("N/A"),
-    HYBRID_CRAWL;
+    HYBRID_CRAWL("Hybrid Crawl"),
+    HISTORY_CRAWL("History Crawl");
 
     private String statusMsg;
 

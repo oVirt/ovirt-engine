@@ -124,12 +124,15 @@ public class VolumeGeoRepSessionDetailsPopUpView extends AbstractModelBoundPopup
     }
 
     private void intiEditors(final ApplicationConstants constants) {
-        checkPointStatus = new EntityModelLabelEditor<GlusterGeoRepSessionDetails>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
-            @Override
-            public String render(GlusterGeoRepSessionDetails object) {
-                return object.getCheckPointStatus();
-            }
-        });
+        checkPointStatus =
+                new EntityModelLabelEditor<GlusterGeoRepSessionDetails>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
+                    @Override
+                    public String render(GlusterGeoRepSessionDetails object) {
+                        String checkPointStatusValue = object.getCheckPointStatus();
+                        return checkPointStatusValue == null || checkPointStatusValue.isEmpty() ? constants.notAvailableLabel()
+                                : checkPointStatusValue;
+                    }
+                });
         crawlStatus = new EntityModelLabelEditor<GlusterGeoRepSessionDetails>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
             @Override
             public String render(GlusterGeoRepSessionDetails object) {

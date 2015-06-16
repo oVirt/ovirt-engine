@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -195,7 +196,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         }
     }
 
-    private void updateDiscoveredSessionConfig(VDSGroup cluster, GlusterGeoRepSession session) {
+    protected void updateDiscoveredSessionConfig(VDSGroup cluster, GlusterGeoRepSession session) {
         List<GlusterGeoRepSessionConfiguration> sessionConfigList = getSessionConfigFromCLI(cluster, session);
         if (sessionConfigList == null) {
             log.info("No configuration information returned from VDS for session '{}'", session.getSessionKey());
@@ -204,7 +205,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         List<GlusterGeoRepSessionConfiguration> existingSessionConfigs =
                 getGeoRepDao().getGeoRepSessionConfig(session.getId());
         Map<String, GlusterGeoRepSessionConfiguration> existingKeyConfigMap =
-                prepareMapOfExistingConfigs(existingSessionConfigs);
+                prepareMapOfGeoRepSessionConfigs(existingSessionConfigs);
         for (GlusterGeoRepSessionConfiguration sessionConfig : sessionConfigList) {
             //update sessionId for fetched object.
             sessionConfig.setId(session.getId());
@@ -228,9 +229,21 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                 }
             }
         }
+        // If configs are reset some of them will disappear from config list
+        Map<String, GlusterGeoRepSessionConfiguration> sessionKeyConfigMap =
+                prepareMapOfGeoRepSessionConfigs(sessionConfigList);
+        existingKeyConfigMap.keySet().removeAll(sessionKeyConfigMap.keySet());
+        Iterator<Map.Entry<String, GlusterGeoRepSessionConfiguration>> mapIterator =
+                existingKeyConfigMap.entrySet().iterator();
+        while (mapIterator.hasNext()) {
+            GlusterGeoRepSessionConfiguration config = new GlusterGeoRepSessionConfiguration();
+            config.setId(session.getId());
+            config.setKey(mapIterator.next().getKey());
+            getGeoRepDao().updateConfig(config);
+        }
     }
 
-    private Map<String, GlusterGeoRepSessionConfiguration> prepareMapOfExistingConfigs(List<GlusterGeoRepSessionConfiguration> existingConfigs) {
+    private Map<String, GlusterGeoRepSessionConfiguration> prepareMapOfGeoRepSessionConfigs(List<GlusterGeoRepSessionConfiguration> existingConfigs) {
         Map<String, GlusterGeoRepSessionConfiguration> keyConfigMap = new HashMap<>();
         if (existingConfigs != null) {
             for (GlusterGeoRepSessionConfiguration config : existingConfigs) {
