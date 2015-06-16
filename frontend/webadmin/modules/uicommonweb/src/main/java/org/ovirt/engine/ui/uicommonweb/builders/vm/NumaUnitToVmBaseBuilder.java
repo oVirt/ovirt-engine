@@ -3,9 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.builders.vm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.builders.BaseSyncBuilder;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
@@ -60,8 +61,10 @@ public class NumaUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
     }
 
     private void updateNumaPinning(VmNumaNode vmNumaNode, int index) {
-        if (vmNumaNode.getNumaNodeVdsList() == null) {
-            vmNumaNode.setNumaNodeVdsList(new ArrayList<NumaNodeVmVds>());
+        if (vmNumaNode.getVdsNumaNodeList() == null) {
+            vmNumaNode.setVdsNumaNodeList(new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>());
+            Pair<Guid, Pair<Boolean, Integer>> pair = new Pair<Guid, Pair<Boolean, Integer>>();
+            pair.setSecond(new Pair<Boolean, Integer>(false, index));
         }
     }
 }

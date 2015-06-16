@@ -22,7 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  *
  */
-public class VdsNumaNodeDAOTest extends BaseHibernateDaoTestCase<VdsNumaNodeDAO, VdsNumaNode, Guid> {
+public class VdsNumaNodeDAOTest extends BaseDAOTestCase {
 
     private static final Guid ANOTHER_EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
 
@@ -30,8 +30,6 @@ public class VdsNumaNodeDAOTest extends BaseHibernateDaoTestCase<VdsNumaNodeDAO,
     private VdsStaticDAO vdsStaticDao;
     private VdsStatic existingVds;
     private NumaNodeStatistics newNodeStatistics;
-    private VdsNumaNode existingNode;
-    private VdsNumaNode newNode;
 
     @Override
     public void setUp() throws Exception {
@@ -43,9 +41,6 @@ public class VdsNumaNodeDAOTest extends BaseHibernateDaoTestCase<VdsNumaNodeDAO,
         newNodeStatistics = new NumaNodeStatistics();
         newNodeStatistics.setCpuUsagePercent(20);
         newNodeStatistics.setMemUsagePercent(50);
-        existingNode = vdsNumaNodeDao.get(new Guid("3c2b81e6-5080-4ad1-86a1-cf513b15b515"));
-        newNode = new VdsNumaNode();
-        newNode.setId(Guid.newGuid());
     }
 
     @Test
@@ -182,37 +177,6 @@ public class VdsNumaNodeDAOTest extends BaseHibernateDaoTestCase<VdsNumaNodeDAO,
             distance.put(i, (Math.abs(selfNodeIndex - i) + 1) * 10);
         }
         return distance;
-    }
-
-    @Override
-    protected VdsNumaNodeDAO getDao() {
-        return vdsNumaNodeDao;
-    }
-
-    @Override
-    protected VdsNumaNode getExistingEntity() {
-        return existingNode;
-    }
-
-    @Override
-    protected VdsNumaNode getNonExistentEntity() {
-        return newNode;
-    }
-
-    @Override
-    protected int getAllEntitiesCount() {
-        return 4;
-    }
-
-    @Override
-    protected VdsNumaNode modifyEntity(VdsNumaNode entity) {
-        entity.setIndex(15);
-        return entity;
-    }
-
-    @Override
-    protected void verifyEntityModification(VdsNumaNode result) {
-        assertEquals(15, result.getIndex());
     }
 
 }

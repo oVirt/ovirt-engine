@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface VdsNumaNodeDAO extends GenericDao<VdsNumaNode, Guid> {
+public interface VdsNumaNodeDAO extends DAO {
 
     /**
      * Get all numa nodes of a vds by vds id

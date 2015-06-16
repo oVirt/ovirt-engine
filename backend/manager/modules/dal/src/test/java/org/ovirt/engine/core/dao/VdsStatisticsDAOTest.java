@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
@@ -9,14 +10,13 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VdsStatisticsDAOTest extends BaseHibernateDaoTestCase<VdsStatisticsDAO, VdsStatistics, Guid> {
+public class VdsStatisticsDAOTest extends BaseDAOTestCase {
     private VdsStatisticsDAO dao;
     private VdsStaticDAO staticDao;
     private VdsDynamicDAO dynamicDao;
     private VdsStatic existingVds;
     private VdsStatic newStaticVds;
     private VdsStatistics newStatistics;
-    private VdsStatistics existingEntity;
 
     @Override
     public void setUp() throws Exception {
@@ -31,14 +31,47 @@ public class VdsStatisticsDAOTest extends BaseHibernateDaoTestCase<VdsStatistics
         newStaticVds.setHostName("farkle.redhat.com");
         newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
         newStaticVds.setProtocol(VdsProtocol.STOMP);
-        newStaticVds.setSshPort(22);
-        newStaticVds.setSshUsername("root");
-        newStaticVds.setSshKeyFingerprint("b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31");
-        newStaticVds.setPort(54321);
-        newStaticVds.setName("farkle");
         newStatistics = new VdsStatistics();
-        newStatistics.setId(Guid.newGuid());
-        existingEntity = dao.get(existingVds.getId());
+
+    }
+
+    /**
+     * Ensures that an invalid id returns null.
+     */
+    @Test
+    public void testGetWithInvalidId() {
+        VdsStatistics result = dao.get(Guid.newGuid());
+
+        assertNull(result);
+    }
+
+    /**
+     * Ensures that the right object is returned.
+     */
+    @Test
+    public void testGet() {
+        VdsStatistics result = dao.get(existingVds.getId());
+
+        assertNotNull(result);
+        assertEquals(existingVds.getId(), result.getId());
+    }
+
+    /**
+     * Ensures saving a VDS instance works.
+     */
+    @Test
+    public void testSave() {
+        staticDao.save(newStaticVds);
+        newStatistics.setId(newStaticVds.getId());
+        dao.save(newStatistics);
+
+        VdsStatic staticResult = staticDao.get(newStaticVds.getId());
+        VdsStatistics statisticsResult = dao.get(newStatistics.getId());
+
+        assertNotNull(staticResult);
+        assertEquals(newStaticVds, staticResult);
+        assertNotNull(statisticsResult);
+        assertEquals(newStatistics, statisticsResult);
     }
 
     /**
@@ -54,36 +87,5 @@ public class VdsStatisticsDAOTest extends BaseHibernateDaoTestCase<VdsStatistics
         assertNull(resultStatic);
         VdsStatistics resultStatistics = dao.get(existingVds.getId());
         assertNull(resultStatistics);
-    }
-
-    @Override
-    protected VdsStatisticsDAO getDao() {
-        return dao;
-    }
-
-    @Override
-    protected VdsStatistics getExistingEntity() {
-        return existingEntity;
-    }
-
-    @Override
-    protected VdsStatistics getNonExistentEntity() {
-        return newStatistics;
-    }
-
-    @Override
-    protected int getAllEntitiesCount() {
-        return 5;
-    }
-
-    @Override
-    protected VdsStatistics modifyEntity(VdsStatistics entity) {
-        entity.setHighlyAvailableIsActive(true);
-        return entity;
-    }
-
-    @Override
-    protected void verifyEntityModification(VdsStatistics result) {
-        assertEquals(true, result.getHighlyAvailableIsActive());
     }
 }

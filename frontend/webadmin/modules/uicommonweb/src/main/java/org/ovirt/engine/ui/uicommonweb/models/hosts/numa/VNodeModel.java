@@ -39,7 +39,7 @@ public class VNodeModel extends Model {
     }
 
     public boolean isSplitted() {
-        return getVmNumaNode().getNumaNodeVdsList() != null && getVmNumaNode().getNumaNodeVdsList().size() > 1;
+        return getVmNumaNode().getVdsNumaNodeList() != null && getVmNumaNode().getVdsNumaNodeList().size() > 1;
     }
 
     public void setLocked(boolean locked) {

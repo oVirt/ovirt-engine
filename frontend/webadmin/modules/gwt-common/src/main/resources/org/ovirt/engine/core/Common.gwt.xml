@@ -407,8 +407,6 @@
         <include name="common/businessentities/NumaTuneMode.java" />
         <include name="common/businessentities/VdsNumaNode.java" />
         <include name="common/businessentities/VmNumaNode.java" />
-        <include name="common/businessentities/NumaNodeVmVds.java" />
-        <include name="common/businessentities/NumaNodeCPUMap.java" />
         <!-- Foreman Objects -->
         <include name="common/businessentities/ExternalEntityBase.java"/>
         <include name="common/businessentities/ExternalHostGroup.java"/>

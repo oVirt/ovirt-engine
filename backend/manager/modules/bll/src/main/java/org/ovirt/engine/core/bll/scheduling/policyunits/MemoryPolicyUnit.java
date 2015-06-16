@@ -8,7 +8,6 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -20,6 +19,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +81,9 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         }
         Map<Integer, VdsNumaNode> indexMap = toMap(pNodes);
         for (VmNumaNode vNode : nodes) {
-            for (NumaNodeVmVds item : vNode.getNumaNodeVdsList()) {
-                if (item.isPinned()) {
-                    if (vNode.getMemTotal() > indexMap.get(item.getNodeIndex())
+            for (Pair<Guid, Pair<Boolean, Integer>> pair : vNode.getVdsNumaNodeList()) {
+                if (pair.getSecond() != null && pair.getSecond().getFirst()) {
+                    if (vNode.getMemTotal() > indexMap.get(pair.getSecond().getSecond())
                             .getNumaNodeStatistics()
                             .getMemFree()) {
                         return false;
@@ -107,8 +108,8 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         }
         // iterate through the nodes, and see if there's at least one pinned node.
         for (VmNumaNode vmNumaNode : nodes) {
-            for (NumaNodeVmVds item : vmNumaNode.getNumaNodeVdsList()) {
-                if (item.isPinned()) {
+            for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
+                if (pair.getSecond() != null && pair.getSecond().getFirst()) {
                     return true;
                 }
             }

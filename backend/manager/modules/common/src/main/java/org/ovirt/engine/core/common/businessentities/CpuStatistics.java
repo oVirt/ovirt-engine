@@ -1,50 +1,23 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-import java.util.Objects;
-
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Object which represents host per cpu statistics information
  *
  */
-@Entity
-@Table(name = "vds_cpu_statistics")
-@Cacheable(true)
 public class CpuStatistics implements Serializable {
 
     private static final long serialVersionUID = 3274786304152401306L;
 
-    @Id
-    @Column(name = "vds_cpu_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
-    private Guid vdsCpuId;
-
-    @Column(name = "vds_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
-    private Guid vdsId;
-
-    @Column(name = "cpu_core_id")
     private int cpuId;
 
-    @Column(name = "cpu_sys")
     private double cpuSys;
 
-    @Column(name = "cpu_user")
     private double cpuUser;
 
-    @Column(name = "cpu_idle")
     private double cpuIdle;
 
-    @Column(name = "usage_cpu_percent")
     private int cpuUsagePercent;
 
     public int getCpuId() {
@@ -89,7 +62,18 @@ public class CpuStatistics implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(vdsCpuId);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + cpuId;
+        long temp;
+        temp = Double.doubleToLongBits(cpuIdle);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(cpuSys);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + cpuUsagePercent;
+        temp = Double.doubleToLongBits(cpuUser);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 
     @Override
@@ -98,9 +82,20 @@ public class CpuStatistics implements Serializable {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof CpuStatistics))
+        if (getClass() != obj.getClass())
             return false;
-        return Objects.equals(vdsCpuId, ((CpuStatistics) obj).vdsCpuId);
+        CpuStatistics other = (CpuStatistics) obj;
+        if (cpuId != other.cpuId)
+            return false;
+        if (Double.doubleToLongBits(cpuIdle) != Double.doubleToLongBits(other.cpuIdle))
+            return false;
+        if (Double.doubleToLongBits(cpuSys) != Double.doubleToLongBits(other.cpuSys))
+            return false;
+        if (cpuUsagePercent != other.cpuUsagePercent)
+            return false;
+        if (Double.doubleToLongBits(cpuUser) != Double.doubleToLongBits(other.cpuUser))
+            return false;
+        return true;
     }
 
 }

@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
-import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -114,14 +113,14 @@ public class NumaSupportModel extends Model {
             if (vm.getvNumaNodeList() != null) {
                 for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
                     VNodeModel vNodeModel = new VNodeModel(this, vm, vmNumaNode, false);
-                    if (vmNumaNode.getNumaNodeVdsList() != null && !vmNumaNode.getNumaNodeVdsList().isEmpty()) {
-                        for (NumaNodeVmVds item : vmNumaNode.getNumaNodeVdsList()) {
-                            if (!item.isPinned()) {
+                    if (vmNumaNode.getVdsNumaNodeList() != null && !vmNumaNode.getVdsNumaNodeList().isEmpty()) {
+                        for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
+                            if (!pair.getSecond().getFirst()) {
                                 unassignedVNodeModelList.add(vNodeModel);
                                 break;
                             } else {
                                 vNodeModel.setPinned(true);
-                                Guid nodeId = item.getVdsNumaNode().getId();
+                                Guid nodeId = pair.getFirst();
                                 assignVNumaToPhysicalNuma(vNodeModel, nodeId);
                             }
                         }
@@ -261,21 +260,22 @@ public class NumaSupportModel extends Model {
                 for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
                     if (vmNumaNode.getIndex() == sourceVNumaIndex) {
                         breakFlag = true;
-                        if (vmNumaNode.getNumaNodeVdsList().isEmpty()) {
-                            NumaNodeVmVds item = new NumaNodeVmVds();
-                            item.setVdsNumaNode(getNodeByIndex(targetPNumaNodeIndex));
-                            item.setPinned(true);
-                            item.setNodeIndex(targetPNumaNodeIndex);
-                            vmNumaNode.getNumaNodeVdsList().add(item);
+                        if (vmNumaNode.getVdsNumaNodeList().isEmpty()) {
+                            Pair<Guid, Pair<Boolean, Integer>> pair = new Pair<Guid, Pair<Boolean, Integer>>();
+                            pair.setFirst(getNodeByIndex(targetPNumaNodeIndex).getId());
+                            pair.setSecond(new Pair<Boolean, Integer>());
+                            pair.getSecond().setFirst(true);
+                            pair.getSecond().setSecond(targetPNumaNodeIndex);
+                            vmNumaNode.getVdsNumaNodeList().add(pair);
                         } else {
-                            for (NumaNodeVmVds item : vmNumaNode.getNumaNodeVdsList()) {
+                            for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
                                 if (targetPNumaNodeIndex == -1) {
-                                    item.setVdsNumaNode(null);
-                                    item.setPinned(false);
+                                    pair.setFirst(null);
+                                    pair.getSecond().setFirst(false);
                                 } else {
-                                    item.setVdsNumaNode(getNodeByIndex(targetPNumaNodeIndex));
-                                    item.setPinned(true);
-                                    item.setNodeIndex(targetPNumaNodeIndex);
+                                    pair.setFirst(getNodeByIndex(targetPNumaNodeIndex).getId());
+                                    pair.getSecond().setFirst(true);
+                                    pair.getSecond().setSecond(targetPNumaNodeIndex);
                                 }
                             }
                         }

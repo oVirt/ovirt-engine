@@ -1,20 +1,8 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.UnchangeableByVdsm;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -50,6 +38,17 @@ import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Responsible of comparing 2 views of the same VM, one from DB and other as reported from VDSM, run checks, see what changed
@@ -918,18 +917,18 @@ public class VmAnalyzer {
             VmNumaNode dbVmNumaNode = vmAllNumaNodesMap.get(vNode.getIndex());
             if (dbVmNumaNode != null) {
                 vNode.setId(dbVmNumaNode.getId());
-                List<Integer> pinnedNodes = NumaUtils.getPinnedNodeIndexList(dbVmNumaNode.getNumaNodeVdsList());
-                List<NumaNodeVmVds> runTimePinList = new ArrayList<>();
-                for (NumaNodeVmVds item : vNode.getNumaNodeVdsList()) {
-                    if (!pinnedNodes.contains(item.getNodeIndex()) &&
-                            runOnVdsAllNumaNodesMap.containsKey(item.getNodeIndex())) {
-                        item.setVdsNumaNode(runOnVdsAllNumaNodesMap.get(item.getNodeIndex()));
-                        item.setPinned(false);
-                        runTimePinList.add(item);
+                List<Integer> pinnedNodes = NumaUtils.getPinnedNodeIndexList(dbVmNumaNode.getVdsNumaNodeList());
+                List<Pair<Guid, Pair<Boolean, Integer>>> runTimePinList = new ArrayList<>();
+                for (Pair<Guid, Pair<Boolean, Integer>> pair : vNode.getVdsNumaNodeList()) {
+                    if ((!pinnedNodes.contains(pair.getSecond().getSecond())) &&
+                            (runOnVdsAllNumaNodesMap.containsKey(pair.getSecond().getSecond()))) {
+                        pair.setFirst(runOnVdsAllNumaNodesMap.get(pair.getSecond().getSecond()).getId());
+                        pair.getSecond().setFirst(false);
+                        runTimePinList.add(pair);
                     }
                 }
                 if (!runTimePinList.isEmpty()) {
-                    vNode.setNumaNodeVdsList(runTimePinList);
+                    vNode.setVdsNumaNodeList(runTimePinList);
                     vmNumaNodesNeedUpdate.add(vNode);
                 }
             }

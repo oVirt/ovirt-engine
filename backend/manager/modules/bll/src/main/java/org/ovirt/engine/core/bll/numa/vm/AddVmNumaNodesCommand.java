@@ -7,9 +7,9 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
-import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> extends AbstractVmNumaNodeCommand<T> {
@@ -31,14 +31,14 @@ public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
         List<VdsNumaNode> nodes = new ArrayList<>();
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
             vmNumaNode.setId(Guid.newGuid());
-            for (NumaNodeVmVds item : vmNumaNode.getNumaNodeVdsList()) {
-                if (item.getNodeIndex() != null) {
-                    int index = item.getNodeIndex();
+            for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
+                if (pair.getSecond() != null && pair.getSecond().getSecond() != null) {
+                    int index = pair.getSecond().getSecond();
                     // if pinned set pNode
-                    if (item.isPinned()) {
+                    if (pair.getSecond().getFirst()) {
                         for (VdsNumaNode vdsNumaNode : vdsNumaNodes) {
                             if (vdsNumaNode.getIndex() == index) {
-                                item.setVdsNumaNode(vdsNumaNode);
+                                pair.setFirst(vdsNumaNode.getId());
                                 break;
                             }
                         }

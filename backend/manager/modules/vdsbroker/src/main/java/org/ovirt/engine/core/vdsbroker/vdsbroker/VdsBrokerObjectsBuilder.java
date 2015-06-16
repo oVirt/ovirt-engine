@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
-import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
@@ -74,6 +73,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -2035,7 +2035,8 @@ public class VdsBrokerObjectsBuilder {
             VmNumaNode vNode = new VmNumaNode();
             vNode.setIndex(Integer.valueOf(item.getKey()));
             for (Object pNodeIndex : item.getValue()) {
-                vNode.getNumaNodeVdsList().add(new NumaNodeVmVds(Guid.Empty, vNode, false, (Integer) pNodeIndex));
+                vNode.getVdsNumaNodeList().add(new Pair<>(
+                        Guid.Empty, new Pair<>(false, (Integer)pNodeIndex)));
             }
             vm.getvNumaNodeStatisticsList().add(vNode);
         }

@@ -4,111 +4,44 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "vds_statistics")
-@Cacheable(true)
 public class VdsStatistics implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 69893283302260434L;
 
-    @Id
-    @Column(name = "vds_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid id;
-
-    @Column(name = "cpu_idle")
     private BigDecimal cpuIdle;
-
-    @Column(name = "cpu_load")
     private BigDecimal cpuLoad;
-
-    @Column(name = "cpu_sys")
     private BigDecimal cpuSys;
-
-    @Column(name = "cpu_user")
     private BigDecimal cpuUser;
-
-    @Column(name = "usage_mem_percent")
     private Integer usageMemPercent;
-
-    @Column(name = "usage_cpu_percent")
     private Integer usageCpuPercent;
-
-    @Column(name = "usage_network_percent")
     private Integer usageNetworkPercent;
-
-    @Column(name = "mem_available")
     private Long memAvailable;
-
-    @Column(name = "mem_free")
     private Long memFree;
-
-    @Column(name = "mem_shared")
     private Long memShared;
-
-    @Column(name = "swap_free")
     private Long swapFree;
-
-    @Column(name = "swap_total")
     private Long swapTotal;
-
-    @Column(name = "ksm_cpu_percent")
     private Integer ksmCpuPercent;
-
-    @Column(name = "ksm_pages")
     private Long ksmPages;
-
-    @Column(name = "ksm_state")
     private Boolean ksmState;
-
-    @Column(name = "anonymous_hugepages")
     private int anonymousHugePages;
-
-    @Column(name = "boot_time")
     private Long bootTime;
-
     // The following values store the state of the Hosted Engine HA environment
     // for each host and allow the user to see/change that state through the
     // engine UI.  They originate in the HA agent and are updated with the other
     // stats in vdsm's getVdsStats call.
-    @Column(name = "ha_score")
     private int highlyAvailableScore;
-
-    @Column(name = "ha_configured")
     private boolean highlyAvailableIsConfigured;
-
-    @Column(name = "ha_active")
     private boolean highlyAvailableIsActive;
-
-    @Column(name = "ha_global_maintenance")
     private boolean highlyAvailableGlobalMaintenance;
-
-    @Column(name = "ha_local_maintenance")
     private boolean highlyAvailableLocalMaintenance;
-
-    @Column(name = "cpu_over_commit_time_stamp")
     private Date cpuOverCommitTimeStamp;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "vds_id", referencedColumnName = "vds_id")
     private List<CpuStatistics> cpuCoreStatistics;
-
-    private transient List<V2VJobInfo> v2vJobs;
+    private List<V2VJobInfo> v2vJobs;
 
     public VdsStatistics() {
         cpuIdle = BigDecimal.ZERO;
@@ -132,7 +65,33 @@ public class VdsStatistics implements BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        result = prime * result + (cpuIdle == null ? 0 : cpuIdle.hashCode());
+        result = prime * result + (cpuLoad == null ? 0 : cpuLoad.hashCode());
+        result = prime * result + (cpuSys == null ? 0 : cpuSys.hashCode());
+        result = prime * result + (cpuUser == null ? 0 : cpuUser.hashCode());
+        result = prime * result + (memAvailable == null ? 0 : memAvailable.hashCode());
+        result = prime * result + (memFree == null ? 0 : memFree.hashCode());
+        result = prime * result + (memShared == null ? 0 : memShared.hashCode());
+        result = prime * result + (usageCpuPercent == null ? 0 : usageCpuPercent.hashCode());
+        result = prime * result + (usageNetworkPercent == null ? 0 : usageNetworkPercent.hashCode());
+        result = prime * result + (ksmState == null ? 0 : ksmState.hashCode());
+        result = prime * result + (ksmPages == null ? 0 : ksmPages.hashCode());
+        result = prime * result + (ksmCpuPercent == null ? 0 : ksmCpuPercent.hashCode());
+        result = prime * result + (swapTotal == null ? 0 : swapTotal.hashCode());
+        result = prime * result + (swapFree == null ? 0 : swapFree.hashCode());
+        result = prime * result + anonymousHugePages;
+        result = prime * result + (bootTime == null ? 0 : bootTime.hashCode());
+        result = prime * result + highlyAvailableScore;
+        result = prime * result + (highlyAvailableIsConfigured ? 1231 : 1237);
+        result = prime * result + (highlyAvailableIsActive ? 1231 : 1237);
+        result = prime * result + (highlyAvailableGlobalMaintenance ? 1231 : 1237);
+        result = prime * result + (highlyAvailableLocalMaintenance ? 1231 : 1237);
+        result = prime * result + (cpuCoreStatistics == null ? 0 : cpuCoreStatistics.hashCode());
+        result = prime * result + (cpuOverCommitTimeStamp == null ? 0 : cpuOverCommitTimeStamp.hashCode());
+        return result;
     }
 
     @Override
@@ -144,7 +103,30 @@ public class VdsStatistics implements BusinessEntity<Guid> {
             return false;
         }
         VdsStatistics other = (VdsStatistics) obj;
-        return ObjectUtils.objectsEqual(id, other.id);
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.bigDecimalEqual(cpuIdle, other.cpuIdle)
+                && ObjectUtils.bigDecimalEqual(cpuLoad, other.cpuLoad)
+                && ObjectUtils.bigDecimalEqual(cpuSys, other.cpuSys)
+                && ObjectUtils.bigDecimalEqual(cpuUser, other.cpuUser)
+                && ObjectUtils.objectsEqual(memAvailable, other.memAvailable)
+                && ObjectUtils.objectsEqual(memFree, other.memFree)
+                && ObjectUtils.objectsEqual(memShared, other.memShared)
+                && ObjectUtils.objectsEqual(usageCpuPercent, other.usageCpuPercent)
+                && ObjectUtils.objectsEqual(usageNetworkPercent, other.usageNetworkPercent)
+                && ObjectUtils.objectsEqual(ksmState, other.ksmState)
+                && ObjectUtils.objectsEqual(ksmPages, other.ksmPages)
+                && ObjectUtils.objectsEqual(ksmCpuPercent, other.ksmCpuPercent)
+                && ObjectUtils.objectsEqual(swapTotal, other.swapTotal)
+                && ObjectUtils.objectsEqual(swapFree, other.swapFree)
+                && (anonymousHugePages == other.anonymousHugePages)
+                && ObjectUtils.objectsEqual(bootTime, other.bootTime)
+                && (highlyAvailableScore == other.highlyAvailableScore)
+                && (highlyAvailableIsConfigured == other.highlyAvailableIsConfigured)
+                && (highlyAvailableIsActive == other.highlyAvailableIsActive)
+                && (highlyAvailableGlobalMaintenance == other.highlyAvailableGlobalMaintenance)
+                && (highlyAvailableLocalMaintenance == other.highlyAvailableLocalMaintenance)
+                && ObjectUtils.objectsEqual(cpuCoreStatistics, other.cpuCoreStatistics)
+                && ObjectUtils.objectsEqual(cpuOverCommitTimeStamp, other.cpuOverCommitTimeStamp));
     }
 
     public int getAnonymousHugePages() {

@@ -415,7 +415,7 @@ public class ResourceManager implements BackendService {
         }
         List<VmNumaNode> vmNumaNodes = vm.getvNumaNodeList();
         for (VmNumaNode node : vmNumaNodes) {
-            node.getNumaNodeVdsList().clear();
+            node.getVdsNumaNodeList().clear();
         }
     }
 

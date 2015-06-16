@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -157,9 +158,9 @@ public class NumaSupportPopupView extends AbstractModelBoundPopupView<NumaSuppor
         for (VM vm: vmsWithVNuma) {
             for(VmNumaNode vmNumaNode: vm.getvNumaNodeList()) {
                 VNodeModel vNodeModel = new VNodeModel(supportModel, vm, vmNumaNode, false);
-                if (vmNumaNode.getNumaNodeVdsList() != null && !vmNumaNode.getNumaNodeVdsList().isEmpty()) {
-                    for (NumaNodeVmVds item : vmNumaNode.getNumaNodeVdsList()) {
-                        if (item.isPinned()) {
+                if (vmNumaNode.getVdsNumaNodeList() != null && !vmNumaNode.getVdsNumaNodeList().isEmpty()) {
+                    for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
+                        if (pair.getSecond().getFirst()) {
                             vNodeModel.setPinned(true);
                         }
                     }

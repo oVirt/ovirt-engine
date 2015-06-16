@@ -2,46 +2,21 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.PostLoad;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Range;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
 import org.ovirt.engine.core.common.validation.annotation.ValidNameWithDot;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "vds_static")
-@Cacheable(true)
-@NamedQueries({
-        @NamedQuery(name = "VdsStatic.getByHostName",
-                query = "select v from VdsStatic v where v.hostName = :hostName"),
-        @NamedQuery(name = "VdsStatic.getAllForVdsGroup",
-                query = "select v from VdsStatic v where v.vdsGroupId = :vdsGroupId"),
-        @NamedQuery(name = "VdsStatic.getByVdsName",
-                query = "select v.name from VdsStatic v where v.name = :name")
-})
 public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     private static final long serialVersionUID = -1425566208615075937L;
@@ -49,30 +24,23 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     private static final int DEFAULT_SSH_PORT = 22;
     private static final String DEFAULT_SSH_USERNAME = "root";
 
-    @Id
-    @Column(name = "vds_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid id;
 
     @EditableField
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
     @ValidNameWithDot(message = "VALIDATION_VDS_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
-    @Column(name = "vds_name")
     private String name;
 
     @EditableField
-    @Column(name = "free_text_comment")
     private String comment;
 
     @EditableField
     @HostnameOrIp(message = "VALIDATION.VDS.CONSOLEADDRESSS.HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.CONSOLE_ADDRESS_SIZE)
-    @Column(name = "console_address")
     private String consoleAddress;
 
     @Size(max = BusinessEntitiesDefinitions.HOST_UNIQUE_ID_SIZE)
-    @Column(name = "vds_unique_id")
     private String uniqueId;
 
     @EditableOnVdsStatus
@@ -80,63 +48,45 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
             groups = { CreateEntity.class, UpdateEntity.class })
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
-    @Column(name = "host_name")
     private String hostName;
 
     @EditableField
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
             message = "VALIDATION.VDS.PORT.RANGE")
-    @Column(name = "port")
     private int port;
 
     @EditableField
-    @Column(name = "protocol")
-    @Enumerated(EnumType.ORDINAL)
     private VdsProtocol protocol;
 
     @EditableOnVdsStatus
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
             message = "VALIDATION.VDS.SSH_PORT.RANGE")
-    @Column(name = "ssh_port")
     private int sshPort;
 
     @EditableField
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
     @ValidNameWithDot(message = "VALIDATION_VDS_SSH_USERNAME_INVALID", groups = { CreateEntity.class,
             UpdateEntity.class })
-    @Column(name = "ssh_username")
     private String sshUsername;
 
     @EditableOnVdsStatus
-    @Column(name = "vds_group_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid vdsGroupId;
 
-    @Column(name = "server_ssl_enabled")
     private Boolean serverSslEnabled;
 
-    @Column(name = "vds_type")
-    @Enumerated(EnumType.ORDINAL)
     private VDSType vdsType;
 
-    @Column(name = "vds_strength")
     private Integer vdsStrength;
 
     @EditableField
-    @Column(name = "pm_enabled")
     private boolean pmEnabled;
 
     @EditableField
-    private transient List<FenceProxySourceType> fenceProxySources;
-
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
-    @Column(name = "pm_proxy_preferences")
-    private String pmProxyPreferences;
+    private List<FenceProxySourceType> fenceProxySources;
 
     @EditableField
-    @Column(name = "pm_detect_kdump")
     private boolean pmKdumpDetection;
 
     /**
@@ -144,30 +94,23 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
      * is not allowed to touch this host.
      */
     @EditableField
-    @Column(name = "disable_auto_pm")
     private boolean disablePowerManagementPolicy;
 
     @EditableField
-    @Column(name = "otp_validity")
-    private Long otpValidity;
+    private long otpValidity;
 
     @EditableField
     @Min(BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY)
     @Max(BusinessEntitiesDefinitions.HOST_MAX_SPM_PRIORITY)
-    @Column(name = "vds_spm_priority")
     private int vdsSpmPriority;
 
-    @Column(name = "recoverable")
     private boolean autoRecoverable;
 
     @EditableField
     @Size(max = BusinessEntitiesDefinitions.SSH_KEY_FINGERPRINT_SIZE)
-    @Column(name = "sshkeyfingerprint")
     private String sshKeyFingerprint;
 
     @EditableField
-    @Column(name = "host_provider_id")
-    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid hostProviderId;
 
     public boolean isAutoRecoverable() {
@@ -176,16 +119,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public void setAutoRecoverable(boolean autoRecoverable) {
         this.autoRecoverable = autoRecoverable;
-    }
-
-    @PostLoad
-    protected void afterLoad() {
-        fenceProxySources = FenceProxySourceTypeHelper.parseFromString(pmProxyPreferences);
-    }
-
-    @PrePersist
-    protected void beforeStore() {
-        pmProxyPreferences = FenceProxySourceTypeHelper.saveAsString(fenceProxySources);
     }
 
     public VdsStatic() {
@@ -201,7 +134,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         disablePowerManagementPolicy = false;
         pmKdumpDetection = true;
         hostProviderId = null;
-        protocol = VdsProtocol.STOMP;
     }
 
     public VdsStatic(String hostName, String uniqueId, int port, int sshPort, String sshUsername, Guid vdsGroupId,
@@ -363,11 +295,11 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.disablePowerManagementPolicy = disablePowerManagementPolicy;
     }
 
-    public Long getOtpValidity() {
+    public long getOtpValidity() {
         return otpValidity;
     }
 
-    public void setOtpValidity(Long otpValidity) {
+    public void setOtpValidity(long otpValidity) {
         this.otpValidity = otpValidity;
     }
 
@@ -435,7 +367,27 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        result = prime * result + (hostName == null ? 0 : hostName.hashCode());
+        result = prime * result + (consoleAddress == null ? 0 : consoleAddress.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
+        result = prime * result + (int) (otpValidity ^ (otpValidity >>> 32));
+        result = prime * result + (pmEnabled ? 1231 : 1237);
+        result = prime * result + (pmKdumpDetection ? 1 : 0);
+        result = prime * result + port;
+        result = prime * result + (protocol == null ? 0 : protocol.hashCode());
+        result = prime * result + sshPort;
+        result = prime * result + (sshUsername == null ? 0 : sshUsername.hashCode());
+        result = prime * result + (serverSslEnabled == null ? 0 : serverSslEnabled.hashCode());
+        result = prime * result + (uniqueId == null ? 0 : uniqueId.hashCode());
+        result = prime * result + (vdsGroupId == null ? 0 : vdsGroupId.hashCode());
+        result = prime * result + (vdsStrength == null ? 0 : vdsStrength.hashCode());
+        result = prime * result + (vdsType == null ? 0 : vdsType.hashCode());
+        result = prime * result + (disablePowerManagementPolicy ? 0 : 1);
+        result = prime * result + (hostProviderId == null ? 0 : hostProviderId.hashCode());
+        return result;
     }
 
     @Override
@@ -447,6 +399,24 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
             return false;
         }
         VdsStatic other = (VdsStatic) obj;
-        return ObjectUtils.objectsEqual(id, other.id);
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(hostName, other.hostName)
+                && ObjectUtils.objectsEqual(consoleAddress, other.consoleAddress)
+                && ObjectUtils.objectsEqual(name, other.name)
+                && otpValidity == other.otpValidity
+                && pmEnabled == other.pmEnabled
+                && pmKdumpDetection == other.isPmKdumpDetection()
+                && port == other.port
+                && protocol == other.protocol
+                && sshPort == other.sshPort
+                && ObjectUtils.objectsEqual(sshUsername, other.sshUsername)
+                && ObjectUtils.objectsEqual(serverSslEnabled, other.serverSslEnabled)
+                && ObjectUtils.objectsEqual(uniqueId, other.uniqueId)
+                && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
+                && ObjectUtils.objectsEqual(vdsStrength, other.vdsStrength)
+                && vdsType == other.vdsType
+                && ObjectUtils.objectsEqual(sshKeyFingerprint, other.sshKeyFingerprint))
+                && disablePowerManagementPolicy == other.disablePowerManagementPolicy
+                && ObjectUtils.objectsEqual(hostProviderId, other.hostProviderId);
     }
 }
