@@ -386,6 +386,7 @@ public enum EngineError {
     GlusterVolumeRebalanceStatusFailedException(4138),
     GlusterVolumeDeleteFailed(4139),
     GlusterVolumeReplaceBrickStartFailed(4142),
+    GlusterVolumeReplaceBrickFailed(4148),
     GlusterVolumeListFailed(4149),
     GlusterVolumeRemoveBrickStatusFailed(4152),
     GlusterVolumeRemoveBricksStopFailed(4150),

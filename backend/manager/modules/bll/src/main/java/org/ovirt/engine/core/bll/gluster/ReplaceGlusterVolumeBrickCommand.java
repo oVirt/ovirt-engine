@@ -1,11 +1,16 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.ReplaceGlusterVolumeBrickActionVDSParameters;
@@ -23,13 +28,6 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
 
     @Override
     protected void setActionMessageParameters() {
-        switch (getParameters().getAction()) {
-        case START:
-            addValidationMessage(EngineMessage.VAR__ACTION__START);
-            break;
-        default:
-            break;
-        }
         addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
     }
 
@@ -39,8 +37,20 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
             return false;
         }
 
+        if (!getGlusterVolume().getVolumeType().isReplicatedType()) {
+            addValidationMessage(EngineMessage.ACTION_TYPE_NOT_SUPPORTED_FOR_VOLUME_TYPE);
+            return false;
+        }
+
         if (!getGlusterVolume().isOnline()) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
+            return false;
+        }
+
+        if (getGlusterVolume().getAsyncTask() != null && (getGlusterVolume().getAsyncTask().getStatus() == JobExecutionStatus.STARTED
+                || (getGlusterVolume().getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
+                && getGlusterVolume().getAsyncTask().getStatus() == JobExecutionStatus.FINISHED))) {
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_HAS_RUNNING_TASKS);
             return false;
         }
 
@@ -49,16 +59,12 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
             return false;
         }
 
-        if (!updateBrickServerAndInterfaceName(getParameters().getExistingBrick(), true)) {
+        if (!isValidVolumeBrick(getParameters().getExistingBrick())) {
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK);
             return false;
         }
 
         if (!updateBrickServerAndInterfaceName(getParameters().getNewBrick(), true)) {
-            return false;
-        }
-
-        if (!isValidVolumeBrick(getParameters().getExistingBrick())) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK);
             return false;
         }
 
@@ -72,30 +78,33 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
                         VDSCommandType.ReplaceGlusterVolumeBrick,
                         new ReplaceGlusterVolumeBrickActionVDSParameters(upServer.getId(),
                                 getGlusterVolumeName(),
-                                getParameters().getAction(),
                                 getParameters().getExistingBrick().getQualifiedName(),
-                                getParameters().getNewBrick().getQualifiedName(),
-                                getParameters().isForceAction()));
+                                getParameters().getNewBrick().getQualifiedName()));
+        setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
-            setSucceeded(returnValue.getSucceeded());
+            getParameters().getNewBrick().setStatus(getParameters().getExistingBrick().getStatus());
+            getGlusterBrickDao().replaceBrick(getParameters().getExistingBrick(), getParameters().getNewBrick());
+
         } else {
-            handleVdsError(AuditLogType.GLUSTER_VOLUME_OPTION_SET_FAILED, returnValue.getVdsError().getMessage());
+            handleVdsError(AuditLogType.GLUSTER_VOLUME_REPLACE_BRICK_FAILED, returnValue.getVdsError().getMessage());
             return;
         }
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        switch (getParameters().getAction()) {
-        case START:
-            if (getSucceeded()) {
-                return AuditLogType.GLUSTER_VOLUME_REPLACE_BRICK_START;
-            } else {
-                return AuditLogType.GLUSTER_VOLUME_REPLACE_BRICK_START_FAILED;
-            }
-        default:
+        if (getSucceeded()) {
+            return AuditLogType.GLUSTER_VOLUME_BRICK_REPLACED;
+        } else {
             return AuditLogType.GLUSTER_VOLUME_REPLACE_BRICK_FAILED;
         }
+    }
+
+    @Override
+    public Map<String, String> getCustomValues() {
+        addCustomValue(GlusterConstants.BRICK, getParameters().getExistingBrick().getQualifiedName());
+        addCustomValue(GlusterConstants.NEW_BRICK, getParameters().getNewBrick().getQualifiedName());
+        return super.getCustomValues();
     }
 
     private boolean isValidVolumeBrick(GlusterBrickEntity volumeBrick) {

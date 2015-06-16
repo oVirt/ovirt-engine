@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskOperation;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
@@ -99,7 +98,7 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
         GlusterVolumeEntity volume = getVolume(volumeId);
         volume.setStatus((volumeId == volumeId1) ? GlusterStatus.UP : GlusterStatus.DOWN);
         volume.setBricks(getBricks(volumeId, "distrib", 2));
-        volume.setVolumeType(GlusterVolumeType.DISTRIBUTE);
+        volume.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
         volume.setClusterId(clusterId);
         return volume;
     }
@@ -140,16 +139,14 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
 
     private ReplaceGlusterVolumeBrickCommand createTestCommand1(Guid volumeId) {
         return new ReplaceGlusterVolumeBrickCommand(new GlusterVolumeReplaceBrickActionParameters(volumeId,
-                GlusterTaskOperation.START,
                 getBricks(volumeId, "distrib", 1).get(0),
-                getBricks(volumeId, "new", 1).get(0), false), null);
+                getBricks(volumeId, "new", 1).get(0)), null);
     }
 
     private ReplaceGlusterVolumeBrickCommand createTestCommand2(Guid volumeId) {
         return new ReplaceGlusterVolumeBrickCommand(new GlusterVolumeReplaceBrickActionParameters(volumeId,
-                GlusterTaskOperation.START,
                 null,
-                getBricks(volumeId, "", 1).get(0), false), null);
+                getBricks(volumeId, "", 1).get(0)), null);
     }
 
     @Test

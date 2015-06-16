@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskOperation;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
@@ -65,7 +64,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         setRetainBricksCommand(new UICommand("RetainBricks", this)); //$NON-NLS-1$
         setReplaceBrickCommand(new UICommand("Replace Brick", this)); //$NON-NLS-1$
         setBrickAdvancedDetailsCommand(new UICommand("Brick Advanced Details", this)); //$NON-NLS-1$
-        getReplaceBrickCommand().setIsAvailable(false);
+        getReplaceBrickCommand().setIsAvailable(true);
 
         // Get the meta volume name
         AsyncQuery aQuery = new AsyncQuery();
@@ -205,11 +204,20 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             allowAdvanced = false;
         }
         else {
+            if (getSelectedItems().size() == 1) {
+                allowReplace = true;
+                allowAdvanced = volumeEntity.isOnline() && getSelectedItems().get(0).isOnline();
+            }
+            else {
+                allowReplace = false;
+                allowAdvanced = false;
+            }
             GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
             if (volumeTask != null
                     && (volumeTask.getStatus() == JobExecutionStatus.STARTED || volumeTask.getType() == GlusterTaskType.REMOVE_BRICK
                             && volumeTask.getStatus() == JobExecutionStatus.FINISHED)) {
                 allowRemove = false;
+                allowReplace = false;
             }
             else if (volumeEntity.getVolumeType() == GlusterVolumeType.STRIPE
                     || getSelectedItems().size() == volumeEntity.getBricks().size()) {
@@ -218,15 +226,6 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             else if (volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
                     && (volumeEntity.getBricks().size() == VolumeListModel.REPLICATE_COUNT_DEFAULT || getSelectedItems().size() > 1)) {
                 allowRemove = false;
-            }
-
-            if (getSelectedItems().size() == 1) {
-                allowReplace = true;
-                allowAdvanced = volumeEntity.isOnline() && getSelectedItems().get(0).isOnline();
-            }
-            else {
-                allowReplace = false;
-                allowAdvanced = false;
             }
         }
 
@@ -1187,10 +1186,8 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         GlusterVolumeReplaceBrickActionParameters parameter =
                 new GlusterVolumeReplaceBrickActionParameters(volumeEntity.getId(),
-                        GlusterTaskOperation.START,
                         existingBrick,
-                        newBrick,
-                        false);
+                        newBrick);
 
         Frontend.getInstance().runAction(VdcActionType.ReplaceGlusterVolumeBrick, parameter, new IFrontendActionAsyncCallback() {
 

@@ -619,6 +619,8 @@ CREATE OR REPLACE FUNCTION UpdateGlusterVolumeBrick (
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
+    DELETE FROM gluster_volume_brick_details
+    WHERE brick_id = v_id;
     UPDATE gluster_volume_bricks
     SET id = v_new_id,
         server_id = v_new_server_id,

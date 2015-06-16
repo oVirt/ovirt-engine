@@ -2886,6 +2886,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The value of gluster volume snapshot parameter ${snapshotConfigParam} is empty.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAM_VALUE_IS_EMPTY();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Operation not supported on selected volume type.")
+    String ACTION_TYPE_NOT_SUPPORTED_FOR_VOLUME_TYPE();
+
     @DefaultStringValue("Cannot ${action} ${type}. The value of start date is before current date.")
     String ACTION_TYPE_FAILED_START_DATE_BEFORE_CURRENT_DATE();
 

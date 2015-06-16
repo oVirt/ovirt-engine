@@ -9,14 +9,9 @@ public class ReplaceGlusterVolumeBrickVDSCommand<P extends ReplaceGlusterVolumeB
 
     @Override
     protected void executeVdsBrokerCommand() {
-        switch (getParameters().getAction()) {
-        case START:
-            status =
-                    getBroker().glusterVolumeReplaceBrickStart(getParameters().getVolumeName(),
+        status = getBroker().glusterVolumeReplaceBrickCommitForce(getParameters().getVolumeName(),
                             getParameters().getExistingBrickDir(),
                             getParameters().getNewBrickDir());
-            break;
-        }
         proceedProxyReturnValue();
     }
 }

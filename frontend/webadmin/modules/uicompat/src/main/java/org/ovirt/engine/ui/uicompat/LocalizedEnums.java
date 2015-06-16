@@ -417,6 +417,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_VOLUME_REPLACE_BRICK_FAILED();
 
+    String AuditLogType___GLUSTER_VOLUME_BRICK_REPLACED();
+
     String AuditLogType___GLUSTER_VOLUME_REPLACE_BRICK_START();
 
     String AuditLogType___GLUSTER_VOLUME_REPLACE_BRICK_START_FAILED();

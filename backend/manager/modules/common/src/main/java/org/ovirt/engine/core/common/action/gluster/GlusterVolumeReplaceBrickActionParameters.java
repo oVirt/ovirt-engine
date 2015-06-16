@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.action.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskOperation;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -11,8 +10,6 @@ public class GlusterVolumeReplaceBrickActionParameters extends GlusterVolumeActi
 
     private static final long serialVersionUID = -8083235918435906931L;
 
-    private GlusterTaskOperation action;
-
     private GlusterBrickEntity existingBrick;
 
     private GlusterBrickEntity newBrick;
@@ -21,22 +18,11 @@ public class GlusterVolumeReplaceBrickActionParameters extends GlusterVolumeActi
     }
 
     public GlusterVolumeReplaceBrickActionParameters(Guid volumeId,
-            GlusterTaskOperation action,
             GlusterBrickEntity existingBrick,
-            GlusterBrickEntity newBrick,
-            boolean forceAction) {
-        super(volumeId, forceAction);
-        setAction(action);
+            GlusterBrickEntity newBrick) {
+        super(volumeId, true);
         setExistingBrick(existingBrick);
         setNewBrick(newBrick);
-    }
-
-    public GlusterTaskOperation getAction() {
-        return action;
-    }
-
-    public void setAction(GlusterTaskOperation action) {
-        this.action = action;
     }
 
     public GlusterBrickEntity getExistingBrick() {

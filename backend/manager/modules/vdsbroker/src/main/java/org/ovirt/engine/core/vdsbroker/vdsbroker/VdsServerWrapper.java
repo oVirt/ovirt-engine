@@ -1131,10 +1131,10 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeReplaceBrickStart(String volumeName, String existingBrickDir,
+    public StatusOnlyReturnForXmlRpc glusterVolumeReplaceBrickCommitForce(String volumeName, String existingBrickDir,
             String newBrickDir) {
         try {
-            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeReplaceBrickStart(volumeName, existingBrickDir,
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeReplaceBrickCommitForce(volumeName, existingBrickDir,
                     newBrickDir));
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
@@ -1672,6 +1672,7 @@ public class VdsServerWrapper implements IVdsServer {
         return wrapper;
     }
 
+    @Override
     public void close() {
         XmlRpcUtils.shutDownConnection(this.httpClient);
     }
@@ -1967,6 +1968,7 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc registerSecrets(Map<String, String>[] libvirtSecrets, boolean clearUnusedSecrets) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.registerSecrets(libvirtSecrets, clearUnusedSecrets);

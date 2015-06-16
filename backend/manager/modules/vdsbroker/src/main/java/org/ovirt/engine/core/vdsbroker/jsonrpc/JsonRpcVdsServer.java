@@ -1259,11 +1259,11 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeReplaceBrickStart(String volumeName,
+    public StatusOnlyReturnForXmlRpc glusterVolumeReplaceBrickCommitForce(String volumeName,
             String existingBrickDir,
             String newBrickDir) {
         JsonRpcRequest request =
-                new RequestBuilder("GlusterVolume.replaceBrickStart").withParameter("volumeName", volumeName)
+                new RequestBuilder("GlusterVolume.replaceBrickCommitForce").withParameter("volumeName", volumeName)
                         .withParameter("existingBrick", existingBrickDir)
                         .withParameter("newBrick", newBrickDir)
                         .build();

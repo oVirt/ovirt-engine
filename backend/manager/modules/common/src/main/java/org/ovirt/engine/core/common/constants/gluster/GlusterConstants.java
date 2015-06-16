@@ -44,6 +44,7 @@ public class GlusterConstants {
     public static final String GEO_REP_SLAVE_VOLUME_NAME = "geoRepSlaveVolumeName";
     public static final String GEO_REP_USER = "geoRepUserName";
     public static final String GEO_REP_USER_GROUP = "geoRepGroupName";
+    public static final String NEW_BRICK = "newBrick";
 
     public static final String HOOK_NAME = "glusterhookname";
     public static final String FAILURE_MESSAGE = "failuremessage";
