@@ -56,16 +56,6 @@ public class VdsStaticDAODbFacadeImpl extends AbstractJpaDao<VdsStatic, Guid> im
     }
 
     @Override
-    public void update(VdsStatic vds) {
-        Guid id = vds.getId();
-        if (Guid.isNullOrEmpty(id)) {
-            id = Guid.newGuid();
-            vds.setId(id);
-        }
-        super.update(vds);
-    }
-
-    @Override
     public VdsStatic getByVdsName(String vdsName) {
         return singleResult(entityManager.createNamedQuery("VdsStatic.getByVdsName",
                 VdsStatic.class)
