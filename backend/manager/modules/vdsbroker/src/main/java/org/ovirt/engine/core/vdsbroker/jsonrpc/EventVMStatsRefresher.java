@@ -99,8 +99,6 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
 
             private VmInternalData createVmInternalData(VM dbVm, Map<String, Object> xmlRpcStruct, Double notifyTime) {
                 VmDynamic vmDynamic = new VmDynamic(dbVm.getDynamicData());
-                vmDynamic.setId(dbVm.getId());
-                vmDynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
 
                 if (xmlRpcStruct.containsKey(VdsProperties.status)) {
                     vmDynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
@@ -116,15 +114,15 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
                     String exitCodeStr = xmlRpcStruct.get(VdsProperties.exit_code).toString();
                     vmDynamic.setExitStatus(VmExitStatus.forValue(Integer.parseInt(exitCodeStr)));
                 }
+
                 if (xmlRpcStruct.containsKey(VdsProperties.exit_message)) {
                     String exitMsg = (String) xmlRpcStruct.get(VdsProperties.exit_message);
                     vmDynamic.setExitMessage(exitMsg);
                 }
+
                 if (xmlRpcStruct.containsKey(VdsProperties.exit_reason)) {
                     String exitReasonStr = xmlRpcStruct.get(VdsProperties.exit_reason).toString();
                     vmDynamic.setExitReason(VmExitReason.forValue(Integer.parseInt(exitReasonStr)));
-                } else {
-                    vmDynamic.setExitReason(VmExitReason.Unknown);
                 }
 
                 return new VmInternalData(vmDynamic, dbVm.getStatisticsData());
