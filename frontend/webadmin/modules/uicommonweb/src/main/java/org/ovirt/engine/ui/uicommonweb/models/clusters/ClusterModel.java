@@ -1131,12 +1131,15 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         getEnableKsm().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getEnableKsm().getEntity() == null)
+                if (getEnableKsm().getEntity() == null){
                     return;
-                if (getEnableKsm().getEntity() == true)
+                }
+                if (getEnableKsm().getEntity() == true){
                     getKsmPolicyForNumaSelection().setIsChangeable(true);
-                if (getEnableKsm().getEntity() == false)
+                }
+                if (getEnableKsm().getEntity() == false){
                     getKsmPolicyForNumaSelection().setIsChangeable(false);
+                }
             }
         });
 
@@ -1717,8 +1720,6 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         boolean isSmallerThanVersion3_4 = version.compareTo(Version.v3_4) < 0;
         getEnableKsm().setIsChangeable(!isSmallerThanVersion3_4);
         getEnableKsm().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ksmNotAvailable());
-        // default is false (disabled)
-        getEnableKsm().setEntity(false);
         // for version 3.3 and lower the default is true.
         if (isSmallerThanVersion3_4) {
             getEnableKsm().setEntity(true);
