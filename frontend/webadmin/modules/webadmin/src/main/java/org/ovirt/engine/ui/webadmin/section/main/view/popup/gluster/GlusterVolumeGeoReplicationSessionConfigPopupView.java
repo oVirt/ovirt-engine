@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractScrollableTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.GlusterConfigAwareColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -67,20 +68,21 @@ public class GlusterVolumeGeoReplicationSessionConfigPopupView extends AbstractM
                 return entity.getSecond().getKey();
             }
         },
-                constants.optionKeyVolumeParameter());
+                constants.optionKeyVolumeParameter(), "150px");//$NON-NLS-1$
 
-        geoReplicationConfigTable.addColumn(new AbstractEntityModelTextColumn<Pair<Boolean, GlusterGeoRepSessionConfiguration>>() {
+        geoReplicationConfigTable.addColumn(new AbstractScrollableTextColumn<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>>() {
             @Override
-            protected String getText(Pair<Boolean, GlusterGeoRepSessionConfiguration> entity) {
-                return entity.getSecond().getDescription() == null ? constants.notAvailableLabel() : entity.getSecond()
-                        .getDescription();
+            public String getValue(EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>> object) {
+                return object.getEntity().getSecond().getDescription() == null ? constants.notAvailableLabel()
+                        : object.getEntity().getSecond().getDescription();
             }
         },
-                constants.descriptionVolumeParameter());
+                constants.descriptionVolumeParameter(),
+                "300px");//$NON-NLS-1$
 
         geoReplicationConfigTable.addColumn(new GlusterConfigAwareColumn(),
                 constants.optionValueVolumeParameter(),
-                "100px");//$NON-NLS-1$
+                "200px");//$NON-NLS-1$
 
         geoReplicationConfigTable.addColumn(new AbstractCheckboxColumn<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>>(true, new FieldUpdater<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>, Boolean>() {
 
