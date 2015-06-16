@@ -79,7 +79,7 @@ public class CinderBroker extends AuditLogableBase {
                 cinderVolume.setName(cinderDisk.getDiskAlias());
                 cinderVolume.setDescription(cinderDisk.getDiskDescription());
                 cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
-                cinderVolume.setSourceVolid(cinderDisk.getId().toString());
+                cinderVolume.setSourceVolid(cinderDisk.getImageId().toString());
                 return proxy.createVolume(cinderVolume);
             }
         });
@@ -123,7 +123,7 @@ public class CinderBroker extends AuditLogableBase {
                 VolumeForUpdate volumeForUpdate = new VolumeForUpdate();
                 volumeForUpdate.setName(cinderDisk.getDiskAlias());
                 volumeForUpdate.setDescription(cinderDisk.getDiskDescription());
-                proxy.updateVolume(cinderDisk.getId().toString(), volumeForUpdate);
+                proxy.updateVolume(cinderDisk.getImageId().toString(), volumeForUpdate);
                 return null;
             }
         });
@@ -133,7 +133,7 @@ public class CinderBroker extends AuditLogableBase {
         return execute(new Callable<Void>() {
             @Override
             public Void call() {
-                proxy.extendVolume(cinderDisk.getId().toString(), newSize);
+                proxy.extendVolume(cinderDisk.getImageId().toString(), newSize);
                 return null;
             }
         });
@@ -144,7 +144,7 @@ public class CinderBroker extends AuditLogableBase {
             @Override
             public String call() {
                 SnapshotForCreate snapshotForCreate = new SnapshotForCreate();
-                snapshotForCreate.setVolumeId(cinderDisk.getId().toString());
+                snapshotForCreate.setVolumeId(cinderDisk.getImageId().toString());
                 return proxy.createSnapshot(snapshotForCreate);
             }
         });
@@ -187,7 +187,7 @@ public class CinderBroker extends AuditLogableBase {
             @Override
             public CinderConnectionInfo call() {
                 ConnectionForInitialize connectionForInitialize = new ConnectionForInitialize();
-                return proxy.initializeConnectionForVolume(cinderDisk.getId().toString(), connectionForInitialize);
+                return proxy.initializeConnectionForVolume(cinderDisk.getImageId().toString(), connectionForInitialize);
             }
         });
     }
