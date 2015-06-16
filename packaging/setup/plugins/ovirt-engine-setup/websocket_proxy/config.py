@@ -112,6 +112,10 @@ class Plugin(plugin.PluginBase):
         self._enabled = self.environment[
             owspcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
         ]
+        if self._enabled:
+            self.environment[
+                owspcons.ConfigEnv.WEBSOCKET_PROXY_STOP_NEEDED
+            ] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,

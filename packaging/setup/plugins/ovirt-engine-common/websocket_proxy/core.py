@@ -39,6 +39,15 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment.setdefault(
+            owspcons.ConfigEnv.WEBSOCKET_PROXY_STOP_NEEDED,
+            False
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
     )
     def _setup(self):
@@ -50,6 +59,8 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_TRANSACTION_BEGIN,
         condition=lambda self: not self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
+        ] and self.environment[
+            owspcons.ConfigEnv.WEBSOCKET_PROXY_STOP_NEEDED
         ],
     )
     def _transactionBegin(self):

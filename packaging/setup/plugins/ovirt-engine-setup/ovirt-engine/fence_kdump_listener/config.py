@@ -41,6 +41,14 @@ class Plugin(plugin.PluginBase):
         self._enabled = True
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        self.environment[
+            oengcommcons.ConfigEnv.FENCE_KDUMP_LISTENER_STOP_NEEDED
+        ] = True
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,

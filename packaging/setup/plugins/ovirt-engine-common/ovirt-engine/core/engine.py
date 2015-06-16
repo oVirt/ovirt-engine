@@ -26,6 +26,7 @@ from otopi import plugin, util
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import dialog
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 def _(m):
@@ -47,9 +48,18 @@ class Plugin(plugin.PluginBase):
             oenginecons.CoreEnv.ENGINE_SERVICE_STOP,
             None
         )
+        self.environment.setdefault(
+            oengcommcons.ConfigEnv.ENGINE_SERVICE_STOP_NEEDED,
+            True
+            # TODO find out where it's actually needed, set to True there
+            # and to False here.
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
+        condition=lambda self: self.environment[
+            oengcommcons.ConfigEnv.ENGINE_SERVICE_STOP_NEEDED
+        ],
     )
     def _validation(self):
         if (
@@ -86,6 +96,8 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_TRANSACTION_BEGIN,
         condition=lambda self: not self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
+        ] and self.environment[
+            oengcommcons.ConfigEnv.ENGINE_SERVICE_STOP_NEEDED
         ],
     )
     def _transactionBegin(self):

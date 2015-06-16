@@ -267,6 +267,9 @@ class ConfigEnv(object):
     JBOSS_DEBUG_ADDRESS = 'OVESETUP_CONFIG/jbossDebugAddress'
     JBOSS_NEEDED = 'OVESETUP_CONFIG/jbossNeeded'
     JAVA_NEEDED = 'OVESETUP_CONFIG/javaNeeded'
+    ENGINE_SERVICE_STOP_NEEDED = 'OVESETUP_CONFIG/engineServiceStopNeeded'
+    FENCE_KDUMP_LISTENER_STOP_NEEDED = \
+        'OVESETUP_CONFIG/fenceKdumpListenerStopNeeded'
 
 
 @util.export

@@ -25,6 +25,7 @@ from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 def _(m):
@@ -34,6 +35,14 @@ def _(m):
 @util.export
 class Plugin(plugin.PluginBase):
     """fence_kdump listener plugin."""
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        self.environment[
+            oengcommcons.ConfigEnv.FENCE_KDUMP_LISTENER_STOP_NEEDED
+        ] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

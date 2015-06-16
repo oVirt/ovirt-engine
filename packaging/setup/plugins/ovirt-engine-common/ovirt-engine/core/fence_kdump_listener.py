@@ -25,6 +25,7 @@ from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 def _(m):
@@ -39,9 +40,20 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment.setdefault(
+            oengcommcons.ConfigEnv.FENCE_KDUMP_LISTENER_STOP_NEEDED,
+            False
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_TRANSACTION_BEGIN,
         condition=lambda self: not self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
+        ] and self.environment[
+            oengcommcons.ConfigEnv.FENCE_KDUMP_LISTENER_STOP_NEEDED
         ],
     )
     def _transactionBegin(self):

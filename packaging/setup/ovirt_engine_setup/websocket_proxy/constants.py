@@ -138,6 +138,8 @@ class ConfigEnv(object):
 
     PKI_WSP_CSR_FILENAME = 'OVESETUP_CONFIG/pkiWSPCSRFilename'
 
+    WEBSOCKET_PROXY_STOP_NEEDED = 'OVESETUP_CONFIG/websocketProxyStopNeeded'
+
 
 @util.export
 @util.codegen

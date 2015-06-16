@@ -50,14 +50,12 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
         ),
-        condition=lambda self: not self.environment[
-            osetupcons.RemoveEnv.REMOVE_ALL
-        ],
     )
     def _customization(self):
-        if self.environment[
-            owspcons.RemoveEnv.REMOVE_WSP
-        ] is None:
+        if self.environment[osetupcons.RemoveEnv.REMOVE_ALL]:
+            self.environment[owspcons.RemoveEnv.REMOVE_WSP] = True
+
+        if self.environment[owspcons.RemoveEnv.REMOVE_WSP] is None:
             self.environment[
                 owspcons.RemoveEnv.REMOVE_WSP
             ] = dialog.queryBoolean(
@@ -72,10 +70,14 @@ class Plugin(plugin.PluginBase):
                 false=_('No'),
                 default=False,
             )
-            if self.environment[owspcons.RemoveEnv.REMOVE_WSP]:
-                self.environment[osetupcons.RemoveEnv.REMOVE_OPTIONS].append(
-                    owspcons.Const.WEBSOCKET_PROXY_PACKAGE_NAME
-                )
+
+        if self.environment[owspcons.RemoveEnv.REMOVE_WSP]:
+            self.environment[osetupcons.RemoveEnv.REMOVE_OPTIONS].append(
+                owspcons.Const.WEBSOCKET_PROXY_PACKAGE_NAME
+            )
+            self.environment[
+                owspcons.ConfigEnv.WEBSOCKET_PROXY_STOP_NEEDED
+            ] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
