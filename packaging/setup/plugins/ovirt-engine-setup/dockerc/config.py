@@ -180,6 +180,10 @@ class Plugin(plugin.PluginBase):
                     },
                 ]
             )
+        if self._enabled:
+            self.environment[
+                odockerccons.ConfigEnv.DOCKERC_NEEDED
+            ] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,

@@ -115,6 +115,8 @@ class ConfigEnv(object):
     def DOCKERC_DAEMON(self):
         return 'OVESETUP_CONFIG/dockerDaemon'
 
+    DOCKERC_NEEDED = 'OVESETUP_CONFIG/dockercNeeded'
+
 
 @util.export
 class Stages(object):

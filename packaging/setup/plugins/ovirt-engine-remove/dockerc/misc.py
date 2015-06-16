@@ -36,6 +36,10 @@ def _(m):
 class Plugin(plugin.PluginBase):
     """Dockerc plugin."""
 
+    def __init__(self, context):
+        super(Plugin, self).__init__(context=context)
+        self._enabled = True
+
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
@@ -46,8 +50,20 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        self._enabled = not self.environment[
+            osetupcons.CoreEnv.DEVELOPER_MODE
+        ]
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=odockerccons.Stages.REMOVE_CUSTOMIZATION_DOCKERC,
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
+        ),
+        condition=lambda self: self._enabled,
     )
     def _customization(self):
         if self.environment[
@@ -80,12 +96,18 @@ class Plugin(plugin.PluginBase):
                     false=_('No'),
                     default=False,
                 )
+        if self.environment[
+            odockerccons.RemoveEnv.REMOVE_DOCKERC
+        ]:
+            self.environment[
+                odockerccons.ConfigEnv.DOCKERC_NEEDED
+            ] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
             self.environment[odockerccons.RemoveEnv.REMOVE_DOCKERC] and
-            not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
+            self._enabled
         ),
     )
     def _misc(self):

@@ -51,6 +51,10 @@ class Plugin(plugin.PluginBase):
             odockerccons.ConfigEnv.DOCKERC_DAEMON,
             None
         )
+        self.environment.setdefault(
+            odockerccons.ConfigEnv.DOCKERC_NEEDED,
+            False
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -68,8 +72,12 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
             odockerccons.Stages.DOCKERC_CUSTOMIZE,
+            odockerccons.Stages.REMOVE_CUSTOMIZATION_DOCKERC,
         ),
         condition=lambda self: (
+            self.environment[
+                odockerccons.ConfigEnv.DOCKERC_NEEDED
+            ] and
             (
                 self.environment[
                     odockerccons.ConfigEnv.DOCKERC_CINDER
