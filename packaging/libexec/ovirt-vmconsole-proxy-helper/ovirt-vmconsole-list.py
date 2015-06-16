@@ -122,8 +122,7 @@ def main():
 
         base_url = (
             # debug, emergency override
-            os.getenv('OVIRT_VMCONSOLE_ENGINE_BASE_URL')
-            or
+            os.getenv('OVIRT_VMCONSOLE_ENGINE_BASE_URL') or
             cfg_file.get('ENGINE_BASE_URL')
         )
 
