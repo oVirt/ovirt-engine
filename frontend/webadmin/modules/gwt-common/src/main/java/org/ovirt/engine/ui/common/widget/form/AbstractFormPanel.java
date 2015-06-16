@@ -6,7 +6,6 @@ import java.util.Map;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.Row;
-import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 
@@ -84,10 +83,14 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
         return row;
     }
 
+    public void addFormItem(FormItem item) {
+        addFormItem(item, 6, 6);
+    }
+
     /**
      * Adds new item to the form panel.
      */
-    public void addFormItem(FormItem item) {
+    public void addFormItem(FormItem item, int labelWidth, int valueWidth) {
         // Create item label
         Label itemLabel = new Label(item.getName());
         itemLabel.getElement().setId(ElementIdUtils.createFormGridElementId(elementId, item.getColumn(),
@@ -95,14 +98,14 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
         itemLabel.setStyleName(style.formPanelLabel());
 
         Row itemRow = new Row();
-        Column labelColumn = new Column(ColumnSize.MD_6);
+        Column labelColumn = new Column(COL_PREFIX + labelWidth);
         labelColumn.add(itemLabel);
         itemRow.add(labelColumn);
         Column itemColumn = findColumn(item.getRow(), item.getColumn());
         itemColumn.add(itemRow);
 
         // Update the item
-        updateFormItem(item);
+        updateFormItem(item, valueWidth);
 
         // Update auto placement data
         incNextAvailableRow(item.getColumn());
@@ -120,10 +123,13 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
         return result;
     }
 
+    public void updateFormItem(FormItem item) {
+        updateFormItem(item, 6);
+    }
     /**
      * Updates the value and visibility of the given item.
      */
-    public void updateFormItem(FormItem item) {
+    public void updateFormItem(FormItem item, int valueWidth) {
         Widget valueWidget = item.resolveValueWidget();
         valueWidget.getElement().setId(
                 ElementIdUtils.createFormGridElementId(elementId, item.getColumn(), item.getRow(), "_value")); //$NON-NLS-1$
@@ -138,7 +144,7 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
             if(itemCellRow.getWidgetCount() > 1) {
                 itemCellRow.remove(1); //Clear out old value.
             }
-            Column valueColumn = new Column(ColumnSize.MD_6);
+            Column valueColumn = new Column(COL_PREFIX + valueWidth);
             valueColumn.add(valueWidget);
             itemCellRow.add(valueColumn);
         }

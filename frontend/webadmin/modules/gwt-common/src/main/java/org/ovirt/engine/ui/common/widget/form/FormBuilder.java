@@ -40,16 +40,20 @@ public class FormBuilder {
         formPanel.setRelativeColumnWidth(columnNum, widthInGridColumns);
     }
 
+    public void addFormItem(FormItem item) {
+        addFormItem(item, 6, 6);
+    }
+
     /**
      * Adds new item to the form panel.
      */
-    public void addFormItem(FormItem item) {
+    public void addFormItem(FormItem item, int labelWidth, int valueWidth) {
         // Adopt item
         item.setFormPanel(formPanel);
 
         // Validate and add item
         if (item.isValid()) {
-            formPanel.addFormItem(item);
+            formPanel.addFormItem(item, labelWidth, valueWidth);
             items.add(item);
 
             // Update property name mapping, if necessary
