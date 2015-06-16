@@ -140,11 +140,6 @@ class FileLocations(object):
         'answers',
     )
 
-    OVIRT_ENGINE_LOG_SETUP_EVENT = os.path.join(
-        OVIRT_SETUP_BINDIR,
-        'ovirt-engine-log-setup-event.sh',
-    )
-
     OVIRT_ENGINE_YUM_VERSIONLOCK = os.path.join(
         SYSCONFDIR,
         'yum',

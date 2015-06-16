@@ -179,7 +179,6 @@ GENERATED = \
 	ovirt-engine.spec \
 	build/python-check.sh \
 	packaging/bin/engine-prolog.sh \
-	packaging/bin/ovirt-engine-log-setup-event.sh \
 	packaging/bin/pki-common.sh \
 	packaging/conf/notifier-logging.properties \
 	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
@@ -231,7 +230,6 @@ generated-files:	$(GENERATED)
 	chmod a+x packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.sysv
 	chmod a+x packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.sysv
 	chmod a+x packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv
-	chmod a+x packaging/bin/ovirt-engine-log-setup-event.sh
 
 # support force run of maven
 maven:

@@ -48,7 +48,6 @@ __pycache__
 build/python-check.sh
 ovirt-engine.spec
 packaging/bin/engine-prolog.sh
-packaging/bin/ovirt-engine-log-setup-event.sh
 packaging/bin/pki-common.sh
 packaging/conf/notifier-logging.properties
 packaging/etc/engine-manage-domains/engine-manage-domains.conf
