@@ -630,10 +630,6 @@ public class VmsMonitoring {
         vmDynamicToSave.put(vmDynamic.getId(), vmDynamic);
     }
 
-    public void resetStatusUpdateTime(Guid id) {
-        vdsManager.resetStatusUpdateTime(id);
-    }
-
     /**
      * Add or update vmStatistics to save list
      *
