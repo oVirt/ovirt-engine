@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.jsonrpc;
 
 import static org.ovirt.engine.core.vdsbroker.VmsListFetcher.isDevicesChanged;
-import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.convertToVmStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +8,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.VmExitReason;
-import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -24,7 +20,7 @@ import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmsListFetcher;
 import org.ovirt.engine.core.vdsbroker.VmsMonitoring;
 import org.ovirt.engine.core.vdsbroker.VmsStatisticsFetcher;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
 import org.reactivestreams.Subscription;
@@ -73,7 +69,7 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
             @SuppressWarnings("unchecked")
             private void convertEvent(List<Pair<VM, VmInternalData>> changedVms,
                     List<Pair<VM, VmInternalData>> devicesChangedVms, Map<String, Object> map) {
-                Double notifyTime = parseDouble(map.remove(VdsProperties.notify_time));
+                Double notifyTime = VdsBrokerObjectsBuilder.removeNotifyTimeFromVmStatusEvent(map);
 
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     Guid vmid = new Guid((String) entry.getKey());
@@ -98,39 +94,10 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
             }
 
             private VmInternalData createVmInternalData(VM dbVm, Map<String, Object> xmlRpcStruct, Double notifyTime) {
-                VmDynamic vmDynamic = new VmDynamic(dbVm.getDynamicData());
-
-                if (xmlRpcStruct.containsKey(VdsProperties.status)) {
-                    vmDynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
-                }
-
-                if (xmlRpcStruct.containsKey(VdsProperties.hash)) {
-                    vmDynamic.setHash((String) xmlRpcStruct.get(VdsProperties.hash));
-                }
-
-                if (xmlRpcStruct.containsKey(VdsProperties.exit_code)) {
-                    String exitCodeStr = xmlRpcStruct.get(VdsProperties.exit_code).toString();
-                    vmDynamic.setExitStatus(VmExitStatus.forValue(Integer.parseInt(exitCodeStr)));
-                }
-
-                if (xmlRpcStruct.containsKey(VdsProperties.exit_message)) {
-                    String exitMsg = (String) xmlRpcStruct.get(VdsProperties.exit_message);
-                    vmDynamic.setExitMessage(exitMsg);
-                }
-
-                if (xmlRpcStruct.containsKey(VdsProperties.exit_reason)) {
-                    String exitReasonStr = xmlRpcStruct.get(VdsProperties.exit_reason).toString();
-                    vmDynamic.setExitReason(VmExitReason.forValue(Integer.parseInt(exitReasonStr)));
-                }
-
-                return new VmInternalData(vmDynamic, dbVm.getStatisticsData(), notifyTime);
-            }
-
-            private Double parseDouble(Object value) {
-                if (Long.class.isInstance(value)) {
-                    return ((Long) value).doubleValue();
-                }
-                return null;
+                return new VmInternalData(
+                        VdsBrokerObjectsBuilder.buildVmDynamicFromEvent(dbVm.getDynamicData(), xmlRpcStruct),
+                        dbVm.getStatisticsData(),
+                        notifyTime);
             }
 
             @Override

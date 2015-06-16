@@ -2186,4 +2186,47 @@ public class VdsBrokerObjectsBuilder {
             return V2VJobInfo.JobStatus.UNKNOWN;
         }
     }
+
+    /**
+     * Build VmDynamic from event we get from VDSM upon status change
+     * @param baseVmDynamic - base dynamic data, values which are not included in the
+     * events will be taken from it. This field is not changed by this method.
+     * @param xmlRpcStruct - map from VDSM
+     * @return cloned VmDynamic with values received from event
+     */
+    public static VmDynamic buildVmDynamicFromEvent(VmDynamic baseVmDynamic, Map<String, Object> xmlRpcStruct) {
+        VmDynamic clonedVmDynamic = new VmDynamic(baseVmDynamic);
+        if (xmlRpcStruct.containsKey(VdsProperties.status)) {
+            clonedVmDynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
+        }
+
+        if (xmlRpcStruct.containsKey(VdsProperties.hash)) {
+            clonedVmDynamic.setHash((String) xmlRpcStruct.get(VdsProperties.hash));
+        }
+
+        if (xmlRpcStruct.containsKey(VdsProperties.exit_code)) {
+            String exitCodeStr = xmlRpcStruct.get(VdsProperties.exit_code).toString();
+            clonedVmDynamic.setExitStatus(VmExitStatus.forValue(Integer.parseInt(exitCodeStr)));
+        }
+
+        if (xmlRpcStruct.containsKey(VdsProperties.exit_message)) {
+            String exitMsg = (String) xmlRpcStruct.get(VdsProperties.exit_message);
+            clonedVmDynamic.setExitMessage(exitMsg);
+        }
+
+        if (xmlRpcStruct.containsKey(VdsProperties.exit_reason)) {
+            String exitReasonStr = xmlRpcStruct.get(VdsProperties.exit_reason).toString();
+            clonedVmDynamic.setExitReason(VmExitReason.forValue(Integer.parseInt(exitReasonStr)));
+        }
+
+        return clonedVmDynamic;
+    }
+
+    public static Double removeNotifyTimeFromVmStatusEvent(Map<String, Object> xmlRpcStruct) {
+        Object notifyTime = xmlRpcStruct.remove(VdsProperties.notify_time);
+        if (Long.class.isInstance(notifyTime)) {
+            return ((Long) notifyTime).doubleValue();
+        }
+        return null;
+    }
 }
