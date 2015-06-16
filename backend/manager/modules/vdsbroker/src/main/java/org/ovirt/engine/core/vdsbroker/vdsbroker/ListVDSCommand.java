@@ -25,7 +25,7 @@ public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> exten
         Map<Guid, VmInternalData> returnVMs = new HashMap<Guid, VmInternalData>();
         for (int idx = 0; idx < mVmListReturn.mVmList.length; ++idx) {
             VmDynamic dynamicData = VdsBrokerObjectsBuilder.buildVMDynamicDataFromList(mVmListReturn.mVmList[idx]);
-            VmInternalData vmData = new VmInternalData(dynamicData, null, null, null);
+            VmInternalData vmData = new VmInternalData(dynamicData);
             returnVMs.put(dynamicData.getId(), vmData);
         }
         setReturnValue(returnVMs);

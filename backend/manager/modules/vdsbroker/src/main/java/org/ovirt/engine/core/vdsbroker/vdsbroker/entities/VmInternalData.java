@@ -21,6 +21,10 @@ public class VmInternalData {
     // A map represents VM's LUN disks (LUN ID -> LUNs object)
     private Map<String, LUNs> lunsMap;
 
+    public VmInternalData(VmDynamic vmDynamic) {
+        this(vmDynamic, null, null, null);
+    }
+
     public VmInternalData(VmDynamic vmDynamic,
             VmStatistics vmStatistics,
             List<VmGuestAgentInterface> vmGuestAgentInterfaces,
