@@ -74,7 +74,7 @@ entity_unlock() {
 					'USER_RUN_UNLOCK_ENTITY_SCRIPT',
 					2024,
 					10,
-					'System user ${user} run unlock_entity script on ${object_type} ${id} with db user ${DBUTILS_DB_USER}}'
+					'${0} :  System user ${user} run manually unlock_entity script on entity [type,id] [${object_type},${id}] with db user ${DBFUNC_DB_USER}'
 				)
 			"
 			echo "unlock ${object_type} ${id} completed successfully."
