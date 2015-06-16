@@ -235,6 +235,46 @@ USAGE:
  --reports-db-secured               set a secured connection for the Reports database
  --reports-db-secured-validation    validate host for Reports database
 
+ --fast-restore                     the default for backup, equivalent to:
+         --archive-compressor=gzip \\
+         --files-compressor=xz \\
+         --db-dump-format=custom \\
+         --db-compressor=None \\
+         --dwh-db-dump-format=custom \\
+         --dwh-db-compressor=None \\
+         --reports-db-dump-format=custom \\
+         --reports-db-compressor=None
+
+    In addition, you should pass, when restoring:
+        --db-restore-jobs=N \\
+        --dwh-db-restore-jobs=N \\
+        --reports-db-restore-jobs=N
+        where 'N' is around 150% of available cpu cores.
+
+ --small-size                       for a small backup file, equivalent to:
+         --archive-compressor=xz \\
+         --files-compressor=xz \\
+         --db-dump-format=plain \\
+         --db-compressor=xz \\
+         --dwh-db-dump-format=plain \\
+         --dwh-db-compressor=xz \\
+         --reports-db-dump-format=plain \\
+         --reports-db-compressor=xz
+
+ --fast-backup                      for a fast backup, equivalent to:
+         --archive-compressor=gzip \\
+         --files-compressor=xz \\
+         --db-dump-format=custom \\
+         --db-compressor=None \\
+         --dwh-db-dump-format=custom \\
+         --dwh-db-compressor=None \\
+         --reports-db-dump-format=custom \\
+         --reports-db-compressor=None
+
+ You can use one of --fast-restore, --small-size, --fast-backup, and after that
+ one of the other compressor/format options for further fine-tuning.
+
+
  ENVIRONMENT VARIABLES
 
  OVIRT_ENGINE_DATABASE_PASSWORD
@@ -585,6 +625,36 @@ parseArgs() {
 			;;
 			--reports-db-sec-validation)
 				MY_REPORTS_DB_SECURED_VALIDATION="True"
+			;;
+			--fast-restore)
+				ARCHIVE_COMPRESS_OPTION=z
+				FILES_COMPRESS_OPTION=J
+				DB_DUMP_FORMAT=custom
+				DB_DUMP_COMPRESSOR=
+				DWH_DB_DUMP_FORMAT=custom
+				DWH_DB_DUMP_COMPRESSOR=
+				REPORTS_DB_DUMP_FORMAT=custom
+				REPORTS_DB_DUMP_COMPRESSOR=
+			;;
+			--small-size)
+				ARCHIVE_COMPRESS_OPTION=J
+				FILES_COMPRESS_OPTION=J
+				DB_DUMP_FORMAT=plain
+				DB_DUMP_COMPRESSOR=xz
+				DWH_DB_DUMP_FORMAT=plain
+				DWH_DB_DUMP_COMPRESSOR=xz
+				REPORTS_DB_DUMP_FORMAT=plain
+				REPORTS_DB_DUMP_COMPRESSOR=xz
+			;;
+			--fast-backup)
+				ARCHIVE_COMPRESS_OPTION=z
+				FILES_COMPRESS_OPTION=J
+				DB_DUMP_FORMAT=custom
+				DB_DUMP_COMPRESSOR=
+				DWH_DB_DUMP_FORMAT=custom
+				DWH_DB_DUMP_COMPRESSOR=
+				REPORTS_DB_DUMP_FORMAT=custom
+				REPORTS_DB_DUMP_COMPRESSOR=
 			;;
 			--help)
 				usage
