@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
@@ -82,6 +83,20 @@ public class CinderBroker extends AuditLogableBase {
                 return proxy.createVolume(cinderVolume);
             }
         });
+    }
+
+    public VolumeClassification deleteVolumeUnknownType(CinderDisk cinderDisk) {
+        VolumeClassification cinderVolumeType = cinderDisk.getVolumeClassification();
+        if (cinderVolumeType == VolumeClassification.Volume) {
+            deleteVolume(cinderDisk);
+        } else if (cinderVolumeType == VolumeClassification.Snapshot) {
+            deleteSnapshot(cinderDisk.getImageId());
+        } else {
+            log.error("Error, could not determine Cinder entity {} with id {} from Cinder provider.",
+                    cinderDisk.getDiskAlias(),
+                    cinderDisk.getImageId());
+        }
+        return cinderVolumeType;
     }
 
     public boolean deleteVolume(final CinderDisk cinderDisk) {

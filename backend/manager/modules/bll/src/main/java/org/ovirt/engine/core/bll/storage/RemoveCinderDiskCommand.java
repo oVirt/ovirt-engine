@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -38,7 +37,6 @@ import org.slf4j.LoggerFactory;
 public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> extends RemoveImageCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(RemoveCinderDiskCommand.class);
-    private CinderBroker cinderBroker;
     private CinderDisk cinderDisk;
     private Guid storageDomainId;
 
@@ -64,7 +62,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
                 lockVmSnapshotsWithWait(vm);
             }
         }
-        removeCinderVolume(lastCinderVolume);
+        getCinderBroker().deleteVolumeUnknownType(lastCinderVolume);
         getParameters().setRemovedVolume(lastCinderVolume);
         persistCommand(getParameters().getParentCommand(), true);
         getReturnValue().setActionReturnValue(disk.getId());
@@ -82,20 +80,6 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
             cinderDisk = (CinderDisk) getDiskDao().get(getParameters().getDiskId());
         }
         return cinderDisk;
-    }
-
-    private VolumeClassification removeCinderVolume(CinderDisk volume) {
-        VolumeClassification cinderVolumeType = volume.getVolumeClassification();
-        if (cinderVolumeType == VolumeClassification.Volume) {
-            getCinderBroker().deleteVolume(volume);
-        } else if (cinderVolumeType == VolumeClassification.Snapshot) {
-            getCinderBroker().deleteSnapshot(volume.getImageId());
-        } else {
-            log.error("Error, could not determine Cinder entity {} with id {} from Cinder provider.",
-                    volume.getDiskAlias(),
-                    volume.getImageId());
-        }
-        return cinderVolumeType;
     }
 
     protected void removeDiskFromDb(final CinderDisk lastCinderVolume) {
