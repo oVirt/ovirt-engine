@@ -123,11 +123,12 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
         if (this.manager.isMonitoringNeeded() && getRefreshStatistics()) {
             VmsListFetcher fetcher = new VmsStatisticsFetcher(this.manager);
 
+            long fetchTime = System.nanoTime();
             fetcher.fetch();
 
             new VmsMonitoring(this.manager,
                     fetcher.getChangedVms(),
-                    fetcher.getVmsWithChangedDevices(), this.auditLogDirector, System.nanoTime()).perform();
+                    fetcher.getVmsWithChangedDevices(), this.auditLogDirector, fetchTime).perform();
         }
     }
 }
