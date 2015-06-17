@@ -34,7 +34,7 @@
         }
 
         .treeScrollPanel {
-            height: 256px;
+            height: 254px;
         }
 
         .treeRow {
