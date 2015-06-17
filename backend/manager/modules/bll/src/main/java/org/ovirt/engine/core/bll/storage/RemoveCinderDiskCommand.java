@@ -62,7 +62,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
                 lockVmSnapshotsWithWait(vm);
             }
         }
-        getCinderBroker().deleteVolumeUnknownType(lastCinderVolume);
+        getCinderBroker().deleteVolumeByClassificationType(lastCinderVolume);
         getParameters().setRemovedVolume(lastCinderVolume);
         persistCommand(getParameters().getParentCommand(), true);
         getReturnValue().setActionReturnValue(disk.getId());

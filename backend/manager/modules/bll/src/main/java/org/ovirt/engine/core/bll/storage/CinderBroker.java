@@ -85,7 +85,7 @@ public class CinderBroker extends AuditLogableBase {
         });
     }
 
-    public VolumeClassification deleteVolumeUnknownType(CinderDisk cinderDisk) {
+    public VolumeClassification deleteVolumeByClassificationType(CinderDisk cinderDisk) {
         VolumeClassification cinderVolumeType = cinderDisk.getVolumeClassification();
         if (cinderVolumeType == VolumeClassification.Volume) {
             deleteVolume(cinderDisk);

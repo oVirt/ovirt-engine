@@ -70,7 +70,7 @@ public class RestoreFromCinderSnapshotCommand<T extends RestoreFromSnapshotParam
         getParameters().setDestinationImageId(cinderSnapshot.getImageId());
         getParameters().setCinderDiskToBeRemoved(cinderSnapshot);
         getParameters().setRemoveParent(false);
-        getCinderBroker().deleteVolumeUnknownType(cinderSnapshot);
+        getCinderBroker().deleteVolumeByClassificationType(cinderSnapshot);
     }
 
     private void removeDecendedSnapshots(CinderDisk cinderSnapshot, DiskImage descendantSnapshot) {
@@ -81,7 +81,7 @@ public class RestoreFromCinderSnapshotCommand<T extends RestoreFromSnapshotParam
             if (lastParentToRemove != null) {
                 getParameters().setCinderDiskToBeRemoved(lastParentToRemove);
                 getParameters().setDestinationImageId(lastParentToRemove.getImageId());
-                getCinderBroker().deleteVolumeUnknownType(lastParentToRemove);
+                getCinderBroker().deleteVolumeByClassificationType(lastParentToRemove);
                 if (!cinderSnapshot.getImageId().equals(lastParentToRemove.getImageId())) {
                     getParameters().setRemoveParent(true);
                 }
