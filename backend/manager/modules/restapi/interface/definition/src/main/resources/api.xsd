@@ -3440,7 +3440,6 @@
           <xs:element name="custom_properties" type="CustomProperties" minOccurs="0" maxOccurs="1"/>
           <xs:element name="custom_emulated_machine" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="custom_cpu_model" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="graphics_consoles" type="GraphicsConsoles" minOccurs="0" maxOccurs="unbounded"/>
           <xs:element name="time_zone" type="TimeZone" minOccurs="0" maxOccurs="1"/>
           <xs:element name="small_icon" type="Icon"  minOccurs="0" maxOccurs="1"/>
           <xs:element name="large_icon" type="Icon"  minOccurs="0" maxOccurs="1"/>
