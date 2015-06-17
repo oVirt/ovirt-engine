@@ -1,3 +1,14 @@
+-- Due to a bug that was already fixed, more than one GetCaps could be executed simultaneously.
+-- In some scenarios of the race the same nic could be created more than once.
+-- The building proccess of the network_attachments assumes there are no such duplicates in vds_interface,
+-- so the duplicates should be cleaned up from vds_interface prior building the network_attachments table.
+DELETE FROM vds_interface
+WHERE id IN (SELECT id
+              FROM (SELECT id,
+                             row_number() over (partition BY vds_id, name ORDER BY _update_date) AS rnum
+                     FROM vds_interface) t
+              WHERE t.rnum > 1);
+
 -----------------------------
 --  network_attachments table
 -----------------------------
