@@ -803,14 +803,14 @@ public class VmAnalyzer {
      */
     private void prepareGuestAgentNetworkDevicesForUpdate() {
         if (vdsmVm != null) {
-            VmDynamic vmDynamicDynamic = vdsmVm.getVmDynamic();
-            if (vmDynamicDynamic != null) {
+            VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
+            if (vdsmVmDynamic != null) {
                 if (dbVm != null) {
                     List<VmGuestAgentInterface> vmGuestAgentInterfaces = vdsmVm.getVmGuestAgentInterfaces();
                     int guestAgentNicHash = vmGuestAgentInterfaces == null ? 0 : vmGuestAgentInterfaces.hashCode();
-                    if (guestAgentNicHash != vmDynamicDynamic.getGuestAgentNicsHash()) {
+                    if (guestAgentNicHash != vdsmVmDynamic.getGuestAgentNicsHash()) {
                         if (vmDynamicToSave == null) {
-                            saveDynamic(vdsmVm.getVmDynamic());
+                            saveDynamic(dbVm.getDynamicData());
                         }
                         updateGuestAgentInterfacesChanges(
                                 vmDynamicToSave,
