@@ -486,10 +486,13 @@ public class VmAnalyzer {
                     else if (vdsmVmDynamic.getStatus() == VMStatus.Paused) {
                         removeFromAsync = true;
                         if (dbVm.getStatus() != VMStatus.Paused) {
+                            AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+                            auditLog(logable, AuditLogType.VM_PAUSED);
+
                             // check exit message to determine why the VM is paused
                             AuditLogType logType = vmPauseStatusToAuditLogType(vdsmVmDynamic.getPauseStatus());
                             if (logType != AuditLogType.UNASSIGNED) {
-                                AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+                                logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
                                 auditLog(logable, logType);
                             }
                         }

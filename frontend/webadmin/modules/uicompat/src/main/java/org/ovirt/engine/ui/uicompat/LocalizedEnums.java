@@ -1100,6 +1100,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM();
 
+    String AuditLogType___VM_PAUSED();
+
     String UnitVmModel$CpuSharesAmount___DISABLED();
 
     String UnitVmModel$CpuSharesAmount___HIGH();
