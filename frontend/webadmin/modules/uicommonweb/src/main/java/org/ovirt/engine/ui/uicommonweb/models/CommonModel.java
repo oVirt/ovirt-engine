@@ -2,8 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -81,6 +83,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
     private AuditLog lastAlert;
     private boolean hasSelectedTags;
     private boolean executingSearch;
+    private Map<ListModel<?>, String> listModelSearchStringHistory = new HashMap<>();
+    private boolean systemSelected = true;
 
     private final DataCenterListModel dataCenterListModel;
     private final ClusterListModel<Void> clusterListModel;
@@ -327,7 +331,13 @@ public class CommonModel extends ListModel<SearchableListModel> {
         if (model == null) {
             return;
         }
-
+        //Check to see if the system node was selected, and we switched to a non system node. If so, store the
+        //search string so we can get back to it when system is selected again.
+        if (systemSelected && !model.getType().equals(SystemTreeItemType.System)) {
+            //Switched away from system, store the search.
+            listModelSearchStringHistory.put(getSelectedItem(), getSelectedItem().getSearchString());
+        }
+        systemSelected = model.getType().equals(SystemTreeItemType.System);
         updateAvailability(model.getType(), model.getEntity());
 
         // Select a default item depending on system tree selection.
@@ -351,7 +361,12 @@ public class CommonModel extends ListModel<SearchableListModel> {
             String search = ""; //$NON-NLS-1$
             RefObject<String> tempRef_prefix = new RefObject<String>(prefix);
             RefObject<String> tempRef_search = new RefObject<String>(search);
-            splitSearchString(getSelectedItem().getDefaultSearchString(), tempRef_prefix, tempRef_search);
+            String searchString = getSelectedItem().getDefaultSearchString();
+            if (model.getType().equals(SystemTreeItemType.System)
+                    && listModelSearchStringHistory.get(getSelectedItem()) != null) {
+                searchString = listModelSearchStringHistory.get(getSelectedItem());
+            }
+            splitSearchString(searchString, tempRef_prefix, tempRef_search);
             prefix = tempRef_prefix.argvalue;
             search = tempRef_search.argvalue;
 
@@ -536,6 +551,10 @@ public class CommonModel extends ListModel<SearchableListModel> {
     }
 
     private void searchStringChanged() {
+        SystemTreeItemModel model = getSystemTree().getSelectedItem();
+        if (model != null && model.getType().equals(SystemTreeItemType.System)) {
+            listModelSearchStringHistory.put(getSelectedItem(), getSearchString());
+        }
         getBookmarkList().setSearchString(getEffectiveSearchString());
     }
 
@@ -628,7 +647,12 @@ public class CommonModel extends ListModel<SearchableListModel> {
             String search = ""; //$NON-NLS-1$
             RefObject<String> tempRef_prefix = new RefObject<String>(prefix);
             RefObject<String> tempRef_search = new RefObject<String>(search);
-            splitSearchString(getSelectedItem().getSearchString(), tempRef_prefix, tempRef_search);
+            SystemTreeItemModel model = getSystemTree().getSelectedItem();
+            String searchString = getSelectedItem().getSearchString();
+            if (model != null && model.getType().equals(SystemTreeItemType.System) && listModelSearchStringHistory.get(getSelectedItem()) != null) {
+                searchString = listModelSearchStringHistory.get(getSelectedItem());
+            }
+            splitSearchString(searchString, tempRef_prefix, tempRef_search);
             prefix = tempRef_prefix.argvalue;
             search = tempRef_search.argvalue;
 
