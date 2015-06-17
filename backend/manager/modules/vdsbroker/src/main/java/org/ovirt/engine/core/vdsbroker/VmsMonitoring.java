@@ -149,7 +149,7 @@ public class VmsMonitoring {
             VmManager vmManager = getResourceManager().getVmManager(vmId);
 
             if (vdsManager.shouldUpdateVmStatus(pair.getSecond().getVmDynamic()) && vmManager.trylock()) {
-                if (fetchTime - vmManager.getVmDataChangedTime() <= 0) {
+                if (vmManager.getVmDataChangedTime() != null && fetchTime - vmManager.getVmDataChangedTime() <= 0) {
                     log.warn("skipping VM '{}' from this monitoring cycle" +
                             " - the VM data has changed since fetching the data", vmId);
                     vmManager.unlock();

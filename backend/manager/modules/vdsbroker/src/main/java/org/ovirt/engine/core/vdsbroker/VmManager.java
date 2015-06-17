@@ -17,14 +17,13 @@ public class VmManager {
 
     private final Guid id;
     private final ReentrantLock lock = new ReentrantLock();
-    private long vmDataChangedTime;
+    private Long vmDataChangedTime;
 
     private int convertOperationProgress;
     private String convertOperationDescription;
 
     public VmManager(Guid id) {
         this.id = id;
-        updateVmDataChangedTime();
     }
 
     public void lock() {
@@ -94,7 +93,7 @@ public class VmManager {
         this.convertOperationProgress = progress;
     }
 
-    public long getVmDataChangedTime () {
+    public Long getVmDataChangedTime () {
         return vmDataChangedTime;
     }
 
