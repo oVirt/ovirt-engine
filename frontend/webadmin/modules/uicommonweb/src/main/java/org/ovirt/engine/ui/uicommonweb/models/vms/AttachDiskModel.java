@@ -9,6 +9,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -147,10 +148,19 @@ public class AttachDiskModel extends NewDiskModel {
         List<EntityModel<DiskModel>> disksToAttach = getSelectedDisks();
         for (int i = 0; i < disksToAttach.size(); i++) {
             DiskModel disk = disksToAttach.get(i).getEntity();
+
+            /*
+            IDE disks can be activated only when the VM is down.
+            Other disks can be hot plugged.
+             */
+            boolean activate = false;
+            if (getIsPlugged().getEntity()) {
+                activate = disk.getDisk().getDiskInterface() == DiskInterface.IDE ?
+                        getVm().getStatus() == VMStatus.Down : true;
+            }
+
             // Disk is attached to VM as read only or not, null is applicable only for floating disks
             // but this is not a case here.
-            boolean activate = getIsPlugged().getEntity() &&
-                    disk.getDisk().getDiskInterface() != DiskInterface.IDE;
             AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(
                     getVm().getId(), disk.getDisk().getId(), activate,
                     Boolean.TRUE.equals(disk.getDisk().getReadOnly()));
@@ -222,7 +232,7 @@ public class AttachDiskModel extends NewDiskModel {
 
     private void updateWarningLabel() {
         getWarningLabel().setIsAvailable(false);
-        if (getIsPlugged().getEntity().equals(Boolean.TRUE)) {
+        if (getIsPlugged().getEntity().equals(Boolean.TRUE) && getVm().getStatus() != VMStatus.Down) {
             List<EntityModel<DiskModel>> selectedDisks = getSelectedDisks();
             if (selectedDisks != null && isSelectedDiskInterfaceIDE(selectedDisks)) {
                 getWarningLabel().setEntity(constants.ideDisksWillBeAttachedButNotActivated());
