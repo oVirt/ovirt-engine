@@ -3581,7 +3581,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Alignment scan of a disk attached to a running VM is only supported with RAW virtual disks.")
     String ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Alignment scan is only supported for disks located on block storage domains.")
+    @DefaultStringValue("Cannot ${action} ${type} ${diskAlias}. Alignment scan is only supported for disks located on block storage domains.")
     String ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Invalid time zone for given OS type.")
