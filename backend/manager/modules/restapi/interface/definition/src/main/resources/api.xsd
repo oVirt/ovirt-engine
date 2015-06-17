@@ -3118,7 +3118,7 @@
 
   <xs:complexType name="GraphicsConsoles">
     <xs:complexContent>
-      <xs:extension base="BaseResource">
+      <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:element ref="graphics_console" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
