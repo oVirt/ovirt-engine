@@ -13,11 +13,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.hibernate.collection.internal.AbstractPersistentCollection;
-import org.hibernate.collection.internal.PersistentBag;
-import org.hibernate.collection.internal.PersistentList;
 import org.hibernate.collection.internal.PersistentMap;
 import org.hibernate.collection.internal.PersistentSet;
 import org.hibernate.collection.internal.PersistentSortedSet;
+import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 
@@ -102,30 +101,6 @@ public class HibernateCleaner {
     }
 
     private static Object doHibernateClean(Object dirty, Map<Object, Object> processed) {
-        if (dirty instanceof PersistentList) {
-            PersistentList dirtyList = (PersistentList) dirty;
-            List<Object> cleanList = new ArrayList<Object>();
-            processed.put(dirtyList, cleanList);
-            if (dirtyList.wasInitialized()) {
-                for (Object value : dirtyList) {
-                    cleanList.add(doClean(value, processed));
-                }
-            }
-            return cleanList;
-        }
-
-        if (dirty instanceof PersistentBag) {
-            PersistentBag dirtyList = (PersistentBag) dirty;
-            List<Object> cleanList = new ArrayList<Object>();
-            processed.put(dirtyList, cleanList);
-            if (dirtyList.wasInitialized()) {
-                for (Object value : dirtyList) {
-                    cleanList.add(doClean(value, processed));
-                }
-            }
-            return cleanList;
-        }
-
         if (dirty instanceof PersistentSortedSet) {
             PersistentSortedSet dirtySet = (PersistentSortedSet) dirty;
             Set<Object> cleanSet = new TreeSet<Object>();
@@ -165,7 +140,23 @@ public class HibernateCleaner {
             }
             return cleanMap;
         }
+
+        if (dirty instanceof List && dirty instanceof PersistentCollection) {
+            return cleanPersistedList(processed, dirty);
+        }
+
         return null;
+    }
+
+    private static Object cleanPersistedList(Map<Object, Object> processed, Object dirtyList) {
+        List<Object> cleanList = new ArrayList<>();
+        processed.put(dirtyList, cleanList);
+        if (((PersistentCollection) dirtyList).wasInitialized()) {
+            for (Object value : (List) dirtyList) {
+                cleanList.add(doClean(value, processed));
+            }
+        }
+        return cleanList;
     }
 
     /**
