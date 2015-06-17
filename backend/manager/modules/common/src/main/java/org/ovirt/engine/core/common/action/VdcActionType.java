@@ -466,6 +466,7 @@ public enum VdcActionType {
     TryBackToCinderSnapshot(3212, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
     TryBackToAllCinderSnapshots(3213, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
     RestoreFromCinderSnapshot(3214, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
+    RestoreAllCinderSnapshots(3215, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
