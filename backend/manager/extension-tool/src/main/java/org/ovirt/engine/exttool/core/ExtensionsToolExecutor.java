@@ -86,7 +86,7 @@ public class ExtensionsToolExecutor {
         } catch (Throwable t) {
             String message = t.getMessage() != null ? t.getMessage() : t.getClass().getName();
             logger.error(message);
-            logger.debug(message, t);
+            logger.debug("Exception:", t);
         }
         logger.debug("Exiting with status '{}'", exitStatus);
         System.exit(exitStatus);
@@ -107,12 +107,19 @@ public class ExtensionsToolExecutor {
         }
 
         for(File f : files) {
-            proxies.put(extensionsManager.load(f), null);
+            logger.debug("Loading extension file '{}'", f.getName());
+            try {
+                proxies.put(extensionsManager.load(f), null);
+            } catch (Exception ex) {
+                logger.error("Can't load extension '{}', ignoring.", f.getName());
+                logger.debug("Exception:", ex);
+            }
         }
 
         for(Map.Entry<String, ExtensionProxy> entry : proxies.entrySet()) {
             extensionsManager.initialize(entry.getKey());
             entry.setValue(extensionsManager.getExtensionByName(entry.getKey()));
+            logger.debug("Extension '{}' initialized", entry.getKey());
         }
     }
 
