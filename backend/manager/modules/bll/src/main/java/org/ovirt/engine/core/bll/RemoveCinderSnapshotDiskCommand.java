@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.RemoveCinderSnapshotCommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -46,16 +48,15 @@ public class RemoveCinderSnapshotDiskCommand<T extends ImagesContainterParameter
     protected void endSuccessfully() {
         if (getDestinationDiskImage() != null) {
             DiskImage curr = getDestinationDiskImage();
-            DiskImage volumeBasedOnsnapshot = getDiskImageDao().getAllSnapshotsForLeaf(curr.getImageId()).get(0);
+
+            // Set the parent snapshot to be dependent on the current snapshot descendant id.
+            List<DiskImage> orderedCinderSnapshots = getDiskImageDao().getAllSnapshotsForParent(curr.getImageId());
+            if (!orderedCinderSnapshots.isEmpty()) {
+                DiskImage volumeBasedOnsnapshot = orderedCinderSnapshots.get(0);
+                volumeBasedOnsnapshot.setParentId(curr.getParentId());
+                getImageDao().update(volumeBasedOnsnapshot.getImage());
+            }
             getImageDao().remove(curr.getImageId());
-            volumeBasedOnsnapshot.setParentId(curr.getParentId());
-            getBaseDiskDao().update(volumeBasedOnsnapshot);
-            getImageDao().update(volumeBasedOnsnapshot.getImage());
-        }
-        if (!getParameters().isParentHasTasks()) {
-            getBackend().endAction(getParameters().getParentCommand(),
-                    getParameters().getParentParameters(),
-                    null);
         }
         setSucceeded(true);
     }
