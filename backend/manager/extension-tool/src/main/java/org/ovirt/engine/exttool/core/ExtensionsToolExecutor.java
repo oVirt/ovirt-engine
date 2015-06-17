@@ -94,6 +94,8 @@ public class ExtensionsToolExecutor {
 
     private static void loadExtensions(ModuleService moduleService, Map<String, Object> argMap) {
         ExtensionsManager extensionsManager = new ExtensionsManager();
+        moduleService.getContext().put(ModuleService.EXTENSION_MANAGER, extensionsManager);
+
         Map<String, ExtensionProxy> proxies = moduleService.getContext().get(ModuleService.EXTENSIONS_MAP);
         List<File> files = (List<File>)argMap.get("extension-file");
 
