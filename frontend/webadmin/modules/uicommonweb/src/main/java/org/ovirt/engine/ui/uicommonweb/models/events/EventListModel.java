@@ -14,6 +14,7 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -135,6 +136,11 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
     }
 
     @Override
+    protected boolean handleRefreshActiveModel(RefreshActiveModelEvent event) {
+        return false;
+    }
+
+    @Override
     public boolean supportsServerSideSorting() {
         return true;
     }
@@ -144,9 +150,16 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object outerObject, Object returnValue) {
-                List<AuditLog> list = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                EventListModel.this.setItems(list);
-                EventListModel.this.setLastEvent(Linq.firstOrDefault(list));
+                List<AuditLog> newEvents = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                List<AuditLog> currentEvents = (List<AuditLog>) getItems();
+
+                if (!newEvents.isEmpty() &&
+                        currentEvents != null && !currentEvents.get(0).equals(newEvents.get(0))) {
+                    //We received some new events, tell the active models to update.
+                    RefreshActiveModelEvent.fire(EventListModel.this, false);
+                }
+                EventListModel.this.setItems(newEvents);
+                EventListModel.this.setLastEvent(Linq.firstOrDefault(newEvents));
             }
         });
 

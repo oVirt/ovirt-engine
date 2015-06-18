@@ -73,6 +73,7 @@ public class HostVmListModel extends VmListModel<VDS> {
         } else {
             setItems(new ArrayList<VM>());
         }
+        startGridTimer();
     }
 
     @Override

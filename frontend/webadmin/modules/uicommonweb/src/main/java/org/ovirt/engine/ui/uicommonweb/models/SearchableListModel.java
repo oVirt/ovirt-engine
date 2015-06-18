@@ -469,25 +469,29 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                 onPropertyChanged(new PropertyChangedEventArgs(PropertyChangedEventArgs.PROGRESS));
                 syncSearch();
                 setIsQueryFirstTime(false);
-                if (getTimer() != null) {
-                    //Timer can be null if the event bus hasn't been set yet (model hasn't been fully initialized)
-                    startRefresh();
-                } else {
-                    //Defer the start of the timer until after the event bus has been added to this model. Then we
-                    //can pass the event bus to the timer and the timer can become active.
-                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                        @Override
-                        public void execute() {
-                            startRefresh();
-                        }
-                    });
-                }
+                startGridTimer();
             }
             else
             {
                 syncSearch();
             }
+        }
+    }
+
+    protected void startGridTimer() {
+        if (getTimer() != null) {
+            //Timer can be null if the event bus hasn't been set yet (model hasn't been fully initialized)
+            startRefresh();
+        } else {
+            //Defer the start of the timer until after the event bus has been added to this model. Then we
+            //can pass the event bus to the timer and the timer can become active.
+            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+                @Override
+                public void execute() {
+                    startRefresh();
+                }
+            });
         }
     }
 
