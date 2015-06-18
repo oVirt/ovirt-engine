@@ -604,6 +604,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         return getNetworkProviderModel().getInterfaceMappings();
     }
 
+    private HostedEngineHostModel hostedEngineHostModel;
+
     public HostModel() {
         setUpdateHostsCommand(new UICommand("", new ICommandTarget() { //$NON-NLS-1$
             @Override
@@ -704,7 +706,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getIsPm().getEntityChangedEvent().addListener(pmListener);
         getIsPm().setEntity(false);
 
-
         setValidTab(TabName.POWER_MANAGEMENT_TAB, true);
         setValidTab(TabName.GENERAL_TAB, true);
 
@@ -722,9 +723,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setKernelCmdlineUnsafeInterrupts(new EntityModel<>(false));
         setKernelCmdlinePciRealloc(new EntityModel<>(false));
         kernelCmdlineListener = new EnableableEventListener<>(null);
-
         setCurrentKernelCmdLine(new EntityModel<>(""));
-
+        setHostedEngineHostModel(new HostedEngineHostModel());
     }
 
     private void updatePmModels() {
@@ -1449,5 +1449,13 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 delegate.eventRaised(ev, sender, args);
             }
         }
+    }
+
+    public HostedEngineHostModel getHostedEngineHostModel() {
+        return hostedEngineHostModel;
+    }
+
+    public void setHostedEngineHostModel(HostedEngineHostModel hostedEngineHostModel) {
+        this.hostedEngineHostModel = hostedEngineHostModel;
     }
 }

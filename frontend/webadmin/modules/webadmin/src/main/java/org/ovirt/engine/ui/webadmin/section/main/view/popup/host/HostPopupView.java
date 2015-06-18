@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.VdsOperationActionParameters.Authenti
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -33,6 +34,7 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
@@ -270,6 +272,14 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @UiField
     @Ignore
     Container spmContainer;
+
+    @UiField
+    @Ignore
+    DialogTab hostedEngineTab;
+
+    @UiField
+    @Path(value = "hostedEngineHostModel.actions.selectedItem")
+    ListModelRadioGroupEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
 
     @UiField
     @Path(value = "pkSection.entity")
@@ -610,6 +620,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         externalDiscoveredHostsEditor.setLabel(constants.discoveredHostsLabel());
         externalHostGroupsEditor.setLabel(constants.hostGroupsLabel());
         externalComputeResourceEditor.setLabel(constants.computeResourceLabel());
+
+        hostedEngineTab.setLabel(constants.hostedEngineLabel());
     }
 
     private void applyModeCustomizations() {
@@ -773,6 +785,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         this.fenceAgentsEditor.edit(object.getFenceAgentListModel());
         this.proxySourceEditor.edit(object.getPmProxyPreferencesList());
         addTextAndLinkAlert(fetchPanel, constants.fetchingHostFingerprint(), object.getSSHFingerPrint());
+        // don't show the hosted engine deployment tab on edit. It's only meant for installation.
+        hostedEngineTab.setVisible(object.getIsNew());
         nameEditor.setFocus(true);
     }
 

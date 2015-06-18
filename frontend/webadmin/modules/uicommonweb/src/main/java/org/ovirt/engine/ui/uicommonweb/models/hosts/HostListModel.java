@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -946,6 +947,9 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         discoveredHost.getIp());
             }
 
+            parameters.setHostedEngineDeployConfiguration(
+                    new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getActions().getSelectedItem()));
+
             Frontend.getInstance().runAction(VdcActionType.AddVds, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
@@ -1326,6 +1330,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         param.setActivateHost(model.getActivateHostAfterInstall().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
         param.setFenceAgents(null);  // Explicitly set null, to be clear we don't want to update fence agents.
+        param.setHostedEngineDeployConfiguration(
+                new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getActions().getSelectedItem()));
 
         Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();
         if (networkProvider != null) {

@@ -30,5 +30,6 @@ public enum TabName {
     IPV4_TAB,
     IPV6_TAB,
     QOS_TAB,
-    KERNEL_TAB
+    KERNEL_TAB,
+    HOSTED_ENGINE
 }

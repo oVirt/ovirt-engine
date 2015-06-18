@@ -134,6 +134,16 @@ public class InstallModel extends Model {
         onPropertyChanged(new PropertyChangedEventArgs("ValidationFailed")); //$NON-NLS-1$
     }
 
+    private HostedEngineHostModel hostedEngineHostModel;
+
+    public HostedEngineHostModel getHostedEngineHostModel() {
+        return hostedEngineHostModel;
+    }
+
+    public void setHostedEngineHostModel(HostedEngineHostModel hostedEngineHostModel) {
+        this.hostedEngineHostModel = hostedEngineHostModel;
+    }
+
     public InstallModel() {
         setUserPassword(new EntityModel<String>());
         setOVirtISO(new ListModel<RpmVersion>());
@@ -151,8 +161,8 @@ public class InstallModel extends Model {
         getPublicKey().setEntity(""); //$NON-NLS-1$
         setValidationFailed(new EntityModel<Boolean>());
         fetchEngineSshPublicKey();
-
         setNetworkProviderModel(new HostNetworkProviderModel());
+        setHostedEngineHostModel(new HostedEngineHostModel());
     }
 
     public boolean validate(boolean isOVirt) {
@@ -169,7 +179,10 @@ public class InstallModel extends Model {
 
         getNetworkProviderModel().validate();
 
-        return getUserPassword().getIsValid() && getOVirtISO().getIsValid() && getNetworkProviderModel().getIsValid();
+        return getUserPassword().getIsValid()
+                && getOVirtISO().getIsValid()
+                && getNetworkProviderModel().getIsValid()
+                && getHostedEngineHostModel().getIsValid();
     }
 
     public void fetchEngineSshPublicKey() {

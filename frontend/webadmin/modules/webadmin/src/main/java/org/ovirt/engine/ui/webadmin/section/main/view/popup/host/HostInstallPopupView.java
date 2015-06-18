@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -11,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
@@ -110,6 +112,10 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     HostNetworkProviderWidget networkProviderWidget;
 
     @UiField
+    @Path(value = "hostedEngineHostModel.actions.selectedItem")
+    ListModelRadioGroupEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
+
+    @UiField
     @Ignore
     DialogTabPanel tabPanel;
 
@@ -120,6 +126,10 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @UiField
     @Ignore
     DialogTab networkProviderTab;
+
+    @UiField
+    @Ignore
+    DialogTab hostedEngineTab;
 
     private final Driver driver = GWT.create(Driver.class);
 
