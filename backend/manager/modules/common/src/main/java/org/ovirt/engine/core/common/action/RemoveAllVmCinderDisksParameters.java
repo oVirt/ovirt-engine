@@ -38,4 +38,12 @@ public class RemoveAllVmCinderDisksParameters extends VmOperationParameterBase i
     public void setParentHasTasks(boolean parentHasTasks) {
         this.parentHasTasks = parentHasTasks;
     }
+
+    public List<CinderDisk> getCinderDisks() {
+        return cinderDisks;
+    }
+
+    public void setCinderDisks(List<CinderDisk> cinderDisks) {
+        this.cinderDisks = cinderDisks;
+    }
 }
