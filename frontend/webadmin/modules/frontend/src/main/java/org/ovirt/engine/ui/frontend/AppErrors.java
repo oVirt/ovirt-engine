@@ -2584,5 +2584,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String AFFINITY_LABEL_NAME_ALREADY_EXISTS();
 
     String AFFINITY_LABEL_READ_ONLY();
+
+    String ACTION_TYPE_FAILED_HOSTED_ENGINE_DEPLOYMENT_UNSUPPORTED();
 }
 

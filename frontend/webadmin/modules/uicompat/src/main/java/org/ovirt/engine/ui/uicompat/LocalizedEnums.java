@@ -1186,5 +1186,11 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String SerialNumberPolicy___CUSTOM();
 
     String ArchitectureType___undefined();
+
+    String HostedEngineDeployConfiguration$Action___NONE();
+
+    String HostedEngineDeployConfiguration$Action___DEPLOY();
+
+    String HostedEngineDeployConfiguration$Action___UNDEPLOY();
 }
 

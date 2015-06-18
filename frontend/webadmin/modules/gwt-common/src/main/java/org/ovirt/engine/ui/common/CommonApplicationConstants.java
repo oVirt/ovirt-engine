@@ -1589,5 +1589,9 @@ public interface CommonApplicationConstants extends Constants {
     String hostKernelCmdlineReset();
 
     String kernelCmdlineLabel();
+
+    String hostedEngineLabel();
+
+    String hostedEngineDeploymentAction();
 }
 

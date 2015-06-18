@@ -80,5 +80,4 @@ public class ListModelRadioGroupEditor<T> extends AbstractValidatedWidgetWithLab
         super.markAsInvalid(validationHints);
         getValidatedWidgetStyle().setBorderStyle(BorderStyle.SOLID);
     }
-
 }

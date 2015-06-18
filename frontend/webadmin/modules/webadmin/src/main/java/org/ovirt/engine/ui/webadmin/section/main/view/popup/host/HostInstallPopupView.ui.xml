@@ -127,6 +127,18 @@
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="hostedEngineTab" label="{constants.hostedEngineLabel}">
+                        <t:content>
+                            <g:FlowPanel>
+                                <e:ListModelRadioGroupEditor ui:field="hostedEngineDeployActionsEditor"
+                                                             addStyleNames="{style.floatLeft}" usePatternFly="true"
+                                                             label="{constants.hostedEngineDeploymentAction}"
+                                                             labelColSize="LG_6" widgetColSize="LG_12"/>
+                            </g:FlowPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
             </t:DialogTabPanel>
         </d:content>
     </d:SimpleDialogPanel>
