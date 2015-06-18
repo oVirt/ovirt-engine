@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  *  <li>mandatory - true/false declares if argument have to be specified or not (default: false)</li>
  *  <li>type - one of:
  *  <ul>
- *    <li>has_argument - argument requires value</li>
+ *    <li>required_argument - argument requires value</li>
  *    <li>optional_argument - argument could have value</li>
  *    <li>no_argument - argument doesn't have value (default)</li>
 *   </ul>
@@ -99,7 +99,7 @@ import java.util.regex.Pattern;
  *   add.arg.message.name = message
  *   add.arg.message.help = Message to be stored
  *   add.arg.message.mandatory = true
- *   add.arg.message.type = has_argument
+ *   add.arg.message.type = required_argument
  *   add.arg.index.name = index
  *   add.arg.index.help = Index where message should be inserted
  *   add.arg.index.value = 0
@@ -246,7 +246,7 @@ public class ArgumentsParser {
                     value == null &&
                     (
                         argument.getType() == Argument.Type.OPTIONAL_ARGUMENT ||
-                        argument.getType() == Argument.Type.HAS_ARGUMENT
+                        argument.getType() == Argument.Type.REQUIRED_ARGUMENT
                     )
                 ) {
                     if(args.size() > 0) {
@@ -258,7 +258,7 @@ public class ArgumentsParser {
                         }
                     }
                 }
-                if (argument.getType() == Argument.Type.HAS_ARGUMENT && value == null) {
+                if (argument.getType() == Argument.Type.REQUIRED_ARGUMENT && value == null) {
                     errors.add(
                         new IllegalArgumentException(
                             String.format("Value is required, but missing for argument '%1$s'", key)

@@ -17,7 +17,7 @@ class Argument {
     private String value;
 
     enum Type {
-        HAS_ARGUMENT,
+        REQUIRED_ARGUMENT,
         OPTIONAL_ARGUMENT,
         NO_ARGUMENT;
 
