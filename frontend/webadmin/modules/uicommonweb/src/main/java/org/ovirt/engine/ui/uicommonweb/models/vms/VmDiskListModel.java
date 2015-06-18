@@ -578,8 +578,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     public boolean isHotPlugAvailable() {
         VM vm = getEntity();
-        return vm != null && (vm.getStatus() == VMStatus.Up ||
-                vm.getStatus() == VMStatus.Paused || vm.getStatus() == VMStatus.Suspended);
+        return vm != null && (vm.getStatus() == VMStatus.Up || vm.getStatus() == VMStatus.Paused);
     }
 
     private boolean isPlugCommandAvailable(boolean plug) {
