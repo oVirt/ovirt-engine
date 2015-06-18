@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -50,6 +51,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
@@ -710,17 +712,41 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
             confirmModel.getCommands().add(tempVar);
             UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar2);
-        }
-        else if (getSelectedItem() != null
+        } else if (getSelectedItem() != null
                 && getSelectedItem().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.HARD_ENFORCEMENT
                 && dcModel.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT)
         {
             checkForQuotaInDC(dcModel.getEntity(), this);
-        }
-        else
-        {
+        } else if (dcModel.getIsNew()) {
+            //New data center, check for name uniqueness.
+            validateDataCenterName(dcModel);
+        } else {
             onSaveInternal();
         }
+    }
+
+    private void validateDataCenterName(final DataCenterModel dataCenter) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolByDatacenterName,
+                new NameQueryParameters(dataCenter.getName().getEntity()),
+                new AsyncQuery(this, new INewAsyncCallback() {
+
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        VdcQueryReturnValue result = (VdcQueryReturnValue) returnValue;
+                        if (!((Collection<?>)result.getReturnValue()).isEmpty()) {
+                            dataCenter.getName().getInvalidityReasons().add(
+                                    ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
+                            dataCenter.getName().setIsValid(false);
+                            dataCenter.setValidTab(TabName.GENERAL_TAB, false);
+                        } else {
+                            dataCenter.getName().getInvalidityReasons().clear();
+                            dataCenter.getName().setIsValid(true);
+                            dataCenter.setValidTab(TabName.GENERAL_TAB, true);
+                            onSaveInternal();
+                        }
+                    }
+                }
+        ));
     }
 
     private void checkForQuotaInDC(StoragePool storage_pool, final ICommandTarget commandTarget) {
