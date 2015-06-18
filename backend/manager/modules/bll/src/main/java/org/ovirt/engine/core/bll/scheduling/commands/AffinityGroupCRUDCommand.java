@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -53,93 +54,34 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
             }
         }
 
-        return hasAffinityCollisions(getParameters().getAffinityGroup());
+        return affinityGroupsWithoutConflict(getParameters().getAffinityGroup());
     }
 
-    private boolean hasAffinityCollisions(AffinityGroup affinityGroup) {
+    private boolean affinityGroupsWithoutConflict(AffinityGroup affinityGroup) {
         List<AffinityGroup> affinityGroups = getAffinityGroupDao().getAllAffinityGroupsByClusterId(affinityGroup.getClusterId());
+
+        // Replace the existing affinity group by the updated copy
+        for(Iterator<AffinityGroup> it = affinityGroups.iterator(); it.hasNext(); ) {
+            AffinityGroup g = it.next();
+            if (g.getId().equals(affinityGroup.getId())) {
+                it.remove();
+            }
+        }
         affinityGroups.add(affinityGroup);
-        return validateUnifiedAffinityGroups(affinityGroups);
-    }
 
-    /**
-     * Unified affinity groups are affinity groups after being merged for logical reasons. From now on
-     * will be called UAG in the following algorithm:
-     * # UAG = {{vm} for each vm} - Each vm is in a separate set that contains itself only.
-     * # For each positive affinity group(Sorted by group id):
-     * ## Merge VM sets from the group in UAG(Sorted by vm id).
-     * # For each negative affinity group(Sorted by group id):
-     * ## For each group in UAG(Sorted by first vm uuid):
-     * ### if size of the intersection of the group from UAG and the negative group is > 1:
-     * #### throw exception “Affinity group contradiction detected” (With associated groups).
-     */
-    private boolean validateUnifiedAffinityGroups(List<AffinityGroup> affinityGroups) {
-        Set<Set<Guid>> uag = new HashSet();
+        Set<Set<Guid>> unifiedPositive = AffinityRulesUtils.getUnifiedPositiveAffinityGroups(affinityGroups);
+        AffinityRulesUtils.AffinityGroupConflict result =
+                AffinityRulesUtils.checkForAffinityGroupConflict(
+                        affinityGroups,
+                        unifiedPositive);
 
-        /*
-        * UAG = {{vm} for each vm in any affinity group(Either negative or positive)}
-        * (UAG stands for Unified Affinity Groups).
-        */
-        for(AffinityGroup ag: affinityGroups) {
-            Set<Guid> temp = new HashSet<>();
-            temp.addAll(ag.getEntityIds());
-            uag.add(temp);
+        if (result == null) {
+            return true;
+        } else {
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_RULES_COLLISION,
+                    String.format("$UnifiedAffinityGroups %s", result.getPositiveVms().toString()),
+                    String.format("$negativeAR %s", result.getNegativeVms().toString()));
         }
-
-        /**
-         * # For each positive affinity group(Sorted by group id) - ag:
-         * # create empty Set<Vm> mergedSet
-         * ## For each vm in ag:
-         * ### remove the group contains vm from uag
-         * ### merge the group with mergedSet
-         * # add mergedSet back to uag.
-         */
-        for(AffinityGroup ag : affinityGroups) {
-            if(ag.isPositive()) {
-                Set<Guid> mergedSet = new HashSet<>();
-
-                for(Guid id : ag.getEntityIds()) {
-                    Set<Guid> vmGroup = popVmGroupByGuid(uag, id);
-                    mergedSet.addAll(vmGroup);
-                }
-
-                uag.add(mergedSet);
-            }
-        }
-
-        //Checking negative affinity group collisions
-        for(AffinityGroup ag : affinityGroups) {
-            if(ag.isPositive()) {
-                continue;
-            }
-
-            for (Set<Guid> positiveGroup : uag) {
-                Set<Guid> intersection = new HashSet<>(ag.getEntityIds());
-                intersection.retainAll(positiveGroup);
-
-                if(intersection.size() > 1) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_RULES_COLLISION,
-                            String.format("$UnifiedAffinityGroups %s", positiveGroup.toString()),
-                            String.format("$negativeAR %s", ag.getEntityIds().toString()));
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private Set<Guid> popVmGroupByGuid(Set<Set<Guid>> uag, Guid id) {
-
-        for(Iterator<Set<Guid>> iterator = uag.iterator(); iterator.hasNext();) {
-            Set<Guid> s = iterator.next();
-
-            if(s.contains(id)) {
-                iterator.remove();
-                return s;
-            }
-        }
-
-        return Collections.<Guid>emptySet();
     }
 
     protected AffinityGroup getAffinityGroup() {
