@@ -1487,7 +1487,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Windows")
     String initialRunWindows();
 
-    @DefaultStringValue("* It is recommended to keep the default values in the fields below unchanged.")
+    @DefaultStringValue("It is recommended to keep the default values in the fields below unchanged.")
     String advancedOptionsLabel();
 
     @DefaultStringValue("Bootable")

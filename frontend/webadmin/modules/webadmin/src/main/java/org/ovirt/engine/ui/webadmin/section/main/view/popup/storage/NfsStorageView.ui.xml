@@ -35,7 +35,6 @@
 
         .warningLabel {
             color: Red;
-            font-weight: bold;
             margin-bottom: 10px;
         }
 
