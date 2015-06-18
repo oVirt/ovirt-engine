@@ -6,6 +6,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +29,9 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -103,6 +107,8 @@ public class GlusterSyncJobTest {
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
 
     private GlusterSyncJob glusterManager;
     private GlusterAuditLogUtil logUtil;
@@ -171,6 +177,11 @@ public class GlusterSyncJobTest {
     private final List<Guid> removedBrickIds = new ArrayList<Guid>();
     private final List<Guid> addedBrickIds = new ArrayList<Guid>();
     private final List<GlusterBrickEntity> bricksWithChangedStatus = new ArrayList<GlusterBrickEntity>();
+
+    @Before
+    public void before() {
+        injectorRule.bind(BackendInternal.class, mock(BackendInternal.class));
+    }
 
     private void createObjects(Version version) {
         existingServer1 = createServer(SERVER_ID_1, SERVER_NAME_1, version);

@@ -10,10 +10,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -57,6 +54,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -70,14 +68,13 @@ import org.slf4j.LoggerFactory;
  * engine as well.
  */
 public class GlusterSyncJob extends GlusterJob {
-    @Inject
-    private BackendInternal backend;
-
     private final Logger log = LoggerFactory.getLogger(GlusterSyncJob.class);
     private static final GlusterSyncJob instance = new GlusterSyncJob();
     private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private final BackendInternal backend;
 
     private GlusterSyncJob() {
+        backend = Injector.get(BackendInternal.class);
     }
 
     public static GlusterSyncJob getInstance() {
@@ -447,7 +444,7 @@ public class GlusterSyncJob extends GlusterJob {
                 new SetNonOperationalVdsParameters(server.getId(),
                         NonOperationalReason.GLUSTER_COMMAND_FAILED,
                         Collections.singletonMap(GlusterConstants.COMMAND, "gluster peer status"));
-        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
+        backend.runInternalAction(VdcActionType.SetNonOperationalVds,
                 nonOpParams,
                 ExecutionHandler.createInternalJobContext());
     }
