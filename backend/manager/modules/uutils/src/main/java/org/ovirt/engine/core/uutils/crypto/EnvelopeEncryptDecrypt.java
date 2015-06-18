@@ -23,12 +23,16 @@ import org.codehaus.jackson.map.type.TypeFactory;
 
 public class EnvelopeEncryptDecrypt {
 
+    private static final String ARTIFACT = "EnvelopeEncryptDecrypt";
+    private static final String VERSION = "1";
     private static final String PUBKEY_DIGEST_ALGO = "SHA-1";
     private static final String PKEY_MODE_PADDING = "ECB/PKCS1Padding";
 
     private static final String CONTENT_KEY = "content";
     private static final String RANDOM_KEY = "random";
 
+    private static final String ARTIFACT_KEY = "artifact";
+    private static final String VERSION_KEY = "version";
     private static final String CIPHER_ALGO_KEY = "cipherAlgo";
     private static final String ENCRYPTED_CONTENT_KEY = "encryptedContent";
     private static final String IV_KEY = "iv";
@@ -82,6 +86,8 @@ public class EnvelopeEncryptDecrypt {
         Cipher wrap = Cipher.getInstance(wrapAlgo);
         wrap.init(Cipher.WRAP_MODE, cert);
 
+        map.put(ARTIFACT_KEY, ARTIFACT);
+        map.put(VERSION_KEY, VERSION);
         map.put(WRAP_ALGO_KEY, wrapAlgo);
         map.put(CIPHER_ALGO_KEY, algo);
         map.put(ENCRYPTED_CONTENT_KEY, base64.encodeToString(cipher.doFinal(new ObjectMapper().writeValueAsString(env).getBytes(Charset.forName("UTF-8")))));
@@ -106,6 +112,13 @@ public class EnvelopeEncryptDecrypt {
             Base64.decodeBase64(blob),
             TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class)
         );
+
+        if (!ARTIFACT.equals(map.get(ARTIFACT_KEY))) {
+            throw new IllegalArgumentException(String.format("Invalid artifact '%s'", map.get(ARTIFACT_KEY)));
+        }
+        if (!VERSION.equals(map.get(VERSION_KEY))) {
+            throw new IllegalArgumentException(String.format("Invalid version '%s'", map.get(VERSION_KEY)));
+        }
 
         if (pkeyEntry.getCertificate() != null) {
             if (
