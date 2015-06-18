@@ -171,6 +171,11 @@ public class ArgumentsParser {
     private List<Throwable> errors;
 
     /**
+     * Map of predefined substitutions which should be replaced in usage.
+     */
+    private Map<String, String> substitutions = new HashMap<>();
+
+    /**
      * Inititilize ArgumentsParser attributes. Parser properties file and create argument map of it.
      *
      * @param properties properties file with defined arguments
@@ -319,33 +324,46 @@ public class ArgumentsParser {
      */
     public String getUsage() {
         StringBuilder help = new StringBuilder(String.format("Options:%n"));
+
         for(String arg : getPrefixArguments()) {
             Argument argument = this.arguments.get(arg);
             help.append(
-                String.format(
-                    "  --%s%n" +
-                        "    %s%n" +
-                        "%n",
-                    arg + (argument.getType() != Argument.Type.NO_ARGUMENT ? "=[" + argument.getMetavar() + "]" : ""),
-                    argument.getHelp()
-                )
+                    String.format(
+                            "  --%s%n" +
+                                    "    %s%n" +
+                                    "%n",
+                            arg + (argument.getType() != Argument.Type.NO_ARGUMENT ? "=[" + argument.getMetavar() + "]" : ""),
+                            argument.getHelp()
+                                    .replace("@CLI_PRM_DEFAULT@", StringUtils.defaultString(argument.getDefaultValue()))
+                                    .replace("@CLI_PRM_PATTERN@", argument.getMatcher().pattern())
+                    )
             );
         }
-        return String.format("%1$s%n%2$s%n%n%3$s%4$s%n",
-            properties.getProperty(
-                prefix + ".help.usage",
-                (String)defaultProperties.get("help.usage")
-            ),
-            properties.getProperty(
-                prefix + ".help.header",
-                (String) defaultProperties.get("help.header")
-            ),
-            help.toString(),
-            properties.getProperty(
-                prefix + ".help.footer",
-                (String) defaultProperties.get("help.footer")
-            )
+        return doSubstitutions(
+                String.format("%1$s%n%2$s%n%n%3$s%4$s%n",
+                        properties.getProperty(
+                                prefix + ".help.usage",
+                                (String) defaultProperties.get("help.usage")
+                        ),
+                        properties.getProperty(
+                                prefix + ".help.header",
+                                (String) defaultProperties.get("help.header")
+                        ),
+                        help.toString(),
+                        properties.getProperty(
+                                prefix + ".help.footer",
+                                (String) defaultProperties.get("help.footer")
+                        )
+                )
         );
+    }
+
+    /**
+     * Return all registered substitutions
+     * @return registered substitutions
+     */
+    public Map<String, String> getSubstitutions() {
+        return substitutions;
     }
 
     /**
@@ -359,7 +377,10 @@ public class ArgumentsParser {
                 putValue(
                     argMap,
                     arg,
-                    StringValueConverter.getObjectValueByString(arg.getValueType(), arg.getDefaultValue())
+                    StringValueConverter.getObjectValueByString(
+                        arg.getValueType(),
+                        doSubstitutions(arg.getDefaultValue())
+                    )
                 );
             }
         }
@@ -383,6 +404,18 @@ public class ArgumentsParser {
             }
             c.add(value);
         }
+    }
+
+    /**
+     * Substitute entries in string.
+     */
+    private String doSubstitutions(String s) {
+        if (s != null) {
+            for (Map.Entry<String, String> substitution : substitutions.entrySet()) {
+                s = s.replaceAll(substitution.getKey(), substitution.getValue());
+            }
+        }
+        return s;
     }
 
     /**

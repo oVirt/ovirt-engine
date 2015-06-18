@@ -13,6 +13,7 @@ import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -22,6 +23,8 @@ import org.ovirt.engine.core.uutils.crypto.EnvelopeEncryptDecrypt;
 import org.ovirt.engine.core.uutils.crypto.EnvelopePBE;
 
 public class Main {
+
+    private static final Map<String, String> substitutions = new HashMap<>();
 
     private static class ExitException extends RuntimeException {
         private int exitCode;
@@ -134,15 +137,12 @@ public class Main {
 
         void execute(Properties props, List<String> cmdArgs) throws IOException, GeneralSecurityException {
             ArgumentsParser parser = new ArgumentsParser(props, cmdArgs.remove(0));
+            parser.getSubstitutions().putAll(substitutions);
             parser.parse(cmdArgs);
             Map<String, Object> argMap = parser.getParsedArgs();
 
             if((Boolean)argMap.get("help")) {
-                System.out.format(
-                    "Usage: %s",
-                    parser.getUsage()
-                        .replace("@PROGRAM_NAME@", PROGRAM_NAME)
-                );
+                System.out.format("Usage: %s", parser.getUsage());
                 throw new ExitException("Help", 0);
             }
             if(!parser.getErrors().isEmpty()) {
@@ -224,6 +224,7 @@ public class Main {
     public static void main(String... args) throws IOException {
         int exitStatus = 1;
         List<String> cmdArgs = new ArrayList<>(Arrays.asList(args));
+        substitutions.put("@PROGRAM_NAME@", PROGRAM_NAME);
 
         try {
             Properties props = new Properties();
@@ -234,15 +235,12 @@ public class Main {
                 props.load(reader);
             }
             ArgumentsParser parser = new ArgumentsParser(props, "core");
+            parser.getSubstitutions().putAll(substitutions);
             parser.parse(cmdArgs);
             Map<String, Object> argMap = parser.getParsedArgs();
 
             if((Boolean)argMap.get("help")) {
-                System.out.format(
-                    "Usage: %s",
-                    parser.getUsage()
-                        .replace("@PROGRAM_NAME@", PROGRAM_NAME)
-                );
+                System.out.format("Usage: %s", parser.getUsage());
                 throw new ExitException("Help", 0);
             } else if((Boolean)argMap.get("version")) {
                 System.out.format("%s-%s (%s)%n", PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_DISPLAY_NAME);

@@ -63,10 +63,15 @@ public class LoggerServiceImpl implements ModuleService {
 
     @Override
     public void parseArguments(List<String> args) throws Exception {
+        final Map<String, String> substitutions = new HashMap<>();
+        substitutions.put("@PROGRAM_NAME@", (String) context.get(PROGRAM_NAME));
+        substitutions.put("@ACTION_LIST@", StringUtils.join(actions.keySet(), ", "));
+
         args.remove(0);
         ArgumentsParser parser;
         try (InputStream stream = getClass().getResourceAsStream("arguments.properties")) {
             parser = new ArgumentsParser(stream, "module");
+            parser.getSubstitutions().putAll(substitutions);
         }
         parser.parse(args);
         moduleArgs = parser.getParsedArgs();
@@ -95,6 +100,7 @@ public class LoggerServiceImpl implements ModuleService {
         }
         try (InputStream stream = getClass().getResourceAsStream("arguments.properties")) {
             parser = new ArgumentsParser(stream, action);
+            parser.getSubstitutions().putAll(substitutions);
         }
         parser.parse(args);
         actionArgs = parser.getParsedArgs();
@@ -124,12 +130,7 @@ public class LoggerServiceImpl implements ModuleService {
     }
 
     private void printUsage(ArgumentsParser parser) {
-        System.out.format(
-            "Usage: %s",
-            parser.getUsage()
-                .replace("@PROGRAM_NAME@", (String) context.get(PROGRAM_NAME))
-                .replace("@ACTION_LIST@", StringUtils.join(actions.keySet(), ", "))
-        );
+        System.out.format("Usage: %s",  parser.getUsage());
     }
 
     private void logrecord() {

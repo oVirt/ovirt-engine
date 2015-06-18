@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class ManageDomainsExecutor {
     private static final String PACKAGE_NAME = System.getProperty("org.ovirt.engine.exttool.core.packageName");
     private static final String PACKAGE_VERSION = System.getProperty("org.ovirt.engine.exttool.core.packageVersion");
     private static final String PACKAGE_DISPLAY_NAME = System.getProperty("org.ovirt.engine.exttool.core.packageDisplayName");
+    private static final String ENGINE_ETC = System.getProperty("org.ovirt.engine.exttool.core.engineEtc");
 
     public static void main(String... args) {
         setupLogger();
@@ -29,8 +31,13 @@ public class ManageDomainsExecutor {
         ArgumentsParser parser;
         List<String> cmdArgs = new ArrayList<>(Arrays.asList(args));
         try {
+            final Map<String, String> substitutions = new HashMap<>();
+            substitutions.put("@ENGINE_ETC@", ENGINE_ETC);
+            substitutions.put("@PROGRAM_NAME@", PROGRAM_NAME);
+
             try (InputStream stream = ManageDomainsExecutor.class.getResourceAsStream("arguments.properties")) {
                 parser = new ArgumentsParser(stream, "module");
+                parser.getSubstitutions().putAll(substitutions);
             }
             parser.parse(cmdArgs);
             Map<String, Object> argMap = parser.getParsedArgs();
@@ -41,10 +48,7 @@ public class ManageDomainsExecutor {
                 (cmdArgs.size() > 0 && cmdArgs.get(0).equals("help")) ||
                 (cmdArgs.size() < 1)
             ) {
-                System.out.format(
-                    "Usage: %s",
-                    parser.getUsage().replace("@PROGRAM_NAME@", PROGRAM_NAME)
-                );
+                System.out.format("Usage: %s", parser.getUsage());
                 throw new ManageDomainsResult(ManageDomainsResultEnum.OK);
             } else if ((Boolean)argMap.get("version")) {
                 System.out.format("%s-%s (%s)%n", PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_DISPLAY_NAME);
@@ -63,6 +67,7 @@ public class ManageDomainsExecutor {
             String action = cmdArgs.remove(0);
             try (InputStream stream = ManageDomainsExecutor.class.getResourceAsStream("arguments.properties")) {
                 parser = new ArgumentsParser(stream, action);
+                parser.getSubstitutions().putAll(substitutions);
             }
             parser.parse(cmdArgs);
             argMap = parser.getParsedArgs();
@@ -71,10 +76,7 @@ public class ManageDomainsExecutor {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ACTION, action);
             }
             if ((Boolean)argMap.get("help")) {
-                System.out.format(
-                    "Usage: %s",
-                    parser.getUsage().replace("@PROGRAM_NAME@", PROGRAM_NAME)
-                );
+                System.out.format("Usage: %s", parser.getUsage());
                 throw new ManageDomainsResult(ManageDomainsResultEnum.OK);
             }
             if(!parser.getErrors().isEmpty()) {

@@ -38,22 +38,22 @@ public class ExtensionsToolExecutor {
         try {
             setupLogger();
             ArgumentsParser parser;
+            Map<String, ModuleService> moduleServices = loadModules(ModuleService.class);
+            final Map<String, String> substitutions = new HashMap<>();
+            substitutions.put("@ENGINE_ETC@", ENGINE_ETC);
+            substitutions.put("@PROGRAM_NAME@", PROGRAM_NAME);
+            substitutions.put("@MODULE_LIST@", getModules(moduleServices));
+
             try (InputStream stream = ExtensionsToolExecutor.class.getResourceAsStream("arguments.properties")) {
                 parser = new ArgumentsParser(stream, "core");
+                parser.getSubstitutions().putAll(substitutions);
             }
             parser.parse(cmdArgs);
             Map<String, Object> argMap = parser.getParsedArgs();
             setupLogger(argMap);
 
-            Map<String, ModuleService> moduleServices = loadModules(ModuleService.class);
             if((Boolean)argMap.get("help") || (cmdArgs.size() > 0 && cmdArgs.get(0).equals("help"))) {
-                System.out.format(
-                    "Usage: %s",
-                    parser.getUsage()
-                        .replace("@PROGRAM_NAME@", PROGRAM_NAME)
-                        .replace("@MODULE_LIST@", getModules(moduleServices)
-                    )
-                );
+                System.out.format("Usage: %s", parser.getUsage());
                 throw new ExitException("Help", 0);
             } else if((Boolean)argMap.get("version")) {
                 System.out.format("%s-%s (%s)%n", PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_DISPLAY_NAME);
@@ -99,7 +99,7 @@ public class ExtensionsToolExecutor {
 
         if(files == null) {
             files = listFiles(
-                ((String) argMap.get("extensions-dir")).replace("@ENGINE_ETC@", ENGINE_ETC),
+                ((String) argMap.get("extensions-dir")),
                 "properties"
             );
         }

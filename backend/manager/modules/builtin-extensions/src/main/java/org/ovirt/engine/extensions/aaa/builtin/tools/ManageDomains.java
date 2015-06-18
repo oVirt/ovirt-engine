@@ -135,9 +135,7 @@ public class ManageDomains {
     public void init() throws ManageDomainsResult {
 
         try {
-            utilityConfiguration = new ManageDomainsConfiguration(
-                ((String)args.get(ARG_CONFIG_FILE)).replace("@ENGINE_ETC@", ENGINE_ETC)
-            );
+            utilityConfiguration = new ManageDomainsConfiguration((String)args.get(ARG_CONFIG_FILE));
         } catch (Exception e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_READING_CONFIGURATION, e.getMessage());
         }
