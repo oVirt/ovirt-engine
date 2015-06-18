@@ -21,7 +21,7 @@ import datetime
 import gettext
 import os
 import re
-import socket
+import string
 import tempfile
 
 import psycopg2
@@ -30,6 +30,7 @@ from ovirt_engine import util as outil
 
 from ovirt_engine_setup import util as osetuputil
 from ovirt_setup_lib import dialog
+from ovirt_setup_lib import hostname as osetuphostname
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 DEK = oengcommcons.DBEnvKeysConst
 
@@ -1033,57 +1034,62 @@ class OvirtUtils(base.Base):
 
         connectionValid = False
         while not connectionValid:
-            host = _ind_env(self, DEK.HOST)
-            port = _ind_env(self, DEK.PORT)
-            secured = _ind_env(self, DEK.SECURED)
-            securedHostValidation = _ind_env(self, DEK.HOST_VALIDATION)
-            db = _ind_env(self, DEK.DATABASE)
-            user = _ind_env(self, DEK.USER)
-            password = _ind_env(self, DEK.PASSWORD)
+            dbenv = {}
+            for k in (
+                DEK.HOST,
+                DEK.PORT,
+                DEK.SECURED,
+                DEK.HOST_VALIDATION,
+                DEK.DATABASE,
+                DEK.USER,
+                DEK.PASSWORD,
+            ):
+                dbenv[self._dbenvkeys[k]] = _ind_env(self, k)
 
-            if host is None:
-                while True:
-                    host = self.dialog.queryString(
-                        name='{qpref}HOST'.format(qpref=queryprefix),
-                        note=_(
-                            '{name} database host [@DEFAULT@]: '
-                        ).format(
-                            name=name,
-                        ),
-                        prompt=True,
-                        default=defaultdbenvkeys[DEK.HOST],
-                    )
-                    try:
-                        socket.getaddrinfo(host, None)
-                        break  # do while missing in python
-                    except socket.error as e:
-                        self.logger.error(
-                            _('Host is invalid: {error}').format(
-                                error=e.strerror
-                            )
-                        )
+            def query_dbenv(
+                what,
+                note,
+                tests=None,
+                **kwargs
+            ):
+                dialog.queryEnvKey(
+                    name='{qpref}{what}'.format(
+                        qpref=queryprefix,
+                        what=string.upper(what),
+                    ),
+                    dialog=self.dialog,
+                    logger=self.logger,
+                    env=dbenv,
+                    key=self._dbenvkeys[what],
+                    note=note.format(
+                        name=name,
+                    ),
+                    prompt=True,
+                    default=defaultdbenvkeys[what],
+                    tests=tests,
+                    **kwargs
+                )
 
-            if port is None:
-                while True:
-                    try:
-                        port = osetuputil.parsePort(
-                            self.dialog.queryString(
-                                name='{qpref}PORT'.format(qpref=queryprefix),
-                                note=_(
-                                    '{name} database port [@DEFAULT@]: '
-                                ).format(
-                                    name=name,
-                                ),
-                                prompt=True,
-                                default=defaultdbenvkeys[DEK.PORT],
-                            )
-                        )
-                        break  # do while missing in python
-                    except ValueError:
-                        pass
+            query_dbenv(
+                what=DEK.HOST,
+                note=_('{name} database host [@DEFAULT@]: '),
+                tests=(
+                    {
+                        'test': osetuphostname.Hostname(
+                            self._plugin,
+                        ).getHostnameTester(),
+                    },
+                ),
+            )
 
-            if secured is None:
-                secured = dialog.queryBoolean(
+            query_dbenv(
+                what=DEK.PORT,
+                note=_('{name} database port [@DEFAULT@]: '),
+                tests=({'test': osetuputil.getPortTester()},),
+            )
+
+            if dbenv[self._dbenvkeys[DEK.SECURED]] is None:
+                dbenv[self._dbenvkeys[DEK.SECURED]] = dialog.queryBoolean(
                     dialog=self.dialog,
                     name='{qpref}SECURED'.format(qpref=queryprefix),
                     note=_(
@@ -1096,11 +1102,13 @@ class OvirtUtils(base.Base):
                     default=defaultdbenvkeys[DEK.SECURED],
                 )
 
-            if not secured:
-                securedHostValidation = False
+            if not dbenv[self._dbenvkeys[DEK.SECURED]]:
+                dbenv[self._dbenvkeys[DEK.HOST_VALIDATION]] = False
 
-            if securedHostValidation is None:
-                securedHostValidation = dialog.queryBoolean(
+            if dbenv[self._dbenvkeys[DEK.HOST_VALIDATION]] is None:
+                dbenv[
+                    self._dbenvkeys[DEK.HOST_VALIDATION]
+                ] = dialog.queryBoolean(
                     dialog=self.dialog,
                     name='{qpref}SECURED_HOST_VALIDATION'.format(
                         qpref=queryprefix
@@ -1115,52 +1123,23 @@ class OvirtUtils(base.Base):
                     default=True,
                 ) == 'yes'
 
-            if db is None:
-                db = self.dialog.queryString(
-                    name='{qpref}DATABASE'.format(qpref=queryprefix),
-                    note=_(
-                        '{name} database name [@DEFAULT@]: '
-                    ).format(
-                        name=name,
-                    ),
-                    prompt=True,
-                    default=defaultdbenvkeys[DEK.DATABASE],
-                )
+            query_dbenv(
+                what=DEK.DATABASE,
+                note=_('{name} database name [@DEFAULT@]: '),
+            )
 
-            if user is None:
-                user = self.dialog.queryString(
-                    name='{qpref}USER'.format(qpref=queryprefix),
-                    note=_(
-                        '{name} database user [@DEFAULT@]: '
-                    ).format(
-                        name=name,
-                    ),
-                    prompt=True,
-                    default=defaultdbenvkeys[DEK.USER],
-                )
+            query_dbenv(
+                what=DEK.USER,
+                note=_('{name} database user [@DEFAULT@]: '),
+            )
 
-            if password is None:
-                password = self.dialog.queryString(
-                    name='{qpref}PASSWORD'.format(qpref=queryprefix),
-                    note=_(
-                        '{name} database password: '
-                    ).format(
-                        name=name,
-                    ),
-                    prompt=True,
-                    hidden=True,
-                )
+            query_dbenv(
+                what=DEK.PASSWORD,
+                note=_('{name} database password: '),
+                hidden=True,
+            )
 
-            dbenv = {
-                self._dbenvkeys[DEK.HOST]: host,
-                self._dbenvkeys[DEK.PORT]: port,
-                self._dbenvkeys[DEK.SECURED]: secured,
-                self._dbenvkeys[DEK.HOST_VALIDATION]: securedHostValidation,
-                self._dbenvkeys[DEK.USER]: user,
-                self._dbenvkeys[DEK.PASSWORD]: password,
-                self._dbenvkeys[DEK.DATABASE]: db,
-            }
-
+            self.logger.debug('dbenv: %s', dbenv)
             if interactive:
                 try:
                     self.tryDatabaseConnect(dbenv)

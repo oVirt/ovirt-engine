@@ -222,6 +222,18 @@ def parsePort(port):
 
 
 @util.export
+def getPortTester():
+    def test_port(port):
+        res = ''
+        try:
+            parsePort(port)
+        except ValueError as e:
+            res = e
+        return res
+    return test_port
+
+
+@util.export
 def addExitCode(environment, code, priority=plugin.Stages.PRIORITY_DEFAULT):
     environment[
         otopicons.BaseEnv.EXIT_CODE
