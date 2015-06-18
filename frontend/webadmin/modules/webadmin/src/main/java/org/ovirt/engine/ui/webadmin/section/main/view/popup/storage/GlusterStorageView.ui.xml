@@ -4,34 +4,31 @@
              xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.GlusterStorageView.WidgetStyle">
-		.content {
-			margin-top: 40px;
-		}
-
         .label {
             color: #333333;
             margin: 0px 5px;
             font-family: Verdana, sans-serif;
         }
 
-		.pathEditorContent {
-			width: 565px;
-		}
+        .pathEditorContent {
+            width: 565px;
+        }
 
         .pathExampleLabel {
             margin: 2px 0px 0px 10px;
             font-size: 8pt;
         }
 
-		.errorLabel {
-			color: #CD2127;
-			margin-top: 20px;
-			margin-left: 5px;
-		}
+        .errorLabel {
+            color: #CD2127;
+            margin-bottom: 20px;
+            margin-left: 5px;
+        }
 
-	</ui:style>
+    </ui:style>
 
-    <g:VerticalPanel addStyleNames="{style.content}">
+    <g:VerticalPanel>
+        <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
         <g:HTMLPanel>
             <table>
                 <tr>
@@ -66,7 +63,6 @@
                 </tr>
             </table>
         </g:HTMLPanel>
-        <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
     </g:VerticalPanel>
 
 </ui:UiBinder>
