@@ -62,7 +62,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     @UiField
     @Ignore
-    Label pathHintLabel;
+    Label pathExampleLabel;
 
     @UiField
     @Ignore
@@ -164,7 +164,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     void localize() {
         pathLabel.setText(constants.storagePopupNfsPathLabel());
-        pathHintLabel.setText(constants.storagePopupNfsPathHintLabel());
+        pathExampleLabel.setText(constants.storagePopupNfsPathExampleLabel());
         warningLabel.setText(constants.advancedOptionsLabel());
         overrideEditor.setLabel(constants.storagePopupNfsOverrideLabel());
         versionLabel.setText(constants.storagePopupNfsVersionLabel());
@@ -182,7 +182,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         EntityModel version = (EntityModel) object.getVersion().getSelectedItem();
         versionReadOnlyEditor.asValueBox().setValue(version != null ? version.getTitle() : null);
 
-        pathHintLabel.setVisible(object.getPath().getIsChangable());
+        pathExampleLabel.setVisible(object.getPath().getIsChangable());
 
         object.getMountOptions().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override

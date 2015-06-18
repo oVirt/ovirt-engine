@@ -440,14 +440,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Path")
     String storagePopupLocalPathLabel();
 
-    @DefaultStringValue("Remote path to NFS export, takes either the form: FQDN:/path or IP:/path e.g. server.example.com:/export/VMs")
-    String storagePopupNfsPathHintLabel();
+    @DefaultStringValue("E.g.: myserver.mydomain.com:/my/local/path")
+    String storagePopupNfsPathExampleLabel();
 
-    @DefaultStringValue("Path to gluster volume to mount")
-    String storagePopupGlusterPathHintLabel();
+    @DefaultStringValue("E.g.: myserver.mydomain.com:/myvolumename")
+    String storagePopupGlusterPathExampleLabel();
 
-    @DefaultStringValue("Path to device to mount / remote export")
-    String storagePopupPosixPathHintLabel();
+    @DefaultStringValue("E.g.: /path/to/my/data")
+    String storagePopupPosixPathExampleLabel();
 
     @DefaultStringValue("Adding an NFS domain as POSIX is highly discouraged, please create an NFS domain for best optimizations")
     String storagePopupPosixNfsWarningLabel();

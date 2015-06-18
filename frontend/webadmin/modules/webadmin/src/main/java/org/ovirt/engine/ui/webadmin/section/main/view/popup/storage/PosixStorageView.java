@@ -54,7 +54,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
 
     @UiField
     @Ignore
-    Label pathHintLabel;
+    Label pathExampleLabel;
 
     @UiField
     @WithElementId
@@ -97,7 +97,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
 
     void localize() {
         pathLabel.setText(constants.storagePopupPosixPathLabel());
-        pathHintLabel.setText(constants.storagePopupPosixPathHintLabel());
+        pathExampleLabel.setText(constants.storagePopupPosixPathExampleLabel());
         vfsTypeLabel.setText(constants.storagePopupVfsTypeLabel());
         mountOptionsLabel.setText(constants.storagePopupMountOptionsLabel());
         nfsPosixAlertIcon.setTitle(constants.storagePopupPosixNfsWarningLabel());
@@ -117,7 +117,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     public void edit(PosixStorageModel object) {
         driver.edit(object);
 
-        pathHintLabel.setVisible(object.getPath().getIsAvailable() && object.getPath().getIsChangable());
+        pathExampleLabel.setVisible(object.getPath().getIsAvailable() && object.getPath().getIsChangable());
 
         StyleTextBoxEditor(pathEditor, object.getPath());
         StyleTextBoxEditor(vfsTypeEditor, object.getVfsType());

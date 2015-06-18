@@ -51,7 +51,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
 
     @UiField
     @Ignore
-    Label pathHintLabel;
+    Label pathExampleLabel;
 
     @UiField
     @WithElementId
@@ -90,7 +90,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
 
     void localize() {
         pathLabel.setText(constants.storagePopupPosixPathLabel());
-        pathHintLabel.setText(constants.storagePopupGlusterPathHintLabel());
+        pathExampleLabel.setText(constants.storagePopupGlusterPathExampleLabel());
         vfsTypeLabel.setText(constants.storagePopupVfsTypeLabel());
         mountOptionsLabel.setText(constants.storagePopupMountOptionsLabel());
     }
@@ -99,7 +99,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     public void edit(GlusterStorageModel object) {
         Driver.driver.edit(object);
 
-        pathHintLabel.setVisible(object.getPath().getIsAvailable() && object.getPath().getIsChangable());
+        pathExampleLabel.setVisible(object.getPath().getIsAvailable() && object.getPath().getIsChangable());
 
         StyleTextBoxEditor(pathEditor, object.getPath());
         StyleTextBoxEditor(vfsTypeEditor, object.getVfsType());

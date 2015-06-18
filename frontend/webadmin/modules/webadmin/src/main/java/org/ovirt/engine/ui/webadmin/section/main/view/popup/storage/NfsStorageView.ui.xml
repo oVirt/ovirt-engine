@@ -21,8 +21,8 @@
             margin-left: 45px;
         }
 
-        .pathHintLabel {
-            margin: 2px 0px 0px 50px;
+        .pathExampleLabel {
+            margin: 2px 0px 0px 55px;
             font-size: 8pt;
             width: 450px;
         }
@@ -60,7 +60,7 @@
                 <tr>
                     <td></td>
                     <td>
-                        <g:Label ui:field="pathHintLabel" addStyleNames="{style.pathHintLabel}, generalDialogComment"/>
+                        <g:Label ui:field="pathExampleLabel" addStyleNames="{style.pathExampleLabel}, generalDialogComment"/>
                     </td>
                 </tr>
                 <tr>
