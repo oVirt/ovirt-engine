@@ -1,25 +1,8 @@
 #!/bin/sh
-#
-# This script is designed to run the manage domains utility.
-# The tool's configuration should be under the /etc directory.
-#
 
-# Load the prolog:
 . "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
-# logging configuration properties for extension tool
 OVIRT_LOGGING_PROPERTIES="${OVIRT_LOGGING_PROPERTIES:-${ENGINE_USR}/conf/extension-tool-logging.properties}"
-
-#
-# Add this option to the java command line to enable remote debugging in
-# all IP addresses and port 8787:
-#
-# -Xrunjdwp:transport=dt_socket,address=0.0.0.0:8787,server=y,suspend=y
-#
-# Note that the "suspend=y" options is needed to suspend the execution
-# of the JVM till you connect with the debugger, otherwise it is
-# not possible to debug the execution of the main method.
-#
 
 exec "${JAVA_HOME}/bin/java" \
 	-Djava.security.auth.login.config="${ENGINE_USR}/conf/jaas.conf" \
