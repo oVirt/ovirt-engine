@@ -90,12 +90,16 @@ public class XmlRpcUtils {
      *            - if a connection should be https or http
      * @return an instance of the given type.
      */
-    public static <T> Pair<T, HttpClient> getConnection(String hostName, int port, int clientTimeOut,
-            int connectionTimeOut, int clientRetries, int maxConnectionsPerHost, int maxTotalConnections, Class<T> type, boolean isSecure) {
+    public static <T> Pair<T, HttpClient> getConnection(String hostName,
+            int port,
+            int clientTimeOut,
+            int connectionTimeOut,
+            int clientRetries,
+            int maxConnectionsPerHost,
+            int maxTotalConnections,
+            Class<T> type,
+            boolean isSecure) {
         Pair<String, URL> urlInfo = getConnectionUrl(hostName, port, null, isSecure);
-        if (urlInfo == null) {
-            return null;
-        }
 
         return getHttpConnection(urlInfo.getSecond(),
                 clientTimeOut,
@@ -107,7 +111,6 @@ public class XmlRpcUtils {
     }
 
     public static Pair<String, URL> getConnectionUrl(String hostName, int port, String path, boolean isSecure) {
-        URL serverUrl;
         String prefix;
         String url;
         if (isSecure) {
@@ -116,14 +119,12 @@ public class XmlRpcUtils {
             prefix = HTTP;
         }
         try {
-            url = prefix + hostName + ":" + port + (path != null ? "/" + path : "");
-            serverUrl = new URL(url);
+            url =  prefix + hostName + ":" + port + (path != null ? "/" + path : "");
+            return new Pair<>(url, new URL(url));
         } catch (MalformedURLException mfue) {
             log.error("failed to form the xml-rpc url", mfue);
-            return null;
+            throw new IllegalStateException(mfue);
         }
-
-        return new Pair<>(url, serverUrl);
     }
 
     public static void shutDownConnection(HttpClient httpClient) {
