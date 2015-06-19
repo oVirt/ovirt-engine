@@ -29,7 +29,6 @@ public class TransportFactory {
             int heartbeat) {
         IIrsServer irsServer = null;
         if (VdsProtocol.STOMP == vdsProtocol) {
-            String eventQueue = getEventsQueue(version);
             irsServer = new JsonRpcIIrsServer(JsonRpcUtils.createStompClient(hostname,
                     port, connectionTimeOut, clientTimeOut, clientRetries, heartbeat,
                     Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication),
@@ -37,7 +36,7 @@ public class TransportFactory {
                     Config.<Integer> getValue(ConfigValues.EventProcessingPoolSize),
                     Config.<String> getValue(ConfigValues.IrsRequestQueueName),
                     Config.<String> getValue(ConfigValues.IrsResponseQueueName),
-                    eventQueue));
+                    null));
         } else if (VdsProtocol.XML == vdsProtocol){
             Pair<IrsServerConnector, HttpClient> returnValue =
                     XmlRpcUtils.getConnection(hostname, port, clientTimeOut, connectionTimeOut,
