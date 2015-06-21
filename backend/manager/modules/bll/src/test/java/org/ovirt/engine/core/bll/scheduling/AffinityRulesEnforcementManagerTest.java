@@ -226,11 +226,8 @@ public class AffinityRulesEnforcementManagerTest {
         doReturn(isRunning).when(vm).isRunning();
         doReturn(isResponding).when(vm).getStatus();
 
-
         _vmDao.saveIsInitialized(guid, true);
 
-        String outputStr = String.format("New VM[%s] sits on host[%s]", guid, vdsToRunOn);
-        System.out.println(outputStr);
         return guid;
     }
 
@@ -247,9 +244,6 @@ public class AffinityRulesEnforcementManagerTest {
         vdsList.add(vds);
 
         when(_vdsDao.getAllForVdsGroup(vdsGroupId)).thenReturn(vdsList);
-
-        String outputStr = String.format("New Host[%s] sits on cluster[%s]", id, vdsGroupId);
-        System.out.println(outputStr);
 
         return id;
     }
@@ -275,9 +269,6 @@ public class AffinityRulesEnforcementManagerTest {
         agList.add(ag);
 
         when(_affinityGroupDao.getAll()).thenReturn(agList);
-
-        String outputStr = String.format("New AffinityGroup[%s] sits on cluster[%s]\nwith Vms[%s]", id, vdsGroupId, vmList);
-        System.out.println(outputStr);
 
         return id;
     }
