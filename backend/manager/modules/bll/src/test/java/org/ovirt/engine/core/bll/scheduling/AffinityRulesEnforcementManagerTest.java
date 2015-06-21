@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +43,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class AffinityRulesEnforcementManagerTest {
     AffinityRulesEnforcementManager arem;
