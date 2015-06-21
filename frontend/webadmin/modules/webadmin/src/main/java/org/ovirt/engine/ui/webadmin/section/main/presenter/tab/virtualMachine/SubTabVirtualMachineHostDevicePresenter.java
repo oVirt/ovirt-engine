@@ -35,7 +35,7 @@ public class SubTabVirtualMachineHostDevicePresenter extends AbstractSubTabPrese
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants, SearchableDetailModelProvider<HostDeviceView, VmListModel<Void>, VmHostDeviceListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.virtualMachineHostDeviceSubTabLabel(), 4, modelProvider);
+        return new ModelBoundTabData(applicationConstants.virtualMachineHostDeviceSubTabLabel(), 5, modelProvider);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class SubTabVirtualMachineNetworkInterfacePresenter extends AbstractSubTa
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> modelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineNetworkInterfaceSubTabLabel(), 2, modelProvider);
+        return new ModelBoundTabData(constants.virtualMachineNetworkInterfaceSubTabLabel(), 1, modelProvider);
     }
 
     @Inject

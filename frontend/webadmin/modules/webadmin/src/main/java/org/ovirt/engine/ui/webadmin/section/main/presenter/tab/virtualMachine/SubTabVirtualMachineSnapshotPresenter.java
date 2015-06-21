@@ -42,7 +42,7 @@ public class SubTabVirtualMachineSnapshotPresenter extends AbstractSubTabPresent
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> modelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineSnapshotSubTabLabel(), 4, modelProvider);
+        return new ModelBoundTabData(constants.virtualMachineSnapshotSubTabLabel(), 3, modelProvider);
     }
 
     @Inject

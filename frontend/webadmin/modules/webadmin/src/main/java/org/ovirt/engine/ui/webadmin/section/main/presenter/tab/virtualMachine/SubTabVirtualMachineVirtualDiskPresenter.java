@@ -39,7 +39,7 @@ public class SubTabVirtualMachineVirtualDiskPresenter extends AbstractSubTabPres
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<Disk, VmListModel<Void>, VmDiskListModel> modelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineVirtualDiskSubTabLabel(), 3, modelProvider);
+        return new ModelBoundTabData(constants.virtualMachineVirtualDiskSubTabLabel(), 2, modelProvider);
     }
 
     @Inject

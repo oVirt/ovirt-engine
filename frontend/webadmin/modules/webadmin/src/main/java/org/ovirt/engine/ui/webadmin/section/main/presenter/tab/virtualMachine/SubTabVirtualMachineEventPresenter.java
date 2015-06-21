@@ -40,7 +40,7 @@ public class SubTabVirtualMachineEventPresenter extends AbstractSubTabPresenter<
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<AuditLog, VmListModel<Void>, VmEventListModel> modelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineEventSubTabLabel(), 8, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.virtualMachineEventSubTabLabel(), 10, modelProvider, Align.RIGHT);
     }
 
     @Inject

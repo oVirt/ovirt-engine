@@ -56,7 +56,7 @@ public class SubTabVirtualMachineGeneralPresenter extends AbstractSubTabPresente
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
             DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineGeneralSubTabLabel(), 1, modelProvider);
+        return new ModelBoundTabData(constants.virtualMachineGeneralSubTabLabel(), 0, modelProvider);
     }
 
     @Inject
