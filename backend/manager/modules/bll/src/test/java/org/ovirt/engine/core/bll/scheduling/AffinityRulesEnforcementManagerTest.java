@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -37,12 +36,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 @Ignore
 @RunWith(MockitoJUnitRunner.class)
@@ -51,10 +52,10 @@ public class AffinityRulesEnforcementManagerTest {
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1),
-            MockConfigRule.mockConfig(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1),
-            MockConfigRule.mockConfig(ConfigValues.AffinityRulesEnforcementManagerMaximumMigrationTries, 1),
-            MockConfigRule.mockConfig(ConfigValues.AffinityRulesEnforcementManagerStandbyInterval, 1)
+            mockConfig(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1),
+            mockConfig(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1),
+            mockConfig(ConfigValues.AffinityRulesEnforcementManagerMaximumMigrationTries, 1),
+            mockConfig(ConfigValues.AffinityRulesEnforcementManagerStandbyInterval, 1)
     );
 
     @Rule
@@ -213,7 +214,7 @@ public class AffinityRulesEnforcementManagerTest {
             ag.setEntityIds(entities);
         }
 
-        Assert.assertNotNull(perCluster.chooseNextVmToMigrate());
+        assertNotNull(perCluster.chooseNextVmToMigrate());
     }
 
     private Guid addNewVm(Guid vdsToRunOn, Boolean isRunning) {
