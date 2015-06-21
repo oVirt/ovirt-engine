@@ -9,11 +9,6 @@ public class CinderDisk extends DiskImage {
         return DiskStorageType.CINDER;
     }
 
-    @Override
-    public boolean isAllowSnapshot() {
-        return true;
-    }
-
     public CinderConnectionInfo getCinderConnectionInfo() {
         return cinderConnectionInfo;
     }
