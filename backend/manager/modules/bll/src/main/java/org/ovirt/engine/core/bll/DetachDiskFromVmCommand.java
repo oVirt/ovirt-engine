@@ -87,7 +87,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         }
         getVmDeviceDao().remove(vmDevice.getId());
 
-        if (!disk.isDiskSnapshot() && DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+        if (!disk.isDiskSnapshot() && disk.getDiskStorageType().isSupportsSnapshots()) {
             // clears snapshot ID
             getImageDao().updateImageVmSnapshotId(((DiskImage) disk).getImageId(), null);
         }
