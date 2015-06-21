@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -484,7 +485,7 @@ public class AffinityRulesEnforcementPerCluster {
         lastMigrations.get(0).setMigrationReturnValue(migrationStatus);
     }
 
-    private static class AffinityGroupComparator implements Comparator<AffinityGroup> {
+    private static class AffinityGroupComparator implements Comparator<AffinityGroup>, Serializable {
         @Override
         public int compare(AffinityGroup o1, AffinityGroup o2) {
             return Integer.compare(o1.getEntityIds().size(), o2.getEntityIds().size());
