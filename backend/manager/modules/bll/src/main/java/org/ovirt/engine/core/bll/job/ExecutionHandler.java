@@ -616,7 +616,7 @@ public class ExecutionHandler {
                 Guid parentStepId = executionStep.getParentStepId();
                 if (parentStepId == null) {
                     context.setExecutionMethod(ExecutionMethod.AsJob);
-                    context.setJob(JobRepositoryFactory.getJobRepository().getJobWithSteps(step.getJobId()));
+                    context.setJob(JobRepositoryFactory.getJobRepository().getJob(step.getJobId()));
                 } else {
                     context.setExecutionMethod(ExecutionMethod.AsStep);
                     Step parentStep = JobRepositoryFactory.getJobRepository().getStep(parentStepId);

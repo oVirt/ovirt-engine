@@ -12,6 +12,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -19,8 +20,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -147,8 +146,7 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
     /**
      * The successors steps
      */
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parentStepId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parentStepId", fetch = FetchType.EAGER, orphanRemoval = true)
     @OrderBy("stepNumber")
     private List<Step> steps;
 
@@ -156,6 +154,7 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
         status = JobExecutionStatus.STARTED;
         externalSystem = new ExternalSystem();
         steps = new ArrayList<Step>();
+        id = Guid.newGuid();
     }
 
     public Step(StepEnum stepType) {

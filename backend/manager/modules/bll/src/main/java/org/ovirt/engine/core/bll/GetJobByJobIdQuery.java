@@ -15,6 +15,6 @@ public class GetJobByJobIdQuery<P extends IdQueryParameters> extends QueriesComm
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(JobRepositoryFactory.getJobRepository()
-                .getJobWithSteps(getParameters().getId()));
+                .getJob(getParameters().getId()));
     }
 }

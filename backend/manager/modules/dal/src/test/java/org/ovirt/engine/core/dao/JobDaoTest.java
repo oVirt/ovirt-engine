@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,8 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 
 public class JobDaoTest extends BaseHibernateDaoTestCase<JobDao, Job, Guid> {
@@ -27,6 +30,7 @@ public class JobDaoTest extends BaseHibernateDaoTestCase<JobDao, Job, Guid> {
     private static final int TOTAL_JOBS = 6;
 
     private JobDao dao;
+    private StepDao stepDao;
     private Job existingEntity;
     private Job newEntity;
 
@@ -35,6 +39,7 @@ public class JobDaoTest extends BaseHibernateDaoTestCase<JobDao, Job, Guid> {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getJobDao();
+        stepDao = dbFacade.getStepDao();
         existingEntity = dao.get(EXISTING_JOB_ID);
         newEntity = generateNewEntity();
     }
@@ -126,6 +131,20 @@ public class JobDaoTest extends BaseHibernateDaoTestCase<JobDao, Job, Guid> {
     @Test
     public void checkIfJobHasNoTasks() {
         assertFalse("Job has no steps for VDSM tasks", dao.checkIfJobHasTasks(NO_VDSM_TASKS_JOB_ID));
+    }
+
+    @Test
+    public void testUpdateJobStepsCompleted() {
+        Job job = generateNewEntity();
+        List<Step> steps = new ArrayList<>();
+        Step step = new Step(StepEnum.EXECUTING);
+        step.setJobId(job.getId());
+        step.setDescription("DESCRIPTION");
+        step.setCorrelationId("Some correlation ID");
+        steps.add(step);
+        job.setSteps(steps);
+        dao.update(job);
+        stepDao.updateJobStepsCompleted(job.getId(), job.getStatus(), job.getEndTime());
     }
 
     @Test

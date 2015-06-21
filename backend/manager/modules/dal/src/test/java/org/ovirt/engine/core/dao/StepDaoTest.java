@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -128,11 +129,22 @@ public class StepDaoTest extends BaseHibernateDaoTestCase<StepDao, Step, Guid> {
     protected Step modifyEntity(Step entity) {
         entity.setStatus(JobExecutionStatus.FINISHED);
         entity.setEndTime(new Date());
+        List<Step> childSteps = new ArrayList<>();
+        Step childStep = new Step();
+        childStep.setStepNumber(1);
+        childStep.setJobId(entity.getJobId());
+        childStep.setStepType(StepEnum.ADD_VM_TO_POOL);
+        childStep.setDescription("DESCRIPTION");
+        childStep.setStartTime(new Date());
+        childStep.setCorrelationId("Some correlation ID");
+        childSteps.add(childStep);
+        entity.setSteps(childSteps);
         return entity;
     }
 
     @Override
     protected void verifyEntityModification(Step result) {
         assertEquals(JobExecutionStatus.FINISHED, result.getStatus());
+        assertEquals(1, result.getSteps().size());
     }
 }

@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.ovirt.engine.core.bll.utils.TransactionManagerMock;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.Job;
@@ -24,6 +26,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
+import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 
 public class JobRepositoryTest {
 
@@ -39,12 +43,16 @@ public class JobRepositoryTest {
     @Mock
     private StepDao stepDao;
 
+    @ClassRule
+    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
+
     private JobRepository jobRepository;
 
     private Job job;
 
     @Before
     public void setUp() throws Exception {
+        ejbRule.mockResource(ContainerManagedResourceType.TRANSACTION_MANAGER, new TransactionManagerMock());
         MockitoAnnotations.initMocks(this);
         jobRepository = new JobRepositoryImpl(jobDao, jobSubjectEntityDao, stepDao);
         job = createJob();
@@ -67,6 +75,7 @@ public class JobRepositoryTest {
     }
 
     private void mockJobDao(Job job) {
+        job.setJobSubjectEntities(JOB_SUBJECT_ENTITIES_MAP);
         when(jobDao.get(any(Guid.class))).thenReturn(job);
     }
 

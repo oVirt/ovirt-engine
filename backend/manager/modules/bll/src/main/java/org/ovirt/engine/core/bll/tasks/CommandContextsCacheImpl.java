@@ -39,7 +39,7 @@ public class CommandContextsCacheImpl implements CommandContextsCache {
     private CommandContext buildCommandContext(CommandEntity cmdEntity) {
         ExecutionContext executionContext = new ExecutionContext();
         if (!Guid.isNullOrEmpty(cmdEntity.getJobId())) {
-            executionContext.setJob(JobRepositoryFactory.getJobRepository().getJobWithSteps(cmdEntity.getJobId()));
+            executionContext.setJob(JobRepositoryFactory.getJobRepository().getJob(cmdEntity.getJobId()));
         } else if (!Guid.isNullOrEmpty(cmdEntity.getStepId())) {
             executionContext.setStep(JobRepositoryFactory.getJobRepository().getStep(cmdEntity.getStepId()));
         }
