@@ -125,7 +125,7 @@ public class AffinityRulesEnforcementManagerTest {
 
             private void addInjectionsToPerClusterObjects() {
                 //Adding affinity group dao to all perCluster objects in the maps.
-                Map<VDSGroup, AffinityRulesEnforcementPerCluster> iterator  = new HashMap(arem.perClusterMap);
+                Map<VDSGroup, AffinityRulesEnforcementPerCluster> iterator  = new HashMap<>(arem.perClusterMap);
                 for(VDSGroup vdsGroup : iterator.keySet()) {
                     AffinityRulesEnforcementPerCluster perCluster = perClusterProvider.get();
                     perCluster.setClusterId(vdsGroup.getId());
