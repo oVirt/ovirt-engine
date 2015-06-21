@@ -40,26 +40,13 @@ public class RemoveCinderSnapshotCommandCallback extends AbstractCinderDiskComma
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
         super.onFailed(cmdId, childCmdIds);
-
-        // If the cinder disk has a snapshot and it is not a part of a template.
-        if ((!getDisk().getParentId().equals(Guid.Empty))
-                && (!getDisk().getParentId().equals(getDisk().getImageTemplateId()))) {
-            DiskImage previousSnapshot = getDiskImageDAO().getSnapshotById(getDisk().getParentId());
-            previousSnapshot.setActive(true);
-            getImageDao().update(previousSnapshot.getImage());
-        }
         getCommand().getParameters().setTaskGroupSuccess(false);
-        onFinish(cmdId);
+        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
         super.onSucceeded(cmdId, childCmdIds);
-        onFinish(cmdId);
-    }
-
-    private void onFinish(Guid cmdId) {
-        getCommand().endAction();
         CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
