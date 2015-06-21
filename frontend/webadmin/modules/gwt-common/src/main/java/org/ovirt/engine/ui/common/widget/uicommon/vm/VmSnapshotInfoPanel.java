@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -159,6 +161,14 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
             }
         };
         disksTable.addColumn(diskSnapshotIDColumn, constants.diskSnapshotIDDisk(), "260px"); //$NON-NLS-1$
+
+        AbstractTextColumn<Disk> diskStorageTypeColumn = new AbstractEnumColumn<Disk, DiskStorageType>() {
+            @Override
+            protected DiskStorageType getRawValue(Disk object) {
+                return object.getDiskStorageType();
+            }
+        };
+        disksTable.addColumn(diskStorageTypeColumn, constants.typeDisk(), "80px"); //$NON-NLS-1$
 
         AbstractTextColumn<DiskImage> descriptionColumn = new AbstractTextColumn<DiskImage>() {
             @Override
