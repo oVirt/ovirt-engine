@@ -53,17 +53,17 @@ public class ProviderModel extends Model {
     private final VdcActionType action;
     protected final Provider provider;
 
-    private EntityModel<String> name = new EntityModel<String>();
-    private EntityModel<String> description = new EntityModel<String>();
-    private EntityModel<String> url = new EntityModel<String>();
-    private EntityModel<Boolean> requiresAuthentication = new EntityModel<Boolean>();
-    private EntityModel<String> username = new EntityModel<String>();
-    private EntityModel<String> password = new EntityModel<String>();
-    private EntityModel<String> tenantName = new EntityModel<String>();
+    private EntityModel<String> name = new EntityModel<>();
+    private EntityModel<String> description = new EntityModel<>();
+    private EntityModel<String> url = new EntityModel<>();
+    private EntityModel<Boolean> requiresAuthentication = new EntityModel<>();
+    private EntityModel<String> username = new EntityModel<>();
+    private EntityModel<String> password = new EntityModel<>();
+    private EntityModel<String> tenantName = new EntityModel<>();
     private ListModel<ProviderType> type;
     private UICommand testCommand;
-    private EntityModel<String> testResult = new EntityModel<String>();
-    private EntityModel<String> authUrl = new EntityModel<String>();
+    private EntityModel<String> testResult = new EntityModel<>();
+    private EntityModel<String> authUrl = new EntityModel<>();
     private ListModel<StoragePool> dataCenter;
 
     private NeutronAgentModel neutronAgentModel = new NeutronAgentModel();
@@ -238,10 +238,8 @@ public class ProviderModel extends Model {
         Collections.sort(providerTypes, new Linq.ProviderTypeComparator());
         getType().setItems(providerTypes);
 
-        UICommand tempVar = UICommand.createDefaultOkUiCommand(CMD_SAVE, this);
-        getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand(CMD_CANCEL, this); //$NON-NLS-1$
-        getCommands().add(tempVar2);
+        getCommands().add(UICommand.createDefaultOkUiCommand(CMD_SAVE, this));
+        getCommands().add(UICommand.createCancelUiCommand(CMD_CANCEL, this));
         setTestCommand(new UICommand(CMD_TEST, this));
 
         setDataCenter(new ListModel<StoragePool>());
