@@ -128,7 +128,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
     @OnTimerMethodAnnotation("refresh")
     public void refresh() {
 
-        log.info("Affinity Rules Enforcement Manager interval reached.");
+        log.debug("Affinity Rules Enforcement Manager interval reached.");
 
         if (AreClusterIterator == null || !AreClusterIterator.hasNext()) {
             AreClusterIterator = perClusterMap.values().iterator();
@@ -138,16 +138,15 @@ public class AffinityRulesEnforcementManager implements BackendService {
 
         while (true) {
             if (!AreClusterIterator.hasNext()) {
-                log.warn("No ready cluster found in Affinity Rules Enforcement Manager");
                 return;
             }
 
             perCluster = AreClusterIterator.next();
-            log.info("Checking affinity rules compliance for cluster {}", perCluster.getClusterId());
+            log.debug("Checking affinity rules compliance for cluster {}", perCluster.getClusterId());
 
             if (perCluster.checkIfCurrentlyMigrating()) {
                 currentInterval = getRegularInterval();
-                log.info("Migration in progress, checking different cluster.");
+                log.debug("Migration in progress, checking different cluster.");
                 continue;
             }
 
@@ -177,7 +176,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
             perCluster = AreClusterIterator.next();
 
             if (perCluster.checkIfCurrentlyMigrating()) {
-                log.info("Migration in progress, checking different cluster.");
+                log.debug("Migration in progress, checking different cluster.");
                 continue;
             }
 

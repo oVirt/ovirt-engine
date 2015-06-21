@@ -140,7 +140,7 @@ public class AffinityRulesEnforcementPerCluster {
         // There is no need to migrate when no collision was detected
         Set<AffinityGroup> violatedAffinityGroups = checkForAffinityGroupViolations(unifiedAffinityGroups, vmToHost, FailMode.GET_ALL);
         if (violatedAffinityGroups.isEmpty()) {
-            log.info("No affinity group colision detected. Standing by for cluster {}.", clusterId);
+            log.debug("No affinity group collision detected for cluster {}. Standing by.", clusterId);
             return null;
         }
 
@@ -175,11 +175,11 @@ public class AffinityRulesEnforcementPerCluster {
                     null, new ArrayList<String>());
 
             if (canMove) {
-                log.info("VM {} is a viable candidate for solving affinity group violation situation.", candidateVm);
+                log.debug("VM {} is a viable candidate for solving affinity group violation situation.", candidateVm);
                 lastMigrations.add(new MigrationEntryDS(candidateVm, vmToHost.get(candidateVm)));
                 return vm;
             }
-            log.info("VM {} is NOT a viable candidate for solving affinity group violation situation.", candidateVm);
+            log.debug("VM {} is NOT a viable candidate for solving affinity group violation situation.", candidateVm);
 
         }
 
@@ -331,7 +331,7 @@ public class AffinityRulesEnforcementPerCluster {
 
                     // Report a violation when any host has more than one VM from this group
                     if (usedHosts.containsKey(host)) {
-                        log.warn("Negative affinity rule violated between VMs {} and {} on host {}",
+                        log.debug("Negative affinity rule violated between VMs {} and {} on host {}",
                                 vm, usedHosts.get(host), host);
                         broken.add(affinity);
 
@@ -356,7 +356,7 @@ public class AffinityRulesEnforcementPerCluster {
 
                     // Report a violation when two VMs do not share a common host
                     if (targetHost != null && !targetHost.equals(host)) {
-                        log.warn("Positive affinity rule violated by VM {} running at {} when other VM(s) are at {}",
+                        log.debug("Positive affinity rule violated by VM {} running at {} when other VM(s) are at {}",
                                 vm, host, targetHost);
                         broken.add(affinity);
 
