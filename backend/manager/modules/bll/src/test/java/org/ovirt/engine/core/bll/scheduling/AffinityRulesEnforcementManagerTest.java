@@ -55,7 +55,10 @@ public class AffinityRulesEnforcementManagerTest {
             mockConfig(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1),
             mockConfig(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1),
             mockConfig(ConfigValues.AffinityRulesEnforcementManagerMaximumMigrationTries, 1),
-            mockConfig(ConfigValues.AffinityRulesEnforcementManagerStandbyInterval, 1)
+            mockConfig(ConfigValues.AffinityRulesEnforcementManagerStandbyInterval, 1),
+            mockConfig(ConfigValues.VdsLoadBalancingIntervalInMinutes, 1),
+            mockConfig(ConfigValues.VdsHaReservationIntervalInMinutes, 1),
+            mockConfig(ConfigValues.EnableVdsLoadBalancing, true)
     );
 
     @Rule
