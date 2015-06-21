@@ -222,7 +222,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
     private void updateDiskVmSnapshotId() {
         Guid snapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
-        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+        if (disk.getDiskStorageType().isSupportsSnapshots()) {
             DiskImage diskImage = ((DiskImage) disk);
             getImageDao().updateImageVmSnapshotId(diskImage.getImageId(),
                     snapshotId);
