@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -216,7 +216,7 @@ public class AffinityRulesEnforcementManagerTest {
             ag.setEntityIds(entities);
         }
 
-        assertNotNull(perCluster.chooseNextVmToMigrate());
+        assertNull(perCluster.chooseNextVmToMigrate());
     }
 
     private Guid addNewVm(Guid vdsToRunOn, Boolean isRunning) {
