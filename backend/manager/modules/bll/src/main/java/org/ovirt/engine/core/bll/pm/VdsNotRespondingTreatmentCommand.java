@@ -121,7 +121,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
             retVal = runInternalAction(VdcActionType.SshSoftFencing,
                     getParameters(),
-                    getContext());
+                    cloneContext().withoutExecutionContext());
             if (retVal.getSucceeded()) {
                 // SSH Soft Fencing was successful and host is Up, stop non responding treatment
                 getReturnValue().setSucceeded(true);
@@ -138,7 +138,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
             retVal = runInternalAction(VdcActionType.VdsKdumpDetection,
                     getParameters(),
-                    getContext());
+                    cloneContext().withoutExecutionContext());
             if (retVal.getSucceeded()) {
                 // kdump on host detected and finished successfully, stop hard fencing execution
                 getReturnValue().setSucceeded(true);

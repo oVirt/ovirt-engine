@@ -170,7 +170,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         if (getParameters().getParentCommand() != VdcActionType.VdsNotRespondingTreatment && getVds().getStatus() == VDSStatus.Maintenance) {
             params.setChangeHostToMaintenanceOnStart(true);
         }
-        return runInternalAction(action, params, getContext());
+        return runInternalAction(action, params, cloneContext().withoutExecutionContext());
     }
 
     @Override
