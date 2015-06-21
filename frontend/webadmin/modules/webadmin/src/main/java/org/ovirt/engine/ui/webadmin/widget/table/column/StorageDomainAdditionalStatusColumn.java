@@ -39,10 +39,11 @@ public class StorageDomainAdditionalStatusColumn extends EntityAdditionalStatusC
         StorageDomain storageDomain = getEntityObject(object);
         Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
 
-        if (storageDomain.getExternalStatus() != ExternalStatus.Ok) {
-            ImageResource statusImage = getStatusImage(storageDomain.getExternalStatus());
+        ExternalStatus externalStatus = storageDomain.getExternalStatus();
+        if (externalStatus != null && externalStatus != ExternalStatus.Ok) {
+            ImageResource statusImage = getStatusImage(externalStatus);
             imagesToText.put(getImageSafeHtml(statusImage),
-                    constants.ExternalStatus() + storageDomain.getExternalStatus().name());
+                    constants.ExternalStatus() + externalStatus.name());
         }
         return imagesToText;
     }

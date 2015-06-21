@@ -39,14 +39,15 @@ public class HostAdditionalStatusColumn extends EntityAdditionalStatusColumn<VDS
     private Map<SafeHtml, String> getSafeHtmlStringMap(VDS object) {
         VDS host = getEntityObject(object);
         Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
+        ExternalStatus externalStatus = host.getExternalStatus();
 
         if (host.isUpdateAvailable()) {
             imagesToText.put(getImageSafeHtml(resources.updateAvailableImage()), constants.updateAvailable());
         }
-        if (host.getExternalStatus() != ExternalStatus.Ok) {
-            ImageResource statusImage = getStatusImage(host.getExternalStatus());
+        if (externalStatus != null && host.getExternalStatus() != ExternalStatus.Ok) {
+            ImageResource statusImage = getStatusImage(externalStatus);
             imagesToText.put(getImageSafeHtml(statusImage),
-                    constants.ExternalStatus() + host.getExternalStatus().name());
+                    constants.ExternalStatus() + externalStatus.name());
         }
         return imagesToText;
     }
