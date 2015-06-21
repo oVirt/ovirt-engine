@@ -58,7 +58,7 @@ public class RemoveCinderSnapshotCommandCallback extends AbstractCinderDiskComma
     @Override
     protected CinderDisk getDisk() {
         if (disk == null) {
-            disk = (CinderDisk) getDiskImageDAO().get(getCommand().getParameters().getDestinationImageId());
+            disk = (CinderDisk) getDiskImageDAO().getSnapshotById(getCommand().getParameters().getDestinationImageId());
         }
         return disk;
     }
