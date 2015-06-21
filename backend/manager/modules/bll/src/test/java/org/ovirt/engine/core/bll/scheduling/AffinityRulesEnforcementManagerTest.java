@@ -89,6 +89,15 @@ public class AffinityRulesEnforcementManagerTest {
     @Mock
     protected Instance<AffinityRulesEnforcementPerCluster> _perClusterProvider;
 
+    private class TestingAffinityRulesEnforcementPerCluster extends AffinityRulesEnforcementPerCluster {
+        private TestingAffinityRulesEnforcementPerCluster() {
+            this.affinityGroupDao = _affinityGroupDao;
+            this.vmDao = _vmDao;
+            this.vdsDao = _vdsDao;
+            this.vdsGroupDao = _vdsGroupDao;
+        }
+    }
+
     @Before
     public void setup() {
         initVdsGroup();
@@ -101,16 +110,7 @@ public class AffinityRulesEnforcementManagerTest {
                 this.vdsDao = _vdsDao;
                 this.vdsGroupDao = _vdsGroupDao;
 
-                doReturn(new AffinityRulesEnforcementPerCluster() {
-                    @Override
-                    public void wakeup() {
-                        this.affinityGroupDao = _affinityGroupDao;
-                        this.vmDao = _vmDao;
-                        this.vdsDao = _vdsDao;
-                        this.vdsGroupDao = _vdsGroupDao;
-                        super.wakeup();
-                    }
-                }).when(_perClusterProvider).get();
+                doReturn(new TestingAffinityRulesEnforcementPerCluster()).when(_perClusterProvider).get();
 
                 this.perClusterProvider = _perClusterProvider;
 
