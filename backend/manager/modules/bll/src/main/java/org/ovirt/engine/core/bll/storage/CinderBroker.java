@@ -112,6 +112,17 @@ public class CinderBroker extends AuditLogableBase {
         return ImageStatus.ILLEGAL;
     }
 
+    public boolean isVolumeExistsByClassificationType(CinderDisk cinderDisk) {
+        VolumeClassification cinderVolumeType = cinderDisk.getVolumeClassification();
+        if (cinderVolumeType == VolumeClassification.Volume) {
+            return isDiskExist(cinderDisk.getImageId());
+        } else if (cinderVolumeType == VolumeClassification.Snapshot) {
+            return isSnapshotExist(cinderDisk.getImageId());
+        }
+        log.error("No valid cinder volume type enum has been initialized in the Cinder disk business entity.");
+        return true;
+    }
+
     public boolean deleteVolume(final CinderDisk cinderDisk) {
         return execute(new Callable<Boolean>() {
             @Override
