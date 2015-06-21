@@ -17,7 +17,7 @@ public class RestoreFromCinderSnapshotCommandCallback extends AbstractCinderDisk
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
         super.doPolling(cmdId, childCmdIds);
-        if (!checkIfVolumeExists(getDisk())) {
+        if (!getCinderBroker().isVolumeExistsByClassificationType(getDisk())) {
             // Disk has been deleted successfully
             getCommand().setCommandStatus(CommandStatus.SUCCEEDED);
             return;
@@ -41,17 +41,6 @@ public class RestoreFromCinderSnapshotCommandCallback extends AbstractCinderDisk
         } else {
             log.error("No valid cinder volume type enum has been initialized in the Cinder disk business entity.");
             return ImageStatus.ILLEGAL;
-        }
-    }
-
-    private boolean checkIfVolumeExists(CinderDisk removedVolume) {
-        if (removedVolume.getVolumeClassification() == VolumeClassification.Volume) {
-            return getCinderBroker().isDiskExist(removedVolume.getImageId());
-        } else if (removedVolume.getVolumeClassification() == VolumeClassification.Snapshot) {
-            return getCinderBroker().isSnapshotExist(removedVolume.getImageId());
-        } else {
-            log.error("No valid cinder volume type enum has been initialized in the Cinder disk business entity.");
-            return true;
         }
     }
 
