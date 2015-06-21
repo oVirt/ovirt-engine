@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcementPerCluster;
@@ -102,7 +101,7 @@ public class AffinityRulesEnforcementManagerTest {
                 this.vdsDao = _vdsDao;
                 this.vdsGroupDao = _vdsGroupDao;
 
-                when(_perClusterProvider.get()).thenReturn(Mockito.spy(new AffinityRulesEnforcementPerCluster() {
+                doReturn(new AffinityRulesEnforcementPerCluster() {
                     @Override
                     public void wakeup() {
                         this.affinityGroupDao = _affinityGroupDao;
@@ -111,7 +110,7 @@ public class AffinityRulesEnforcementManagerTest {
                         this.vdsGroupDao = _vdsGroupDao;
                         super.wakeup();
                     }
-                }));
+                }).when(_perClusterProvider).get();
 
                 this.perClusterProvider = _perClusterProvider;
 
