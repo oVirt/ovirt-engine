@@ -29,9 +29,8 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import javax.enterprise.inject.Instance;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertNull;
@@ -125,11 +124,10 @@ public class AffinityRulesEnforcementManagerTest {
 
             private void addInjectionsToPerClusterObjects() {
                 //Adding affinity group dao to all perCluster objects in the maps.
-                Map<VDSGroup, AffinityRulesEnforcementPerCluster> iterator  = new HashMap<>(arem.perClusterMap);
-                for(VDSGroup vdsGroup : iterator.keySet()) {
+                for(Entry<VDSGroup, AffinityRulesEnforcementPerCluster> entry: arem.perClusterMap.entrySet()) {
                     AffinityRulesEnforcementPerCluster perCluster = perClusterProvider.get();
-                    perCluster.setClusterId(vdsGroup.getId());
-                    arem.perClusterMap.put(vdsGroup, perCluster);
+                    perCluster.setClusterId(entry.getKey().getId());
+                    entry.setValue(perCluster);
                 }
             }
 
