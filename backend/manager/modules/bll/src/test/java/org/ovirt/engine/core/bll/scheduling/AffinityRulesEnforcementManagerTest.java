@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -162,8 +162,8 @@ public class AffinityRulesEnforcementManagerTest {
                 anyString(),
                 any(Class[].class),
                 any(Object[].class),
-                anyInt(),
-                anyInt(),
+                anyLong(),
+                anyLong(),
                 any(TimeUnit.class)
         )).thenReturn("jobId");
     }
