@@ -45,7 +45,7 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AffinityRulesEnforcementManagerTest {
-    AffinityRulesEnforcementManager arem;
+    private AffinityRulesEnforcementManager arem;
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
@@ -62,30 +62,30 @@ public class AffinityRulesEnforcementManagerTest {
     public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
-    AffinityRulesEnforcementPerCluster perCluster;
+    private AffinityRulesEnforcementPerCluster perCluster;
 
     @Mock
-    protected VdsGroupDAO _vdsGroupDao; //Clusters
+    private VdsGroupDAO _vdsGroupDao; //Clusters
 
     @Mock
-    protected AffinityGroupDao _affinityGroupDao;
+    private AffinityGroupDao _affinityGroupDao;
 
-    protected VDSGroup cluster;
-
-    @Mock
-    public VdsDAO _vdsDao;
+    private VDSGroup cluster;
 
     @Mock
-    VmDAO _vmDao;
+    private VdsDAO _vdsDao;
 
     @Mock
-    AuditLogDirector _auditLogDirector;
+    private VmDAO _vmDao;
+
+    @Mock
+    private AuditLogDirector _auditLogDirector;
 
     @Mock
     private SchedulerUtilQuartzImpl scheduler;
 
     @Mock
-    protected Instance<AffinityRulesEnforcementPerCluster> _perClusterProvider;
+    private Instance<AffinityRulesEnforcementPerCluster> _perClusterProvider;
 
     private class TestingAffinityRulesEnforcementPerCluster extends AffinityRulesEnforcementPerCluster {
         private TestingAffinityRulesEnforcementPerCluster() {
