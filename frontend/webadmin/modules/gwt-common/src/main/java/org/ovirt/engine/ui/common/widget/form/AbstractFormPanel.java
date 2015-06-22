@@ -102,7 +102,9 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
         labelColumn.add(itemLabel);
         itemRow.add(labelColumn);
         Column itemColumn = findColumn(item.getRow(), item.getColumn());
-        itemColumn.add(itemRow);
+        if (itemColumn != null) {
+            itemColumn.add(itemRow);
+        }
 
         // Update the item
         updateFormItem(item, valueWidth);
@@ -136,17 +138,20 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
         valueWidget.setStyleName(style.formPanelValue());
         boolean visible = item.getIsAvailable();
 
-        IsWidget itemCell = findColumn(item.getRow(), item.getColumn()).getWidget(0);
-        if (itemCell instanceof Row) {
-            Row itemCellRow = (Row)itemCell;
-            // Update item visibility
-            itemCellRow.setVisible(visible);
-            if(itemCellRow.getWidgetCount() > 1) {
-                itemCellRow.remove(1); //Clear out old value.
+        Column widgetColumn = findColumn(item.getRow(), item.getColumn());
+        if (widgetColumn != null) {
+            IsWidget itemCell = widgetColumn.getWidget(0);
+            if (itemCell instanceof Row) {
+                Row itemCellRow = (Row)itemCell;
+                // Update item visibility
+                itemCellRow.setVisible(visible);
+                if(itemCellRow.getWidgetCount() > 1) {
+                    itemCellRow.remove(1); //Clear out old value.
+                }
+                Column valueColumn = new Column(COL_PREFIX + valueWidth);
+                valueColumn.add(valueWidget);
+                itemCellRow.add(valueColumn);
             }
-            Column valueColumn = new Column(COL_PREFIX + valueWidth);
-            valueColumn.add(valueWidget);
-            itemCellRow.add(valueColumn);
         }
     }
 
