@@ -62,11 +62,23 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
                 lockVmSnapshotsWithWait(vm);
             }
         }
-        getCinderBroker().deleteVolumeByClassificationType(lastCinderVolume);
+        deleteVolumeFromCinder(lastCinderVolume);
         getParameters().setRemovedVolume(lastCinderVolume);
         persistCommand(getParameters().getParentCommand(), true);
         getReturnValue().setActionReturnValue(disk.getId());
         setSucceeded(true);
+    }
+
+    private void deleteVolumeFromCinder(CinderDisk lastCinderVolume) {
+        try {
+            getCinderBroker().deleteVolumeByClassificationType(lastCinderVolume);
+        } catch (Exception e) {
+            if (!getParameters().isFaultTolerant()) {
+                throw e;
+            } else {
+                log.error("Failed to remove volume from Cinder provider. continue to delete the disk.");
+            }
+        }
     }
 
     private void lockDiskIfNecessary() {
