@@ -69,6 +69,11 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> impleme
         return false;
     }
 
+    @Override
+    public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent,
+                               Boolean value, NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
+        onBrowserEvent(context, parent, value, null, event, valueUpdater);
+    }
 
     @Override
     public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent,
