@@ -216,7 +216,7 @@ public class DiskGeneralModel extends EntityModel<Disk>
     {
         Disk disk = getEntity();
 
-        setImage(disk.getDiskStorageType() == DiskStorageType.IMAGE);
+        setImage(disk.getDiskStorageType().isInternal());
         setLun(disk.getDiskStorageType() == DiskStorageType.LUN);
 
         setAlias(disk.getDiskAlias());
