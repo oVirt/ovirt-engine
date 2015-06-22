@@ -3486,6 +3486,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Source")
     String importSource();
 
+    @DefaultStringValue("Custom")
+    String customExternalProvider();
+
     @DefaultStringValue("Proxy Host")
     String proxyHost();
 

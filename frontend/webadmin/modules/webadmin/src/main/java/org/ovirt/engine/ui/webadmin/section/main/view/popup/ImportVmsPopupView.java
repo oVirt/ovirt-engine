@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
@@ -53,17 +55,17 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     }
 
     @UiField(provided = true)
-    @Path(value = "dataCenters.selectedItem")
+    @Path("dataCenters.selectedItem")
     @WithElementId
     ListModelListBoxEditor<StoragePool> dataCentersEditor;
 
     @UiField(provided = true)
-    @Path(value = "importSources.selectedItem")
+    @Path("importSources.selectedItem")
     @WithElementId
     ListModelListBoxEditor<ImportSource> importSourcesEditor;
 
     @UiField(provided = true)
-    @Path(value = "proxyHosts.selectedItem")
+    @Path("proxyHosts.selectedItem")
     @WithElementId
     ListModelListBoxEditor<VDS> proxyHostsEditor;
 
@@ -86,33 +88,38 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @UiField
     UiCommandButton loadVmsFromVmwareButton;
 
+    @UiField(provided = true)
+    @Path("vmwareProviders.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Provider<VmwareVmProviderProperties>> vmwareProvidersEditor;
+
     @UiField
-    @Path(value = "vCenter.entity")
+    @Path("vCenter.entity")
     @WithElementId("vCenter")
     StringEntityModelTextBoxEditor vCenterEditor;
 
     @UiField
-    @Path(value = "esx.entity")
+    @Path("esx.entity")
     @WithElementId("esx")
     StringEntityModelTextBoxEditor esxEditor;
 
     @UiField
-    @Path(value = "vmwareDatacenter.entity")
+    @Path("vmwareDatacenter.entity")
     @WithElementId("vmwareDatacenter")
     StringEntityModelTextBoxEditor vmwareDatacenterEditor;
 
     @UiField
-    @Path(value = "verify.entity")
+    @Path("verify.entity")
     @WithElementId("verify")
     EntityModelCheckBoxEditor verifyEditor;
 
     @UiField
-    @Path(value = "username.entity")
+    @Path("username.entity")
     @WithElementId("username")
     StringEntityModelTextBoxEditor usernameEditor;
 
     @UiField
-    @Path(value = "password.entity")
+    @Path("password.entity")
     @WithElementId("password")
     StringEntityModelPasswordBoxEditor passwordEditor;
 
@@ -145,7 +152,6 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         // Initialize Editors
         dataCentersEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
         importSourcesEditor = new ListModelListBoxEditor<ImportSource>(new NullSafeRenderer<ImportSource>() {
-
             @Override
             protected String renderNullSafe(ImportSource is) {
                 return new EnumRenderer<ImportSource>().render(is);
@@ -156,6 +162,12 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
             public String render(VDS object) {
                 return object != null ? object.getName() :
                     ConstantsManager.getInstance().getConstants().anyHostInDataCenter();
+            }
+        });
+        vmwareProvidersEditor = new ListModelListBoxEditor<>(new AbstractRenderer<Provider<VmwareVmProviderProperties>>() {
+            @Override
+            public String render(Provider<VmwareVmProviderProperties> provider) {
+                return provider == null ? constants.customExternalProvider() : provider.getName();
             }
         });
 
@@ -171,6 +183,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
         dataCentersEditor.setLabel(constants.dataCenter());
         importSourcesEditor.setLabel(constants.importSource());
+        vmwareProvidersEditor.setLabel(constants.externalProviderLabel());
 
         exportDomainName.setLabel(constants.nameLabel());
         exportDomainPath.setLabel(constants.pathStorageGeneral());
@@ -247,6 +260,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     private void updatePanelsVisibility(ImportVmsModel model) {
         exportPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.EXPORT_DOMAIN);
         vmwarePanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.VMWARE);
+        vmwareProvidersEditor.setVisible(model.getImportSources().getSelectedItem() == ImportSource.VMWARE);
     }
 
     @Override

@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -44,7 +47,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
@@ -52,6 +54,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private ListModel<ImportSource> importSources;
     private ListModel<EntityModel<VM>> externalVmModels;
     private ListModel<EntityModel<VM>> importedVmModels;
+    private ListModel<Provider<VmwareVmProviderProperties>> vmwareProviders;
 
     private EntityModel<String> vCenter;
     private EntityModel<String> esx;
@@ -69,8 +72,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
 
-    private Provider<ImportVmFromExternalProviderModel> importFromExternalProviderModelProvider;
-    private Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider;
+    private com.google.inject.Provider<ImportVmFromExternalProviderModel> importFromExternalProviderModelProvider;
+    private com.google.inject.Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider;
 
     private ImportVmFromExternalProviderModel importFromExternalProviderModel;
     private ImportVmFromExportDomainModel importFromExportDomainModel;
@@ -79,8 +82,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private EntityModel<Boolean> importSourceValid;
 
     @Inject
-    public ImportVmsModel(Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider,
-            Provider<ImportVmFromExternalProviderModel> importFromExternalProviderModelProvider) {
+    public ImportVmsModel(
+            com.google.inject.Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider,
+            com.google.inject.Provider<ImportVmFromExternalProviderModel> importFromExternalProviderModelProvider) {
         this.importFromExportDomainModelProvider = importFromExportDomainModelProvider;
         this.importFromExternalProviderModelProvider = importFromExternalProviderModelProvider;
 
@@ -89,6 +93,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setImportSources(new ListModel<ImportSource>());
         setExternalVmModels(new ListModel<EntityModel<VM>>());
         setImportedVmModels(new ListModel<EntityModel<VM>>());
+        setVmwareProviders(new ListModel<Provider<VmwareVmProviderProperties>>());
 
         // VMWARE
         setProxyHosts(new ListModel<VDS>());
@@ -101,6 +106,12 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
         setImportSourceValid(new EntityModel<Boolean>(true));
 
+        getVmwareProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                providerChanged();
+            }
+        });
         initImportSources();
     }
 
@@ -194,6 +205,43 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         return null;
     }
 
+    private void providerChanged() {
+        clearValidations();
+        switch(importSources.getSelectedItem()) {
+        case VMWARE:
+            vmwareProviderChanged();
+            break;
+        default:
+        }
+    }
+
+    private void vmwareProviderChanged() {
+        Provider<VmwareVmProviderProperties> provider = getVmwareProviders().getSelectedItem();
+        if (provider == null) {
+            provider = new Provider<>();
+            provider.setAdditionalProperties(new VmwareVmProviderProperties());
+        }
+
+        getUsername().setEntity(provider.getUsername());
+        getPassword().setEntity(provider.getPassword());
+
+        VmwareVmProviderProperties properties = (VmwareVmProviderProperties) provider.getAdditionalProperties();
+        getvCenter().setEntity(properties.getvCenter());
+        getEsx().setEntity(properties.getEsx());
+        getVmwareDatacenter().setEntity(properties.getDataCenter());
+        getVerify().setEntity(properties.isVerifySSL());
+        if (properties.getProxyHostId() == null) {
+            getProxyHosts().setSelectedItem(null);
+        } else {
+            for (VDS host : getProxyHosts().getItems()) {
+                if (host != null && host.getId().equals(properties.getProxyHostId())) {
+                    getProxyHosts().setSelectedItem(host);
+                    break;
+                }
+            }
+        }
+    }
+
     private void initDataCenters() {
         getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
@@ -255,19 +303,45 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private void initImportSources() {
         importSources.setItems(Arrays.asList(ImportSource.values()));
-        importSources.setSelectedItem(ImportSource.EXPORT_DOMAIN);
         importSources.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 clearVms();
                 clearValidations();
+                loadProviders();
             }
         });
+        importSources.setSelectedItem(ImportSource.EXPORT_DOMAIN);
     }
 
     private void clearVms() {
         importedVmModels.setItems(null);
         externalVmModels.setItems(null);
+    }
+
+    private void loadVmwareProviders() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                List<Provider<VmwareVmProviderProperties>> providers = new ArrayList<>();
+                for (Provider<VmwareVmProviderProperties> provider : (List<Provider<VmwareVmProviderProperties>>) returnValue) {
+                    if (getDataCenters().getSelectedItem().getId().equals(provider.getAdditionalProperties().getStoragePoolId())) {
+                        providers.add(provider);
+                    }
+                }
+                providers.add(0, null);
+                getVmwareProviders().setItems(providers);
+            }
+        }), ProviderType.VMWARE);
+    }
+
+    private void loadProviders() {
+        switch(importSources.getSelectedItem()) {
+        case VMWARE:
+            loadVmwareProviders();
+            break;
+        default:
+        }
     }
 
     @Override
@@ -551,5 +625,13 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public void setvCenter(EntityModel<String> vCenter) {
         this.vCenter = vCenter;
+    }
+
+    public ListModel<Provider<VmwareVmProviderProperties>> getVmwareProviders() {
+        return vmwareProviders;
+    }
+
+    public void setVmwareProviders(ListModel<Provider<VmwareVmProviderProperties>> vmwareProviders) {
+        this.vmwareProviders = vmwareProviders;
     }
 }

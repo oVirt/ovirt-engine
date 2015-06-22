@@ -42,6 +42,7 @@
 			margin-right: 20px;
             float: right;
         }
+
 	</ui:style>
 
 	<d:SimpleDialogPanel width="800px" height="630px">
@@ -49,7 +50,10 @@
 			<g:VerticalPanel width="100%">
 				<g:FlowPanel addStyleNames="{style.generalSectionStyle}">
 					<e:ListModelListBoxEditor ui:field="dataCentersEditor" addStyleNames="{style.sourcePropertyStyle}" />
-					<e:ListModelListBoxEditor ui:field="importSourcesEditor" addStyleNames="{style.sourcePropertyStyle}" />
+					<g:HorizontalPanel>
+						<e:ListModelListBoxEditor  ui:field="importSourcesEditor" addStyleNames="{style.sourcePropertyStyle}" />
+						<e:ListModelListBoxEditor ui:field="vmwareProvidersEditor" addStyleNames="{style.sourcePropertyStyle}" />
+					</g:HorizontalPanel>
 				</g:FlowPanel>
 
 				<g:FlowPanel ui:field="exportPanel" visible="false" addStyleNames="{style.exportSectionStyle}">
