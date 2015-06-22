@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.arem;
 
+import static java.util.Collections.min;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,9 +81,9 @@ public class AffinityRulesEnforcer {
         }
 
         // Find a VM that is breaking the affinityGroup and can be theoretically migrated
-        // - start with smaller Affinity Groups
+        // - start with bigger Affinity Groups
         List<AffinityGroup> affGroupsBySize = new ArrayList<>(violatedAffinityGroups);
-        Collections.sort(affGroupsBySize, new AffinityGroupComparator());
+        Collections.sort(affGroupsBySize, Collections.reverseOrder(new AffinityGroupComparator()));
 
         for (AffinityGroup affinityGroup : affGroupsBySize) {
             final List<VM> candidateVms;
@@ -304,8 +306,19 @@ public class AffinityRulesEnforcer {
 
     private static class AffinityGroupComparator implements Comparator<AffinityGroup>, Serializable {
         @Override
-        public int compare(AffinityGroup o1, AffinityGroup o2) {
-            return Integer.compare(o1.getEntityIds().size(), o2.getEntityIds().size());
+        public int compare(AffinityGroup thisAffinityGroup, AffinityGroup thatAffinityGroup) {
+            final List<Guid> thisEntityIds = thisAffinityGroup.getEntityIds();
+            final List<Guid> otherEntityIds = thatAffinityGroup.getEntityIds();
+
+            // Avoid NoSuchElementExceptions from Collections.min()
+            if (thisEntityIds.isEmpty() && otherEntityIds.isEmpty()) {
+                return 0;
+            }
+
+            int diff = Integer.compare(thisEntityIds.size(), otherEntityIds.size());
+
+            // Merged affinity groups do not have an ID, so use the VM with the tiniest ID instead
+            return diff != 0 ? diff : min(thisEntityIds).compareTo(min(otherEntityIds));
         }
     }
 }
