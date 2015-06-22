@@ -6,7 +6,6 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -34,12 +33,12 @@ public class RemoveCinderDiskCommandCallback extends AbstractCinderDiskCommandCa
     }
 
     private ImageStatus checkImageStatus(CinderDisk removedVolume) {
-        if (removedVolume.getVolumeClassification() == VolumeClassification.Volume) {
-            return getCinderBroker().getDiskStatus(removedVolume.getImageId());
-        } else if (removedVolume.getVolumeClassification() == VolumeClassification.Snapshot) {
-            return getCinderBroker().getSnapshotStatus(removedVolume.getImageId());
-        } else {
-            log.error("No valid cinder volume type enum has been initialized in the Cinder disk business entity.");
+        try {
+            return getCinderBroker().getImageStatusByClassificationType(removedVolume);
+        } catch (Exception e) {
+            log.error("An exception occured while verifying status for volume id '{0}' with the following exception: {1}.",
+                    removedVolume.getImageId(),
+                    e);
             return ImageStatus.ILLEGAL;
         }
     }
