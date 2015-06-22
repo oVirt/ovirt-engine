@@ -42,7 +42,7 @@ public class ManageDomainsExecutor {
                 (cmdArgs.size() < 1)
             ) {
                 System.out.format(
-                    "usage: %s",
+                    "Usage: %s",
                     parser.getUsage().replace("@PROGRAM_NAME@", PROGRAM_NAME)
                 );
                 throw new ManageDomainsResult(ManageDomainsResultEnum.OK);
@@ -72,7 +72,7 @@ public class ManageDomainsExecutor {
             }
             if ((Boolean)argMap.get("help")) {
                 System.out.format(
-                    "usage: %s",
+                    "Usage: %s",
                     parser.getUsage().replace("@PROGRAM_NAME@", PROGRAM_NAME)
                 );
                 throw new ManageDomainsResult(ManageDomainsResultEnum.OK);

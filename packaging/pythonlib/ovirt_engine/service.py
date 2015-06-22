@@ -456,7 +456,7 @@ class Daemon(base.Base):
         self.logger.debug('startup args=%s', sys.argv)
 
         parser = optparse.OptionParser(
-            usage=_('usage: %prog [options] start'),
+            usage=_('Usage: %prog [options] start'),
         )
         parser.add_option(
             '-d', '--debug',

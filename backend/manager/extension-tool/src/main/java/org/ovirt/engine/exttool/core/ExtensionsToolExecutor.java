@@ -48,7 +48,7 @@ public class ExtensionsToolExecutor {
             Map<String, ModuleService> moduleServices = loadModules(ModuleService.class);
             if((Boolean)argMap.get("help") || (cmdArgs.size() > 0 && cmdArgs.get(0).equals("help"))) {
                 System.out.format(
-                    "usage: %s",
+                    "Usage: %s",
                     parser.getUsage()
                         .replace("@PROGRAM_NAME@", PROGRAM_NAME)
                         .replace("@MODULE_LIST@", getModules(moduleServices)

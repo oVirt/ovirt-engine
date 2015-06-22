@@ -125,7 +125,7 @@ public class LoggerServiceImpl implements ModuleService {
 
     private void printUsage(ArgumentsParser parser) {
         System.out.format(
-            "usage: %s",
+            "Usage: %s",
             parser.getUsage()
                 .replace("@PROGRAM_NAME@", (String) context.get(PROGRAM_NAME))
                 .replace("@ACTION_LIST@", StringUtils.join(actions.keySet(), ", "))
