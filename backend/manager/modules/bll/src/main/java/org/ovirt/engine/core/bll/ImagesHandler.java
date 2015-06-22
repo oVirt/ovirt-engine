@@ -528,7 +528,7 @@ public final class ImagesHandler {
 
     public static void fillImagesBySnapshots(VM vm) {
         for (Disk disk : vm.getDiskMap().values()) {
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            if (disk.getDiskStorageType().isInternal()) {
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.getSnapshots().addAll(getAllImageSnapshots(diskImage.getImageId()));
             }
