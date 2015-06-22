@@ -19,6 +19,7 @@ import org.ovirt.engine.api.model.HardwareInformation;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostDevicePassthrough;
 import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.HostType;
@@ -309,6 +310,14 @@ public class HostMapper {
         }
 
         model.setUpdateAvailable(entity.isUpdateAvailable());
+
+        HostDevicePassthrough devicePassthrough = model.getDevicePassthrough();
+        if (devicePassthrough == null) {
+            devicePassthrough = new HostDevicePassthrough();
+            model.setDevicePassthrough(devicePassthrough);
+        }
+        devicePassthrough.setEnabled(entity.isHostDevicePassthroughEnabled());
+
         return model;
     }
 

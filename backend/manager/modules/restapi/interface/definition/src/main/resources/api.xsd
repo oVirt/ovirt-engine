@@ -2046,10 +2046,19 @@
           <xs:element ref="katello_errata"  minOccurs="0" maxOccurs="1"/>
           <xs:element ref="external_host_provider" minOccurs="0" maxOccurs="1"/>
           <xs:element name="update_available" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="device_passthrough" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+  <xs:complexType name="HostDevicePassthrough">
+    <xs:sequence>
+      <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="device_passthrough" type="HostDevicePassthrough" />
 
   <!-- This element is deprecated because it uses a mix of attributes and text content, which makes it
        impossible to send the values independently. Use the the "spm" element instead. -->

@@ -251,4 +251,15 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertEquals(hostedEngine.isGlobalMaintenance(), Boolean.TRUE);
         assertEquals(hostedEngine.isLocalMaintenance(), Boolean.FALSE);
     }
+
+    @Test
+    public void testDevicePassthroughMapping() {
+        VDS vds = new VDS();
+        vds.setId(Guid.Empty);
+        vds.setHostDevicePassthroughEnabled(true);
+        Host host = HostMapper.map(vds, (Host) null);
+        assertNotNull(host);
+        assertNotNull(host.getDevicePassthrough());
+        assertTrue(host.getDevicePassthrough().isEnabled());
+    }
 }
