@@ -24,6 +24,8 @@ load_config() {
 		[ -r "${f}" ] && . "${f}"
 	done
 
+	[ -n "${OVIRT_JBOSS_HOME}" ] && JBOSS_HOME="${OVIRT_JBOSS_HOME}"
+
 	JAVA_HOME="$("${ENGINE_USR}/bin/java-home")" || die "Cannot set JAVA_HOME"
 	export JAVA_HOME
 
