@@ -695,7 +695,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
         List<DiskImage> res = new ArrayList<>();
         for (Disk disk : disks) {
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            if (disk.getDiskStorageType().isInternal()) {
                 res.add((DiskImage) disk);
             }
         }

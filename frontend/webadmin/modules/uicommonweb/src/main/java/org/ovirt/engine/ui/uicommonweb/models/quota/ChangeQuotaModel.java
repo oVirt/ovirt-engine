@@ -11,7 +11,6 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -102,7 +101,7 @@ public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
                 && systemTreeSelectedItem.getType() == SystemTreeItemType.DataCenter) {
             if (selectedDisks != null && !selectedDisks.isEmpty()) {
                 for (Disk diskItem : selectedDisks) {
-                    if (diskItem.getDiskStorageType() != DiskStorageType.IMAGE ||
+                    if (!diskItem.getDiskStorageType().isInternal() ||
                             !(diskItem instanceof DiskImageBase) ||
                             ((DiskImageBase) diskItem).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED) {
                         isExecutionAllowed = false;
@@ -120,7 +119,7 @@ public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
             boolean hasDisksWithQuotaMode = false;
             if (allDisks != null && !allDisks.isEmpty()) {
                 for (Disk diskItem : allDisks) {
-                    if (diskItem.getDiskStorageType() == DiskStorageType.IMAGE &&
+                    if (diskItem.getDiskStorageType().isInternal() &&
                             (diskItem instanceof DiskImageBase) &&
                             ((DiskImageBase) diskItem).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
                         hasDisksWithQuotaMode = true;
