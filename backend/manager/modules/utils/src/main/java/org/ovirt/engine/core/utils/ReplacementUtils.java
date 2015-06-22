@@ -13,6 +13,11 @@ public class ReplacementUtils {
 
     protected static final int DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS = 5;
     protected static final String DEFAULT_SEPARATOR = "," + System.lineSeparator();
+    private static final String COUNTER_SUFFIX = "_COUNTER";
+    private static final String SET_VARIABLE_VALUE_FORMAT = "${0} {1}";
+
+    private ReplacementUtils() {
+    }
 
     /**
      * Replace a property defined within a message with a bounded number of elements.<br>
@@ -40,7 +45,7 @@ public class ReplacementUtils {
         Validate.isTrue(StringUtils.isNotEmpty(separator));
 
         int size = Math.min(maxNumberOfPrintedItems, items.size());
-        List<String> printedItems = new ArrayList<String>(size);
+        List<String> printedItems = new ArrayList<>(size);
 
         for (int i = 0; i < size; i++) {
             printedItems.add(String.format("\t%s", String.valueOf(items.get(i))));
@@ -50,13 +55,16 @@ public class ReplacementUtils {
             printedItems.add("\t...");
         }
 
-        ArrayList<String> replacements = new ArrayList<String>();
-        replacements.add(MessageFormat.format("${0} {1}", propertyName, StringUtils.join(printedItems, separator)));
-        replacements.add(MessageFormat.format("${0}_COUNTER {1}", propertyName, items.size()));
+        ArrayList<String> replacements = new ArrayList<>();
+        replacements.add(createSetVariableString(propertyName, StringUtils.join(printedItems, separator)));
+        replacements.add(createSetVariableString(propertyName + COUNTER_SUFFIX, items.size()));
 
         return replacements;
     }
 
+    public static String createSetVariableString(String propertyName, Object value) {
+        return MessageFormat.format(SET_VARIABLE_VALUE_FORMAT, propertyName, value);
+    }
 
     /**
      * Replace a property defined within a message with a bounded number of elements.<br>
@@ -99,7 +107,7 @@ public class ReplacementUtils {
      *         </ul>
      */
     public static <T extends Nameable> Collection<String> replaceWithNameable(String propertyName, List<T> items) {
-        List<Object> printedItems = new ArrayList<Object>(items.size());
+        List<Object> printedItems = new ArrayList<>(items.size());
 
         for (Nameable itemName : items) {
             printedItems.add(itemName.getName());
