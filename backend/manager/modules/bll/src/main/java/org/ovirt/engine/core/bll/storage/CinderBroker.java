@@ -99,6 +99,19 @@ public class CinderBroker extends AuditLogableBase {
         return cinderVolumeType;
     }
 
+    public ImageStatus getImageStatusByClassificationType(CinderDisk cinderDisk) {
+        VolumeClassification cinderVolumeType = cinderDisk.getVolumeClassification();
+        if (cinderVolumeType == VolumeClassification.Volume) {
+            return getDiskStatus(cinderDisk.getImageId());
+        } else if (cinderVolumeType == VolumeClassification.Snapshot) {
+            return getSnapshotStatus(cinderDisk.getImageId());
+        }
+        log.error("Error, could not determine Cinder entity {} with id {} from Cinder provider.",
+                cinderDisk.getDiskAlias(),
+                cinderDisk.getImageId());
+        return ImageStatus.ILLEGAL;
+    }
+
     public boolean deleteVolume(final CinderDisk cinderDisk) {
         return execute(new Callable<Boolean>() {
             @Override
