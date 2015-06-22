@@ -16,7 +16,7 @@ public class RemoveCinderDiskCommandCallback extends AbstractCinderDiskCommandCa
         super.doPolling(cmdId, childCmdIds);
         CinderDisk removedVolume = getCommand().getParameters().getRemovedVolume();
 
-        if (getCinderBroker().isVolumeExistsByClassificationType(removedVolume)) {
+        if (!getCinderBroker().isVolumeExistsByClassificationType(removedVolume)) {
             // Disk has been deleted successfully
             getCommand().setCommandStatus(CommandStatus.SUCCEEDED);
             return;
