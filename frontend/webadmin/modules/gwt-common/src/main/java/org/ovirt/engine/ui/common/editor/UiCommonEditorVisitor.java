@@ -209,11 +209,12 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
                     // Order is important
                     parentModel.setSelectedItem(value);
                 }
-                listEditor.setValue(value);
-
+                if (items.contains(value)) {
+                    listEditor.setValue(value);
+                }
             }
-
             listEditor.setAcceptableValues(items);
+
         }
     }
 

@@ -943,10 +943,12 @@ public abstract class HostModel extends Model implements HasValidatedTabs
             getProtocol().setEntity(jsonSupported);
             getProtocol().setIsChangeable(jsonSupported);
             //Match the appropriate selected data center to the selected cluster, don't fire update events.
-            for (StoragePool datacenter : getDataCenter().getItems()) {
-                if (datacenter.getId().equals(cluster.getStoragePoolId())) {
-                    getDataCenter().setSelectedItem(datacenter, false);
-                    break;
+            if (getDataCenter() != null && getDataCenter().getItems() != null) {
+                for (StoragePool datacenter : getDataCenter().getItems()) {
+                    if (datacenter.getId().equals(cluster.getStoragePoolId())) {
+                        getDataCenter().setSelectedItem(datacenter, false);
+                        break;
+                    }
                 }
             }
         }
