@@ -79,6 +79,7 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
     MemorySizeTextBoxLabel<Float> maxSchedulingMemory = new MemorySizeTextBoxLabel<Float>();
 
     BooleanTextBoxLabel liveSnapshotSupport = new BooleanTextBoxLabel(constants.active(), constants.inactive());
+    BooleanTextBoxLabel hostDevicePassthroughSupport = new BooleanTextBoxLabel(constants.enabled(), constants.disabled());
 
     @Ignore
     DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Integer>>, Integer> physicalMemoryDetails =
@@ -153,13 +154,13 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
         formBuilder.addFormItem(new FormItem(constants.physMemHostGeneral(), physicalMemoryDetails, 1).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.swapSizeHostGeneral(), swapSizeDetails, 1).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.sharedMemHostGeneral(), sharedMemory, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.hostDevicePassthroughHostGeneral(), hostDevicePassthroughSupport, 1).withAutoPlacement());
 
         formBuilder.addFormItem(new FormItem(constants.maxSchedulingMemory(), maxSchedulingMemory, 0, 2, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.selinuxModeGeneral(), selinuxEnforceMode, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.liveSnapshotSupportHostGeneral(), liveSnapshotSupport, 2).withAutoPlacement());
-
     }
 
     @Override

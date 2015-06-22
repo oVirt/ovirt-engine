@@ -4489,4 +4489,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Gluster CLI based snapshot scheduling is enabled. \nIt would be disabled once volume snapshots scheduled from UI.")
     String glusterCliSchedulingEnabled();
+
+    @DefaultStringValue("Enabled")
+    String enabled();
+
+    @DefaultStringValue("Disabled")
+    String disabled();
+
+    @DefaultStringValue("Device Passthrough")
+    String hostDevicePassthroughHostGeneral();
 }

@@ -829,6 +829,19 @@ public class HostGeneralModel extends EntityModel<VDS>
         }
     }
 
+    private boolean hostDevicePassthroughSupport;
+
+    public boolean isHostDevicePassthroughSupport() {
+        return hostDevicePassthroughSupport;
+    }
+
+    public void setHostDevicePassthroughSupport(boolean value) {
+        if (hostDevicePassthroughSupport != value) {
+            hostDevicePassthroughSupport = value;
+            onPropertyChanged(new PropertyChangedEventArgs("hostDevicePassthroughSupport")); //$NON-NLS-1$
+        }
+    }
+
     static
     {
         requestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class); //$NON-NLS-1$
@@ -938,6 +951,7 @@ public class HostGeneralModel extends EntityModel<VDS>
         setSelinuxEnforceMode(EnumTranslator.getInstance().translate(vds.getSELinuxEnforceMode()));
 
         setLiveSnapshotSupport(vds.getLiveSnapshotSupport());
+        setHostDevicePassthroughSupport(vds.isHostDevicePassthroughEnabled());
 
         if (!vds.getHighlyAvailableIsConfigured()) {
             setHostedEngineHaIsConfigured(false);
