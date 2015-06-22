@@ -278,7 +278,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private double getRequestDiskSpace() {
-        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
+        if (getParameters().getDiskInfo().getDiskStorageType().isInternal()) {
             return getDiskImageInfo().getSizeInGigabytes();
         }
         return 0;
@@ -517,6 +517,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setPlugDiskToVm(getParameters().getPlugDiskToVm());
         parameters.setVmId(getParameters().getVmId());
         parameters.setStorageDomainId(getParameters().getStorageDomainId());
+        parameters.setQuotaId(getQuotaId());
         if (getVm() != null) {
             parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
         }
@@ -643,8 +644,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private Guid getQuotaId() {
-        if (getParameters().getDiskInfo() != null
-                && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
+        if (getParameters().getDiskInfo() != null && getParameters().getDiskInfo().getDiskStorageType().isInternal()) {
             Guid quotaId = ((DiskImage) getParameters().getDiskInfo()).getQuotaId();
             if (!Guid.Empty.equals(quotaId)) {
                 return quotaId;
@@ -679,7 +679,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
 
-        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
+        if (getParameters().getDiskInfo().getDiskStorageType().isInternal()) {
             list.add(new QuotaStorageConsumptionParameter(
                 getQuotaId(),
                 null,

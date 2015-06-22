@@ -95,6 +95,7 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
         cinderDisk.setImageStatus(ImageStatus.LOCKED);
         cinderDisk.setVmSnapshotId(getParameters().getVmSnapshotId());
         cinderDisk.setCinderVolumeType(getParameters().getDiskInfo().getCinderVolumeType());
+        cinderDisk.setQuotaId(getParameters().getQuotaId());
         return cinderDisk;
     }
 
