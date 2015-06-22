@@ -1071,6 +1071,8 @@ select fn_db_update_default_config_value('VdsmSSLProtocol','SSLv3','TLSv1','gene
 select fn_db_update_default_config_value('ExternalCommunicationProtocol','SSLv3','TLSv1','general', false);
 
 
+-- Update mount points filter for storage device list
+select fn_db_update_default_config_value('GlusterStorageDeviceListMountPointsToIgnore','/,/home,/boot,/run/gluster/snaps/.*', '/,/home,/boot,/run/gluster/snaps/.*,/var/run/gluster/snaps/.*','general', false);
 ------------------------------------------------------------------------------------
 --              Cleanup deprecated configuration values section
 ------------------------------------------------------------------------------------
