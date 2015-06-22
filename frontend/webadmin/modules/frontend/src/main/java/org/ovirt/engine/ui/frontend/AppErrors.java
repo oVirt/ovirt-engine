@@ -889,6 +889,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action create")
     String VAR__ACTION__CREATE();
 
+    @DefaultStringValue("$action restore")
+    String VAR__ACTION__RESTORE();
+
     @DefaultStringValue("$action suspend")
     String VAR__ACTION__PAUSE();
 
