@@ -178,7 +178,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                statusColumn, constants.statusDisk(), images || cinder,
+                statusColumn, constants.statusDisk(), images || cinder || all,
                 "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(

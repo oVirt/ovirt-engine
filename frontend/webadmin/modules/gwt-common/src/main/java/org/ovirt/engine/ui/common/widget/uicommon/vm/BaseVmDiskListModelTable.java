@@ -160,7 +160,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
                 DisksViewColumns.diskAlignmentColumn, constants.diskAlignment(), all || images || luns, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                statusColumn, constants.statusDisk(), images || cinder, "80px"); //$NON-NLS-1$
+                statusColumn, constants.statusDisk(), images || cinder || all, "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 diskStorageTypeColumn, constants.typeDisk(), all, "80px"); //$NON-NLS-1$
