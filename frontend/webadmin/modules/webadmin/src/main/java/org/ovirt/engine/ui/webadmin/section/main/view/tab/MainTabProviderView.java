@@ -75,7 +75,7 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
         };
         urlColumn.makeSortable(ProviderConditionFieldAutoCompleter.URL);
 
-        getTable().addColumn(urlColumn, constants.urlProvider(), "200px"); //$NON-NLS-1$
+        getTable().addColumn(urlColumn, constants.urlProvider(), "300px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<Provider>(constants.addProvider()) {
             @Override
