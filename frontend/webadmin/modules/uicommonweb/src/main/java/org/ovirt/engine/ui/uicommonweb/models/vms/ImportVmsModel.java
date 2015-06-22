@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -302,15 +303,20 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private String getUrl() {
+        return getVmwareUrl(getUsername().getEntity(), getvCenter().getEntity(),
+                getVmwareDatacenter().getEntity(), getEsx().getEntity(), getVerify().getEntity());
+    }
+
+    public static String getVmwareUrl(String username, String vcenter,
+            String dataCenter, String esx, boolean verify) {
         return "vpx://" + //$NON-NLS-1$
-                getUsername().getEntity() +
-                "@" + //$NON-NLS-1$
-                getvCenter().getEntity() +
+                (StringUtils.isEmpty(username) ? "" : username + "@") + //$NON-NLS-1$ //$NON-NLS-2$
+                vcenter +
                 "/" + //$NON-NLS-1$
-                getVmwareDatacenter().getEntity() +
+                dataCenter +
                 "/" + //$NON-NLS-1$
-                getEsx().getEntity() +
-                (getVerify().getEntity() ? "" : "?no_verify=1"); //$NON-NLS-1$ //$NON-NLS-2$
+                esx +
+                (verify ? "" : "?no_verify=1"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void updateVms(List<VM> vms) {
