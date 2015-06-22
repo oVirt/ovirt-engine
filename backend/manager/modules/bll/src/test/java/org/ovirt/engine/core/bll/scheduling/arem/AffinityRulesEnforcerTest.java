@@ -88,12 +88,8 @@ public class AffinityRulesEnforcerTest {
         vm4 = createVM(host2, Up, "vm4");
         vm5 = createVM(host3, Up, "vm5");
         vm6 = createVM(host3, Up, "vm6");
+        prepareVmDao(vm1, vm2, vm3, vm4, vm5, vm6);
 
-        List<VM> vms = Arrays.asList(vm1, vm2, vm3, vm4, vm5, vm6);
-        when(vmDao.getVmsByIds(anyList())).thenReturn(vms);
-        for (VM vm : vms) {
-            when(vmDao.get(eq(vm.getId()))).thenReturn(vm);
-        }
         when(affinityGroupDao.getAllAffinityGroupsByClusterId(any(Guid.class))).thenReturn(affinityGroups);
 
         when(schedulingManager.canSchedule(eq(vdsGroup), any(VM.class), anyList(), anyList(),
@@ -147,6 +143,48 @@ public class AffinityRulesEnforcerTest {
         assertTrue(Arrays.asList(vm5, vm6).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
     }
 
+    @Test
+    public void shouldFixBiggerAffinityGroupFirst() {
+        AffinityGroup bigGroup = createAffinityGroup(vdsGroup, true, vm1, vm4, vm6);
+        AffinityGroup smallGroup = createAffinityGroup(vdsGroup, true, vm2, vm5);
+        affinityGroups.add(bigGroup);
+        affinityGroups.add(smallGroup);
+        assertTrue(Arrays.asList(vm1, vm4, vm6).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+
+        affinityGroups.clear();
+        affinityGroups.add(smallGroup);
+        affinityGroups.add(bigGroup);
+        assertTrue(Arrays.asList(vm1, vm4, vm6).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+    }
+
+    @Test
+    public void shouldFixEqualSizedAffinityGroupWithHigherIdFirst() {
+        vm1.setId(Guid.createGuidFromString("00000000-0000-0000-0000-000000000001"));
+        vm4.setId(Guid.createGuidFromString("00000000-0000-0000-0000-000000000007"));
+        vm6.setId(Guid.createGuidFromString("00000000-0000-0000-0000-000000000008"));
+        vm2.setId(Guid.createGuidFromString("00000000-0000-0000-0000-000000000003"));
+        vm5.setId(Guid.createGuidFromString("00000000-0000-0000-0000-000000000004"));
+        prepareVmDao(vm1, vm2, vm4, vm5, vm6);
+
+        final AffinityGroup lowIdGroup = createAffinityGroup(vdsGroup, true, vm1, vm4);
+        final AffinityGroup highIdGroup = createAffinityGroup(vdsGroup, true, vm2, vm5);
+        affinityGroups.add(lowIdGroup);
+        affinityGroups.add(highIdGroup);
+        assertTrue(Arrays.asList(vm2, vm5).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+
+        affinityGroups.clear();
+        affinityGroups.add(highIdGroup);
+        affinityGroups.add(lowIdGroup);
+        assertTrue(Arrays.asList(vm2, vm5).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+
+        // Bigger groups should always come first
+        affinityGroups.clear();
+        final AffinityGroup biggestIdGroup = createAffinityGroup(vdsGroup, true, vm1, vm4,  vm6);
+        affinityGroups.add(highIdGroup);
+        affinityGroups.add(biggestIdGroup);
+        assertTrue(Arrays.asList(vm1, vm4, vm6).contains(enforcer.chooseNextVmToMigrate(vdsGroup)));
+    }
+
     private VDSGroup createVdsGroup() {
         Guid id = Guid.newGuid();
         VDSGroup cluster = new VDSGroup();
@@ -185,5 +223,13 @@ public class AffinityRulesEnforcerTest {
             }
         }));
         return ag;
+    }
+
+    private void prepareVmDao(VM... vmList) {
+        List<VM> vms = Arrays.asList(vmList);
+        when(vmDao.getVmsByIds(anyList())).thenReturn(vms);
+        for (VM vm : vms) {
+            when(vmDao.get(eq(vm.getId()))).thenReturn(vm);
+        }
     }
 }

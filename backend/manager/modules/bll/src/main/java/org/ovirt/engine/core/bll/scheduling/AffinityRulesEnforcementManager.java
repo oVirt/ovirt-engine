@@ -105,6 +105,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
 
     /**
      * Find all clusters where currently no migration is happening
+     *
      * @return migration-free clusters
      */
     private Iterable<VDSGroup> findMigrationFreeClusters() {
