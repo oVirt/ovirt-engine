@@ -390,9 +390,7 @@ class Plugin(plugin.PluginBase):
             self.environment[oenginecons.CoreEnv.ENABLE] and
             os.path.exists(
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-            ) and
-            # Disable this in 3.5.z.
-            False
+            )
         ),
         before=(
             oenginecons.Stages.CA_AVAILABLE,
