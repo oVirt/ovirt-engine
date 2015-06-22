@@ -405,12 +405,14 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                         break;
                     case CINDER:
                         CinderDisk cinderDisk = (CinderDisk) disk;
+                        cinderDisk.setQuotaId(getQuotaId());
                         setStorageDomainId(cinderDisk.getStorageIds().get(0));
                         getCinderBroker().updateDisk(cinderDisk);
                         if (unlockImage && cinderDisk.getImageStatus() == ImageStatus.LOCKED) {
                             cinderDisk.setImageStatus(ImageStatus.OK);
                         }
                         getImageDao().update(cinderDisk.getImage());
+                        updateQuota(cinderDisk);
                         break;
                     case LUN:
                         updateLunProperties((LunDisk)getNewDisk());
@@ -503,7 +505,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     protected void updateQuota(DiskImage diskImage) {
-        if (isDiskImage()) {
+        if (isInternalManagedDisk()) {
             DiskImage oldDisk = (DiskImage) getOldDisk();
             if (!Objects.equals(oldDisk.getQuotaId(), diskImage.getQuotaId())) {
                 getImageStorageDomainMapDao().updateQuotaForImageAndSnapshots(diskImage.getId(),
@@ -673,7 +675,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     protected Guid getQuotaId() {
-        if (getNewDisk() != null && isDiskImage()) {
+        if (getNewDisk() != null && isInternalManagedDisk()) {
             return ((DiskImage) getNewDisk()).getQuotaId();
         }
         return null;
@@ -699,7 +701,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
 
-        if (isDiskImage()) {
+        if (isInternalManagedDisk()) {
             DiskImage oldDiskImage = (DiskImage) getOldDisk();
             DiskImage newDiskImage = (DiskImage) getNewDisk();
 
@@ -724,6 +726,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
         }
         return list;
+    }
+
+    protected boolean isInternalManagedDisk() {
+        return isDiskImage() || isCinderDisk();
     }
 
     private QuotaConsumptionParameter generateQuotaConsumeParameters(DiskImage newDiskImage, long sizeInGigabytes) {
@@ -760,7 +766,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private boolean updateImageParametersRequiringVmDownRequested() {
-        if (getOldDisk().getDiskStorageType() != DiskStorageType.IMAGE) {
+        if (getOldDisk().getDiskStorageType().isInternal()) {
             return false;
         }
         Guid oldQuotaId = ((DiskImage) getOldDisk()).getQuotaId();
