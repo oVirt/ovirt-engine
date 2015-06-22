@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -181,11 +182,9 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     private void fetchImageTemplates() {
         if (imageTemplates == null) {
-            imageTemplates =
-                    ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId()),
-                            false,
-                            false,
-                            true);
+            List<Disk> allImages = DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId());
+            imageTemplates = ImagesHandler.filterImageDisks(allImages, false, false, true);
+            imageTemplates.addAll(ImagesHandler.filterDisksBasedOnCinder(allImages, true));
         }
     }
 
