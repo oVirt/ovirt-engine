@@ -106,6 +106,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 false,
                 true);
 
+        final List<LunDisk> lunDisks =
+                ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values());
+
         for (VmNic nic : getInterfaces()) {
             new ExternalNetworkManager(nic).deallocateIfExternal();
         }
@@ -121,6 +124,11 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                         getCompensationContext().snapshotEntityStatus(image.getImage(), ImageStatus.ILLEGAL);
                         ImagesHandler.updateImageStatus(image.getImage().getId(), ImageStatus.LOCKED);
                     }
+
+                    for (LunDisk lunDisk : lunDisks) {
+                        ImagesHandler.removeLunDisk(lunDisk);
+                    }
+
                     getCompensationContext().stateChanged();
                 }
                 else {
@@ -318,7 +326,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     protected void removeVmFromDb() {
-        removeLunDisks();
         removeVmUsers();
         removeVmNetwork();
         removeVmSnapshots();
@@ -333,18 +340,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         if (getVm() != null) {
             vmIconDao.removeIfUnused(getVm().getStaticData().getLargeIconId());
             vmIconDao.removeIfUnused(getVm().getStaticData().getSmallIconId());
-        }
-    }
-
-    /**
-     * The following method will perform a removing of all lunDisks from vm.
-     * These is only DB operation
-     */
-    private void removeLunDisks() {
-        List<LunDisk> lunDisks =
-                ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values());
-        for (LunDisk lunDisk : lunDisks) {
-            ImagesHandler.removeLunDisk(lunDisk);
         }
     }
 
