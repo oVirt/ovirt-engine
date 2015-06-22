@@ -490,7 +490,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
         if (getDisk() != null
-                && DiskStorageType.IMAGE == getDisk().getDiskStorageType()
+                && getDisk().getDiskStorageType().isInternal()
                 && getQuotaId() != null
                 && !Guid.Empty.equals(getQuotaId())) {
             list.add(new QuotaStorageConsumptionParameter(
@@ -504,8 +504,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private Guid getQuotaId() {
-        if (getDisk() != null
-                && DiskStorageType.IMAGE == getDisk().getDiskStorageType()) {
+        if (getDisk() != null && getDisk().getDiskStorageType().isInternal()) {
             return getDiskImage().getQuotaId();
         }
         return null;
