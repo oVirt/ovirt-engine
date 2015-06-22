@@ -23,7 +23,7 @@ public class RemoveCinderDiskCommandCallback extends AbstractCinderDiskCommandCa
         }
 
         ImageStatus imageStatus = checkImageStatus(removedVolume);
-        if (imageStatus != null && imageStatus != disk.getImageStatus()) {
+        if (imageStatus != null && imageStatus != getDisk().getImageStatus()) {
             switch (imageStatus) {
             case ILLEGAL:
                 getCommand().setCommandStatus(CommandStatus.FAILED);
