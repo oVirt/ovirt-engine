@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
@@ -77,11 +78,13 @@ public class ConnectHostToStoragePoolServersCommand extends
     }
 
     private boolean registerLibvirtSecrets() {
-        List<LibvirtSecret> libvirtSecrets =
-                getDbFacade().getLibvirtSecretDao().
-                        getAllByStoragePoolIdFilteredByActiveStorageDomains(getStoragePoolId());
-        if (!libvirtSecrets.isEmpty()) {
-            return registerLibvirtSecrets(libvirtSecrets, false);
+        if (FeatureSupported.cinderProviderSupported(getStoragePool().getCompatibilityVersion())) {
+            List<LibvirtSecret> libvirtSecrets =
+                    getDbFacade().getLibvirtSecretDao().
+                            getAllByStoragePoolIdFilteredByActiveStorageDomains(getStoragePoolId());
+            if (!libvirtSecrets.isEmpty()) {
+                return registerLibvirtSecrets(libvirtSecrets, false);
+            }
         }
         return true;
     }

@@ -37,8 +37,6 @@ public class DisconnectHostFromStoragePoolServersCommand extends
         for (Map.Entry<StorageType, List<StorageServerConnections>> connectionToType : getConnectionsTypeMap().entrySet()) {
             disconnectStorageByType(connectionToType.getKey(), connectionToType.getValue());
         }
-
-        // Unregister all libvirt secrets if needed
         unregisterLibvirtSecrets();
     }
 

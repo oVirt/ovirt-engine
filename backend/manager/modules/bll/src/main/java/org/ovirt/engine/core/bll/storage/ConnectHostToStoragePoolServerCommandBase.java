@@ -10,6 +10,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -77,7 +78,11 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
         return true;
     }
 
-    protected void unregisterLibvirtSecrets() {
-        registerLibvirtSecrets(Collections.<LibvirtSecret> emptyList(), true);
+    protected boolean unregisterLibvirtSecrets() {
+        if (FeatureSupported.cinderProviderSupported(getStoragePool().getCompatibilityVersion())) {
+            // Unregister all libvirt secrets if needed
+            return registerLibvirtSecrets(Collections.<LibvirtSecret>emptyList(), true);
+        }
+        return true;
     }
 }
