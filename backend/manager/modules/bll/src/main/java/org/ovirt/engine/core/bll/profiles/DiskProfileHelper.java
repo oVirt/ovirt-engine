@@ -14,14 +14,19 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DiskProfileHelper {
+
+    private static final Logger log = LoggerFactory.getLogger(DiskProfileHelper.class);
 
     private DiskProfileHelper() {
 
@@ -46,6 +51,11 @@ public class DiskProfileHelper {
         for (Entry<DiskImage, Guid> entry : map.entrySet()) {
             DiskImage diskImage = entry.getKey();
             Guid storageDomainId = entry.getValue();
+            if (diskImage.getDiskStorageType() != DiskStorageType.IMAGE) {
+                log.info("Disk profiles is not supported for storage type '{}' (Disk '{}')",
+                        diskImage.getDiskStorageType(), diskImage.getDiskAlias());
+                continue;
+            }
             if (diskImage.getDiskProfileId() == null && storageDomainId != null) {
                 List<DiskProfile> diskProfilesList = storageDiskProfilesMap.get(storageDomainId);
                 if (diskProfilesList == null) {
