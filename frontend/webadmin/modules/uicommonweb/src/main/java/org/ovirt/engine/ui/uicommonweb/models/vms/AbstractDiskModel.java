@@ -632,7 +632,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
     private void updateQuota(StoragePool datacenter) {
         if (datacenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED) ||
-                getDiskStorageType().getEntity() != DiskStorageType.IMAGE) {
+                !getDiskStorageType().getEntity().isInternal()) {
             getQuota().setIsAvailable(false);
             return;
         }
@@ -968,14 +968,13 @@ public abstract class AbstractDiskModel extends DiskModel
                 break;
             case CINDER:
                 CinderDisk cinderDisk = getCinderDisk();
+                updateQuota(cinderDisk);
                 updateDiskSize(cinderDisk);
                 setDisk(cinderDisk);
                 break;
             case IMAGE:
                 DiskImage diskImage = getDiskImage();
-                if (getQuota().getIsAvailable() && getQuota().getSelectedItem() != null) {
-                    diskImage.setQuotaId(getQuota().getSelectedItem().getId());
-                }
+                updateQuota(diskImage);
                 updateDiskSize(diskImage);
                 setDisk(diskImage);
                 break;
@@ -990,6 +989,12 @@ public abstract class AbstractDiskModel extends DiskModel
         getDisk().setPlugged(getIsPlugged().getEntity());
         getDisk().setPropagateErrors(PropagateErrors.Off);
         getDisk().setReadOnly(getIsReadOnly().getIsAvailable() ? getIsReadOnly().getEntity() : null);
+    }
+
+    private void updateQuota(DiskImage diskImage) {
+        if (getQuota().getIsAvailable() && getQuota().getSelectedItem() != null) {
+            diskImage.setQuotaId(getQuota().getSelectedItem().getId());
+        }
     }
 
     public abstract void store(IFrontendActionAsyncCallback callback);
