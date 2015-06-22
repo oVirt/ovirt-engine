@@ -14,6 +14,9 @@ import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dao.LibvirtSecretDao;
+
+import javax.inject.Inject;
 
 /**
  * Connect host to all Storage server connections in Storage pool. We
@@ -24,6 +27,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 @InternalCommandAttribute
 public class ConnectHostToStoragePoolServersCommand extends
         ConnectHostToStoragePoolServerCommandBase<ConnectHostToStoragePoolServersParameters> {
+
+    @Inject
+    private LibvirtSecretDao libvirtSecretDao;
 
     public ConnectHostToStoragePoolServersCommand(ConnectHostToStoragePoolServersParameters parameters,
             CommandContext cmdContext) {
@@ -80,8 +86,7 @@ public class ConnectHostToStoragePoolServersCommand extends
     private boolean registerLibvirtSecrets() {
         if (FeatureSupported.cinderProviderSupported(getStoragePool().getCompatibilityVersion())) {
             List<LibvirtSecret> libvirtSecrets =
-                    getDbFacade().getLibvirtSecretDao().
-                            getAllByStoragePoolIdFilteredByActiveStorageDomains(getStoragePoolId());
+                    libvirtSecretDao.getAllByStoragePoolIdFilteredByActiveStorageDomains(getStoragePoolId());
             if (!libvirtSecrets.isEmpty()) {
                 return registerLibvirtSecrets(libvirtSecrets, false);
             }
