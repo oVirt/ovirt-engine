@@ -21,8 +21,7 @@ public enum DiskStorageType implements Identifiable {
         return values()[value];
     }
 
-    public boolean isSupportsSnapshots() {
+    public boolean isInternal() {
         return this == IMAGE || this == CINDER;
     }
-
 }

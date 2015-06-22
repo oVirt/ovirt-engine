@@ -281,7 +281,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         List<DiskImage> excludedImages = new ArrayList<>();
 
         for (DiskImage image : images) {
-            if (image.getDiskStorageType().isSupportsSnapshots() && image.getVmSnapshotId().equals(previousActiveSnapshotId)) {
+            if (image.getDiskStorageType().isInternal() && image.getVmSnapshotId().equals(previousActiveSnapshotId)) {
                 // Image is already active, hence only update snapshot ID.
                 getImageDao().updateImageVmSnapshotId(image.getImageId(), newActiveSnapshotId);
                 excludedImages.add(image);
