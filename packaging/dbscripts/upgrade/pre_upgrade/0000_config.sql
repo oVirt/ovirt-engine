@@ -45,6 +45,12 @@ select fn_db_rename_config_key('DefaultMtu', 'DefaultMTU', 'general');
 select fn_db_rename_config_key('ManagementNetwork', 'DefaultManagementNetwork', 'general');
 select fn_db_rename_config_key('FreeSpaceCriticalLowInGB','CriticalSpaceActionBlocker', 'general');
 select fn_db_rename_config_key('FreeSpaceLow', 'WarningLowSpaceIndicator', 'general');
+select fn_db_rename_config_key('VmStatsEvents', 'VmStatsEventsSupported', '3.0');
+select fn_db_rename_config_key('VmStatsEvents', 'VmStatsEventsSupported', '3.1');
+select fn_db_rename_config_key('VmStatsEvents', 'VmStatsEventsSupported', '3.2');
+select fn_db_rename_config_key('VmStatsEvents', 'VmStatsEventsSupported', '3.3');
+select fn_db_rename_config_key('VmStatsEvents', 'VmStatsEventsSupported', '3.4');
+select fn_db_rename_config_key('VmStatsEvents', 'VmStatsEventsSupported', '3.5');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -287,7 +293,7 @@ select fn_db_add_config_value('UserPackageNamesForCheckUpdate','','general');
 select fn_db_add_config_value('HostPackagesUpdateTimeInHours','24','general');
 
 select fn_db_add_config_value_for_versions_up_to('LiveStorageMigrationBetweenDifferentStorageTypes', 'false', '3.5');
-select fn_db_add_config_value_for_versions_up_to('VmStatsEvents','false','3.5');
+select fn_db_add_config_value_for_versions_up_to('VmStatsEventsSupported','false','3.5');
 
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
