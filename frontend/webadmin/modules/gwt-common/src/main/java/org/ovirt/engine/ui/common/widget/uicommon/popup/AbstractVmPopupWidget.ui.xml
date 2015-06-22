@@ -133,7 +133,7 @@
         }
 
         .disksPanel {
-            width: 550px;
+            width: 560px;
             margin: 10px 0;
             display: inline-table;
         }
@@ -753,7 +753,7 @@
                                 <g:Label addStyleNames="{style.sectionLabel}" text="{constants.disksAllocation}" />
                             </g:HorizontalPanel>
                             <g:FlowPanel ui:field="disksPanel">
-                                <s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="550px" showVolumeType="true" addStyleNames="{style.disksPanel}" />
+                                <s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="560px" showVolumeType="true" addStyleNames="{style.disksPanel}" />
                             </g:FlowPanel>
                         </g:FlowPanel>
                     </g:FlowPanel>

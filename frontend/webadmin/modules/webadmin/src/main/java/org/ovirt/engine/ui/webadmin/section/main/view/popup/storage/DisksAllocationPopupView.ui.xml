@@ -24,10 +24,10 @@
         }
 	</ui:style>
 	
-	<d:SimpleDialogPanel width="540px" height="410px">
+	<d:SimpleDialogPanel width="575px" height="410px">
 		<d:content>
 			<g:FlowPanel>
-				<w:DisksAllocationView ui:field="disksAllocationView" listHeight="230px" listWidth="525px" showSource="true" />
+				<w:DisksAllocationView ui:field="disksAllocationView" listHeight="230px" listWidth="560px" showSource="true" />
                 <g:FlowPanel addStyleNames="{style.messagePanel}" >
                     <g:FlowPanel ui:field="messagePanel" visible="false" />
                     <g:HorizontalPanel ui:field="warningPanel" visible="false">

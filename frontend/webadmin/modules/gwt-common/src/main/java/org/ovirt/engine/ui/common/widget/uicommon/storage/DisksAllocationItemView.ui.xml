@@ -10,15 +10,15 @@
 			display: none;
 		}
 
+		.editorContent,
 		.editorContentNarrow {
-			width: 95px;
-			margin-left: 5px;
+			width: 98px;
+			margin: 2px;
+			line-height: 15px;
 		}
-		
-		.editorContent {
-			width: 110px;
-			margin-left: 5px;
-            margin-bottom: 5px;
+
+		.editorContentNarrow {
+			width: 75px;
 		}
 		
 		.editorWrapper {

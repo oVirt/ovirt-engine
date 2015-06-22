@@ -123,7 +123,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     }
 
     void updateStyles(Boolean isNarrowStyle) {
-        String editorStyle = style.editorContentNarrow();
+        String editorStyle = isNarrowStyle ? style.editorContentNarrow() : style.editorContent();
 
         updateEditorStyle(diskAliasLabel, editorStyle);
         updateEditorStyle(diskAliasEditor, editorStyle);
