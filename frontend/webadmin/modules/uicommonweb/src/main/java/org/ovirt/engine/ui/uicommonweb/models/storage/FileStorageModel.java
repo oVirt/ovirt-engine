@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -25,11 +24,6 @@ public abstract class FileStorageModel extends Model implements IStorageModel{
     }
 
     public boolean isEditable(StorageDomain storage) {
-        StorageDomainType storageDomainType = storage.getStorageDomainType();
-        return storageDomainType.isInternalDomain() && isStorageStatusValidForPathEditing(storage);
-    }
-
-    private boolean isStorageStatusValidForPathEditing(StorageDomain storage) {
         return (storage.getStatus() == StorageDomainStatus.Maintenance
                 || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
     }
