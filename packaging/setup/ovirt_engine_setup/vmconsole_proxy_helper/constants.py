@@ -101,8 +101,11 @@ class FileLocations(object):
     )
 
     # integration with external package ovirt-vmconsole-proxy
+    # we default to absolute path because this is an
+    # external package.
     # sync with ovirt-vmconsole-proxy
     OVIRT_VMCONSOLE_PROXY_CONFIGD = os.path.join(
+        '/',
         'etc',
         'ovirt-vmconsole',
         'ovirt-vmconsole-proxy',
