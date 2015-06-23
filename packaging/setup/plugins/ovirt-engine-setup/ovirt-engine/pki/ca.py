@@ -445,6 +445,8 @@ class Plugin(plugin.PluginBase):
                         'One or more of the certificates should be renewed, '
                         'because they expire soon or include an invalid '
                         'expiry date, which is rejected by recent browsers.\n'
+                        'If you choose "No", you will be asked again the next '
+                        'time you run Setup.\n'
                         'See {url} for more details.\n'
                         'Renew certificates? '
                         '(@VALUES@) [@DEFAULT@]: '
