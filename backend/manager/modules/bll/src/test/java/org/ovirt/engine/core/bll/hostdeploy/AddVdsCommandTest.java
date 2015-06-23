@@ -9,6 +9,8 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +30,8 @@ import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
+import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -130,6 +134,10 @@ public class AddVdsCommandTest {
         when(validator.sshUserNameNotEmpty()).thenReturn(ValidationResult.VALID);
         doReturn(ValidationResult.VALID).when(validator).validateSingleHostAttachedToLocalStorage();
         doReturn(ValidationResult.VALID).when(validator).securityKeysExists();
+        doReturn(ValidationResult.VALID).when(validator).provisioningComputeResourceValid(any(Boolean.class),
+                any(ExternalComputeResource.class));
+        doReturn(ValidationResult.VALID).when(validator).provisioningHostGroupValid(any(Boolean.class),
+                any(ExternalHostGroup.class));
         when(validator.passwordNotEmpty(any(Boolean.class),
                 any(AuthenticationMethod.class),
                 any(String.class))).thenReturn(ValidationResult.VALID);
@@ -229,4 +237,14 @@ public class AddVdsCommandTest {
                 .getCanDoActionMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE.toString()));
     }
+
+    @Test
+    public void provisioningValidated() throws Exception {
+        setupVirtMock();
+        assertTrue(commandMock.canDoAction());
+        verify(validator, times(1)).provisioningComputeResourceValid(any(Boolean.class),
+                any(ExternalComputeResource.class));
+        verify(validator, times(1)).provisioningHostGroupValid(any(Boolean.class), any(ExternalHostGroup.class));
+    }
+
 }

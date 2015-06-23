@@ -316,6 +316,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot add new Host using a secured connection, Certificate file could not be found.")
     String VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Host group is required for provisioned host.")
+    String VDS_PROVIDER_PROVISION_MISSING_HOSTGROUP();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Compute resource is required for provisioned host.")
+    String VDS_PROVIDER_PROVISION_MISSING_COMPUTERESOURCE();
+
     @DefaultStringValue("Cannot fence Host, Host fence is disabled.")
     String VDS_FENCE_DISABLED();
 

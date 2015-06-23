@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.validator;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
+import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
@@ -84,13 +86,24 @@ public class HostValidator {
                 .when(Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication) && !haveSecurityKey());
     }
 
+    public ValidationResult provisioningComputeResourceValid(boolean provisioned,
+            ExternalComputeResource computeResource) {
+        return ValidationResult.failWith(EngineMessage.VDS_PROVIDER_PROVISION_MISSING_COMPUTERESOURCE)
+                .when(provisioned && computeResource == null);
+    }
+
+    public ValidationResult provisioningHostGroupValid(boolean provisioned, ExternalHostGroup hostGroup) {
+        return ValidationResult.failWith(EngineMessage.VDS_PROVIDER_PROVISION_MISSING_HOSTGROUP)
+                .when(provisioned && hostGroup == null);
+    }
+
     protected boolean haveSecurityKey() {
         return EngineEncryptionUtils.haveKey();
     }
 
     /**
-     *  We block vds installations if it's not a RHEV-H and password is empty.
-     *  Note that this may override local host SSH policy. See BZ#688718.
+     * We block vds installations if it's not a RHEV-H and password is empty. Note that this may override local host SSH
+     * policy. See BZ#688718.
      */
     public ValidationResult passwordNotEmpty(boolean addPending, AuthenticationMethod authMethod, String password) {
         return ValidationResult.failWith(EngineMessage.VDS_CANNOT_INSTALL_EMPTY_PASSWORD)

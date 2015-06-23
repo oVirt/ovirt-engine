@@ -19,6 +19,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
+import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -213,8 +215,8 @@ public class HostValidatorTest {
     @Test
     public void passwordNotEmpty() {
         assertThat(validator.passwordNotEmpty(false,
-                        AuthenticationMethod.Password,
-                        RandomUtils.instance().nextString(10)),
+                AuthenticationMethod.Password,
+                RandomUtils.instance().nextString(10)),
                 isValid());
     }
 
@@ -233,5 +235,31 @@ public class HostValidatorTest {
     public void passwordIsEmptyForOvirtNode() {
         assertThat(validator.passwordNotEmpty(true, RandomUtils.instance().nextEnum(AuthenticationMethod.class), null),
                 isValid());
+    }
+
+    @Test
+    public void provisioningComputeResourceEmpty() {
+        assertThat(validator.provisioningComputeResourceValid(true, null),
+                failsWith(EngineMessage.VDS_PROVIDER_PROVISION_MISSING_COMPUTERESOURCE));
+    }
+
+    @Test
+    public void provisioningHostGroupEmpty() {
+        assertThat(validator.provisioningHostGroupValid(true, null),
+                failsWith(EngineMessage.VDS_PROVIDER_PROVISION_MISSING_HOSTGROUP));
+    }
+
+    @Test
+    public void provisioningNotProvided() {
+        assertThat(validator.provisioningComputeResourceValid(false, null), isValid());
+        assertThat(validator.provisioningHostGroupValid(false, null), isValid());
+    }
+
+    @Test
+    public void provisioningProvided() {
+        assertThat(validator.provisioningComputeResourceValid(false, new ExternalComputeResource()), isValid());
+        assertThat(validator.provisioningHostGroupValid(false, new ExternalHostGroup()), isValid());
+        assertThat(validator.provisioningComputeResourceValid(true, new ExternalComputeResource()), isValid());
+        assertThat(validator.provisioningHostGroupValid(true, new ExternalHostGroup()), isValid());
     }
 }

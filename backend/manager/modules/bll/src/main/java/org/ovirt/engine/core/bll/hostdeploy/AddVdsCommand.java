@@ -118,14 +118,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         });
 
         if (getParameters().isProvisioned()) {
-            if (getParameters().getComputeResource() == null) {
-                log.error("Failed to provision: Compute resource cannot be empty");
-                throw new EngineException(EngineError.PROVIDER_PROVISION_MISSING_COMPUTERESOURCE);
-            }
-            if (getParameters().getHostGroup() == null) {
-                log.error("Failed to provision: Host group cannot be empty");
-                throw new EngineException(EngineError.PROVIDER_PROVISION_MISSING_HOSTGROUP);
-            }
             HostProviderProxy proxy =
                     ((HostProviderProxy) ProviderProxyFactory.getInstance().create(getHostProvider()));
             proxy.provisionHost(
@@ -321,37 +313,42 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     @Override
     protected boolean canDoAction() {
-        setVdsGroupId(getParameters().getVdsStaticData().getVdsGroupId());
-        getParameters().setVdsForUniqueId(null);
+        T params = getParameters();
+        setVdsGroupId(params.getVdsStaticData().getVdsGroupId());
+        params.setVdsForUniqueId(null);
         // Check if this is a valid cluster
         boolean returnValue = validateVdsGroup();
         if (returnValue) {
             HostValidator validator = getHostValidator();
             returnValue = validate(validator.nameNotEmpty())
-            && validate(validator.nameLengthIsLegal())
-            && validate(validator.hostNameIsValid())
-            && validate(validator.nameNotUsed())
-            && validate(validator.hostNameNotUsed())
-            && validate(validator.portIsValid())
-            && validate(validator.sshUserNameNotEmpty())
-            && validate(validator.validateSingleHostAttachedToLocalStorage())
-            && validate(validator.securityKeysExists())
-            && validate(validator.passwordNotEmpty(getParameters().isPending(),
-                    getParameters().getAuthMethod(),
-                    getParameters().getPassword()));
+                    && validate(validator.nameLengthIsLegal())
+                    && validate(validator.hostNameIsValid())
+                    && validate(validator.nameNotUsed())
+                    && validate(validator.hostNameNotUsed())
+                    && validate(validator.portIsValid())
+                    && validate(validator.sshUserNameNotEmpty())
+                    && validate(validator.validateSingleHostAttachedToLocalStorage())
+                    && validate(validator.securityKeysExists())
+                    && validate(validator.provisioningComputeResourceValid(params.isProvisioned(),
+                            params.getComputeResource()))
+                    && validate(validator.provisioningHostGroupValid(params.isProvisioned(),
+                            params.getHostGroup()))
+                    && validate(validator.passwordNotEmpty(params.isPending(),
+                            params.getAuthMethod(),
+                            params.getPassword()));
         }
 
         if (!(returnValue
-                && isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
-                        getParameters().getFenceAgents(),
+                && isPowerManagementLegal(params.getVdsStaticData().isPmEnabled(),
+                        params.getFenceAgents(),
                         getVdsGroup().getCompatibilityVersion().toString())
-                && canConnect(getParameters().getvds()))) {
+                && canConnect(params.getvds()))) {
             return false;
         }
 
-        if (getParameters().getNetworkProviderId() != null
-                && !validateNetworkProviderProperties(getParameters().getNetworkProviderId(),
-                        getParameters().getNetworkMappings())) {
+        if (params.getNetworkProviderId() != null
+                && !validateNetworkProviderProperties(params.getNetworkProviderId(),
+                        params.getNetworkMappings())) {
             return false;
         }
 
