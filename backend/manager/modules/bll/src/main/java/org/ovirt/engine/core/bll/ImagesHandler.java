@@ -565,10 +565,12 @@ public final class ImagesHandler {
         return diskImages;
     }
 
-    public static List<LunDisk> filterDiskBasedOnLuns(Collection<Disk> listOfDisks) {
+    public static List<LunDisk> filterDiskBasedOnLuns(Collection<? extends Disk> listOfDisks,
+            boolean allowShareableDisks) {
         List<LunDisk> lunDisks = new ArrayList<>();
         for (Disk disk : listOfDisks) {
-            if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+            if (disk.getDiskStorageType() == DiskStorageType.LUN &&
+                    (allowShareableDisks || !disk.isShareable())) {
                 lunDisks.add((LunDisk) disk);
             }
         }

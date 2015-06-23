@@ -253,7 +253,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         if (getVm().getDiskMap().isEmpty()) {
             VmHandler.updateDisksFromDb(getVm());
         }
-        List<LunDisk> lunDisks = ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values());
+        List<LunDisk> lunDisks = ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values(), true);
         for (LunDisk lunDisk : lunDisks) {
             LUNs lun = lunDisk.getLun();
             lun.setLunConnections(new ArrayList<>(DbFacade.getInstance()

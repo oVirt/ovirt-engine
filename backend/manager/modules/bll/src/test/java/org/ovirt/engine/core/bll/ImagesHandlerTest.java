@@ -6,12 +6,15 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.compat.Guid;
 
 /** A test case for {@link ImagesHandler} */
@@ -24,12 +27,16 @@ public class ImagesHandlerTest {
     private DiskImage disk1;
     private DiskImage disk2;
     private DiskImage disk3;
+    private LunDisk lunDisk1;
+    private LunDisk lunDisk2;
 
     @Before
     public void setUp() {
         disk1 = new DiskImage();
         disk2 = new DiskImage();
         disk3 = new DiskImage();
+        lunDisk1 = new LunDisk();
+        lunDisk2 = new LunDisk();
     }
 
     @Test
@@ -89,6 +96,32 @@ public class ImagesHandlerTest {
 
         assertEquals("Wrong number of Guids returned", 1, result.size());
         assertTrue("The result should contain the active image disk", result.contains(disk1));
+    }
+
+    @Test
+    public void filterDiskBasedOnLunsReturnsOnlyLunDisks() {
+        List<LunDisk> returnedLuns = ImagesHandler.filterDiskBasedOnLuns(Arrays.asList(disk1, lunDisk1), true);
+        assertEquals("The returned list should contain only lun disks.",
+                new ArrayList<>(Collections.singletonList(lunDisk1)),
+                new ArrayList<>(returnedLuns));
+    }
+
+    @Test
+    public void filterDiskBasedOnLunsReturnsAllLuns() {
+        lunDisk1.setShareable(true);
+        Collection<LunDisk> allLuns = new ArrayList<>(Arrays.asList(lunDisk1, lunDisk2));
+        List<LunDisk> returnedLuns = ImagesHandler.filterDiskBasedOnLuns(allLuns, true);
+        assertEquals("The returned list should contain both shareable and not shareable lun disks.",
+                allLuns, new ArrayList<>(returnedLuns));
+    }
+
+    @Test
+    public void filterDiskBasedOnLunsReturnsOnlyNotShareableLuns() {
+        lunDisk1.setShareable(true);
+        List<LunDisk> returnedLuns = ImagesHandler.filterDiskBasedOnLuns(Arrays.asList(lunDisk1, lunDisk2), false);
+        assertEquals("The returned list should contain only not shareable lun disks.",
+                new ArrayList<>(Collections.singletonList(lunDisk2)),
+                new ArrayList<>(returnedLuns));
     }
 
     @Test
