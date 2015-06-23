@@ -296,6 +296,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         for (DiskImage disk : getDisksList()) {
             if (disk.getDiskStorageType() == DiskStorageType.CINDER) {
                 ImagesContainterParametersBase params = buildChildCommandParameters(disk);
+                params.setQuotaId(disk.getQuotaId());
 
                 Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                         VdcActionType.CreateCinderSnapshot,

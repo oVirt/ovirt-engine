@@ -53,6 +53,7 @@ public class CreateCinderSnapshotCommand<T extends ImagesContainterParametersBas
         newCinderVolume.setQuotaId(getParameters().getQuotaId());
         newCinderVolume.setDiskProfileId(getParameters().getDiskProfileId());
         newCinderVolume.setActive(Boolean.FALSE);
+        newCinderVolume.setQuotaId(getParameters().getQuotaId());
 
         // Get the last snapshot to be the parent of the new volume.
         DiskImage leaf = ImagesHandler.getSnapshotLeaf(getDiskImage().getId());
