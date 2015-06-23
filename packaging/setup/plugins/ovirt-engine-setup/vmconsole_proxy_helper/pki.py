@@ -171,6 +171,29 @@ class Plugin(plugin.PluginBase):
             oenginecons.PKIEnv.STORE_PASS
         )
 
+    def _requireManualIntervention(
+        self,
+        artifact,
+        destination_path=ovmpcons.FileLocations.OVIRT_VMCONSOLE_PROXY_PKIDIR
+    ):
+        install_cmd = get_install_command(
+            artifact=artifact,
+            destination_path=destination_path
+        )
+
+        self.dialog.note(
+            _(
+                'Manual intervention is required, because '
+                'setup was run in developer mode. '
+                'Please run with root privileges:\n'
+                '\n'
+                '{install_cmd}'
+                '\n'.format(
+                    install_cmd=install_cmd
+                )
+            )
+        )
+
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=ovmpcons.Stages.CONFIG_VMCONSOLE_PKI_ENGINE,
@@ -275,6 +298,7 @@ class Plugin(plugin.PluginBase):
             )
         else:
             # store incomplete file, let admin fix later
+            # on developer mode we cannot change owner/group!
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 filetransaction.FileTransaction(
                     name=key_file.path,
@@ -283,20 +307,9 @@ class Plugin(plugin.PluginBase):
                 )
             )
 
-            self.dialog.note(
-                _(
-                    'Manual intervention is required, because '
-                    'setup was run under unprivileged user.\n'
-                    'Cannot set the ownership of the PKI artifacts.\n'
-                    'Please make sure to run as root:\n'
-                    '\n'
-                    '{install_cmd}\n'.format(
-                        install_cmd=get_install_command(key_file)
-                    )
-                )
-            )
+            self._requireManualIntervention(key_file, destination_path=None)
 
-    def _enrollSSHKeys(self, host_mode, uninstall_files, pki_artifacts):
+    def _enrollSSHKeys(self, host_mode, uninstall_files):
         suffix = 'host' if host_mode else 'user'
         name = '%s-%s' % (
             ovmpcons.Const.VMCONSOLE_PROXY_PKI_NAME,
@@ -349,17 +362,38 @@ class Plugin(plugin.PluginBase):
 
         # prepare final path in the engine pki directory.
         # copy in the vmconsole pki directory later
-        pki_artifacts.append(
-            Artifact(
-                path=cert,
-                mode=0o644,
-                owner=ovmpcons.Const.OVIRT_VMCONSOLE_USER,
-                group=ovmpcons.Const.OVIRT_VMCONSOLE_GROUP,
-                destination='proxy-ssh_%s_rsa-cert.pub' % suffix,
+        # this does the copy because execute() above directly
+        # writes the file, we don't use a FileTransaction
+        # unlike the other PKI artifacts.
+        cert_file = Artifact(
+            path=cert,
+            mode=0o644,
+            owner=ovmpcons.Const.OVIRT_VMCONSOLE_USER,
+            group=ovmpcons.Const.OVIRT_VMCONSOLE_GROUP,
+            destination='proxy-ssh_%s_rsa-cert.pub' % suffix,
+        )
+        if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                CopyFileInDirTransaction(
+                    src_name=cert_file.path,
+                    dst_dir=ovmpcons.FileLocations.
+                    OVIRT_VMCONSOLE_PROXY_PKIDIR,
+                    mode=cert_file.mode,
+                    owner=cert_file.owner,
+                    group=cert_file.group,
+                )
             )
+        else:
+            self._requireManualIntervention(cert_file)
+
+    def _getEtcPkiDir(self):
+        return (
+            ovmpcons.FileLocations.OVIRT_VMCONSOLE_PROXY_PKIDIR
+            if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
+            else oenginecons.FileLocations.OVIRT_ENGINE_PKIDIR
         )
 
-    def _expandPKCS12SSHKey(self, host_mode, uninstall_files, pki_artifacts):
+    def _expandPKCS12SSHKey(self, host_mode, uninstall_files):
         suffix = 'host' if host_mode else 'user'
 
         rc, key, stderr = self.execute(
@@ -378,7 +412,7 @@ class Plugin(plugin.PluginBase):
 
         key_file = Artifact(
             path=os.path.join(
-                oenginecons.FileLocations.OVIRT_ENGINE_PKIDIR,
+                self._getEtcPkiDir(),
                 'proxy-ssh_%s_rsa' % suffix,
             ),
             mode=0o600,
@@ -387,21 +421,35 @@ class Plugin(plugin.PluginBase):
             destination=None,
         )
 
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            filetransaction.FileTransaction(
-                name=key_file.path,
-                content=key,
-                mode=key_file.mode,
-                modifiedList=uninstall_files,
+        if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                filetransaction.FileTransaction(
+                    name=key_file.path,
+                    content=key,
+                    mode=key_file.mode,
+                    owner=key_file.owner,
+                    group=key_file.group,
+                    modifiedList=uninstall_files,
+                )
             )
-        )
+        else:
+            # store incomplete file, let admin fix later
+            # on developer mode we cannot change owner/group!
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                filetransaction.FileTransaction(
+                    name=key_file.path,
+                    content=key,
+                    mode=key_file.mode,
+                    modifiedList=uninstall_files,
+                )
+            )
 
-        pki_artifacts.append(key_file)
+            self._requireManualIntervention(key_file)
 
-    def _expandSSHCAKey(self, uninstall_files, pki_artifacts):
+    def _expandSSHCAKey(self, uninstall_files):
         ca_file = Artifact(
             path=os.path.join(
-                oenginecons.FileLocations.OVIRT_ENGINE_PKIDIR,
+                self._getEtcPkiDir(),
                 'ca.pub',
             ),
             mode=0o644,
@@ -444,44 +492,8 @@ class Plugin(plugin.PluginBase):
             )
         )
 
-        pki_artifacts.append(ca_file)
-
-    def _copyVMConsoleProxyPKIArtifacts(self, pki_artifacts):
-        if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
-            for artifact in pki_artifacts:
-                self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-                    CopyFileInDirTransaction(
-                        src_name=artifact.path,
-                        dst_dir=ovmpcons.FileLocations.
-                        OVIRT_VMCONSOLE_PROXY_PKIDIR,
-                        mode=artifact.mode,
-                        owner=artifact.owner,
-                        group=artifact.group,
-                    )
-                )
-        else:
-            install_cmd = ''.join(
-                get_install_command(
-                    artifact=artifact,
-                    destination_path=ovmpcons.FileLocations.
-                    OVIRT_VMCONSOLE_PROXY_PKIDIR
-                )
-                for artifact in pki_artifacts
-            )
-
-            self.dialog.note(
-                _(
-                    'Manual intervention is required, because '
-                    'setup was run under unprivileged user.\n'
-                    'Cannot copy ovirt-vmconsole PKI artifacts'
-                    'into the proper PKI directory.\n'
-                    'Please make sure to run as root:\n'
-                    '\n'
-                    '{install_cmd}'.format(
-                        install_cmd=install_cmd
-                    )
-                )
-            )
+        if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+            self._requireManualIntervention(ca_file)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
@@ -501,7 +513,6 @@ class Plugin(plugin.PluginBase):
         self._enabled = True
         uninstall_files = []
         # files to copy in /etc/pki/ovirt-vmconsole
-        pki_artifacts = []
         self.environment[
             osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
         ].createGroup(
@@ -517,33 +528,26 @@ class Plugin(plugin.PluginBase):
 
         self._expandSSHCAKey(
             uninstall_files=uninstall_files,
-            pki_artifacts=pki_artifacts,
         )
 
         self._enrollSSHKeys(
             host_mode=True,
             uninstall_files=uninstall_files,
-            pki_artifacts=pki_artifacts,
         )
         self._expandPKCS12SSHKey(
             host_mode=True,
             uninstall_files=uninstall_files,
-            pki_artifacts=pki_artifacts,
         )
 
         # user PKI artifacts
         self._enrollSSHKeys(
             host_mode=False,
             uninstall_files=uninstall_files,
-            pki_artifacts=pki_artifacts,
         )
         self._expandPKCS12SSHKey(
             host_mode=False,
             uninstall_files=uninstall_files,
-            pki_artifacts=pki_artifacts,
         )
-
-        self._copyVMConsoleProxyPKIArtifacts(pki_artifacts)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
