@@ -14,11 +14,13 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtil;
  *
  */
 public abstract class VMStatsRefresher {
+    protected static final int VMS_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
+    protected static final int NUMBER_VMS_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
+
     protected VdsManager manager;
     protected SchedulerUtil sched;
     protected String vmsMonitoringJobId;
-    protected int refreshIteration = 1;
-    protected final int numberRefreshesBeforeSave = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
+    protected int refreshIteration;
     protected AuditLogDirector auditLogDirector;
 
     public VMStatsRefresher(VdsManager vdsManager, AuditLogDirector auditLog, SchedulerUtil scheduler) {
@@ -31,17 +33,14 @@ public abstract class VMStatsRefresher {
      * Performs operations required to start monitoring vms.
      */
     public void startMonitoring() {
-        int refreshRate = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
-        refreshIteration = numberRefreshesBeforeSave - 1;
-
         vmsMonitoringJobId =
                 sched.scheduleAFixedDelayJob(
                         this,
                         "perform",
                         new Class[0],
                         new Object[0],
-                        refreshRate,
-                        refreshRate,
+                        VMS_REFRESH_RATE,
+                        VMS_REFRESH_RATE,
                         TimeUnit.MILLISECONDS);
     }
 
@@ -60,12 +59,8 @@ public abstract class VMStatsRefresher {
     /**
      * Calculates number of refresh iterations.
      */
-    public void updateIteration() {
-        if (refreshIteration == numberRefreshesBeforeSave) {
-            refreshIteration = 1;
-        } else {
-            refreshIteration++;
-        }
+    protected void updateIteration() {
+        refreshIteration =  (++refreshIteration) % NUMBER_VMS_REFRESHES_BEFORE_SAVE;
     }
 
     /**
@@ -73,7 +68,7 @@ public abstract class VMStatsRefresher {
      *          otherwise.
      */
     public boolean getRefreshStatistics() {
-        return (refreshIteration == numberRefreshesBeforeSave);
+        return refreshIteration == 0;
     }
 
 }

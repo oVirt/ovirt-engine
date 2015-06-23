@@ -156,5 +156,6 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
                 log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", manager.getVdsName());
             }
         }
+        updateIteration();
     }
 }

@@ -92,8 +92,15 @@ public class VdsManager {
     private final DbFacade dbFacade;
     private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
     private VMStatsRefresher vmsRefresher;
+    protected int refreshIteration;
+
+    protected final int HOST_REFRESH_RATE;
+    protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
 
     public VdsManager(VDS vds, AuditLogDirector auditLogDirector, ResourceManager resourceManager, DbFacade dbFacade) {
+        HOST_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
+        NUMBER_HOST_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
+        refreshIteration = NUMBER_HOST_REFRESHES_BEFORE_SAVE - 1;
         this.resourceManager = resourceManager;
         this.dbFacade = dbFacade;
         this.auditLogDirector = auditLogDirector;
@@ -202,7 +209,7 @@ public class VdsManager {
                     }
 
                     try {
-                        vmsRefresher.updateIteration();
+                        updateIteration();
                         if (isMonitoringNeeded()) {
                             setStartTime();
                             hostMonitoring =
@@ -998,11 +1005,16 @@ public class VdsManager {
         return cachedVds.getHostName();
     }
 
-    public boolean getRefreshStatistics() {
-        if (vmsRefresher == null) {
-            return false;
+    public void updateIteration() {
+        if (refreshIteration == NUMBER_HOST_REFRESHES_BEFORE_SAVE) {
+            refreshIteration = 1;
+        } else {
+            refreshIteration++;
         }
-        return vmsRefresher.getRefreshStatistics();
+    }
+
+    public boolean getRefreshStatistics() {
+        return refreshIteration == NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     }
 
     public Object getLockObj() {

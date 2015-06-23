@@ -28,6 +28,7 @@ public class PollVMStatsRefresher extends VMStatsRefresher {
                 log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", manager.getVdsName());
             }
         }
+        updateIteration();
     }
 
     private VmsMonitoring getVmsMonitoring(VmsListFetcher fetcher, long fetchTime) {
