@@ -472,12 +472,12 @@ public class ProviderModel extends Model {
 
     private void setTestResultValue(VdcReturnValueBase result) {
         String errorMessage = EMPTY_ERROR_MESSAGE;
-        if (result == null || !result.getSucceeded()) {
-            if (result != null) {
-                errorMessage = Frontend.getInstance().translateEngineFault(result.getFault());
-            } else {
-                errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
-            }
+        if (result == null) {
+            errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
+        } else if (!result.getSucceeded()) {
+            errorMessage = result.getCanDoAction() ?
+                    Frontend.getInstance().translateEngineFault(result.getFault()) :
+                    Frontend.getInstance().translateExecuteFailedMessages(result.getCanDoActionMessages());
         }
         getTestResult().setEntity(errorMessage);
     }
