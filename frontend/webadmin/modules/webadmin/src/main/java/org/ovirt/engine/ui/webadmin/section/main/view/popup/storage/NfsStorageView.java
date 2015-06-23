@@ -5,11 +5,8 @@ import com.google.gwt.user.client.ui.UIObject;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ShortEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
@@ -67,11 +64,6 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     @UiField
     @Ignore
     VerticalPanel expanderContent;
-
-    @UiField(provided = true)
-    @Path(value = "override.entity")
-    @WithElementId("overrideEditor")
-    EntityModelCheckBoxEditor overrideEditor;
 
     @UiField
     @Ignore
@@ -134,15 +126,12 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
                 return model.getTitle();
             }
         });
-
-        overrideEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new VisibilityRenderer.SimpleVisibilityRenderer(), true);
     }
 
     void localize() {
         pathEditor.setLabel(constants.storagePopupNfsPathLabel());
         pathExampleLabel.setText(constants.storagePopupNfsPathExampleLabel());
         warningLabel.setText(constants.advancedOptionsLabel());
-        overrideEditor.setLabel(constants.storagePopupNfsOverrideLabel());
         versionListEditor.setLabel(constants.storagePopupNfsVersionLabel());
         retransmissionsEditor.setLabel(constants.storagePopupNfsRetransmissionsLabel());
         timeoutEditor.setLabel(constants.storagePopupNfsTimeoutLabel());
@@ -175,14 +164,6 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         setElementVisibility(retransmissionsEditor, object.getRetransmissions().getIsAvailable());
         setElementVisibility(timeoutEditor, object.getTimeout().getIsAvailable());
         setElementVisibility(mountOptionsEditor, object.getTimeout().getIsAvailable());
-
-        // When all advanced fields are unavailable - hide the expander.
-        boolean anyField = object.getVersion().getIsAvailable()
-            || object.getRetransmissions().getIsAvailable()
-            || object.getTimeout().getIsAvailable()
-            || object.getMountOptions().getIsAvailable();
-
-        expander.getElement().getStyle().setVisibility(anyField ? Style.Visibility.VISIBLE : Style.Visibility.HIDDEN);
     }
 
     @Override

@@ -61,7 +61,6 @@
         <d:AdvancedParametersExpander ui:field="expander"/>
         <g:VerticalPanel ui:field="expanderContent">
             <g:Label ui:field="warningLabel" addStyleNames="{style.warningLabel}"/>
-            <ge:EntityModelCheckBoxEditor ui:field="overrideEditor" addStyleNames="{style.label} table_contentWidget_pfly_fix"/>
             <e:ListModelListBoxEditor ui:field="versionListEditor"/>
             <ge:ShortEntityModelTextBoxEditor ui:field="retransmissionsEditor"/>
             <ge:ShortEntityModelTextBoxEditor ui:field="timeoutEditor"/>

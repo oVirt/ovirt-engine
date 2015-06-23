@@ -84,12 +84,6 @@ public class NfsStorageModel extends FileStorageModel {
         role = value;
     }
 
-    private EntityModel<Boolean> override;
-
-    public EntityModel<Boolean> getOverride() {
-        return override;
-    }
-
     @Override protected void prepareConnectionForEditing(StorageServerConnections connection) {
         getRetransmissions().setEntity(connection.getNfsRetrans());
         getTimeout().setEntity(connection.getNfsTimeo());
@@ -105,17 +99,6 @@ public class NfsStorageModel extends FileStorageModel {
                 break;
             }
         }
-
-        // If any settings were overridden, reflect this in the override checkbox
-        getOverride().setEntity(
-                connection.getNfsVersion() != null ||
-                        connection.getNfsRetrans() != null ||
-                        connection.getNfsTimeo() != null ||
-                        connection.getMountOptions() != null);
-    }
-
-    private void setOverride(EntityModel<Boolean> value) {
-        override = value;
     }
 
     private ListModel<EntityModel<NfsVersion>> version;
@@ -187,21 +170,6 @@ public class NfsStorageModel extends FileStorageModel {
         setTimeout(new EntityModel<Short>());
         setMountOptions(new EntityModel<String>());
 
-        setOverride(new EntityModel<Boolean>());
-        getOverride().getEntityChangedEvent().addListener(this);
-        getOverride().setEntity(false);
-
-    }
-
-    private void override_EntityChanged(EventArgs e) {
-        // Advanced options are editable only if override checkbox is enabled
-        // and the dialog is not editing existing nfs storage.
-        boolean isChangeable = (Boolean) getOverride().getEntity();
-        getVersion().setIsChangeable(isChangeable);
-        getRetransmissions().setIsChangeable(isChangeable);
-        getTimeout().setIsChangeable(isChangeable);
-        getMountOptions().setIsChangeable(isChangeable);
-        getMountOptions().setTitle(isChangeable ? ConstantsManager.getInstance().getConstants().mountOptionsHint() : null);
     }
 
     @Override
@@ -210,9 +178,6 @@ public class NfsStorageModel extends FileStorageModel {
         if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition) && sender == getPath()) {
             // Notify about path change.
             getPathChangedEvent().raise(this, EventArgs.EMPTY);
-        }
-        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition) && sender == getOverride()) {
-            override_EntityChanged(args);
         }
     }
 
@@ -285,6 +250,10 @@ public class NfsStorageModel extends FileStorageModel {
     @Override
     public void prepareForEdit(StorageDomain storage) {
         super.prepareForEdit(storage);
-        getOverride().setIsChangeable(isEditable(storage));
+        boolean isStorageEditable = isEditable(storage);
+        getVersion().setIsChangeable(isStorageEditable);
+        getRetransmissions().setIsChangeable(isStorageEditable);
+        getTimeout().setIsChangeable(isStorageEditable);
+        getMountOptions().setIsChangeable(isStorageEditable);
     }
 }

@@ -1271,7 +1271,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     private void updateNFSProperties(IStorageModel storageModel) {
         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
-        if (nfsModel.getOverride().getEntity()) {
+        if (isConnectionOverriden()) {
             connection.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
             connection.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
             connection.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
@@ -1297,16 +1297,16 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         hostId = host.getId();
 
         // Create storage connection.
-        StorageServerConnections tempVar = new StorageServerConnections();
-        tempVar.setconnection(path);
-        tempVar.setstorage_type(nfsModel.getType());
-        if (nfsModel.getOverride().getEntity()) {
-            tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
-            tempVar.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
-            tempVar.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
-            tempVar.setMountOptions(nfsModel.getMountOptions().getEntity());
+        StorageServerConnections storageConnection = new StorageServerConnections();
+        storageConnection.setconnection(path);
+        storageConnection.setstorage_type(nfsModel.getType());
+        if (isConnectionOverriden()) {
+            storageConnection.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
+            storageConnection.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
+            storageConnection.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
+            storageConnection.setMountOptions(nfsModel.getMountOptions().getEntity());
         }
-        connection = tempVar;
+        connection = storageConnection;
 
         ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
@@ -1767,7 +1767,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                     tempVar.setstorage_type(storageListModel.storageType);
                     if (storageModel instanceof NfsStorageModel) {
                         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
-                        if (nfsModel.getOverride().getEntity()) {
+                        if (isConnectionOverriden()) {
                             tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
                             tempVar.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
                             tempVar.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
@@ -2084,5 +2084,14 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     public DiskProfileListModel getDiskProfileListModel() {
         return diskProfileListModel;
+    }
+
+    private boolean isConnectionOverriden() {
+        StorageModel model = (StorageModel) getWindow();
+        NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
+        return (nfsModel.getVersion().getSelectedItem().getEntity() != null
+                || nfsModel.getRetransmissions().asConvertible().nullableShort() != null
+                || nfsModel.getTimeout().asConvertible().nullableShort() != null
+                || nfsModel.getMountOptions().getEntity() != null);
     }
 }
