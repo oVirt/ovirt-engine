@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResource.SUB_COLLECTIONS;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -156,19 +157,15 @@ public class BackendStorageDomainResource extends
 
     @Override
     public Response refreshLuns(Action action) {
-        StorageDomain model = get();
-        org.ovirt.engine.api.model.StorageType storageType = org.ovirt.engine.api.model.StorageType.fromValue(model.getStorage().getType());
-        if (storageType != null) {
-            switch (storageType) {
-                case ISCSI:
-                case FCP:
-                    refreshLunSize(action);
-                    break;
-                default:
-                    break;
-            }
+        List<LogicalUnit> incomingLuns;
+        if (action.isSetLogicalUnits()) {
+            incomingLuns = action.getLogicalUnits().getLogicalUnits();
         }
-        return Response.ok().entity(model).build();
+        else {
+            incomingLuns = Collections.emptyList();
+        }
+        ExtendSANStorageDomainParameters params = createParameters(guid, incomingLuns, false);
+        return performAction(VdcActionType.RefreshLunsSize, params);
     }
 
     @Override
@@ -203,15 +200,6 @@ public class BackendStorageDomainResource extends
                         : isImageDomain(storageDomain) ? new String[] { "templates", "vms", "files", "disks",
                                 "storageconnections" }
                                 : new String[] { "files", "images" };
-    }
-
-    private void refreshLunSize(Action action) {
-        List<LogicalUnit> incomingLuns = action.getLogicalUnits().getLogicalUnits();
-        if (!incomingLuns.isEmpty()) {
-
-            ExtendSANStorageDomainParameters params = createParameters(guid, incomingLuns, false);
-            performAction(VdcActionType.RefreshLunsSize, params);
-        }
     }
 
     /**

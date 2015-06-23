@@ -382,13 +382,6 @@ public class BackendStorageDomainResourceTest
 
     @Test
     public void testRefreshLunsSize() throws Exception {
-        setUpGetEntityExpectations(1, getIscsiEntity());
-        setUpGetEntityExpectations(VdcQueryType.GetLunsByVgId,
-                GetLunsByVgIdParameters.class,
-                new String[] { "VgId" },
-                new Object[] { GUIDS[0].toString() },
-                setUpLuns());
-
         List<String> lunsArray = new ArrayList();
         lunsArray.add(GUIDS[2].toString());
         setUriInfo(setUpActionExpectations(VdcActionType.RefreshLunsSize,
@@ -397,16 +390,17 @@ public class BackendStorageDomainResourceTest
                 new Object[]{lunsArray},
                 true,
                 true));
-
         Action action = new Action();
         LogicalUnits luns= new LogicalUnits();
         LogicalUnit lun = new LogicalUnit();
         lun.setId(GUIDS[2].toString());
         luns.getLogicalUnits().add(lun);
         action.setLogicalUnits(luns);
-        Response response = resource.refreshLuns(action);
-        assertEquals("unexpected status", 200, response.getStatus());
-        verifyModelResponse(((StorageDomain) response.getEntity()), 0);
+        verifyActionResponse(resource.refreshLuns(action));
+    }
+
+    private void verifyActionResponse(Response response) throws Exception {
+        verifyActionResponse(response, "storagedomains/" + GUIDS[0], false);
     }
 
     protected void verifyModelResponse(StorageDomain model, int index) {

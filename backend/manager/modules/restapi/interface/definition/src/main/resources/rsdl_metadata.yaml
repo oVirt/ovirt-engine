@@ -1066,7 +1066,7 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments:
+      - optionalArguments:
           action.logical_units.logical_unit--COLLECTION:
             logical_unit.id: xs:string
 - name: /storagedomains/{storagedomain:id}|rel=update
