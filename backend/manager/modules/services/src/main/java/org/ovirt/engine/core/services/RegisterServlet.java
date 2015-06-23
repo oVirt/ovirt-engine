@@ -258,6 +258,9 @@ public class RegisterServlet extends HttpServlet {
             else if (cmd.equals("register")) {
                 registerV1(request, response);
             }
+            else {
+                throw new RuntimeException("Invalid command");
+            }
         }
         catch (Exception e) {
             log.error("Registration failed: {}", e.getMessage());
