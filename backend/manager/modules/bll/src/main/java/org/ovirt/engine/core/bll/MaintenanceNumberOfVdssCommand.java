@@ -8,9 +8,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.gluster.GlusterHostValidator;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -37,6 +41,7 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 
@@ -46,6 +51,12 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     private final HashMap<Guid, VDS> vdssToMaintenance = new HashMap<>();
     private final List<PermissionSubject> inspectedEntitiesMap;
     private Map<String, Pair<String, String>> sharedLockMap;
+
+    @Inject
+    protected ClusterDao clusterDao;
+
+    @Inject
+    private GlusterHostValidator glusterHostValidator;
 
     public MaintenanceNumberOfVdssCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -314,6 +325,51 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                     getReturnValue().getValidationMessages().add(String.format("$HostsList %1$s",
                             StringUtils.join(allHostsWithRunningVms, ",")));
                 }
+            }
+
+            if (result && !getParameters().isForceMaintenance()) {
+                result = validateGlusterParams(clustersAsSet);
+            }
+        }
+
+        return result;
+    }
+
+    /*
+     * Validates gluster specific properties before moving the host to maintenance. Following things will be checked as
+     * part of this check 1. Ensure gluster quorum can be met for all the volumes 2. Ensure there is no unsynced entry
+     * present in the bricks
+     */
+    private boolean validateGlusterParams(Set<Guid> clustersAsSet) {
+        boolean result = true;
+        List<String> volumesWithoutQuorum = new ArrayList<>();
+        for (Guid clusterId : clustersAsSet) {
+            Cluster cluster = clusterDao.get(clusterId);
+            if (cluster.supportsGlusterService()) {
+                volumesWithoutQuorum.addAll(
+                        glusterHostValidator.checkGlusterQuorum(cluster, getParameters().getVdsIdList()));
+            }
+        }
+        if (!volumesWithoutQuorum.isEmpty()) {
+            addValidationMessage(
+                    EngineMessage.VDS_CANNOT_MAINTENANCE_GLUSTER_QUORUM_CANNOT_BE_MET);
+            addValidationMessageVariable("VolumesList", StringUtils.join(volumesWithoutQuorum, ","));
+            result = false;
+        }
+
+        if (result) {
+            Map<Guid, List<String>> unsyncedEntries =
+                    glusterHostValidator.checkUnsyncedEntries(getParameters().getVdsIdList());
+            if (!unsyncedEntries.isEmpty()) {
+                addValidationMessage(
+                        EngineMessage.VDS_CANNOT_MAINTENANCE_UNSYNCED_ENTRIES_PRESENT_IN_GLUSTER_BRICKS);
+                addValidationMessageVariable("BricksList", StringUtils.join(unsyncedEntries.values(), ","));
+                String hostsWithUnsyncedEntries = unsyncedEntries.keySet()
+                        .stream()
+                        .map(hostId -> vdssToMaintenance.get(hostId).getName())
+                        .collect(Collectors.joining(","));
+                addValidationMessageVariable("HostsList", hostsWithUnsyncedEntries);
+                result = false;
             }
         }
         return result;

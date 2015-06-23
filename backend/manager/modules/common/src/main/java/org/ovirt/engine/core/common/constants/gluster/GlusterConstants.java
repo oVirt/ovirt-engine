@@ -12,6 +12,13 @@ public class GlusterConstants {
     public static final String OPTION_NFS_DISABLE = "nfs.disable";
     public static final String OPTION_USER_CIFS = "user.cifs";
     public static final String OPTION_GROUP = "group";
+    public static final String OPTION_QUORUM_TYPE = "cluster.quorum-type";
+    public static final String OPTION_QUORUM_COUNT = "cluster.quorum-count";
+    public static final String OPTION_SERVER_QUORUM_TYPE = "cluster.server-quorum-type";
+    public static final String OPTION_SERVER_QUORUM_RATIO = "cluster.server-quorum-ratio";
+
+    public static final String OPTION_QUORUM_TYPE_FIXED = "fixed";
+    public static final String OPTION_QUORUM_TYPE_AUTO = "auto";
 
     public static final String NO_OF_BRICKS = "NoOfBricks";
     public static final String BRICK_PATH = "brickpath";
