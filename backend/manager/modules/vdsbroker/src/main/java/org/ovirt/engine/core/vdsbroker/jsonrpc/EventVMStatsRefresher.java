@@ -1,11 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.jsonrpc;
 
-import static org.ovirt.engine.core.vdsbroker.VmsListFetcher.isDevicesChanged;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -26,6 +23,8 @@ import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.ovirt.engine.core.vdsbroker.VmsListFetcher.isDevicesChanged;
 
 public class EventVMStatsRefresher extends VMStatsRefresher {
     private static final Logger log = LoggerFactory.getLogger(EventVMStatsRefresher.class);
@@ -124,11 +123,14 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
             VmsListFetcher fetcher = new VmsStatisticsFetcher(this.manager);
 
             long fetchTime = System.nanoTime();
-            fetcher.fetch();
 
-            new VmsMonitoring(this.manager,
-                    fetcher.getChangedVms(),
-                    fetcher.getVmsWithChangedDevices(), this.auditLogDirector, fetchTime).perform();
+            if (fetcher.fetch()) {
+                new VmsMonitoring(this.manager,
+                        fetcher.getChangedVms(),
+                        fetcher.getVmsWithChangedDevices(), this.auditLogDirector, fetchTime).perform();
+            } else {
+                log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", manager.getVdsName());
+            }
         }
     }
 }

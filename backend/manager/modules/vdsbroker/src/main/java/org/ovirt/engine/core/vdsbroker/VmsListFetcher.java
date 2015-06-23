@@ -51,7 +51,7 @@ public class VmsListFetcher {
         this.resourceManager = resourceManager;
     }
 
-    public void fetch() {
+    public boolean fetch() {
         VDSReturnValue getList =
                 getResourceManager().runVdsCommand(
                         VDSCommandType.List,
@@ -59,8 +59,10 @@ public class VmsListFetcher {
         if (getList.getSucceeded()) {
             vdsmVms = (Map<Guid, VmInternalData>) getList.getReturnValue();
             onFetchVms();
+            return true;
         } else {
             onError();
+            return false;
         }
     }
 

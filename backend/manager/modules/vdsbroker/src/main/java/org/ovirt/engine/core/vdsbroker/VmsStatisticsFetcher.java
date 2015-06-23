@@ -17,7 +17,7 @@ public class VmsStatisticsFetcher extends VmsListFetcher {
     }
 
     @Override
-    public void fetch() {
+    public boolean fetch() {
         VDSReturnValue getStats = ResourceManager.getInstance()
                 .runVdsCommand(
                         VDSCommandType.GetAllVmStats,
@@ -25,8 +25,10 @@ public class VmsStatisticsFetcher extends VmsListFetcher {
         if (getStats.getSucceeded()) {
             vdsmVms = (Map<Guid, VmInternalData>) getStats.getReturnValue();
             onFetchVms();
+            return true;
         } else {
             onError();
+            return false;
         }
     }
 

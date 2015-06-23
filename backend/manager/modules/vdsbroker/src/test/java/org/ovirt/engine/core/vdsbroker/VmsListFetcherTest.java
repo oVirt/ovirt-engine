@@ -67,7 +67,7 @@ public class VmsListFetcherTest {
         //given
         stubCalls(data);
         //when
-        vmsListFetcher.fetch();
+        Assert.assertTrue(vmsListFetcher.fetch());
         assumeTrue(data.dbVm() != null);
         assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm().getStatus() != data.vdsmVm().getVmDynamic().getStatus());
@@ -84,7 +84,7 @@ public class VmsListFetcherTest {
         assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm() != null && data.dbVm().getStatus() == data.vdsmVm().getVmDynamic().getStatus());
         //then
-        vmsListFetcher.fetch();
+        Assert.assertTrue(vmsListFetcher.fetch());
         Assert.assertTrue(vmsListFetcher.getChangedVms().isEmpty());
     }
 
@@ -93,7 +93,7 @@ public class VmsListFetcherTest {
         //given
         stubCalls(data);
         //when
-        vmsListFetcher.fetch();
+        Assert.assertTrue(vmsListFetcher.fetch());
         /* assume non external VM */
         assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm() != null);
@@ -110,13 +110,20 @@ public class VmsListFetcherTest {
      //given
         stubCalls(data);
         //when
-        vmsListFetcher.fetch();
+        Assert.assertTrue(vmsListFetcher.fetch());
         /* assume external VM */
         assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm() == null);
         //then
         verify(vdsManager).setLastVmsList(vdsManagerArgumentCaptor.capture());
         Assert.assertTrue(vdsManagerArgumentCaptor.getValue().size() == 0);
+    }
+
+    @Theory
+    public void callToVDSMFailed(VmTestPairs data) {
+        // given
+        stubFailedCalls();
+        Assert.assertFalse(vmsListFetcher.fetch());
     }
 
     private void stubCalls(VmTestPairs data) {
@@ -159,6 +166,19 @@ public class VmsListFetcherTest {
         }
         return value;
 
+    }
+
+    private void stubFailedCalls() {
+        when(resourceManager.runVdsCommand(
+                any(VDSCommandType.class),
+                any(VdsIdAndVdsVDSCommandParametersBase.class))).
+                thenReturn(getFailedVdsReturnValue());
+    }
+
+    private VDSReturnValue getFailedVdsReturnValue() {
+        VDSReturnValue value = new VDSReturnValue();
+        value.setSucceeded(false);
+        return value;
     }
 
 }
