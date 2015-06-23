@@ -82,11 +82,6 @@ public class BackendOperatingSystemsResource
     }
 
     @Override
-    protected OperatingSystemInfo doPopulate(OperatingSystemInfo model, Integer entity) {
-        return model;
-    }
-
-    @Override
     protected Response performRemove(String id) {
         throw new NotImplementedException();
     }

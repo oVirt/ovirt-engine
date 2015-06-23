@@ -49,11 +49,6 @@ public class BackendOpenStackVolumeTypesResource
 
     }
 
-    @Override
-    protected OpenStackVolumeType doPopulate(OpenStackVolumeType model, CinderVolumeType entity) {
-        return model;
-    }
-
     protected OpenStackVolumeTypes mapCollection(List<CinderVolumeType> entities) {
         OpenStackVolumeTypes collection = new OpenStackVolumeTypes();
         for (CinderVolumeType volumeType : entities) {

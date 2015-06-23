@@ -114,11 +114,6 @@ public class BackendAttachedStorageDomainsResource
         return resource.map(entity, template);
     }
 
-    @Override
-    protected StorageDomain doPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
-        return model;
-    }
-
     public String[] getLinksToExclude(org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain) {
         return isIsoDomain(storageDomain) ? new String[] { "disks" }
                                             :

@@ -68,11 +68,6 @@ public class BackendVmNumaNodesResource
         }
     }
 
-    @Override
-    protected VirtualNumaNode doPopulate(VirtualNumaNode model, VmNumaNode entity) {
-        return model;
-    }
-
     protected VmNumaNode lookupEntity(Guid id) {
         for (VmNumaNode entity : getBackendCollection(queryType, queryParams)) {
             if (matchEntity(entity, id)) {

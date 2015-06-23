@@ -69,11 +69,6 @@ public class BackendExternalProviderCertificateResource
     }
 
     @Override
-    protected Certificate doPopulate(Certificate model, CertificateInfo entity) {
-        return model;
-    }
-
-    @Override
     protected Guid asGuidOr404(String id) {
         return null;
     }

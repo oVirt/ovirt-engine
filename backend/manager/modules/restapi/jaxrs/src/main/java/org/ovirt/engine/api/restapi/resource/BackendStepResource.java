@@ -38,11 +38,6 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
     }
 
     @Override
-    protected Step doPopulate(Step model, org.ovirt.engine.core.common.job.Step entity) {
-        return model;
-    }
-
-    @Override
     protected Step addParents(Step model) {
         parent.addParents(model);
         return model;

@@ -146,11 +146,6 @@ public class BackendGlusterVolumeResource
         this.parent = parent;
     }
 
-    @Override
-    protected GlusterVolume doPopulate(GlusterVolume model, GlusterVolumeEntity entity) {
-        return model;
-    }
-
     public String getId() {
         return this.id;
     }

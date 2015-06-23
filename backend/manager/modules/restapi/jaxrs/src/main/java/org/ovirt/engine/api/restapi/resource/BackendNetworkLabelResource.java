@@ -41,11 +41,6 @@ public class BackendNetworkLabelResource extends AbstractBackendSubResource<Labe
     }
 
     @Override
-    protected Label doPopulate(Label model, NetworkLabel entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         return performAction(VdcActionType.UnlabelNetwork, new UnlabelNetworkParameters(parent.getNetworkId()));

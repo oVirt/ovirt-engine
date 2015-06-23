@@ -69,11 +69,6 @@ public class BackendDataCentersResource extends
     }
 
     @Override
-    protected DataCenter doPopulate(DataCenter model, StoragePool entity) {
-        return model;
-    }
-
-    @Override
     protected DataCenter deprecatedPopulate(DataCenter model, StoragePool entity) {
         IdQueryParameters parameters = new IdQueryParameters(asGuid(model.getId()));
         model.setSupportedVersions(getMapper(List.class,

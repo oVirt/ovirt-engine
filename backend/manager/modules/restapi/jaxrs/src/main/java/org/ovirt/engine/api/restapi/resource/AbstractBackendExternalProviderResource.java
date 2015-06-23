@@ -65,11 +65,6 @@ public abstract class AbstractBackendExternalProviderResource<R extends External
     }
 
     @Override
-    protected R doPopulate(R model, Provider entity) {
-        return model;
-    }
-
-    @Override
     public Response testConnectivity(Action action) {
         Provider provider = BackendExternalProviderHelper.getProvider(this, id);
         ProviderParameters parameters = new ProviderParameters(provider);

@@ -57,7 +57,7 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
 
     @Override
     protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-        return ((BackendVmDisksResource) collection).doPopulate(model, entity);
+        return collection.doPopulate(model, entity);
     }
 
     @Override

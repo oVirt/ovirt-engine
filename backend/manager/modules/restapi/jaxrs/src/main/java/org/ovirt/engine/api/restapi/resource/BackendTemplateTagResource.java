@@ -37,11 +37,6 @@ public class BackendTemplateTagResource extends AbstractBackendSubResource<Tag, 
     }
 
     @Override
-    protected Tag doPopulate(Tag model, Tags entity) {
-        return model;
-    }
-
-    @Override
     protected Tag addParents(Tag tag) {
         Template template = new Template();
         template.setId(templateId.toString());

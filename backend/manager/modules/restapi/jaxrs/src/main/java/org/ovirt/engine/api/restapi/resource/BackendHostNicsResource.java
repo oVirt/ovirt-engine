@@ -285,11 +285,6 @@ public class BackendHostNicsResource
     }
 
     @Override
-    protected HostNIC doPopulate(HostNIC model, VdsNetworkInterface entity) {
-        return model;
-    }
-
-    @Override
     protected HostNIC deprecatedPopulate(HostNIC model, VdsNetworkInterface entity) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         if (details.contains("statistics")) {

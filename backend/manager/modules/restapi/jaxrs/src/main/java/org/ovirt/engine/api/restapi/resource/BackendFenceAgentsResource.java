@@ -52,11 +52,6 @@ public class BackendFenceAgentsResource extends AbstractBackendCollectionResourc
         return inject(new BackendFenceAgentResource(id));
     }
 
-    @Override
-    protected Agent doPopulate(Agent model, FenceAgent entity) {
-        return model; // no additional information.
-    }
-
     private Agents mapCollection(List<FenceAgent> fenceAgents) {
         Agents agents = new Agents();
         for (FenceAgent fenceAgent : fenceAgents) {

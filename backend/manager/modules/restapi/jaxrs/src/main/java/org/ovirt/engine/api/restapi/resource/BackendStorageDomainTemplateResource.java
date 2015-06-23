@@ -115,11 +115,6 @@ public class BackendStorageDomainTemplateResource
     }
 
     @Override
-    protected Template doPopulate(Template model, VmTemplate entity) {
-        return model;
-    }
-
-    @Override
     public StorageDomainContentDisksResource getDisksResource() {
         return inject(new BackendExportDomainDisksResource(this));
     }

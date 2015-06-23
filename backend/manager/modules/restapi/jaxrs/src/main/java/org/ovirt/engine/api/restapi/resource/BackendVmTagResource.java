@@ -37,11 +37,6 @@ public class BackendVmTagResource extends AbstractBackendSubResource<Tag, Tags> 
     }
 
     @Override
-    protected Tag doPopulate(Tag model, Tags entity) {
-        return model;
-    }
-
-    @Override
     protected Tag addParents(Tag tag) {
         VM vm = new VM();
         vm.setId(vmId.toString());

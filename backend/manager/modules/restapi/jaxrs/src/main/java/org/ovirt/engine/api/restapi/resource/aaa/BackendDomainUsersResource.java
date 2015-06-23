@@ -81,11 +81,6 @@ public class BackendDomainUsersResource
     }
 
     @Override
-    protected User doPopulate(User model, DirectoryUser entity) {
-        return model;
-    }
-
-    @Override
     protected Guid asGuidOr404(String id) {
         return null;
     }

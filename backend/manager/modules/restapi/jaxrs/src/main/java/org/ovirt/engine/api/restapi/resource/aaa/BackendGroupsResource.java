@@ -124,11 +124,6 @@ public class BackendGroupsResource
     }
 
     @Override
-    protected Group doPopulate(Group model, DbGroup entity) {
-        return model;
-    }
-
-    @Override
     @SingleEntityResource
     public GroupResource getGroupSubResource(String id) {
         return inject(new BackendGroupResource(id, this));

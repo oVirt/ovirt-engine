@@ -69,11 +69,6 @@ public class BackendOpenStackSubnetsResource
     }
 
     @Override
-    protected OpenStackSubnet doPopulate(OpenStackSubnet model, ExternalSubnet entity) {
-        return model;
-    }
-
-    @Override
     protected OpenStackSubnet addParents(OpenStackSubnet subnet) {
         OpenStackNetworkProvider provider = new OpenStackNetworkProvider();
         provider.setId(providerId);

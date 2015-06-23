@@ -68,12 +68,6 @@ public class BackendExternalHostGroupResource
     }
 
     @Override
-    protected ExternalHostGroup doPopulate(ExternalHostGroup model,
-            org.ovirt.engine.core.common.businessentities.ExternalHostGroup entity) {
-        return model;
-    }
-
-    @Override
     protected ExternalHostGroup addParents(ExternalHostGroup image) {
         ExternalHostProvider provider = new ExternalHostProvider();
         provider.setId(providerId);

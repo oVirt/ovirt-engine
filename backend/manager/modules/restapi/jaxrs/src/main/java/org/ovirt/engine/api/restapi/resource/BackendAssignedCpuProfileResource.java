@@ -25,10 +25,4 @@ public class BackendAssignedCpuProfileResource extends AbstractBackendCpuProfile
     protected CpuProfile addParents(CpuProfile cpuProfile) {
         return parent.addParents(cpuProfile);
     }
-
-    @Override
-    protected CpuProfile doPopulate(CpuProfile model,
-            org.ovirt.engine.core.common.businessentities.profiles.CpuProfile entity) {
-        return model;
-    }
 }

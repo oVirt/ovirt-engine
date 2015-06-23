@@ -65,12 +65,6 @@ public class BackendExternalDiscoveredHostResource
     }
 
     @Override
-    protected ExternalDiscoveredHost doPopulate(ExternalDiscoveredHost model,
-            org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost entity) {
-        return model;
-    }
-
-    @Override
     protected ExternalDiscoveredHost addParents(ExternalDiscoveredHost image) {
         ExternalHostProvider provider = new ExternalHostProvider();
         provider.setId(providerId);

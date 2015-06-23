@@ -13,11 +13,6 @@ public class BackendIconResource extends AbstractBackendSubResource<Icon, VmIcon
     }
 
     @Override
-    protected Icon doPopulate(Icon model, org.ovirt.engine.core.common.businessentities.VmIcon entity) {
-        return model;
-    }
-
-    @Override
     public Icon get() {
         return performGet(VdcQueryType.GetVmIcon, new IdQueryParameters(guid));
     }

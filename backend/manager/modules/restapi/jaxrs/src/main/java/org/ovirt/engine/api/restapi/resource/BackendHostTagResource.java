@@ -37,12 +37,6 @@ public class BackendHostTagResource extends AbstractBackendSubResource<Tag, Tags
     }
 
     @Override
-    protected Tag doPopulate(Tag model, Tags entity) {
-        return model;
-    }
-
-
-    @Override
     protected Tag addParents(Tag tag) {
         Host host = new Host();
         host.setId(hostId.toString());

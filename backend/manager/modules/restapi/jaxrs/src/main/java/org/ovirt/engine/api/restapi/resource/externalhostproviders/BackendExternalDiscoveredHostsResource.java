@@ -49,12 +49,6 @@ public class BackendExternalDiscoveredHostsResource
         return mapCollection(getBackendCollection(VdcQueryType.GetDiscoveredHostListFromExternalProvider, parameters));
     }
 
-    @Override
-    protected ExternalDiscoveredHost doPopulate(ExternalDiscoveredHost model,
-            org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost entity) {
-        return model;
-    }
-
     protected ExternalDiscoveredHosts mapCollection(
             List<org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost> entities) {
         ExternalDiscoveredHosts collection = new ExternalDiscoveredHosts();

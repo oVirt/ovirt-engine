@@ -49,11 +49,6 @@ public class BackendSchedulingPolicyResource extends AbstractBackendSubResource<
     }
 
     @Override
-    protected SchedulingPolicy doPopulate(SchedulingPolicy model, ClusterPolicy entity) {
-        return model;
-    }
-
-    @Override
     public FiltersResource getFiltersResource() {
         return inject(new BackendFiltersResource(guid));
     }

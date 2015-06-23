@@ -78,11 +78,6 @@ public class BackendOpenStackNetworksResource
     }
 
     @Override
-    protected OpenStackNetwork doPopulate(OpenStackNetwork model, Network entity) {
-        return model;
-    }
-
-    @Override
     protected OpenStackNetwork addParents(OpenStackNetwork image) {
         OpenStackNetworkProvider provider = new OpenStackNetworkProvider();
         provider.setId(providerId);

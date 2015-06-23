@@ -36,12 +36,6 @@ public abstract class BackendPolicyUnitResource<T extends BaseResource> extends 
     }
 
     @Override
-    protected T doPopulate(T model, ClusterPolicy entity) {
-        return model;
-    }
-
-
-    @Override
     public Response remove() {
         ClusterPolicy entity = parent.getClusterPolicy();
         updateEntityForRemove(entity, asGuid(id));

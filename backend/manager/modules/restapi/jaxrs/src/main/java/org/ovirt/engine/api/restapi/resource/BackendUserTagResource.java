@@ -37,11 +37,6 @@ public class BackendUserTagResource extends AbstractBackendSubResource<Tag, Tags
     }
 
     @Override
-    protected Tag doPopulate(Tag model, Tags entity) {
-        return model;
-    }
-
-    @Override
     protected Tag addParents(Tag tag) {
         User user = new User();
         user.setId(userId.toString());

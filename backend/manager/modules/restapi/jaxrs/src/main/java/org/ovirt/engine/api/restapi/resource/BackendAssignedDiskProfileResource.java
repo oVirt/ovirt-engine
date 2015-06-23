@@ -25,10 +25,4 @@ public class BackendAssignedDiskProfileResource extends AbstractBackendDiskProfi
     protected DiskProfile addParents(DiskProfile diskProfile) {
         return parent.addParents(diskProfile);
     }
-
-    @Override
-    protected DiskProfile doPopulate(DiskProfile model,
-            org.ovirt.engine.core.common.businessentities.profiles.DiskProfile entity) {
-        return model;
-    }
 }

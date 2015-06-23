@@ -41,11 +41,6 @@ public class BackendDomainGroupResource
         return performGet(VdcQueryType.GetDirectoryGroupById, parameters, BaseResource.class);
     }
 
-    @Override
-    protected Group doPopulate(Group model, DirectoryGroup entity) {
-        return model;
-    }
-
     // We need to override this method because the native identifier of this
     // resource isn't an UUID.
     @Override

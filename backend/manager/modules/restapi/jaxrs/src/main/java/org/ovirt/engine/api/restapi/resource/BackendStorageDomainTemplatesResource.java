@@ -71,9 +71,4 @@ public class BackendStorageDomainTemplatesResource
     public StorageDomainContentResource<Template> getStorageDomainContentSubResource(String id) {
         return inject(new BackendStorageDomainTemplateResource(this, id));
     }
-
-    @Override
-    protected Template doPopulate(Template model, VmTemplate entity) {
-        return model;
-    }
 }

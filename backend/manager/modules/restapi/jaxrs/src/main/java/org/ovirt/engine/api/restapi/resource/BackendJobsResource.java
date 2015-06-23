@@ -50,11 +50,6 @@ public class BackendJobsResource extends AbstractBackendCollectionResource<Job, 
         throw new NotImplementedException();
     }
 
-    @Override
-    protected Job doPopulate(Job model, org.ovirt.engine.core.common.job.Job entity) {
-        return model;
-    }
-
     protected Jobs mapCollection(List<org.ovirt.engine.core.common.job.Job> entities) {
         Jobs collection = new Jobs();
         for (org.ovirt.engine.core.common.job.Job entity : entities) {

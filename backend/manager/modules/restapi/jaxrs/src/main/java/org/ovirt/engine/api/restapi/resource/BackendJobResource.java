@@ -50,10 +50,4 @@ public class BackendJobResource extends AbstractBackendActionableResource<Job, o
     public StepsResource getStepsResource() {
        return inject(new BackendStepsResource(guid));
     }
-
-    @Override
-    protected Job doPopulate(Job model, org.ovirt.engine.core.common.job.Job entity) {
-        return model;
-    }
-
 }

@@ -97,9 +97,4 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
                         + networkName).getId();
 
     }
-
-    @Override
-    protected Network doPopulate(Network model, org.ovirt.engine.core.common.businessentities.network.Network entity) {
-        return model;
-    }
 }

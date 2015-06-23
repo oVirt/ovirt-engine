@@ -33,10 +33,4 @@ public class BackendVmSessionResource extends AbstractBackendResource<Session, O
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND); // shouldn't happen.
     }
-
-    @Override
-    protected Session doPopulate(Session model, Object entity) {
-        return model;
-    }
-
 }

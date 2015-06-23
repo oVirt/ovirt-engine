@@ -67,11 +67,6 @@ public class BackendUserResource
                                                              User.class));
     }
 
-    @Override
-    protected User doPopulate(User model, DbUser entity) {
-        return model;
-    }
-
     public User getUserByNameAndDomain(String userName, String domainName) {
         return performGet(VdcQueryType.GetDbUserByUserNameAndDomain,
                 new GetDbUserByUserNameAndDomainQueryParameters(userName, domainName),

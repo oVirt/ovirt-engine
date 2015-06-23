@@ -20,11 +20,6 @@ public class BackendActionResource
     }
 
     @Override
-    protected Action doPopulate(Action model, List entity) {
-        return model;
-    }
-
-    @Override
     protected Action deprecatedPopulate(Action model, List entity) {
         model.setId(asString(ids));
         if (model.isSetFault()) {

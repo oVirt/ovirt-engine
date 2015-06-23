@@ -49,11 +49,6 @@ public class BackendOpenStackImagesResource
         return mapCollection(getBackendCollection(VdcQueryType.GetImagesList, parameters));
     }
 
-    @Override
-    protected OpenStackImage doPopulate(OpenStackImage model, RepoImage entity) {
-        return model;
-    }
-
     protected OpenStackImages mapCollection(List<RepoImage> entities) {
         OpenStackImages collection = new OpenStackImages();
         for (RepoImage image : entities) {

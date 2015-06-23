@@ -274,9 +274,4 @@ public class BackendAssignedPermissionsResource
     protected boolean isGroupSubCollection() {
         return Group.class.equals(suggestedParentType);
     }
-
-    @Override
-    protected Permission doPopulate(Permission model, org.ovirt.engine.core.common.businessentities.Permission entity) {
-        return model;
-    }
 }

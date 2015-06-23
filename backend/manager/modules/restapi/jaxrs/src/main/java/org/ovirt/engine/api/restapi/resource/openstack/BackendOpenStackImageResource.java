@@ -49,11 +49,6 @@ public class BackendOpenStackImageResource
     }
 
     @Override
-    protected OpenStackImage doPopulate(OpenStackImage model, RepoImage entity) {
-        return model;
-    }
-
-    @Override
     protected OpenStackImage addParents(OpenStackImage image) {
         OpenStackImageProvider provider = new OpenStackImageProvider();
         provider.setId(providerId);

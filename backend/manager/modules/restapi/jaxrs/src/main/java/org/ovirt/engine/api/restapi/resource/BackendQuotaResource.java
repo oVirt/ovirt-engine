@@ -48,11 +48,6 @@ public class BackendQuotaResource extends AbstractBackendSubResource<Quota, org.
     }
 
     @Override
-    protected Quota doPopulate(Quota model, org.ovirt.engine.core.common.businessentities.Quota entity) {
-        return model;
-    }
-
-    @Override
     public Quota update(Quota incoming) {
         return performUpdate(incoming,
                 new QueryIdResolver<Guid>(VdcQueryType.GetQuotaByQuotaId, IdQueryParameters.class),

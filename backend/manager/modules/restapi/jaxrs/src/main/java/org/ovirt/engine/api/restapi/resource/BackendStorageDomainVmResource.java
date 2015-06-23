@@ -119,11 +119,6 @@ public class BackendStorageDomainVmResource
     }
 
     @Override
-    protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         RemoveVmFromImportExportParameters params = new RemoveVmFromImportExportParameters(

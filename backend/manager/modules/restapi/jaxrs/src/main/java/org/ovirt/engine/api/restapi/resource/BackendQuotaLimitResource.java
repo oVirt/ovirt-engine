@@ -32,11 +32,6 @@ public abstract class BackendQuotaLimitResource<T extends BaseResource> extends 
         return super.map(entity, createQuotaLimit());
     }
 
-    @Override
-    protected T doPopulate(T model, Quota entity) {
-        return model;
-    }
-
     protected abstract void updateEntityForRemove(Quota entity, Guid id);
 
     @Override

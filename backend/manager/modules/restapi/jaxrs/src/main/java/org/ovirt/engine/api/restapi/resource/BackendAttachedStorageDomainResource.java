@@ -75,11 +75,6 @@ public class BackendAttachedStorageDomainResource
     }
 
     @Override
-    protected StorageDomain doPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
-        return model;
-    }
-
-    @Override
     public DisksResource getDisksResource() {
         return inject(new BackendStorageDomainDisksResource(asGuid(id), subCollections));
     }

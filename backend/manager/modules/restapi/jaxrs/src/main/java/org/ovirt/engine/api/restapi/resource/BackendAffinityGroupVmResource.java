@@ -35,11 +35,6 @@ public class BackendAffinityGroupVmResource
         );
     }
 
-    @Override
-    protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        return model;
-    }
-
     private org.ovirt.engine.core.common.scheduling.AffinityGroup getGroup() {
         return getEntity(
             org.ovirt.engine.core.common.scheduling.AffinityGroup.class,

@@ -60,11 +60,6 @@ public class BackendOpenStackVolumeTypeResource
     }
 
     @Override
-    protected OpenStackVolumeType doPopulate(OpenStackVolumeType model, CinderVolumeType entity) {
-        return model;
-    }
-
-    @Override
     protected OpenStackVolumeType addParents(OpenStackVolumeType volumeType) {
         OpenStackVolumeProvider provider = new OpenStackVolumeProvider();
         provider.setId(providerId);

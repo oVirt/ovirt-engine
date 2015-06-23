@@ -141,11 +141,6 @@ public class BackendUsersResource
         return user;
     }
 
-    @Override
-    protected User doPopulate(User model, DbUser entity) {
-        return model;
-    }
-
     @SingleEntityResource
     public UserResource getUserSubResource(String id) {
         return inject(new BackendUserResource(id, this));

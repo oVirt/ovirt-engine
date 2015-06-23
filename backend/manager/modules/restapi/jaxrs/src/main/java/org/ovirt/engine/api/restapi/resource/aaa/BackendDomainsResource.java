@@ -104,9 +104,4 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
     protected Response performRemove(String id) {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    protected Domain doPopulate(Domain model, Directory entity) {
-        return model;
-    }
 }

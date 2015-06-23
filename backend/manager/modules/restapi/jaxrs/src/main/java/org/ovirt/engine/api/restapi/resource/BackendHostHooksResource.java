@@ -55,11 +55,6 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
     }
 
     @Override
-    protected Hook doPopulate(Hook model, Object entity) {
-        return model;
-    }
-
-    @Override
     protected Response performRemove(String id) {
         return null;
     }

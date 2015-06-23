@@ -20,11 +20,6 @@ public class BackendSchedulingPolicyUnitResource extends AbstractBackendSubResou
     }
 
     @Override
-    protected SchedulingPolicyUnit doPopulate(SchedulingPolicyUnit model, PolicyUnit entity) {
-        return model;
-    }
-
-    @Override
     public SchedulingPolicyUnit get() {
         return performGet(VdcQueryType.GetPolicyUnitById, new IdQueryParameters(guid));
     }

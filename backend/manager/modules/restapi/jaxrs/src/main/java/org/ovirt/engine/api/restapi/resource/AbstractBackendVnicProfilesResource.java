@@ -76,12 +76,6 @@ public abstract class AbstractBackendVnicProfilesResource
 
     protected abstract void validateParameters(VnicProfile vnicProfile);
 
-    @Override
-    protected VnicProfile doPopulate(VnicProfile model,
-            org.ovirt.engine.core.common.businessentities.network.VnicProfile entity) {
-        return model;
-    }
-
     protected abstract List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> getVnicProfilesCollection();
 
     protected VnicProfiles performList() {

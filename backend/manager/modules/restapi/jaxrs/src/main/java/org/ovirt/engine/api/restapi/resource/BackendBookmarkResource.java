@@ -41,11 +41,6 @@ public class BackendBookmarkResource extends AbstractBackendSubResource<Bookmark
     }
 
     @Override
-    protected Bookmark doPopulate(Bookmark model, org.ovirt.engine.core.common.businessentities.Bookmark entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         return performAction(VdcActionType.RemoveBookmark, new BookmarksParametersBase(guid));

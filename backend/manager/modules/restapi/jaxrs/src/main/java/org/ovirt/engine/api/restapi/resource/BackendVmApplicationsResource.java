@@ -49,10 +49,4 @@ public class BackendVmApplicationsResource extends AbstractBackendResource<Appli
     public VmApplicationResource getVmApplicationSubResource(String id) {
         return inject(new BackendVmApplicationResource(id, this));
     }
-
-    @Override
-    protected Application doPopulate(Application model, VM entity) {
-        return model;
-    }
-
 }

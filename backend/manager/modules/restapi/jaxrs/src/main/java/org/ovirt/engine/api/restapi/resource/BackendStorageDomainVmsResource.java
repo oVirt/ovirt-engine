@@ -62,9 +62,4 @@ public class BackendStorageDomainVmsResource
     public StorageDomainContentResource<VM> getStorageDomainContentSubResource(String id) {
         return inject(new BackendStorageDomainVmResource(this, id));
     }
-
-    @Override
-    protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        return model;
-    }
 }

@@ -103,11 +103,6 @@ public class BackendGlusterHookResource
         this.parent = parent;
     }
 
-    @Override
-    protected GlusterHook doPopulate(GlusterHook model, GlusterHookEntity entity) {
-        return model;
-    }
-
     public String getId() {
        return this.id;
     }

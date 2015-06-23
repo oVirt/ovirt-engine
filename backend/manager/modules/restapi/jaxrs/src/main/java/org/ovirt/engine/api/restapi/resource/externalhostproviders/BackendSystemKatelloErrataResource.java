@@ -45,9 +45,4 @@ public class BackendSystemKatelloErrataResource extends AbstractBackendCollectio
     protected Response performRemove(String id) {
         throw new NotImplementedException();
     }
-
-    @Override
-    protected KatelloErratum doPopulate(KatelloErratum model, Erratum entity) {
-        return model;
-    }
 }

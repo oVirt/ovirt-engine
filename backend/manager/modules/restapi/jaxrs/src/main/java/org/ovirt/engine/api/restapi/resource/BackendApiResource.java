@@ -390,9 +390,4 @@ public class BackendApiResource
                         new VdcActionParametersBase(),
                         action);
     }
-
-    @Override
-    protected API doPopulate(API model, Object entity) {
-        return model;
-    }
 }

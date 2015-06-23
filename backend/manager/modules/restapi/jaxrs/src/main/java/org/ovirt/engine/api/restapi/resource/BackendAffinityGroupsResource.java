@@ -57,11 +57,6 @@ public class BackendAffinityGroupsResource
     }
 
     @Override
-    protected AffinityGroup doPopulate(AffinityGroup model, org.ovirt.engine.core.common.scheduling.AffinityGroup entity) {
-        return model;
-    }
-
-    @Override
     @SingleEntityResource
     public AffinityGroupResource getAffinityGroupResource(String id) {
         return inject(new BackendAffinityGroupResource(id));

@@ -29,11 +29,6 @@ public class BackendVmKatelloErratumResource extends AbstractBackendSubResource<
     }
 
     @Override
-    protected KatelloErratum doPopulate(KatelloErratum model, Erratum entity) {
-        return model;
-    }
-
-    @Override
     protected KatelloErratum addParents(KatelloErratum erratum) {
         VM vm = new VM();
         vm.setId(vmId);

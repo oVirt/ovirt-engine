@@ -31,11 +31,6 @@ public class BackendStorageServerConnectionsResource extends AbstractBackendColl
                 new VdcQueryParametersBase()));
     }
 
-    @Override
-    protected StorageConnection doPopulate(StorageConnection model, StorageServerConnections entity) {
-        return model;
-    }
-
     private StorageConnections mapCollection(List<StorageServerConnections> entities) {
         StorageConnections collection = new StorageConnections();
         for (org.ovirt.engine.core.common.businessentities.StorageServerConnections entity : entities) {

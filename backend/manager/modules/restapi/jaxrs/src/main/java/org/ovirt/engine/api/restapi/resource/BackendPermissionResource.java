@@ -54,11 +54,6 @@ public class BackendPermissionResource
     }
 
     @Override
-    protected Permission doPopulate(Permission model, org.ovirt.engine.core.common.businessentities.Permission entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         return performAction(VdcActionType.RemovePermission, new PermissionsOperationsParameters(getPermissions()));

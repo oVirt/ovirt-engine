@@ -50,11 +50,6 @@ public class BackendStorageDomainDiskSnapshotsResource
         return inject(new BackendStorageDomainDiskSnapshotResource(id, this));
     }
 
-    @Override
-    protected DiskSnapshot doPopulate(DiskSnapshot model, Disk entity) {
-        return model;
-    }
-
     protected Guid getStorageDomainId() {
         return storageDomainId;
     }

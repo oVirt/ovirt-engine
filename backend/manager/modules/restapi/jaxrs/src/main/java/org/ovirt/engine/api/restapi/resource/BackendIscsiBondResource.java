@@ -55,11 +55,6 @@ public class BackendIscsiBondResource
     }
 
     @Override
-    protected IscsiBond doPopulate(IscsiBond model, org.ovirt.engine.core.common.businessentities.IscsiBond entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         return performAction(VdcActionType.RemoveIscsiBond, new RemoveIscsiBondParameters(guid));

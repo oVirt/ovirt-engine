@@ -37,11 +37,6 @@ public class BackendGroupTagResource extends AbstractBackendSubResource<Tag, Tag
     }
 
     @Override
-    protected Tag doPopulate(Tag model, Tags entity) {
-        return model;
-    }
-
-    @Override
     protected Tag addParents(Tag tag) {
         Group group = new Group();
         group.setId(groupId.toString());

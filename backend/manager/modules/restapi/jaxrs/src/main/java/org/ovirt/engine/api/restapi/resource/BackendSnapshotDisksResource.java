@@ -41,9 +41,4 @@ public class BackendSnapshotDisksResource extends AbstractBackendCollectionResou
     public SnapshotDiskResource getDiskSubResource(String id) {
         return inject(new BackendSnapshotDiskResource(id, this));
     }
-
-    @Override
-    protected Disk doPopulate(Disk model, Snapshot entity) {
-        return model;
-    }
 }

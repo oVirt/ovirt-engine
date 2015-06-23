@@ -73,11 +73,6 @@ public class BackendOpenStackVolumeAuthenticationKeyResource
     }
 
     @Override
-    protected OpenstackVolumeAuthenticationKey doPopulate(OpenstackVolumeAuthenticationKey model, LibvirtSecret entity) {
-        return model;
-    }
-
-    @Override
     protected OpenstackVolumeAuthenticationKey addParents(OpenstackVolumeAuthenticationKey authenticationKey) {
         OpenStackVolumeProvider provider = new OpenStackVolumeProvider();
         provider.setId(providerId);

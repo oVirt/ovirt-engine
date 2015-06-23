@@ -61,11 +61,6 @@ public class BackendVmNumaNodeResource
     }
 
     @Override
-    protected VirtualNumaNode doPopulate(VirtualNumaNode model, VmNumaNode entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         return performAction(removeAction, getRemoveParameters());

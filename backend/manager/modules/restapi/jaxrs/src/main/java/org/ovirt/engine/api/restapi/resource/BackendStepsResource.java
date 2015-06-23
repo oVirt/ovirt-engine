@@ -66,11 +66,6 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
         throw new NotImplementedException();
     }
 
-    @Override
-    protected Step doPopulate(Step model, org.ovirt.engine.core.common.job.Step entity) {
-        return model;
-    }
-
     protected Steps mapCollection(List<org.ovirt.engine.core.common.job.Step> entities) {
         Steps collection = new Steps();
         for (org.ovirt.engine.core.common.job.Step entity : entities) {

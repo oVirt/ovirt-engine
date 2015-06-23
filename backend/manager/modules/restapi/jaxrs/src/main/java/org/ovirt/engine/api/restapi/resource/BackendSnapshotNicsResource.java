@@ -41,9 +41,4 @@ public class BackendSnapshotNicsResource extends AbstractBackendCollectionResour
     protected Response performRemove(String id) {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    protected NIC doPopulate(NIC model, Snapshot entity) {
-        return model;
-    }
 }

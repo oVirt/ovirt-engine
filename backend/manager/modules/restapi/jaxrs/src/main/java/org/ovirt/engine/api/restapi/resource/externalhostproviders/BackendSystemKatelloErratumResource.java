@@ -22,11 +22,6 @@ public class BackendSystemKatelloErratumResource extends AbstractBackendSubResou
     }
 
     @Override
-    protected KatelloErratum doPopulate(KatelloErratum model, Erratum entity) {
-        return model;
-    }
-
-    @Override
     protected Guid asGuidOr404(String id) {
         // The identifier isn't a UUID.
         return null;

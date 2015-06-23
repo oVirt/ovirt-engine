@@ -100,11 +100,6 @@ public class BackendOpenStackNetworkProvidersResource
     }
 
     @Override
-    protected OpenStackNetworkProvider doPopulate(OpenStackNetworkProvider model, Provider entity) {
-        return model;
-    }
-
-    @Override
     @SingleEntityResource
     public OpenStackNetworkProviderResource getOpenStackNetworkProvider(@PathParam("id") String id) {
         return inject(new BackendOpenStackNetworkProviderResource(id));

@@ -63,12 +63,6 @@ public abstract class AbstractBackendAssignedTagsResource
         return performCreate(attachAction, getAttachParams(tag.getId()), new TagIdResolver(asGuid(tag.getId())));
     }
 
-
-    @Override
-    protected Tag doPopulate(Tag model, Tags entity) {
-        return model;
-    }
-
     @Override
     public Tag addParents(Tag tag) {
         assignChildModel(tag, parentType).setId(parentId);

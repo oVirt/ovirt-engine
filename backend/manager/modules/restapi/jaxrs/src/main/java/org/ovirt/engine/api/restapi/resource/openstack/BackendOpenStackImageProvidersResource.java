@@ -99,11 +99,6 @@ public class BackendOpenStackImageProvidersResource
     }
 
     @Override
-    protected OpenStackImageProvider doPopulate(OpenStackImageProvider model, Provider entity) {
-        return model;
-    }
-
-    @Override
     @SingleEntityResource
     public OpenStackImageProviderResource getOpenStackImageProvider(@PathParam("id") String id) {
         return inject(new BackendOpenStackImageProviderResource(id));

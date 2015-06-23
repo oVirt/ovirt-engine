@@ -60,10 +60,4 @@ public class BackendStatisticsResource<R extends BaseResource, Q>
     protected Response performRemove(String id) {
        throw new UnsupportedOperationException();
     }
-
-    @Override
-    protected Statistic doPopulate(Statistic model, Q entity) {
-        return model;
-    }
-
 }

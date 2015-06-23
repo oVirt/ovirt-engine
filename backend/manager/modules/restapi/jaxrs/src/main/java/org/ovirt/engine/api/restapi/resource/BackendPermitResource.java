@@ -51,11 +51,6 @@ public class BackendPermitResource
     }
 
     @Override
-    protected Permit doPopulate(Permit model, ActionGroup entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         ActionGroup entity = parent.lookupId(id);

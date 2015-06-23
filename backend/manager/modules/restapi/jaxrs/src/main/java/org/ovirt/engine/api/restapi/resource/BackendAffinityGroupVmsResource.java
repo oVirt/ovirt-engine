@@ -24,11 +24,6 @@ public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionRe
     }
 
     @Override
-    protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        return model;
-    }
-
-    @Override
     public VMs list() {
         VMs vms = new VMs();
         AffinityGroup affinityGroup = getEntity();

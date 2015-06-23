@@ -43,11 +43,6 @@ public class BackendDomainUserResource
         return performGet(VdcQueryType.GetDirectoryUserById, parameters, BaseResource.class);
     }
 
-    @Override
-    protected User doPopulate(User model, DirectoryUser entity) {
-        return model;
-    }
-
     // We need to override this method because the native identifier of this
     // resource isn't an UUID.
     @Override

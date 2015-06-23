@@ -49,11 +49,6 @@ public class BackendHostNumaNodesResource
     }
 
     @Override
-    protected NumaNode doPopulate(NumaNode model, VdsNumaNode entity) {
-        return model;
-    }
-
-    @Override
     protected Response performRemove(String id) {
         return null;
     }

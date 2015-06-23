@@ -25,12 +25,6 @@ public abstract class AbstractBackendDiskProfileResource
     }
 
     @Override
-    protected DiskProfile doPopulate(DiskProfile model,
-            org.ovirt.engine.core.common.businessentities.profiles.DiskProfile entity) {
-        return model;
-    }
-
-    @Override
     protected DiskProfile addLinks(DiskProfile model,
             Class<? extends BaseResource> suggestedParent,
             String... subCollectionMembersToExclude) {

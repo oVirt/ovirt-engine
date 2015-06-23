@@ -87,11 +87,6 @@ public class BackendDomainGroupsResource
     }
 
     @Override
-    protected Group doPopulate(Group model, DirectoryGroup entity) {
-        return model;
-    }
-
-    @Override
     protected Guid asGuidOr404(String id) {
         return null;
     }

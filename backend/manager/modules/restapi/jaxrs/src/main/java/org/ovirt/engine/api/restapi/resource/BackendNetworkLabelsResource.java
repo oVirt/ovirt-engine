@@ -62,11 +62,6 @@ public class BackendNetworkLabelsResource extends AbstractBackendCollectionResou
     }
 
     @Override
-    protected Label doPopulate(Label model, NetworkLabel entity) {
-        return model;
-    }
-
-    @Override
     protected Label addParents(Label model) {
         model.setNetwork(new Network());
         model.getNetwork().setId(networkId.toString());

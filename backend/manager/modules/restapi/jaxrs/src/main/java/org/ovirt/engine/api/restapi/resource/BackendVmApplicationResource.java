@@ -27,10 +27,4 @@ public class BackendVmApplicationResource extends AbstractBackendSubResource<App
         }
         return notFound();
     }
-
-    @Override
-    protected Application doPopulate(Application model, Applications entity) {
-        return model;
-    }
-
 }

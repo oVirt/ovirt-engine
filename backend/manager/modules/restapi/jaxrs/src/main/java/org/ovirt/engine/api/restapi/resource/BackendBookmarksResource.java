@@ -42,11 +42,6 @@ public class BackendBookmarksResource extends
         return inject(new BackendBookmarkResource(id));
     }
 
-    @Override
-    protected Bookmark doPopulate(Bookmark model, org.ovirt.engine.core.common.businessentities.Bookmark entity) {
-        return model;
-    }
-
     protected Bookmarks mapCollection(List<org.ovirt.engine.core.common.businessentities.Bookmark> entities) {
         Bookmarks collection = new Bookmarks();
         for (org.ovirt.engine.core.common.businessentities.Bookmark entity : entities) {

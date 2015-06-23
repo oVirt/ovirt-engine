@@ -24,11 +24,6 @@ public class BackendMacPoolsResource
     }
 
     @Override
-    protected MacPool doPopulate(MacPool model, org.ovirt.engine.core.common.businessentities.MacPool entity) {
-        return model;
-    }
-
-    @Override
     public MacPools list() {
         return mapCollection(getBackendCollection(VdcQueryType.GetAllMacPools, new VdcQueryParametersBase()));
     }

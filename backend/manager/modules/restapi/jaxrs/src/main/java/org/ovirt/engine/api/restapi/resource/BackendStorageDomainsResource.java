@@ -510,12 +510,6 @@ public class BackendStorageDomainsResource
     }
 
     @Override
-    protected StorageDomain doPopulate(StorageDomain model,
-            org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
-        return model;
-    }
-
-    @Override
     protected StorageDomain addParents(StorageDomain model) {
         StorageDomainHelper.addAttachedDataCenterReferences(this, model);
         return model;

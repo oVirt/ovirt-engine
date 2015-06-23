@@ -125,9 +125,4 @@ public class BackendGlusterVolumesResource
     public GlusterVolumeResource getGlusterVolumeSubResource(String id) {
         return inject(new BackendGlusterVolumeResource(id, this));
     }
-
-    @Override
-    protected GlusterVolume doPopulate(GlusterVolume model, GlusterVolumeEntity entity) {
-        return model;
-    }
 }

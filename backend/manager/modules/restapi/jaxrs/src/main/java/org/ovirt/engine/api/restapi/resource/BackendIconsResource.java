@@ -19,11 +19,6 @@ public class BackendIconsResource
     }
 
     @Override
-    protected Icon doPopulate(Icon model, VmIcon entity) {
-        return model;
-    }
-
-    @Override
     public Icons list() {
         return mapCollection(getBackendCollection(VdcQueryType.GetAllVmIcons, new VdcQueryParametersBase()));
     }

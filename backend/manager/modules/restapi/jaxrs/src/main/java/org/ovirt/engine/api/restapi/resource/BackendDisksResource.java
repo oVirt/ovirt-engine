@@ -126,9 +126,4 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
         }
         return collection;
     }
-
-    @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-        return model;
-    }
 }

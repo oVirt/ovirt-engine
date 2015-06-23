@@ -79,11 +79,6 @@ public class BackendStorageDomainImageResource
     }
 
     @Override
-    protected Image doPopulate(Image model, RepoImage entity) {
-        return model;
-    }
-
-    @Override
     public Image get() {
         return performGet(VdcQueryType.GetImageById, new GetImageByIdParameters(getStorageDomainId(), id));
     }

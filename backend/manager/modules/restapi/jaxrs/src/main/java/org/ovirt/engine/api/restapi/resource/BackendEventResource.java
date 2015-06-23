@@ -22,11 +22,6 @@ public class BackendEventResource extends AbstractBackendActionableResource<Even
     }
 
     @Override
-    protected Event doPopulate(Event model, AuditLog entity) {
-        return model;
-    }
-
-    @Override
     protected Guid asGuidOr404(String id) {
         // The identifiers of events aren't UUIDs:
         return null;

@@ -71,11 +71,6 @@ public class BackendGroupResource
     }
 
     @Override
-    protected Group doPopulate(Group model, DbGroup entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         return performAction(VdcActionType.RemoveGroup, new IdParameters(guid));

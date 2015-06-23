@@ -78,12 +78,6 @@ public abstract class AbstractBackendDiskProfilesResource
 
     protected abstract void validateParameters(DiskProfile diskProfile);
 
-    @Override
-    protected DiskProfile doPopulate(DiskProfile model,
-            org.ovirt.engine.core.common.businessentities.profiles.DiskProfile entity) {
-        return model;
-    }
-
     protected abstract List<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> getDiskProfilesCollection();
 
     protected DiskProfiles performList() {

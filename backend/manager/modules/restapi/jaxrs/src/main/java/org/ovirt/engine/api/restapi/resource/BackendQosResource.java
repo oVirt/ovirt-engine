@@ -81,11 +81,6 @@ public class BackendQosResource extends AbstractBackendSubResource<QoS, QosBase>
     }
 
     @Override
-    protected QoS doPopulate(QoS model, QosBase entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         QosParametersBase<?> params = new QosParametersBase<>();

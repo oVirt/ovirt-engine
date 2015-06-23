@@ -49,12 +49,6 @@ public class BackendExternalComputeResourcesResource
         return mapCollection(getBackendCollection(VdcQueryType.GetComputeResourceFromExternalProvider, parameters));
     }
 
-    @Override
-    protected ExternalComputeResource doPopulate(ExternalComputeResource model,
-            org.ovirt.engine.core.common.businessentities.ExternalComputeResource entity) {
-        return model;
-    }
-
     protected ExternalComputeResources mapCollection(
             List<org.ovirt.engine.core.common.businessentities.ExternalComputeResource> entities) {
         ExternalComputeResources collection = new ExternalComputeResources();

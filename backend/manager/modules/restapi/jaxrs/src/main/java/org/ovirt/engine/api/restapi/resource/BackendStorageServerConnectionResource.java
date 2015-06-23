@@ -42,11 +42,6 @@ public class BackendStorageServerConnectionResource extends
     }
 
     @Override
-    protected StorageConnection doPopulate(StorageConnection model, StorageServerConnections entity) {
-        return model;
-    }
-
-    @Override
     public Response remove(Action action) {
         get();
         StorageServerConnections connection = new StorageServerConnections();

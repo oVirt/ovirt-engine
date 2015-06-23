@@ -63,9 +63,4 @@ public class BackendAssignedRolesResource
         role.getUser().setId(principalId.toString());
         return role;
     }
-
-    @Override
-    protected Role doPopulate(Role model, Permission entity) {
-        return model;
-    }
 }

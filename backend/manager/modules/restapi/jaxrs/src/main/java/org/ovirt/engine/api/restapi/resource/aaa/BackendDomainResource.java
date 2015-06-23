@@ -51,11 +51,6 @@ implements DomainResource {
     }
 
     @Override
-    protected Domain doPopulate(Domain model, Directory entity) {
-        return model;
-    }
-
-    @Override
     protected Guid asGuidOr404(String id) {
         return null;
     }

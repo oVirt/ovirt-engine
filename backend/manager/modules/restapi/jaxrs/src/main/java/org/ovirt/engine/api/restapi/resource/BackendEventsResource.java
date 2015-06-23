@@ -69,11 +69,6 @@ public class BackendEventsResource
                 new QueryIdResolver<Long>(VdcQueryType.GetAuditLogById, GetAuditLogByIdParameters.class));
     }
 
-    @Override
-    protected Event doPopulate(Event model, AuditLog entity) {
-        return model;
-    }
-
     private AddExternalEventParameters getParameters(Event event) {
 
         AddExternalEventParameters parameters;

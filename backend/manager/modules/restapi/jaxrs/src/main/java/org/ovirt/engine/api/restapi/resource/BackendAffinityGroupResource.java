@@ -42,11 +42,6 @@ public class BackendAffinityGroupResource
     }
 
     @Override
-    protected AffinityGroup doPopulate(AffinityGroup model, org.ovirt.engine.core.common.scheduling.AffinityGroup entity) {
-        return model;
-    }
-
-    @Override
     public AffinityGroupVmsResource getAffinityGroupVmsSubResource() {
         return inject(new BackendAffinityGroupVmsResource(guid));
     }

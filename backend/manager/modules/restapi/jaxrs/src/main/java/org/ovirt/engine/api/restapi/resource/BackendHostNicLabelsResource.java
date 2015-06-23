@@ -66,11 +66,6 @@ public class BackendHostNicLabelsResource extends AbstractBackendCollectionResou
     }
 
     @Override
-    protected Label doPopulate(Label model, NetworkLabel entity) {
-        return model;
-    }
-
-    @Override
     protected Label addParents(Label model) {
         model.setHostNic(new HostNIC());
         model.getHostNic().setId(nicId.toString());

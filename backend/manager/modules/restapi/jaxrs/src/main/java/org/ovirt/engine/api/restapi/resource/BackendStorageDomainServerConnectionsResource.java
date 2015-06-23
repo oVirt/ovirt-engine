@@ -36,11 +36,6 @@ public class BackendStorageDomainServerConnectionsResource extends AbstractBacke
                 "storage domain: id=" + storageDomainId);
     }
 
-    @Override
-    protected StorageConnection doPopulate(StorageConnection model, StorageServerConnections entity) {
-        return model;
-    }
-
     private StorageConnections mapCollection(List<StorageServerConnections> entities) {
         StorageConnections collection = new StorageConnections();
         for (StorageServerConnections entity : entities) {

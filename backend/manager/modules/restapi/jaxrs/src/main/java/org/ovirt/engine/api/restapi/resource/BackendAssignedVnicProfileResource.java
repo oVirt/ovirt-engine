@@ -28,12 +28,6 @@ public class BackendAssignedVnicProfileResource extends AbstractBackendVnicProfi
     }
 
     @Override
-    protected VnicProfile doPopulate(VnicProfile model,
-            org.ovirt.engine.core.common.businessentities.network.VnicProfile entity) {
-        return model;
-    }
-
-    @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return super.getPermissionsResource();
     }

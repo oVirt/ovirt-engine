@@ -26,11 +26,6 @@ public class BackendStorageDomainServerConnectionResource extends
                 new StorageServerConnectionQueryParametersBase(guid.toString()));
     }
 
-    @Override
-    protected StorageConnection doPopulate(StorageConnection model, StorageServerConnections entity) {
-        return model;
-    }
-
     public BackendStorageDomainServerConnectionsResource getParent() {
         return parent;
     }

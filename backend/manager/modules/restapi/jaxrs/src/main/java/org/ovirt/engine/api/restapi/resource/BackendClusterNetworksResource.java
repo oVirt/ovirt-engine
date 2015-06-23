@@ -133,9 +133,4 @@ public class BackendClusterNetworksResource
         IdQueryParameters params = new IdQueryParameters(dataCenterId);
         return getBackendCollection(VdcQueryType.GetAllNetworks, params);
     }
-
-    @Override
-    protected Network doPopulate(Network model, org.ovirt.engine.core.common.businessentities.network.Network entity) {
-        return model;
-    }
 }

@@ -48,11 +48,6 @@ public class BackendExternalHostsResource
         return mapCollection(getBackendCollection(VdcQueryType.GetHostListFromExternalProvider, parameters));
     }
 
-    @Override
-    protected ExternalHost doPopulate(ExternalHost model, VDS entity) {
-        return model;
-    }
-
     protected ExternalHosts mapCollection(List<VDS> entities) {
         ExternalHosts collection = new ExternalHosts();
         for (VDS entity : entities) {

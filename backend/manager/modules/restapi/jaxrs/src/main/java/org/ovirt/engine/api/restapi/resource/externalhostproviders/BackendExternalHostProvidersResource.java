@@ -103,11 +103,6 @@ public class BackendExternalHostProvidersResource
     }
 
     @Override
-    protected ExternalHostProvider doPopulate(ExternalHostProvider model, Provider entity) {
-        return model;
-    }
-
-    @Override
     @SingleEntityResource
     public ExternalHostProviderResource getExternalHostProvider(@PathParam("id") String id) {
         return inject(new BackendExternalHostProviderResource(id));

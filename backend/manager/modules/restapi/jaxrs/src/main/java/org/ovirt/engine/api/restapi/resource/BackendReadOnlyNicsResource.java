@@ -20,9 +20,4 @@ public class BackendReadOnlyNicsResource
     protected <T> boolean matchEntity(VmNetworkInterface entity, T id) {
         return id.equals(entity.getId());
     }
-
-    @Override
-    protected NIC doPopulate(NIC model, VmNetworkInterface entity) {
-        return model;
-    }
 }

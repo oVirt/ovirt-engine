@@ -53,11 +53,6 @@ public class BackendIscsiBondsResource extends AbstractBackendCollectionResource
         return inject(new BackendIscsiBondResource(id));
     }
 
-    @Override
-    protected IscsiBond doPopulate(IscsiBond model, org.ovirt.engine.core.common.businessentities.IscsiBond entity) {
-        return model;
-    }
-
     private IscsiBonds mapCollection(List<org.ovirt.engine.core.common.businessentities.IscsiBond> entities) {
         IscsiBonds iscsiBonds = new IscsiBonds();
 

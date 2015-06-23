@@ -28,11 +28,6 @@ public class BackendHostKatelloErratumResource extends AbstractBackendSubResourc
     }
 
     @Override
-    protected KatelloErratum doPopulate(KatelloErratum model, Erratum entity) {
-        return model;
-    }
-
-    @Override
     protected KatelloErratum addParents(KatelloErratum erratum) {
         Host host = new Host();
         host.setId(hostId);

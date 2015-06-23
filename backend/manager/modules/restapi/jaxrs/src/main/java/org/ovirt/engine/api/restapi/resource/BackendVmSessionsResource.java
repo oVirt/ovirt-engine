@@ -119,11 +119,6 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
         throw new UnsupportedOperationException("Remove of sessions not currently possible");
     }
 
-    @Override
-    protected Session doPopulate(Session model, Object entity) {
-        return model;
-    }
-
     public void setUserResource(BackendUserResource userResource) {
         this.userResource = userResource;
     }

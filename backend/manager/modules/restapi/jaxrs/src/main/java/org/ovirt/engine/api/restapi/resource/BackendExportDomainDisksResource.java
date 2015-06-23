@@ -47,11 +47,6 @@ public class BackendExportDomainDisksResource
     }
 
     @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-        return model;
-    }
-
-    @Override
     protected Response performRemove(String id) {
         throw new UnsupportedOperationException("Not supported.");
     }

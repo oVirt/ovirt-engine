@@ -78,12 +78,6 @@ public abstract class AbstractBackendCpuProfilesResource
 
     protected abstract void validateParameters(CpuProfile cpuProfile);
 
-    @Override
-    protected CpuProfile doPopulate(CpuProfile model,
-            org.ovirt.engine.core.common.businessentities.profiles.CpuProfile entity) {
-        return model;
-    }
-
     protected abstract List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> getCpuProfilesCollection();
 
     protected CpuProfiles performList() {

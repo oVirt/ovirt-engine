@@ -40,11 +40,6 @@ public class BackendHostNicLabelResource extends AbstractBackendSubResource<Labe
     }
 
     @Override
-    protected Label doPopulate(Label model, NetworkLabel entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         return performAction(VdcActionType.UnlabelNic, new LabelNicParameters(parent.getHostNicId(), id));

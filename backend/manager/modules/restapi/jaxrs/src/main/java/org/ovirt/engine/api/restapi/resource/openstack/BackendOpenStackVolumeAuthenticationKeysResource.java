@@ -62,11 +62,6 @@ public class BackendOpenStackVolumeAuthenticationKeysResource
         );
     }
 
-    @Override
-    protected OpenstackVolumeAuthenticationKey doPopulate(OpenstackVolumeAuthenticationKey model, LibvirtSecret entity) {
-        return model;
-    }
-
     protected OpenstackVolumeAuthenticationKeys mapCollection(List<LibvirtSecret> entities) {
         OpenstackVolumeAuthenticationKeys collection = new OpenstackVolumeAuthenticationKeys();
         for (LibvirtSecret libvirtSecret : entities) {

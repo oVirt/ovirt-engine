@@ -91,9 +91,4 @@ public class BackendTagsResource
             return lookupTagByName(name);
         }
     }
-
-    @Override
-    protected Tag doPopulate(Tag model, Tags entity) {
-        return model;
-    }
 }

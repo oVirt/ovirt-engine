@@ -25,12 +25,6 @@ public abstract class AbstractBackendCpuProfileResource
     }
 
     @Override
-    protected CpuProfile doPopulate(CpuProfile model,
-            org.ovirt.engine.core.common.businessentities.profiles.CpuProfile entity) {
-        return model;
-    }
-
-    @Override
     protected CpuProfile addLinks(CpuProfile model,
             Class<? extends BaseResource> suggestedParent,
             String... subCollectionMembersToExclude) {

@@ -32,11 +32,6 @@ public class BackendSchedulingPolicyUnitsResource extends AbstractBackendCollect
     }
 
     @Override
-    protected SchedulingPolicyUnit doPopulate(SchedulingPolicyUnit model, PolicyUnit entity) {
-        return model;
-    }
-
-    @Override
     @SingleEntityResource
     public SchedulingPolicyUnitResource getSchedulingPolicyUnitSubResource(String id) {
         return inject(new BackendSchedulingPolicyUnitResource(id));

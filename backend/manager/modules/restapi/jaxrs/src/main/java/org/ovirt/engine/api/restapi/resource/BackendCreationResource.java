@@ -26,9 +26,4 @@ public class BackendCreationResource
         }
         return model;
     }
-
-    @Override
-    protected Creation doPopulate(Creation model, List entity) {
-        return model;
-    }
 }

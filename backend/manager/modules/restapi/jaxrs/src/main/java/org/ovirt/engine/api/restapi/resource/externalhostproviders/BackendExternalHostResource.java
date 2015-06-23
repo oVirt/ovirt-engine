@@ -64,11 +64,6 @@ public class BackendExternalHostResource
     }
 
     @Override
-    protected ExternalHost doPopulate(ExternalHost model, VDS entity) {
-        return model;
-    }
-
-    @Override
     protected ExternalHost addParents(ExternalHost image) {
         ExternalHostProvider provider = new ExternalHostProvider();
         provider.setId(providerId);

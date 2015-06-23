@@ -36,11 +36,6 @@ public class BackendFenceAgentResource extends AbstractBackendSubResource<Agent,
                 new UpdateParametersProvider());
     }
 
-    @Override
-    protected Agent doPopulate(Agent model, FenceAgent entity) {
-        return model; // no additional information required
-    }
-
     protected class UpdateParametersProvider implements ParametersProvider<Agent, FenceAgent> {
         @Override
         public VdcActionParametersBase getParameters(Agent incoming, FenceAgent entity) {

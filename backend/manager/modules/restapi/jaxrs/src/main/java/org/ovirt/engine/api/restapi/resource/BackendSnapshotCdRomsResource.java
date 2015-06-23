@@ -38,9 +38,4 @@ public class BackendSnapshotCdRomsResource extends AbstractBackendCollectionReso
     protected Response performRemove(String id) {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    protected CdRom doPopulate(CdRom model, Snapshot entity) {
-        return model;
-    }
 }

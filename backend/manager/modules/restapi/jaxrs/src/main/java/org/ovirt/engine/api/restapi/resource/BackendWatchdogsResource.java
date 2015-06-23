@@ -101,11 +101,6 @@ public class BackendWatchdogsResource extends AbstractBackendDevicesResource<Wat
     }
 
     @Override
-    protected WatchDog doPopulate(WatchDog model, VmWatchdog entity) {
-        return model;
-    }
-
-    @Override
     protected <T> boolean matchEntity(VmWatchdog entity, T id) {
         return entity.getId().equals(id);
     }

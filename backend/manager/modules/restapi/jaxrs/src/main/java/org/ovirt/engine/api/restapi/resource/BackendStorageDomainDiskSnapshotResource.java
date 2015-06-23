@@ -22,11 +22,6 @@ public class BackendStorageDomainDiskSnapshotResource
         this.storageDomainId = parent.getStorageDomainId().toString();
     }
 
-    @Override
-    protected DiskSnapshot doPopulate(DiskSnapshot model, Disk entity) {
-        return model;
-    }
-
     public String getStorageDomainId() {
         return storageDomainId;
     }

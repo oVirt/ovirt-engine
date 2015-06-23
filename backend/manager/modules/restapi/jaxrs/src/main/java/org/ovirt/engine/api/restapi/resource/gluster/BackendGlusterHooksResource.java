@@ -62,9 +62,4 @@ public class BackendGlusterHooksResource
     public GlusterHookResource getGlusterHookSubResource(String id) {
         return inject(new BackendGlusterHookResource(id, this));
     }
-
-    @Override
-    protected GlusterHook doPopulate(GlusterHook model, GlusterHookEntity entity) {
-        return model;
-    }
 }

@@ -43,11 +43,6 @@ public abstract class BackendQuotaLimitsResource<M extends BaseResources, N exte
         return addLinks(doPopulate(model, entity));
     }
 
-    @Override
-    protected N doPopulate(N model, Quota entity) {
-        return model;
-    }
-
     protected Quota getQuota() {
         return getEntity(Quota.class,
                 VdcQueryType.GetQuotaByQuotaId,

@@ -71,11 +71,6 @@ public class BackendRoleResource
     }
 
     @Override
-    protected Role doPopulate(Role model, org.ovirt.engine.core.common.businessentities.Role entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         return performAction(VdcActionType.RemoveRole, new RolesParameterBase(guid));

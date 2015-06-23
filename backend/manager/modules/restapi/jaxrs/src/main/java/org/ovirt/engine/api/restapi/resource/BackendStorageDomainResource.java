@@ -288,12 +288,6 @@ public class BackendStorageDomainResource extends
     }
 
     @Override
-    protected StorageDomain doPopulate(StorageDomain model,
-            org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
-        return model;
-    }
-
-    @Override
     protected StorageDomain deprecatedPopulate(StorageDomain model,
             org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         if (StorageDomainSharedStatus.Unattached.equals(entity.getStorageDomainSharedStatus())) {

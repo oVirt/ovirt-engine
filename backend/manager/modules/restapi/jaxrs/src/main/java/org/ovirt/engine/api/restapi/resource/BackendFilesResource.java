@@ -87,10 +87,4 @@ public class BackendFilesResource
     protected Response performRemove(String id) {
        throw new UnsupportedOperationException();
     }
-
-    @Override
-    protected File doPopulate(File model, String entity) {
-        return model;
-    }
-
 }

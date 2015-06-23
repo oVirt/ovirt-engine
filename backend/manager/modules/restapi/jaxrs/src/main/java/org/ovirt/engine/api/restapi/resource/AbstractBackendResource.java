@@ -163,7 +163,9 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
      * Populates the entity with additional information, which is not returned by the main backend query. Override this
      * method to add population logic to an entity.
      */
-    protected abstract R doPopulate(R model, Q entity);
+    protected R doPopulate(R model, Q entity) {
+        return model;
+    }
 
     /**
      * Add any parent resource references needed for constructing links.

@@ -52,11 +52,6 @@ public class BackendVmGraphicsConsolesResource
     }
 
     @Override
-    protected GraphicsConsole doPopulate(GraphicsConsole model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        return model;
-    }
-
-    @Override
     protected GraphicsConsole addParents(GraphicsConsole model) {
         model.setVm(new VM());
         model.getVm().setId(guid.toString());

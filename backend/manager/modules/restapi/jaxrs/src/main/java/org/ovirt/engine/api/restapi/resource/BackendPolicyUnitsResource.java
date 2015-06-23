@@ -35,11 +35,6 @@ public abstract class BackendPolicyUnitsResource<M extends BaseResources, N exte
         return addLinks(doPopulate(model, entity));
     }
 
-    @Override
-    protected N doPopulate(N model, ClusterPolicy entity) {
-        return model;
-    }
-
     protected ClusterPolicy getClusterPolicy() {
         return getEntity(ClusterPolicy.class,
                 VdcQueryType.GetClusterPolicyById,

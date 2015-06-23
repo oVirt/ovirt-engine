@@ -69,12 +69,6 @@ public class BackendExternalComputeResourceResource
     }
 
     @Override
-    protected ExternalComputeResource doPopulate(ExternalComputeResource model,
-            org.ovirt.engine.core.common.businessentities.ExternalComputeResource entity) {
-        return model;
-    }
-
-    @Override
     protected ExternalComputeResource addParents(ExternalComputeResource model) {
         ExternalHostProvider provider = new ExternalHostProvider();
         provider.setId(providerId);

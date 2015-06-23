@@ -39,11 +39,6 @@ public class BackendIscsiBondNetworksResource extends BackendNetworksResource {
     }
 
     @Override
-    protected Network doPopulate(Network model, org.ovirt.engine.core.common.businessentities.network.Network entity) {
-        return model;
-    }
-
-    @Override
     @SingleEntityResource
     public NetworkResource getNetworkSubResource(String id) {
         return inject(new BackendIscsiBondNetworkResource(id, this));

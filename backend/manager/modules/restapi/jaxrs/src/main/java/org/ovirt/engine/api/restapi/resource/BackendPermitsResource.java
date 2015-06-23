@@ -117,10 +117,4 @@ public class BackendPermitsResource
             return actionGroup;
         }
     }
-
-    @Override
-    protected Permit doPopulate(Permit model, ActionGroup entity) {
-        return model;
-    }
-
 }

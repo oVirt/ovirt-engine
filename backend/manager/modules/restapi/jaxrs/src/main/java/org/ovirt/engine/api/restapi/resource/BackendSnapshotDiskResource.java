@@ -33,11 +33,6 @@ public class BackendSnapshotDiskResource extends BackendDiskResource implements 
     }
 
     @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-        return model;
-    }
-
-    @Override
     public Response remove() {
         DiskImage diskImage = (DiskImage) DiskMapper.map(get(), null);
         return performAction(VdcActionType.RemoveDiskSnapshots, new RemoveDiskSnapshotsParameters(diskImage.getImageId()));

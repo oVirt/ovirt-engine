@@ -66,9 +66,4 @@ public class BackendQuotasResource extends AbstractBackendCollectionResource<Quo
         quota.getDataCenter().setId(dataCenterId.toString());
         return quota;
     }
-
-    @Override
-    protected Quota doPopulate(Quota model, org.ovirt.engine.core.common.businessentities.Quota entity) {
-        return model;
-    }
 }

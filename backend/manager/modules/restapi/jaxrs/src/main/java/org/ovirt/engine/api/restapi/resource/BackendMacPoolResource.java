@@ -20,11 +20,6 @@ public class BackendMacPoolResource extends AbstractBackendSubResource<MacPool,
     }
 
     @Override
-    protected MacPool doPopulate(MacPool model, org.ovirt.engine.core.common.businessentities.MacPool entity) {
-        return model;
-    }
-
-    @Override
     public MacPool get() {
         return performGet(VdcQueryType.GetMacPoolById, new IdQueryParameters(guid));
     }

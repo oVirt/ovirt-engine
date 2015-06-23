@@ -21,9 +21,4 @@ public class BackendVmReportedDeviceResource extends AbstractBackendSubResource<
     public BackendVmReportedDevicesResource getParent() {
         return parent;
     }
-
-    @Override
-    protected ReportedDevice doPopulate(ReportedDevice model, VmGuestAgentInterface entity) {
-        return model;
-    }
 }

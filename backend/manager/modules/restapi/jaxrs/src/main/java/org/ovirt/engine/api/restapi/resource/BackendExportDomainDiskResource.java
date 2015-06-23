@@ -20,11 +20,6 @@ public class BackendExportDomainDiskResource
     }
 
     @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-        return model;
-    }
-
-    @Override
     public Disk get() {
         org.ovirt.engine.core.common.businessentities.storage.Disk disk = parent.getDisk(asGuid(diskId));
         if (disk == null) {

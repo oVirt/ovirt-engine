@@ -49,11 +49,6 @@ public class BackendSchedulingPoliciesResource extends AbstractBackendCollection
         return inject(new BackendSchedulingPolicyResource(id));
     }
 
-    @Override
-    protected SchedulingPolicy doPopulate(SchedulingPolicy model, ClusterPolicy entity) {
-        return model;
-    }
-
     protected SchedulingPolicies mapCollection(List<ClusterPolicy> entities) {
         SchedulingPolicies collection = new SchedulingPolicies();
         for (ClusterPolicy entity : entities) {

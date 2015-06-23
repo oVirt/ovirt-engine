@@ -49,11 +49,6 @@ public class BackendExternalProviderCertificatesResource
         return mapCollection(getBackendCollection(VdcQueryType.GetProviderCertificateChain, parameters));
     }
 
-    @Override
-    protected Certificate doPopulate(Certificate model, CertificateInfo entity) {
-        return model;
-    }
-
     protected Certificates mapCollection(List<CertificateInfo> entities) {
         Certificates collection = new Certificates();
         if (entities != null) {

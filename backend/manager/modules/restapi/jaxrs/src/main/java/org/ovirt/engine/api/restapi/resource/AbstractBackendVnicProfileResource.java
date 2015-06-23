@@ -36,12 +36,6 @@ public abstract class AbstractBackendVnicProfileResource
     }
 
     @Override
-    protected VnicProfile doPopulate(VnicProfile model,
-            org.ovirt.engine.core.common.businessentities.network.VnicProfile entity) {
-        return model;
-    }
-
-    @Override
     protected VnicProfile addLinks(VnicProfile model,
             Class<? extends BaseResource> suggestedParent,
             String... subCollectionMembersToExclude) {

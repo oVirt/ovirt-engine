@@ -49,11 +49,6 @@ public class BackendStorageDomainImagesResource
         throw new UnsupportedOperationException(); // TODO: removal is not implemented yet
     }
 
-    @Override
-    protected Image doPopulate(Image model, RepoImage entity) {
-        return model;
-    }
-
     protected Images mapCollection(List<RepoImage> entities) {
         Images collection = new Images();
         for (RepoImage image : entities) {

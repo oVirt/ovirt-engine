@@ -211,11 +211,6 @@ public class BackendVmDisksResource
     }
 
     @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-        return model;
-    }
-
-    @Override
     protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         if (details.contains("statistics")) {

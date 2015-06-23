@@ -88,9 +88,4 @@ public class BackendQossResource extends AbstractBackendCollectionResource<QoS, 
         qos.getDataCenter().setId(dataCenterId.toString());
         return qos;
     }
-
-    @Override
-    protected QoS doPopulate(QoS model, QosBase entity) {
-        return model;
-    }
 }

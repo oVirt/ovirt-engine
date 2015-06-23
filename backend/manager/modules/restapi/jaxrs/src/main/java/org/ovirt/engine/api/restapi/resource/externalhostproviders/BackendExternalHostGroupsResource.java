@@ -49,12 +49,6 @@ public class BackendExternalHostGroupsResource
         return mapCollection(getBackendCollection(VdcQueryType.GetHostGroupsFromExternalProvider, parameters));
     }
 
-    @Override
-    protected ExternalHostGroup doPopulate(ExternalHostGroup model,
-            org.ovirt.engine.core.common.businessentities.ExternalHostGroup entity) {
-        return model;
-    }
-
     protected ExternalHostGroups mapCollection(
             List<org.ovirt.engine.core.common.businessentities.ExternalHostGroup> entities) {
         ExternalHostGroups collection = new ExternalHostGroups();

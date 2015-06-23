@@ -60,11 +60,6 @@ public class BackendOperatingSystemResource
     }
 
     @Override
-    protected OperatingSystemInfo doPopulate(OperatingSystemInfo model, Integer entity) {
-        return model;
-    }
-
-    @Override
     protected Guid asGuidOr404(String id) {
         // The identifier if an operating system isn't a UUID.
         return null;
