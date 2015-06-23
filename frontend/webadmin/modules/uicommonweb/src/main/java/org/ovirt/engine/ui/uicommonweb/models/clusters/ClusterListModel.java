@@ -339,7 +339,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             {
                 ClusterListModel<Void> clModel = (ClusterListModel<Void>) model;
                 ClusterModel cModel = (ClusterModel) clModel.getWindow();
-                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
+                List<StoragePool> dataCenters = (List<StoragePool>) result;
 
                 // Be aware of system tree selection.
                 // Strict data center as neccessary.
@@ -434,7 +434,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                         asyncQuery.asyncCallback = new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object model1, Object result) {
-                                ArrayList<GlusterVolumeEntity> volumes = (ArrayList<GlusterVolumeEntity>) result;
+                                List<GlusterVolumeEntity> volumes = (List<GlusterVolumeEntity>) result;
                                 if (volumes.size() > 0) {
                                     clusterModel.getEnableGlusterService().setIsChangeable(false);
                                     if (!isVirtGlusterAllowed) {
@@ -1202,11 +1202,11 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         ClusterListModel<Void> model = (ClusterListModel<Void>) target;
-                        ArrayList<VDS> hosts = null;
-                        if (returnValue instanceof ArrayList) {
-                            hosts = (ArrayList<VDS>) returnValue;
+                        List<VDS> hosts = null;
+                        if (returnValue instanceof List) {
+                            hosts = (List<VDS>) returnValue;
                         } else if (returnValue instanceof VdcQueryReturnValue
-                                && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof ArrayList) {
+                                && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof List) {
                             hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
                         }
 
