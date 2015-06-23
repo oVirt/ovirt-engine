@@ -2,7 +2,11 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -111,7 +115,16 @@ public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbF
 
     @Override
     public void updateAllDiskImageDynamicWithDiskIdByVmId(Collection<Pair<Guid, DiskImageDynamic>> diskImageDynamicForVm) {
+        List<Pair<Guid, DiskImageDynamic>> sortedDisks = new ArrayList<>();
+        sortedDisks.addAll(diskImageDynamicForVm);
+        Collections.sort(sortedDisks, new Comparator<Pair<Guid, DiskImageDynamic>>() {
+
+            @Override
+            public int compare(Pair<Guid, DiskImageDynamic> o1, Pair<Guid, DiskImageDynamic> o2) {
+                return o1.getFirst().compareTo(o2.getFirst());
+            }
+        });
         getCallsHandler().executeStoredProcAsBatch("Updatedisk_image_dynamic_by_disk_id_and_vm_id",
-                diskImageDynamicForVm, getBatchImageGroupMapper());
+                sortedDisks, getBatchImageGroupMapper());
     }
 }
