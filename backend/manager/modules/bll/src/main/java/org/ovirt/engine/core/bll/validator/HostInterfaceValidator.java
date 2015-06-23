@@ -47,7 +47,7 @@ public class HostInterfaceValidator {
 
     public ValidationResult networkCanBeAttached() {
         return ValidationResult.failWith(VdcBllMessages.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN)
-                .when(NetworkUtils.isVlan(iface) || iface.isBondSlave());
+                .when(NetworkUtils.isVlan(iface) || iface.isPartOfBond());
     }
 
 }

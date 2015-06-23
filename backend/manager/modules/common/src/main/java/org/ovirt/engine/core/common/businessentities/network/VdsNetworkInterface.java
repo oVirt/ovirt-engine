@@ -260,10 +260,14 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     /**
      * Returns if the interface is bonded or not.
      *
-     * @return <code>true</code> if it is bonded
+     * @return <code>true</code> if it is bonded, <code>null</code> if value is not set.
      */
     public Boolean getBonded() {
         return bonded;
+    }
+
+    public boolean isBond() {
+        return Boolean.TRUE.equals(getBonded());
     }
 
     /**
@@ -290,8 +294,12 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      *
      * @return whether the interface is part of a bond.
      */
-    public boolean isBondSlave() {
+    public boolean isPartOfBond() {
         return getBondName() != null;
+    }
+
+    public boolean isPartOfBond(String bondName) {
+        return getBondName().equals(bondName);
     }
 
     /**

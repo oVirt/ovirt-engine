@@ -971,7 +971,7 @@ public class VdsBrokerObjectsBuilder {
                     existingIface.getStatistics()
                             .setStatus(AssignInterfaceStatusValue(dict, VdsProperties.iface_status));
 
-                    if (!NetworkUtils.isVlan(existingIface) && !existingIface.isBondSlave()) {
+                    if (!NetworkUtils.isVlan(existingIface) && !existingIface.isPartOfBond()) {
                         Double ifaceUsage = computeInterfaceUsage(existingIface, statsBuilder.isTotalStatsReported());
                         if (ifaceUsage != null) {
                             networkUsage = (int) Math.max(networkUsage, ifaceUsage);
