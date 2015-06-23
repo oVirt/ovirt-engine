@@ -40,6 +40,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     TextBoxLabel vmId = new TextBoxLabel();
     TextBoxLabel fqdn = new TextBoxLabel();
     TextBoxLabel guestFreeCachedBufferedMemInfo = new TextBoxLabel();
+    TextBoxLabel timeZone = new TextBoxLabel();
 
     BooleanLabel isHighlyAvailable;
 
@@ -51,7 +52,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     private final Driver driver = GWT.create(Driver.class);
 
     public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider) {
-        super(modelProvider, 3, 8);
+        super(modelProvider, 3, 9);
     }
 
     /**
@@ -119,16 +120,12 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
                 return !(fqdn == null || fqdn.isEmpty());
             }
         });
-
-        // Removed because VDSM and guest agent don't support returning of the time zone within the guest.
-        // TODO: Uncomment again once this will be implemented.
-        //
-        // formBuilder.addFormItem(new FormItem(constants.timeZoneVm(), timeZone, 2) {
-        // @Override
-        // public boolean getIsAvailable() {
-        // return getModel().getHasTimeZone();
-        // }
-        // });
+        formBuilder.addFormItem(new FormItem(constants.timeZoneVm(), timeZone, 8, 2 ) {
+            @Override
+            public boolean getIsAvailable() {
+                return getModel().getHasTimeZone();
+            }
+        });
     }
 
     @Override

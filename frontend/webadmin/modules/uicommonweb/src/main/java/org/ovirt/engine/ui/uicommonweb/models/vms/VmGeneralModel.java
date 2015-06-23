@@ -611,7 +611,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
             setDomain(vm.getVmInit().getDomain());
         }
 
-        setHasTimeZone(AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId()));
+        setHasTimeZone(!StringHelper.isNullOrEmpty(vm.getTimeZone()));
         setTimeZone(vm.getTimeZone());
 
         setHasCustomProperties(!StringHelper.isNullOrEmpty(vm.getCustomProperties()));
