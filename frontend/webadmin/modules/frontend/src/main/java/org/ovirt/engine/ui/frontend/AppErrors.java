@@ -2426,10 +2426,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Storage Domain description must not exceed 4000 characters")
     String VALIDATION_STORAGE_DOMAIN_DESCRIPTION_MAX();
 
-    @DefaultStringValue("Storage Domain's warning_low_space_indicator must be an integer between 0 and 100")
+    @DefaultStringValue("Storage Domain's \"Warning Low Space Indicator\" must be an integer between 0 and 100")
     String VALIDATION_STORAGE_DOMAIN_WARNING_LOW_SPACE_INDICATOR_RANGE();
 
-    @DefaultStringValue("Storage Domain's critical_space_action_blocker must be a non-negative integer.0")
+    @DefaultStringValue("Storage Domain's \"Critical Space Action Blocker\" must be a non-negative integer.0")
     String VALIDATION_STORAGE_DOMAIN_CRITICAL_SPACE_ACTION_BLOCKER_RANGE();
 
     @DefaultStringValue("Data Center name must be formed of \"a-z0-9A-Z\" or \"-_\"")
