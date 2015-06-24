@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 
 import java.util.HashMap;
 
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.QueryHelper;
@@ -151,7 +150,6 @@ public class BackendGlusterVolumeResource
     }
 
     @Override
-    @Path("statistics")
     public StatisticsResource getStatisticsResource() {
 
         EntityIdResolver<Guid> resolver =

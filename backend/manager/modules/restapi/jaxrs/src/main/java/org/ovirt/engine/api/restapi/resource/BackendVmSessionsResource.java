@@ -1,8 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
@@ -108,8 +105,7 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
     }
 
     @Override
-    @Path("{iden}")
-    public VmSessionResource getSessionSubResource(@PathParam("iden") String id) {
+    public VmSessionResource getSessionSubResource(String id) {
         return inject(new BackendVmSessionResource(this, id));
     }
 

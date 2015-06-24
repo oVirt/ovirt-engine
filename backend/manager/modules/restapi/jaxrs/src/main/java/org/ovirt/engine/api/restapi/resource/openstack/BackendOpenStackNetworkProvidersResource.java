@@ -16,7 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
@@ -101,7 +100,7 @@ public class BackendOpenStackNetworkProvidersResource
 
     @Override
     @SingleEntityResource
-    public OpenStackNetworkProviderResource getOpenStackNetworkProvider(@PathParam("id") String id) {
+    public OpenStackNetworkProviderResource getOpenStackNetworkProvider(String id) {
         return inject(new BackendOpenStackNetworkProviderResource(id));
     }
 }

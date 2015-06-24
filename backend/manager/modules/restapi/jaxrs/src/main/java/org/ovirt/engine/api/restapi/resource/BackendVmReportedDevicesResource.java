@@ -2,9 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDevices;
 import org.ovirt.engine.api.model.VM;
@@ -46,8 +43,7 @@ public class BackendVmReportedDevicesResource extends AbstractBackendCollectionR
     }
 
     @Override
-    @Path("{id}")
-    public VmReportedDeviceResource getVmReportedDeviceSubResource(@PathParam("id") String id) {
+    public VmReportedDeviceResource getVmReportedDeviceSubResource(String id) {
         return inject(new BackendVmReportedDeviceResource(id, this));
     }
 

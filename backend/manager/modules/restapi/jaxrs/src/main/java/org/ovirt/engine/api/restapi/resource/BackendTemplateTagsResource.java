@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByTemplateIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-import javax.ws.rs.PathParam;
 import java.util.List;
 
 public class BackendTemplateTagsResource extends AbstractBackendAssignedTagsResource {
@@ -21,7 +20,7 @@ public class BackendTemplateTagsResource extends AbstractBackendAssignedTagsReso
     }
 
     @Override
-    public AssignedTagResource getAssignedTagSubResource(@PathParam("id") String id) {
+    public AssignedTagResource getAssignedTagSubResource(String id) {
         return inject(new BackendTemplateTagResource(asGuid(parentId), id));
     }
 }

@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-import javax.ws.rs.PathParam;
-
 public class BackendHostTagsResource extends AbstractBackendAssignedTagsResource {
     public BackendHostTagsResource(String parentId) {
         super(Host.class, parentId, VdcActionType.AttachVdsToTag);
@@ -21,7 +19,7 @@ public class BackendHostTagsResource extends AbstractBackendAssignedTagsResource
     }
 
     @Override
-    public AssignedTagResource getAssignedTagSubResource(@PathParam("id") String id) {
+    public AssignedTagResource getAssignedTagSubResource(String id) {
         return inject(new BackendHostTagResource(asGuid(parentId), id));
     }
 }

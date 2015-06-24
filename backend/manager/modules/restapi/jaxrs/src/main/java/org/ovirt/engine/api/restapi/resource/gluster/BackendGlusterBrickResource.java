@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 
 import static org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterBricksResource.SUB_COLLECTIONS;
 
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -78,7 +77,6 @@ public class BackendGlusterBrickResource
     }
 
     @Override
-    @Path("statistics")
     public StatisticsResource getStatisticsResource() {
         EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetGlusterBrickById, IdQueryParameters.class) {
 

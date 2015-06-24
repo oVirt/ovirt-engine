@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-import javax.ws.rs.PathParam;
-
 public class BackendGroupTagsResource extends AbstractBackendAssignedTagsResource {
     public BackendGroupTagsResource(String parentId) {
         super(Group.class, parentId, VdcActionType.AttachUserGroupToTag);
@@ -21,7 +19,7 @@ public class BackendGroupTagsResource extends AbstractBackendAssignedTagsResourc
     }
 
     @Override
-    public AssignedTagResource getAssignedTagSubResource(@PathParam("id") String id) {
+    public AssignedTagResource getAssignedTagSubResource(String id) {
         return inject(new BackendGroupTagResource(asGuid(parentId), id));
     }
 }

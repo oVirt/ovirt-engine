@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.VnicProfile;
@@ -41,7 +40,7 @@ public class BackendVnicProfilesResource extends AbstractBackendVnicProfilesReso
 
     @SingleEntityResource
     @Override
-    public VnicProfileResource getVnicProfileSubResource(@PathParam("id") String id) {
+    public VnicProfileResource getVnicProfileSubResource(String id) {
         return inject(new BackendVnicProfileResource(id));
     }
 }

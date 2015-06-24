@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Cluster;
@@ -43,7 +42,7 @@ public class BackendAssignedCpuProfilesResource extends AbstractBackendCpuProfil
 
     @SingleEntityResource
     @Override
-    public AssignedCpuProfileResource getAssignedCpuProfileSubResource(@PathParam("id") String id) {
+    public AssignedCpuProfileResource getAssignedCpuProfileSubResource(String id) {
         return inject(new BackendAssignedCpuProfileResource(id, this));
     }
 

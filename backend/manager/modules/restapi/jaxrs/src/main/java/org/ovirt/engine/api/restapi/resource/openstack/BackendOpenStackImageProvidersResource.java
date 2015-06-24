@@ -16,7 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
@@ -100,7 +99,7 @@ public class BackendOpenStackImageProvidersResource
 
     @Override
     @SingleEntityResource
-    public OpenStackImageProviderResource getOpenStackImageProvider(@PathParam("id") String id) {
+    public OpenStackImageProviderResource getOpenStackImageProvider(String id) {
         return inject(new BackendOpenStackImageProviderResource(id));
     }
 }

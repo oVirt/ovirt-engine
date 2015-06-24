@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -22,7 +21,7 @@ public class BackendJobResource extends AbstractBackendActionableResource<Job, o
     }
 
     @Override
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid) {
+    public ActionResource getActionSubresource(String action, String oid) {
         return inject(new BackendActionResource(action, oid));
     }
 

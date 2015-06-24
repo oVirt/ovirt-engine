@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
@@ -120,7 +119,7 @@ public class BackendOpenStackVolumeProvidersResource
 
     @Override
     @SingleEntityResource
-    public OpenStackVolumeProviderResource getOpenStackVolumeProvider(@PathParam("id") String id) {
+    public OpenStackVolumeProviderResource getOpenStackVolumeProvider(String id) {
         return inject(new BackendOpenStackVolumeProviderResource(id, this));
     }
 

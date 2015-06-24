@@ -2,9 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.HashMap;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
@@ -40,8 +37,7 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
     }
 
     @Override
-    @Path("{id}")
-    public HostHookResource getHookSubResource(@PathParam("id") String id) {
+    public HostHookResource getHookSubResource(String id) {
         return inject(new BackendHostHookResource(id, this));
     }
 

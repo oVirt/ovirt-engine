@@ -16,7 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import java.util.List;
@@ -104,7 +103,7 @@ public class BackendExternalHostProvidersResource
 
     @Override
     @SingleEntityResource
-    public ExternalHostProviderResource getExternalHostProvider(@PathParam("id") String id) {
+    public ExternalHostProviderResource getExternalHostProvider(String id) {
         return inject(new BackendExternalHostProviderResource(id));
     }
 }

@@ -5,7 +5,6 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostsResource.SUB_COL
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
@@ -549,13 +548,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
-    @Path("hooks")
     public BackendHostHooksResource getHooksResource() {
         return inject(new BackendHostHooksResource(id));
     }
 
     @Override
-    @Path("fenceagents")
     public FenceAgentsResource getFenceAgentsResource() {
         return inject(new BackendFenceAgentsResource(id));
     }

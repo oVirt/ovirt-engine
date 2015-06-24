@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Job;
@@ -15,7 +14,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
 
 public class BackendJobsResource extends AbstractBackendCollectionResource<Job, org.ovirt.engine.core.common.job.Job> implements JobsResource {
 
@@ -40,7 +38,7 @@ public class BackendJobsResource extends AbstractBackendCollectionResource<Job, 
     }
 
     @Override
-    public JobResource getJobSubResource(@PathParam("id") String id) {
+    public JobResource getJobSubResource(String id) {
         return inject(new BackendJobResource(id));
     }
 

@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
@@ -56,7 +55,7 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
 
     @Override
     @SingleEntityResource
-    public StepResource getStepSubResource(@PathParam("id") String id) {
+    public StepResource getStepSubResource(String id) {
         return inject(new BackendStepResource(id, this));
     }
 

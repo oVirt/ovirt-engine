@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.IscsiBond;
@@ -49,7 +48,7 @@ public class BackendIscsiBondsResource extends AbstractBackendCollectionResource
 
     @Override
     @SingleEntityResource
-    public IscsiBondResource getIscsiBondSubResource(@PathParam("id") String id) {
+    public IscsiBondResource getIscsiBondSubResource(String id) {
         return inject(new BackendIscsiBondResource(id));
     }
 

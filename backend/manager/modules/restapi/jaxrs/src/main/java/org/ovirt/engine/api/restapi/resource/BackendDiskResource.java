@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -70,7 +69,7 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
     }
 
     @Override
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid) {
+    public ActionResource getActionSubresource(String action, String oid) {
         return inject(new BackendActionResource(action, oid));
     }
 

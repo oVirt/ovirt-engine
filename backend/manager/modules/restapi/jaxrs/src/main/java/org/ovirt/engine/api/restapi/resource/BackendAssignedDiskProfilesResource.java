@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.StorageDomain;
@@ -43,7 +42,7 @@ public class BackendAssignedDiskProfilesResource extends AbstractBackendDiskProf
 
     @SingleEntityResource
     @Override
-    public AssignedDiskProfileResource getAssignedDiskProfileSubResource(@PathParam("id") String id) {
+    public AssignedDiskProfileResource getAssignedDiskProfileSubResource(String id) {
         return inject(new BackendAssignedDiskProfileResource(id, this));
     }
 
