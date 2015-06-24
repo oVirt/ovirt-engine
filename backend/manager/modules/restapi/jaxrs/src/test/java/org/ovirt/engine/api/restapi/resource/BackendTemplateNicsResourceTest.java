@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -10,7 +9,6 @@ import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -28,64 +26,11 @@ public class BackendTemplateNicsResourceTest
               "Id");
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUpEntityQueryExpectations(1);
-        setGetTemplateQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplateInterface,
-                                           RemoveVmTemplateInterfaceParameters.class,
-                                           new String[] {},
-                                           new Object[] {},
-                                           true,
-                                           true));
-        verifyRemove(collection.deprecatedRemove(GUIDS[0].toString()));
-    }
-
     private VmNetworkInterface getInterface(int id, String name){
         VmNetworkInterface inter = new VmNetworkInterface();
         inter.setId(GUIDS[id]);
         inter.setName(name);
         return inter;
-    }
-
-    protected void setUpGetEntityQueryExpectations(int times, Object failure) throws Exception {
-        while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetTemplateInterfacesByTemplateId,
-                                         IdQueryParameters.class,
-                                         new String[] { "Id" },
-                                         new Object[] { PARENT_ID },
-                                         asList(getInterface(0, null)),
-                                         failure);
-        }
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpEntityQueryExpectations(1);
-        setGetTemplateQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplateInterface,
-                                           RemoveVmTemplateInterfaceParameters.class,
-                                           new String[] { "VmTemplateId" },
-                                           new Object[] { PARENT_ID },
-                                           canDo,
-                                           success));
-        try {
-            collection.deprecatedRemove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
     }
 
     @Test

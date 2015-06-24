@@ -64,12 +64,17 @@ public class BackendTemplateNicsResource
     @Override
     @SingleEntityResource
     public DeviceResource<NIC> getDeviceSubResource(String id) {
-        return inject(new BackendTemplateNicResource(id,
-                                                     this,
-                                                     updateType,
-                                                     getUpdateParametersProvider(),
-                                                     getRequiredUpdateFields(),
-                                                     subCollections));
+        return inject(
+            new BackendTemplateNicResource(
+                parentId,
+                id,
+                this,
+                updateType,
+                getUpdateParametersProvider(),
+                getRequiredUpdateFields(),
+                subCollections
+            )
+        );
     }
 
     @Override
