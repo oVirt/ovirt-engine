@@ -11,9 +11,6 @@ import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.resource.DeviceResource;
 
 public class BackendCdRomResource extends BackendDeviceResource<CdRom, CdRoms, VM> implements DeviceResource<CdRom>{
-
-    public static final String CURRENT_CONSTRAINT_PARAMETER = "current";
-
     public BackendCdRomResource(Class<CdRom> modelType,
                                  Class<VM> entityType,
                                  final Guid guid,
