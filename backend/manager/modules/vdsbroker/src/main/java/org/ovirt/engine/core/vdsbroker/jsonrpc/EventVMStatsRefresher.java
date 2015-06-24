@@ -34,7 +34,7 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
     private PollVMStatsRefresher pollVMStatsRefresher;
 
     public EventVMStatsRefresher(VdsManager manager, AuditLogDirector auditLogDirector, SchedulerUtil scheduler) {
-        super(manager, auditLogDirector, scheduler);
+        super(manager, auditLogDirector);
         this.resourceManager = ResourceManager.getInstance();
         this.dbFacade = DbFacade.getInstance();
         // we still want to fetch GetAllVmStats as we did before
@@ -138,10 +138,5 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
     public void stopMonitoring() {
         pollVMStatsRefresher.stopMonitoring();
         this.subscription.cancel();
-    }
-
-    @Override
-    public void poll() {
-        // noop
     }
 }
