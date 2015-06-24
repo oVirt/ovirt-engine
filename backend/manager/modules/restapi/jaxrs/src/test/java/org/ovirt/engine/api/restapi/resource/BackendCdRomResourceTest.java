@@ -40,13 +40,14 @@ public class BackendCdRomResourceTest
     }
 
     protected static BackendDeviceResource<CdRom, CdRoms, VM> getResource(Guid id) {
-        return new BackendCdRomResource(CdRom.class,
-                                        VM.class,
-                                        id,
-                                        collection,
-                                        VdcActionType.UpdateVm,
-                                        collection.getUpdateParametersProvider(),
-                                        collection.getRequiredUpdateFields());
+        return new BackendCdRomResource(
+            PARENT_ID,
+            id,
+            collection,
+            VdcActionType.UpdateVm,
+            collection.getUpdateParametersProvider(),
+            collection.getRequiredUpdateFields()
+        );
     }
 
     protected BackendDeviceResource<CdRom, CdRoms, VM> getNotFoundResource() {
@@ -261,6 +262,86 @@ public class BackendCdRomResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
              verifyIncompleteException(wae, "CdRom", "update", "file");
+        }
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetVmByVmId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { PARENT_ID },
+            getEntity(1)
+        );
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.UpdateVm,
+                VmManagementParametersBase.class,
+                new String[] { "VmStaticData.IsoPath" },
+                new Object[] { null },
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveNonExistant() throws Exception{
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetVmByVmId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { PARENT_ID },
+            null
+        );
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(wae.getResponse().getStatus(), 404);
+        }
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpEntityQueryExpectations(
+            VdcQueryType.GetVmByVmId,
+            IdQueryParameters.class,
+            new String[]{"Id"},
+            new Object[]{PARENT_ID},
+            getEntity(1)
+        );
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.UpdateVm,
+                VmManagementParametersBase.class,
+                new String[] { "VmStaticData.IsoPath" },
+                new Object[] { null },
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
         }
     }
 

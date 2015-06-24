@@ -104,12 +104,15 @@ public class BackendCdRomsResource
     @Override
     @SingleEntityResource
     public DeviceResource<CdRom> getDeviceSubResource(String id) {
-        return inject(new BackendCdRomResource(modelType,
-                                               entityType,
-                                               asGuidOr404(id),
-                                               this,
-                                               updateType,
-                                               getUpdateParametersProvider(),
-                                               getRequiredUpdateFields()));
+        return inject(
+            new BackendCdRomResource(
+                parentId,
+                asGuidOr404(id),
+                this,
+                updateType,
+                getUpdateParametersProvider(),
+                getRequiredUpdateFields()
+            )
+        );
     }
 }

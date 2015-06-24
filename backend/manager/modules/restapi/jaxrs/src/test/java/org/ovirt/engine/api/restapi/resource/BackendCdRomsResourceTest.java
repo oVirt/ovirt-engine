@@ -9,7 +9,6 @@ import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -24,75 +23,6 @@ public class BackendCdRomsResourceTest
               VdcQueryType.GetVmByVmId,
               new IdQueryParameters(PARENT_ID),
               "Id");
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                     IdQueryParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { PARENT_ID },
-                                     getEntity(0),
-                                     2);
-
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
-                                           VmManagementParametersBase.class,
-                                           new String[] {},
-                                           new Object[] {},
-                                           true,
-                                           true));
-        verifyRemove(collection.deprecatedRemove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { PARENT_ID },
-                new VM(),
-                1);
-        setUriInfo(setUpBasicUriExpectations());
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(wae.getResponse().getStatus(), 404);
-        }
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                     IdQueryParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { PARENT_ID },
-                                     getEntity(0),
-                                     2);
-
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
-                                           VmManagementParametersBase.class,
-                                           new String[] {},
-                                           new Object[] {},
-                                           canDo,
-                                           success));
-        try {
-            collection.deprecatedRemove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
     }
 
     @Test
