@@ -707,6 +707,7 @@ public class VdsDeploy extends VdsDeployBase {
                 );
                 _certificate = OpenSslCAWrapper.signCertificateRequest(
                     StringUtils.join(event.value, "\n"),
+                    _vds.getHostName(),
                     _vds.getHostName()
                 );
                 unknown = false;
@@ -719,10 +720,12 @@ public class VdsDeploy extends VdsDeployBase {
                 String name = String.format("%s-ssh", _vds.getHostName());
                 OpenSslCAWrapper.signCertificateRequest(
                     StringUtils.join(event.value, "\n"),
-                    name
+                    name,
+                    _vds.getHostName()
                 );
                 _sercon_certificate = OpenSslCAWrapper.signOpenSSHCertificate(
                     name,
+                    _vds.getHostName(),
                     _vds.getHostName()
                 );
                 unknown = false;

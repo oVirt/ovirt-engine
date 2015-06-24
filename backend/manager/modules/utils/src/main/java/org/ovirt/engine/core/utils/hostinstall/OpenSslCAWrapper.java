@@ -34,6 +34,7 @@ public class OpenSslCAWrapper {
 
     public static String signCertificateRequest(
         String request,
+        String name,
         String hostname
     ) throws IOException {
         EngineLocalConfig config = EngineLocalConfig.getInstance();
@@ -42,7 +43,7 @@ public class OpenSslCAWrapper {
             final OutputStream os = new FileOutputStream(
                 new File(
                     new File(config.getPKIDir(), "requests"),
-                    String.format("%s.req", hostname)
+                    String.format("%s.req", name)
                 )
             )
         ) {
@@ -52,6 +53,7 @@ public class OpenSslCAWrapper {
         if (
             !new OpenSslCAWrapper().signCertificateRequest(
                 new File(new File(config.getUsrDir(), "bin"), "pki-enroll-request.sh"),
+                name,
                 hostname
             )
         ) {
@@ -60,11 +62,12 @@ public class OpenSslCAWrapper {
 
         return FileUtil.readAllText(
             new File(new File(config.getPKIDir(), "certs"),
-            String.format("%s.cer", hostname)
+            String.format("%s.cer", name)
         ).getPath());
     }
 
     public static String signOpenSSHCertificate(
+        String name,
         String hostname,
         String principal
     ) throws IOException {
@@ -73,6 +76,7 @@ public class OpenSslCAWrapper {
         if (
             !new OpenSslCAWrapper().signOpenSSHCertificate(
                 new File(new File(config.getUsrDir(), "bin"), "pki-enroll-openssh-cert.sh"),
+                name,
                 hostname,
                 principal
             )
@@ -82,12 +86,13 @@ public class OpenSslCAWrapper {
 
         return FileUtil.readAllText(
             new File(new File(config.getPKIDir(), "certs"),
-            String.format("%s-cert.pub", hostname)
+            String.format("%s-cert.pub", name)
         ).getPath());
     }
 
     public final boolean signCertificateRequest(
         File executable,
+        String name,
         String hostname
     ) {
         log.debug("Entered signCertificateRequest");
@@ -99,7 +104,7 @@ public class OpenSslCAWrapper {
             returnValue = runCommandArray(
                 new String[] {
                     executable.getAbsolutePath(),
-                    String.format("--name=%s", hostname),
+                    String.format("--name=%s", name),
                     String.format("--subject=/O=%s/CN=%s", escapeSubjectComponent(organization), escapeSubjectComponent(hostname)),
                     String.format("--days=%s", days),
                     String.format("--timeout=%s", signatureTimeout / 2)
@@ -116,6 +121,7 @@ public class OpenSslCAWrapper {
 
     public final boolean signOpenSSHCertificate(
         File executable,
+        String name,
         String hostname,
         String principal
     ) {
@@ -126,7 +132,7 @@ public class OpenSslCAWrapper {
             returnValue = runCommandArray(
                 new String[] {
                     executable.getAbsolutePath(),
-                    String.format("--name=%s", hostname),
+                    String.format("--name=%s", name),
                     "--host",
                     String.format("--id=%s", hostname),
                     String.format("--principals=%s", principal),
