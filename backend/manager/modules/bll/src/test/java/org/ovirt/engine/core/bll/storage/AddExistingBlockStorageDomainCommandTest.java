@@ -65,14 +65,14 @@ public class AddExistingBlockStorageDomainCommandTest {
 
     @Test
     public void testAddExistingBlockDomainSuccessfully() {
-        when(command.getLUNsFromVgInfo(parameters.getStorageDomain().getStorage())).thenReturn(getLUNs());
+        doReturn(getLUNs()).when(command).getLUNsFromVgInfo(parameters.getStorageDomain().getStorage());
         command.executeCommand();
         assertTrue(command.getReturnValue().getSucceeded());
     }
 
     @Test
     public void testAddExistingBlockDomainWhenVgInfoReturnsEmptyLunList() {
-        when(command.getLUNsFromVgInfo(parameters.getStorageDomain().getStorage())).thenReturn(Collections.<LUNs> emptyList());
+        doReturn(Collections.emptyList()).when(command).getLUNsFromVgInfo(parameters.getStorageDomain().getStorage());
         assertFalse("Could not connect to Storage Domain", command.canAddDomain());
         assertTrue("Import block Storage Domain should have failed due to empty Lun list returned from VGInfo ",
                 command.getReturnValue()
@@ -92,7 +92,7 @@ public class AddExistingBlockStorageDomainCommandTest {
 
     @Test
     public void testAddHostedEngineStorageFails() {
-        when(command.getLUNsFromVgInfo(parameters.getStorageDomain().getStorage())).thenReturn(getLUNs());
+        doReturn(getLUNs()).when(command).getLUNsFromVgInfo(parameters.getStorageDomain().getStorage());
         doReturn(Collections.emptyList()).when(command).getAllLuns();
 
         parameters.getStorageDomain().setStorageName(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME);
