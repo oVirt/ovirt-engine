@@ -3884,7 +3884,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Vm icon has invalid dimensions (${currentDimensions}). Allowed dimmension: ${allowedDimensions}")
     String PROVIDED_VM_ICON_HAS_INVALID_DIMENSIONS();
 
-    @DefaultStringValue("Data size of provided icon (${currentSize}) is to big. Maximum allowd is ${maxSize}")
+    @DefaultStringValue("Data size of provided icon (${currentSize}) is too big. Maximum allowd is ${maxSize}")
     String DATA_SIZE_OF_PROVIDED_VM_ICON_TOO_LARGE();
 
     @DefaultStringValue("Base64 part of vm icon is malformed.")
