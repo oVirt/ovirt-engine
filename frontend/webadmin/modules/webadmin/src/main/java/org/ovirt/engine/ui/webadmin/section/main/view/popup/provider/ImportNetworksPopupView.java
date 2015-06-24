@@ -64,7 +64,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
     ListModelListBoxEditor<Provider<?>> providersEditor;
 
     @UiField(provided = true)
-    HorizontalSplitTable<ExternalNetwork> splitTable;
+    HorizontalSplitTable<ListModel<ExternalNetwork>, ExternalNetwork> splitTable;
 
     @Ignore
     EntityModelCellTable<ListModel<ExternalNetwork>> providerNetworks;
@@ -86,7 +86,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         providerNetworks = new EntityModelCellTable<ListModel<ExternalNetwork>>(true, false, true);
         importedNetworks = new EntityModelCellTable<ListModel<ExternalNetwork>>(true, false, true);
         splitTable =
-                new HorizontalSplitTable<ExternalNetwork>(providerNetworks,
+                new HorizontalSplitTable<>(providerNetworks,
                         importedNetworks,
                         constants.providerNetworks(),
                         constants.importedNetworks());

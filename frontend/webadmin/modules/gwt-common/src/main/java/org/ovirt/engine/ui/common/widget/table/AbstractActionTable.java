@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -12,7 +11,6 @@ import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
-import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -43,7 +41,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
@@ -194,6 +191,16 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                 return AbstractActionTable.this.getElementId();
             }
 
+            @Override
+            protected void pushColumnSort(ColumnSortInfo columnSortInfo) {
+                AbstractActionTable.this.pushColumnSort(columnSortInfo);
+            }
+
+            @Override
+            protected void clearColumnSort() {
+                AbstractActionTable.this.clearColumnSort();
+            }
+
         };
 
         // Can't do this in the onBrowserEvent, as GWT CellTable doesn't support double click.
@@ -237,6 +244,16 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             @Override
             protected String getGridElementId() {
                 return AbstractActionTable.this.getElementId();
+            }
+
+            @Override
+            protected void pushColumnSort(ColumnSortInfo columnSortInfo) {
+                AbstractActionTable.this.pushColumnSort(columnSortInfo);
+            }
+
+            @Override
+            protected void clearColumnSort() {
+                AbstractActionTable.this.clearColumnSort();
             }
 
         };
@@ -479,46 +496,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
         // Attach column sort handler
         ActionCellTable<T> tableWithHeader = isTableHeaderVisible() ? tableHeader : table;
-        tableWithHeader.addColumnSortHandler(new ColumnSortEvent.Handler() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onColumnSort(ColumnSortEvent event) {
-                SearchableListModel<?, ?> model = getDataProvider().getModel();
-                Column<?, ?> column = event.getColumn();
-
-                if (column instanceof SortableColumn) {
-                    SortableColumn<T, ?> sortableColumn = (SortableColumn<T, ?>) column;
-                    boolean sortApplied = false;
-
-                    // Apply server-side sorting, if supported by the model
-                    if (model.supportsServerSideSorting()) {
-                        if (model.isSearchValidForServerSideSorting()) {
-                            model.updateSortOptions(sortableColumn.getSortBy(), event.isSortAscending());
-                            sortApplied = true;
-                        } else {
-                            model.clearSortOptions();
-                        }
-                    }
-
-                    // Otherwise, fall back to client-side sorting
-                    else {
-                        Comparator<? super T> comparator = sortableColumn.getComparator();
-                        if (comparator != null) {
-                           ((SearchableListModel<?, T>) model).setComparator(comparator, event.isSortAscending());
-                            sortApplied = true;
-                        }
-                    }
-
-                    // Update column sort status, redrawing table headers if necessary
-                    ColumnSortInfo columnSortInfo = event.getColumnSortList().get(0);
-                    if (sortApplied) {
-                        pushColumnSort(columnSortInfo);
-                    } else {
-                        clearColumnSort();
-                    }
-                }
-            }
-        });
+        tableWithHeader.initModelSortHandler(getDataProvider().getModel());
     }
 
     void pushColumnSort(ColumnSortInfo columnSortInfo) {

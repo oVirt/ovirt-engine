@@ -65,6 +65,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
         void updateTabIndexes();
 
+        void init(T model);
+
     }
 
     private final ModelBoundPopupHandler<T> popupHandler;
@@ -134,6 +136,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
      */
     public void init(final T model) {
         this.model = model;
+
+        getView().init(model);
 
         // Set up async operation listeners to automatically display/hide progress bar
         asyncOperationCounter = 0;
@@ -236,7 +240,6 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         if (!model.hasEventBusSet()) {
             model.setEventBus((EventBus) getEventBus());
         }
-
     }
 
     @Override

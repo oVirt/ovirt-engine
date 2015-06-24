@@ -189,4 +189,9 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
         }
     }
 
+    @Override
+    public void init(T model) {
+        // No-op, override as necessary
+    }
+
 }

@@ -21,7 +21,7 @@ import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
-public abstract class SplitTable<T> extends Composite {
+public abstract class SplitTable<M extends ListModel<T>, T> extends Composite {
 
     private final MultiSelectionModel<T> excludedSelectionModel;
     private final MultiSelectionModel<T> includedSelectionModel;
@@ -39,10 +39,10 @@ public abstract class SplitTable<T> extends Composite {
     protected ShapedButton excludeButton;
 
     @UiField(provided = true)
-    protected EntityModelCellTable<ListModel<T>> excludedTable;
+    protected EntityModelCellTable<M> excludedTable;
 
     @UiField(provided = true)
-    protected EntityModelCellTable<ListModel<T>> includedTable;
+    protected EntityModelCellTable<M> includedTable;
 
     @UiField(provided = true)
     protected Label excludedTitle;
@@ -51,8 +51,8 @@ public abstract class SplitTable<T> extends Composite {
     protected Label includedTitle;
 
     @SuppressWarnings("unchecked")
-    public SplitTable(EntityModelCellTable<ListModel<T>> excludedTable,
-            EntityModelCellTable<ListModel<T>> includedTable,
+    public SplitTable(EntityModelCellTable<M> excludedTable,
+            EntityModelCellTable<M> includedTable,
             String excludedTitle,
             String includedTitle) {
 
@@ -69,8 +69,8 @@ public abstract class SplitTable<T> extends Composite {
 
         initWidget();
 
-        excludedSelectionModel = (MultiSelectionModel<T>) excludedTable.getSelectionModel();
-        includedSelectionModel = (MultiSelectionModel<T>) includedTable.getSelectionModel();
+        excludedSelectionModel = (MultiSelectionModel) excludedTable.getSelectionModel();
+        includedSelectionModel = (MultiSelectionModel) includedTable.getSelectionModel();
 
         excludedItemsChangedListener = new IEventListener<EventArgs>() {
             @Override
@@ -115,8 +115,8 @@ public abstract class SplitTable<T> extends Composite {
             @Override
             public void onClick(ClickEvent event) {
                 MultiSelectionModel<T> sourceSelectionModel = getSelectionModel(excludedTableIsSource);
-                EntityModelCellTable<ListModel<T>> sourceTable = getTable(excludedTableIsSource);
-                EntityModelCellTable<ListModel<T>> targetTable = getTable(!excludedTableIsSource);
+                EntityModelCellTable<M> sourceTable = getTable(excludedTableIsSource);
+                EntityModelCellTable<M> targetTable = getTable(!excludedTableIsSource);
                 UICommand command = excludedTableIsSource ? onIncludeButtonPressed : onExcludeButtonPressed;
 
                 if (command != null) {
@@ -145,7 +145,7 @@ public abstract class SplitTable<T> extends Composite {
         return include ? includeButton : excludeButton;
     }
 
-    private EntityModelCellTable<ListModel<T>> getTable(boolean excluded) {
+    private EntityModelCellTable<M> getTable(boolean excluded) {
         return excluded ? excludedTable : includedTable;
     }
 
@@ -156,9 +156,9 @@ public abstract class SplitTable<T> extends Composite {
         includedTable.asEditor().edit(includedTable.asEditor().flush());
     }
 
-    private void edit(ListModel<T> model, final boolean excludedTableIsEdited) {
-        EntityModelCellTable<ListModel<T>> table = getTable(excludedTableIsEdited);
-        ListModel<T> oldModel = table.asEditor().flush();
+    private void edit(M model, final boolean excludedTableIsEdited) {
+        EntityModelCellTable<M> table = getTable(excludedTableIsEdited);
+        M oldModel = table.asEditor().flush();
         IEventListener<EventArgs> listener = excludedTableIsEdited ? excludedItemsChangedListener : includedItemsChangedListener;
         if (oldModel != null) {
             oldModel.getItemsChangedEvent().removeListener(listener);
@@ -167,13 +167,13 @@ public abstract class SplitTable<T> extends Composite {
         table.asEditor().edit(model);
     }
 
-    public void edit(ListModel<T> excludedListModel, ListModel<T> includedListModel) {
+    public void edit(M excludedListModel, M includedListModel) {
         edit(excludedListModel, true);
         edit(includedListModel, false);
     }
 
-    public void edit(ListModel<T> excludedListModel,
-            ListModel<T> includedListModel,
+    public void edit(M excludedListModel,
+            M includedListModel,
             UICommand onIncludeButtonPressed,
             UICommand onExcludeButtonPressed) {
         edit(excludedListModel, includedListModel);

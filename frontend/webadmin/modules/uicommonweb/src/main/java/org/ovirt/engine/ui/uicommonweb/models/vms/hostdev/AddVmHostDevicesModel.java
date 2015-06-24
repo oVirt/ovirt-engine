@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -30,9 +31,9 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
 
     private ListModel<String> capability;
 
-    private ListModel<EntityModel<HostDeviceView>> allAvailableHostDevices;
-    private ListModel<EntityModel<HostDeviceView>> availableHostDevices;
-    private ListModel<EntityModel<HostDeviceView>> selectedHostDevices;
+    private SortedListModel<EntityModel<HostDeviceView>> allAvailableHostDevices;
+    private SortedListModel<EntityModel<HostDeviceView>> availableHostDevices;
+    private SortedListModel<EntityModel<HostDeviceView>> selectedHostDevices;
 
     private UICommand addDeviceCommand = new UICommand(null, this);
     private UICommand removeDeviceCommand = new UICommand(null, this);
@@ -41,9 +42,9 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
 
     public AddVmHostDevicesModel() {
         setCapability(new ListModel<String>());
-        setAllAvailableHostDevices(new ListModel<EntityModel<HostDeviceView>>());
-        setAvailableHostDevices(new ListModel<EntityModel<HostDeviceView>>());
-        setSelectedHostDevices(new ListModel<EntityModel<HostDeviceView>>());
+        setAllAvailableHostDevices(new SortedListModel<EntityModel<HostDeviceView>>());
+        setAvailableHostDevices(new SortedListModel<EntityModel<HostDeviceView>>());
+        setSelectedHostDevices(new SortedListModel<EntityModel<HostDeviceView>>());
 
         setTitle(ConstantsManager.getInstance().getConstants().addVmHostDevicesTitle());
         setHelpTag(HelpTag.add_host_device);
@@ -152,27 +153,27 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
         this.capability = capability;
     }
 
-    public ListModel<EntityModel<HostDeviceView>> getAllAvailableHostDevices() {
+    public SortedListModel<EntityModel<HostDeviceView>> getAllAvailableHostDevices() {
         return allAvailableHostDevices;
     }
 
-    public void setAllAvailableHostDevices(ListModel<EntityModel<HostDeviceView>> allAvailableHostDevices) {
+    public void setAllAvailableHostDevices(SortedListModel<EntityModel<HostDeviceView>> allAvailableHostDevices) {
         this.allAvailableHostDevices = allAvailableHostDevices;
     }
 
-    public ListModel<EntityModel<HostDeviceView>> getAvailableHostDevices() {
+    public SortedListModel<EntityModel<HostDeviceView>> getAvailableHostDevices() {
         return availableHostDevices;
     }
 
-    public void setAvailableHostDevices(ListModel<EntityModel<HostDeviceView>> availableHostDevices) {
+    public void setAvailableHostDevices(SortedListModel<EntityModel<HostDeviceView>> availableHostDevices) {
         this.availableHostDevices = availableHostDevices;
     }
 
-    public ListModel<EntityModel<HostDeviceView>> getSelectedHostDevices() {
+    public SortedListModel<EntityModel<HostDeviceView>> getSelectedHostDevices() {
         return selectedHostDevices;
     }
 
-    public void setSelectedHostDevices(ListModel<EntityModel<HostDeviceView>> selectedHostDevices) {
+    public void setSelectedHostDevices(SortedListModel<EntityModel<HostDeviceView>> selectedHostDevices) {
         this.selectedHostDevices = selectedHostDevices;
     }
 

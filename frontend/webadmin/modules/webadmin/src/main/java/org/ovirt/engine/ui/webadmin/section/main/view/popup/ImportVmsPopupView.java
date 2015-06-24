@@ -68,7 +68,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     ListModelListBoxEditor<VDS> proxyHostsEditor;
 
     @UiField(provided = true)
-    VerticalSplitTable<EntityModel<VM>> vmsTable;
+    VerticalSplitTable<ListModel<EntityModel<VM>>, EntityModel<VM>> vmsTable;
 
     @Ignore
     EntityModelCellTable<ListModel<EntityModel<VM>>> externalVms;
@@ -162,7 +162,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         externalVms = new EntityModelCellTable<>(true, false, true);
         importedVms = new EntityModelCellTable<>(true, false, true);
         vmsTable =
-                new VerticalSplitTable<EntityModel<VM>>(externalVms,
+                new VerticalSplitTable<>(externalVms,
                         importedVms,
                         constants.externalVms(),
                         constants.importedVms());

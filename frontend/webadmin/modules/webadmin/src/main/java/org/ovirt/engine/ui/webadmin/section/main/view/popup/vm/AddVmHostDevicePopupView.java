@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.AddVmHostDevicesModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -47,13 +47,13 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
     ListModelListBoxEditor<String> capabilityEditor;
 
     @UiField(provided = true)
-    HorizontalSplitTable<EntityModel<HostDeviceView>> splitTable;
+    HorizontalSplitTable<SortedListModel<EntityModel<HostDeviceView>>, EntityModel<HostDeviceView>> splitTable;
 
     @Ignore
-    EntityModelCellTable<ListModel<EntityModel<HostDeviceView>>> availableHostDevices;
+    EntityModelCellTable<SortedListModel<EntityModel<HostDeviceView>>> availableHostDevices;
 
     @Ignore
-    EntityModelCellTable<ListModel<EntityModel<HostDeviceView>>> selectedHostDevices;
+    EntityModelCellTable<SortedListModel<EntityModel<HostDeviceView>>> selectedHostDevices;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -82,7 +82,7 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
         initHostDeviceCellTable(selectedHostDevices);
     }
 
-    private void initHostDeviceCellTable(EntityModelCellTable<ListModel<EntityModel<HostDeviceView>>> hostDeviceTable) {
+    private void initHostDeviceCellTable(EntityModelCellTable<SortedListModel<EntityModel<HostDeviceView>>> hostDeviceTable) {
         hostDeviceTable.enableColumnResizing();
 
         addHostDeviceColumn(hostDeviceTable, constants.deviceName(), "200px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
@@ -132,7 +132,7 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
         });
     }
 
-    private void addHostDeviceColumn(EntityModelCellTable<ListModel<EntityModel<HostDeviceView>>> hostDeviceTable,
+    private void addHostDeviceColumn(EntityModelCellTable<SortedListModel<EntityModel<HostDeviceView>>> hostDeviceTable,
                                      String header, String width, AbstractTextColumn<EntityModel<HostDeviceView>> column) {
         column.makeSortable();
         hostDeviceTable.addColumn(column, header, width);
@@ -152,4 +152,11 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
     public AddVmHostDevicesModel flush() {
         return driver.flush();
     }
+
+    @Override
+    public void init(AddVmHostDevicesModel model) {
+        availableHostDevices.initModelSortHandler((SortedListModel) model.getAvailableHostDevices());
+        selectedHostDevices.initModelSortHandler((SortedListModel) model.getSelectedHostDevices());
+    }
+
 }

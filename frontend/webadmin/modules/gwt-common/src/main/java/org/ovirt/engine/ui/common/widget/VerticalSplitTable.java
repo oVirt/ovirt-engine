@@ -10,16 +10,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class VerticalSplitTable<T> extends SplitTable<T> {
+public class VerticalSplitTable<M extends ListModel<T>, T> extends SplitTable<M, T> {
 
-    interface WidgetUiBinder extends UiBinder<Widget, VerticalSplitTable<?>> {
+    interface WidgetUiBinder extends UiBinder<Widget, VerticalSplitTable<?, ?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
     private final static CommonApplicationResources resources = AssetProvider.getResources();
 
-    public VerticalSplitTable(EntityModelCellTable<ListModel<T>> excludedTable,
-            EntityModelCellTable<ListModel<T>> includedTable,
+    public VerticalSplitTable(EntityModelCellTable<M> excludedTable,
+            EntityModelCellTable<M> includedTable,
             String excludedTitle,
             String includedTitle) {
         super(excludedTable, includedTable, excludedTitle, includedTitle);

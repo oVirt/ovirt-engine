@@ -2,14 +2,18 @@ package org.ovirt.engine.ui.common.widget.table.resize;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
+import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
+import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizableHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizeableCheckboxHeader;
@@ -29,6 +33,8 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ProvidesKey;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 
 /**
  * A {@link CellTable} that supports resizing its columns using mouse.
@@ -361,6 +367,64 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     protected void dontApplyResizableHeaderStyle() {
         applyHeaderStyle = false;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void initModelSortHandler(final SortedListModel<T> sortedModel) {
+        final SearchableListModel<?, T> searchableModel = (sortedModel instanceof SearchableListModel)
+                ? (SearchableListModel<?, T>) sortedModel : null;
+
+        addColumnSortHandler(new ColumnSortEvent.Handler() {
+            @Override
+            public void onColumnSort(ColumnSortEvent event) {
+                Column<?, ?> column = event.getColumn();
+
+                if (column instanceof SortableColumn) {
+                    SortableColumn<T, ?> sortableColumn = (SortableColumn<T, ?>) column;
+                    boolean sortApplied = false;
+
+                    // Apply server-side sorting, if supported by the model
+                    if (searchableModel != null && searchableModel.supportsServerSideSorting()) {
+                        if (searchableModel.isSearchValidForServerSideSorting()) {
+                            searchableModel.updateSortOptions(sortableColumn.getSortBy(), event.isSortAscending());
+                            sortApplied = true;
+                        } else {
+                            searchableModel.clearSortOptions();
+                        }
+                    }
+
+                    // Otherwise, fall back to client-side sorting
+                    else {
+                        Comparator<? super T> comparator = sortableColumn.getComparator();
+                        if (comparator != null) {
+                            sortedModel.setComparator(comparator, event.isSortAscending());
+                            sortApplied = true;
+
+                            // SortedListModel.setComparator does not sort the items
+                            if (searchableModel == null) {
+                                sortedModel.setItems(sortedModel.getItems());
+                            }
+                        }
+                    }
+
+                    // Update column sort status, redrawing table headers if necessary
+                    ColumnSortInfo columnSortInfo = event.getColumnSortList().get(0);
+                    if (sortApplied) {
+                        pushColumnSort(columnSortInfo);
+                    } else {
+                        clearColumnSort();
+                    }
+                }
+            }
+        });
+    }
+
+    protected void pushColumnSort(ColumnSortInfo columnSortInfo) {
+        getColumnSortList().push(columnSortInfo);
+    }
+
+    protected void clearColumnSort() {
+        getColumnSortList().clear();
     }
 
 }
