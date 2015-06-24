@@ -10,12 +10,12 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
  * fetching statistics for vms.
  *
  */
-public abstract class VMStatsRefresher {
+public abstract class VmStatsRefresher {
     protected VdsManager vdsManager;
     @Inject
     protected AuditLogDirector auditLogDirector;
 
-    public VMStatsRefresher(VdsManager vdsManager) {
+    public VmStatsRefresher(VdsManager vdsManager) {
         this.vdsManager = vdsManager;
     }
 

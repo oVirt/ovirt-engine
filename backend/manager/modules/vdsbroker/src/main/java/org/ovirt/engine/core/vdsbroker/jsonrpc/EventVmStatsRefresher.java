@@ -13,8 +13,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.PollAllVmStatsOnlyRefresher;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
-import org.ovirt.engine.core.vdsbroker.VMStatsRefresher;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.VmStatsRefresher;
 import org.ovirt.engine.core.vdsbroker.VmsMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
@@ -24,14 +24,14 @@ import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EventVMStatsRefresher extends VMStatsRefresher {
-    private static final Logger log = LoggerFactory.getLogger(EventVMStatsRefresher.class);
+public class EventVmStatsRefresher extends VmStatsRefresher {
+    private static final Logger log = LoggerFactory.getLogger(EventVmStatsRefresher.class);
     private Subscription subscription;
     private DbFacade dbFacade;
     private ResourceManager resourceManager;
     private PollAllVmStatsOnlyRefresher allVmStatsOnlyRefresher;
 
-    public EventVMStatsRefresher(VdsManager manager) {
+    public EventVmStatsRefresher(VdsManager manager) {
         super(manager);
         // we still want to fetch GetAllVmStats as we did before
         this.allVmStatsOnlyRefresher = Injector.injectMembers(new PollAllVmStatsOnlyRefresher(vdsManager));

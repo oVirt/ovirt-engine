@@ -91,7 +91,7 @@ public class VdsManager {
     private final ResourceManager resourceManager;
     private final DbFacade dbFacade;
     private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
-    private VMStatsRefresher vmsRefresher;
+    private VmStatsRefresher vmsRefresher;
     protected int refreshIteration;
 
     protected final int HOST_REFRESH_RATE;

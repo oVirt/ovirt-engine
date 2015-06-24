@@ -11,8 +11,8 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class PollVMStatsRefresher extends VMStatsRefresher {
-    private static final Logger log = LoggerFactory.getLogger(PollVMStatsRefresher.class);
+public abstract class PollVmStatsRefresher extends VmStatsRefresher {
+    private static final Logger log = LoggerFactory.getLogger(PollVmStatsRefresher.class);
     protected static final int VMS_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
     protected static final int NUMBER_VMS_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
 
@@ -21,7 +21,7 @@ public abstract class PollVMStatsRefresher extends VMStatsRefresher {
     private String vmsMonitoringJobId;
     private final int refreshRate;
 
-    public PollVMStatsRefresher(VdsManager vdsManager, int refreshRate) {
+    public PollVmStatsRefresher(VdsManager vdsManager, int refreshRate) {
         super(vdsManager);
         this.refreshRate = refreshRate;
     }

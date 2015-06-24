@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
-public class PollAllVmStatsOnlyRefresher extends PollVMStatsRefresher {
+public class PollAllVmStatsOnlyRefresher extends PollVmStatsRefresher {
 
     public PollAllVmStatsOnlyRefresher(VdsManager vdsManager) {
         super(vdsManager, getRefreshRate());

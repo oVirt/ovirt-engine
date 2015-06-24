@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker;
 
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
-public class PollListAndAllVmStatsRefresher extends PollVMStatsRefresher {
+public class PollListAndAllVmStatsRefresher extends PollVmStatsRefresher {
 
     private int refreshIteration;
 

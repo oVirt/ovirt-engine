@@ -7,23 +7,23 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.vdsbroker.jsonrpc.EventVMStatsRefresher;
+import org.ovirt.engine.core.vdsbroker.jsonrpc.EventVmStatsRefresher;
 
 
 @Singleton
 public class RefresherFactory {
 
-    public VMStatsRefresher create(VdsManager vdsManager) {
+    public VmStatsRefresher create(VdsManager vdsManager) {
         return Injector.injectMembers(getRefresherForVds(vdsManager));
     }
 
-    private VMStatsRefresher getRefresherForVds(VdsManager vdsManager) {
+    private VmStatsRefresher getRefresherForVds(VdsManager vdsManager) {
         Version version = vdsManager.getCompatibilityVersion();
         VDS vds = vdsManager.getCopyVds();
         if (FeatureSupported.jsonProtocol(version)
                 && VdsProtocol.STOMP == vds.getProtocol()
                 && FeatureSupported.vmStatsEvents(version)) {
-            return new EventVMStatsRefresher(vdsManager);
+            return new EventVmStatsRefresher(vdsManager);
         }
         return new PollListAndAllVmStatsRefresher(vdsManager);
     }
