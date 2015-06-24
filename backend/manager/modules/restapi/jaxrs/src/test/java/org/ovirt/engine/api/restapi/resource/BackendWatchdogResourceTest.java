@@ -18,7 +18,37 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendWatchdogResourceTest extends AbstractBackendSubResourceTest<WatchDog, VmWatchdog, BackendDeviceResource<WatchDog, WatchDogs, VmWatchdog>> {
 
-    protected static BackendWatchdogsResource collection = getCollection();
+    private static final Guid VM_ID = GUIDS[1];
+    private static final Guid WATCHDOG_ID = GUIDS[0];
+
+    private static BackendDeviceResource<WatchDog, WatchDogs, VmWatchdog> getResource() {
+        return new BackendWatchdogResource(
+            true,
+            VM_ID,
+            WATCHDOG_ID,
+            getCollection(),
+            VdcActionType.UpdateWatchdog,
+            getUpdateParams(),
+            new String[] { "action", "model" }
+        );
+    }
+
+    private static BackendWatchdogsResource getCollection() {
+        return new BackendWatchdogsResource(true, VM_ID, VdcQueryType.GetWatchdog, new IdQueryParameters(VM_ID));
+    }
+
+    private static ParametersProvider<WatchDog, VmWatchdog> getUpdateParams() {
+        return new ParametersProvider<WatchDog, VmWatchdog>() {
+            public VdcActionParametersBase getParameters(WatchDog model, VmWatchdog entity) {
+                WatchdogParameters params = new WatchdogParameters();
+                params.setModel(VmWatchdogType.getByName(model.getModel()));
+                params.setAction(VmWatchdogAction.getByName(model.getAction()));
+                params.setId(VM_ID);
+                params.setVm(true);
+                return params;
+            }
+        };
+    }
 
     public BackendWatchdogResourceTest() {
         super(getResource());
@@ -29,60 +59,13 @@ public class BackendWatchdogResourceTest extends AbstractBackendSubResourceTest<
         initResource(resource.getCollection());
     }
 
-    private static BackendDeviceResource<WatchDog, WatchDogs, VmWatchdog> getResource() {
-        return new BackendWatchdogResource(GUIDS[1],
-                collection,
-                VdcActionType.UpdateWatchdog,
-                getUpdateParams(),
-                new String[] { "action", "model" });
-    }
-
-    private static ParametersProvider<WatchDog, VmWatchdog> getUpdateParams() {
-        return new ParametersProvider<WatchDog, VmWatchdog>(){
-
-            public VdcActionParametersBase getParameters(WatchDog model, VmWatchdog entity) {
-                WatchdogParameters params = new WatchdogParameters();
-                params.setModel(VmWatchdogType.getByName(model.getModel()));
-                params.setAction(VmWatchdogAction.getByName(model.getAction()));
-                params.setId(GUIDS[1]);
-                params.setVm(true);
-                return params;
-            }};
-    }
-
-    @Override
-    protected VmWatchdog getEntity(int index) {
-        VmWatchdog wd = new VmWatchdog();
-        wd.setId(GUIDS[1]);
-        wd.setAction(VmWatchdogAction.RESET);
-        wd.setModel(VmWatchdogType.i6300esb);
-        return wd;
-    }
-
-    protected BackendDeviceResource<WatchDog, WatchDogs, VmWatchdog> getNotFoundResource() {
-        BackendDeviceResource<WatchDog, WatchDogs, VmWatchdog> ret = getResource(GUIDS[2]);
-        ret.setUriInfo(setUpBasicUriExpectations());
-        initResource(ret);
-        initResource(ret.getCollection());
-        return ret;
-    }
-
-    private BackendDeviceResource<WatchDog, WatchDogs, VmWatchdog> getResource(Guid guid) {
-        return new BackendWatchdogResource(guid, getCollection(), VdcActionType.UpdateWatchdog, null, new String[] {});
-    }
-
-    private static BackendWatchdogsResource getCollection() {
-        return new BackendWatchdogsResource(GUIDS[0], VdcQueryType.GetWatchdog, new IdQueryParameters(GUIDS[1]));
-    }
-
     @Test
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
         control.replay();
-
         WatchDog watchDog = resource.get();
-        verifyModel(watchDog, 1);
+        verifyModel(watchDog, 0);
     }
 
     @Override
@@ -92,46 +75,64 @@ public class BackendWatchdogResourceTest extends AbstractBackendSubResourceTest<
         verifyLinks(model);
     }
 
-    private void setUpEntityQueryExpectations(int cnt) throws Exception {
-        for (int i = 0; i < cnt; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetWatchdog,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[1] },
-                    getEntity(0));
-        }
-    }
-
     @Test
     public void testUpdate() throws Exception {
         setUpEntityQueryExpectations(2);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateWatchdog,
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.UpdateWatchdog,
                 WatchdogParameters.class,
                 new String[] { "Id" },
-                new Object[] { GUIDS[1] },
+                new Object[] { VM_ID },
                 true,
-                true));
-
+                true
+            )
+        );
         WatchDog wd = resource.update(getUpdate());
         assertTrue(wd.isSetAction());
     }
 
-    private WatchDog getUpdate() {
-        WatchDog watchDog = new WatchDog();
-        watchDog.setAction(WatchdogAction.RESET.name().toLowerCase());
-        watchDog.setModel(WatchdogModel.I6300ESB.name().toLowerCase());
-        watchDog.setId(GUIDS[1].toString());
+    @Test
+    public void testRemove() throws Exception {
+        setUpEntityQueryExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveWatchdog,
+                WatchdogParameters.class,
+                new String[]{"Id"},
+                new Object[]{VM_ID},
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
+
+    private void setUpEntityQueryExpectations(int cnt) throws Exception {
+        for (int i = 0; i < cnt; i++) {
+            setUpGetEntityExpectations(
+                VdcQueryType.GetWatchdog,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { VM_ID },
+                getWatchdog()
+            );
+        }
+    }
+
+    private VmWatchdog getWatchdog() {
+        VmWatchdog watchDog = new VmWatchdog();
+        watchDog.setId(WATCHDOG_ID);
+        watchDog.setAction(VmWatchdogAction.RESET);
+        watchDog.setModel(VmWatchdogType.i6300esb);
         return watchDog;
     }
 
-    @Test
-    public void testGetNotFound() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(1);
-        control.replay();
-
-        WatchDog watchDog = resource.get();
-        verifyModel(watchDog, 1);
+    private WatchDog getUpdate() {
+        WatchDog watchDog = new WatchDog();
+        watchDog.setId(WATCHDOG_ID.toString());
+        watchDog.setAction(WatchdogAction.RESET.name().toLowerCase());
+        watchDog.setModel(WatchdogModel.I6300ESB.name().toLowerCase());
+        return watchDog;
     }
-
 }

@@ -8,14 +8,17 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateWatchdogsResource extends BackendWatchdogsResource {
 
-    public BackendTemplateWatchdogsResource(Guid parentId, VdcQueryType queryType, VdcQueryParametersBase queryParams) {
-        super(parentId, queryType, queryParams);
+    private Guid templateId;
+
+    public BackendTemplateWatchdogsResource(Guid templateId, VdcQueryType queryType, VdcQueryParametersBase queryParams) {
+        super(false, templateId, queryType, queryParams);
+        this.templateId = templateId;
     }
 
     @Override
     public WatchDog addParents(WatchDog device) {
         device.setTemplate(new Template());
-        device.getTemplate().setId(parentId.toString());
+        device.getTemplate().setId(templateId.toString());
         return device;
     }
 

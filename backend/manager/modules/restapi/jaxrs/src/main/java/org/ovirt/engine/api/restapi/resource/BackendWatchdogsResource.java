@@ -10,44 +10,65 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.Paramete
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendWatchdogsResource extends AbstractBackendDevicesResource<WatchDog, WatchDogs, VmWatchdog> implements WatchdogsResource {
+public class BackendWatchdogsResource
+        extends AbstractBackendDevicesResource<WatchDog, WatchDogs, VmWatchdog> implements WatchdogsResource {
+
+    private boolean parentIsVm;
+    private Guid parentId;
+
+    public BackendWatchdogsResource(
+            boolean parentIsVm,
+            Guid parentId,
+            VdcQueryType queryType,
+            VdcQueryParametersBase queryParams) {
+        super(
+            WatchDog.class,
+            WatchDogs.class,
+            VmWatchdog.class,
+            parentId,
+            queryType,
+            queryParams,
+            VdcActionType.AddWatchdog,
+            VdcActionType.RemoveWatchdog,
+            VdcActionType.UpdateWatchdog
+        );
+        this.parentIsVm = parentIsVm;
+        this.parentId = parentId;
+    }
 
     @Override
     @SingleEntityResource
-    public WatchdogResource getDeviceSubResource(String id) {
-        return inject(new BackendWatchdogResource(asGuidOr404(id), this,
+    public WatchdogResource getDeviceSubResource(String watchdogId) {
+        return inject(
+            new BackendWatchdogResource(
+                true,
+                parentId,
+                asGuidOr404(watchdogId),
+                this,
                 updateType,
                 getUpdateParametersProvider(),
-                getRequiredUpdateFields()));
+                getRequiredUpdateFields()
+            )
+        );
     }
 
-    public BackendWatchdogsResource(Guid parentId,
-            VdcQueryType queryType,
-            VdcQueryParametersBase queryParams) {
-        super(WatchDog.class,
-                WatchDogs.class,
-                VmWatchdog.class,
-                parentId,
-                queryType,
-                queryParams,
-                VdcActionType.AddWatchdog,
-                VdcActionType.RemoveWatchdog,
-                VdcActionType.UpdateWatchdog);
+    @Override
+    protected <T> boolean matchEntity(VmWatchdog entity, T id) {
+        // There is only one watchdog:
+        return true;
     }
 
     @Override
     protected boolean matchEntity(VmWatchdog entity, String name) {
-        //since there can be only one
-        return true;
+        // Watchdogs don't have a name:
+        return false;
     }
 
     @Override
@@ -69,7 +90,7 @@ public class BackendWatchdogsResource extends AbstractBackendDevicesResource<Wat
         watchdogParameters.setModel(getMapper(WatchdogModel.class, VmWatchdogType.class).map(WatchdogModel.fromValue(device.getModel()),
                 null));
         watchdogParameters.setId(parentId);
-        watchdogParameters.setVm(isVm(parentId));
+        watchdogParameters.setVm(parentIsVm);
         return watchdogParameters;
     }
 
@@ -77,32 +98,22 @@ public class BackendWatchdogsResource extends AbstractBackendDevicesResource<Wat
     protected VdcActionParametersBase getRemoveParameters(String id) {
         WatchdogParameters watchdogParameters = new WatchdogParameters();
         watchdogParameters.setId(parentId);
-        watchdogParameters.setVm( isVm(parentId) );
+        watchdogParameters.setVm(parentIsVm);
         return watchdogParameters;
-    }
-
-    private boolean isVm(Guid id) {
-        return runQuery(VdcQueryType.GetVmByVmId, new IdQueryParameters(id)).getReturnValue() instanceof VM;
     }
 
     @Override
     protected ParametersProvider<WatchDog, VmWatchdog> getUpdateParametersProvider() {
-        return new ParametersProvider<WatchDog, VmWatchdog>(){
-
+        return new ParametersProvider<WatchDog, VmWatchdog>() {
             public VdcActionParametersBase getParameters(WatchDog model, VmWatchdog entity) {
                 validateEnums(WatchDog.class, model);
                 WatchdogParameters params = new WatchdogParameters();
                 params.setModel(VmWatchdogType.getByName(model.getModel()));
                 params.setAction(VmWatchdogAction.getByName(model.getAction()));
                 params.setId(parentId);
-                params.setVm(isVm(parentId));
+                params.setVm(parentIsVm);
                 return params;
-            }};
+            }
+        };
     }
-
-    @Override
-    protected <T> boolean matchEntity(VmWatchdog entity, T id) {
-        return entity.getId().equals(id);
-    }
-
 }

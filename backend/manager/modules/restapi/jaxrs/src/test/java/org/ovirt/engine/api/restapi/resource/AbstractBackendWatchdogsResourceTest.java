@@ -27,7 +27,7 @@ public abstract class AbstractBackendWatchdogsResourceTest<R extends AbstractBac
         super(collection, null, "");
     }
 
-    protected final static Guid PARENT_ID = GUIDS[1];
+    protected static final Guid PARENT_ID = GUIDS[1];
 
     @Override
     protected List<WatchDog> getCollection() {

@@ -220,9 +220,14 @@ public class BackendVmResource extends
     @Override
     @SingleEntityResource
     public WatchdogsResource getWatchdogsResource() {
-        return inject(new BackendWatchdogsResource(guid,
-                                                VdcQueryType.GetWatchdog,
-                                                new IdQueryParameters(guid)));
+        return inject(
+            new BackendWatchdogsResource(
+                true,
+                guid,
+                VdcQueryType.GetWatchdog,
+                new IdQueryParameters(guid)
+            )
+        );
     }
 
     @Override
