@@ -2,8 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
@@ -54,10 +52,5 @@ public class BackendStatisticsResource<R extends BaseResource, Q>
         } catch (Exception e) {
             return handleError(e, false);
         }
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-       throw new UnsupportedOperationException();
     }
 }

@@ -8,8 +8,6 @@ import org.ovirt.engine.api.resource.SnapshotCdRomsResource;
 import org.ovirt.engine.api.restapi.types.CdRomMapper;
 import org.ovirt.engine.core.common.businessentities.VM;
 
-import javax.ws.rs.core.Response;
-
 public class BackendSnapshotCdRomsResource extends AbstractBackendCollectionResource<CdRom, Snapshot> implements SnapshotCdRomsResource {
 
     protected BackendSnapshotResource parent;
@@ -32,10 +30,5 @@ public class BackendSnapshotCdRomsResource extends AbstractBackendCollectionReso
     @Override
     public SnapshotCdRomResource getCdRomSubResource(String id) {
         return new BackendSnapshotCdRomResource(id, this);
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException();
     }
 }

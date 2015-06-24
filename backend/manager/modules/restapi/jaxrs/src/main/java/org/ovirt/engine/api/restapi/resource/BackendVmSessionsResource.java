@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Session;
@@ -112,11 +111,6 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
     @Path("{iden}")
     public VmSessionResource getSessionSubResource(@PathParam("iden") String id) {
         return inject(new BackendVmSessionResource(this, id));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException("Remove of sessions not currently possible");
     }
 
     public void setUserResource(BackendUserResource userResource) {

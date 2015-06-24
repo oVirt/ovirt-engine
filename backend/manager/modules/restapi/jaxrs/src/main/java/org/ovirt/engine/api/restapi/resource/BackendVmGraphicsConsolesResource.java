@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-import javax.ws.rs.core.Response;
 import java.util.Map;
 
 public class BackendVmGraphicsConsolesResource
@@ -44,11 +43,6 @@ public class BackendVmGraphicsConsolesResource
     @Override
     public VmGraphicsConsoleResource getVmGraphicsConsoleResource(String id) {
         return inject(new BackendVmGraphicsConsoleResource(this, guid, id));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

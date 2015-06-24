@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class BackendExternalDiscoveredHostsResource
@@ -64,11 +63,6 @@ public class BackendExternalDiscoveredHostsResource
         provider.setId(providerId);
         image.setExternalHostProvider(provider);
         return super.addParents(image);
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

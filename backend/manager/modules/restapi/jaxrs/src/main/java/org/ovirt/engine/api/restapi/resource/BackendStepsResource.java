@@ -5,7 +5,6 @@ import java.util.List;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Step;
@@ -59,11 +58,6 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
     @SingleEntityResource
     public StepResource getStepSubResource(@PathParam("id") String id) {
         return inject(new BackendStepResource(id, this));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new NotImplementedException();
     }
 
     protected Steps mapCollection(List<org.ovirt.engine.core.common.job.Step> entities) {

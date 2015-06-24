@@ -16,7 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 import org.ovirt.engine.api.model.Certificate;
@@ -60,11 +59,6 @@ public class BackendExternalProviderCertificatesResource
             }
         }
         return collection;
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

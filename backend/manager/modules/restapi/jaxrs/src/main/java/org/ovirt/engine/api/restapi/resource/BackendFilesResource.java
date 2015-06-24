@@ -5,8 +5,6 @@ import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -81,10 +79,5 @@ public class BackendFilesResource
             fileNames.add(file.getRepoImageId());
         }
         return fileNames;
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-       throw new UnsupportedOperationException();
     }
 }

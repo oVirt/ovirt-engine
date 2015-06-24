@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
@@ -52,10 +51,5 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
         host.setId(hostId);
         model.setHost(host);
         return super.addParents(model);
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return null;
     }
 }

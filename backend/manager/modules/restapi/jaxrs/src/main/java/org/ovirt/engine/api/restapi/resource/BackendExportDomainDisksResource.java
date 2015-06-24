@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.Set;
-import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.resource.StorageDomainContentDiskResource;
@@ -45,10 +44,4 @@ public class BackendExportDomainDisksResource
     public StorageDomainContentDiskResource getDeviceSubResource(String id) {
         return inject(new BackendExportDomainDiskResource(id, this));
     }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException("Not supported.");
-    }
-
 }

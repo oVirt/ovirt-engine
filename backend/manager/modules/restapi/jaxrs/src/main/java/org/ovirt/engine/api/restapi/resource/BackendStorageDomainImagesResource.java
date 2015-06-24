@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.Images;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -42,11 +40,6 @@ public class BackendStorageDomainImagesResource
 
     protected Guid getStorageDomainId() {
         return storageDomainId;
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException(); // TODO: removal is not implemented yet
     }
 
     protected Images mapCollection(List<RepoImage> entities) {

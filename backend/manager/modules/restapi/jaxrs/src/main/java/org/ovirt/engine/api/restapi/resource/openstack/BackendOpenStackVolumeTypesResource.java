@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class BackendOpenStackVolumeTypesResource
@@ -63,11 +62,6 @@ public class BackendOpenStackVolumeTypesResource
         provider.setId(providerId);
         volumeType.setOpenstackVolumeProvider(provider);
         return super.addParents(volumeType);
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

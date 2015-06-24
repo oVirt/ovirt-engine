@@ -2,9 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Roles;
 import org.ovirt.engine.api.model.User;
@@ -40,11 +37,6 @@ public class BackendAssignedRolesResource
     public Roles list() {
         return mapCollection(getBackendCollection(VdcQueryType.GetPermissionsByAdElementId,
                                                   new IdQueryParameters(principalId)));
-    }
-
-    @Override
-    public Response performRemove(String id) {
-        throw new NotImplementedException();
     }
 
     protected Roles mapCollection(List<Permission> entities) {

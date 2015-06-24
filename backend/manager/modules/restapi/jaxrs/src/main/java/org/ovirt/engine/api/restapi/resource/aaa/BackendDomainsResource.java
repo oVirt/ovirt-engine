@@ -5,8 +5,6 @@ import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Domains;
 import org.ovirt.engine.api.resource.aaa.DomainResource;
@@ -98,10 +96,5 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
             assignChildModel(domain, Domain.class).setId(id);
         }
         return domain;
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException();
     }
 }

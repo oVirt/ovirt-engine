@@ -3,8 +3,6 @@ package org.ovirt.engine.api.restapi.resource;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.BaseDevice;
 import org.ovirt.engine.api.model.BaseDevices;
 import org.ovirt.engine.api.model.VM;
@@ -105,9 +103,4 @@ public abstract class AbstractBackendReadOnlyDevicesResource<D extends BaseDevic
     }
 
     protected abstract <T> boolean matchEntity(Q entity, T id);
-
-    @Override
-    protected Response performRemove(String id) {
-       throw new UnsupportedOperationException();
-    }
 }

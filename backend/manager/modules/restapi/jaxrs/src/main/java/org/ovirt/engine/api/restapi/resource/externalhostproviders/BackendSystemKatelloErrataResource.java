@@ -2,9 +2,6 @@ package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.api.model.KatelloErrata;
 import org.ovirt.engine.api.model.KatelloErratum;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErratumResource;
@@ -39,10 +36,5 @@ public class BackendSystemKatelloErrataResource extends AbstractBackendCollectio
     @Override
     public KatelloErratumResource getKatelloErratumSubResource(String id) {
         return inject(new BackendSystemKatelloErratumResource(id));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new NotImplementedException();
     }
 }

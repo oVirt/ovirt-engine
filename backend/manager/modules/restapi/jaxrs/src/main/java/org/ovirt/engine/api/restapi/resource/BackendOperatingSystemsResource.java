@@ -16,7 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.api.model.OperatingSystemInfo;
 import org.ovirt.engine.api.model.OperatingSystemInfos;
 import org.ovirt.engine.api.resource.OperatingSystemResource;
@@ -28,7 +27,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,10 +77,5 @@ public class BackendOperatingSystemsResource
     @SingleEntityResource
     public OperatingSystemResource getOperatingSystem(String id) {
         return inject(new BackendOperatingSystemResource(id));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new NotImplementedException();
     }
 }

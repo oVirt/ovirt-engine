@@ -2,8 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.NumaNode;
 import org.ovirt.engine.api.model.NumaNodes;
@@ -46,11 +44,6 @@ public class BackendHostNumaNodesResource
     @SingleEntityResource
     public HostNumaNodeResource getHostNumaNodeSubResource(String id) {
         return inject(new BackendHostNumaNodeResource(id, this));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        return null;
     }
 
     protected List<VdsNumaNode> getCollection() {

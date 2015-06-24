@@ -16,7 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 import org.ovirt.engine.api.model.OpenStackImage;
@@ -63,11 +62,6 @@ public class BackendOpenStackImagesResource
         provider.setId(providerId);
         image.setOpenstackImageProvider(provider);
         return super.addParents(image);
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

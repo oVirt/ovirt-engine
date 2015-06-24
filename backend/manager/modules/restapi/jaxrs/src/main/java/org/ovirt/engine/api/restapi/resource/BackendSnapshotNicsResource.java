@@ -9,8 +9,6 @@ import org.ovirt.engine.api.restapi.types.NicMapper;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
-import javax.ws.rs.core.Response;
-
 public class BackendSnapshotNicsResource extends AbstractBackendCollectionResource<NIC, Snapshot> implements SnapshotNicsResource {
 
     protected BackendSnapshotResource parent;
@@ -35,10 +33,5 @@ public class BackendSnapshotNicsResource extends AbstractBackendCollectionResour
     @Override
     public SnapshotNicResource getNicSubResource(String id) {
         return new BackendSnapshotNicResource(id, this);
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException();
     }
 }

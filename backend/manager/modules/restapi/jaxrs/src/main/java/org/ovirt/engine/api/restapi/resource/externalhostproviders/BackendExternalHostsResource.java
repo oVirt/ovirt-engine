@@ -16,7 +16,6 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 import org.ovirt.engine.api.model.ExternalHost;
@@ -62,11 +61,6 @@ public class BackendExternalHostsResource
         provider.setId(providerId);
         entity.setExternalHostProvider(provider);
         return super.addParents(entity);
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

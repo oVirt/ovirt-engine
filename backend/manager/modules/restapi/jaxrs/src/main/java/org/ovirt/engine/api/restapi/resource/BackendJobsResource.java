@@ -5,7 +5,6 @@ import java.util.List;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Jobs;
 import org.ovirt.engine.api.resource.JobResource;
@@ -43,11 +42,6 @@ public class BackendJobsResource extends AbstractBackendCollectionResource<Job, 
     @Override
     public JobResource getJobSubResource(@PathParam("id") String id) {
         return inject(new BackendJobResource(id));
-    }
-
-    @Override
-    protected Response performRemove(String id) {
-        throw new NotImplementedException();
     }
 
     protected Jobs mapCollection(List<org.ovirt.engine.core.common.job.Job> entities) {
