@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
@@ -36,6 +38,7 @@ import com.woorea.openstack.quantum.model.Port;
 import com.woorea.openstack.quantum.model.Port.Binding;
 import com.woorea.openstack.quantum.model.Subnet;
 import com.woorea.openstack.quantum.model.Subnets;
+import com.woorea.openstack.base.client.OpenStackResponseException;
 
 public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
 
@@ -58,6 +61,8 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     private Quantum client;
 
     private ProviderValidator providerValidator;
+
+    private static Logger log = LoggerFactory.getLogger(OpenstackNetworkProviderProxy.class);
 
     public OpenstackNetworkProviderProxy(Provider<OpenstackNetworkProviderProperties> provider) {
         this.provider = provider;
@@ -188,7 +193,11 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     public void testConnection() {
         try {
             getClient().execute(new OpenStackRequest<>(getClient(), HttpMethod.GET, "", null, ApiRootResponse.class));
-        } catch (RuntimeException e) {
+        }  catch (OpenStackResponseException e) {
+            log.error("{} (OpenStack response error code: {})", e.getMessage(), e.getStatus());
+            log.debug("Exception", e);
+            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+        }catch (RuntimeException e) {
             throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
         }
     }

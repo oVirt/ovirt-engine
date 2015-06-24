@@ -3,9 +3,12 @@ package org.ovirt.engine.core.bll.provider.storage;
 import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackClient;
 import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.base.client.OpenStackTokenProvider;
 import com.woorea.openstack.keystone.model.Access;
 import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -38,10 +41,16 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
 
     protected V providerValidator;
 
+    private static Logger log = LoggerFactory.getLogger(AbstractOpenStackStorageProviderProxy.class);
+
     @Override
     public void testConnection() {
         try {
             getClient().execute(new OpenStackRequest<>(getClient(), HttpMethod.GET, "", null, null));
+        } catch (OpenStackResponseException e) {
+            log.error("{} (OpenStack response error code: {})", e.getMessage(), e.getStatus());
+            log.debug("Exception", e);
+            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
         } catch (RuntimeException e) {
             throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
         }
