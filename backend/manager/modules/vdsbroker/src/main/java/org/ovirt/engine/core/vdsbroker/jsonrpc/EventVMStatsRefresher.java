@@ -11,14 +11,13 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
+import org.ovirt.engine.core.vdsbroker.PollAllVmStatsOnlyRefresher;
+import org.ovirt.engine.core.vdsbroker.PollVMStatsRefresher;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VMStatsRefresher;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.VmsListFetcher;
 import org.ovirt.engine.core.vdsbroker.VmsMonitoring;
-import org.ovirt.engine.core.vdsbroker.VmsStatisticsFetcher;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
@@ -32,16 +31,19 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
     private Subscription subscription;
     private DbFacade dbFacade;
     private ResourceManager resourceManager;
+    private PollVMStatsRefresher pollVMStatsRefresher;
 
     public EventVMStatsRefresher(VdsManager manager, AuditLogDirector auditLogDirector, SchedulerUtil scheduler) {
         super(manager, auditLogDirector, scheduler);
         this.resourceManager = ResourceManager.getInstance();
         this.dbFacade = DbFacade.getInstance();
+        // we still want to fetch GetAllVmStats as we did before
+        pollVMStatsRefresher = new PollAllVmStatsOnlyRefresher(manager, auditLogDirector, scheduler);
     }
 
     @Override
     public void startMonitoring() {
-        super.startMonitoring();
+        pollVMStatsRefresher.startMonitoring();
         this.resourceManager.subscribe(new EventSubscriber(manager.getVdsHostname() + "|*|VM_status|*") {
 
             @Override
@@ -134,28 +136,12 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
 
     @Override
     public void stopMonitoring() {
-        super.stopMonitoring();
+        pollVMStatsRefresher.stopMonitoring();
         this.subscription.cancel();
     }
 
     @Override
-    @OnTimerMethodAnnotation("poll")
     public void poll() {
-        // we still want to fetch GetAllVmStats as we did before
-        if (this.manager.isMonitoringNeeded() && getRefreshStatistics()) {
-            VmsListFetcher fetcher = new VmsStatisticsFetcher(this.manager);
-
-            long fetchTime = System.nanoTime();
-
-            if (fetcher.fetch()) {
-                new VmsMonitoring(this.manager,
-                        fetcher.getChangedVms(),
-                        fetcher.getVmsWithChangedDevices(), this.auditLogDirector, fetchTime, true)
-                .perform();
-            } else {
-                log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", manager.getVdsName());
-            }
-        }
-        updateIteration();
+        // noop
     }
 }
