@@ -183,12 +183,17 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     @Override
     @SingleEntityResource
     public VmNicResource getDeviceSubResource(String id) {
-        return inject(new BackendVmNicResource(id,
-                                             this,
-                                             updateType,
-                                             getUpdateParametersProvider(),
-                                             getRequiredUpdateFields(),
-                                             subCollections));
+        return inject(
+            new BackendVmNicResource(
+                parentId,
+                id,
+                this,
+                updateType,
+                getUpdateParametersProvider(),
+                getRequiredUpdateFields(),
+                subCollections
+            )
+        );
     }
 
     @Override

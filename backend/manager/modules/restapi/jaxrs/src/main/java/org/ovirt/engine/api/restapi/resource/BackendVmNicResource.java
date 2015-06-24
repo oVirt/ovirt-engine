@@ -13,19 +13,32 @@ import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
+import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicResource extends BackendNicResource implements VmNicResource {
 
-    protected BackendVmNicResource(String id,
+    private Guid vmId;
+
+    protected BackendVmNicResource(
+            Guid vmId,
+            String nicId,
             AbstractBackendReadOnlyDevicesResource<NIC, Nics, VmNetworkInterface> collection,
             VdcActionType updateType,
             ParametersProvider<NIC, VmNetworkInterface> updateParametersProvider,
             String[] requiredUpdateFields,
             String[] subCollections) {
-        super(id, collection, updateType, updateParametersProvider, requiredUpdateFields, subCollections);
+        super(
+            nicId,
+            collection,
+            updateType,
+            updateParametersProvider,
+            requiredUpdateFields,
+            subCollections
+        );
+        this.vmId = vmId;
     }
 
     @Override
@@ -198,5 +211,11 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
     @Override
     public VmReportedDevicesResource getVmReportedDevicesResource() {
         return inject(new BackendVmReportedDevicesResource(guid));
+    }
+
+    @Override
+    public Response remove() {
+        get();
+        return performAction(VdcActionType.RemoveVmInterface, new RemoveVmInterfaceParameters(vmId, guid));
     }
 }

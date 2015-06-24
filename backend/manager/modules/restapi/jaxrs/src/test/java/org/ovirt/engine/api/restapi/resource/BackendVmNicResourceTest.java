@@ -28,6 +28,7 @@ import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
+import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -155,11 +156,11 @@ public class BackendVmNicResourceTest
         setGetNetworksQueryExpectations(2);
         setGetGuestAgentQueryExpectations(2);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
-                                           AddVmInterfaceParameters.class,
-                                           new String[] { "VmId", "Interface.Id" },
-                                           new Object[] { PARENT_ID, GUIDS[1] },
-                                           true,
-                                           true));
+            AddVmInterfaceParameters.class,
+            new String[]{"VmId", "Interface.Id"},
+            new Object[]{PARENT_ID, GUIDS[1]},
+            true,
+            true));
 
         NIC nic = resource.update(getNic(false));
         assertNotNull(nic);
@@ -233,11 +234,11 @@ public class BackendVmNicResourceTest
         setGetGuestAgentQueryExpectations(2);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
-                AddVmInterfaceParameters.class,
-                new String[] { "VmId", "Interface.Id" },
-                new Object[] { PARENT_ID, GUIDS[1] },
-                true,
-                true));
+            AddVmInterfaceParameters.class,
+            new String[]{"VmId", "Interface.Id"},
+            new Object[]{PARENT_ID, GUIDS[1]},
+            true,
+            true));
 
         NIC nic = getNic(false);
         nic.setNetwork(new Network());
@@ -256,6 +257,62 @@ public class BackendVmNicResourceTest
         assertNotNull(statisticsResource);
 
         verifyQuery(statisticsResource.getQuery(), entity);
+    }
+
+
+    @Test
+    public void testRemove() throws Exception {
+        setUpEntityQueryExpectations(1);
+        setAllContentHeaderExpectation();
+        setGetVmQueryExpectations(1);
+        setGetNetworksQueryExpectations(1);
+        setGetGuestAgentQueryExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveVmInterface,
+                RemoveVmInterfaceParameters.class,
+                new String[] { "VmId", "InterfaceId" },
+                new Object[] { PARENT_ID, NIC_ID },
+                true,
+                true
+            )
+        );
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveCantDo() throws Exception {
+        doTestBadRemove(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testRemoveFailed() throws Exception {
+        doTestBadRemove(true, false, FAILURE);
+    }
+
+    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+        setUpEntityQueryExpectations(1);
+        setAllContentHeaderExpectation();
+        setGetVmQueryExpectations(1);
+        setGetNetworksQueryExpectations(1);
+        setGetGuestAgentQueryExpectations(1);
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveVmInterface,
+                RemoveVmInterfaceParameters.class,
+                new String[] { "VmId", "InterfaceId" },
+                new Object[] { PARENT_ID, NIC_ID },
+                canDo,
+                success
+            )
+        );
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
     }
 
     protected void setGetVmQueryExpectations(int times) throws Exception {

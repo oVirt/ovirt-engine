@@ -1,8 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -14,7 +11,6 @@ import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
-import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -45,52 +41,6 @@ public class BackendVmNicsResourceTest
             verifyCollection(nics);
         } finally {
             accepts.clear();
-        }
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-        setUpEntityQueryExpectations(1);
-        setAllContentHeaderExpectation();
-        setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
-        setGetGuestAgentQueryExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmInterface,
-                                           RemoveVmInterfaceParameters.class,
-                                           new String[] { "VmId", "InterfaceId" },
-                                           new Object[] { PARENT_ID, GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.deprecatedRemove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpEntityQueryExpectations(1);
-        setAllContentHeaderExpectation();
-        setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
-        setGetGuestAgentQueryExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmInterface,
-                                           RemoveVmInterfaceParameters.class,
-                                           new String[] { "VmId", "InterfaceId" },
-                                           new Object[] { PARENT_ID, GUIDS[0] },
-                                           canDo,
-                                           success));
-        try {
-            collection.deprecatedRemove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
         }
     }
 
@@ -204,11 +154,5 @@ public class BackendVmNicsResourceTest
                     new Object[] { PARENT_ID },
                     vm);
         }
-    }
-
-    private void setAllContentHeaderExpectation() {
-        List<String> allContentHeaders = new ArrayList<String>();
-        allContentHeaders.add("true");
-        expect(httpHeaders.getRequestHeader("All-Content")).andReturn(allContentHeaders).anyTimes();
     }
 }
