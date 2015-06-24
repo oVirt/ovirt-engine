@@ -1,12 +1,9 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.utils.timer.SchedulerUtil;
-
 public class PollAllVmStatsOnlyRefresher extends PollVMStatsRefresher {
 
-    public PollAllVmStatsOnlyRefresher(VdsManager vdsManager, AuditLogDirector auditLog, SchedulerUtil scheduler) {
-        super(vdsManager, auditLog, scheduler, getRefreshRate());
+    public PollAllVmStatsOnlyRefresher(VdsManager vdsManager) {
+        super(vdsManager, getRefreshRate());
     }
 
     private static int getRefreshRate() {
@@ -15,7 +12,7 @@ public class PollAllVmStatsOnlyRefresher extends PollVMStatsRefresher {
 
     @Override
     protected VmsListFetcher getVmsFetcher() {
-        return new VmsStatisticsFetcher(manager);
+        return new VmsStatisticsFetcher(vdsManager);
     }
 
     @Override

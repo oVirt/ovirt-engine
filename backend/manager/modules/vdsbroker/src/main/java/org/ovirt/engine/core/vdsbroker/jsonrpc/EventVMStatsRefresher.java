@@ -10,10 +10,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.utils.timer.SchedulerUtil;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.PollAllVmStatsOnlyRefresher;
-import org.ovirt.engine.core.vdsbroker.PollVMStatsRefresher;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VMStatsRefresher;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -31,20 +29,21 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
     private Subscription subscription;
     private DbFacade dbFacade;
     private ResourceManager resourceManager;
-    private PollVMStatsRefresher pollVMStatsRefresher;
+    private PollAllVmStatsOnlyRefresher allVmStatsOnlyRefresher;
 
-    public EventVMStatsRefresher(VdsManager manager, AuditLogDirector auditLogDirector, SchedulerUtil scheduler) {
-        super(manager, auditLogDirector);
-        this.resourceManager = ResourceManager.getInstance();
-        this.dbFacade = DbFacade.getInstance();
+    public EventVMStatsRefresher(VdsManager manager) {
+        super(manager);
         // we still want to fetch GetAllVmStats as we did before
-        pollVMStatsRefresher = new PollAllVmStatsOnlyRefresher(manager, auditLogDirector, scheduler);
+        this.allVmStatsOnlyRefresher = Injector.injectMembers(new PollAllVmStatsOnlyRefresher(vdsManager));
+        dbFacade = DbFacade.getInstance();
+        resourceManager = ResourceManager.getInstance();
     }
 
     @Override
     public void startMonitoring() {
-        pollVMStatsRefresher.startMonitoring();
-        this.resourceManager.subscribe(new EventSubscriber(manager.getVdsHostname() + "|*|VM_status|*") {
+        allVmStatsOnlyRefresher.startMonitoring();
+        final String hostname = vdsManager.getVdsHostname();
+        resourceManager.subscribe(new EventSubscriber(hostname + "|*|VM_status|*") {
 
             @Override
             public void onSubscribe(Subscription sub) {
@@ -77,11 +76,11 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
                 StringBuilder sb = new StringBuilder();
                 XmlRpcObjectDescriptor.toStringBuilder(map, sb);
 
-                log.debug("processing event for host {} data:\n{}", manager.getVdsName(), sb);
+                log.debug("processing event for host {} data:\n{}", vdsManager.getVdsName(), sb);
             }
 
             private VmsMonitoring getVmsMonitoring(List<Pair<VM, VmInternalData>> changedVms, List<Pair<VM, VmInternalData>> devicesChangedVms) {
-                return new VmsMonitoring(manager, changedVms, devicesChangedVms, auditLogDirector, System.nanoTime());
+                return new VmsMonitoring(vdsManager, changedVms, devicesChangedVms, auditLogDirector, System.nanoTime());
             }
 
             @SuppressWarnings("unchecked")
@@ -99,7 +98,7 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
                         vdsmVm = createVmInternalData(dbVm, (Map<String, Object>) map.get(vmid.toString()), notifyTime);
 
                         // if dbVm runs on different host, monitoring expect it to be null
-                        if (!manager.getVdsId().equals(dbVm.getRunOnVds())) {
+                        if (!vdsManager.getVdsId().equals(dbVm.getRunOnVds())) {
                             dbVm = null;
                         }
                     }
@@ -136,7 +135,7 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
 
     @Override
     public void stopMonitoring() {
-        pollVMStatsRefresher.stopMonitoring();
-        this.subscription.cancel();
+        allVmStatsOnlyRefresher.stopMonitoring();
+        subscription.cancel();
     }
 }

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 
@@ -9,12 +11,12 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
  *
  */
 public abstract class VMStatsRefresher {
-    protected VdsManager manager;
+    protected VdsManager vdsManager;
+    @Inject
     protected AuditLogDirector auditLogDirector;
 
-    public VMStatsRefresher(VdsManager vdsManager, AuditLogDirector auditLog) {
-        manager = vdsManager;
-        auditLogDirector = auditLog;
+    public VMStatsRefresher(VdsManager vdsManager) {
+        this.vdsManager = vdsManager;
     }
 
     /**
