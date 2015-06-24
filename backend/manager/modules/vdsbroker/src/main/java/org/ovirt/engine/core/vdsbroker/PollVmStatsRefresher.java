@@ -46,11 +46,11 @@ public abstract class PollVmStatsRefresher extends VmStatsRefresher {
                 fetcher.getVmsWithChangedDevices(),
                 auditLogDirector,
                 fetchTime,
-                getRefreshStatistics());
+                isTimeToRefreshStatistics());
     }
 
     protected abstract VmsListFetcher getVmsFetcher();
-    protected abstract boolean getRefreshStatistics();
+    protected abstract boolean isTimeToRefreshStatistics();
 
     public void startMonitoring() {
         vmsMonitoringJobId =

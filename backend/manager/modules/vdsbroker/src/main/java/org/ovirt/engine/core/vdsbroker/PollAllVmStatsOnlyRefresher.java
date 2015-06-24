@@ -16,7 +16,7 @@ public class PollAllVmStatsOnlyRefresher extends PollVmStatsRefresher {
     }
 
     @Override
-    protected boolean getRefreshStatistics() {
+    protected boolean isTimeToRefreshStatistics() {
         return true;
     }
 }

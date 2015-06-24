@@ -12,7 +12,7 @@ public class PollListAndAllVmStatsRefresher extends PollVmStatsRefresher {
 
     @Override
     protected VmsListFetcher getVmsFetcher() {
-        return getRefreshStatistics() ?
+        return isTimeToRefreshStatistics() ?
                 new VmsStatisticsFetcher(vdsManager) :
                 new VmsListFetcher(vdsManager);
     }
@@ -29,7 +29,7 @@ public class PollListAndAllVmStatsRefresher extends PollVmStatsRefresher {
     }
 
     @Override
-    public boolean getRefreshStatistics() {
+    protected boolean isTimeToRefreshStatistics() {
         return refreshIteration == 0;
     }
 }
