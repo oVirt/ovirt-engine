@@ -18,6 +18,6 @@ public class RefresherFactory {
                 && FeatureSupported.vmStatsEvents(version)) {
             return new EventVMStatsRefresher(manager, auditLogDirector, scheduler);
         }
-        return new PollVMStatsRefresher(manager, auditLogDirector, scheduler);
+        return new PollListAndAllVmStatsRefresher(manager, auditLogDirector, scheduler);
     }
 }
