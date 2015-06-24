@@ -99,6 +99,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                             false,
                             true,
                             true);
+            diskImagesFromConfiguration.addAll(ImagesHandler.filterDisksBasedOnCinder(vmFromConfiguration.getDiskMap().values(), true));
             adjustDisksImageConfiguration(diskImagesFromConfiguration);
         }
         return diskImagesFromConfiguration;

@@ -29,9 +29,11 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -138,10 +140,17 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         return params;
     }
 
+    private List<DiskImage> getDiskImagesToValidate() {
+        List<Disk> disks = getDiskDao().getAllForVm(getSourceVmFromDb().getId());
+        List<DiskImage> allDisks = ImagesHandler.filterImageDisks(disks, true, false, true);
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(disks, true);
+        allDisks.addAll(cinderDisks);
+        return allDisks;
+    }
+
     @Override
     protected boolean canDoAction() {
-        List<DiskImage> disksToCheck =
-                ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getSourceVmFromDb().getId()), true, false, true);
+        List<DiskImage> disksToCheck = getDiskImagesToValidate();
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
         if (!validate(diskImagesValidator.diskImagesNotLocked())) {
             return false;
@@ -164,7 +173,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         }
 
         for (DiskImage diskImage : getDiskImagesToBeCloned()) {
-            if (!checkImageConfiguration(diskImage)) {
+            if (diskImage.getDiskStorageType() == DiskStorageType.IMAGE && !checkImageConfiguration(diskImage)) {
                 return false;
             }
         }
@@ -352,6 +361,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     @Override
     protected boolean addVmImages() {
         int numberOfStartedCopyTasks = 0;
+        List<CinderDisk> cinderDisks = new ArrayList<>();
         try {
             if (!getAdjustedDiskImagesFromConfiguration().isEmpty()) {
                 lockEntities();
@@ -369,6 +379,12 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                             saveIllegalDisk(diskImage);
                         }
                     } else {// Only legal images can be copied
+                        if (diskImage.getDiskStorageType() == DiskStorageType.CINDER) {
+                            CinderDisk cinder = (CinderDisk) diskImage;
+                            cinder.setVmSnapshotId(getVmSnapshotId());
+                            cinderDisks.add(cinder);
+                            continue;
+                        }
                         copyDiskImage(diskImage,
                                 diskImage.getStorageIds().get(0),
                                 diskInfoDestinationMap.get(diskImage.getId()).getStorageIds().get(0),
@@ -377,11 +393,14 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                         numberOfStartedCopyTasks++;
                     }
                 }
+                if (!cinderDisks.isEmpty()) {
+                    addVmCinderDisks(cinderDisks);
+                }
             }
         } finally {
             // If no tasks were created, endAction will not be called, but
             // it is still needed to unlock the entities
-            if (numberOfStartedCopyTasks == 0) {
+            if ((numberOfStartedCopyTasks == 0) && cinderDisks.isEmpty()) {
                 unlockEntities();
             }
         }
