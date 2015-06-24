@@ -129,8 +129,13 @@ public class TestHelper {
         @Override
         public void appendTo(StringBuffer buffer) {
             buffer.append("eqActionParams(");
-            for (String name : names) {
-                buffer.append(", field: " + name);
+            for (int i = 0; i < names.length; i++) {
+                if (i > 0) {
+                    buffer.append(", ");
+                }
+                buffer.append(names[i]);
+                buffer.append("=");
+                buffer.append(values[i]);
             }
             buffer.append(")");
         }
@@ -211,8 +216,13 @@ public class TestHelper {
         @Override
         public void appendTo(StringBuffer buffer) {
             buffer.append("eqQueryParams(");
-            for (String name : names) {
-                buffer.append(", field: " + name);
+            for (int i = 0; i < names.length; i++) {
+                if (i > 0) {
+                    buffer.append(", ");
+                }
+                buffer.append(names[i]);
+                buffer.append("=");
+                buffer.append(values[i]);
             }
             buffer.append(")");
         }
