@@ -14,8 +14,8 @@ public class PollVMStatsRefresher extends VMStatsRefresher {
     }
 
     @Override
-    @OnTimerMethodAnnotation("perform")
-    public void perform() {
+    @OnTimerMethodAnnotation("poll")
+    public void poll() {
         if (manager.isMonitoringNeeded()) {
             VmsListFetcher fetcher =
                     getRefreshStatistics() ?

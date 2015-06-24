@@ -139,8 +139,8 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
     }
 
     @Override
-    @OnTimerMethodAnnotation("perform")
-    public void perform() {
+    @OnTimerMethodAnnotation("poll")
+    public void poll() {
         // we still want to fetch GetAllVmStats as we did before
         if (this.manager.isMonitoringNeeded() && getRefreshStatistics()) {
             VmsListFetcher fetcher = new VmsStatisticsFetcher(this.manager);

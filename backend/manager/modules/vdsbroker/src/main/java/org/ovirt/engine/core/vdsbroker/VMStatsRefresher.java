@@ -36,7 +36,7 @@ public abstract class VMStatsRefresher {
         vmsMonitoringJobId =
                 sched.scheduleAFixedDelayJob(
                         this,
-                        "perform",
+                        "poll",
                         new Class[0],
                         new Object[0],
                         VMS_REFRESH_RATE,
@@ -54,7 +54,7 @@ public abstract class VMStatsRefresher {
     /**
      * Triggers refresh of vm statistics and analyzes the results.
      */
-    public abstract void perform();
+    public abstract void poll();
 
     /**
      * Calculates number of refresh iterations.
