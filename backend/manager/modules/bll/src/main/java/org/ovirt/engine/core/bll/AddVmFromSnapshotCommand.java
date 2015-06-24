@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -52,9 +53,13 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         super(commandId);
     }
 
-    public AddVmFromSnapshotCommand(T params) {
+    protected AddVmFromSnapshotCommand(T params, CommandContext commandContext) {
         super(params);
         sourceSnapshotId = params.getSourceSnapshotId();
+    }
+
+    public AddVmFromSnapshotCommand(T params) {
+        this(params, null);
     }
 
     @Override
