@@ -169,7 +169,6 @@ public class AffinityRulesEnforcementPerCluster {
             // Test whether any migration is possible, this uses current AffinityGroup settings
             // and so won't allow more breakage
             VM vm = vmDao.get(candidateVm);
-            assert  vm.getVdsGroupId().equals(clusterId);
             VDSGroup cluster = vdsGroupDao.get(clusterId);
             boolean canMove = schedulingManager.canSchedule(cluster, vm,
                     new ArrayList<Guid>(), new ArrayList<Guid>(),
