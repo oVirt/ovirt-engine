@@ -76,7 +76,7 @@ public class HostMonitoringTest {
     public void setup() {
         initVds();
         initConditions();
-        when(vdsManager.getRefreshStatistics()).thenReturn(false);
+        when(vdsManager.isTimeToRefreshStatistics()).thenReturn(false);
         updater =
                 new HostMonitoring(vdsManager,
                         vds,

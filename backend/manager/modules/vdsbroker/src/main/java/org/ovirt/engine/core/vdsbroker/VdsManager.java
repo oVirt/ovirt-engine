@@ -1005,7 +1005,7 @@ public class VdsManager {
         return cachedVds.getHostName();
     }
 
-    public void updateIteration() {
+    private void updateIteration() {
         if (refreshIteration == NUMBER_HOST_REFRESHES_BEFORE_SAVE) {
             refreshIteration = 1;
         } else {
@@ -1013,7 +1013,7 @@ public class VdsManager {
         }
     }
 
-    public boolean getRefreshStatistics() {
+    boolean isTimeToRefreshStatistics() {
         return refreshIteration == NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     }
 

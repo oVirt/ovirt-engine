@@ -110,7 +110,7 @@ public class HostMonitoring {
         try {
             if (isVdsUpOrGoingToMaintenance) {
                 // check if its time for statistics refresh
-                if (vdsManager.getRefreshStatistics() || vds.getStatus() == VDSStatus.PreparingForMaintenance) {
+                if (vdsManager.isTimeToRefreshStatistics() || vds.getStatus() == VDSStatus.PreparingForMaintenance) {
                     refreshVdsStats();
                 }
             } else {
@@ -750,7 +750,7 @@ public class HostMonitoring {
      *                  getVdsCaps
      */
     void refreshCommitedMemory() {
-        if (!vdsManager.getRefreshStatistics()) {
+        if (!vdsManager.isTimeToRefreshStatistics()) {
             return;
         }
         int memCommited = vds.getGuestOverhead();
