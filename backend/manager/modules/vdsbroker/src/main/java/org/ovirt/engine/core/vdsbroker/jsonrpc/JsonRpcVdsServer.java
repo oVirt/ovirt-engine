@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.jsonrpc;
 
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,10 +65,13 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VMInfoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
+import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.RequestBuilder;
 import org.ovirt.vdsm.jsonrpc.client.internal.ClientPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of <code>IVdsServer</code> interface which provides JSONRPC by
@@ -79,6 +83,7 @@ import org.ovirt.vdsm.jsonrpc.client.internal.ClientPolicy;
  */
 public class JsonRpcVdsServer implements IVdsServer {
 
+    private static final Logger logger = LoggerFactory.getLogger(JsonRpcVdsServer.class);
     private final JsonRpcClient client;
     private final HttpClient httpClient;
 
@@ -91,6 +96,17 @@ public class JsonRpcVdsServer implements IVdsServer {
     public void close() {
         XmlRpcUtils.shutDownConnection(this.httpClient);
         this.client.close();
+    }
+
+    @Override
+    public List<Certificate> getPeerCertificates() {
+        try {
+            return client.getClient().getPeerCertificates();
+        } catch (ClientConnectionException | IllegalStateException e) {
+            logger.error("Failed to get peer certification for host '{}': {}", client.getHostname(), e.getMessage());
+            logger.debug("Exception", e);
+            return null;
+        }
     }
 
     @Override

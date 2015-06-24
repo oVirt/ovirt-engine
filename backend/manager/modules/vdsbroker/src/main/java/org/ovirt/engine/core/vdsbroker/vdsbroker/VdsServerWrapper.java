@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.cert.Certificate;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -8,7 +12,11 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.uutils.crypto.CertificateChain;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHostsPubKeyReturnForXmlRpc;
@@ -34,10 +42,13 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class VdsServerWrapper implements IVdsServer {
 
+    private static final Logger logger = LoggerFactory.getLogger(VdsServerWrapper.class);
     private final VdsServerConnector vdsServer;
     private final HttpClient httpClient;
 
@@ -1670,6 +1681,24 @@ public class VdsServerWrapper implements IVdsServer {
     @Override
     public void close() {
         XmlRpcUtils.shutDownConnection(this.httpClient);
+    }
+
+    @Override
+    public List<Certificate> getPeerCertificates() {
+        try {
+            Pair<String, URL> connectionUrl =
+                    XmlRpcUtils.getConnectionUrl(httpClient.getHostConfiguration().getHost(),
+                            httpClient.getHostConfiguration().getPort(),
+                            null,
+                            Config.<Boolean>getValue(ConfigValues.EncryptHostCommunication));
+            return CertificateChain.getSSLPeerCertificates(connectionUrl.getSecond());
+        } catch (GeneralSecurityException | IOException e) {
+            logger.error("Failed to get peer certification for host '{}': {}",
+                    httpClient.getHostConfiguration().getHost(),
+                    e.getMessage());
+            logger.debug("Exception", e);
+            return null;
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.config.Config;
@@ -78,7 +79,10 @@ public class TransportFactory {
                     eventQueue),
                     returnValue.getSecond());
         } else if (VdsProtocol.XML == vdsProtocol) {
-            vdsServer = new VdsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
+            HttpClient httpClient = returnValue.getSecond();
+            String protocol = Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication) ? "https" : "http";
+            httpClient.getHostConfiguration().setHost(hostname, port, Protocol.getProtocol(protocol));
+            vdsServer = new VdsServerWrapper(returnValue.getFirst(), httpClient);
         }
         return vdsServer;
     }

@@ -268,6 +268,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         loadService(VmPoolMonitor.class);
         loadService(AutoStartVmsRunner.class);
         loadService(QuotaManager.class);
+        loadService(CertificationValidityChecker.class);
 
         //initializes attestation
         initAttestation();

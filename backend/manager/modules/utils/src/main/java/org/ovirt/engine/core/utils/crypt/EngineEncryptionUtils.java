@@ -2,11 +2,15 @@ package org.ovirt.engine.core.utils.crypt;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 import javax.crypto.Cipher;
 import javax.net.ssl.KeyManager;
@@ -109,6 +113,21 @@ public class EngineEncryptionUtils {
      */
     public static Certificate getCertificate() {
         return getPrivateKeyEntry().getCertificate();
+    }
+
+
+    public static X509Certificate getCertificate(File file) {
+        try (InputStream in = new FileInputStream(file)) {
+            return (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(in);
+        } catch (CertificateException | IOException e) {
+            throw new RuntimeException(
+                    String.format(
+                            "Failed to read certificate '%1$s'",
+                            file.getName()
+                    ),
+                    e
+            );
+        }
     }
 
     /**

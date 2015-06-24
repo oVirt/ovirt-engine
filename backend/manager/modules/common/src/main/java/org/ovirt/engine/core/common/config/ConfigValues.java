@@ -2209,6 +2209,21 @@ public enum ConfigValues {
     @DefaultValueAttribute("24")
     HostPackagesUpdateTimeInHours,
 
+    /**
+     * The interval in hours of checking the validity of the host's certification
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("24")
+    CertificationValidityCheckTimeInHours,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    CertExpirationWarnPeriodInDays,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("7")
+    CertExpirationAlertPeriodInDays,
+
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     LiveStorageMigrationBetweenDifferentStorageTypes,

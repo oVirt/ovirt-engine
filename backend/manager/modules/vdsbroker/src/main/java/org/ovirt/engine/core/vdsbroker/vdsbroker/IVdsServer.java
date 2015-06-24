@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.security.cert.Certificate;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -35,6 +36,8 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 
 public interface IVdsServer {
     void close();
+
+    List<Certificate> getPeerCertificates();
 
     HttpClient getHttpClient();
 
