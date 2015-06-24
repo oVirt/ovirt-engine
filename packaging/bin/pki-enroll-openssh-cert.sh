@@ -12,6 +12,11 @@ sign() {
 	local sshpub="${PKIDIR}/certs/${name}.pub"
 	local sshcert="${PKIDIR}/certs/${name}-cert.pub"
 
+	local principal_arg="-n"
+
+	# rhel-6 has -Z instead of -n for principals
+	ssh-keygen -V 2>&1 | grep -- -Z | grep -iq principal && principal_arg="-Z"
+
 	common_backup "${sshpub}" "${sshcert}"
 
 	#
@@ -37,7 +42,7 @@ sign() {
 			-I "${id}" \
 			${host:+-h} \
 			-V "-1h:+${days}d" \
-			${principals:+-n "${principals}"} \
+			${principals:+${principal_arg} "${principals}"} \
 			$(echo -n "${options}" | xargs -ix -d',' echo -O x) \
 			"${sshpub}" \
 			|| die "ssh-keygen failed"
