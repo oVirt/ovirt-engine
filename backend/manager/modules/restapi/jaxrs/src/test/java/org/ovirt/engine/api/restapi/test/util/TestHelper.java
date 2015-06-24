@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 import org.easymock.EasyMock;
 import org.easymock.IArgumentMatcher;
@@ -65,7 +66,7 @@ public class TestHelper {
             }
         }
         else {
-            matches = lhs.equals(rhs);
+            matches = Objects.equals(lhs, rhs);
         }
         return matches;
     }
