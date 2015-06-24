@@ -10,7 +10,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -74,8 +74,7 @@ public class AddExistingBlockStorageDomainCommandTest {
     @Test
     public void testAddExistingBlockDomainWhenVgInfoReturnsEmptyLunList() {
         when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(null);
-        List<LUNs> luns = new ArrayList<>();
-        when(command.getLUNsFromVgInfo(parameters.getStorageDomain().getStorage())).thenReturn(luns);
+        when(command.getLUNsFromVgInfo(parameters.getStorageDomain().getStorage())).thenReturn(Collections.<LUNs> emptyList());
         assertFalse("Could not connect to Storage Domain", command.canAddDomain());
         assertTrue("Import block Storage Domain should have failed due to empty Lun list returned from VGInfo ",
                 command.getReturnValue()
@@ -96,7 +95,7 @@ public class AddExistingBlockStorageDomainCommandTest {
     @Test
     public void testAddHostedEngineStorageFails() {
         when(command.getLUNsFromVgInfo(parameters.getStorageDomain().getStorage())).thenReturn(getLUNs());
-        doReturn(new ArrayList<LUNs>()).when(command).getAllLuns();
+        doReturn(Collections.emptyList()).when(command).getAllLuns();
 
         parameters.getStorageDomain().setStorageName(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME);
         assertFalse(command.canAddDomain());
@@ -111,10 +110,8 @@ public class AddExistingBlockStorageDomainCommandTest {
     }
 
     private static List<LUNs> getLUNs() {
-        List<LUNs> luns = new ArrayList<>();
         LUNs lun = new LUNs();
         lun.setId(Guid.newGuid().toString());
-        luns.add(lun);
-        return luns;
+        return Collections.singletonList(lun);
     }
 }
