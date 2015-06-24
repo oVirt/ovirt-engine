@@ -5,9 +5,6 @@ import static org.easymock.EasyMock.expect;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.WebApplicationException;
-
-import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -21,17 +18,6 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
 
     public AbstractBackendNetworksResourceTest(R collection, SearchType searchType, String searchPrefix) {
         super(collection, searchType, searchPrefix);
-    }
-
-    @Test
-    public void testRemoveBadGuid() throws Exception {
-        control.replay();
-        try {
-            collection.remove("foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
     }
 
     protected void setUpEntityQueryExpectations(int times) throws Exception {

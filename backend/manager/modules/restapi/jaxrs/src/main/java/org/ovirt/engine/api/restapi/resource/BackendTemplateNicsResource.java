@@ -7,7 +7,6 @@ import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -27,7 +26,6 @@ public class BackendTemplateNicsResource
               VdcQueryType.GetTemplateInterfacesByTemplateId,
               new IdQueryParameters(parentId),
               VdcActionType.AddVmTemplateInterface,
-              VdcActionType.RemoveVmTemplateInterface,
               VdcActionType.UpdateVmTemplateInterface);
     }
 
@@ -54,11 +52,6 @@ public class BackendTemplateNicsResource
                 iface,
                 nic.isSetNetwork() ? iface.getNetworkName() : null,
                 nic.isSetPortMirroring() ? iface.isPortMirroring() : false);
-    }
-
-    @Override
-    protected VdcActionParametersBase getRemoveParameters(String id) {
-        return new RemoveVmTemplateInterfaceParameters(parentId, asGuid(id));
     }
 
     @Override

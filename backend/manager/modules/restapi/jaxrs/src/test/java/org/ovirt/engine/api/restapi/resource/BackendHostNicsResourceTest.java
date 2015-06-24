@@ -171,22 +171,6 @@ public class BackendHostNicsResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                                     IdQueryParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { PARENT_GUID },
-                                     new ArrayList<VdsNetworkInterface>());
-        control.replay();
-        try {
-            collection.remove(MASTER_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
-    }
-
-    @Test
     public void testSetupNetworksNotSyncsNetwork() throws Exception {
         setUpNetworkQueryExpectations(1);
         setUpEntityQueryExpectations(1);

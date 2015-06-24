@@ -34,7 +34,6 @@ public class BackendCdRomsResource
               queryType,
               queryParams,
               VdcActionType.UpdateVm,
-              VdcActionType.UpdateVm,
               VdcActionType.UpdateVm);
     }
 
@@ -61,11 +60,6 @@ public class BackendCdRomsResource
     @Override
     protected VdcActionParametersBase getAddParameters(VM mapped, CdRom cdrom) {
         return new VmManagementParametersBase(getUpdatable(mapped.getStaticData().getIsoPath()));
-    }
-
-    @Override
-    protected VdcActionParametersBase getRemoveParameters(String id) {
-        return new VmManagementParametersBase(getUpdatable(null));
     }
 
     @Override

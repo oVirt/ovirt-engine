@@ -21,7 +21,6 @@ import org.ovirt.engine.api.model.MAC;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
-import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.resource.NicResource;
@@ -40,7 +39,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicResourceTest
-        extends AbstractBackendSubResourceTest<NIC, VmNetworkInterface, BackendDeviceResource<NIC, Nics, VmNetworkInterface>> {
+        extends AbstractBackendSubResourceTest<NIC, VmNetworkInterface, BackendVmNicResource> {
 
     protected static final Guid NIC_ID = GUIDS[1];
     protected static final String ADDRESS = "10.11.12.13";

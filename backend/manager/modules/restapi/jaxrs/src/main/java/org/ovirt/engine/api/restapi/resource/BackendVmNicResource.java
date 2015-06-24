@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendVmNicResource extends BackendNicResource implements VmNicResource {
+public class BackendVmNicResource extends AbstractBackendNicResource implements VmNicResource {
 
     private Guid vmId;
 

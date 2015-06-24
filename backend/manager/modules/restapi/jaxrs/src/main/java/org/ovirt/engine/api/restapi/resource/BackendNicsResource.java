@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -28,7 +27,6 @@ public abstract class BackendNicsResource
                                VdcQueryType queryType,
                                VdcQueryParametersBase queryParams,
                                VdcActionType addAction,
-                               VdcActionType removeAction,
                                VdcActionType updateAction) {
         super(NIC.class,
               Nics.class,
@@ -37,7 +35,6 @@ public abstract class BackendNicsResource
               queryType,
               queryParams,
               addAction,
-              removeAction,
               updateAction,
               SUB_COLLECTIONS);
     }

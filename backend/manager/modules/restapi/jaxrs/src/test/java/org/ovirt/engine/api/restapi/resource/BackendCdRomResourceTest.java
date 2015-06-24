@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendCdRomResourceTest
-        extends AbstractBackendSubResourceTest<CdRom, VM, BackendDeviceResource<CdRom, CdRoms, VM>> {
+        extends AbstractBackendSubResourceTest<CdRom, VM, BackendCdRomResource> {
 
     protected static final String EJECT_ISO = "";
     protected static BackendCdRomsResource collection = getCollection();
@@ -39,7 +39,7 @@ public class BackendCdRomResourceTest
         super(getResource(GUIDS[0]));
     }
 
-    protected static BackendDeviceResource<CdRom, CdRoms, VM> getResource(Guid id) {
+    protected static BackendCdRomResource getResource(Guid id) {
         return new BackendCdRomResource(
             PARENT_ID,
             id,

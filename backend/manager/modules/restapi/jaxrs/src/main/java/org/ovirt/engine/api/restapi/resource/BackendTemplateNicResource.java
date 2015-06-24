@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 import javax.ws.rs.core.Response;
 
-public class BackendTemplateNicResource extends BackendNicResource implements NicResource {
+public class BackendTemplateNicResource extends AbstractBackendNicResource implements NicResource {
 
     private Guid templateId;
 

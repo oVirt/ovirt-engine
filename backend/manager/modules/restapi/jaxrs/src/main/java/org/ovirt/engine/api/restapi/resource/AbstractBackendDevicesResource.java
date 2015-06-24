@@ -14,13 +14,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 
-
 public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C extends BaseDevices, Q extends IVdcQueryable>
         extends AbstractBackendReadOnlyDevicesResource<D, C, Q>
         implements DevicesResource<D, C> {
 
     protected VdcActionType addAction;
-    protected VdcActionType removeAction;
     protected VdcActionType updateType;
 
     public AbstractBackendDevicesResource(Class<D> modelType,
@@ -30,12 +28,10 @@ public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C ext
                                           VdcQueryType queryType,
                                           VdcQueryParametersBase queryParams,
                                           VdcActionType addAction,
-                                          VdcActionType removeAction,
                                           VdcActionType updateType,
                                           String... subCollections) {
         super(modelType, collectionType, entityType, parentId, queryType, queryParams, subCollections);
         this.addAction = addAction;
-        this.removeAction = removeAction;
         this.updateType = updateType;
     }
 
@@ -45,15 +41,6 @@ public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C ext
         return performCreate(addAction,
                                getAddParameters(map(device), device),
                                getEntityIdResolver(device.getName()));
-    }
-
-    // This method should be part of the entity resource, but moving it requires too many changes, so it will be
-    // temporarily kept here. A new method is introduced in the entity resource that calls this one, and this
-    // one is removed from the collection interface.
-    @Deprecated
-    public Response deprecatedRemove(String id) {
-        getEntity(id);
-        return performAction(removeAction, getRemoveParameters(id));
     }
 
     @Override
@@ -102,8 +89,6 @@ public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C ext
     protected abstract String[] getRequiredUpdateFields();
 
     protected abstract VdcActionParametersBase getAddParameters(Q entity, D device);
-
-    protected abstract VdcActionParametersBase getRemoveParameters(String id);
 
     protected abstract ParametersProvider<D, Q> getUpdateParametersProvider();
 }

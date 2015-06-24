@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.WatchDog;
-import org.ovirt.engine.api.model.WatchDogs;
 import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
@@ -16,12 +15,12 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendWatchdogResourceTest extends AbstractBackendSubResourceTest<WatchDog, VmWatchdog, BackendDeviceResource<WatchDog, WatchDogs, VmWatchdog>> {
+public class BackendWatchdogResourceTest extends AbstractBackendSubResourceTest<WatchDog, VmWatchdog, BackendWatchdogResource> {
 
     private static final Guid VM_ID = GUIDS[1];
     private static final Guid WATCHDOG_ID = GUIDS[0];
 
-    private static BackendDeviceResource<WatchDog, WatchDogs, VmWatchdog> getResource() {
+    private static BackendWatchdogResource getResource() {
         return new BackendWatchdogResource(
             true,
             VM_ID,

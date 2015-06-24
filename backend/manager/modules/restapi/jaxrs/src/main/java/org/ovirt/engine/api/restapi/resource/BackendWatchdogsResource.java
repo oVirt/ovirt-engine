@@ -36,7 +36,6 @@ public class BackendWatchdogsResource
             queryType,
             queryParams,
             VdcActionType.AddWatchdog,
-            VdcActionType.RemoveWatchdog,
             VdcActionType.UpdateWatchdog
         );
         this.parentIsVm = parentIsVm;
@@ -89,14 +88,6 @@ public class BackendWatchdogsResource
                 null));
         watchdogParameters.setModel(getMapper(WatchdogModel.class, VmWatchdogType.class).map(WatchdogModel.fromValue(device.getModel()),
                 null));
-        watchdogParameters.setId(parentId);
-        watchdogParameters.setVm(parentIsVm);
-        return watchdogParameters;
-    }
-
-    @Override
-    protected VdcActionParametersBase getRemoveParameters(String id) {
-        WatchdogParameters watchdogParameters = new WatchdogParameters();
         watchdogParameters.setId(parentId);
         watchdogParameters.setVm(parentIsVm);
         return watchdogParameters;

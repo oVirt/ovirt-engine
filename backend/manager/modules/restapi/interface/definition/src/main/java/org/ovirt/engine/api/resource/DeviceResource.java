@@ -17,10 +17,8 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseDevice;
 
@@ -29,7 +27,4 @@ public interface DeviceResource<D extends BaseDevice> extends ReadOnlyDeviceReso
     @PUT
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     D update(D device);
-
-    @DELETE
-    Response remove();
 }

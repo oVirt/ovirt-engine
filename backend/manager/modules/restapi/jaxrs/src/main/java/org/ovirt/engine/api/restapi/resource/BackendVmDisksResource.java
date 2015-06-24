@@ -23,7 +23,6 @@ import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
-import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -48,7 +47,6 @@ public class BackendVmDisksResource
               queryType,
               queryParams,
               VdcActionType.AddDisk,
-              VdcActionType.RemoveDisk,
               VdcActionType.UpdateVmDisk,
               SUB_COLLECTIONS);
     }
@@ -181,11 +179,6 @@ public class BackendVmDisksResource
 
     private org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomainById(Guid id) {
         return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, VdcQueryType.GetStorageDomainById, new IdQueryParameters(id), id.toString());
-    }
-
-    @Override
-    protected VdcActionParametersBase getRemoveParameters(String id) {
-        return new RemoveDiskParameters(asGuid(id));
     }
 
     @Override

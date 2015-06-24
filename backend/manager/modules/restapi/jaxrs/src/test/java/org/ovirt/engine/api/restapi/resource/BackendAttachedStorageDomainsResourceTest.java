@@ -171,19 +171,6 @@ public class BackendAttachedStorageDomainsResourceTest
         }
     }
 
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(NON_EXISTANT_GUID, null);
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(wae.getResponse().getStatus(), 404);
-        }
-    }
-
     private void setUpGetEntityExpectations(Guid entityId, org.ovirt.engine.core.common.businessentities.StorageDomain entity) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetStorageDomainByIdAndStoragePoolId,
                 StorageDomainAndPoolQueryParameters.class,

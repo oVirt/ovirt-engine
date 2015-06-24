@@ -21,7 +21,6 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.Paramete
 import org.ovirt.engine.api.restapi.types.ReportedDeviceMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
-import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -34,13 +33,11 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicsResource extends BackendNicsResource implements VmNicsResource {
 
-
     public BackendVmNicsResource(Guid parentId) {
         super(parentId,
               VdcQueryType.GetVmInterfacesByVmId,
               new IdQueryParameters(parentId),
               VdcActionType.AddVmInterface,
-              VdcActionType.RemoveVmInterface,
               VdcActionType.UpdateVmInterface);
     }
 
@@ -173,11 +170,6 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
                 setNetwork(nic, entity),
                 nic.isSetNetwork() ? entity.getNetworkName() : null,
                 nic.isSetPortMirroring() ? entity.isPortMirroring() : false);
-    }
-
-    @Override
-    protected VdcActionParametersBase getRemoveParameters(String id) {
-        return new RemoveVmInterfaceParameters(parentId, asGuid(id));
     }
 
     @Override

@@ -42,15 +42,6 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         super(modelType, entityType, subCollections);
     }
 
-    public Response remove(String id) {
-        getEntity(id);  //will throw 404 if entity not found.
-        return performRemove(id);
-    }
-
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException();
-    }
-
     protected List<Q> getBackendCollection(SearchType searchType) {
         return getBackendCollection(searchType, QueryHelper.getConstraint(getUriInfo(), "",  modelType));
     }

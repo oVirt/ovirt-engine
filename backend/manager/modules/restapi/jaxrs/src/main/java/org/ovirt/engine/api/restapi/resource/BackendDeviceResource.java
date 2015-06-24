@@ -7,8 +7,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
 
-import javax.ws.rs.core.Response;
-
 public class BackendDeviceResource<D extends BaseDevice, C extends BaseDevices, Q extends IVdcQueryable> extends BackendReadOnlyDeviceResource<D, C, Q> implements DeviceResource<D> {
 
     protected VdcActionType updateType;
@@ -40,12 +38,5 @@ public class BackendDeviceResource<D extends BaseDevice, C extends BaseDevices, 
     public D update(D resource) {
         validateParameters(resource, requiredUpdateFields);
         return performUpdate(resource, entityResolver, updateType, updateParametersProvider);
-    }
-
-    // The code to remove the device should be here, but moving it from the collection resource requires too many
-    // changes, so it is temporarily kept there.
-    @Override
-    public Response remove() {
-        return ((AbstractBackendDevicesResource) collection).deprecatedRemove(id);
     }
 }

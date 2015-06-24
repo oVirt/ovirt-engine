@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import org.ovirt.engine.api.resource.CdRomResource;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -12,11 +13,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
-import org.ovirt.engine.api.resource.DeviceResource;
 
 import javax.ws.rs.core.Response;
 
-public class BackendCdRomResource extends BackendDeviceResource<CdRom, CdRoms, VM> implements DeviceResource<CdRom> {
+public class BackendCdRomResource extends BackendDeviceResource<CdRom, CdRoms, VM> implements CdRomResource {
 
     private Guid vmId;
 

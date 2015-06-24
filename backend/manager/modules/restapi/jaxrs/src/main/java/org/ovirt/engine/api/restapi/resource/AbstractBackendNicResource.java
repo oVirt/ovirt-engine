@@ -11,23 +11,25 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
+public abstract class AbstractBackendNicResource extends BackendDeviceResource<NIC, Nics, VmNetworkInterface> implements NicResource {
 
-public class BackendNicResource extends BackendDeviceResource<NIC, Nics, VmNetworkInterface> implements NicResource {
-
-    protected BackendNicResource(String id,
-                                 AbstractBackendReadOnlyDevicesResource<NIC, Nics, VmNetworkInterface> collection,
-                                 VdcActionType updateType,
-                                 ParametersProvider<NIC, VmNetworkInterface> updateParametersProvider,
-                                 String[] requiredUpdateFields,
-                                 String... subCollections) {
-        super(NIC.class,
-              VmNetworkInterface.class,
-              collection.asGuidOr404(id),
-              collection,
-              updateType,
-              updateParametersProvider,
-              requiredUpdateFields,
-              SUB_COLLECTIONS);
+    protected AbstractBackendNicResource(
+            String id,
+            AbstractBackendReadOnlyDevicesResource<NIC, Nics, VmNetworkInterface> collection,
+            VdcActionType updateType,
+            ParametersProvider<NIC, VmNetworkInterface> updateParametersProvider,
+            String[] requiredUpdateFields,
+            String... subCollections) {
+        super(
+            NIC.class,
+            VmNetworkInterface.class,
+            collection.asGuidOr404(id),
+            collection,
+            updateType,
+            updateParametersProvider,
+            requiredUpdateFields,
+            SUB_COLLECTIONS
+        );
     }
 
     @Override

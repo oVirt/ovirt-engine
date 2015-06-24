@@ -82,8 +82,8 @@ public class BackendAttachedStorageDomainResourceTest
             setUpActionExpectations(
                 VdcActionType.ActivateStorageDomain,
                 StorageDomainPoolParametersBase.class,
-                new String[] { "StorageDomainId", "StoragePoolId" },
-                new Object[] { STORAGE_DOMAIN_ID, DATA_CENTER_ID }
+                new String[]{"StorageDomainId", "StoragePoolId"},
+                new Object[]{STORAGE_DOMAIN_ID, DATA_CENTER_ID}
             )
         );
         Action action = new Action();
@@ -158,6 +158,21 @@ public class BackendAttachedStorageDomainResourceTest
             )
         );
         verifyRemove(resource.remove());
+    }
+
+
+    @Test
+    public void testRemoveNonExistant() throws Exception{
+        setUpGetDomainExpectations(StorageType.NFS, false);
+        control.replay();
+        try {
+            resource.remove();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(wae.getResponse().getStatus(), 404);
+        }
     }
 
     @Test
