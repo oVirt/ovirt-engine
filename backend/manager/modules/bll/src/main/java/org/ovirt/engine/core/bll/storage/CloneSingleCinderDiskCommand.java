@@ -67,7 +67,7 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
 
     protected CinderDisk getDisk() {
         if (disk == null) {
-            disk = (CinderDisk) getDiskDao().get(getImageId());
+            disk = (CinderDisk) getDiskImageDao().getSnapshotById(getImageId());
         }
         return disk;
     }
