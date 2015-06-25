@@ -62,6 +62,7 @@ def queryEnvKey(
     prompt=False,
     default=None,
     name=None,
+    store=True,
 ):
     """Query string and validate it.
     Params:
@@ -81,6 +82,7 @@ def queryEnvKey(
     'warn_note' -- Message displayed if warning
     'warn_name' -- warn dialog name
     'interactive_only' -- Do not run test if env[key] is already set
+    'store' -- Store the value in environment
     """
 
     interactive = key not in env or env[key] is None
@@ -137,7 +139,8 @@ def queryEnvKey(
                         raise RuntimeError(msg)
                     else:
                         logger.warning(msg)
-    env[key] = value
+    if store:
+        env[key] = value
     return value
 
 
