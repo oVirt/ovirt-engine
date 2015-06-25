@@ -382,8 +382,8 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
                 .getItems()) {
             Pair<Boolean, GlusterGeoRepSessionConfiguration> newConfigPair = newConfigEntity.getEntity();
             GlusterGeoRepSessionConfiguration newConfig = newConfigPair.getSecond();
-            boolean isOldConfigNull = newConfig == null ? true : oldConfigs.get(newConfig.getKey()) == null;
-            boolean isNewConfigNull = newConfig == null || newConfig.getValue() == null;
+            boolean isOldConfigNull = oldConfigs.get(newConfig.getKey()) == null;
+            boolean isNewConfigNull = newConfig.getValue() == null;
             if ((!isNewConfigNull && !newConfig.getValue().isEmpty())
                     && (isOldConfigNull || !newConfig.getValue().equals(oldConfigs.get(newConfig.getKey())))) {
                 actionTypes.add(VdcActionType.SetGeoRepConfig);
