@@ -73,7 +73,7 @@
 		}
 
         .advancedParametersExpanderContent {
-            margin-left: 20px;
+            margin-left: 18px;
             display: none;
         }
 

@@ -40,15 +40,16 @@
     }
 
     .expanderContent {
-        margin-left: 20px;
+        margin-left: 25px;
         display: none;
     }
 
     .storageTextBoxEditor,
     .versionListEditor,
     .mountTextBoxEditor {
-        width: 460px;
+        width: 474px;
         line-height: 26px !important;
+        margin-bottom: 5px;
     }
 
 </ui:style>
