@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterHostPubKeyToSlaveParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -55,6 +58,12 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommand extends GlusterComman
     }
 
     @Override
+    public Map<String, String> getCustomValues() {
+        addCustomValue(GlusterConstants.VDS_NAME, getVds().getName());
+        return super.getCustomValues();
+    }
+
+    @Override
     protected void executeCommand() {
         final VDSReturnValue writePubKeysReturnValue =
                 runVdsCommand(VDSCommandType.UpdateGlusterGeoRepKeys,
@@ -63,6 +72,8 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommand extends GlusterComman
                                 getParameters().getRemoteUserName()));
         setSucceeded(writePubKeysReturnValue.getSucceeded());
         if (!writePubKeysReturnValue.getSucceeded()) {
+            String errorMsg = writePubKeysReturnValue.getVdsError().getMessage();
+            writePubKeysReturnValue.getVdsError().setMessage(errorMsg + " : " + getVdsDAO().get(getParameters().getId()).getName());
             propagateFailure(convertToVdcReturnValueBase(writePubKeysReturnValue));
             return;
         }

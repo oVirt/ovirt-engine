@@ -26,6 +26,12 @@ public class GlusterVolumeGeoRepSessionParameters extends GlusterVolumeParameter
         this(volumeId, slaveVolumeName, slaveHostId, "root", null, false);
     }
 
+    public GlusterVolumeGeoRepSessionParameters(Guid volumeId, Guid geoRepSessionId, boolean force) {
+        super(volumeId);
+        this.geoRepSessionId = geoRepSessionId;
+        this.force = force;
+    }
+
     public GlusterVolumeGeoRepSessionParameters(Guid volumeId,
             String slaveVolumeName,
             Guid slaveHostId,

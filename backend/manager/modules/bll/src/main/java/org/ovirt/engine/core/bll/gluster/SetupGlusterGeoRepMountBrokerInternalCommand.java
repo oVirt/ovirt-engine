@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -18,6 +21,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.SetUpGlusterGeoRepMountBrokerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -34,8 +38,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
     }
 
     protected GlusterVolumeEntity getSlaveVolume() {
-        return getGlusterVolumeDao().getByName(getVdsDAO().get(getParameters().getId()).getVdsGroupId(),
-                getParameters().getRemoteVolumeName());
+        return getGlusterVolumeDao().getByName(getParameters().getId(), getParameters().getRemoteVolumeName());
     }
 
     @Override
@@ -90,25 +93,51 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
 
     @Override
     protected void executeCommand() {
-        SetUpMountBrokerParameters parameters = getParameters();
+        boolean succeeded = true;
+        final SetUpMountBrokerParameters parameters = getParameters();
+        final List<Callable<VDSReturnValue>> mountBrokerSetupReturnStatuses = new ArrayList<>();
+        for (final Guid currentRemoteServerId : getParameters().getRemoteServerIds()) {
+            mountBrokerSetupReturnStatuses.add(new Callable<VDSReturnValue>() {
+                @Override
+                public VDSReturnValue call() throws Exception {
+                    return setUpMountBrokerPartial(currentRemoteServerId,
+                            parameters.getRemoteUserName(),
+                            parameters.getRemoteUserGroup(),
+                            parameters.getRemoteVolumeName(),
+                            parameters.isPartial());
+                }
+            });
+        }
+        List<VDSReturnValue> returnValues = ThreadPoolUtil.invokeAll(mountBrokerSetupReturnStatuses);
+        List<String> errors = new ArrayList<String>();
+        for (VDSReturnValue currentReturnValue : returnValues) {
+            if (!currentReturnValue.getSucceeded()) {
+                succeeded = false;
+                errors.add(currentReturnValue.getVdsError().getMessage());
+            }
+        }
+        if (!errors.isEmpty()) {
+            propagateFailure(AuditLogType.GLUSTER_GEOREP_SETUP_MOUNT_BROKER_FAILED, errors);
+        }
+        setSucceeded(succeeded);
+    }
+
+    private VDSReturnValue setUpMountBrokerPartial(Guid currentHostId,
+            String remoteUserName,
+            String remoteUserGroupName,
+            String remoteVolumeName,
+            boolean partial) {
         VDSReturnValue mountBrokerReturnValue =
                 runVdsCommand(VDSCommandType.SetupGlusterGeoRepMountBroker,
-                        new SetUpGlusterGeoRepMountBrokerVDSParameters(getParameters().getId(),
-                                parameters.getRemoteUserName(),
-                                parameters.getRemoteUserGroup(),
-                                parameters.getRemoteVolumeName(),
-                                parameters.isPartial()));
+                        new SetUpGlusterGeoRepMountBrokerVDSParameters(currentHostId,
+                                remoteUserName,
+                                remoteUserGroupName,
+                                remoteVolumeName,
+                                partial));
         if (mountBrokerReturnValue.getSucceeded()) {
-            VDSReturnValue restartGlusterdReturnValue = restartGlusterd(getParameters().getId());
-            if (!restartGlusterdReturnValue.getSucceeded()) {
-                propagateFailure(convertToVdcReturnValueBase(restartGlusterdReturnValue));
-                return;
-            } else {
-                setSucceeded(restartGlusterdReturnValue.getSucceeded());
-            }
-        } else {
-            propagateFailure(convertToVdcReturnValueBase(mountBrokerReturnValue));
-            return;
+            VDSReturnValue restartGlusterdReturnValue = restartGlusterd(currentHostId);
+            return restartGlusterdReturnValue;
         }
+        return mountBrokerReturnValue;
     }
 }

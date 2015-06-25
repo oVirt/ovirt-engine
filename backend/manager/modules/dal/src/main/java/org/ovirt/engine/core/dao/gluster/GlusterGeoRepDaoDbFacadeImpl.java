@@ -162,6 +162,13 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     }
 
     @Override
+    public GlusterGeoRepSession getGeoRepSessionBySlaveVolume(Guid slaveVolumeId) {
+        return getCallsHandler().executeRead("GetGeoRepSessionBySlaveVolume",
+                georepSessionRowMapper,
+                getCustomMapSqlParameterSource().addValue("slave_volume_id", slaveVolumeId));
+    }
+
+    @Override
     public List<GlusterGeoRepSessionDetails> getGeoRepSessionDetails(Guid sessionId) {
         return getCallsHandler().executeReadList("GetGlusterGeoRepSessionDetails", georepSessionDetailsRowMapper,
                 createIdParameterMapper(sessionId));

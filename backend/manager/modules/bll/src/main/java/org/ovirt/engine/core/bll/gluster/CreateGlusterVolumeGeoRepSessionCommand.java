@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -15,7 +13,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.action.gluster.SetUpMountBrokerParameters;
-import org.ovirt.engine.core.common.action.gluster.UpdateGlusterHostPubKeyToSlaveParameters;
+import org.ovirt.engine.core.common.action.gluster.SetUpPasswordLessSSHParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -25,15 +23,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
-import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeCommandBase<GlusterVolumeGeoRepSessionParameters> {
 
@@ -110,7 +105,6 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
     public Map<String, String> getCustomValues() {
         addCustomValue(GlusterConstants.VOLUME_NAME, getGlusterVolumeName());
         addCustomValue(GlusterConstants.GEO_REP_USER, getParameters().getUserName());
-        addCustomValue(GlusterConstants.GEO_REP_USER_GROUP, getParameters().getUserGroup());
         addCustomValue(GlusterConstants.GEO_REP_SLAVE_VOLUME_NAME, getParameters().getSlaveVolumeName());
         addCustomValue(GlusterConstants.SERVICE_TYPE, ServiceType.GLUSTER.name());
         return super.getCustomValues();
@@ -129,34 +123,57 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         Set<Guid> remoteServerIds = getServerIds(remoteServersSet);
         Guid slaveHostId = getParameters().getSlaveHostId();
         if (!rootSession) {
-            VdcReturnValueBase mountBrokerOnSlaveReturnValue = setUpMountBrokerOnSlave();
-            succeeded =
-                    evaluateReturnValues(AuditLogType.GLUSTER_GEOREP_SETUP_MOUNT_BROKER_FAILED,
-                            Collections.singletonList(mountBrokerOnSlaveReturnValue));
+            VdcReturnValueBase completeMountBrokerSetupOnSlaveInternalAction =
+                    getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
+                            new SetUpMountBrokerParameters(getVdsDAO().get(slaveHostId).getVdsGroupId(),
+                                    new HashSet<Guid>(Collections.singletonList(getParameters().getSlaveHostId())),
+                                    getParameters().getSlaveVolumeName(),
+                                    getParameters().getUserName(),
+                                    getParameters().getUserGroup()));
+            succeeded = evaluateReturnValue(AuditLogType.GLUSTER_GEOREP_SETUP_MOUNT_BROKER_FAILED, completeMountBrokerSetupOnSlaveInternalAction);
             remoteServerIds.remove(slaveHostId);
             if (succeeded) {
-                succeeded =
-                        evaluateReturnValues(AuditLogType.GLUSTER_GEOREP_SETUP_MOUNT_BROKER_FAILED,
-                                setUpPartialMountBrokerOnSlaves(remoteServerIds));
+                AuditLogDirector.log(this, AuditLogType.GLUSTER_SETUP_GEOREP_MOUNT_BROKER);
+                if (!remoteServerIds.isEmpty()) {
+                    VdcReturnValueBase mountBrokerPartialSetupInternalAction =
+                            getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
+                                    new SetUpMountBrokerParameters(getVdsDAO().get(slaveHostId).getVdsGroupId(),
+                                            remoteServerIds,
+                                            getParameters().getSlaveVolumeName(),
+                                            getParameters().getUserName()));
+                    succeeded =
+                            evaluateReturnValue(AuditLogType.GLUSTER_GEOREP_SETUP_MOUNT_BROKER_FAILED,
+                                    mountBrokerPartialSetupInternalAction);
+                    if (succeeded) {
+                        AuditLogDirector.log(this, AuditLogType.GLUSTER_SETUP_GEOREP_MOUNT_BROKER);
+                    }
+                }
             }
         }
         if (succeeded) {
             remoteServerIds.add(slaveHostId);
-            succeeded = setUpPasswordlessSSH(upServer.getId(), remoteServerIds, getParameters().getUserName());
+            VdcReturnValueBase setUpPasswordLessSSHinternalAction =
+                    runInternalAction(VdcActionType.SetUpPasswordLessSSHInternal,
+                            new SetUpPasswordLessSSHParameters(upServer.getVdsGroupId(),
+                                    remoteServerIds,
+                                    getParameters().getUserName()));
+            succeeded = evaluateReturnValue(errorType, setUpPasswordLessSSHinternalAction);
             if (succeeded) {
-                succeeded =
-                        createGeoRepSession(upServer.getId(),
+                AuditLogDirector.log(this, AuditLogType.SET_UP_PASSWORDLESS_SSH);
+                VDSReturnValue createVdsReturnValue = runVdsCommand(VDSCommandType.CreateGlusterVolumeGeoRepSession,
+                        new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(),
                                 getGlusterVolumeName(),
                                 getVdsDAO().get(slaveHostId).getHostName(),
                                 getParameters().getSlaveVolumeName(),
                                 getParameters().getUserName(),
-                                getParameters().isForce(),
-                                true);
+                                getParameters().isForce()));
+                succeeded = evaluateReturnValue(AuditLogType.GLUSTER_GEOREP_SESSION_CREATE_FAILED, createVdsReturnValue);
                 if (succeeded) {
                     GlusterGeoRepSyncJob.getInstance().refreshGeoRepDataForVolume(getGlusterVolume());
                 }
             }
         }
+        setSucceeded(succeeded);
     }
 
     private Set<Guid> getServerIds(Set<VDS> remoteServersSet) {
@@ -167,108 +184,8 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         return remoteServerIds;
     }
 
-    protected VdcReturnValueBase setUpMountBrokerOnSlave() {
-        VdcReturnValueBase mountBrokerOnSlaveReturnValue = getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
-                new SetUpMountBrokerParameters(getParameters().getSlaveHostId(),
-                        getParameters().getSlaveVolumeName(),
-                        getParameters().getUserName(),
-                        getParameters().getUserGroup()));
-        return mountBrokerOnSlaveReturnValue;
-    }
-
-    protected List<VdcReturnValueBase> setUpPartialMountBrokerOnSlaves(Set<Guid> remoteServerIds) {
-        if (remoteServerIds == null || remoteServerIds.isEmpty()) {
-            return null;
-        }
-        List<Callable<VdcReturnValueBase>> mountBrokerPartialSetupReturnStatuses = new ArrayList<Callable<VdcReturnValueBase>>();
-        for (final Guid currentSlaveServerId : remoteServerIds) {
-            mountBrokerPartialSetupReturnStatuses.add(new Callable<VdcReturnValueBase>() {
-                @Override
-                public VdcReturnValueBase call() throws Exception {
-                    return getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
-                            new SetUpMountBrokerParameters(currentSlaveServerId,
-                                    getParameters().getSlaveVolumeName(),
-                                    getParameters().getUserName(),
-                                    getParameters().getUserGroup(),
-                                    true));
-                }
-            });
-        }
-        List<VdcReturnValueBase> returnStatuses = ThreadPoolUtil.invokeAll(mountBrokerPartialSetupReturnStatuses);
-        return returnStatuses;
-    }
-
-    protected boolean setUpPasswordlessSSH(Guid masterUpServerId, Set<Guid> remoteServerSet, String userName) {
-        List<String> pubKeys = readPubKey(masterUpServerId);
-        boolean canProceed = pubKeys != null && pubKeys.size() > 0;
-        if (canProceed) {
-            canProceed = evaluateReturnValues(AuditLogType.GLUSTER_GEOREP_PUBLIC_KEY_WRITE_FAILED, updatePubKeysToRemoteHosts(pubKeys, remoteServerSet, userName));
-        }
-        return canProceed;
-    }
-
-    private List<VdcReturnValueBase> updatePubKeysToRemoteHosts(final List<String> pubKeys,
-            Set<Guid> remoteServersSet,
-            final String userName) {
-        List<Callable<VdcReturnValueBase>> slaveWritePubKeyList = new ArrayList<Callable<VdcReturnValueBase>>();
-        for (final Guid currentRemoteHostId : remoteServersSet) {
-            slaveWritePubKeyList.add(new Callable<VdcReturnValueBase>() {
-                @Override
-                public VdcReturnValueBase call() throws Exception {
-                    return getBackend().runInternalAction(VdcActionType.UpdateGlusterHostPubKeyToSlaveInternal,
-                            new UpdateGlusterHostPubKeyToSlaveParameters(currentRemoteHostId,
-                                    pubKeys, userName));
-                }
-            });
-        }
-        List<VdcReturnValueBase> returnStatuses = ThreadPoolUtil.invokeAll(slaveWritePubKeyList);
-        return returnStatuses;
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<String> readPubKey(Guid upServerId) {
-        VdcQueryReturnValue readPubKeyReturnvalue =
-                runInternalQuery(VdcQueryType.GetGlusterHostPublicKeys, new IdQueryParameters(upServerId));
-        if (readPubKeyReturnvalue.getSucceeded()) {
-            return (List<String>) readPubKeyReturnvalue.getReturnValue();
-        } else {
-            handleVdsError(AuditLogType.GLUSTER_GEO_REP_PUB_KEY_FETCH_FAILED,
-                    readPubKeyReturnvalue.getExceptionString());
-            return null;
-        }
-    }
-
-    protected boolean createGeoRepSession(Guid upServerId,
-            String masterVolumeName,
-            String remoteHost,
-            String remoteVolumeName,
-            String userName,
-            Boolean force,
-            Boolean handleError) {
-        GlusterVolumeGeoRepSessionVDSParameters params =
-                new GlusterVolumeGeoRepSessionVDSParameters(upServerId,
-                        masterVolumeName,
-                        remoteHost,
-                        remoteVolumeName,
-                        userName,
-                        force);
-        VDSReturnValue createSessionReturnValue =
-                runVdsCommand(VDSCommandType.CreateGlusterVolumeGeoRepSession, params);
-        if (createSessionReturnValue.getSucceeded()) {
-            setSucceeded(true);
-            return true;
-        } else {
-            setSucceeded(false);
-            if (handleError) {
-                handleVdsError(AuditLogType.GLUSTER_GEOREP_SESSION_CREATE_FAILED,
-                        createSessionReturnValue.getVdsError().getMessage());
-            }
-            return false;
-        }
-    }
-
     private Set<VDS> fetchRemoteServers() {
-        Set<VDS> remoteServers = new HashSet<VDS>();
+        Set<VDS> remoteServers = new HashSet<>();
         List<GlusterBrickEntity> slaveBricks = slaveVolume.getBricks();
         for (GlusterBrickEntity currentBrick : slaveBricks) {
             remoteServers.add(getVdsDAO().get(currentBrick.getServerId()));
@@ -280,19 +197,8 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         return GlusterUtil.getInstance();
     }
 
-    private boolean evaluateReturnValues(AuditLogType auditLogType, List<VdcReturnValueBase> returnValues) {
-        boolean succeeded = true;
-        List<String> errors = new ArrayList<>();
-        for (VdcReturnValueBase currentReturnValue : returnValues) {
-            boolean currentExecutionStatus = currentReturnValue.getSucceeded();
-            succeeded = succeeded && currentExecutionStatus;
-            if (!currentExecutionStatus) {
-                errors.addAll(currentReturnValue.getExecuteFailedMessages());
-            }
-        }
-        if (!succeeded) {
-            handleVdsErrors(auditLogType, errors);
-        }
-        return succeeded;
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.CREATE_GLUSTER_VOLUME_GEOREP_SESSION : AuditLogType.GLUSTER_GEOREP_SESSION_CREATE_FAILED;
     }
 }

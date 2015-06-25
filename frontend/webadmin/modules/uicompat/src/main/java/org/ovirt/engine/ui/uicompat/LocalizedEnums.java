@@ -345,6 +345,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_GEO_REP_PUB_KEY_FETCH_FAILED();
 
+    String AuditLogType___SET_UP_PASSWORDLESS_SSH();
+
+    String AuditLogType___SET_UP_PASSWORDLESS_SSH_FAILED();
+
     String AuditLogType___GLUSTER_GET_PUB_KEY();
 
     String AuditLogType___GLUSTER_GEOREP_PUBLIC_KEY_WRITE_FAILED();

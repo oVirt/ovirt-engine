@@ -327,6 +327,7 @@ public enum VdcActionType {
     SetupGlusterGeoRepMountBrokerInternal(1446, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     UpdateGlusterHostPubKeyToSlaveInternal(1447, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     DisableGlusterCliSnapshotScheduleInternal(1448, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    SetUpPasswordLessSSHInternal(1449, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
 
     // Cluster Policy
     AddClusterPolicy(1450, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),

@@ -591,6 +591,8 @@ public class FixturesTool {
      */
     public static final Guid GLUSTER_GEOREP_SESSION_ID = new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a755");
 
+    public static final Guid GLUSTER_GEOREP_SESSION_SLAVE_VOLUME_ID = new Guid("44f645f6-3fe9-4b35-a30c-11111a835ea8");
+
     /**
      * A test provider that exists.
      */
