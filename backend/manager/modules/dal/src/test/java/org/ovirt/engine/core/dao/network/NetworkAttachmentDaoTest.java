@@ -5,11 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -35,6 +37,7 @@ public class NetworkAttachmentDaoTest extends BaseDAOTestCase {
         networkAttachment.setNetworkId(FixturesTool.NETWORK_ENGINE);
         IpConfiguration ipConfiguration = new IpConfiguration();
         ipConfiguration.setBootProtocol(NetworkBootProtocol.DHCP);
+        ipConfiguration.getIPv4Addresses().add(new IPv4Address());
         networkAttachment.setIpConfiguration(ipConfiguration);
     }
 
@@ -68,9 +71,7 @@ public class NetworkAttachmentDaoTest extends BaseDAOTestCase {
         expected.setNicId(FixturesTool.VDS_NETWORK_INTERFACE2);
         IpConfiguration ipConfiguration = new IpConfiguration();
         ipConfiguration.setBootProtocol(NetworkBootProtocol.DHCP);
-        ipConfiguration.setAddress(null);
-        ipConfiguration.setNetmask(null);
-        ipConfiguration.setGateway(null);
+        ipConfiguration.getIPv4Addresses().add(createPrimaryAddress());
         expected.setIpConfiguration(ipConfiguration);
 
         Map<String, String> properties = new HashMap<>();
@@ -80,6 +81,10 @@ public class NetworkAttachmentDaoTest extends BaseDAOTestCase {
         expected.setProperties(properties);
 
         return expected;
+    }
+
+    public IPv4Address createPrimaryAddress() {
+        return new IPv4Address();
     }
 
     /**
@@ -145,9 +150,11 @@ public class NetworkAttachmentDaoTest extends BaseDAOTestCase {
         dao.save(networkAttachment);
         IpConfiguration ipConfiguration = networkAttachment.getIpConfiguration();
         ipConfiguration.setBootProtocol(NetworkBootProtocol.STATIC_IP);
-        ipConfiguration.setAddress("192.168.1.2");
-        ipConfiguration.setGateway("192.168.1.1");
-        ipConfiguration.setNetmask("255.255.255.0");
+        IPv4Address primaryAddress = new IPv4Address();
+        primaryAddress.setAddress("192.168.1.2");
+        primaryAddress.setGateway("192.168.1.1");
+        primaryAddress.setNetmask("255.255.255.0");
+        ipConfiguration.setIPv4Addresses(Collections.singletonList(primaryAddress));
 
         networkAttachment.setIpConfiguration(ipConfiguration);
 

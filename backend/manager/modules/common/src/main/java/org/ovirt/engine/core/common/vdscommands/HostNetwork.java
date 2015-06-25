@@ -83,15 +83,31 @@ public class HostNetwork {
     }
 
     public String getAddress() {
-        return hasIpConfiguration() ? getIpConfiguration().getAddress() : null;
+        if (primaryAddressNotSet()) {
+            return null;
+        }
+
+        return getIpConfiguration().getPrimaryAddress().getAddress();
     }
 
     public String getNetmask() {
-        return hasIpConfiguration() ? getIpConfiguration().getNetmask() : null;
+        if (primaryAddressNotSet()) {
+            return null;
+        }
+
+        return getIpConfiguration().getPrimaryAddress().getNetmask();
     }
 
     public String getGateway() {
-        return hasIpConfiguration() ? getIpConfiguration().getGateway() : null;
+        if (primaryAddressNotSet()) {
+            return null;
+        }
+
+        return getIpConfiguration().getPrimaryAddress().getGateway();
+    }
+
+    private boolean primaryAddressNotSet() {
+        return !hasIpConfiguration() || !getIpConfiguration().hasPrimaryAddressSet();
     }
 
     private boolean hasIpConfiguration() {

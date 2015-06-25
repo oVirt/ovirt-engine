@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities.network;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -27,7 +28,9 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     private String nicName;
 
+    @Valid
     private IpConfiguration ipConfiguration;
+
     private Map<String, String> properties;
 
     public static long getSerialVersionUID() {

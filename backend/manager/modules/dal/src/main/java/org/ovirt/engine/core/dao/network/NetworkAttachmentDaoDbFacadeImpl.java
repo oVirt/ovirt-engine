@@ -2,12 +2,14 @@ package org.ovirt.engine.core.dao.network;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -55,10 +57,13 @@ public class NetworkAttachmentDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<
     }
 
     private void mapIpConfiguration(MapSqlParameterSource mapper, IpConfiguration ipConfiguration) {
+        boolean hasPrimaryAddressSet = ipConfiguration.hasPrimaryAddressSet();
+        IPv4Address primaryAddress = hasPrimaryAddressSet ? ipConfiguration.getPrimaryAddress() : null;
+
         mapper.addValue("boot_protocol", EnumUtils.nameOrNull(ipConfiguration.getBootProtocol()))
-                .addValue("address", ipConfiguration.getAddress())
-                .addValue("netmask", ipConfiguration.getNetmask())
-                .addValue("gateway", ipConfiguration.getGateway());
+                .addValue("address", hasPrimaryAddressSet ? primaryAddress.getAddress() : null)
+                .addValue("netmask", hasPrimaryAddressSet ? primaryAddress.getNetmask() : null)
+                .addValue("gateway", hasPrimaryAddressSet ? primaryAddress.getGateway() : null);
     }
 
     @Override
@@ -89,9 +94,12 @@ public class NetworkAttachmentDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<
             String bootProtocol = rs.getString("boot_protocol");
             if (bootProtocol != null) {
                 ipConfiguration.setBootProtocol(NetworkBootProtocol.valueOf(bootProtocol));
-                ipConfiguration.setAddress(rs.getString("address"));
-                ipConfiguration.setNetmask(rs.getString("netmask"));
-                ipConfiguration.setGateway(rs.getString("gateway"));
+                ipConfiguration.setIPv4Addresses(new ArrayList<IPv4Address>());
+                IPv4Address iPv4Address = new IPv4Address();
+                iPv4Address.setAddress(rs.getString("address"));
+                iPv4Address.setNetmask(rs.getString("netmask"));
+                iPv4Address.setGateway(rs.getString("gateway"));
+                ipConfiguration.getIPv4Addresses().add(iPv4Address);
                 entity.setIpConfiguration(ipConfiguration);
             }
 

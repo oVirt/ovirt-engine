@@ -199,7 +199,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 && ipConfiguration != null
                 && (ipConfiguration.getBootProtocol() == NetworkBootProtocol.DHCP
                 || ipConfiguration.getBootProtocol() == NetworkBootProtocol.STATIC_IP
-                && StringUtils.isNotEmpty(ipConfiguration.getGateway()));
+                && ipConfiguration.hasPrimaryAddressSet() && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway()));
     }
 
     private boolean noChangesDetected() {

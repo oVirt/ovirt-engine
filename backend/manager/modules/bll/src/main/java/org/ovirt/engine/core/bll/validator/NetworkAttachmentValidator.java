@@ -92,14 +92,16 @@ public class NetworkAttachmentValidator {
         return ValidationResult.failWith(VdcBllMessages.NETWORK_ADDR_MANDATORY_IN_STATIC_IP)
             .unless(ipConfiguration == null
                 || ipConfiguration.getBootProtocol() != NetworkBootProtocol.STATIC_IP
-                || ipConfiguration.getAddress() != null && ipConfiguration.getNetmask() != null);
+                || (ipConfiguration.hasPrimaryAddressSet()
+                && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getAddress())
+                && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getNetmask())));
     }
 
     public ValidationResult bootProtocolSetForDisplayNetwork() {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
         return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL)
             .unless(!getNetworkCluster().isDisplay()
-                    || ipConfiguration != null && ipConfiguration.getBootProtocol() != NetworkBootProtocol.NONE);
+                || ipConfiguration != null && ipConfiguration.getBootProtocol() != NetworkBootProtocol.NONE);
     }
 
     public ValidationResult nicExists() {
@@ -122,7 +124,7 @@ public class NetworkAttachmentValidator {
                 String oldAddress = existingIface.getAddress();
                 return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED)
                         .when(StringUtils.equals(oldAddress, host.getHostName())
-                                && !StringUtils.equals(oldAddress, ipConfiguration.getAddress()));
+                            && !StringUtils.equals(oldAddress, ipConfiguration.getPrimaryAddress().getAddress()));
             }
         }
 
@@ -138,7 +140,8 @@ public class NetworkAttachmentValidator {
     public ValidationResult validateGateway() {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
         return ValidationResult.failWith(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY).when(ipConfiguration != null
-            && StringUtils.isNotEmpty(ipConfiguration.getGateway())
+            && ipConfiguration.hasPrimaryAddressSet()
+            && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway())
             && !managementNetworkUtil.isManagementNetwork(getNetwork().getId())
             && !FeatureSupported.multipleGatewaysSupported(host.getVdsGroupCompatibilityVersion()));
     }

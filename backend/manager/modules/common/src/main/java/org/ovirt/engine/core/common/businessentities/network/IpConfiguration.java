@@ -1,31 +1,33 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 
 public class IpConfiguration implements Serializable {
     private static final long serialVersionUID = -3207405803308009853L;
 
     private NetworkBootProtocol bootProtocol;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT")
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_NETWORK_ADDR_SIZE)
-    private String address;
+    @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
+    @Size(min = 1,
+            max = 1,
+            groups = { CreateEntity.class, UpdateEntity.class },
+            message = "Currently is supported only one IPv4 address for NIC."
+    )
+    private List<IPv4Address> iPv4Addresses = new ArrayList<>();
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_SUBNET_BAD_FORMAT")
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_SUBNET_SIZE)
-    private String netmask;
-
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_GATEWAY_SIZE)
-    private String gateway;
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
     public NetworkBootProtocol getBootProtocol() {
         return bootProtocol;
@@ -35,28 +37,23 @@ public class IpConfiguration implements Serializable {
         this.bootProtocol = bootProtocol;
     }
 
-    public String getAddress() {
-        return address;
+    public List<IPv4Address> getIPv4Addresses() {
+        return iPv4Addresses;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public IPv4Address getPrimaryAddress() {
+        if (!hasPrimaryAddressSet()) {
+            throw new IllegalStateException("IpConfiguration does not have IPv4 address set.");
+        }
+        return getIPv4Addresses().get(0);
     }
 
-    public String getNetmask() {
-        return netmask;
+    public boolean hasPrimaryAddressSet() {
+        return iPv4Addresses != null && !iPv4Addresses.isEmpty() && iPv4Addresses.get(0) != null;
     }
 
-    public void setNetmask(String netmask) {
-        this.netmask = netmask;
-    }
-
-    public String getGateway() {
-        return gateway;
-    }
-
-    public void setGateway(String gateway) {
-        this.gateway = gateway;
+    public void setIPv4Addresses(List<IPv4Address> iPv4Addresses) {
+        this.iPv4Addresses = iPv4Addresses;
     }
 
     @Override
@@ -67,23 +64,19 @@ public class IpConfiguration implements Serializable {
             return false;
         IpConfiguration that = (IpConfiguration) o;
         return Objects.equals(getBootProtocol(), that.getBootProtocol()) &&
-                Objects.equals(getAddress(), that.getAddress()) &&
-                Objects.equals(getNetmask(), that.getNetmask()) &&
-                Objects.equals(getGateway(), that.getGateway());
+                Objects.equals(getIPv4Addresses(), that.getIPv4Addresses());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getBootProtocol(), getAddress(), getNetmask(), getGateway());
+        return Objects.hash(getBootProtocol(), getIPv4Addresses());
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
                 .append("bootProtocol", getBootProtocol())
-                .append("address", getAddress())
-                .append("netmask", getNetmask())
-                .append("gateway", getGateway())
+                .append("ipv4Addresses", getIPv4Addresses())
                 .build();
     }
 }

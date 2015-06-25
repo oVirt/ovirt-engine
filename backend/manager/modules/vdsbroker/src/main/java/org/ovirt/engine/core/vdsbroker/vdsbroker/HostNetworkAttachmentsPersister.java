@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -125,11 +127,14 @@ public class HostNetworkAttachmentsPersister {
     }
 
     private IpConfiguration createIpConfigurationFromVdsNetworkInterface(VdsNetworkInterface nic) {
+        IPv4Address iPv4Address = new IPv4Address();
+        iPv4Address.setAddress(nic.getAddress());
+        iPv4Address.setNetmask(nic.getSubnet());
+        iPv4Address.setGateway(nic.getGateway());
+
         IpConfiguration ipConfiguration = new IpConfiguration();
         ipConfiguration.setBootProtocol(nic.getBootProtocol());
-        ipConfiguration.setAddress(nic.getAddress());
-        ipConfiguration.setNetmask(nic.getSubnet());
-        ipConfiguration.setGateway(nic.getGateway());
+        ipConfiguration.setIPv4Addresses(Collections.singletonList(iPv4Address));
 
         return ipConfiguration;
     }

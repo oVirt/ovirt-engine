@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -29,11 +30,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.network.predicate.InterfaceByNetworkNamePredicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.utils.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,13 +142,19 @@ public class NetworkConfigurator {
         managementAttachment.setNetworkId(managementNetwork.getId());
         managementAttachment.setNicId(nic.getId());
         IpConfiguration ipConfiguration = new IpConfiguration();
-        ipConfiguration.setAddress(nic.getAddress());
-        ipConfiguration.setNetmask(nic.getSubnet());
-        ipConfiguration.setGateway(nic.getGateway());
+        ipConfiguration.getIPv4Addresses().add(createIPv4Address(nic));
         ipConfiguration.setBootProtocol(nic.getBootProtocol());
         managementAttachment.setIpConfiguration(ipConfiguration);
         parameters.getNetworkAttachments().add(managementAttachment);
         return parameters;
+    }
+
+    public IPv4Address createIPv4Address(VdsNetworkInterface nic) {
+        IPv4Address result = new IPv4Address();
+        result.setAddress(nic.getAddress());
+        result.setNetmask(nic.getSubnet());
+        result.setGateway(nic.getGateway());
+        return result;
     }
 
     private VdsNetworkInterface findNicToSetupManagementNetwork() {
