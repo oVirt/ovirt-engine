@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -25,7 +26,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageVmBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractGeneralDateTimeColumn;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -148,7 +149,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         diskColumn.makeSortable();
         getTable().addColumn(diskColumn, constants.disksVm(), "95px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> creationDateColumn = new AbstractGeneralDateTimeColumn<VM>() {
+        AbstractTextColumn<VM> creationDateColumn = new AbstractFullDateTimeColumn<VM>() {
             @Override
             protected Date getRawValue(VM object) {
                 return object.getVmCreationDate();
@@ -157,7 +158,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         creationDateColumn.makeSortable();
         getTable().addColumn(creationDateColumn, constants.creationDateVm(), "95px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> exportDateColumn = new AbstractGeneralDateTimeColumn<VM>() {
+        AbstractTextColumn<VM> exportDateColumn = new AbstractFullDateTimeColumn<VM>() {
             @Override
             protected Date getRawValue(VM object) {
                 return object.getExportDate();

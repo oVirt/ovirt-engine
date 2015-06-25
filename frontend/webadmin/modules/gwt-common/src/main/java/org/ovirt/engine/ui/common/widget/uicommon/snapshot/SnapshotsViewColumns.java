@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
@@ -27,13 +28,15 @@ public class SnapshotsViewColumns {
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
     private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
+    protected final static FullDateTimeRenderer fullDateTimeRenderer = new FullDateTimeRenderer();
+
     public static final AbstractTextColumn<Snapshot> dateColumn = new AbstractTextColumn<Snapshot>() {
         @Override
         public String getValue(Snapshot snapshot) {
             if (snapshot.getType() == SnapshotType.ACTIVE) {
                 return constants.currentSnapshotLabel();
             }
-            return FullDateTimeRenderer.getLocalizedDateTimeFormat().format(snapshot.getCreationDate());
+            return fullDateTimeRenderer.render(snapshot.getCreationDate());
         }
     };
 

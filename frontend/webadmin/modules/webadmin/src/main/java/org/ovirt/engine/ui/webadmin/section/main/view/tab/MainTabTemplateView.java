@@ -9,6 +9,7 @@ import org.ovirt.engine.core.searchbackend.VmTemplateConditionFieldAutoCompleter
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
@@ -17,8 +18,8 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractGeneralDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
@@ -71,7 +72,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VmTemplate> creationDateColumn = new AbstractGeneralDateTimeColumn<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> creationDateColumn = new AbstractFullDateTimeColumn<VmTemplate>() {
             @Override
             protected Date getRawValue(VmTemplate object) {
                 return object.getCreationDate();

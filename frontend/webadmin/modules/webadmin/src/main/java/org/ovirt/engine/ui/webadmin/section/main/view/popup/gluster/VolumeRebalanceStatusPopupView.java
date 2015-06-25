@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.renderer.GlusterRebalanceDateTimeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractHumanReadableTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractRebalanceFileSizeColumn;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
@@ -93,6 +94,8 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
     private final static ApplicationMessages messages = AssetProvider.getMessages();
+
+    protected FullDateTimeRenderer renderer = new FullDateTimeRenderer(true, true); // show seconds in dates
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -225,10 +228,11 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
                 if(entity == null) {
                     return constants.unAvailablePropertyLabel();
                 }
-                return GlusterRebalanceDateTimeRenderer.getLocalizedDateTimeFormat().format(entity);
+                return renderer.render(entity);
             }
         });
     }
+
     @Override
     public VolumeRebalanceStatusModel flush() {
         return driver.flush();
