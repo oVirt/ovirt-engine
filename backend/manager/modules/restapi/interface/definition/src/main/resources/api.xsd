@@ -229,6 +229,10 @@
       </xs:element>
       <xs:element ref="power_management" minOccurs="0" maxOccurs="1"/>
       <!-- for Host fence status action  -->
+
+      <!-- This flag is populated by the "isattached" action to indicate if the
+           returned storage dommain is attached to any data center: -->
+      <xs:element name="is_attached" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:group>
 
@@ -2871,7 +2875,6 @@
           <xs:element name="storage_format" type="xs:string" minOccurs="0"/>
           <xs:element name="wipe_after_delete" type="xs:boolean" minOccurs="0"/>
           <xs:element name="import" type="xs:boolean" minOccurs="0"/>
-          <xs:element name="is_attached" type="xs:boolean" minOccurs="0"/>
           <xs:element name="warning_low_space_indicator" type="xs:int" minOccurs="0"/>
           <xs:element name="critical_space_action_blocker" type="xs:int" minOccurs="0"/>
         </xs:sequence>

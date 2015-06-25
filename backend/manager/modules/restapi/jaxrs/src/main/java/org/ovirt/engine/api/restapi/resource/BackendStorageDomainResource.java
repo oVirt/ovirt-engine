@@ -12,8 +12,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
-import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -132,27 +132,31 @@ public class BackendStorageDomainResource extends
     @Override
     public Response getIsAttached(Action action) {
         validateParameters(action, "host.id|name");
-        Host host = action.getHost();
-        org.ovirt.engine.core.common.businessentities.StorageDomain storageDomainToAttach =
-                getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-                        VdcQueryType.GetStorageDomainById,
-                        new IdQueryParameters(guid),
-                        "storage_domain");
+        Guid hostId = getHostId(action);
+        org.ovirt.engine.core.common.businessentities.StorageDomain storageDomainToAttach = getEntity(
+            org.ovirt.engine.core.common.businessentities.StorageDomain.class,
+            VdcQueryType.GetStorageDomainById,
+            new IdQueryParameters(guid),
+            guid.toString()
+        );
         StorageDomainsAndStoragePoolIdQueryParameters parameters =
-                new StorageDomainsAndStoragePoolIdQueryParameters(storageDomainToAttach, null, asGuid(host.getId()));
+                new StorageDomainsAndStoragePoolIdQueryParameters(storageDomainToAttach, null, hostId);
         parameters.setCheckStoragePoolStatus(false);
-        List<StorageDomainStatic> attachedStorageDomains =
-                getEntity(List.class,
-                        VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
-                        parameters,
-                        "GetStorageDomainsWithAttachedStoragePoolGuid", true);
-        StorageDomain returnedStorageDomain = new StorageDomain();
-        returnedStorageDomain.setIsAttached(false);
-        returnedStorageDomain.setId(guid.toString());
-        if (!attachedStorageDomains.isEmpty()) {
-            returnedStorageDomain.setIsAttached(true);
-        }
-        return Response.ok().entity(returnedStorageDomain).build();
+        List<StorageDomainStatic> attachedStorageDomains = getEntity(
+            List.class,
+            VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
+            parameters,
+            guid.toString(),
+            true
+        );
+
+        // This is an atypical action, as it doesn't invoke a backend action, but a query. As a result we need to
+        // create and populate the returned action object so that it looks like a real action result.
+        Action result = new Action();
+        result.setIsAttached(!attachedStorageDomains.isEmpty());
+        result.setStatus(StatusUtils.create(CreationStatus.COMPLETE));
+
+        return Response.ok().entity(result).build();
     }
 
     @Override
