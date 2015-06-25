@@ -11,58 +11,45 @@
         }
 
         .pathEditorContent {
-            width: 565px;
+            width: 540px;
+            margin-left: 87px;
+            line-height: 26px !important;
         }
 
         .pathExampleLabel {
-            margin: 2px 0px 0px 10px;
+            margin: 0px 0px 0px 125px;
             font-size: 8pt;
+            width: 450px;
         }
 
         .errorLabel {
             color: #CD2127;
-            margin-bottom: 20px;
+            margin-bottom: 11px;
             margin-left: 5px;
+        }
+
+        .vfsTypeTextBoxEditor {
+            width: 270px;
+            margin-left: 57px;
+            line-height: 26px !important;
+        }
+
+        .mountOptionsTextBoxEditor {
+            width: 270px;
+            margin-left: 29px;
+            line-height: 26px !important;
         }
 
     </ui:style>
 
     <g:VerticalPanel>
         <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
-        <g:HTMLPanel>
-            <table>
-                <tr>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="pathLabel" addStyleNames="{style.label}"/>
-                    </td>
-                    <td>
-                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="pathEditor" addStyleNames="table_contentWidget_pfly_fix"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="pathExampleLabel" addStyleNames="{style.pathExampleLabel}, generalDialogComment"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="vfsTypeLabel" addStyleNames="{style.label}"/>
-                    </td>
-                    <td>
-                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="vfsTypeEditor" addStyleNames="table_contentWidget_pfly_fix"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="mountOptionsLabel" addStyleNames="{style.label}"/>
-                    </td>
-                    <td>
-                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="mountOptionsEditor" addStyleNames="table_contentWidget_pfly_fix"/>
-                    </td>
-                </tr>
-            </table>
-        </g:HTMLPanel>
+        <ge:StringEntityModelTextBoxEditor ui:field="pathEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+        <g:Label ui:field="pathExampleLabel" addStyleNames="{style.pathExampleLabel}, generalDialogComment"/>
+        <g:VerticalPanel>
+            <ge:StringEntityModelTextBoxEditor ui:field="vfsTypeEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+            <ge:StringEntityModelTextBoxEditor ui:field="mountOptionsEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+        </g:VerticalPanel>
     </g:VerticalPanel>
 
 </ui:UiBinder>

@@ -2,21 +2,18 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.GlusterStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel> {
@@ -41,35 +38,23 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     WidgetStyle style;
 
     @UiField
-    @WithElementId
     @Path(value = "path.entity")
-    StringEntityModelTextBoxOnlyEditor pathEditor;
-
-    @UiField
-    @Ignore
-    Label pathLabel;
+    @WithElementId("path")
+    StringEntityModelTextBoxEditor pathEditor;
 
     @UiField
     @Ignore
     Label pathExampleLabel;
 
     @UiField
-    @WithElementId
     @Path(value = "vfsType.entity")
-    StringEntityModelTextBoxOnlyEditor vfsTypeEditor;
+    @WithElementId("vfsType")
+    StringEntityModelTextBoxEditor vfsTypeEditor;
 
     @UiField
-    @Ignore
-    Label vfsTypeLabel;
-
-    @UiField
-    @WithElementId
     @Path(value = "mountOptions.entity")
-    StringEntityModelTextBoxOnlyEditor mountOptionsEditor;
-
-    @UiField
-    @Ignore
-    Label mountOptionsLabel;
+    @WithElementId("mountOptions")
+    StringEntityModelTextBoxEditor mountOptionsEditor;
 
     @UiField
     @Path(value = "configurationMessage")
@@ -86,13 +71,15 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
 
     void addStyles() {
         pathEditor.addContentWidgetContainerStyleName(style.pathEditorContent());
+        vfsTypeEditor.addContentWidgetContainerStyleName(style.vfsTypeTextBoxEditor());
+        mountOptionsEditor.addContentWidgetContainerStyleName(style.mountOptionsTextBoxEditor());
     }
 
     void localize() {
-        pathLabel.setText(constants.storagePopupPosixPathLabel());
+        pathEditor.setLabel(constants.storagePopupPosixPathLabel());
         pathExampleLabel.setText(constants.storagePopupGlusterPathExampleLabel());
-        vfsTypeLabel.setText(constants.storagePopupVfsTypeLabel());
-        mountOptionsLabel.setText(constants.storagePopupMountOptionsLabel());
+        vfsTypeEditor.setLabel(constants.storagePopupVfsTypeLabel());
+        mountOptionsEditor.setLabel(constants.storagePopupMountOptionsLabel());
     }
 
     @Override
@@ -101,24 +88,6 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
 
         pathExampleLabel.setVisible(object.getPath().getIsAvailable() && object.getPath().getIsChangable());
 
-        StyleTextBoxEditor(pathEditor, object.getPath());
-        StyleTextBoxEditor(vfsTypeEditor, object.getVfsType());
-        StyleTextBoxEditor(mountOptionsEditor, object.getMountOptions());
-    }
-
-    /*
-    Makes a provided editor look like label (enabled, read-only textbox).
-     */
-    private void StyleTextBoxEditor(StringEntityModelTextBoxOnlyEditor editor, EntityModel model) {
-
-        if (!model.getIsChangable()) {
-
-            editor.setEnabled(true);
-
-            ValueBox<String> valueBox = editor.asValueBox();
-            valueBox.setReadOnly(true);
-            valueBox.getElement().getStyle().setBorderWidth(0, Style.Unit.PX);
-        }
     }
 
     @Override
@@ -129,6 +98,10 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     interface WidgetStyle extends CssResource {
 
         String pathEditorContent();
+
+        String vfsTypeTextBoxEditor();
+
+        String mountOptionsTextBoxEditor();
     }
 
     @Override
