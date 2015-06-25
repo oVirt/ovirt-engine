@@ -117,6 +117,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
                             false,
                             true,
                             true);
+            diskImagesFromConfiguration.addAll(ImagesHandler.filterDisksBasedOnCinder(loadedImages, true));
         }
         return diskImagesFromConfiguration;
     }
