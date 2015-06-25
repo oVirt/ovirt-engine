@@ -1761,6 +1761,10 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         return getStatus().isQualifiedForLiveSnapshotMerge();
     }
 
+    public boolean isQualifiedForConsoleConnect() {
+        return getStatus().isQualifiedForConsoleConnect();
+    }
+
     public boolean isRunningAndQualifyForDisksMigration() {
         return getStatus().isUpOrPaused() && getRunOnVds() != null && !getRunOnVds().equals(Guid.Empty);
     }

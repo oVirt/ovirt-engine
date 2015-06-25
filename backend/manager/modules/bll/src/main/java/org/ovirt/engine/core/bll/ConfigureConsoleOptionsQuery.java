@@ -74,7 +74,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             getQueryReturnValue().setExceptionString(String.format("Can't find VM with id %s",
                     getParameters().getOptions().getVmId()));
             return false;
-        } else if (!getCachedVm().isRunning()) {
+        } else if (!getCachedVm().isQualifiedForConsoleConnect()) {
             getQueryReturnValue().setExceptionString(String.format("Vm %s is not running.", getCachedVm().getName()));
             return false;
         } else {

@@ -87,6 +87,16 @@ public enum VMStatus implements Identifiable {
     }
 
     /**
+     * This method reflects whether the VM is qualified for console connection.
+     *
+     * @return true if the VM status indicates that console connection may be possible, otherwise false
+     */
+    public boolean isQualifiedForConsoleConnect() {
+        return this == PoweringUp || this == Up || this == RebootInProgress || this == PoweringDown ||
+                this == Paused || this == MigratingFrom || this == SavingState;
+    }
+
+    /**
      * This method reflects whether the VM is surely running or paused in this status
      *
      * @see #isRunning()

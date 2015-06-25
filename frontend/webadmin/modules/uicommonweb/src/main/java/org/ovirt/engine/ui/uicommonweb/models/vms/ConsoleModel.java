@@ -126,21 +126,7 @@ public abstract class ConsoleModel extends EntityModel<VM> {
 
         return getForceVmStatusUp()
                 ? getEntity().getStatus() == VMStatus.Up
-                : isVmRunning();
-    }
-
-    private boolean isVmRunning() {
-        switch (getEntity().getStatus()) {
-            case PoweringUp:
-            case Up:
-            case RebootInProgress:
-            case PoweringDown:
-            case Paused:
-                return true;
-
-            default:
-                return false;
-        }
+                : getEntity().isQualifiedForConsoleConnect();
     }
 
     @Override
