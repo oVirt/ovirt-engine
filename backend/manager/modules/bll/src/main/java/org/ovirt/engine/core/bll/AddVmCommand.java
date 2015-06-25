@@ -1235,9 +1235,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     private boolean isMakeCreatorExplicitOwner() {
-        return getParameters().isMakeCreatorExplicitOwner() ||
-                !checkUserAuthorization(
-                        getCurrentUser().getId(), ActionGroup.MANIPULATE_PERMISSIONS, getVmId(), VdcObjectType.VM);
+        return getParameters().isMakeCreatorExplicitOwner()
+                || (getCurrentUser() != null && !checkUserAuthorization(
+                        getCurrentUser().getId(),
+                        ActionGroup.MANIPULATE_PERMISSIONS,
+                        getVmId(),
+                        VdcObjectType.VM));
     }
 
     private void copyTemplatePermissions(UniquePermissionsSet permissionsToAdd) {
