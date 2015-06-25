@@ -71,6 +71,7 @@ public class CloneCinderDisksCommand<T extends CloneCinderDisksParameters> exten
         createParams.setEntityInfo(getParameters().getEntityInfo());
         createParams.setParentCommand(getActionType());
         createParams.setParentParameters(getParameters());
+        createParams.setVmSnapshotId(getParameters().getVmSnapshotId());
         return createParams;
     }
 

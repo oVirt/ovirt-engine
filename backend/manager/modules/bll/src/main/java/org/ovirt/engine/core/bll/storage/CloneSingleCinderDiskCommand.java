@@ -33,12 +33,19 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
     protected void executeCommand() {
         lockImage();
         CinderDisk cinderDisk = getDisk();
-        String volumeId = getCinderBroker().cloneDisk(cinderDisk);
         cinderDisk.setDiskAlias(getParameters().getDiskAlias());
+        String volumeId = getNewVolumeCinderDisk(cinderDisk);
         cinderDisk.setId(Guid.createGuidFromString(volumeId));
         cinderDisk.setImageId(Guid.createGuidFromString(volumeId));
         cinderDisk.setImageStatus(ImageStatus.LOCKED);
         cinderDisk.setVolumeType(VolumeType.Sparse);
+        cinderDisk.setVmSnapshotId(getParameters().getVmSnapshotId());
+
+        // If we clone a disk from snapshot, update the volume with the appropriate parameters.
+        if (!cinderDisk.getActive()) {
+            cinderDisk.setActive(true);
+            cinderDisk.setParentId(Guid.Empty);
+        }
         addCinderDiskTemplateToDB(cinderDisk);
 
         getReturnValue().setActionReturnValue(cinderDisk.getId());
@@ -46,6 +53,16 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
         getParameters().setContainerId(Guid.createGuidFromString(volumeId));
         persistCommand(getParameters().getParentCommand(), true);
         setSucceeded(true);
+    }
+
+    private String getNewVolumeCinderDisk(CinderDisk cinderDisk) {
+        String volumeId;
+        if (cinderDisk.getActive()) {
+            volumeId = getCinderBroker().cloneDisk(cinderDisk);
+        } else {
+            volumeId = getCinderBroker().cloneVolumeFromSnapshot(cinderDisk, cinderDisk.getImageId());
+        }
+        return volumeId;
     }
 
     protected void addCinderDiskTemplateToDB(final CinderDisk cinderDisk) {
