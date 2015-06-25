@@ -842,10 +842,9 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
                 VDS host = hostListModel.getSelectedItem();
 
-                final EditHostModel hostModel = new EditHostModel();
+                final HostModel hostModel = new EditHostModel();
                 hostListModel.setWindow(hostModel);
                 hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis, getSystemTreeSelectedItem());
-                hostModel.setSelectedCluster(host);
                 hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
                 hostModel.setHelpTag(HelpTag.edit_host);
                 hostModel.setHashName("edit_host"); //$NON-NLS-1$

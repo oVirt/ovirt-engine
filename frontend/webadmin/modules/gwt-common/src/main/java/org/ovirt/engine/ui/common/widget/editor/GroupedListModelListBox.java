@@ -17,8 +17,6 @@ import com.google.gwt.dom.client.OptionElement;
 import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -70,7 +68,7 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
      */
     public void setValue(T value) {
         if (value != null) {
-            super.setValue(value, true);
+            super.setValue(value);
         }
     }
 
@@ -82,13 +80,6 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
         getListBox().addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
-                updateGroupLabel();
-            }
-        });
-        addValueChangeHandler(new ValueChangeHandler<T>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<T> event) {
                 updateGroupLabel();
             }
         });

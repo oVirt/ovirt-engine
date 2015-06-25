@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -90,22 +89,4 @@ public class EditHostModel extends HostModel {
         return false;
     }
 
-    public void setSelectedCluster(VDS host) {
-        ArrayList<VDSGroup> clusters;
-        if (getCluster().getItems() == null)
-        {
-            VDSGroup tempVar = new VDSGroup();
-            tempVar.setName(host.getVdsGroupName());
-            tempVar.setId(host.getVdsGroupId());
-            tempVar.setCompatibilityVersion(host.getVdsGroupCompatibilityVersion());
-            getCluster()
-                    .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { tempVar })));
-        }
-        clusters = (ArrayList<VDSGroup>) getCluster().getItems();
-        updateModelClusterFromVds(clusters, host);
-        if (getCluster().getSelectedItem() == null)
-        {
-            getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
-        }
-    }
 }

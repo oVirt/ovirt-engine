@@ -463,23 +463,23 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
              */
             final class DataCenterClusterComparator implements Comparator<VDSGroup> {
 
-                @Override
-                public int compare(VDSGroup cluster1, VDSGroup cluster2) {
-                    if (cluster1.getStoragePoolName() != null && cluster2.getStoragePoolName() == null) {
-                        return -1;
-                    } else if (cluster2.getStoragePoolName() != null && cluster1.getStoragePoolName() == null) {
-                        return 1;
-                    } else if (cluster1.getStoragePoolName() == null && cluster2.getStoragePoolName() == null) {
-                        return 0;
-                    }
-                    if (cluster1.getStoragePoolName().equals(cluster2.getStoragePoolName())) {
-                        return cluster1.getName().compareToIgnoreCase(cluster2.getName());
-                    } else {
-                        return cluster1.getStoragePoolName().compareToIgnoreCase(cluster2.getStoragePoolName());
-                    }
-                }
-            }
-        });
+                 @Override
+                 public int compare(VDSGroup cluster1, VDSGroup cluster2) {
+                     if (cluster1.getStoragePoolName() != null && cluster2.getStoragePoolName() == null) {
+                         return -1;
+                     } else if (cluster2.getStoragePoolName() != null && cluster1.getStoragePoolName() == null) {
+                         return 1;
+                     } else if (cluster1.getStoragePoolName() == null && cluster2.getStoragePoolName() == null) {
+                         return 0;
+                     }
+                     if (cluster1.getStoragePoolName().equals(cluster2.getStoragePoolName())) {
+                         return cluster1.getName().compareToIgnoreCase(cluster2.getName());
+                     } else {
+                         return cluster1.getStoragePoolName().compareToIgnoreCase(cluster2.getStoragePoolName());
+                     }
+                 }
+             }
+         });
 
         externalHostNameEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 

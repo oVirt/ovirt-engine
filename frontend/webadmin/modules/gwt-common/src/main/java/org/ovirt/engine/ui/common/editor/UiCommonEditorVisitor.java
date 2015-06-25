@@ -200,7 +200,6 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
     <O> void updateListEditor(TakesConstrainedValueEditor<O> listEditor, ListModel parentModel) {
         Collection<O> items = (Collection<O>) parentModel.getItems();
         if (items != null) {
-            listEditor.setAcceptableValues(items);
             if (items.size() > 0) {
                 O value;
                 if (parentModel.getSelectedItem() != null) {
@@ -214,6 +213,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
 
             }
 
+            listEditor.setAcceptableValues(items);
         }
     }
 
