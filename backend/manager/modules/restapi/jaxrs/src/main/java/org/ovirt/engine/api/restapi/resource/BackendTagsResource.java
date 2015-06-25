@@ -31,7 +31,6 @@ public class BackendTagsResource
     }
 
     @Override
-    @SingleEntityResource
     public TagResource getTagSubResource(String id) {
         return inject(new BackendTagResource(id, this));
     }

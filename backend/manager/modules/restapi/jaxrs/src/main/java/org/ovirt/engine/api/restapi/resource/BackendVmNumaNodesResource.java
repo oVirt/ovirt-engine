@@ -101,7 +101,6 @@ public class BackendVmNumaNodesResource
     }
 
     @Override
-    @SingleEntityResource
     public VmNumaNodeResource getVmNumaNodeSubResource(String id) {
         return inject(new BackendVmNumaNodeResource(id,
                 this,

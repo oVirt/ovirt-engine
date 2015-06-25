@@ -17,7 +17,6 @@ import org.ovirt.engine.api.resource.aaa.GroupResource;
 import org.ovirt.engine.api.resource.aaa.GroupsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.ResourceConstants;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.api.restapi.utils.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
@@ -124,7 +123,6 @@ public class BackendGroupsResource
     }
 
     @Override
-    @SingleEntityResource
     public GroupResource getGroupSubResource(String id) {
         return inject(new BackendGroupResource(id, this));
     }

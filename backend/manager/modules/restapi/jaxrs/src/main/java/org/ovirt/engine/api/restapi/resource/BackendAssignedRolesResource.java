@@ -28,7 +28,6 @@ public class BackendAssignedRolesResource
     }
 
     @Override
-    @SingleEntityResource
     public RoleResource getRoleSubResource(String id) {
         return inject(new BackendRoleResource(id, principalId));
     }

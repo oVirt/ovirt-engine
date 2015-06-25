@@ -40,7 +40,6 @@ public class BackendAssignedDiskProfilesResource extends AbstractBackendDiskProf
         validateParameters(diskProfile, "name");
     }
 
-    @SingleEntityResource
     @Override
     public AssignedDiskProfileResource getAssignedDiskProfileSubResource(String id) {
         return inject(new BackendAssignedDiskProfileResource(id, this));

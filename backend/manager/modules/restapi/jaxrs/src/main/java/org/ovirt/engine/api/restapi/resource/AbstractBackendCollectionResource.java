@@ -1,13 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -182,41 +179,6 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     protected String asString(VdcReturnValueBase result) {
         Guid guid = (Guid)result.getActionReturnValue();
         return guid != null ? guid.toString() : null;
-    }
-
-    protected void getEntity(String id) {
-        try {
-            Method method = getMethod(this.getClass(), SingleEntityResource.class);
-            if (method==null) {
-                log.error("Could not find sub-resource in the collection resource");
-            } else {
-                Object entityResource = method.invoke(this, id);
-                method = entityResource.getClass().getMethod("get");
-                method.invoke(entityResource);
-            }
-        } catch (IllegalAccessException e) {
-            log.error("Reflection Error", e);
-        } catch (InvocationTargetException e) {
-            if (e.getTargetException() instanceof WebApplicationException) {
-                throw((WebApplicationException)e.getTargetException());
-            } else {
-                log.error("Reflection Error", e);
-            }
-        } catch (SecurityException e) {
-            log.error("Reflection Error", e);
-        } catch (NoSuchMethodException e) {
-            log.error("Reflection Error", e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private Method getMethod(Class<?> clazz, @SuppressWarnings("rawtypes") Class annotation) {
-        for (Method m : clazz.getMethods()) {
-            if (m.getAnnotation(annotation)!=null) {
-                return m;
-            }
-        }
-        return null;
     }
 
     /**

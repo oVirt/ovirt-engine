@@ -41,7 +41,6 @@ public class BackendAssignedVnicProfilesResource extends AbstractBackendVnicProf
         validateParameters(vnicProfile, "name");
     }
 
-    @SingleEntityResource
     @Override
     public AssignedVnicProfileResource getAssignedVnicProfileSubResource(String id) {
         return inject(new BackendAssignedVnicProfileResource(id, this));

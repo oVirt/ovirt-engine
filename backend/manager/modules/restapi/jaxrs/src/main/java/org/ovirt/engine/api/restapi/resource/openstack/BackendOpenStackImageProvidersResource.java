@@ -26,7 +26,6 @@ import org.ovirt.engine.api.model.OpenStackImageProviders;
 import org.ovirt.engine.api.resource.openstack.OpenStackImageProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackImageProvidersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -98,7 +97,6 @@ public class BackendOpenStackImageProvidersResource
     }
 
     @Override
-    @SingleEntityResource
     public OpenStackImageProviderResource getOpenStackImageProvider(String id) {
         return inject(new BackendOpenStackImageProviderResource(id));
     }

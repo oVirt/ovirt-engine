@@ -83,7 +83,6 @@ public class BackendStorageServerConnectionsResource extends AbstractBackendColl
     }
 
     @Override
-    @SingleEntityResource
     public StorageServerConnectionResource getStorageConnectionSubResource(String id) {
         return inject(new BackendStorageServerConnectionResource(id, this));
     }

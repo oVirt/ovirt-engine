@@ -24,7 +24,6 @@ import org.ovirt.engine.api.model.OpenStackVolumeProviders;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.api.restapi.types.DataCenterMapper;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -118,7 +117,6 @@ public class BackendOpenStackVolumeProvidersResource
     }
 
     @Override
-    @SingleEntityResource
     public OpenStackVolumeProviderResource getOpenStackVolumeProvider(String id) {
         return inject(new BackendOpenStackVolumeProviderResource(id, this));
     }

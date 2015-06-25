@@ -54,7 +54,6 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
     }
 
     @Override
-    @SingleEntityResource
     public StepResource getStepSubResource(String id) {
         return inject(new BackendStepResource(id, this));
     }

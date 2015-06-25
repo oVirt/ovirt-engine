@@ -39,7 +39,6 @@ public class BackendIscsiBondNetworksResource extends BackendNetworksResource {
     }
 
     @Override
-    @SingleEntityResource
     public NetworkResource getNetworkSubResource(String id) {
         return inject(new BackendIscsiBondNetworkResource(id, this));
     }

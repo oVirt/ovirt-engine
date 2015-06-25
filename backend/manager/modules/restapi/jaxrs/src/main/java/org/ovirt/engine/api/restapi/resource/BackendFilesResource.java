@@ -40,7 +40,6 @@ public class BackendFilesResource
     }
 
     @Override
-    @SingleEntityResource
     public FileResource getFileSubResource(String id) {
         return new BackendFileResource(id, this);
     }

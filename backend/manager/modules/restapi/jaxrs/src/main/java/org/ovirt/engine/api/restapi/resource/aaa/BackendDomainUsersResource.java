@@ -12,7 +12,6 @@ import org.ovirt.engine.api.resource.aaa.DomainUserResource;
 import org.ovirt.engine.api.resource.aaa.DomainUsersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.ResourceConstants;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.compat.Guid;
@@ -47,7 +46,6 @@ public class BackendDomainUsersResource
     }
 
     @Override
-    @SingleEntityResource
     public DomainUserResource getDomainUserSubResource(String id) {
         return inject(new BackendDomainUserResource(id, this));
     }

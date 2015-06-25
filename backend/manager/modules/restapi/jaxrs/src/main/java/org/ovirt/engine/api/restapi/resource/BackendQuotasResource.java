@@ -47,7 +47,6 @@ public class BackendQuotasResource extends AbstractBackendCollectionResource<Quo
     }
 
     @Override
-    @SingleEntityResource
     public QuotaResource getQuotaSubResource(String id) {
         return inject(new BackendQuotaResource(id, this));
     }

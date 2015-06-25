@@ -12,7 +12,6 @@ import org.ovirt.engine.api.resource.aaa.DomainGroupResource;
 import org.ovirt.engine.api.resource.aaa.DomainGroupsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.ResourceConstants;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.compat.Guid;
@@ -46,7 +45,6 @@ public class BackendDomainGroupsResource
     }
 
     @Override
-    @SingleEntityResource
     public DomainGroupResource getDomainGroupSubResource(String id) {
         return inject(new BackendDomainGroupResource(id, this));
     }

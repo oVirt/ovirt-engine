@@ -82,7 +82,6 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     }
 
     @Override
-    @SingleEntityResource
     public HostResource getHostSubResource(String id) {
         return inject(new BackendHostResource(id, this));
     }

@@ -39,7 +39,6 @@ public class BackendDataCentersResource extends
     }
 
     @Override
-    @SingleEntityResource
     public DataCenterResource getDataCenterSubResource(String id) {
         return inject(new BackendDataCenterResource(id, this));
     }

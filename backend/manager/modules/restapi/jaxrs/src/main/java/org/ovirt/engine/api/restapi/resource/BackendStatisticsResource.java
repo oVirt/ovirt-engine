@@ -31,7 +31,6 @@ public class BackendStatisticsResource<R extends BaseResource, Q>
     }
 
     @Override
-    @SingleEntityResource
     public StatisticResource getStatisticSubResource(String id) {
         return inject(new BackendStatisticResource<R, Q>(id, entityType, subjectId, query));
     }

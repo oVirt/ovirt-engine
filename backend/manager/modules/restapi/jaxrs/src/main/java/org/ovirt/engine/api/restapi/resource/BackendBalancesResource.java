@@ -33,7 +33,6 @@ public class BackendBalancesResource extends BackendPolicyUnitsResource<Balances
         return inject(new BackendBalanceResource(id, this));
     }
 
-    @SingleEntityResource
     public BalanceResource getBalanceSubResource(String id) {
         return getSubResource(id);
     }

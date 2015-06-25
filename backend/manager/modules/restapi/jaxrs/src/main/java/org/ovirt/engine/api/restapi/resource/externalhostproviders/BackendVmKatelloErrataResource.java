@@ -8,7 +8,6 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErratumResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -36,7 +35,6 @@ public class BackendVmKatelloErrataResource extends AbstractBackendCollectionRes
         return collection;
     }
 
-    @SingleEntityResource
     @Override
     public KatelloErratumResource getKatelloErratumSubResource(String id) {
         return inject(new BackendVmKatelloErratumResource(id, vmId));

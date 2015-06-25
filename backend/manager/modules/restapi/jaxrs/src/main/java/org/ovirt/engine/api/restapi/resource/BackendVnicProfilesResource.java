@@ -38,7 +38,6 @@ public class BackendVnicProfilesResource extends AbstractBackendVnicProfilesReso
                 + networkId);
     }
 
-    @SingleEntityResource
     @Override
     public VnicProfileResource getVnicProfileSubResource(String id) {
         return inject(new BackendVnicProfileResource(id));

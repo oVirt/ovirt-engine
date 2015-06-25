@@ -46,7 +46,6 @@ public class BackendMacPoolsResource
                 new QueryIdResolver<Guid>(VdcQueryType.GetMacPoolById, IdQueryParameters.class));
     }
 
-    @SingleEntityResource
     @Override
     public MacPoolResource getMacPoolSubResource(String id) {
         return inject(new BackendMacPoolResource(id));

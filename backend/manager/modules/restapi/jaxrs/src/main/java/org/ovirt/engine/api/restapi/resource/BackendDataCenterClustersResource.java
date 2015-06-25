@@ -33,7 +33,6 @@ public class BackendDataCenterClustersResource extends BackendClustersResource {
     }
 
     @Override
-    @SingleEntityResource
     public ClusterResource getClusterSubResource(String id) {
         return inject(new BackendDataCenterClusterResource(this, id));
     }

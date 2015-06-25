@@ -25,7 +25,6 @@ import org.ovirt.engine.api.model.OpenStackNetworks;
 import org.ovirt.engine.api.resource.openstack.OpenStackNetworkResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackNetworksResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -85,7 +84,6 @@ public class BackendOpenStackNetworksResource
     }
 
     @Override
-    @SingleEntityResource
     public OpenStackNetworkResource getOpenStackNetwork(String id) {
         return inject(new BackendOpenStackNetworkResource(providerId, id));
     }

@@ -58,7 +58,6 @@ public class BackendStorageDomainVmsResource
     }
 
     @Override
-    @SingleEntityResource
     public StorageDomainContentResource<VM> getStorageDomainContentSubResource(String id) {
         return inject(new BackendStorageDomainVmResource(this, id));
     }

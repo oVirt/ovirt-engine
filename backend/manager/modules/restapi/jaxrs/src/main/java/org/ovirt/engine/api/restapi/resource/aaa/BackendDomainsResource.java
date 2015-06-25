@@ -11,7 +11,6 @@ import org.ovirt.engine.api.resource.aaa.DomainResource;
 import org.ovirt.engine.api.resource.aaa.DomainsResource;
 import org.ovirt.engine.api.restapi.model.Directory;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -41,7 +40,6 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
     }
 
     @Override
-    @SingleEntityResource
     public DomainResource getDomainSubResource(String id) {
         return inject(new BackendDomainResource(id, this));
     }

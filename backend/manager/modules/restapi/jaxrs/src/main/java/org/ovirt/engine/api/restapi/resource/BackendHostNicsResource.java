@@ -86,7 +86,6 @@ public class BackendHostNicsResource
     }
 
     @Override
-    @SingleEntityResource
     public HostNicResource getHostNicSubResource(String id) {
         return inject(new BackendHostNicResource(id, this));
     }

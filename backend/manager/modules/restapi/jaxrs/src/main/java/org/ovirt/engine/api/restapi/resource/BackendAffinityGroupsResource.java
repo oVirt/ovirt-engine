@@ -57,7 +57,6 @@ public class BackendAffinityGroupsResource
     }
 
     @Override
-    @SingleEntityResource
     public AffinityGroupResource getAffinityGroupResource(String id) {
         return inject(new BackendAffinityGroupResource(id));
     }

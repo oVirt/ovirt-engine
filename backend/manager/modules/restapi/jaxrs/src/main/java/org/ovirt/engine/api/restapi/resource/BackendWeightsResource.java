@@ -37,7 +37,6 @@ public class BackendWeightsResource extends BackendPolicyUnitsResource<Weights, 
         return inject(new BackendWeightResource(id, this));
     }
 
-    @SingleEntityResource
     public WeightResource getWeightSubResource(String id) {
         return getSubResource(id);
     }

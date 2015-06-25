@@ -48,7 +48,6 @@ public class BackendCpuProfilesResource extends AbstractBackendCpuProfilesResour
                         + clusterId);
     }
 
-    @SingleEntityResource
     @Override
     public CpuProfileResource getCpuProfileSubResource(String id) {
         return inject(new BackendCpuProfileResource(id));

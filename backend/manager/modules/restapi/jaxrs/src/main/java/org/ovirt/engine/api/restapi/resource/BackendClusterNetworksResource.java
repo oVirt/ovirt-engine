@@ -119,7 +119,6 @@ public class BackendClusterNetworksResource
     }
 
     @Override
-    @SingleEntityResource
     public AssignedNetworkResource getAssignedNetworkSubResource(String id) {
         return inject(new BackendClusterNetworkResource(id, this));
     }

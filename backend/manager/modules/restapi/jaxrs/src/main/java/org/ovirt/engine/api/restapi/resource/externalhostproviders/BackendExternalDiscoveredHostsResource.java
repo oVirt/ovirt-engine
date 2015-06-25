@@ -23,7 +23,6 @@ import org.ovirt.engine.api.resource.externalhostproviders.ExternalDiscoveredHos
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalDiscoveredHostsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -66,7 +65,6 @@ public class BackendExternalDiscoveredHostsResource
     }
 
     @Override
-    @SingleEntityResource
     public ExternalDiscoveredHostResource getExternalDiscoveredHost(String id) {
         return inject(new BackendExternalDiscoveredHostResource(id, providerId));
     }

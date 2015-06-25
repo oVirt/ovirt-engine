@@ -47,7 +47,6 @@ public class BackendEventsResource
     }
 
     @Override
-    @SingleEntityResource
     public EventResource getEventSubResource(String id) {
         return inject(new BackendEventResource(id));
     }

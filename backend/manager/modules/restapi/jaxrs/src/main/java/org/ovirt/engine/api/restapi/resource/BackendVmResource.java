@@ -218,7 +218,6 @@ public class BackendVmResource extends
     }
 
     @Override
-    @SingleEntityResource
     public WatchdogsResource getWatchdogsResource() {
         return inject(
             new BackendWatchdogsResource(

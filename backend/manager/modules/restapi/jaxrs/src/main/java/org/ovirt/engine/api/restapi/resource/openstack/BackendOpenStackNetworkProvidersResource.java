@@ -26,7 +26,6 @@ import org.ovirt.engine.api.model.OpenStackNetworkProviders;
 import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProvidersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -99,7 +98,6 @@ public class BackendOpenStackNetworkProvidersResource
     }
 
     @Override
-    @SingleEntityResource
     public OpenStackNetworkProviderResource getOpenStackNetworkProvider(String id) {
         return inject(new BackendOpenStackNetworkProviderResource(id));
     }

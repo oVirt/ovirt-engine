@@ -96,7 +96,6 @@ public class BackendCdRomsResource
     }
 
     @Override
-    @SingleEntityResource
     public DeviceResource<CdRom> getDeviceSubResource(String id) {
         return inject(
             new BackendCdRomResource(

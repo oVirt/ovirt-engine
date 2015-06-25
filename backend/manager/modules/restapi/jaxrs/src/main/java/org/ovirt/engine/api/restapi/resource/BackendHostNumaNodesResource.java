@@ -41,7 +41,6 @@ public class BackendHostNumaNodesResource
     }
 
     @Override
-    @SingleEntityResource
     public HostNumaNodeResource getHostNumaNodeSubResource(String id) {
         return inject(new BackendHostNumaNodeResource(id, this));
     }

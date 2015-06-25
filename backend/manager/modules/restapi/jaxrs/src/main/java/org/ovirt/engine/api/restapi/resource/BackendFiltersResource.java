@@ -35,7 +35,6 @@ public class BackendFiltersResource extends BackendPolicyUnitsResource<Filters, 
         return inject(new BackendFilterResource(id, this));
     }
 
-    @SingleEntityResource
     public FilterResource getFilterSubResource(String id) {
         return getSubResource(id);
     }

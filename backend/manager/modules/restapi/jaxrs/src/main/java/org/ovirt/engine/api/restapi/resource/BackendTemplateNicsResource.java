@@ -55,7 +55,6 @@ public class BackendTemplateNicsResource
     }
 
     @Override
-    @SingleEntityResource
     public DeviceResource<NIC> getDeviceSubResource(String id) {
         return inject(
             new BackendTemplateNicResource(

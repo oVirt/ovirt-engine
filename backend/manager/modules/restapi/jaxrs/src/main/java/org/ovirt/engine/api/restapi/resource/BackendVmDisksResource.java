@@ -79,7 +79,6 @@ public class BackendVmDisksResource
     }
 
     @Override
-    @SingleEntityResource
     public VmDiskResource getDeviceSubResource(String id) {
         return inject(
             new BackendVmDiskResource(

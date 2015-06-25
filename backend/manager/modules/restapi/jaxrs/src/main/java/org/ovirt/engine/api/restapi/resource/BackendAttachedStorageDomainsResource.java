@@ -45,7 +45,6 @@ public class BackendAttachedStorageDomainsResource
     }
 
     @Override
-    @SingleEntityResource
     public AttachedStorageDomainResource getAttachedStorageDomainSubResource(String id) {
         return inject(new BackendAttachedStorageDomainResource(id, dataCenterId, SUB_COLLECTIONS));
     }

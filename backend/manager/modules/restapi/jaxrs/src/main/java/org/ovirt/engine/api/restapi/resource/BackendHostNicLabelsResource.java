@@ -59,7 +59,6 @@ public class BackendHostNicLabelsResource extends AbstractBackendCollectionResou
                 new NetworkLabelIdResolver(nicId, label.getId()));
     }
 
-    @SingleEntityResource
     @Override
     public LabelResource getLabelSubResource(String id) {
         return inject(new BackendHostNicLabelResource(id, this));

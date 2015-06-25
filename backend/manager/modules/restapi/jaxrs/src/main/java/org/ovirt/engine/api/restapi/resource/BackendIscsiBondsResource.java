@@ -47,7 +47,6 @@ public class BackendIscsiBondsResource extends AbstractBackendCollectionResource
     }
 
     @Override
-    @SingleEntityResource
     public IscsiBondResource getIscsiBondSubResource(String id) {
         return inject(new BackendIscsiBondResource(id));
     }

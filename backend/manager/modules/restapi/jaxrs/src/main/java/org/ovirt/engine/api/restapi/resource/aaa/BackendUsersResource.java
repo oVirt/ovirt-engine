@@ -19,7 +19,6 @@ import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.resource.aaa.UsersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.ResourceConstants;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.api.restapi.utils.aaa.AuthzUtils;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
@@ -141,7 +140,6 @@ public class BackendUsersResource
         return user;
     }
 
-    @SingleEntityResource
     public UserResource getUserSubResource(String id) {
         return inject(new BackendUserResource(id, this));
     }

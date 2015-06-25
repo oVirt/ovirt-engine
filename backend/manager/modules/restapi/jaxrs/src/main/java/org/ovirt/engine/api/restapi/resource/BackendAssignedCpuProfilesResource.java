@@ -40,7 +40,6 @@ public class BackendAssignedCpuProfilesResource extends AbstractBackendCpuProfil
         validateParameters(cpuProfile, "name");
     }
 
-    @SingleEntityResource
     @Override
     public AssignedCpuProfileResource getAssignedCpuProfileSubResource(String id) {
         return inject(new BackendAssignedCpuProfileResource(id, this));

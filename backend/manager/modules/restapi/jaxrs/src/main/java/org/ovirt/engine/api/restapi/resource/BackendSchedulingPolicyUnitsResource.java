@@ -32,7 +32,6 @@ public class BackendSchedulingPolicyUnitsResource extends AbstractBackendCollect
     }
 
     @Override
-    @SingleEntityResource
     public SchedulingPolicyUnitResource getSchedulingPolicyUnitSubResource(String id) {
         return inject(new BackendSchedulingPolicyUnitResource(id));
     }

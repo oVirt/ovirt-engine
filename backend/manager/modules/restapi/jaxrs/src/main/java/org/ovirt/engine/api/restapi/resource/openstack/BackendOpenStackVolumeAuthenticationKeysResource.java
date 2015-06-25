@@ -26,7 +26,6 @@ import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKeys;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeAuthenticationKeyResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeAuthenticationKeysResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -83,7 +82,6 @@ public class BackendOpenStackVolumeAuthenticationKeysResource
     }
 
     @Override
-    @SingleEntityResource
     public OpenStackVolumeAuthenticationKeyResource getOpenStackVolumeAuthenticationKey(String id) {
         return inject(new BackendOpenStackVolumeAuthenticationKeyResource(providerId, id));
     }

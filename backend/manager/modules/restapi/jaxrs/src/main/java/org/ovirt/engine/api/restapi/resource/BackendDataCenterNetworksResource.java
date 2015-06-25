@@ -63,7 +63,6 @@ public class BackendDataCenterNetworksResource extends BackendNetworksResource {
     }
 
     @Override
-    @SingleEntityResource
     public NetworkResource getNetworkSubResource(String id) {
         return inject(new BackendDataCenterNetworkResource(id, this));
     }

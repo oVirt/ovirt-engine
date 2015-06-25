@@ -74,7 +74,6 @@ public class BackendOperatingSystemsResource
     }
 
     @Override
-    @SingleEntityResource
     public OperatingSystemResource getOperatingSystem(String id) {
         return inject(new BackendOperatingSystemResource(id));
     }

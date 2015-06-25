@@ -56,7 +56,6 @@ public class BackendStorageDomainServerConnectionsResource extends AbstractBacke
     }
 
     @Override
-    @SingleEntityResource
     public StorageDomainServerConnectionResource getStorageConnectionSubResource(String id) {
         return inject(new BackendStorageDomainServerConnectionResource(id, this));
     }

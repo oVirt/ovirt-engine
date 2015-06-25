@@ -66,7 +66,6 @@ public class BackendTemplatesResource
     }
 
     @Override
-    @SingleEntityResource
     public TemplateResource getTemplateSubResource(String id) {
         return inject(new BackendTemplateResource(id));
     }

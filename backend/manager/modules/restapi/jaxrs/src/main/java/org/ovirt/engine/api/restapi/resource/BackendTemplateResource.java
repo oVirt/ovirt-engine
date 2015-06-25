@@ -203,7 +203,6 @@ public class BackendTemplateResource
     }
 
     @Override
-    @SingleEntityResource
     public WatchdogsResource getWatchdogsResource() {
         return inject(new BackendTemplateWatchdogsResource(guid,
                 VdcQueryType.GetWatchdog,

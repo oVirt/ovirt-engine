@@ -67,7 +67,6 @@ public class BackendStorageDomainTemplatesResource
     }
 
     @Override
-    @SingleEntityResource
     public StorageDomainContentResource<Template> getStorageDomainContentSubResource(String id) {
         return inject(new BackendStorageDomainTemplateResource(this, id));
     }

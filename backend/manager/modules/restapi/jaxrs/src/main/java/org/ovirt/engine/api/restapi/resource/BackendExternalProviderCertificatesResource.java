@@ -62,7 +62,6 @@ public class BackendExternalProviderCertificatesResource
     }
 
     @Override
-    @SingleEntityResource
     public ExternalProviderCertificateResource getCertificate(String id) {
         return inject(new BackendExternalProviderCertificateResource(id, providerId));
     }

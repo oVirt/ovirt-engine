@@ -86,7 +86,6 @@ public class BackendInstanceTypesResource
     }
 
     @Override
-    @SingleEntityResource
     public InstanceTypeResource getInstanceTypeSubResource(String id) {
         return inject(new BackendInstanceTypeResource(id));
     }

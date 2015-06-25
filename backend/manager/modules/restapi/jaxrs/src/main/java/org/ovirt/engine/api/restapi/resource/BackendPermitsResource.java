@@ -63,7 +63,6 @@ public class BackendPermitsResource
     }
 
     @Override
-    @SingleEntityResource
     public PermitResource getPermitSubResource(String id) {
         return inject(new BackendPermitResource(id, this));
     }

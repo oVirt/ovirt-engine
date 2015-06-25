@@ -70,7 +70,6 @@ public class BackendStorageDomainsResource
     }
 
     @Override
-    @SingleEntityResource
     public StorageDomainResource getStorageDomainSubResource(String id) {
         return inject(new BackendStorageDomainResource(id, this));
     }

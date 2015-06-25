@@ -55,7 +55,6 @@ public class BackendNetworkLabelsResource extends AbstractBackendCollectionResou
                 new NetworkLabelIdResolver(networkId));
     }
 
-    @SingleEntityResource
     @Override
     public LabelResource getLabelSubResource(String id) {
         return inject(new BackendNetworkLabelResource(id, this));

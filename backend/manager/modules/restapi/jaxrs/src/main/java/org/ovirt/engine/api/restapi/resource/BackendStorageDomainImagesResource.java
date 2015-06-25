@@ -33,7 +33,6 @@ public class BackendStorageDomainImagesResource
     }
 
     @Override
-    @SingleEntityResource
     public ImageResource getDeviceSubResource(String id) {
         return inject(new BackendStorageDomainImageResource(id, this));
     }

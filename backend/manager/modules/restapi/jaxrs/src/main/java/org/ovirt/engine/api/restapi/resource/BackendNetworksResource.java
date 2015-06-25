@@ -81,7 +81,6 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
     }
 
     @Override
-    @SingleEntityResource
     public NetworkResource getNetworkSubResource(String id) {
         return inject(new BackendNetworkResource(id, this));
     }

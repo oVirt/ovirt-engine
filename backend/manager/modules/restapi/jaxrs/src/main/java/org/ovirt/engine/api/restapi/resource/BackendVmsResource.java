@@ -95,7 +95,6 @@ public class BackendVmsResource extends
     }
 
     @Override
-    @SingleEntityResource
     public VmResource getVmSubResource(String id) {
         return inject(new BackendVmResource(id, this));
     }

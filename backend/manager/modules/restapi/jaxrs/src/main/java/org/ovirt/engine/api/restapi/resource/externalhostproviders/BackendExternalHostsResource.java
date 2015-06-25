@@ -24,7 +24,6 @@ import org.ovirt.engine.api.model.ExternalHosts;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -64,7 +63,6 @@ public class BackendExternalHostsResource
     }
 
     @Override
-    @SingleEntityResource
     public ExternalHostResource getExternalHost(String id) {
         return inject(new BackendExternalHostResource(id, providerId));
     }

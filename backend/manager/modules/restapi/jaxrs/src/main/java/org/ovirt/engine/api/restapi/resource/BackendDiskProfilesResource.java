@@ -48,7 +48,6 @@ public class BackendDiskProfilesResource extends AbstractBackendDiskProfilesReso
                         + storageId);
     }
 
-    @SingleEntityResource
     @Override
     public DiskProfileResource getDiskProfileSubResource(String id) {
         return inject(new BackendDiskProfileResource(id));

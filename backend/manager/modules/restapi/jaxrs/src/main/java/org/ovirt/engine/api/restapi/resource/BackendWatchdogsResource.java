@@ -43,7 +43,6 @@ public class BackendWatchdogsResource
     }
 
     @Override
-    @SingleEntityResource
     public WatchdogResource getDeviceSubResource(String watchdogId) {
         return inject(
             new BackendWatchdogResource(

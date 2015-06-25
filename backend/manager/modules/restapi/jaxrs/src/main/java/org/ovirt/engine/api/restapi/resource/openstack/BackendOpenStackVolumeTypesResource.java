@@ -22,7 +22,6 @@ import org.ovirt.engine.api.model.OpenStackVolumeTypes;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypeResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -65,7 +64,6 @@ public class BackendOpenStackVolumeTypesResource
     }
 
     @Override
-    @SingleEntityResource
     public OpenStackVolumeTypeResource getOpenStackVolumeType(String id) {
         return inject(new BackendOpenStackVolumeTypeResource(providerId, id));
     }
