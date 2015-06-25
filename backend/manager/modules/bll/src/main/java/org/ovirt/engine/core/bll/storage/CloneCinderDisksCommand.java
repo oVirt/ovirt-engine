@@ -66,7 +66,7 @@ public class CloneCinderDisksCommand<T extends CloneCinderDisksParameters> exten
     private ImagesContainterParametersBase buildChildCommandParameters(CinderDisk cinderDisk) {
         ImagesContainterParametersBase createParams = new ImagesContainterParametersBase(cinderDisk.getId());
         DiskImage templateDisk = getParameters().getDisksMap().get(cinderDisk.getId());
-        cinderDisk.setDiskAlias(templateDisk.getDiskAlias());
+        createParams.setDiskAlias(templateDisk.getDiskAlias());
         createParams.setStorageDomainId(templateDisk.getStorageIds().get(0));
         createParams.setEntityInfo(getParameters().getEntityInfo());
         createParams.setParentCommand(getActionType());

@@ -34,7 +34,7 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
         lockImage();
         CinderDisk cinderDisk = getDisk();
         String volumeId = getCinderBroker().cloneDisk(cinderDisk);
-
+        cinderDisk.setDiskAlias(getParameters().getDiskAlias());
         cinderDisk.setId(Guid.createGuidFromString(volumeId));
         cinderDisk.setImageId(Guid.createGuidFromString(volumeId));
         cinderDisk.setImageStatus(ImageStatus.LOCKED);
