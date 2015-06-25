@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateFromSnapshotParameters;
@@ -41,7 +42,11 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
     }
 
     public AddVmTemplateFromSnapshotCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public AddVmTemplateFromSnapshotCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override
