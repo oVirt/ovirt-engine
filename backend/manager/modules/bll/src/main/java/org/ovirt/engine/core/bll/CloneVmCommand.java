@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -48,8 +49,13 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     private VM sourceVm;
 
     public CloneVmCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    protected CloneVmCommand(T params, CommandContext commandContext) {
+        super(params);
+    }
+
 
     @Override
     protected void init() {
