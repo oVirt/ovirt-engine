@@ -19,11 +19,11 @@ public class ManageDomainsExecutor {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ManageDomainsExecutor.class);
 
-    private static final String PROGRAM_NAME = System.getProperty("org.ovirt.engine.exttool.core.programName");
-    private static final String PACKAGE_NAME = System.getProperty("org.ovirt.engine.exttool.core.packageName");
-    private static final String PACKAGE_VERSION = System.getProperty("org.ovirt.engine.exttool.core.packageVersion");
-    private static final String PACKAGE_DISPLAY_NAME = System.getProperty("org.ovirt.engine.exttool.core.packageDisplayName");
-    private static final String ENGINE_ETC = System.getProperty("org.ovirt.engine.exttool.core.engineEtc");
+    private static final String PROGRAM_NAME = System.getProperty("org.ovirt.engine.extensions.aaa.builtin.tools.programName");
+    private static final String PACKAGE_NAME = System.getProperty("org.ovirt.engine.extensions.aaa.builtin.tools.packageName");
+    private static final String PACKAGE_VERSION = System.getProperty("org.ovirt.engine.extensions.aaa.builtin.tools.packageVersion");
+    private static final String PACKAGE_DISPLAY_NAME = System.getProperty("org.ovirt.engine.extensions.aaa.builtin.tools.packageDisplayName");
+    private static final String ENGINE_ETC = System.getProperty("org.ovirt.engine.extensions.aaa.builtin.tools.engineEtc");
 
     public static void main(String... args) {
         setupLogger();
