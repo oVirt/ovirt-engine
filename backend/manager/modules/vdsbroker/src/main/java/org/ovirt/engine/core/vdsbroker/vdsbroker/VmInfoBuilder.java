@@ -110,7 +110,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmGraphicsDevices() {
         boolean graphicsOverriden = vm.isRunOnce() && vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty();
-        boolean usesGraphicsAsDevice = FeatureSupported.graphicsDeviceEnabled(vm.getClusterCompatibilityVersion());
+        boolean usesGraphicsAsDevice = FeatureSupported.graphicsDeviceEnabled(vm.getCompatibilityVersion());
 
         Map<GraphicsType, GraphicsInfo> infos = vm.getGraphicsInfos();
         Map<String, Object> specParamsFromVm = buildVmGraphicsSpecParamsFromVm(infos);
@@ -418,8 +418,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 }
                 addBootOrder(vmDevice, struct);
                 struct.put(VdsProperties.Shareable,
-                        (vmDevice.getSnapshotId() != null && FeatureSupported.hotPlugDiskSnapshot(vm.getClusterCompatibilityVersion())) ? VdsProperties.Transient
-                                : String.valueOf(disk.isShareable()));
+                        (vmDevice.getSnapshotId() != null
+                        && FeatureSupported.hotPlugDiskSnapshot(vm.getCompatibilityVersion()))
+                                ? VdsProperties.Transient : String.valueOf(disk.isShareable()));
                 struct.put(VdsProperties.Optional, Boolean.FALSE.toString());
                 struct.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
                 struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
@@ -495,7 +496,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      * @param storageQosIoTuneMap Cache object to reuse existing ioTune QoS entitites when iterating
      */
     static void handleIoTune(VM vm, VmDevice vmDevice, DiskImage diskImage, Map<Guid, Guid> diskProfileStorageQosMap, Map<Guid, Map<String, Long>> storageQosIoTuneMap) {
-        if (FeatureSupported.storageQoS(vm.getClusterCompatibilityVersion())) {
+        if (FeatureSupported.storageQoS(vm.getCompatibilityVersion())) {
             Map<String, Long> ioTune = buildIoTune(diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
 
             if (ioTune != null) {
@@ -599,7 +600,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             vmInterface,
                             vmDevice,
                             VmInfoBuilder.evaluateInterfaceType(ifaceType, vm.getHasAgent()),
-                            vm.getClusterCompatibilityVersion());
+                            vm.getCompatibilityVersion());
                 }
 
                 devices.add(struct);
@@ -690,7 +691,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     vm,
                     vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence(),
                     managedDevices,
-                    VmDeviceCommonUtils.isOldClusterVersion(vm.getClusterCompatibilityVersion()));
+                    VmDeviceCommonUtils.isOldClusterVersion(vm.getCompatibilityVersion()));
             for (VmDevice vmDevice : managedDevices) {
                 for (Map struct : devices) {
                     String deviceId = (String) struct.get(VdsProperties.DeviceId);
@@ -714,7 +715,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // The sysprep file size isn't being verified for 3.0 clusters and below, so we maintain the same behavior here.
         VmPayload vmPayload = new VmPayload();
         vmPayload.setDeviceType(VmDeviceType.FLOPPY);
-        vmPayload.getFiles().put(getOsRepository().getSysprepFileName(vm.getOs(), vm.getClusterCompatibilityVersion()),
+        vmPayload.getFiles().put(getOsRepository().getSysprepFileName(vm.getOs(), vm.getCompatibilityVersion()),
                 new String(BASE_64.encode(sysPrepContent.getBytes()), Charset.forName(CharEncoding.UTF_8)));
 
         VmDevice vmDevice =
@@ -846,7 +847,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 networkName = network.getName();
                 log.debug("VNIC '{}' is using profile '{}' on network '{}'",
                         nic.getName(), vnicProfile, networkName);
-                if (!addQosForDevice(struct, vnicProfile, vm.getClusterCompatibilityVersion())) {
+                if (!addQosForDevice(struct, vnicProfile, vm.getCompatibilityVersion())) {
                     unsupportedFeatures.add(VnicProfileProperties.NETWORK_QOS);
                 }
             }
@@ -861,7 +862,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         if (!addCustomPropertiesForDevice(struct,
                 vm,
                 vmDevice,
-                vm.getClusterCompatibilityVersion(),
+                vm.getCompatibilityVersion(),
                 getVnicCustomProperties(vnicProfile))) {
             unsupportedFeatures.add(VnicProfileProperties.CUSTOM_PROPERTIES);
         }
@@ -967,8 +968,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
 
-        String cdInterface = osRepository.getCdInterface(vm.getOs(),
-                vm.getClusterCompatibilityVersion());
+        String cdInterface = osRepository.getCdInterface(vm.getOs(), vm.getCompatibilityVersion());
 
         if ("scsi".equals(cdInterface)) {
             struct.put(VdsProperties.Index, "0"); // SCSI unit 0 is reserved by VDSM to CDROM
@@ -992,8 +992,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             struct.put(VdsProperties.Path, isPayload ? "" : path);
         }
         if (isPayload) {
-            String cdInterface = osRepository.getCdInterface(vm.getOs(),
-                    vm.getClusterCompatibilityVersion());
+            String cdInterface = osRepository.getCdInterface(vm.getOs(), vm.getCompatibilityVersion());
 
             if ("scsi".equals(cdInterface)) {
                 struct.put(VdsProperties.Index, "1"); // SCSI unit 1 is reserved for payload
@@ -1309,7 +1308,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     protected void buildVmNumaProperties() {
-        final String compatibilityVersion = vm.getClusterCompatibilityVersion().toString();
+        final String compatibilityVersion = vm.getCompatibilityVersion().toString();
         addNumaSetting(compatibilityVersion);
     }
 
@@ -1332,7 +1331,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             // if user didn't set specific NUMA conf
             // create a default one with one guest numa node
             if (vmNumaNodes.isEmpty()) {
-                if (FeatureSupported.hotPlugMemory(vm.getClusterCompatibilityVersion(), vm.getClusterArch())) {
+                if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
                     VmNumaNode vmNode = new VmNumaNode();
                     vmNode.setIndex(0);
                     vmNode.setMemTotal(vm.getMemSizeMb());

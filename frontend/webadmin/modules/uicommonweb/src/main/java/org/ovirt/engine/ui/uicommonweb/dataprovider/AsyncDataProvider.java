@@ -469,18 +469,18 @@ public class AsyncDataProvider {
 
         boolean archMemorySnapshotSupported = isMemorySnapshotSupportedByArchitecture(
                 vm.getClusterArch(),
-                vm.getClusterCompatibilityVersion());
+                vm.getCompatibilityVersion());
 
         return  (Boolean) getConfigValuePreConverted(
                 ConfigurationValues.MemorySnapshotSupported,
-                vm.getClusterCompatibilityVersion().toString())
+                vm.getCompatibilityVersion().toString())
                 && archMemorySnapshotSupported;
     }
 
     public boolean canVmsBePaused(List<VM> items) {
         for (VM vm : items) {
             if (!isSuspendSupportedByArchitecture(vm.getClusterArch(),
-                vm.getClusterCompatibilityVersion())) {
+                    vm.getCompatibilityVersion())) {
                 return false;
             }
         }
@@ -491,7 +491,7 @@ public class AsyncDataProvider {
     public boolean isLiveMergeSupported(VM vm) {
         return vm != null && (Boolean) getConfigValuePreConverted(
                 ConfigurationValues.LiveMergeSupported,
-                vm.getClusterCompatibilityVersion().toString());
+                vm.getCompatibilityVersion().toString());
     }
 
     public void initNicHotplugSupportMap() {
@@ -3860,7 +3860,7 @@ public class AsyncDataProvider {
         }
 
         for (VM vm : vms) {
-            Version version = vm.getClusterCompatibilityVersion();
+            Version version = vm.getCompatibilityVersion();
             Version anyDcVersion = new Version();
             boolean compatibleCluster = isCommandCompatible(VdcActionType.RebootVm, version, anyDcVersion);
             boolean guestAgentPresent = !StringHelper.isNullOrEmpty(vm.getVmIp());

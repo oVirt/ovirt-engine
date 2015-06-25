@@ -237,7 +237,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             allVmDisks.add(getNewDisk());
 
             if (!checkPciAndIdeLimit(vm.getOs(),
-                    vm.getClusterCompatibilityVersion(),
+                    vm.getCompatibilityVersion(),
                     vm.getNumOfMonitors(),
                     allVmInterfaces,
                     allVmDisks,

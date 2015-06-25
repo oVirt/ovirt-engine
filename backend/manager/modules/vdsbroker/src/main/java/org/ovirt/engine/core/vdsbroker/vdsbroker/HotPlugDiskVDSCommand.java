@@ -66,9 +66,9 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
             vmDevice.getSpecParams().put(VdsProperties.pinToIoThread, pinToIoThread);
         }
         drive.put(VdsProperties.Shareable,
-                (vmDevice.getSnapshotId() != null && FeatureSupported.hotPlugDiskSnapshot(getParameters().getVm()
-                        .getClusterCompatibilityVersion())) ? VdsProperties.Transient
-                        : String.valueOf(disk.isShareable()));
+                (vmDevice.getSnapshotId() != null && FeatureSupported.hotPlugDiskSnapshot(
+                        getParameters().getVm().getCompatibilityVersion()))
+                        ? VdsProperties.Transient : String.valueOf(disk.isShareable()));
         drive.put(VdsProperties.Optional, Boolean.FALSE.toString());
         drive.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
         drive.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());

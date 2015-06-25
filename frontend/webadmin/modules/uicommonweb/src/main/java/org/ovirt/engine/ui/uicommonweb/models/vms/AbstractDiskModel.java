@@ -851,7 +851,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         setMessage(null);
         updateShareableDiskEnabled(datacenter);
         updateDirectLunDiskEnabled(datacenter);
-        updateInterface(isInVm ? getVm().getClusterCompatibilityVersion() : null);
+        updateInterface(isInVm ? getVm().getCompatibilityVersion() : null);
 
         switch (getDiskStorageType().getEntity()) {
             case IMAGE:

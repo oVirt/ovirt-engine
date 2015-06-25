@@ -150,8 +150,9 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
-        if (!FeatureSupported.isSuspendSupportedByArchitecture(getVm().getClusterArch(),
-                getVm().getClusterCompatibilityVersion())) {
+        if (!FeatureSupported.isSuspendSupportedByArchitecture(
+                getVm().getClusterArch(),
+                getVm().getCompatibilityVersion())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_SUSPEND_NOT_SUPPORTED);
         }
 

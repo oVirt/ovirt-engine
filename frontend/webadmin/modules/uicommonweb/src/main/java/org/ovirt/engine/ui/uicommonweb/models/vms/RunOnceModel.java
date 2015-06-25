@@ -591,7 +591,8 @@ public abstract class RunOnceModel extends Model {
         setCustomPropertySheet(new KeyValueModel());
 
         setBootMenuEnabled(new EntityModel<>(false));
-        getBootMenuEnabled().setIsAvailable(AsyncDataProvider.getInstance().isBootMenuSupported(vm.getClusterCompatibilityVersion().toString()));
+        getBootMenuEnabled().setIsAvailable(
+                AsyncDataProvider.getInstance().isBootMenuSupported(vm.getCompatibilityVersion().toString()));
         setRunAndPause(new EntityModel<>(false));
         setRunAsStateless(new EntityModel<>(false));
 
@@ -608,13 +609,15 @@ public abstract class RunOnceModel extends Model {
 
         setSpiceFileTransferEnabled(new EntityModel<Boolean>());
         getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
-        boolean spiceFileTransferToggle = AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(vm.getClusterCompatibilityVersion().toString());
+        boolean spiceFileTransferToggle =
+                AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(vm.getCompatibilityVersion().toString());
         getSpiceFileTransferEnabled().setIsChangeable(spiceFileTransferToggle);
         getSpiceFileTransferEnabled().setIsAvailable(spiceFileTransferToggle);
 
         setSpiceCopyPasteEnabled(new EntityModel<Boolean>());
         getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
-        boolean spiceCopyPasteToggle = AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(vm.getClusterCompatibilityVersion().toString());
+        boolean spiceCopyPasteToggle =
+                AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(vm.getCompatibilityVersion().toString());
         getSpiceCopyPasteEnabled().setIsChangeable(spiceCopyPasteToggle);
         getSpiceCopyPasteEnabled().setIsAvailable(spiceCopyPasteToggle);
 
@@ -689,7 +692,8 @@ public abstract class RunOnceModel extends Model {
         EntityModel<DisplayType> qxlProtocol = new EntityModel<>(DisplayType.qxl)
            .setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
 
-        boolean hasSpiceSupport = AsyncDataProvider.getInstance().hasSpiceSupport(vm.getOs(), vm.getClusterCompatibilityVersion());
+        boolean hasSpiceSupport =
+                AsyncDataProvider.getInstance().hasSpiceSupport(vm.getOs(), vm.getCompatibilityVersion());
 
         if (hasSpiceSupport) {
             getDisplayProtocol().setItems(Arrays.asList(vncProtocol, qxlProtocol));
@@ -714,7 +718,7 @@ public abstract class RunOnceModel extends Model {
                 }
 
             }
-        }), vm.getOs(), vm.getClusterCompatibilityVersion());
+        }), vm.getOs(), vm.getCompatibilityVersion());
     }
 
     private void initVmInitEnabled(VmInit vmInit, boolean isInitialized) {

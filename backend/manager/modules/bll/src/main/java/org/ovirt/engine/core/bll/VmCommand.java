@@ -390,7 +390,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * check that hotplug is enabled via the 3.1 config paramter {@literal ConfigValues.HotPlugEnabled}
      */
     protected boolean isHotPlugSupported() {
-        if (FeatureSupported.hotPlug(getVm().getClusterCompatibilityVersion())) {
+        if (FeatureSupported.hotPlug(getVm().getCompatibilityVersion())) {
             return true;
         }
 
@@ -401,7 +401,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * The following method should check if os of guest is supported for nic hot plug/unplug operation
      */
     protected boolean isNicSupportedForPlugUnPlug() {
-        if (osRepository.hasNicHotplugSupport(getVm().getOs(), getVm().getClusterCompatibilityVersion())) {
+        if (osRepository.hasNicHotplugSupport(getVm().getOs(), getVm().getCompatibilityVersion())) {
             return true;
         }
 
@@ -418,7 +418,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             return failValidation(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
         }
         Set<String> diskHotpluggableInterfaces = osRepository.getDiskHotpluggableInterfaces(getVm().getOs(),
-                getVm().getClusterCompatibilityVersion());
+                getVm().getCompatibilityVersion());
 
         if (CollectionUtils.isEmpty(diskHotpluggableInterfaces)
                 || !diskHotpluggableInterfaces.contains(disk.getDiskInterface().name())) {

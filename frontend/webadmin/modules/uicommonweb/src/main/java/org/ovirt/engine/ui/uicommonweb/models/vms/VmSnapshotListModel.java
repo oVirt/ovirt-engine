@@ -936,7 +936,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                     return;
                 }
 
-                Version minClusterVersion = vm.getClusterCompatibilityVersion();
+                Version minVmVersion = vm.getCompatibilityVersion();
                 Version minDcVersion = dataCenter.getCompatibilityVersion();
 
                 AsyncDataProvider.getInstance().isCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
@@ -945,7 +945,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                         VmSnapshotListModel model = (VmSnapshotListModel) target;
                         model.setIsCloneVmSupported((Boolean) returnValue);
                     }
-                }), VdcActionType.AddVmFromSnapshot, minClusterVersion, minDcVersion);
+                }), VdcActionType.AddVmFromSnapshot, minVmVersion, minDcVersion);
             }
         }), vm.getStoragePoolId());
     }

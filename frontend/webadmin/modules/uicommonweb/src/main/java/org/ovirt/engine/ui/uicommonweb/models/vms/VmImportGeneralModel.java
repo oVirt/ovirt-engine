@@ -172,8 +172,9 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         setHasCustomProperties(!StringHelper.isNullOrEmpty(vm.getCustomProperties()));
         setCustomProperties(getHasCustomProperties() ? constants.configured() : constants.notConfigured());
 
-        setCompatibilityVersion(vm.getClusterCompatibilityVersion() != null ?
-                                vm.getClusterCompatibilityVersion().toString() : ""); //$NON-NLS-1$
+        setCompatibilityVersion(vm.getCompatibilityVersion() != null
+                ? vm.getCompatibilityVersion().toString()
+                : ""); //$NON-NLS-1$
 
         setVmId(vm.getId().toString());
         setFqdn(vm.getVmFQDN());

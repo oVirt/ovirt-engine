@@ -241,7 +241,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                             vm.getName(),
                             VmEntityType.VM,
                             vm.getClusterArch(),
-                            vm.getClusterCompatibilityVersion(),
+                            vm.getCompatibilityVersion(),
                             storageDomainId,
                             null,
                             null));

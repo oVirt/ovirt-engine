@@ -71,7 +71,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
         if (getParameters().getVmInit() != null) {
             if (!osRepository.isWindows(getVm().getOs()) &&
-                    !FeatureSupported.cloudInit(getVm().getClusterCompatibilityVersion())) {
+                    !FeatureSupported.cloudInit(getVm().getCompatibilityVersion())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED);
             }
 

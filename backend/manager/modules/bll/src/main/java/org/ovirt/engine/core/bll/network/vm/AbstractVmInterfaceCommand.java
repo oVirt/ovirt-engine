@@ -74,7 +74,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         List<Disk> allDisks = getDiskDao().getAllForVm(getVmId());
 
         return checkPciAndIdeLimit(vm.getOs(),
-                vm.getClusterCompatibilityVersion(),
+                vm.getCompatibilityVersion(),
                 vm.getNumOfMonitors(), allInterfaces, allDisks,
                 VmDeviceUtils.hasVirtioScsiController(getVmId()),
                 VmDeviceUtils.hasWatchdog(getVmId()),

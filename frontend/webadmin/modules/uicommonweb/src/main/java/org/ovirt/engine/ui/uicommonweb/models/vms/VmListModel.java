@@ -2054,7 +2054,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         VM vm = getSelectedItem();
         if (vm == null || !vm.isHostedEngine()
-              || vm.getClusterCompatibilityVersion().compareTo(Version.v3_4) < 0) {
+              || vm.getCompatibilityVersion().compareTo(Version.v3_4) < 0) {
             setHaMaintenanceAvailability(false);
         } else {
             setHaMaintenanceAvailability(true);

@@ -216,8 +216,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
         List<VmDevice> vmSoundDevices = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.SOUND);
         if (!vmSoundDevices.isEmpty()) {
             createInfo.put(VdsProperties.soundDevice,
-                    osRepository.getSoundDevice(vm.getStaticData().getOsId(),
-                            vm.getClusterCompatibilityVersion()));
+                    osRepository.getSoundDevice(vm.getStaticData().getOsId(), vm.getCompatibilityVersion()));
         }
     }
 

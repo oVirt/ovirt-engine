@@ -35,9 +35,9 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
         VmPropertiesUtils vmPropertiesUtils = SimpleDependencyInjector.getInstance().get(VmPropertiesUtils.class);
 
         vmPropertiesUtils.separateCustomPropertiesToUserAndPredefined(
-                srcVm.getClusterCompatibilityVersion(), srcStatic);
+                srcVm.getCompatibilityVersion(), srcStatic);
         vmPropertiesUtils.separateCustomPropertiesToUserAndPredefined(
-                dstVm.getClusterCompatibilityVersion(), dstStatic);
+                dstVm.getCompatibilityVersion(), dstStatic);
 
         Set<String> result = new HashSet<>(VmHandler.getChangedFieldsForStatus(srcStatic, dstStatic, VMStatus.Up));
 

@@ -617,7 +617,7 @@ public class SnapshotsManager {
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(vm.getClusterId(),
                         vm.getStoragePoolId(),
-                        vm.getClusterCompatibilityVersion(),
+                        vm.getCompatibilityVersion(),
                         AuditLogType.IMPORTEXPORT_SNAPSHOT_VM_INVALID_INTERFACES);
 
         vmInterfaceManager.removeAll(vm.getId());
@@ -629,7 +629,7 @@ public class SnapshotsManager {
             }
 
             vnicProfileHelper.updateNicWithVnicProfileForUser(vmInterface, user);
-            vmInterfaceManager.add(vmInterface, compensationContext, true, vm.getOs(), vm.getClusterCompatibilityVersion());
+            vmInterfaceManager.add(vmInterface, compensationContext, true, vm.getOs(), vm.getCompatibilityVersion());
         }
 
         vnicProfileHelper.auditInvalidInterfaces(vm.getName());

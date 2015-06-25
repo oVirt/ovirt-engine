@@ -71,12 +71,13 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.vm_name, vm.getName());
         createInfo.put(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
 
-        if (FeatureSupported.hotPlugMemory(vm.getClusterCompatibilityVersion(), vm.getClusterArch())) {
+        if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
             if (osRepository.get64bitOss().contains(vm.getOs())) {
                 ConfigValues config = vm.getClusterArch() == ArchitectureType.ppc64 ?
                         ConfigValues.VMPpc64BitMaxMemorySizeInMB :
                         ConfigValues.VM64BitMaxMemorySizeInMB;
-                createInfo.put(VdsProperties.maxMemSize, Config.getValue(config, vm.getClusterCompatibilityVersion().getValue()));
+                createInfo.put(VdsProperties.maxMemSize,
+                        Config.getValue(config, vm.getCompatibilityVersion().getValue()));
             } else {
                 createInfo.put(VdsProperties.maxMemSize, Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB));
             }
@@ -95,14 +96,14 @@ public abstract class VmInfoBuilderBase {
             createInfo.put(VdsProperties.threads_per_core, Integer.toString(vm.getThreadsPerCpu()));
             if (FeatureSupported.supportedInConfig(
                     ConfigValues.HotPlugCpuSupported,
-                    vm.getClusterCompatibilityVersion(),
+                    vm.getCompatibilityVersion(),
                     vm.getClusterArch())) {
                 createInfo.put(
                         VdsProperties.max_number_of_cpus,
                         calcMaxVCpu().toString());
             }
         }
-        final String compatibilityVersion = vm.getClusterCompatibilityVersion().toString();
+        final String compatibilityVersion = vm.getCompatibilityVersion().toString();
         addCpuPinning(compatibilityVersion);
         if(vm.getEmulatedMachine() != null) {
             createInfo.put(VdsProperties.emulatedMachine, vm.getEmulatedMachine());
@@ -122,7 +123,7 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.BOOT_MENU_ENABLE, Boolean.toString(vm.isBootMenuEnabled()));
 
         createInfo.put(VdsProperties.Custom,
-                VmPropertiesUtils.getInstance().getVMProperties(vm.getClusterCompatibilityVersion(),
+                VmPropertiesUtils.getInstance().getVMProperties(vm.getCompatibilityVersion(),
                         vm.getStaticData()));
         createInfo.put(VdsProperties.vm_type, "kvm"); // "qemu", "kvm"
         if (vm.isRunAndPause()) {
@@ -167,7 +168,7 @@ public abstract class VmInfoBuilderBase {
         // ensure compatibility with VDSM <= 4.16
         addVmSpiceOptions(vm.getGraphicsInfos(), createInfo);
 
-        if (osRepository.isHypervEnabled(vm.getVmOsId(), vm.getClusterCompatibilityVersion())) {
+        if (osRepository.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion())) {
             createInfo.put(VdsProperties.hypervEnable, "true");
         }
     }
@@ -184,10 +185,10 @@ public abstract class VmInfoBuilderBase {
     private Integer calcMaxVCpu() {
         Integer maxSockets = Config.<Integer>getValue(
                 ConfigValues.MaxNumOfVmSockets,
-                vm.getClusterCompatibilityVersion().getValue());
+                vm.getCompatibilityVersion().getValue());
         Integer maxVCpus = Config.<Integer>getValue(
                 ConfigValues.MaxNumOfVmCpus,
-                vm.getClusterCompatibilityVersion().getValue());
+                vm.getCompatibilityVersion().getValue());
 
         int threadsPerCore = vm.getThreadsPerCpu();
         int cpuPerSocket = vm.getCpuPerSocket();
@@ -313,7 +314,7 @@ public abstract class VmInfoBuilderBase {
         event.setVmId(vm.getId());
         event.setClusterId(vm.getClusterId());
         event.setCustomId(nic.getId().toString());
-        event.setCompatibilityVersion(vm.getClusterCompatibilityVersion().toString());
+        event.setCompatibilityVersion(vm.getCompatibilityVersion().toString());
         event.addCustomValue("NicName", nic.getName());
         event.addCustomValue("VnicProfile", vnicProfile == null ? null : vnicProfile.getName());
         String[] unsupportedFeatureNames = new String[unsupportedFeatures.size()];

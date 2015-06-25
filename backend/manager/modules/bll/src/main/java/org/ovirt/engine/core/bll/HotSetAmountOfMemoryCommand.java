@@ -51,7 +51,7 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__HOT_SET_MEMORY);
         addValidationMessage(EngineMessage.VAR__TYPE__VM);
-        addValidationMessageVariable("clusterVersion", getVm().getClusterCompatibilityVersion());
+        addValidationMessageVariable("clusterVersion", getVm().getCompatibilityVersion());
         addValidationMessageVariable("architecture", getVm().getClusterArch());
     }
 
@@ -66,7 +66,7 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
         }
 
         if (getParameters().getPlugAction() == PlugAction.PLUG) {
-            if (!FeatureSupported.hotPlugMemory(getVm().getClusterCompatibilityVersion(), getVm().getClusterArch())) {
+            if (!FeatureSupported.hotPlugMemory(getVm().getCompatibilityVersion(), getVm().getClusterArch())) {
                 return failValidation(EngineMessage.HOT_PLUG_MEMORY_IS_NOT_SUPPORTED);
             }
             // check max slots
@@ -80,7 +80,7 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_MEMORY_MUST_BE_MULTIPLICATION,
                         "$multiplicationSize " + Config.getValue(ConfigValues.HotPlugMemoryMultiplicationSizeMb).toString());
             }
-        } else if (!FeatureSupported.hotUnplugMemory(getVm().getClusterCompatibilityVersion(), getVm().getClusterArch())) {
+        } else if (!FeatureSupported.hotUnplugMemory(getVm().getCompatibilityVersion(), getVm().getClusterArch())) {
             return failValidation(EngineMessage.HOT_UNPLUG_MEMORY_IS_NOT_SUPPORTED);
         }
 

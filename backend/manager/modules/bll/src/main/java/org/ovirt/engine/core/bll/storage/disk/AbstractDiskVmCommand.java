@@ -135,7 +135,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         allVmDisks.add(diskInfo);
 
         return checkPciAndIdeLimit(getVm().getOs(),
-                getVm().getClusterCompatibilityVersion(),
+                getVm().getCompatibilityVersion(),
                 getVm().getNumOfMonitors(),
                 vmInterfaces,
                 allVmDisks,

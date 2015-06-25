@@ -516,9 +516,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     /**
      * Check if Memory Snapshot is supported
      */
-    private boolean isMemorySnapshotSupported () {
-        return FeatureSupported.memorySnapshot(getVm().getClusterCompatibilityVersion())
-                && FeatureSupported.isMemorySnapshotSupportedByArchitecture(getVm().getClusterArch(), getVm().getClusterCompatibilityVersion());
+    private boolean isMemorySnapshotSupported() {
+        return FeatureSupported.memorySnapshot(getVm().getCompatibilityVersion())
+                && FeatureSupported.isMemorySnapshotSupportedByArchitecture(
+                        getVm().getClusterArch(), getVm().getCompatibilityVersion());
     }
 
     /**

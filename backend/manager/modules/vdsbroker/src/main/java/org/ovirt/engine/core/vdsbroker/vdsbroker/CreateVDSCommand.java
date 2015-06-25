@@ -53,7 +53,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     }
 
     private VmInfoBuilderBase createBuilder() {
-        if (VmDeviceCommonUtils.isOldClusterVersion(vm.getClusterCompatibilityVersion())) {
+        if (VmDeviceCommonUtils.isOldClusterVersion(vm.getCompatibilityVersion())) {
             // backward compatibility for 3.0
             return new VmOldInfoBuilder(vm, createInfo);
         } else {

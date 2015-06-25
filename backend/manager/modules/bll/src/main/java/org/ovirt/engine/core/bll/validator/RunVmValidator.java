@@ -161,7 +161,7 @@ public class RunVmValidator {
             ConfigValues config = vm.getClusterArch() == ArchitectureType.ppc64 ?
                     ConfigValues.VMPpc64BitMaxMemorySizeInMB :
                     ConfigValues.VM64BitMaxMemorySizeInMB;
-            maxSize = Config.getValue(config, vm.getClusterCompatibilityVersion().getValue());
+            maxSize = Config.getValue(config, vm.getCompatibilityVersion().getValue());
         } else {
             maxSize = Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB);
         }
@@ -175,8 +175,8 @@ public class RunVmValidator {
 
     public ValidationResult validateFloppy() {
 
-        if (StringUtils.isNotEmpty(runVmParam.getFloppyPath()) && !VmValidationUtils.isFloppySupported(vm.getOs(),
-                vm.getClusterCompatibilityVersion())) {
+        if (StringUtils.isNotEmpty(runVmParam.getFloppyPath())
+                && !VmValidationUtils.isFloppySupported(vm.getOs(), vm.getCompatibilityVersion())) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_FLOPPY_IS_NOT_SUPPORTED_BY_OS);
         }
 
@@ -207,7 +207,7 @@ public class RunVmValidator {
 
     protected ValidationResult validateDisplayType() {
         if (!VmValidationUtils.isGraphicsAndDisplaySupported(vm.getOs(),
-                vm.getClusterCompatibilityVersion(),
+                vm.getCompatibilityVersion(),
                 getVmActiveGraphics(),
                 vm.getDefaultDisplayType())) {
             return new ValidationResult(
@@ -239,7 +239,7 @@ public class RunVmValidator {
         String customProperties = runOnceCustomProperties != null ?
                 runOnceCustomProperties : vm.getCustomProperties();
         return getVmPropertiesUtils().validateVmProperties(
-                        vm.getClusterCompatibilityVersion(),
+                        vm.getCompatibilityVersion(),
                         customProperties,
                         messages);
     }

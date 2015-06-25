@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -72,6 +73,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     @Inject
     private VmTemplateDao vmTemplateDao;
 
+    private Version effectiveCompatibilityVersion;
+
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
         super(parameters);
         setVmTemplate(parameters.getVmTemplate());
@@ -79,15 +82,21 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         setStoragePoolId(parameters.getStoragePoolId());
         setClusterId(parameters.getClusterId());
         setStorageDomainId(parameters.getStorageDomainId());
+        setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
 
-        Version clusterVersion = getCluster() == null
-                ? null
-                : getCluster().getCompatibilityVersion();
-        ImportUtils.updateGraphicsDevices(getVmTemplate(), clusterVersion);
+        ImportUtils.updateGraphicsDevices(getVmTemplate(), getEffectiveCompatibilityVersion());
     }
 
     protected ImportVmTemplateCommand(Guid commandId) {
         super(commandId);
+    }
+
+    public Version getEffectiveCompatibilityVersion() {
+        return effectiveCompatibilityVersion;
+    }
+
+    public void setEffectiveCompatibilityVersion(Version effectiveCompatibilityVersion) {
+        this.effectiveCompatibilityVersion = effectiveCompatibilityVersion;
     }
 
     @Override
@@ -577,8 +586,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     protected boolean setAndValidateCpuProfile() {
         getVmTemplate().setClusterId(getClusterId());
         getVmTemplate().setCpuProfileId(getParameters().getCpuProfileId());
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
-                getCluster().getCompatibilityVersion()));
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(), getEffectiveCompatibilityVersion()));
     }
 
     @Override
@@ -634,4 +642,5 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     protected DiskImage getNewDiskIdForDisk(Guid diskId) {
         return newDiskIdForDisk.get(diskId);
     }
+
 }

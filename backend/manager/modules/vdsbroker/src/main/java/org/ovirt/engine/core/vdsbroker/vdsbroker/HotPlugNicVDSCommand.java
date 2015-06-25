@@ -41,7 +41,7 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
         VM vm = getParameters().getVm();
 
         if (!nic.isPassthrough()) {
-            Version clusterVersion = getParameters().getVm().getClusterCompatibilityVersion();
+            Version clusterVersion = getParameters().getVm().getCompatibilityVersion();
             map.put(VdsProperties.Type, vmDevice.getType().getValue());
             map.put(VdsProperties.Device, VmDeviceType.BRIDGE.getName());
             map.put(VdsProperties.MAC_ADDR, nic.getMacAddress());

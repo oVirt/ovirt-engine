@@ -460,7 +460,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 targetSnapshot,
                 targetSnapshot.getId(),
                 null,
-                getCompensationContext(), getVm().getClusterCompatibilityVersion(), getCurrentUser());
+                getCompensationContext(), getVm().getCompatibilityVersion(), getCurrentUser());
         getSnapshotDao().remove(targetSnapshot.getId());
         // add active snapshot with status locked, so that other commands that depend on the VM's snapshots won't run in parallel
         snapshotsManager.addActiveSnapshot(targetSnapshot.getId(),

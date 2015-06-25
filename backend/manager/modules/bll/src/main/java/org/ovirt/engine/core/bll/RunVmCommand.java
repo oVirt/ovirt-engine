@@ -178,11 +178,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (!FeatureSupported.isMemorySnapshotSupportedByArchitecture(
                 getVm().getClusterArch(),
-                getVm().getClusterCompatibilityVersion())) {
+                getVm().getCompatibilityVersion())) {
             return StringUtils.EMPTY;
         }
 
-        if (!FeatureSupported.memorySnapshot(getVm().getClusterCompatibilityVersion())) {
+        if (!FeatureSupported.memorySnapshot(getVm().getCompatibilityVersion())) {
             return StringUtils.EMPTY;
         }
 
@@ -786,8 +786,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getVm().setCpuName(getVm().getCustomCpuName());
             } else {
                 // get what cpu flags should be passed to vdsm according to the cluster
-                getVm().setCpuName(getCpuFlagsManagerHandler().getCpuId(getVm().getClusterCpuName(), getVm()
-                        .getClusterCompatibilityVersion()));
+                getVm().setCpuName(getCpuFlagsManagerHandler().getCpuId(
+                        getVm().getClusterCpuName(),
+                        getVm().getCompatibilityVersion()));
             }
         }
         if (getVm().getEmulatedMachine() == null) {
@@ -909,7 +910,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     Version clusterVer = new Version(matchToolPattern.group(IsoDomainListSyncronizer.TOOL_CLUSTER_LEVEL));
                     int toolVersion = Integer.parseInt(matchToolPattern.group(IsoDomainListSyncronizer.TOOL_VERSION));
 
-                    if (clusterVer.compareTo(getVm().getClusterCompatibilityVersion()) <= 0) {
+                    if (clusterVer.compareTo(getVm().getCompatibilityVersion()) <= 0) {
                         if ((bestClusterVer == null)
                                 || (clusterVer.compareTo(bestClusterVer) > 0)) {
                             bestToolVer = toolVersion;
@@ -1024,7 +1025,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (!VmHandler.isCpuSupported(
                 getVm().getVmOsId(),
-                getCluster().getCompatibilityVersion(),
+                getVm().getCompatibilityVersion(),
                 getCluster().getCpuName(),
                 getReturnValue().getValidationMessages())) {
             return false;
@@ -1272,4 +1273,5 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     public void onPowerringUp() {
         decreasePendingVm(getVmStaticDao().get(getVmId()));
     }
+
 }

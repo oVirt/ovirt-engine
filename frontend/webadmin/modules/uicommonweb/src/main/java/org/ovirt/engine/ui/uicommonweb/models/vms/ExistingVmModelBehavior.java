@@ -213,7 +213,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     }), vm.getRunOnVds());
                 }
 
-                updateCpuProfile(vm.getClusterId(), vm.getClusterCompatibilityVersion(), vm.getCpuProfileId());
+                updateCpuProfile(vm.getClusterId(), vm.getCompatibilityVersion(), vm.getCpuProfileId());
             }
         });
     }

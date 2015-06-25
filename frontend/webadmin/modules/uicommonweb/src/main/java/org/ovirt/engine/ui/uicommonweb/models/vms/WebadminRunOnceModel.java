@@ -27,8 +27,8 @@ public class WebadminRunOnceModel extends RunOnceModel {
         getIsAutoAssign().setEntity(true);
 
         // Custom Properties
-        getCustomPropertySheet().setKeyValueMap(AsyncDataProvider.getInstance().getCustomPropertiesList()
-                                                        .get(vm.getClusterCompatibilityVersion()));
+        getCustomPropertySheet().setKeyValueMap(
+                AsyncDataProvider.getInstance().getCustomPropertiesList().get(vm.getCompatibilityVersion()));
         getCustomPropertySheet().deserialize(vm.getCustomProperties());
 
         loadHosts();

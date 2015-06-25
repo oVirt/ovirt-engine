@@ -55,7 +55,7 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
         if (getParameters().getVm().getCpuPerSocket() >
                 Config.<Integer>getValue(
                         ConfigValues.MaxNumOfCpuPerSocket,
-                        getVm().getClusterCompatibilityVersion().getValue())) {
+                        getVm().getCompatibilityVersion().getValue())) {
             valid = failValidation(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET);
         }
         if (getParameters().getVm().getThreadsPerCpu() >
@@ -67,14 +67,14 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
         if (getParameters().getVm().getNumOfSockets() >
                 Config.<Integer>getValue(
                         ConfigValues.MaxNumOfVmSockets,
-                        getVm().getClusterCompatibilityVersion().getValue())) {
+                        getVm().getCompatibilityVersion().getValue())) {
             valid = failValidation(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS);
         }
         if (getParameters().getPlugAction() == PlugAction.PLUG) {
-            if (!FeatureSupported.hotPlugCpu(getVm().getClusterCompatibilityVersion(), getVm().getClusterArch())) {
+            if (!FeatureSupported.hotPlugCpu(getVm().getCompatibilityVersion(), getVm().getClusterArch())) {
                 valid = failValidation(EngineMessage.HOT_PLUG_CPU_IS_NOT_SUPPORTED);
             }
-        } else if (!FeatureSupported.hotUnplugCpu(getVm().getClusterCompatibilityVersion(), getVm().getClusterArch())) {
+        } else if (!FeatureSupported.hotUnplugCpu(getVm().getCompatibilityVersion(), getVm().getClusterArch())) {
             valid = failValidation(EngineMessage.HOT_UNPLUG_CPU_IS_NOT_SUPPORTED);
         }
 
@@ -123,7 +123,7 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__HOT_SET_CPUS);
         addValidationMessage(EngineMessage.VAR__TYPE__VM);
-        addValidationMessageVariable("clusterVersion", getVm().getClusterCompatibilityVersion());
+        addValidationMessageVariable("clusterVersion", getVm().getCompatibilityVersion());
         addValidationMessageVariable("architecture", getVm().getClusterArch());
     }
 

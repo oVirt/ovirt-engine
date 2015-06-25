@@ -989,7 +989,7 @@ public class VmDeviceUtils {
             }
             VmHandler.updateDisksForVm(vm, dbFacade.getDiskDao().getAllForVm(vmId));
             VmHandler.updateNetworkInterfacesFromDb(vm);
-            boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getClusterCompatibilityVersion());
+            boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getCompatibilityVersion());
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices, isOldCluster);
             dao.updateBootOrderInBatch(devices);
         }
@@ -1072,7 +1072,7 @@ public class VmDeviceUtils {
         updateVideoDevices(oldVmBase, newVmBase);
         updateUsbSlots(oldVmBase, newVmBase);
         updateMemoryBalloon(newVmBase.getId(), params.isBalloonEnabled());
-        updateSoundDevice(oldVmBase, newVmBase, oldVm.getClusterCompatibilityVersion(),
+        updateSoundDevice(oldVmBase, newVmBase, oldVm.getCompatibilityVersion(),
                 params.isSoundDeviceEnabled());
         updateSmartcardDevice(oldVm, newVmBase);
         updateConsoleDevice(newVmBase.getId(), params.isConsoleEnabled());
