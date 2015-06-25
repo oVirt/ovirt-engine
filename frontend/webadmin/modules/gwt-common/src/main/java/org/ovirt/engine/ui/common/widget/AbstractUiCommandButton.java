@@ -15,6 +15,21 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Abstract button widget bound to UiCommon {@linkplain UICommand command}.
+ *
+ * The command isn't invoked automatically when using the button. You must attach a command,
+ * and then also invoke it in a handler (usually this logic goes in your Presenter). Example:
+ *
+ * <pre>
+ * {@code
+ * getView().getLoginButton().setCommand(loginModel.getLoginCommand());
+ * registerHandler(getView().getLoginButton().addClickHandler(new ClickHandler() {
+ *     @Override
+ *     public void onClick(ClickEvent event) {
+ *         getView().getLoginButton().getCommand().execute();
+ *     }
+ * }));
+ * }
+ * </pre>
  */
 public abstract class AbstractUiCommandButton extends Composite
         implements HasUiCommandClickHandlers, HasLabel, FocusableComponentsContainer {
