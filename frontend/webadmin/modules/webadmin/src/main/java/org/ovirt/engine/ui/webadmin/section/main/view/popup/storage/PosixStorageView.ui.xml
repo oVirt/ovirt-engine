@@ -14,13 +14,16 @@
             font-family: Verdana, sans-serif;
         }
 
-		.pathEditorContent {
-			width: 565px;
-		}
+        .pathEditorContent {
+            width: 540px;
+            margin-left: 87px;
+            line-height: 26px !important;
+        }
 
         .pathExampleLabel {
-            margin: 2px 0px 0px 10px;
+            margin: 0px 0px 0px 125px;
             font-size: 8pt;
+            width: 450px;
         }
 
 		.errorLabel {
@@ -29,51 +32,30 @@
 			margin-left: 5px;
 		}
 
-        .nfsPosixAlertIcon {
-            margin-top: 10px;
+        .vfsTypeTextBoxEditor {
+            width: 270px;
+            margin-left: 57px;
+            line-height: 26px !important;
+        }
+
+        .mountOptionsTextBoxEditor {
+            width: 270px;
+            margin-left: 29px;
+            line-height: 26px !important;
         }
 
 	</ui:style>
 
     <g:VerticalPanel addStyleNames="{style.content}">
-        <g:HTMLPanel>
-            <table>
-                <tr>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="pathLabel" addStyleNames="{style.label}"/>
-                    </td>
-                    <td>
-                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="pathEditor" addStyleNames="table_contentWidget_pfly_fix"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="pathExampleLabel" addStyleNames="{style.pathExampleLabel}, generalDialogComment"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="vfsTypeLabel" addStyleNames="{style.label}"/>
-                    </td>
-                    <td>
-                        <g:HorizontalPanel>
-                            <ge:StringEntityModelTextBoxOnlyEditor ui:field="vfsTypeEditor" addStyleNames="table_contentWidget_pfly_fix"/>
-                            <g:Image ui:field="nfsPosixAlertIcon" resource='{resources.alertImage}' visible="false" addStyleNames="{style.nfsPosixAlertIcon}"/>
-                        </g:HorizontalPanel>
-                    </td>
-                </tr>
-                <tr>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="mountOptionsLabel" addStyleNames="{style.label}"/>
-                    </td>
-                    <td>
-                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="mountOptionsEditor" addStyleNames="table_contentWidget_pfly_fix"/>
-                    </td>
-                </tr>
-            </table>
-        </g:HTMLPanel>
-        <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
+        <ge:StringEntityModelTextBoxEditor ui:field="pathEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+        <g:Label ui:field="pathExampleLabel" addStyleNames="{style.pathExampleLabel}, generalDialogComment"/>
+        <g:HorizontalPanel>
+            <ge:StringEntityModelTextBoxEditor ui:field="vfsTypeEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+            <g:Image ui:field="nfsPosixAlertIcon" resource='{resources.alertImage}' visible="false"/>
+        </g:HorizontalPanel>
+        <g:HorizontalPanel>
+            <ge:StringEntityModelTextBoxEditor ui:field="mountOptionsEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+        </g:HorizontalPanel>
     </g:VerticalPanel>
 
 </ui:UiBinder>
