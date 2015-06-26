@@ -598,8 +598,13 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
         @Override
         protected UICommand resolveCommand(AuditLog value) {
-            modelProvider.getModel().setSelectedItem(value);
             return modelProvider.getModel().getDismissCommand();
+        }
+
+        @Override
+        protected UICommand resolveCommandOnClick(AuditLog value) {
+            modelProvider.getModel().setSelectedItem(value);
+            return resolveCommand(value);
         }
     }
 

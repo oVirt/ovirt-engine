@@ -88,6 +88,10 @@ public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
      */
     protected abstract UICommand resolveCommand(T value);
 
+    protected UICommand resolveCommandOnClick(T value) {
+        return resolveCommand(value);
+    }
+
     /**
      * Check if the button is enabled.
      * @param value
@@ -103,7 +107,7 @@ public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
      * @param value
      */
     protected void onClick(T value) {
-        UICommand command = resolveCommand(value);
+        UICommand command = resolveCommandOnClick(value);
         if (command != null) {
             command.execute();
         }
