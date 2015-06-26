@@ -53,6 +53,9 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         // init the parameters only at first instantiation (not subsequent for end action)
         if (Guid.isNullOrEmpty(parameters.getNewVmGuid())) {
             setupParameters();
+        } else {
+            // the VM id has to be the new VM id - same as the getVm is always the new VM
+            setVmId(getParameters().getNewVmGuid());
         }
 
     }
