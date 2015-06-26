@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -24,14 +25,14 @@ public class UserPortalTemplateVmModelBehavior extends TemplateVmModelBehavior {
      * Pattern).
      */
     @Override
-    protected void doChangeDefautlHost(Guid hostGuid) {
-        if (hostGuid != null) {
+    protected void doChangeDefaultHost(List<Guid> hostGuids) {
+        if (hostGuids != null && hostGuids.size() == 1) {
             VDS vds = new VDS();
-            vds.setId(hostGuid);
+            vds.setId(hostGuids.get(0));
             getModel().getDefaultHost().setItems(Arrays.asList(vds));
         }
 
-        super.doChangeDefautlHost(hostGuid);
+        super.doChangeDefaultHost(hostGuids);
     }
 
     @Override

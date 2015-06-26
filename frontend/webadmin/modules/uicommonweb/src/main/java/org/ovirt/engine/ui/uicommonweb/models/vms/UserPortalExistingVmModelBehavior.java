@@ -107,14 +107,14 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior {
      * Pattern).
      */
     @Override
-    protected void doChangeDefautlHost(Guid hostGuid) {
-        if (hostGuid != null) {
+    protected void doChangeDefaultHost(List<Guid> hostGuids) {
+        if (hostGuids != null && hostGuids.size() == 1) {
             VDS vds = new VDS();
-            vds.setId(hostGuid);
+            vds.setId(hostGuids.get(0));
             getModel().getDefaultHost().setItems(Arrays.asList(vds));
         }
 
-        super.doChangeDefautlHost(hostGuid);
+        super.doChangeDefaultHost(hostGuids);
     }
 
     @Override

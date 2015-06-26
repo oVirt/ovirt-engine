@@ -136,7 +136,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
      * Disabled to change this in userportal
      */
     @Override
-    protected void doChangeDefautlHost(Guid hostGuid) {
+    protected void doChangeDefaultHost(List<Guid> hostGuid) {
     }
 
     @Override

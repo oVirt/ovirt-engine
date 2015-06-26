@@ -55,11 +55,9 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
-    protected void changeDefualtHost() {
-        super.changeDefualtHost();
-
-        // TODO multiple dedicated hosts - redesign GUI for multiple hosts pinning
-        doChangeDefautlHost(pool.fetchDedicatedVmForSingleHost());
+    protected void changeDefaultHost() {
+        super.changeDefaultHost();
+        doChangeDefaultHost(pool.getDedicatedVmForVdsList());
     }
 
     @Override
@@ -113,8 +111,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                     }
                 });
             }
-            // TODO multiple dedicated hosts - redesign GUI for multiple hosts pinning
-            doChangeDefautlHost(pool.fetchDedicatedVmForSingleHost());
+            doChangeDefaultHost(pool.getDedicatedVmForVdsList());
             setupWindowModelFrom(template);
 
         } else {

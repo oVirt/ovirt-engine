@@ -102,8 +102,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             public void finished(VmBase source, UnitVmModel destination) {
                 setSelectedOSType(template, getModel().getSelectedCluster().getArchitecture());
 
-                // TODO multiple dedicated hosts - redesign GUI for multiple hosts pinning
-                doChangeDefautlHost(template.fetchDedicatedVmForSingleHost());
+                doChangeDefaultHost(template.getDedicatedVmForVdsList());
 
                 getModel().getIsStateless().setEntity(template.isStateless());
                 getModel().getIsRunAndPause().setEntity(template.isRunAndPause());

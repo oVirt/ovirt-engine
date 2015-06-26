@@ -1,13 +1,17 @@
 package org.ovirt.engine.ui.common.editor;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.ui.common.widget.HasAccess;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.editor.HasEditorValidityState;
+import org.ovirt.engine.ui.common.widget.editor.ListModelMultipleSelectListBox;
 import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueEditor;
+import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueListEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -47,7 +51,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
     @SuppressWarnings("unchecked")
     @Override
     public <T> boolean visit(final EditorContext<T> ctx) {
-        String absolutePath = ctx.getAbsolutePath();
+        final String absolutePath = ctx.getAbsolutePath();
         LeafValueEditor<T> currentLeafEditor = ctx.asLeafValueEditor();
 
         if (currentLeafEditor == null) {
@@ -92,7 +96,9 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
             Model ownerModel = ownerModels.get(absolutePath);
 
             // If this editor edits a ListModel, initialize it
-            if (editor instanceof TakesConstrainedValueEditor && ownerModel instanceof ListModel) {
+            if (editor instanceof TakesConstrainedValueListEditor && ownerModel instanceof ListModel) {
+                updateListEditor((TakesConstrainedValueListEditor<T>) editor, (ListModel) ownerModel);
+            } else if (editor instanceof TakesConstrainedValueEditor && ownerModel instanceof ListModel) {
                 updateListEditor((TakesConstrainedValueEditor<T>) editor, (ListModel) ownerModel);
             }
 
@@ -151,7 +157,20 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         eventMap.registerListener(absolutePath, "SelectedItemChanged", new IEventListener() { //$NON-NLS-1$
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                editor.setValue((T) ((ListModel) sender).getSelectedItem());
+                T selectedItem = (T) ((ListModel) sender).getSelectedItem();
+                if (editor instanceof TakesConstrainedValueListEditor && ownerModels.get(absolutePath) instanceof ListModel) {
+                    editor.setValue((T)Arrays.asList(selectedItem));
+                } else {
+                    editor.setValue(selectedItem);
+                }
+            }
+        });
+        eventMap.registerListener(absolutePath, "SelectedItemsChanged", new IEventListener() { //$NON-NLS-1$
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (editor instanceof TakesConstrainedValueListEditor && ownerModels.get(absolutePath) instanceof ListModel) {
+                    ((TakesConstrainedValueListEditor)editor).setListValue((List<T>)((ListModel) sender).getSelectedItems());
+                }
             }
         });
 
@@ -165,7 +184,13 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
                 editorValid = ((HasEditorValidityState)editor).isStateValid();
             }
             if (editorValid) {
-                ctx.setInModel(value);
+                if (editor instanceof ListModelMultipleSelectListBox) {
+                    @SuppressWarnings("unchecked")
+                    T listValue = (T) ((ListModelMultipleSelectListBox<T>) editor).selectedItems();
+                    ctx.setInModel(listValue);
+                } else {
+                    ctx.setInModel(value);
+                }
             }
         }
     }
@@ -196,7 +221,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
      * @param parentModel
      */
     @SuppressWarnings("unchecked")
-    <O> void updateListEditor(TakesConstrainedValueEditor<O> listEditor, ListModel parentModel) {
+    <O> void updateListEditor(TakesConstrainedValueEditor<O> listEditor, ListModel<O> parentModel) {
         Collection<O> items = (Collection<O>) parentModel.getItems();
         if (items != null) {
             if (items.size() > 0) {
@@ -209,10 +234,20 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
                     parentModel.setSelectedItem(value);
                 }
                 if (items.contains(value)) {
-                    listEditor.setValue(value);
+                    if (listEditor instanceof TakesConstrainedValueListEditor) {
+                        if (parentModel.getSelectedItems() != null) {
+                            ((TakesConstrainedValueListEditor<O>)listEditor).setListValue(parentModel.getSelectedItems());
+                        }
+                    } else {
+                        listEditor.setValue(value);
+                    }
                 }
             }
-            listEditor.setAcceptableValues(items);
+            if (listEditor instanceof TakesConstrainedValueListEditor) {
+                ((TakesConstrainedValueListEditor<O>)listEditor).setAcceptableListValues(items);
+            } else {
+                listEditor.setAcceptableValues(items);
+            }
 
         }
     }

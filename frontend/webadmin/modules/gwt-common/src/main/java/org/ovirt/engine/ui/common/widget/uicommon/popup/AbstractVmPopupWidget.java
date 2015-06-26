@@ -57,6 +57,7 @@ import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.IconEditorWidget;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelMultipleSelectListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.SuggestionMatcher;
@@ -664,9 +665,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public Label specificHostLabel;
 
     @UiField(provided = true)
-    @Path(value = "defaultHost.selectedItem")
+    @Path(value = "defaultHost.selectedItems")
     @WithElementId("defaultHost")
-    public ListModelListBoxEditor<VDS> defaultHostEditor;
+    public ListModelMultipleSelectListBoxEditor<VDS> defaultHostEditor;
 
     @UiField(provided = true)
     @Path(value = "isAutoAssign.entity")
@@ -1396,7 +1397,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$
         isAutoAssignEditor =
                 new EntityModelRadioButtonEditor("runVmOnHostGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
-        defaultHostEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>(), new ModeSwitchingVisibilityRenderer());
+        defaultHostEditor = new ListModelMultipleSelectListBoxEditor<>(new NameRenderer<VDS>(),
+                new ModeSwitchingVisibilityRenderer());
+        defaultHostEditor.asListBox().setVisibleItemCount(3);
 
         migrationModeEditor =
                 new ListModelListBoxEditor<MigrationSupport>(new EnumRenderer<MigrationSupport>(), new ModeSwitchingVisibilityRenderer());

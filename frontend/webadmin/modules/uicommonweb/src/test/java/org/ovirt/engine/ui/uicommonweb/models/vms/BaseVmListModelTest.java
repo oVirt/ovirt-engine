@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+
 import org.junit.After;
 import org.junit.Before;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
@@ -84,6 +86,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         VDS defaultHost = new VDS();
         defaultHost.setId(HOST_ID);
         when(model.getDefaultHost().getSelectedItem()).thenReturn(defaultHost);
+        when(model.getDefaultHost().getSelectedItems()).thenReturn(Arrays.asList(defaultHost));
         when(model.getIsAutoAssign().getEntity()).thenReturn(false);
         when(model.getMigrationMode().getSelectedItem()).thenReturn(MIGRATION_SUPPORT);
         when(model.getSelectedMigrationDowntime()).thenReturn(MIGRATION_DOWNTIME);

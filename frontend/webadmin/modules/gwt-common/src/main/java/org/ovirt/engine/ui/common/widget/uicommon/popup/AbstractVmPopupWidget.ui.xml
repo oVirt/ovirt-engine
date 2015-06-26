@@ -163,7 +163,7 @@
         }
 
         .radioButtonSpecificHost {
-            margin-left: 5px;
+            margin-left: 10px;
         }
 
         .label {
@@ -345,7 +345,7 @@
         }
 
         .hostSelector {
-            width: 416px;
+            width: 486px;
         }
 
         .labelToCouple {
@@ -623,10 +623,10 @@
                         <g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
                             <ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor"
                                 addStyleNames="{style.radioButton}" />
-                            <g:HorizontalPanel verticalAlignment='ALIGN_MIDDLE'>
+                            <g:HorizontalPanel verticalAlignment='ALIGN_TOP'>
                                 <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
                                 <g:Label ui:field="specificHostLabel" text="{constants.specificVmPopup}" addStyleNames="avmpw_specificHostLabel_pfly_fix" />
-                                <e:ListModelListBoxEditor ui:field="defaultHostEditor" addStyleNames="{style.hostSelector}"/>
+                                <e:ListModelMultipleSelectListBoxEditor ui:field="defaultHostEditor" addStyleNames="{style.hostSelector}"/>
                             </g:HorizontalPanel>
                         </g:VerticalPanel>
                     </g:FlowPanel>

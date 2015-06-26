@@ -445,22 +445,24 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 : TimeZoneType.GENERAL_TIMEZONE;
     }
 
-    protected void changeDefualtHost() {
-
+    protected void changeDefaultHost() {
     }
 
-
-    protected void doChangeDefautlHost(Guid dedicatedHostId) {
+    protected void doChangeDefaultHost(List<Guid> dedicatedHostIds) {
         getModel().getIsAutoAssign().setEntity(true);
-        if (dedicatedHostId == null) {
+        if (dedicatedHostIds == null) {
             return;
         }
-        // TODO multiple dedicated hosts - redesign GUI for multiple hosts pinning
+
         if (getModel().getDefaultHost().getItems() != null) {
-            getModel().getDefaultHost().setSelectedItem(Linq.firstOrDefault(getModel().getDefaultHost().getItems(),
-                    new Linq.HostPredicate(dedicatedHostId)));
-            if (getModel().getDefaultHost().getSelectedItem() != null &&
-                    getModel().getDefaultHost().getSelectedItem().getId().equals(dedicatedHostId)) {
+            List<VDS> selectedHosts = new ArrayList<>();
+            for (VDS host: getModel().getDefaultHost().getItems()) {
+                if (dedicatedHostIds.contains(host.getId())) {
+                    selectedHosts.add(host);
+                }
+            }
+            if (!selectedHosts.isEmpty()) {
+                getModel().getDefaultHost().setSelectedItems(selectedHosts);
                 getModel().getIsAutoAssign().setEntity(false);
             }
         }
@@ -475,30 +477,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getDefaultHost().setSelectedItem(null);
 
             return;
-        }
-
-        // TODO multiple dedicated hosts - redesign GUI for multiple hosts pinning
-        // TEMPORARY solution till extending multi select widget. Throw away code!!!
-        //
-        // if there are more than 1 dedicated hosts in existing vm, fill them together into single line
-        // assign the model.getDefaultHost() with single item containing csv of the host name.
-        // preventing users from modify the list with GUI. User may still change via REST-api
-        if (this instanceof ExistingVmModelBehavior){
-            if (getDedicatedHostsNames().size() > 1){ // more then on host name, override the current widget
-                // build csv list of names
-                StringBuilder hostNamesStr = new StringBuilder("Multiple hosts selected: "); //$NON-NLS-1$
-                boolean firstName = true;
-                for (String hostName : getDedicatedHostsNames()){
-                    if (!firstName){
-                        hostNamesStr.append(',');
-                    }
-                    hostNamesStr.append(hostName);
-                    firstName = false;
-                }
-                 // Gray out host selector widget, put reason in tool tip
-                getModel().getDefaultHost().setIsChangeable(false, hostNamesStr.toString());
-                return;
-            }
         }
 
         AsyncQuery query = new AsyncQuery(getModel(),
@@ -545,7 +523,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             model.getDefaultHost().setSelectedItem(oldDefaultHost != null ?
                                     oldDefaultHost : Linq.firstOrDefault(hosts));
                         }
-                        changeDefualtHost();
+                        changeDefaultHost();
 
                     }
                 });

@@ -296,10 +296,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    protected void changeDefualtHost() {
-        super.changeDefualtHost();
-        // TODO multiple dedicated hosts - redesign GUI for multiple hosts pinning
-        doChangeDefautlHost(vm.fetchDedicatedVmForSingleHost());
+    protected void changeDefaultHost() {
+        super.changeDefaultHost();
+        doChangeDefaultHost(vm.getDedicatedVmForVdsList());
     }
 
     @Override

@@ -183,11 +183,9 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    protected void changeDefualtHost() {
-        super.changeDefualtHost();
-
-        // TODO multiple dedicated hosts - redesign GUI for multiple hosts pinning
-        doChangeDefautlHost(template.fetchDedicatedVmForSingleHost());
+    protected void changeDefaultHost() {
+        super.changeDefaultHost();
+        doChangeDefaultHost(template.getDedicatedVmForVdsList());
     }
 
     public void buildModel(VmBase vmBase, BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
