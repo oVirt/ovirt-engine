@@ -3477,6 +3477,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Provider URL")
     String urlProvider();
 
+    @DefaultStringValue("Source")
+    String importSource();
+
     @DefaultStringValue("Proxy Host")
     String proxyHost();
 

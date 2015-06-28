@@ -170,7 +170,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         initEntityModelCellTables();
 
         dataCentersEditor.setLabel(constants.dataCenter());
-        importSourcesEditor.setLabel(constants.hostPopupSourceText());
+        importSourcesEditor.setLabel(constants.importSource());
 
         exportDomainName.setLabel(constants.nameLabel());
         exportDomainPath.setLabel(constants.pathStorageGeneral());
