@@ -58,11 +58,15 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
                     convertEvent(changedVms, devicesChangedVms, map);
 
                     if (!changedVms.isEmpty() || !devicesChangedVms.isEmpty()) {
-                        new VmsMonitoring(manager, changedVms, devicesChangedVms, auditLogDirector, System.nanoTime()).perform();
+                        getVmsMonitoring(changedVms, devicesChangedVms).perform();
                     }
                 } finally {
                     subscription.request(1);
                 }
+            }
+
+            private VmsMonitoring getVmsMonitoring(List<Pair<VM, VmInternalData>> changedVms, List<Pair<VM, VmInternalData>> devicesChangedVms) {
+                return new VmsMonitoring(manager, changedVms, devicesChangedVms, auditLogDirector, System.nanoTime());
             }
 
             @SuppressWarnings("unchecked")

@@ -201,14 +201,10 @@ public class VmsMonitoring {
      *   this filtering.
      */
     private void refreshVmStats() {
-        for (Pair<VM, VmInternalData> pair : monitoredVms) {
+        for (Pair<VM, VmInternalData> monitoredVm : monitoredVms) {
             // TODO filter out migratingTo VMs if no action is taken on them
-            if (tryLockVmForUpdate(pair)) {
-                VmAnalyzer vmAnalyzer = new VmAnalyzer(
-                        pair.getFirst(),
-                        pair.getSecond(),
-                        this,
-                        auditLogDirector);
+            if (tryLockVmForUpdate(monitoredVm)) {
+                VmAnalyzer vmAnalyzer = getVmAnalyzer(monitoredVm);
                 vmAnalyzers.add(vmAnalyzer);
                 vmAnalyzer.analyze();
 
@@ -221,6 +217,14 @@ public class VmsMonitoring {
         processExternallyManagedVms();
         processVmsWithDevicesChange();
         saveVmsToDb();
+    }
+
+    protected VmAnalyzer getVmAnalyzer(Pair<VM, VmInternalData> pair) {
+        return new VmAnalyzer(
+                pair.getFirst(),
+                pair.getSecond(),
+                this,
+                auditLogDirector);
     }
 
     private void afterVMsRefreshTreatment() {
