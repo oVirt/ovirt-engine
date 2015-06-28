@@ -97,7 +97,6 @@
     <xmlgraphics-commons.version>1.4</xmlgraphics-commons.version>
     <batik.version>1.7</batik.version>
     <avalon.version>4.3.1</avalon.version>
-    <commons-io.version>1.3</commons-io.version>
     <c3p0.version>0.9.1.1</c3p0.version>
     <aopalliance.version>1.0</aopalliance.version>
     <snmp4j.version>2.2.2</snmp4j.version>

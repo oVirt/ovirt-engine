@@ -797,7 +797,6 @@ while read dst src; do
 	rm -f "%{buildroot}${dst}"
 	ln -s "${src}" "%{buildroot}${dst}"
 done << __EOF__
-common/org/apache/commons/io/main/commons-io.jar
 common/org/apache/ws/commons/main/ws-commons-util.jar
 common/org/apache/xmlgraphics/batik/main/batik-awt-util.jar batik/batik-awt-util.jar
 common/org/apache/xmlgraphics/batik/main/batik-bridge.jar batik/batik-bridge.jar

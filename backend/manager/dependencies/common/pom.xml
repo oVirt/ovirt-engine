@@ -274,12 +274,6 @@
     </dependency>
 
     <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>batik-util</artifactId>
       <version>${batik.version}</version>
@@ -660,12 +654,6 @@
                 <groupId>org.apache.avalon.framework</groupId>
                 <artifactId>avalon-framework-impl</artifactId>
                 <moduleName>org.apache.avalon.framework</moduleName>
-              </module>
-
-              <module>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <moduleName>org.apache.commons.io</moduleName>
               </module>
 
               <module>
