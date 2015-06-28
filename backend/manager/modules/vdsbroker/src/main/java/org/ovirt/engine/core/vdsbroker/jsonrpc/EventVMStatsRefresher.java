@@ -127,7 +127,8 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
             if (fetcher.fetch()) {
                 new VmsMonitoring(this.manager,
                         fetcher.getChangedVms(),
-                        fetcher.getVmsWithChangedDevices(), this.auditLogDirector, fetchTime).perform();
+                        fetcher.getVmsWithChangedDevices(), this.auditLogDirector, fetchTime, true)
+                .perform();
             } else {
                 log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", manager.getVdsName());
             }

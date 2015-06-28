@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
  */
 public class VmsMonitoring {
 
+    private final boolean timeToUpdateVmStatistics;
     private final long fetchTime;
     private VdsManager vdsManager;
     /**
@@ -114,11 +115,22 @@ public class VmsMonitoring {
             List<Pair<VM, VmInternalData>> vmsWithChangedDevices,
             AuditLogDirector auditLogDirector,
             long fetchTime) {
+        this(vdsManager, monitoredVms, vmsWithChangedDevices, auditLogDirector, fetchTime, false);
+    }
+
+    public VmsMonitoring(
+            VdsManager vdsManager,
+            List<Pair<VM, VmInternalData>> monitoredVms,
+            List<Pair<VM, VmInternalData>> vmsWithChangedDevices,
+            AuditLogDirector auditLogDirector,
+            long fetchTime,
+            boolean timeToUpdateVmStatistics) {
         this.vdsManager = vdsManager;
         this.monitoredVms = monitoredVms;
         this.vmsWithChangedDevices = vmsWithChangedDevices;
         this.auditLogDirector = auditLogDirector;
         this.fetchTime = fetchTime;
+        this.timeToUpdateVmStatistics = timeToUpdateVmStatistics;
     }
 
     /**
@@ -136,6 +148,10 @@ public class VmsMonitoring {
             unlockVmsManager();
         }
 
+    }
+
+    protected boolean isTimeToUpdateVmStatistics() {
+        return timeToUpdateVmStatistics;
     }
 
     /**

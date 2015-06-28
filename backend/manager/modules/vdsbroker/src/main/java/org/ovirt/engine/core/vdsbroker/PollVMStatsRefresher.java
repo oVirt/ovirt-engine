@@ -27,7 +27,8 @@ public class PollVMStatsRefresher extends VMStatsRefresher {
                         fetcher.getChangedVms(),
                         fetcher.getVmsWithChangedDevices(),
                         auditLogDirector,
-                        fetchTime
+                        fetchTime,
+                        getRefreshStatistics()
                 ).perform();
             } else {
                 log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", manager.getVdsName());
