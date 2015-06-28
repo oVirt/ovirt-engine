@@ -192,6 +192,7 @@ Create or replace FUNCTION InsertVdsDynamic(v_cpu_cores INTEGER ,
  v_libvirt_version VARCHAR(4000) ,
  v_spice_version VARCHAR(4000) ,
  v_gluster_version VARCHAR(4000) ,
+ v_librbd1_version VARCHAR(4000) ,
  v_kernel_version VARCHAR(4000) ,
  v_iscsi_initiator_name VARCHAR(4000) ,
  v_transparent_hugepages_state INTEGER ,
@@ -220,8 +221,8 @@ RETURNS VOID
 BEGIN
 
    BEGIN
-INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, incoming_migrations, outgoing_migrations, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines, controlled_by_pm_policy, kdump_status, selinux_enforce_mode, auto_numa_balancing, is_numa_supported, supported_rng_sources, is_live_snapshot_supported, is_live_merge_supported, online_cpus, is_update_available, is_hostdev_enabled)
-	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating, v_incoming_migrations, v_outgoing_migrations, v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines, v_controlled_by_pm_policy, v_kdump_status, v_selinux_enforce_mode, v_auto_numa_balancing, v_is_numa_supported, v_supported_rng_sources, v_is_live_snapshot_supported, v_is_live_merge_supported, v_online_cpus, v_is_update_available, v_is_hostdev_enabled);
+INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, incoming_migrations, outgoing_migrations, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, librbd1_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines, controlled_by_pm_policy, kdump_status, selinux_enforce_mode, auto_numa_balancing, is_numa_supported, supported_rng_sources, is_live_snapshot_supported, is_live_merge_supported, online_cpus, is_update_available, is_hostdev_enabled)
+	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating, v_incoming_migrations, v_outgoing_migrations, v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_librbd1_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines, v_controlled_by_pm_policy, v_kdump_status, v_selinux_enforce_mode, v_auto_numa_balancing, v_is_numa_supported, v_supported_rng_sources, v_is_live_snapshot_supported, v_is_live_merge_supported, v_online_cpus, v_is_update_available, v_is_hostdev_enabled);
    END;
 
    RETURN;
@@ -279,6 +280,7 @@ Create or replace FUNCTION UpdateVdsDynamic(v_cpu_cores INTEGER ,
  v_libvirt_version VARCHAR(4000) ,
  v_spice_version VARCHAR(4000) ,
  v_gluster_version VARCHAR(4000) ,
+ v_librbd1_version VARCHAR(4000) ,
  v_kernel_version VARCHAR(4000) ,
  v_iscsi_initiator_name VARCHAR(4000) ,
  v_transparent_hugepages_state INTEGER ,
@@ -328,6 +330,7 @@ BEGIN
       supported_engines = v_supported_engines,host_os = v_host_os,
       kvm_version = v_kvm_version,libvirt_version = v_libvirt_version,spice_version = v_spice_version,
       gluster_version = v_gluster_version,
+      librbd1_version = v_librbd1_version,
       kernel_version = v_kernel_version,iscsi_initiator_name = v_iscsi_initiator_name,
       transparent_hugepages_state = v_transparent_hugepages_state,
       hooks = v_hooks,

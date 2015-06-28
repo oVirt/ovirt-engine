@@ -89,6 +89,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDaoDbFacade<VdsDynam
             entity.setLibvirtVersion(new RpmVersion(rs.getString("libvirt_version")));
             entity.setSpiceVersion(rs.getString("spice_version"));
             entity.setGlusterVersion(new RpmVersion(rs.getString("gluster_version")));
+            entity.setLibrbdVersion(new RpmVersion(rs.getString("librbd1_version")));
             entity.setKernelVersion(rs.getString("kernel_version"));
             entity.setIScsiInitiatorName(rs
                     .getString("iscsi_initiator_name"));
@@ -248,6 +249,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDaoDbFacade<VdsDynam
                 .addValue("libvirt_version", vds.getLibvirtVersion().getRpmName())
                 .addValue("spice_version", vds.getSpiceVersion())
                 .addValue("gluster_version", vds.getGlusterVersion().getRpmName())
+                .addValue("librbd1_version", vds.getLibrbdVersion().getRpmName())
                 .addValue("kernel_version", vds.getKernelVersion())
                 .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
                 .addValue("transparent_hugepages_state",

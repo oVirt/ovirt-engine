@@ -175,6 +175,7 @@ public final class VdsProperties {
     public static final String qemuKvmPackageName = "qemu-kvm";
     public static final String vdsmPackageName = "vdsm";
     public static final String spiceServerPackageName = "spice-server";
+    public static final String librbdPackageName = "librbd1";
     public static final String GLUSTER_PACKAGE_NAME = "glusterfs";
 
     // Addressing related strings

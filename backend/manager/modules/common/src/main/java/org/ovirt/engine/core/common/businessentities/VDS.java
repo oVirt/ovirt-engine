@@ -181,6 +181,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vds.setKvmVersion(getKvmVersion());
         vds.setLibvirtVersion(getLibvirtVersion());
         vds.setGlusterVersion(getGlusterVersion());
+        vds.setLibrbdVersion(getLibrbdVersion());
         vds.setHooksStr(getHooksStr());
         vds.setActiveNic(getActiveNic());
         vds.setPowerManagementControlledByPolicy(isPowerManagementControlledByPolicy());
@@ -1004,6 +1005,14 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
 
     public void setGlusterVersion(RpmVersion value) {
         vdsDynamic.setGlusterVersion(value);
+    }
+
+    public RpmVersion getLibrbdVersion() {
+        return vdsDynamic.getLibrbdVersion();
+    }
+
+    public void setLibrbdVersion(RpmVersion value) {
+        vdsDynamic.setLibrbdVersion(value);
     }
 
     public String getKernelVersion() {

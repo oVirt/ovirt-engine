@@ -845,6 +845,10 @@ public class VdsBrokerObjectsBuilder {
                 Map<String, Object> libvirt = (Map<String, Object>) packages.get(VdsProperties.libvirtPackageName);
                 vds.setLibvirtVersion(getPackageRpmVersion("libvirt", libvirt));
             }
+            if (packages.containsKey(VdsProperties.librbdPackageName)) {
+                Map<String, Object> librbd1 = (Map<String, Object>) packages.get(VdsProperties.librbdPackageName);
+                vds.setLibrbdVersion(getPackageRpmVersion(VdsProperties.librbdPackageName, librbd1));
+            }
             if (packages.containsKey(VdsProperties.spiceServerPackageName)) {
                 Map<String, Object> spice = (Map<String, Object>) packages.get(VdsProperties.spiceServerPackageName);
                 vds.setSpiceVersion(getPackageVersionFormated2(spice));

@@ -343,6 +343,7 @@ public class VdsDaoImpl extends BaseDaoDbFacade implements VdsDao {
             entity.setVdsGroupSupportsGlusterService(rs.getBoolean("vds_group_gluster_service"));
             entity.setHostOs(rs.getString("host_os"));
             entity.setGlusterVersion(new RpmVersion(rs.getString("gluster_version")));
+            entity.setLibrbdVersion(new RpmVersion(rs.getString("librbd1_version")));
             entity.setKvmVersion(rs.getString("kvm_version"));
             entity.setLibvirtVersion(new RpmVersion(rs.getString("libvirt_version")));
             entity.setSpiceVersion(rs.getString("spice_version"));
