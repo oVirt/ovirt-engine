@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,9 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -104,6 +107,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
                             false,
                             true,
                             true);
+            cachedDisksFromDb.addAll(ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values(), true));
         }
         return cachedDisksFromDb;
     }
@@ -114,7 +118,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         if (diskImages.isEmpty()) {
             return;
         }
-
+        List<CinderDisk> cinderDisks = new ArrayList<>();
         for (DiskImage diskImage : diskImages) {
             if (diskImage.getImageStatus() == ImageStatus.ILLEGAL) {
                 DiskImage snapshotImageInDb =
@@ -126,11 +130,18 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
                     saveIllegalDisk(diskImage);
                 }
             } else {
+                if (diskImage.getDiskStorageType() == DiskStorageType.CINDER) {
+                    cinderDisks.add((CinderDisk) diskImage);
+                    continue;
+                }
                 addVmTemplateImage(srcDeviceIdToTargetDeviceIdMapping, diskImage);
             }
         }
-        if (!getReturnValue().getVdsmTaskIdList().isEmpty()) {
+        if (!getReturnValue().getVdsmTaskIdList().isEmpty() || !cinderDisks.isEmpty()) {
             lockSnapshot();
+        }
+        if (!cinderDisks.isEmpty()) {
+            addVmTemplateCinderDisks(srcDeviceIdToTargetDeviceIdMapping);
         }
     }
 
