@@ -54,6 +54,7 @@ public class SubTabHostGeneralSoftwareView extends AbstractSubTabFormView<VDS, H
     TextBoxLabel kernelVersion = new TextBoxLabel();
     VersionTextBoxLabel glusterVersion = new VersionTextBoxLabel();
     VersionTextBoxLabel vdsmVersion = new VersionTextBoxLabel();
+    VersionTextBoxLabel librbdVersion = new VersionTextBoxLabel();
 
     @UiField(provided = true)
     @WithElementId
@@ -77,7 +78,7 @@ public class SubTabHostGeneralSoftwareView extends AbstractSubTabFormView<VDS, H
         boolean glusterSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 7);
+        formBuilder = new FormBuilder(formPanel, 1, 8);
         formBuilder.setRelativeColumnWidth(0, 3);
         formBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion, 0).withAutoPlacement());
@@ -86,6 +87,7 @@ public class SubTabHostGeneralSoftwareView extends AbstractSubTabFormView<VDS, H
         formBuilder.addFormItem(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 0).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 0, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.glusterVersionHostGeneral(), glusterVersion, 0, glusterSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.cephVersionHostGeneral(), librbdVersion, 0, virtSupported).withAutoPlacement());
     }
 
     @Override

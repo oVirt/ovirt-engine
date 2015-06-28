@@ -1624,6 +1624,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("GlusterFS Version")
     String glusterVersionHostGeneral();
 
+    @DefaultStringValue("CEPH Version")
+    String cephVersionHostGeneral();
+
     @DefaultStringValue("iSCSI Initiator Name")
     String isciInitNameHostGeneral();
 
