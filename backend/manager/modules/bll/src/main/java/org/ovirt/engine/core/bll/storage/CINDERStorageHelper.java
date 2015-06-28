@@ -61,7 +61,17 @@ public class CINDERStorageHelper extends StorageHelperBase {
         Provider provider = getProviderDao().get(Guid.createGuidFromString(storageDomain.getStorage()));
         List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
         VDS vds = getVdsDao().get(vdsId);
+        if (!isLibrbdAvailable(vds)) {
+            log.error("Couldn't found librbd1 package on vds {} (needed for storage domain {}).",
+                    vds.getName(), storageDomain.getName());
+            addMessageToAuditLog(AuditLogType.NO_LIBRBD_PACKAGE_AVAILABLE_ON_VDS, null, vds.getName());
+            return new Pair<>(false, null);
+        }
         return registerLibvirtSecrets(storageDomain, vds, libvirtSecrets);
+    }
+
+    public static boolean isLibrbdAvailable(VDS vds) {
+        return vds.getLibrbdVersion() != null;
     }
 
     @Override
