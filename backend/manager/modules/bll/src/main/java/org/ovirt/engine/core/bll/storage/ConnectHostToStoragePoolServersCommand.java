@@ -136,8 +136,9 @@ public class ConnectHostToStoragePoolServersCommand extends
     private boolean registerLibvirtSecrets() {
         List<LibvirtSecret> libvirtSecrets =
                 libvirtSecretDao.getAllByStoragePoolIdFilteredByActiveStorageDomains(getStoragePoolId());
-        if (!libvirtSecrets.isEmpty()) {
-            return registerLibvirtSecrets(libvirtSecrets, false);
+        if (!libvirtSecrets.isEmpty() && !registerLibvirtSecrets(libvirtSecrets, false)) {
+            setNonOperational(NonOperationalReason.LIBVIRT_SECRETS_REGISTRATION_FAILURE);
+            return false;
         }
         return true;
     }
