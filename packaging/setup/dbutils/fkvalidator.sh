@@ -111,5 +111,7 @@ if [ -n "${FIXIT}" -a -z "${QUIET}" ]; then
 	[ "${answer}" = "y" ] || die "Please contact support for further assistance."
 fi
 
+# Install fkvalidator procedures
+dbfunc_psql_die --file="$(dirname "$0")/fkvalidator_sp.sql" > /dev/null
 # Execute
 validate_db_fks "${FIXIT}" "${DBFUNC_VERBOSE}"
