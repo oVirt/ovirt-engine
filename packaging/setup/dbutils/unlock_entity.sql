@@ -1,5 +1,7 @@
 /************************************************************************************************
  The following are helper SP for unlock_entity.sh utility and are not exposed to the application DAOs
+
+If you add a function here, drop it in unlock_entity_drop.sql
 ************************************************************************************************/
 -- Unlocks all locked entities
 create or replace FUNCTION fn_db_unlock_all()

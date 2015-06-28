@@ -23,7 +23,14 @@
 . "$(dirname "$0")/dbfunc-base.sh"
 
 cleanup() {
+	exit_code="$?"
+
 	dbfunc_cleanup
+
+	# Drop fkvalidator procedures
+	dbfunc_psql_die --file="$(dirname "$0")/fkvalidator_sp_drop.sql" > /dev/null
+
+	exit "${exit_code}"
 }
 trap cleanup 0
 dbfunc_init

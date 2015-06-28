@@ -1,5 +1,7 @@
 /************************************************************************************************
  The following are helper SP for taskcleaner utility and are not exposed to the application DAOs
+
+If you add a function here, drop it in taskcleaner_sp_drop.sql
 ************************************************************************************************/
 CREATE OR REPLACE FUNCTION GetAsyncTasksZombies() RETURNS SETOF async_tasks
    AS $procedure$

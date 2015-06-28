@@ -232,3 +232,7 @@ else
 	    done
         fi
 fi
+
+# Drop fn_db_unlock_all procedure
+dbfunc_psql_die --file="$(dirname "$0")/unlock_entity_drop.sql" > /dev/null
+

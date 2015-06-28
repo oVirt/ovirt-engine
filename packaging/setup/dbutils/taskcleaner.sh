@@ -46,7 +46,6 @@ CLEAR_COMPENSATION=
 CLEAR_JOB_STEPS=
 CLEAR_JOB_STEPS_AND_COMPENSATION=
 QUITE_MODE=
-VERSION=
 TASKS_FIELDS="task_id,task_type,status,started_at,result,action_type as command_type,command_id,step_id,storage_pool_id as DC"
 COMMANDS_FIELDS="command_id,command_type,root_command_id,command_parameters,command_params_class,created_at,status,return_value,return_value_class,job_id,step_id,executed"
 
@@ -119,12 +118,6 @@ __EOF__
 [ -n "${DBFUNC_DB_DATABASE}" ] || die "Please specify database"
 
 dbfunc_psql_die --command="select exists (select * from information_schema.tables where table_schema = 'public' and table_name = 'command_entities');" | grep "t"
-VERSION=$?
-if [[ $VERSION = 0 ]]; then
-	VERSION="post3.5"
-else
-	VERSION="pre3.5"
-fi
 
 if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o -n "${CLEAR_ALL}" -o -n "${CLEAR_COMPENSATION}" -o -n "${CLEAR_JOB_STEPS}" ]; then #delete operations block
 	if [ -n "${TASK_ID}" ]; then
@@ -257,45 +250,29 @@ if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o -n "${CLEAR_ALL}" -o -n "${C
 elif [ -n "${ZOMBIES_ONLY}" ]; then #only display operations block
 	CMD1="SELECT ${TASKS_FIELDS} FROM GetAsyncTasksZombies();"
 elif [ -n "${ALL_COMMANDS}" ]; then #only display commands
-	if [[ $VERSION = "post3.5" ]]; then
-		CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommands();"
-	else
-		die "This option is available only from version 3.5"
-	fi
+	CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommands();"
 elif [ -n "${COMMANDS_WITH_RUNNING_TASKS_ONLY}" ]; then
-	if [[ $VERSION = "post3.5" ]]; then
-		CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommandsWithRunningTasks();"
-	else
-		die "This option is available only from version 3.5"
-	fi
+	CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommandsWithRunningTasks();"
 elif [ -n "${CLEAR_COMMANDS}" ]; then
-	if [[ $VERSION = "post3.5" ]]; then
-		if [ -n "${COMMANDS_WITH_RUNNING_TASKS_ONLY}" ]; then
-			CMD1="SELECT DeleteAllCommandsWithRunningTasks();"
-		elif [ -n "${ZOMBIE_COMMANDS_ONLY}" ]; then
-			CMD1="SELECT DeleteAllCommandsWithZombieTasks();"
-		else
-			CMD1="SELECT DeleteAllCommands();"
-		fi
+	if [ -n "${COMMANDS_WITH_RUNNING_TASKS_ONLY}" ]; then
+		CMD1="SELECT DeleteAllCommandsWithRunningTasks();"
+	elif [ -n "${ZOMBIE_COMMANDS_ONLY}" ]; then
+		CMD1="SELECT DeleteAllCommandsWithZombieTasks();"
 	else
-		die "This option is available only from version 3.5"
+		CMD1="SELECT DeleteAllCommands();"
 	fi
 elif [ -n "${ZOMBIE_COMMANDS_ONLY}" ]; then
-	if [[ $VERSION = "post3.5" ]]; then
-		CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommandsWithZombieTasks();"
-	else
-		die "This option is available only from version 3.5"
-	fi
+	CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommandsWithZombieTasks();"
 else
 	CMD1="SELECT ${TASKS_FIELDS} FROM GetAllFromasync_tasks();"
 fi
 
 # Install taskcleaner procedures
 dbfunc_psql_die --file="$(dirname "$0")/taskcleaner_sp.sql" > /dev/null
-if [[ $VERSION = "post3.5" ]]; then
-    dbfunc_psql_die --file="$(dirname "$0")/taskcleaner_sp_3_5.sql" > /dev/null
-fi
-# Execute
 
+# Execute
 dbfunc_psql_die --command="${CMD1}${CMD2}"
+
+# Drop taskcleaner procedures
+dbfunc_psql_die --file="$(dirname "$0")/taskcleaner_sp_drop.sql" > /dev/null
 

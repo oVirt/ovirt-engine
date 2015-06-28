@@ -1,4 +1,5 @@
 -- Database FK validation
+-- If you add a function here, drop it in fkvalidator_sp_drop.sql
 SET client_min_messages=ERROR;
 DROP TYPE IF EXISTS fk_info_rs CASCADE;
 DROP FUNCTION IF EXISTS fn_db_validate_fks(boolean,boolean);
