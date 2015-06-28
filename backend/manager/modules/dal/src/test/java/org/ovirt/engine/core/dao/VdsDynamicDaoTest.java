@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -159,6 +160,17 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
         dao.update(before);
         VdsDynamic after = dao.get(existingVds.getId());
         assertEquals(glusterVersion, after.getGlusterVersion());
+    }
+
+    @Test
+    public void testUpdateLibrbdVersion() {
+        RpmVersion librbdVersion = new RpmVersion("librbd1-0.80.9-1.fc21.x86_64_updated");
+        VdsDynamic before = dao.get(existingVds.getId());
+        assertNotEquals(librbdVersion, before.getLibrbdVersion());
+        before.setLibrbdVersion(librbdVersion);
+        dao.update(before);
+        VdsDynamic after = dao.get(existingVds.getId());
+        assertEquals(librbdVersion, after.getLibrbdVersion());
     }
 
     @Test
