@@ -143,6 +143,8 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             return AuditLogType.VDS_UNTRUSTED;
         case HOST_FEATURES_INCOMPATIBILE_WITH_CLUSTER:
             return AuditLogType.HOST_FEATURES_INCOMPATIBILE_WITH_CLUSTER;
+        case LIBRBD_PACKAGE_NOT_AVAILABLE:
+            return AuditLogType.NO_LIBRBD_PACKAGE_AVAILABLE_ON_VDS;
         default:
             return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
         }
