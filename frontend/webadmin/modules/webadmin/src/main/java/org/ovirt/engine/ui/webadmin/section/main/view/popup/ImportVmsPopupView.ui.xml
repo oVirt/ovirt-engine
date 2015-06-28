@@ -12,20 +12,21 @@
 		}
 
 		.generalSectionStyle {
-			margin-top: 5px;
-			margin-bottom: 10px;
-			width: 390px;
+			margin-bottom: 5px;
+			width: 100%;
+			background-color: #e5e5e5;
+			border: 2px solid #d3d3d3;
 		}
 
 		.vmwareSectionStyle {
 			margin-top: 5px;
-			margin-bottom: 5px;
+			height: 165px;
 		}
 
 		.exportSectionStyle {
 			margin-top: 5px;
-			margin-bottom: 5px;
 			width: 390px;
+			height: 165px;
 		}
 
         .messageStyle {
@@ -51,7 +52,7 @@
 					<e:ListModelListBoxEditor ui:field="importSourcesEditor" />
 				</g:FlowPanel>
 
-				<g:FlowPanel ui:field="exportPanel" visible="false" height="110px" addStyleNames="{style.exportSectionStyle}">
+				<g:FlowPanel ui:field="exportPanel" visible="false" addStyleNames="{style.exportSectionStyle}">
 					<ge:StringEntityModelLabelEditor ui:field="exportDomainName"/>
 					<ge:StringEntityModelLabelEditor ui:field="exportDomainPath"/>
 					<ge:StringEntityModelLabelEditor ui:field="exportDomainDescription"/>
