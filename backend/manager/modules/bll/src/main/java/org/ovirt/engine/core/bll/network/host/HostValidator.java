@@ -21,7 +21,7 @@ public class HostValidator {
 
     private ValidationResult hostExist() {
         if (host == null) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST, host.getName());
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
 
         return ValidationResult.VALID;
