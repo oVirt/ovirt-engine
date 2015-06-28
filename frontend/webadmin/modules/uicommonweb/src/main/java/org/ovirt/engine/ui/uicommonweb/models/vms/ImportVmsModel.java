@@ -30,6 +30,11 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -255,6 +260,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 clearVms();
+                clearValidations();
             }
         });
     }
@@ -288,6 +294,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void loadVmsFromVmware() {
+        if (!validateVmwareConfiguration()) {
+            return;
+        }
+
         startProgress(null);
         AsyncDataProvider.getInstance().getVmsFromExternalServer(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -300,6 +310,38 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         getUrl(),
         getUsername().getEntity(),
         getPassword().getEntity());
+    }
+
+    private boolean validateVmwareConfiguration() {
+        getvCenter().validateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(255),
+                new HostAddressValidation() });
+        getEsx().validateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(255),
+                new HostAddressValidation() });
+        getVmwareDatacenter().validateEntity(new IValidation[] {
+                new NotEmptyValidation() });
+        getUsername().validateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new AsciiNameValidation() });
+        getPassword().validateEntity(new IValidation[] {
+                new NotEmptyValidation()} );
+
+        return getvCenter().getIsValid()
+                && getEsx().getIsValid()
+                && getVmwareDatacenter().getIsValid()
+                && getUsername().getIsValid()
+                && getPassword().getIsValid();
+    }
+
+    private void clearValidations() {
+        getvCenter().setIsValid(true);
+        getEsx().setIsValid(true);
+        getVmwareDatacenter().setIsValid(true);
+        getUsername().setIsValid(true);
+        getPassword().setIsValid(true);
     }
 
     private String getUrl() {
