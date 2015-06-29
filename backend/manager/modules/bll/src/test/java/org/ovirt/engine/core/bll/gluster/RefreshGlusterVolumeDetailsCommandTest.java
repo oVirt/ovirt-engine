@@ -6,18 +6,23 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.InjectorRule;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -29,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -39,6 +45,9 @@ public class RefreshGlusterVolumeDetailsCommandTest {
     private Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     private Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
     private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     GlusterVolumeDao volumeDao;
@@ -54,14 +63,21 @@ public class RefreshGlusterVolumeDetailsCommandTest {
     @Mock
     private GlusterSyncJob syncJob;
 
+    @Before
+    public void init() {
+        injectorRule.bind(BackendInternal.class, mock(BackendInternal.class));
+        injectorRule.bind(AuditLogDirector.class, mock(AuditLogDirector.class));
+        syncJob = Mockito.spy(GlusterSyncJob.getInstance());
+    }
+
     private void prepareMocks(RefreshGlusterVolumeDetailsCommand command) {
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getDistributedVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getDistributedVolume(volumeId2)).when(volumeDao).getById(volumeId2);
         doReturn(null).when(volumeDao).getById(null);
+        doReturn(syncJob).when(command).getSyncJobInstance();
         doNothing().when(syncJob).refreshVolumeDetails(any(VDS.class), any(GlusterVolumeEntity.class));
-        when(cmd.getSyncJobInstance()).thenReturn(syncJob);
 
     }
 

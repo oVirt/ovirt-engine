@@ -63,6 +63,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
@@ -181,6 +182,8 @@ public class GlusterSyncJobTest {
     @Before
     public void before() {
         injectorRule.bind(BackendInternal.class, mock(BackendInternal.class));
+        injectorRule.bind(AuditLogDirector.class, mock(AuditLogDirector.class));
+        glusterManager = Mockito.spy(GlusterSyncJob.getInstance());
     }
 
     private void createObjects(Version version) {
@@ -270,7 +273,6 @@ public class GlusterSyncJobTest {
     @SuppressWarnings("unchecked")
     private void setupMocks() throws Exception {
         logUtil = Mockito.spy(GlusterAuditLogUtil.getInstance());
-        glusterManager = Mockito.spy(GlusterSyncJob.getInstance());
         glusterManager.setLogUtil(logUtil);
         mockDaos();
 

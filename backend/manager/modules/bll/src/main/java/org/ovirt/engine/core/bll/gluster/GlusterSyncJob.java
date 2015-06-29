@@ -70,11 +70,12 @@ import org.slf4j.LoggerFactory;
 public class GlusterSyncJob extends GlusterJob {
     private final Logger log = LoggerFactory.getLogger(GlusterSyncJob.class);
     private static final GlusterSyncJob instance = new GlusterSyncJob();
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private final AuditLogDirector auditLogDirector;
     private final BackendInternal backend;
 
     private GlusterSyncJob() {
         backend = Injector.get(BackendInternal.class);
+        auditLogDirector = Injector.get(AuditLogDirector.class);
     }
 
     public static GlusterSyncJob getInstance() {
