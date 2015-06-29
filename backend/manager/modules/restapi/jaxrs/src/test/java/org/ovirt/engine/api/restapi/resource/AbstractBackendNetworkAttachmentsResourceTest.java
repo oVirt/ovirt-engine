@@ -160,7 +160,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     }
 
     protected String[] getIncompleteFields() {
-        return new String[] { "network.id" };
+        return new String[] { "network.id|name" };
     }
 
     protected org.ovirt.engine.api.model.NetworkAttachment createIncompleteNetworkAttachment() {

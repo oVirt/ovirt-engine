@@ -28,8 +28,15 @@ public class NetworkAttachmentMapper {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
 
-        if (model.isSetNetwork() && model.getNetwork().isSetId()) {
-            entity.setNetworkId(GuidUtils.asGuid(model.getNetwork().getId()));
+        if (model.isSetNetwork()) {
+            Network networkModel = model.getNetwork();
+            if (networkModel.isSetId()) {
+                entity.setNetworkId(GuidUtils.asGuid(networkModel.getId()));
+            }
+
+            if (networkModel.isSetName()) {
+                entity.setNetworkName(networkModel.getName());
+            }
         }
 
         if (model.isSetHostNic()) {
@@ -101,6 +108,14 @@ public class NetworkAttachmentMapper {
 
         if (entity.getNetworkId() != null) {
             getModelNetwork(model).setId(entity.getNetworkId().toString());
+        }
+
+        if (entity.getNetworkName() != null) {
+            if (model.getNetwork() == null) {
+                model.setNetwork(new Network());
+            }
+
+            model.getNetwork().setName(entity.getNetworkName());
         }
 
         if (entity.getNicId() != null) {

@@ -46,7 +46,7 @@ public abstract class AbstractBackendNetworkAttachmentsResource
 
     @Override
     public Response add(NetworkAttachment attachment) {
-        validateParameters(attachment, "network.id");
+        validateParameters(attachment, "network.id|name");
         org.ovirt.engine.core.common.businessentities.network.NetworkAttachment networkAttachment = map(attachment);
         NetworkAttachmentParameters params = new NetworkAttachmentParameters(hostId, networkAttachment);
         return performCreate(VdcActionType.AddNetworkAttachment,

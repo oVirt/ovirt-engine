@@ -2196,7 +2196,7 @@ actions:
       parameterType: NetworkAttachment
       signatures:
       - mandatoryArguments:
-          network_attachment.network.id: xs:string
+          network_attachment.network.name|id: xs:string
         optionalArguments:
           network_attachment.ip_address_assignments.ip_address_assignment--COLLECTION:
             ip_address_assignment.assignment_method: xs:string
@@ -2241,10 +2241,9 @@ actions:
       parameterType: NetworkAttachment
       signatures:
       - mandatoryArguments:
-          network_attachment.network.id: xs:string
+          network_attachment.network.name|id: xs:string
         optionalArguments:
-          network_attachment.host_nic.id: xs:string
-          network_attachment.host_nic.name: xs:string
+          network_attachment.host_nic.id|name: xs:string
           network_attachment.ip_address_assignments.ip_address_assignment--COLLECTION:
             ip_address_assignment.assignment_method: xs:string
             ip_address_assignment.ip.address: xs:string
