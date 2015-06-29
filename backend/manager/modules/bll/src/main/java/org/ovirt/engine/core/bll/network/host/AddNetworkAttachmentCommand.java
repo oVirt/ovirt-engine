@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
-import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -23,9 +22,6 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 @NonTransactiveCommandAttribute
 public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> extends VdsCommand<T> {
-
-    @Inject
-    private ManagementNetworkUtil managementNetworkUtil;
 
     @Inject
     private InterfaceDao interfaceDao;
