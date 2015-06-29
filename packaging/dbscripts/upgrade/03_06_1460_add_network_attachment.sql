@@ -9,6 +9,14 @@ WHERE id IN (SELECT id
                      FROM vds_interface) t
               WHERE t.rnum > 1);
 
+UPDATE vds_interface SET network_name = null
+WHERE id in (
+    SELECT vds_interface.id
+    FROM vds_interface
+    JOIN network on vds_interface.network_name = network.name
+    WHERE network.vlan_id is not NULL AND vds_interface.vlan_id is NULL
+);
+
 -----------------------------
 --  network_attachments table
 -----------------------------
