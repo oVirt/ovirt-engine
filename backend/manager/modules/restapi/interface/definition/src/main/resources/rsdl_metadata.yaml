@@ -497,14 +497,37 @@ actions:
           action.ticket.value: xs:string
         description: Create a ticket for connecting to the VM using the display protocol.
 - name: /vms/{vm:id}/graphicsconsoles|rel=get
-  description: Get active graphics consoles of a VM.
+  description: Get graphics consoles of a VM.
+  request:
+    urlparams:
+      current:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
+- name: /vms/{vm:id}/graphicsconsoles|rel=add
+  description: add a graphics console to a virtual machine
+  request:
+    body:
+      parameterType: GraphicsConsole
+      signatures:
+      - mandatoryArguments:
+          graphics_console.protocol: xs:string
 - name: /vms/{vm:id}/graphicsconsoles/{graphicsconsole:id}|rel=get
   description: Get active graphics console of a VM.
   request:
+    urlparams:
+      current:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
     headers:
       Content-Type:
         value: application/xml|json|x-virt-viewer
         required: false
+- name: /vms/{vm:id}/graphicsconsoles/{graphicsconsole:id}|rel=delete
+  description: delete the graphics console for a virtual machine identified by the given id
 - name: /vms/{vm:id}/logon|rel=logon
   description: Perform automatic logon on the VM using the guest agent.
   request:

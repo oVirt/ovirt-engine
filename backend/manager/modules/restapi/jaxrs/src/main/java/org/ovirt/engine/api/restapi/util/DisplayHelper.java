@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.util;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
@@ -16,6 +14,9 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DisplayHelper {
 
     private DisplayHelper() { }
@@ -26,10 +27,7 @@ public class DisplayHelper {
     public static List<GraphicsType> getGraphicsTypesForEntity(BackendResource backendResource, Guid id) {
         List<GraphicsType> graphicsTypes = new ArrayList<>();
 
-        List<GraphicsDevice> graphicsDevices = backendResource.getEntity(List.class,
-                VdcQueryType.GetGraphicsDevices,
-                new IdQueryParameters(id),
-                "GetGraphicsDevices", true);
+        List<GraphicsDevice> graphicsDevices = getGraphicsDevicesForEntity(backendResource, id);
 
         if (graphicsDevices != null) {
             for (GraphicsDevice graphicsDevice : graphicsDevices) {
@@ -38,6 +36,15 @@ public class DisplayHelper {
         }
 
         return graphicsTypes;
+    }
+
+    public static List<GraphicsDevice> getGraphicsDevicesForEntity(BackendResource backendResource, Guid id) {
+        List<GraphicsDevice> graphicsDevices = backendResource.getEntity(List.class,
+                VdcQueryType.GetGraphicsDevices,
+                new IdQueryParameters(id),
+                id.toString(), true);
+
+        return graphicsDevices;
     }
 
     /**
@@ -66,7 +73,6 @@ public class DisplayHelper {
      * Sets static display info (derived from graphics device) to the Template.
      * Serves for BC purposes as VM can have more graphics devices, but old restapi allows us to set only one.
      * If there are multiple graphics, SPICE is preferred.
-     *
      * @param template
      */
     public static void adjustDisplayData(BackendResource res, Template template) {
@@ -77,7 +83,6 @@ public class DisplayHelper {
      * Sets static display info (derived from graphics device) to the VM.
      * Serves for BC purposes as VM can have more graphics devices, but old restapi allows us to set only one.
      * If there are multiple graphics, SPICE is preferred.
-     *
      * @param vm
      */
     public static void adjustDisplayData(BackendResource res, VM vm) {

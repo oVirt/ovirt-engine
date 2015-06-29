@@ -16,19 +16,6 @@
 
 package org.ovirt.engine.api.utils;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import javax.ws.rs.Path;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.ActionsBuilder;
@@ -61,6 +48,7 @@ import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.model.GlusterHook;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.GlusterVolumeProfileDetails;
+import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Host;
@@ -94,6 +82,7 @@ import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.model.Quota;
+import org.ovirt.engine.api.model.QuotaStorageLimit;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Role;
@@ -106,7 +95,6 @@ import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageDomain;
-import org.ovirt.engine.api.model.QuotaStorageLimit;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Url;
@@ -134,8 +122,6 @@ import org.ovirt.engine.api.resource.BookmarkResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
-import org.ovirt.engine.api.resource.QuotaClusterLimitResource;
-import org.ovirt.engine.api.resource.QuotaClusterLimitsResource;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.CpuProfileResource;
@@ -167,6 +153,8 @@ import org.ovirt.engine.api.resource.HostNicsResource;
 import org.ovirt.engine.api.resource.HostNumaNodeResource;
 import org.ovirt.engine.api.resource.HostNumaNodesResource;
 import org.ovirt.engine.api.resource.HostStorageResource;
+import org.ovirt.engine.api.resource.IconResource;
+import org.ovirt.engine.api.resource.IconsResource;
 import org.ovirt.engine.api.resource.ImageResource;
 import org.ovirt.engine.api.resource.ImagesResource;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
@@ -189,7 +177,11 @@ import org.ovirt.engine.api.resource.PermitResource;
 import org.ovirt.engine.api.resource.PermitsResource;
 import org.ovirt.engine.api.resource.QoSsResource;
 import org.ovirt.engine.api.resource.QosResource;
+import org.ovirt.engine.api.resource.QuotaClusterLimitResource;
+import org.ovirt.engine.api.resource.QuotaClusterLimitsResource;
 import org.ovirt.engine.api.resource.QuotaResource;
+import org.ovirt.engine.api.resource.QuotaStorageLimitResource;
+import org.ovirt.engine.api.resource.QuotaStorageLimitsResource;
 import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
@@ -208,8 +200,6 @@ import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.api.resource.StorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainsResource;
-import org.ovirt.engine.api.resource.QuotaStorageLimitResource;
-import org.ovirt.engine.api.resource.QuotaStorageLimitsResource;
 import org.ovirt.engine.api.resource.StorageResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
@@ -225,10 +215,10 @@ import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
-import org.ovirt.engine.api.resource.IconResource;
-import org.ovirt.engine.api.resource.IconsResource;
 import org.ovirt.engine.api.resource.VmHostDeviceResource;
 import org.ovirt.engine.api.resource.VmHostDevicesResource;
+import org.ovirt.engine.api.resource.VmGraphicsConsoleResource;
+import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
 import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmNumaNodeResource;
 import org.ovirt.engine.api.resource.VmNumaNodesResource;
@@ -291,6 +281,18 @@ import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypeResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 /**
  * Contains a static addLinks() method which constructs any href attributes
  * and action links required by a representation.
@@ -342,6 +344,9 @@ public class LinkHelper {
         map = new ParentToCollectionMap(ReadOnlyDeviceResource.class, ReadOnlyDevicesResource.class, Template.class);
         map.add(DeviceResource.class, DevicesResource.class, VM.class);
         TYPES.put(CdRom.class, map);
+
+        map = new ParentToCollectionMap(VmGraphicsConsoleResource.class, VmGraphicsConsolesResource.class, VM.class);
+        TYPES.put(GraphicsConsole.class, map);
 
         map = new ParentToCollectionMap(VmApplicationResource.class, VmApplicationsResource.class, VM.class);
         TYPES.put(Application.class, map);

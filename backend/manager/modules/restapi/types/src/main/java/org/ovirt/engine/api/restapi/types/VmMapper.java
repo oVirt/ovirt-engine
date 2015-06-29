@@ -69,6 +69,7 @@ import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -676,11 +677,30 @@ public class VmMapper extends VmBaseMapper {
             model.setProtocol(graphicsTypeString);
         }
 
-        model.setPort(graphicsInfo.getValue().getPort());
-        model.setTlsPort(graphicsInfo.getValue().getTlsPort());
-        model.setAddress(graphicsInfo.getValue().getIp());
+        if (graphicsInfo.getValue() != null) {
+            model.setPort(graphicsInfo.getValue().getPort());
+            model.setTlsPort(graphicsInfo.getValue().getTlsPort());
+            model.setAddress(graphicsInfo.getValue().getIp());
+        }
 
         return model;
+    }
+
+    @Mapping(from = GraphicsConsole.class, to = GraphicsDevice.class)
+    public static GraphicsDevice map(GraphicsConsole graphicsConsole, GraphicsDevice template) {
+        GraphicsType type = GraphicsType.valueOf(graphicsConsole.getProtocol());
+        if (template != null) {
+            return template;
+        }
+
+        switch (type) {
+            case SPICE:
+                return new GraphicsDevice(VmDeviceType.SPICE);
+            case VNC:
+                return new GraphicsDevice(VmDeviceType.VNC);
+            default:
+                return template;
+        }
     }
 
     @Mapping(from = GraphicsType.class, to = org.ovirt.engine.core.common.businessentities.GraphicsType.class)

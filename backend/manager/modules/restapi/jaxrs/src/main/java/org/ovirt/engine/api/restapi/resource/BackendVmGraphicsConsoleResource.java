@@ -5,10 +5,15 @@ import org.ovirt.engine.api.model.GraphicsType;
 import org.ovirt.engine.api.resource.ApiMediaType;
 import org.ovirt.engine.api.resource.VmGraphicsConsoleResource;
 import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
+import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
+import org.ovirt.engine.core.common.action.GraphicsParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -49,25 +54,54 @@ public class BackendVmGraphicsConsoleResource
 
     @Override
     public Response generateDescriptor() {
-        String consoleString = HexUtils.hex2string(consoleId);
-
-        GraphicsConsole console = new GraphicsConsole();
-        console.setProtocol(consoleString);
-        validateEnums(GraphicsConsole.class, console);
-
-        GraphicsType type = GraphicsType.valueOf(consoleString);
-
-        org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = getMappingLocator().getMapper(GraphicsType.class, org.ovirt.engine.core.common.businessentities.GraphicsType.class).map(type, null);
+        org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = asGraphicsType();
 
         ConsoleOptions consoleOptions = new ConsoleOptions(graphicsType);
         consoleOptions.setVmId(vmGuid);
         ConsoleOptions configuredOptions = runQuery(VdcQueryType.ConfigureConsoleOptions,
                 new ConfigureConsoleOptionsParams(consoleOptions, true)).getReturnValue();
 
-        String descriptor = runQuery(VdcQueryType.GetConsoleDescriptorFile, new ConsoleOptionsParams(configuredOptions))
-                .getReturnValue();
-        Response.ResponseBuilder builder = Response.ok(descriptor.getBytes(Charset.forName("UTF-8")), ApiMediaType.APPLICATION_X_VIRT_VIEWER);
+        VdcQueryReturnValue returnValue = runQuery(VdcQueryType.GetConsoleDescriptorFile, new ConsoleOptionsParams(configuredOptions));
+
+        Response.ResponseBuilder builder;
+        if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
+            builder = Response.ok(((String) returnValue.getReturnValue()).getBytes(Charset.forName("UTF-8")), ApiMediaType.APPLICATION_X_VIRT_VIEWER);
+        } else {
+            builder = Response.noContent();
+        }
 
         return builder.build();
+    }
+
+    public org.ovirt.engine.core.common.businessentities.GraphicsType asGraphicsType() {
+        String consoleString = HexUtils.hex2string(consoleId);
+        validateGraphicsEnum(consoleString);
+
+        GraphicsType type = GraphicsType.valueOf(consoleString);
+        return getMappingLocator().getMapper(GraphicsType.class, org.ovirt.engine.core.common.businessentities.GraphicsType.class).map(type, null);
+    }
+
+    public void validateGraphicsEnum(String consoleString) {
+        GraphicsConsole console = new GraphicsConsole();
+        console.setProtocol(consoleString);
+        validateEnums(GraphicsConsole.class, console);
+    }
+
+    @Override
+    public Response remove() {
+        org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = asGraphicsType();
+
+        List<GraphicsDevice> devices = DisplayHelper.getGraphicsDevicesForEntity(this, vmGuid);
+        if (devices == null) {
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
+        }
+
+        for (GraphicsDevice device : devices) {
+            if (device.getGraphicsType().equals(graphicsType)) {
+                return performAction(VdcActionType.RemoveGraphicsDevice, new GraphicsParameters(device));
+            }
+        }
+
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
     }
 }
