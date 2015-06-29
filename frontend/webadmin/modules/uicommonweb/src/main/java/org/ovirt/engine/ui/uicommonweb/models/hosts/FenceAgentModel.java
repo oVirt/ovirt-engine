@@ -152,7 +152,9 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
         getPmEncryptOptions().setEntity(original.getPmEncryptOptions().getEntity());
         getPmPort().setEntity(original.getPmPort().getEntity());
         getPmSlot().setEntity(original.getPmSlot().getEntity());
+        getOrder().setEntity(original.getOrder().getEntity());
         getPmOptions().setEntity(original.getPmOptions().getEntity());
+        setCiscoUcsPrimaryPmTypeSelected(original.isCiscoUcsPrimaryPmTypeSelected());
         //Do this last so any event handlers have the up to date information.
         getManagementIp().setEntity(original.getManagementIp().getEntity());
     }

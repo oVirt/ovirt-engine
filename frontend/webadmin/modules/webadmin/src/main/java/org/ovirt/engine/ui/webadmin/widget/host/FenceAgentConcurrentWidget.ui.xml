@@ -14,7 +14,6 @@
         }
 
         .button {
-            padding: 0px 0px 0px 26px;
             border: none;
             background: none;
         }
@@ -43,10 +42,13 @@
         .separator {
             border-bottom: lightgray 1px solid;
         }
+        .indentButton {
+            padding: 0px 0px 0px 26px;
+        }
     </ui:style>
 
     <b:Row addStyleNames="{style.separator}">
-      <b:Column size="LG_1">
+      <b:Column size="LG_1" addStyleNames="{style.indentButton}">
         <g:PushButton ui:field="editFenceAgent" addStyleNames="{style.button}">
             <g:upFace image="{resources.editHover}"/>
         </g:PushButton>

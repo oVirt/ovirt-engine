@@ -119,6 +119,7 @@ public class FenceAgentsEditor extends AddRemoveRowWidget<FenceAgentListModel, F
             }
         });
         for (final FenceAgentModel concurrentModel: model.getConcurrentList()) {
+            modelProvider.initializeModel(concurrentModel);
             widget.addRemoveConcurrentGroupClickHandler(concurrentModel, new ClickHandler() {
 
                 @Override
