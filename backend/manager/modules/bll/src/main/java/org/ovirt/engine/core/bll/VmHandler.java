@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -1137,5 +1138,48 @@ public class VmHandler {
             }
         }
         return true;
+    }
+
+    /**
+     * Automatic selection of display type based on its graphics types in parameters.
+     * This method preserves backward compatibility for REST API - legacy REST API doesn't allow to set display and
+     * graphics separately.
+     */
+    public static void autoSelectDefaultDisplayType(Guid srcEntityId,
+                                                VmBase parametersStaticData,
+                                                VDSGroup cluster,
+                                                Map<GraphicsType, GraphicsDevice> graphicsDevices) {
+        if (parametersStaticData.getOsId() == OsRepository.AUTO_SELECT_OS ||
+                parametersStaticData.getDefaultDisplayType() != null) {
+            return;
+        }
+
+        DisplayType defaultDisplayType = DisplayType.qxl;
+        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = osRepository.getGraphicsAndDisplays(
+                parametersStaticData.getOsId(),
+                // cluster == null for the non cluster entities (e.g. Blank template and instance types)
+                cluster != null ? cluster.getCompatibilityVersion() : Version.getLast());
+
+        // map holding display type -> set of supported graphics types for this display type
+        Map<DisplayType, Set<GraphicsType>> displayGraphicsSupport = new HashMap<>();
+
+        for (Pair<GraphicsType, DisplayType> graphicsAndDisplay : graphicsAndDisplays) {
+            DisplayType display = graphicsAndDisplay.getSecond();
+            if (!displayGraphicsSupport.containsKey(display)) {
+                displayGraphicsSupport.put(display, new HashSet<GraphicsType>());
+            }
+
+            displayGraphicsSupport.get(display).add(graphicsAndDisplay.getFirst());
+        }
+
+        for (Map.Entry<DisplayType, Set<GraphicsType>> entry : displayGraphicsSupport.entrySet()) {
+            if (entry.getValue().containsAll(VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(srcEntityId),
+                    graphicsDevices))) {
+                defaultDisplayType = entry.getKey();
+                break;
+            }
+        }
+
+        parametersStaticData.setDefaultDisplayType(defaultDisplayType);
     }
 }

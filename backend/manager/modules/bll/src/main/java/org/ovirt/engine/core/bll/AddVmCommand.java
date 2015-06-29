@@ -1511,10 +1511,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         // Choose a proper default display type according to the cluster architecture
-        if (getParameters().getVmStaticData().getOsId() != OsRepository.AUTO_SELECT_OS &&
-                getParameters().getVmStaticData().getDefaultDisplayType() == null) {
-            autoSelectDefaultDisplayType(getVmTemplateId());
-        }
+        VmHandler.autoSelectDefaultDisplayType(getVmTemplateId(),
+            getParameters().getVmStaticData(),
+            getVdsGroup(),
+            getParameters().getGraphicsDevices());
     }
 
     protected boolean isTemplateInValidDc() {

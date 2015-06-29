@@ -117,9 +117,10 @@ public class AddVmTemplateCommandTest {
             public void separateCustomProperties(VmStatic parameterMasterVm) {
             }
         });
-        cmd.postConstruct();
+
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        cmd.postConstruct();
         cmd.setVmId(vmId);
         cmd.setVdsGroupId(vdsGroupId);
     }

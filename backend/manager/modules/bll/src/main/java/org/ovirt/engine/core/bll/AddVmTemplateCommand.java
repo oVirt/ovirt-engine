@@ -143,6 +143,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 parameters.setConsoleEnabled(false);
             }
             VmHandler.updateDefaultTimeZone(parameterMasterVm);
+            VmHandler.autoSelectDefaultDisplayType(getVmId(),
+                    getParameters().getMasterVm(),
+                    getVdsGroup(),
+                    getParameters().getGraphicsDevices());
 
             separateCustomProperties(parameterMasterVm);
         }

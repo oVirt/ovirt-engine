@@ -71,7 +71,13 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                         mOldTemplate);
             }
         }
+
+
         VmHandler.updateDefaultTimeZone(parameters.getVmTemplateData());
+        VmHandler.autoSelectDefaultDisplayType(getVmTemplateId(),
+                getParameters().getVmTemplateData(),
+                getVdsGroup(),
+                getParameters().getGraphicsDevices());
     }
 
     @Override

@@ -1,12 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -15,8 +12,6 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -25,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmManagementCommandBase<T extends VmManagementParametersBase> extends VmCommand<T> {
@@ -256,40 +250,5 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                 getParameters().setBalloonEnabled(true);
             }
         }
-    }
-
-
-    /**
-     * Automatic selection of VM display type based on its graphics types in parameters.
-     * This method preserves backward compatibility for REST API - legacy REST API doesn't allow to set display and
-     * graphics separately.
-     */
-    protected void autoSelectDefaultDisplayType(Guid srcEntityId) {
-        DisplayType defaultDisplayType = DisplayType.qxl;
-        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = osRepository.getGraphicsAndDisplays(
-                getParameters().getVmStaticData().getOsId(),
-                getVdsGroup().getCompatibilityVersion());
-
-        // map holding display type -> set of supported graphics types for this display type
-        Map<DisplayType, Set<GraphicsType>> displayGraphicsSupport = new HashMap<>();
-
-        for (Pair<GraphicsType, DisplayType> graphicsAndDisplay : graphicsAndDisplays) {
-            DisplayType display = graphicsAndDisplay.getSecond();
-            if (!displayGraphicsSupport.containsKey(display)) {
-                displayGraphicsSupport.put(display, new HashSet<GraphicsType>());
-            }
-
-            displayGraphicsSupport.get(display).add(graphicsAndDisplay.getFirst());
-        }
-
-        for (Map.Entry<DisplayType, Set<GraphicsType>> entry : displayGraphicsSupport.entrySet()) {
-            if (entry.getValue().containsAll(VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(srcEntityId),
-                    getParameters().getGraphicsDevices()))) {
-                defaultDisplayType = entry.getKey();
-                break;
-            }
-        }
-
-        getParameters().getVmStaticData().setDefaultDisplayType(defaultDisplayType);
     }
 }

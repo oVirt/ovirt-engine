@@ -71,7 +71,6 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -121,10 +120,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         VmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
 
-        if (getParameters().getVmStaticData().getOsId() != OsRepository.AUTO_SELECT_OS &&
-                getParameters().getVmStaticData().getDefaultDisplayType() == null) {
-            autoSelectDefaultDisplayType(getVmId());
-        }
+        VmHandler.autoSelectDefaultDisplayType(getVmId(),
+            getParameters().getVmStaticData(),
+            getVdsGroup(),
+            getParameters().getGraphicsDevices());
+
 
         updateParametersVmFromInstanceType();
     }
