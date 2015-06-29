@@ -72,6 +72,12 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/large/windows_2012x64.png")
     ImageResource windows_2012x64LargeImage();
 
+    @Source("images/os/large/windows_10.png")
+    ImageResource windows_10LargeImage();
+
+    @Source("images/os/large/windows_10x64.png")
+    ImageResource windows_10x64LargeImage();
+
     @Source("images/os/large/sles_11.png")
     ImageResource sles_11LargeImage();
 
@@ -181,6 +187,12 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     @Source("images/os/windows_2012x64.png")
     ImageResource windows_2012x64SmallImage();
+
+    @Source("images/os/windows_10.png")
+    ImageResource windows_10SmallImage();
+
+    @Source("images/os/windows_10x64.png")
+    ImageResource windows_10x64SmallImage();
 
     @Source("images/os/sles_11.png")
     ImageResource sles_11SmallImage();
