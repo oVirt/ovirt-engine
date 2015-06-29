@@ -619,6 +619,7 @@ with ovirt-vmconsole-proxy package
 %package setup-plugin-vmconsole-proxy-helper
 Summary:	Setup and upgrade specific plugins for vmconsole-proxy-helper
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
+Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 
 %description setup-plugin-vmconsole-proxy-helper
 Setup and upgrade specific plugins for vmconsole-proxy-helper
