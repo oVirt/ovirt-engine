@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VdsCommand;
-import org.ovirt.engine.core.bll.VdsValidator;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -54,7 +54,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
         }
 
-        VdsValidator validator = new VdsValidator(getVds());
+        HostValidator validator = new HostValidator(getVds());
         if (!validate(validator.isUp())) {
             return false;
         }

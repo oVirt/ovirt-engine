@@ -7,6 +7,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -92,8 +93,8 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
     @Override
     protected boolean canDoAction() {
-        VdsValidator validator = new VdsValidator(getVds());
-        return validate(validator.exists()) &&
+        HostValidator validator = new HostValidator(getVds());
+        return validate(validator.hostExists()) &&
                 validate(validator.validateStatusForActivation()) &&
                 validate(validator.validateUniqueId());
     }

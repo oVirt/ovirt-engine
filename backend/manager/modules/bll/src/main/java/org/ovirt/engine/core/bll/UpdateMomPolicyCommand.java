@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -40,10 +41,10 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
 
     @Override
     protected boolean canDoAction() {
-        VdsValidator vdsValidator = new VdsValidator(getVds());
+        HostValidator hostValidator = new HostValidator(getVds());
 
-        return validate(vdsValidator.exists())
-                && validate(vdsValidator.isUp())
+        return validate(hostValidator.hostExists())
+                && validate(hostValidator.isUp())
                 && validate(validateMinimumVersionSupport());
     }
 

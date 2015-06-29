@@ -7,10 +7,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.VdsValidator;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -113,7 +113,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             return;
         }
 
-        VdsValidator validator = new VdsValidator(getVds());
+        HostValidator validator = new HostValidator(getVds());
         boolean shouldBeFenced = validator.shouldVdsBeFenced();
         if (shouldBeFenced) {
             getParameters().setParentCommand(VdcActionType.VdsNotRespondingTreatment);

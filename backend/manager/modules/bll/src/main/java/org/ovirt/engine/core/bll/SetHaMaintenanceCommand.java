@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SetHaMaintenanceParameters;
@@ -42,10 +43,10 @@ public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParamete
 
     @Override
     protected boolean canDoAction() {
-        VdsValidator vdsValidator = new VdsValidator(getVds());
+        HostValidator hostValidator = new HostValidator(getVds());
 
-        if (!validate(vdsValidator.exists())
-                || !validate(vdsValidator.isUp())) {
+        if (!validate(hostValidator.hostExists())
+                || !validate(hostValidator.isUp())) {
             return false;
         }
         if (getVds().getVdsGroupCompatibilityVersion().compareTo(Version.v3_4) < 0) {

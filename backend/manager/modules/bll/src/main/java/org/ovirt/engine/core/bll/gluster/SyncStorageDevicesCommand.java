@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.VdsCommand;
-import org.ovirt.engine.core.bll.VdsValidator;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -30,7 +30,7 @@ public class SyncStorageDevicesCommand<T extends VdsActionParameters> extends Vd
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
         }
 
-        VdsValidator validator = new VdsValidator(getVds());
+        HostValidator validator = new HostValidator(getVds());
         return validate(validator.isUp());
     }
 

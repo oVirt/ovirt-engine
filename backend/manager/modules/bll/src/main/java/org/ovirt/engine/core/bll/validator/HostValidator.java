@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -19,15 +20,24 @@ import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 
 public class HostValidator {
 
-    private final VdsDao hostDao;
-    private final StoragePoolDao storagePoolDao;
-    private final VdsStaticDao hostStaticDao;
-    private final VDS host;
+    private VdsDao hostDao;
+    private StoragePoolDao storagePoolDao;
+    private VdsStaticDao hostStaticDao;
+    private VDS host;
+
+    private ValidationResult validateStatus(VDSStatus hostStatus) {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL)
+                .unless(hostStatus == host.getStatus());
+    }
 
     public HostValidator(DbFacade dbFacade, VDS host) {
         this.hostDao = dbFacade.getVdsDao();
         this.storagePoolDao = dbFacade.getStoragePoolDao();
         this.hostStaticDao = dbFacade.getVdsStaticDao();
+        this.host = host;
+    }
+
+    public HostValidator(VDS host) {
         this.host = host;
     }
 
@@ -108,6 +118,53 @@ public class HostValidator {
     public ValidationResult passwordNotEmpty(boolean addPending, AuthenticationMethod authMethod, String password) {
         return ValidationResult.failWith(EngineMessage.VDS_CANNOT_INSTALL_EMPTY_PASSWORD)
                 .when(!addPending && authMethod == AuthenticationMethod.Password && StringUtils.isEmpty(password));
+    }
+
+    public boolean shouldVdsBeFenced() {
+        boolean result = false;
+        // Not using exists() here in order not to add canDoAction message
+        if (host == null) {
+            return false;
+        }
+
+        switch (host.getStatus()) {
+        case Down:
+        case InstallFailed:
+        case Maintenance:
+        case NonOperational:
+        case NonResponsive:
+        case Kdumping:  // it should happen only after restart when host is stuck in status Kdumping
+            result = true;
+            break;
+
+        default:
+            break;
+        }
+
+        return result;
+    }
+
+    public ValidationResult validateStatusForActivation() {
+        ValidationResult existsValidation = hostExists();
+        if (!existsValidation.isValid()) {
+            return existsValidation;
+        }
+        if (VDSStatus.Up == host.getStatus()) {
+            return new ValidationResult(EngineMessage.VDS_ALREADY_UP);
+        }
+        if (VDSStatus.NonResponsive == host.getStatus()) {
+            return new ValidationResult(EngineMessage.VDS_NON_RESPONSIVE);
+        }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult validateUniqueId() {
+        return ValidationResult.failWith(EngineMessage.VDS_NO_UUID)
+                .when(StringUtils.isBlank(host.getUniqueId()) && Config.<Boolean> getValue(ConfigValues.InstallVds));
+    }
+
+    public ValidationResult isUp() {
+        return validateStatus(VDSStatus.Up);
     }
 
     protected VDS getHost() {

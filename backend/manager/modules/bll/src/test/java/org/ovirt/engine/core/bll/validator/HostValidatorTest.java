@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -8,8 +11,10 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Collections;
+
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -23,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -57,6 +63,19 @@ public class HostValidatorTest {
     private VDS host;
 
     private HostValidator validator;
+
+    private HostValidator mockHostForActivation(VDSStatus status) {
+        VDS host = mock(VDS.class);
+        when(host.getStatus()).thenReturn(status);
+        return new HostValidator(dbFacade, host);
+    }
+
+    private HostValidator mockHostForUniqueId(String value) {
+        mockConfigRule.mockConfigValue(ConfigValues.InstallVds, Boolean.TRUE);
+        VDS host = mock(VDS.class);
+        when(host.getUniqueId()).thenReturn(value);
+        return new HostValidator(dbFacade, host);
+    }
 
     @Before
     public void setup() {
@@ -261,5 +280,52 @@ public class HostValidatorTest {
         assertThat(validator.provisioningHostGroupValid(false, new ExternalHostGroup()), isValid());
         assertThat(validator.provisioningComputeResourceValid(true, new ExternalComputeResource()), isValid());
         assertThat(validator.provisioningHostGroupValid(true, new ExternalHostGroup()), isValid());
+    }
+
+    @Test
+    public void testHostShouldBeFenced() {
+        validator = mockHostForActivation(VDSStatus.Down);
+        assertTrue(validator.shouldVdsBeFenced());
+    }
+    @Test
+    public void testHostShouldNotBeFenced() {
+        validator = mockHostForActivation(VDSStatus.Installing);
+        assertFalse(validator.shouldVdsBeFenced());
+    }
+
+    @Test
+    public void testValidateStatusUpForActivation() {
+        validator = mockHostForActivation(VDSStatus.Up);
+        assertThat(validator.validateStatusForActivation(), failsWith( EngineMessage.VDS_ALREADY_UP));
+    }
+
+    @Test
+    public void testValidateStatusNonResponsiveForActivation() {
+        validator = mockHostForActivation(VDSStatus.NonResponsive);
+        assertThat(validator.validateStatusForActivation(), failsWith( EngineMessage.VDS_NON_RESPONSIVE));
+    }
+
+    @Test
+    public void testValidateNoUniqueId() {
+        validator = mockHostForUniqueId(StringUtils.EMPTY);
+        assertThat(validator.validateUniqueId(), failsWith( EngineMessage.VDS_NO_UUID));
+    }
+
+    @Test
+    public void testValidateUniqueId() {
+        validator = mockHostForUniqueId(Guid.newGuid().toString());
+        assertThat(validator.validateUniqueId(), isValid());
+    }
+
+    @Test
+    public void testIsNotUp() {
+        validator = mockHostForActivation(VDSStatus.Down);
+        assertNotEquals(validator.isUp().getMessage(), EngineMessage.VAR__HOST_STATUS__UP);
+    }
+
+    @Test
+    public void testIsUp() {
+        validator = mockHostForActivation(VDSStatus.Up);
+        assertTrue(validator.isUp().isValid());
     }
 }
