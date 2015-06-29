@@ -51,7 +51,7 @@ public class AffinityRulesEnforcementPerCluster {
     @Inject
     protected VdsGroupDao vdsGroupDao;
 
-    protected final SchedulingManager schedulingManager = SchedulingManager.getInstance();
+    protected SchedulingManager schedulingManager = SchedulingManager.getInstance();
 
     protected enum FailMode {
         IMMEDIATELY, // Fail when first violation is detected
@@ -203,6 +203,12 @@ public class AffinityRulesEnforcementPerCluster {
         // the vm and the previous occupant as candidates for migration
         for (Guid vm: affinityGroup.getEntityIds()) {
             Guid host = vmToHost.get(vm);
+
+            // Ignore stopped VMs
+            if (host == null) {
+                continue;
+            }
+
             if (firstAssignment.containsKey(host)) {
                 violatingVms.add(vm);
                 violatingVms.add(firstAssignment.get(host));
@@ -232,6 +238,12 @@ public class AffinityRulesEnforcementPerCluster {
         // Prepare affinity group related host counts
         for (Guid vm: affinityGroup.getEntityIds()) {
             Guid host = vmToHost.get(vm);
+
+            // Ignore stopped VMs
+            if (host == null) {
+                continue;
+            }
+
             if (hostCount.containsKey(host)) {
                 hostCount.get(host).add(vm);
             } else {
@@ -489,5 +501,9 @@ public class AffinityRulesEnforcementPerCluster {
         public int compare(AffinityGroup o1, AffinityGroup o2) {
             return Integer.compare(o1.getEntityIds().size(), o2.getEntityIds().size());
         }
+    }
+
+    public void setSchedulingManager(SchedulingManager schedulingManager) {
+        this.schedulingManager = schedulingManager;
     }
 }

@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcementPerCluster;
+import org.ovirt.engine.core.common.action.MigrateVmParameters;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -35,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -84,6 +87,9 @@ public class AffinityRulesEnforcementManagerTest {
     private SchedulerUtilQuartzImpl scheduler;
 
     @Mock
+    private SchedulingManager schedulingManager;
+
+    @Mock
     private Instance<AffinityRulesEnforcementPerCluster> _perClusterProvider;
 
     private class TestingAffinityRulesEnforcementPerCluster extends AffinityRulesEnforcementPerCluster {
@@ -127,6 +133,7 @@ public class AffinityRulesEnforcementManagerTest {
                 for(Entry<VDSGroup, AffinityRulesEnforcementPerCluster> entry: arem.perClusterMap.entrySet()) {
                     AffinityRulesEnforcementPerCluster perCluster = perClusterProvider.get();
                     perCluster.setClusterId(entry.getKey().getId());
+                    perCluster.setSchedulingManager(schedulingManager);
                     entry.setValue(perCluster);
                 }
             }
@@ -138,6 +145,9 @@ public class AffinityRulesEnforcementManagerTest {
                 return vdsGroups;
             }
 
+            @Override protected VdcReturnValueBase executeMigration(MigrateVmParameters parameters) {
+                return null;
+            }
         };
         arem.wakeup();
         arem.refresh();
@@ -166,6 +176,14 @@ public class AffinityRulesEnforcementManagerTest {
                 anyLong(),
                 any(TimeUnit.class)
         )).thenReturn("jobId");
+
+        when(schedulingManager.canSchedule(any(VDSGroup.class),
+                any(VM.class),
+                anyListOf(Guid.class),
+                anyListOf(Guid.class),
+                anyListOf(Guid.class),
+                anyListOf(String.class)
+        )).thenReturn(true);
     }
 
     @Test

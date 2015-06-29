@@ -194,13 +194,16 @@ public class AffinityRulesEnforcementManager implements BackendService {
         MigrateVmParameters parameters = new MigrateVmParameters(false, vmToMigrate);
         parameters.setInitialHosts(new ArrayList<>(getInitialHosts()));
 
-        VdcReturnValueBase migrationStatus = Backend.getInstance().runInternalAction(VdcActionType.MigrateVm,
-                parameters,
-                ExecutionHandler.createInternalJobContext());
-
+        VdcReturnValueBase migrationStatus = executeMigration(parameters);
         perCluster.updateMigrationStatus(migrationStatus);
 
         currentInterval = getRegularInterval();
+    }
+
+    protected VdcReturnValueBase executeMigration(MigrateVmParameters parameters) {
+        return Backend.getInstance().runInternalAction(VdcActionType.MigrateVm,
+                    parameters,
+                    ExecutionHandler.createInternalJobContext());
     }
 
     private List<Guid> getInitialHosts() {
