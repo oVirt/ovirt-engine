@@ -216,7 +216,6 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     }
 
     void addStyles() {
-        activateDomainEditor.addContentWidgetContainerStyleName(style.activateDomainEditor());
         advancedParametersExpanderContent.setStyleName(style.advancedParametersExpanderContent());
         warningLowSpaceIndicatorEditor.addContentWidgetContainerStyleName(style.warningTextBoxEditor());
         criticalSpaceActionBlockerEditor.addContentWidgetStyleName(style.blockerTextBoxEditor());
@@ -391,7 +390,6 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     }
 
     interface WidgetStyle extends CssResource {
-        String activateDomainEditor();
 
         String label();
 

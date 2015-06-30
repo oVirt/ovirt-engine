@@ -21,7 +21,7 @@
 		}
 
 		.activateDomainEditor {
-            width: 370px;
+            padding-left: 0px;
         }
 
         @external obrand_storageTypePanel;
@@ -112,7 +112,6 @@
                     <g:HorizontalPanel>
                         <e:ListModelListBoxEditor ui:field="storageTypeListEditor" addStyleNames="{style.storageTypeListEditor}"/>
                         <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" addStyleNames="{style.commentEditor}"/>
-                        <ge:EntityModelCheckBoxEditor ui:field="activateDomainEditor" />
                     </g:HorizontalPanel>
                     <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.hostListEditor}"/>
                 </g:VerticalPanel>
@@ -127,6 +126,7 @@
                     <e:ListModelListBoxEditor ui:field="formatListEditor" />
                     <ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.wipeAfterDeleteEditor}"/>
                 </g:VerticalPanel>
+                <ge:EntityModelCheckBoxEditor ui:field="activateDomainEditor" addStyleNames="{style.activateDomainEditor}" contentWidgetContainerStyleName="{style.activateDomainEditor}"/>
             </g:FlowPanel>
         </d:content>
     </d:SimpleDialogPanel>
