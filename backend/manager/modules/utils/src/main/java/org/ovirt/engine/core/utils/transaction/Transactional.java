@@ -22,4 +22,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 @InterceptorBinding
 public @interface Transactional {
     @Nonbinding TransactionScopeOption propogation() default TransactionScopeOption.Required;
+
+    @Nonbinding
+    boolean readOnly() default false;
 }

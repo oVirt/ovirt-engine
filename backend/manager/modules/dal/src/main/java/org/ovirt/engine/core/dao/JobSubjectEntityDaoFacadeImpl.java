@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.job.JobSubjectEntity;
 import org.ovirt.engine.core.common.job.JobSubjectEntityId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.jpa.AbstractJpaDao;
-import org.ovirt.engine.core.utils.transaction.TransactionalInterceptor;
+import org.ovirt.engine.core.dao.jpa.TransactionalInterceptor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,7 +36,7 @@ public class JobSubjectEntityDaoFacadeImpl extends AbstractJpaDao<JobSubjectEnti
     @Override
     public Map<Guid, VdcObjectType> getJobSubjectEntityByJobId(Guid jobId) {
         List<JobSubjectEntity> list =
-                multipleResults(entityManager.createNamedQuery("JobSubjectEntity.getJobSubjectEntityByJobId",
+                multipleResults(getEntityManager().createNamedQuery("JobSubjectEntity.getJobSubjectEntityByJobId",
                         JobSubjectEntity.class)
                         .setParameter("jobId", jobId));
 
@@ -49,7 +49,7 @@ public class JobSubjectEntityDaoFacadeImpl extends AbstractJpaDao<JobSubjectEnti
 
     @Override
     public List<Guid> getJobIdByEntityId(Guid entityId) {
-        return multipleResults(entityManager.createNamedQuery("JobSubjectEntity.getJobIdByEntityId")
+        return multipleResults(getEntityManager().createNamedQuery("JobSubjectEntity.getJobIdByEntityId")
                 .setParameter("entityId", entityId));
     }
 }

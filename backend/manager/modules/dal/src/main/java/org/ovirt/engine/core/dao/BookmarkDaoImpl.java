@@ -18,7 +18,7 @@ class BookmarkDaoImpl extends AbstractJpaDao<Bookmark, Guid> implements Bookmark
 
     @Override
     public Bookmark getByName(String name) {
-        final TypedQuery<Bookmark> query = entityManager.createNamedQuery("Bookmark.byName", Bookmark.class);
+        final TypedQuery<Bookmark> query = getEntityManager().createNamedQuery("Bookmark.byName", Bookmark.class);
         query.setParameter("name", name);
 
         return singleResult(query);

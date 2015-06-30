@@ -7,13 +7,21 @@ import static org.junit.Assert.assertNull;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.sql.DataSource;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.dao.jpa.EntityManagerHolder;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
 @TransactionConfiguration(transactionManager = "transactionManagerJPA", defaultRollback = true)
 public abstract class BaseHibernateDaoTestCase<T extends GenericDao<E, ID>, E extends BusinessEntity<ID>, ID extends Serializable>
         extends BaseDaoTestCase {
+
+    @Inject
+    private EntityManagerHolder entityManagerHolder;
 
     protected abstract T getDao();
 
@@ -26,6 +34,12 @@ public abstract class BaseHibernateDaoTestCase<T extends GenericDao<E, ID>, E ex
     protected abstract E modifyEntity(E entity);
 
     protected abstract void verifyEntityModification(E result);
+
+    public static DataSource getDataSource() {
+        DataSource jpaDataSource = createDataSource();
+        ((SingleConnectionDataSource) jpaDataSource).setAutoCommit(false);
+        return jpaDataSource;
+    }
 
     /**
      * Ensures that, if the id is valid, then retrieving a bookmark works as expected.
@@ -92,6 +106,7 @@ public abstract class BaseHibernateDaoTestCase<T extends GenericDao<E, ID>, E ex
         final E modifiedEntity = modifyEntity(getExistingEntity());
 
         getDao().update(modifiedEntity);
+        entityManagerHolder.getEntityManager().flush();
 
         E result = getDao().get(getExistingEntity().getId());
 

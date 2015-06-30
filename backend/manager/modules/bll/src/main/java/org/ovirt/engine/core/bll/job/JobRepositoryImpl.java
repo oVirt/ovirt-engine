@@ -82,14 +82,7 @@ public class JobRepositoryImpl implements JobRepository {
 
     @Override
     public void saveJob(final Job job) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                jobDao.save(job);
-                return null;
-            }
-        });
+        jobDao.save(job);
     }
 
     @Override

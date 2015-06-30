@@ -13,7 +13,8 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.jpa.AbstractJpaDao;
-import org.ovirt.engine.core.utils.transaction.TransactionalInterceptor;
+import org.ovirt.engine.core.dao.jpa.TransactionalInterceptor;
+import org.ovirt.engine.core.utils.transaction.Transactional;
 import org.springframework.stereotype.Component;
 
 @Interceptors({ TransactionalInterceptor.class })
@@ -29,16 +30,19 @@ public class StepDaoImpl extends AbstractJpaDao<Step, Guid> implements StepDao {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean exists(Guid id) {
         return get(id) != null;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Step> getStepsByJobId(Guid jobId) {
         return jobDao.get(jobId).getSteps();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Step> getStepsByParentStepId(Guid parentStepId) {
         return get(parentStepId).getSteps();
     }
@@ -46,7 +50,7 @@ public class StepDaoImpl extends AbstractJpaDao<Step, Guid> implements StepDao {
     @Override
     public void updateJobStepsCompleted(Guid jobId, JobExecutionStatus status, Date endTime) {
         if (status != JobExecutionStatus.STARTED) {
-            updateQuery(entityManager.createNamedQuery("Step.updateJobStepsCompleted")
+            updateQuery(getEntityManager().createNamedQuery("Step.updateJobStepsCompleted")
                     .setParameter("jobId", jobId)
                     .setParameter("status", status)
                     .setParameter("endTime", endTime)
@@ -55,22 +59,25 @@ public class StepDaoImpl extends AbstractJpaDao<Step, Guid> implements StepDao {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Step> getStepsByExternalId(Guid externalId) {
-        return multipleResults(entityManager.createNamedQuery("Step.getStepsByExternalId", Step.class)
+        return multipleResults(getEntityManager().createNamedQuery("Step.getStepsByExternalId", Step.class)
                 .setParameter("externalId", externalId));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Guid> getExternalIdsForRunningSteps(ExternalSystemType systemType) {
-        return multipleResults(entityManager.createNamedQuery("Step.getExternalIdsForRunningSteps")
+        return multipleResults(getEntityManager().createNamedQuery("Step.getExternalIdsForRunningSteps")
                         .setParameter("status", JobExecutionStatus.STARTED)
                         .setParameter("type", systemType)
                 );
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Step> getStepsByJobIdForVdsmAndGluster(Guid jobId) {
-        return multipleResults(entityManager.createNamedQuery("Step.getStepsByJobIdForVdsmAndGluster",
+        return multipleResults(getEntityManager().createNamedQuery("Step.getStepsByJobIdForVdsmAndGluster",
                 Step.class)
                 .setParameter("jobId", jobId)
                 .setParameter("systemType", EnumSet.of(ExternalSystemType.VDSM, ExternalSystemType.GLUSTER)));

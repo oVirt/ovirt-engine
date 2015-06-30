@@ -15,7 +15,9 @@
     <bean id="dbFacadeLocator" class="org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator"/>
 
     <bean id="sqlExceptionTranslator"
-          class="org.ovirt.engine.core.dal.dbbroker.CustomSQLErrorCodeSQLExceptionTranslator"/>
+          class="org.ovirt.engine.core.dal.dbbroker.CustomSQLErrorCodeSQLExceptionTranslator">
+          <constructor-arg ref="engineDataSource"/>
+    </bean>
 
     <bean id="dbEngineDialect" factory-bean="dbFacadeLocator" factory-method="produceDbEngineDialect"/>
 
@@ -46,13 +48,16 @@
     <bean id="engineDataSource" class="org.ovirt.engine.core.dao.BaseDaoTestCase"
           factory-method="getDataSource"/>
 
+    <bean id="engineDataSourceNoAutoCommit" class="org.ovirt.engine.core.dao.BaseHibernateDaoTestCase"
+          factory-method="getDataSource"/>
+
     <bean id="transactionManagerJPA" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
 
     <bean id="entityManagerFactory"
         class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="engineDataSource" />
+        <property name="dataSource" ref="engineDataSourceNoAutoCommit" />
         <property name="packagesToScan"
             value="org.ovirt.engine.core.common.businessentities, org.ovirt.engine.core.common.job" />
         <property name="jpaVendorAdapter">

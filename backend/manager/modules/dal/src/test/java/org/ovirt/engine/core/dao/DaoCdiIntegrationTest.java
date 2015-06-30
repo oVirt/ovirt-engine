@@ -26,6 +26,7 @@ public class DaoCdiIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testSingletonDaoAnnotationPresent() {
 
         for (Class daoClass : daoClasses) {

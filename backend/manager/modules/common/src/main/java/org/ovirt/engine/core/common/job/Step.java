@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -146,7 +145,7 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
     /**
      * The successors steps
      */
-    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parentStepId", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentStepId", fetch = FetchType.EAGER)
     @OrderBy("stepNumber")
     private List<Step> steps;
 
@@ -359,5 +358,4 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
         Step other = (Step) obj;
         return Objects.equals(id, other.id);
     }
-
 }

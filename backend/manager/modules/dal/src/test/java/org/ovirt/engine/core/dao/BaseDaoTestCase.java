@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.runner.RunWith;
+import org.ovirt.engine.core.EntityManagerTestListener;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -41,7 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
  * back on completion of the test.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestExecutionListeners({ TransactionalTestExecutionListener.class, DependencyInjectionTestExecutionListener.class })
+@TestExecutionListeners({ TransactionalTestExecutionListener.class, DependencyInjectionTestExecutionListener.class,
+        EntityManagerTestListener.class })
 @ContextConfiguration(locations = { "classpath:/test-beans.xml" })
 @Transactional
 public abstract class BaseDaoTestCase {
@@ -97,7 +99,7 @@ public abstract class BaseDaoTestCase {
         return connection;
     }
 
-    private static DataSource createDataSource() {
+    protected static DataSource createDataSource() {
         DataSource result = null;
         Properties properties = new Properties();
 
@@ -123,7 +125,6 @@ public abstract class BaseDaoTestCase {
                     dbUrl,
                     properties.getProperty("database.username"),
                     properties.getProperty("database.password"), true);
-
             initSql = properties.getProperty("database.initsql");
 
             loadDataFactory(properties.getProperty("database.testing.datafactory"));

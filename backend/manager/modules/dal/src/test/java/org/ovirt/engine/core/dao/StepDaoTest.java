@@ -76,6 +76,12 @@ public class StepDaoTest extends BaseHibernateDaoTestCase<StepDao, Step, Guid> {
     }
 
     @Test
+    public void getStepsWithChildSteps() {
+        Step step = dao.get(EXISTING_STEP_WITH_SUB_STEPS);
+        assertEquals("Verify Job has steps", TOTAL_STEPS_OF_PARENT_STEP, step.getSteps().size());
+    }
+
+    @Test
     public void updateJobStepsCompleted() {
         Step step = dao.get(IN_PROGRESS_STEP_ID);
         assertNotNull("Started step with ID " + IN_PROGRESS_STEP_ID, step);
@@ -137,6 +143,8 @@ public class StepDaoTest extends BaseHibernateDaoTestCase<StepDao, Step, Guid> {
         childStep.setDescription("DESCRIPTION");
         childStep.setStartTime(new Date());
         childStep.setCorrelationId("Some correlation ID");
+        childStep.setParentStepId(entity.getId());
+        dao.save(childStep);
         childSteps.add(childStep);
         entity.setSteps(childSteps);
         return entity;

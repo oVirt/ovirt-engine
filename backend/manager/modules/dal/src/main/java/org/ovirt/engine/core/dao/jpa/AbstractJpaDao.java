@@ -4,15 +4,15 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.dao.GenericDao;
+import org.ovirt.engine.core.utils.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +29,9 @@ public abstract class AbstractJpaDao<T extends BusinessEntity<ID>, ID extends Se
     private static final Logger LOG = LoggerFactory.getLogger(AbstractJpaDao.class);
 
     private final Class<T> entityType;
-    protected String entityName;
 
-    @PersistenceContext
-    protected EntityManager entityManager;
+    @Inject
+    private EntityManagerHolder entityManagerHolder;
 
     // Don't use. Only added because of CDI requirement
     protected AbstractJpaDao() {
@@ -41,39 +40,39 @@ public abstract class AbstractJpaDao<T extends BusinessEntity<ID>, ID extends Se
 
     protected AbstractJpaDao(Class<T> entityType) {
         Objects.requireNonNull(entityType, "entityType cannot be null");
-
         this.entityType = entityType;
     }
 
-    @PostConstruct
-    void init() {
-        entityName = entityManager.getMetamodel().entity(entityType).getName();
+    protected EntityManager getEntityManager() {
+        return entityManagerHolder.getEntityManager();
+    }
+
+    protected String getEntityName() {
+            return getEntityManager().getMetamodel().entity(entityType).getName();
     }
 
     @Override
     public void save(T entity) {
-        entityManager.merge(entity);
+        getEntityManager().merge(entity);
     }
 
     @Override
     public void update(T entity) {
-        entityManager.merge(entity);
+        getEntityManager().merge(entity);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public T get(ID id) {
-        final T entity = entityManager.find(entityType, id);
-        if (entity == null) {
-            return null;
-        }
-        entityManager.detach(entity);
+        final T entity = getEntityManager().find(entityType, id);
         return entity;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<T> getAll() {
-        final String qlString = String.format("select e from %s e", entityName);
-        final TypedQuery<T> query = entityManager.createQuery(qlString, entityType);
+        final String qlString = String.format("select e from %s e", getEntityName());
+        final TypedQuery<T> query = getEntityManager().createQuery(qlString, entityType);
 
         return multipleResults(query);
     }
@@ -85,13 +84,9 @@ public abstract class AbstractJpaDao<T extends BusinessEntity<ID>, ID extends Se
      *            the {@link TypedQuery} to be run.
      * @return the result {@code List<T>} of the detached entities.
      */
+    @Transactional(readOnly = true)
     protected List<T> multipleResults(TypedQuery<T> query) {
         final List<T> resultList = query.getResultList();
-
-        for (T entity : resultList) {
-            entityManager.detach(entity);
-        }
-
         return resultList;
     }
 
@@ -103,19 +98,9 @@ public abstract class AbstractJpaDao<T extends BusinessEntity<ID>, ID extends Se
      * @return the result {@code List} of the detached entities.
      */
     @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
     protected <O> List<O> multipleResults(Query query) {
         final List<O> resultList = query.getResultList();
-
-        if (!resultList.isEmpty()) {
-            boolean isEntity = entityManager.getMetamodel().getEntities().contains(resultList.get(0));
-
-            for (Object entity : resultList) {
-                if (isEntity) {
-                    entityManager.detach(entity);
-                }
-            }
-        }
-
         return resultList;
     }
 
@@ -127,10 +112,11 @@ public abstract class AbstractJpaDao<T extends BusinessEntity<ID>, ID extends Se
      * @return A single object result of the given query. Detached state. Returns {@code null} in case of query does not
      *         return any result.
      */
+    @Transactional(readOnly = true)
     protected T singleResult(TypedQuery<T> query) {
         try {
             final T entity = query.getSingleResult();
-            entityManager.detach(entity);
+            // getEntityManager().detach(entity);
             return entity;
         } catch (NoResultException nre) {
             return null;
@@ -138,14 +124,18 @@ public abstract class AbstractJpaDao<T extends BusinessEntity<ID>, ID extends Se
     }
 
     public void remove(ID id) {
-        final T entity = entityManager.find(entityType, id);
+        final T entity = getEntityManager().find(entityType, id);
         if (entity == null) {
             LOG.warn("Trying to remove non-existent {} with id = '{}'",
                     entityType.getSimpleName(),
                     id);
         } else {
-            entityManager.remove(entity);
+            remove(entity);
         }
+    }
+
+    public void remove(T entity) {
+        getEntityManager().remove(entity);
     }
 
     protected void updateQuery(final Query query) {
