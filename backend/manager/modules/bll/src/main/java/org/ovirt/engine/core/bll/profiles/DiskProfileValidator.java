@@ -39,10 +39,16 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
 
     protected StorageDomain getStorageDomain() {
         if (storageDomain == null) {
-            storageDomain = getDbFacade().getStorageDomainDao().get(getProfile().getStorageDomainId());
+            storageDomain = getStorageDomain(getProfile().getStorageDomainId());
         }
-
         return storageDomain;
+    }
+
+    protected StorageDomain getStorageDomain(Guid sdGuid) {
+        if (sdGuid != null) {
+            return getDbFacade().getStorageDomainDao().get(sdGuid);
+        }
+        return null;
     }
 
     @Override
@@ -60,9 +66,11 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
         }
         if (!storageDomainId.equals(fetchedDiskProfile.getStorageDomainId())) {
             String diskProfileName = fetchedDiskProfile.getName();
-            String targetStorageDomainName = getStorageDomain().getName();
+            StorageDomain targetStorageDomain = getStorageDomain(storageDomainId);
+            String targetStorageDomainName = targetStorageDomain != null ? getStorageDomain(storageDomainId).getName() : "Unknown";
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_PROFILE_NOT_MATCH_STORAGE_DOMAIN,
                     String.format("$diskProfile %s", diskProfileName),
+                    String.format("$diskProfileId %s", fetchedDiskProfile.getId().toString()),
                     String.format("$storageDomain %s", targetStorageDomainName));
         }
         return ValidationResult.VALID;
