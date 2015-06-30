@@ -9,6 +9,7 @@ import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,7 +23,6 @@ import javax.ws.rs.core.UriInfo;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.easymock.IMocksControl;
-import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -188,7 +188,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo addMatrixParameterExpectations(UriInfo mockUriInfo, String matrixParameter) {
-        MultivaluedMap<String, String> matrixParams = new MultivaluedMapImpl<String, String>();
+        MultivaluedMap<String, String> matrixParams = new SimpleMultivaluedMap<>();
         matrixParams.put(matrixParameter, null);
         PathSegment segment = control.createMock(PathSegment.class);
         expect(segment.getMatrixParameters()).andReturn(matrixParams).anyTimes();
@@ -657,5 +657,36 @@ public abstract class AbstractBackendBaseTest extends Assert {
         resource.setValidatorLocator(validatorLocator);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);
+    }
+
+    public static class SimpleMultivaluedMap<K, V> extends HashMap<K, List<V>> implements MultivaluedMap<K, V> {
+        @Override
+        public void putSingle(K key, V value) {
+            List<V> values = new ArrayList<>(1);
+            values.add(value);
+            put(key, values);
+        }
+
+        @Override
+        public void add(K key, V value) {
+            List<V> values = get(key);
+            if (values == null) {
+                values = new ArrayList<>(1);
+                put(key, values);
+            }
+            values.add(value);
+        }
+
+        @Override
+        public V getFirst(K key) {
+            List<V> values = get(key);
+            if (values == null) {
+                return null;
+            }
+            if (values.isEmpty()) {
+                return null;
+            }
+            return values.get(0);
+        }
     }
 }
