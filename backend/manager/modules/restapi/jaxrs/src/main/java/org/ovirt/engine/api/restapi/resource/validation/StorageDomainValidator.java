@@ -21,7 +21,7 @@ public class StorageDomainValidator implements Validator<StorageDomain> {
             if (storageDomain.isSetStorage() && storageDomain.getStorage().isSetType()) {
                 validateEnum(StorageType.class, storageDomain.getStorage().getType(), true);
             }
-            if (storageDomain.isSetFormat()) {
+            if (storageDomain.isSetStorageFormat()) {
                 validateEnum(StorageFormat.class, storageDomain.getStorageFormat(), true);
             }
             if (storageDomain.isSetStorage() && storageDomain.getStorage().isSetNfsVersion()) {
