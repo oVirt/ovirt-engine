@@ -443,9 +443,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.setHelpTag(HelpTag.import_pre_configured_domain);
         model.setHashName("import_pre-configured_domain"); //$NON-NLS-1$
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
-        model.getName().setIsAvailable(false);
-        model.getDescription().setIsAvailable(false);
-        model.getComment().setIsAvailable(false);
         model.getFormat().setIsAvailable(false);
 
         model.initialize();
