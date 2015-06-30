@@ -71,6 +71,7 @@ select fn_db_add_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-gue
 select fn_db_add_config_value('AllowClusterWithVirtGlusterEnabled','true','general');
 select fn_db_add_config_value('AllowDuplicateMacAddresses','false','general');
 select fn_db_add_config_value('ApplicationMode','255','general');
+select fn_db_add_config_value('AsyncCommandPollingLoopInSeconds','1','general');
 select fn_db_add_config_value('AsyncCommandPollingRateInSeconds','10','general');
 select fn_db_add_config_value('AsyncTaskPollingRate','10','general');
 select fn_db_add_config_value('AsyncTaskStatusCacheRefreshRateInSeconds','30','general');

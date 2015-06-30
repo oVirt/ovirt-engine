@@ -50,26 +50,44 @@ public class CommandExecutor {
     private static final ExecutorService executor = Executors.newFixedThreadPool(Config.<Integer>getValue(ConfigValues.CommandCoordinatorThreadPoolSize));
     private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
 
+    private class CommandContainer {
+        private int initialDelay;     // Total delay between callback executions
+        private int remainingDelay;   // Remaining delay to next callback execution
+        private CommandCallback callback;
+
+        public CommandContainer(CommandCallback callback, int executionDelay) {
+            this.callback = callback;
+            this.initialDelay = executionDelay;
+            this.remainingDelay = executionDelay;
+        }
+    }
+
     private final CommandCoordinatorImpl coco;
-    private final Map<Guid, CommandCallback> cmdCallbackMap = new ConcurrentHashMap<>();
+    private final Map<Guid, CommandContainer> cmdCallbackMap = new ConcurrentHashMap<>();
     private boolean cmdExecutorInitialized;
+    private final int pollingRate = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds);
 
     CommandExecutor(CommandCoordinatorImpl coco) {
         this.coco = coco;
         SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
         scheduler.scheduleAFixedDelayJob(this, "invokeCallbackMethods", new Class[]{},
-                new Object[]{}, Config.<Integer>getValue(ConfigValues.AsyncCommandPollingRateInSeconds),
-                Config.<Integer>getValue(ConfigValues.AsyncCommandPollingRateInSeconds), TimeUnit.SECONDS);
+                new Object[]{}, pollingRate, pollingRate, TimeUnit.SECONDS);
     }
 
     @OnTimerMethodAnnotation("invokeCallbackMethods")
     public void invokeCallbackMethods() {
         initCommandExecutor();
-        Iterator<Entry<Guid, CommandCallback>> iterator = cmdCallbackMap.entrySet().iterator();
+        Iterator<Entry<Guid, CommandContainer>> iterator = cmdCallbackMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            Entry<Guid, CommandCallback> entry = iterator.next();
+            Entry<Guid, CommandContainer> entry = iterator.next();
+
+            // Decrement counter; execute if it reaches 0
+            if ((entry.getValue().remainingDelay -= pollingRate) > 0) {
+                continue;
+            }
+
             Guid cmdId = entry.getKey();
-            CommandCallback callback = entry.getValue();
+            CommandCallback callback = entry.getValue().callback;
             CommandStatus status = coco.getCommandStatus(cmdId);
             boolean errorInCallback = false;
             try {
@@ -95,6 +113,10 @@ public class CommandExecutor {
                 if (CommandStatus.FAILED.equals(status) || (CommandStatus.SUCCEEDED.equals(status) && !errorInCallback)) {
                     coco.updateCallbackNotified(cmdId);
                     iterator.remove();
+                } else {
+                    int maxDelay = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingRateInSeconds);
+                    entry.getValue().initialDelay = Math.min(maxDelay, entry.getValue().initialDelay * 2);
+                    entry.getValue().remainingDelay = entry.getValue().initialDelay;
                 }
             }
         }
@@ -145,7 +167,7 @@ public class CommandExecutor {
         if (!cmdCallbackMap.containsKey(cmdEntity.getId())) {
             CommandBase<?> cmd = coco.retrieveCommand(cmdEntity.getId());
             if (cmd != null && cmd.getCallback() != null) {
-                cmdCallbackMap.put(cmdEntity.getId(), cmd.getCallback());
+                cmdCallbackMap.put(cmdEntity.getId(), new CommandContainer(cmd.getCallback(), pollingRate));
             }
         }
     }
@@ -159,7 +181,7 @@ public class CommandExecutor {
         command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null);
         coco.persistCommandAssociatedEntities(buildCommandAssociatedEntities(command.getCommandId(), subjectEntities));
         if (callBack != null) {
-            cmdCallbackMap.put(command.getCommandId(), callBack);
+            cmdCallbackMap.put(command.getCommandId(), new CommandContainer(callBack, pollingRate));
         }
         Future<VdcReturnValueBase> retVal;
         try {

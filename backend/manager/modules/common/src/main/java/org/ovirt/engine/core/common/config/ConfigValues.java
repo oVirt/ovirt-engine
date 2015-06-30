@@ -107,6 +107,10 @@ public enum ConfigValues {
     AsyncTaskPollingRate,
 
     @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1")
+    AsyncCommandPollingLoopInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     AsyncCommandPollingRateInSeconds,
 

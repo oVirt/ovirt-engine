@@ -71,6 +71,7 @@ public class BackwardCompatibilityTaskCreationTest extends DbDependentTestBase {
             mockConfig(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds, 10),
             mockConfig(ConfigValues.AsyncTaskStatusCachingTimeInMinutes, 10),
             mockConfig(ConfigValues.CommandCoordinatorThreadPoolSize, 10),
+            mockConfig(ConfigValues.AsyncCommandPollingLoopInSeconds, 1),
             mockConfig(ConfigValues.AsyncCommandPollingRateInSeconds, 10)
             );
 
