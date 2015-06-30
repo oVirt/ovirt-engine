@@ -136,7 +136,7 @@ public class AffinityRulesEnforcementPerCluster {
             allVms.addAll(group.getEntityIds());
         }
 
-        Map<Guid, Guid> vmToHost = new HashMap<>();
+        Map<Guid, Guid> vmToHost = createMapOfVmToHost(allVms);
 
         // There is no need to migrate when no collision was detected
         Set<AffinityGroup> violatedAffinityGroups = checkForAffinityGroupViolations(unifiedAffinityGroups, vmToHost, FailMode.GET_ALL);
@@ -185,6 +185,20 @@ public class AffinityRulesEnforcementPerCluster {
 
         // No possible migration..
         return null;
+    }
+
+    private Map<Guid, Guid> createMapOfVmToHost(Set<Guid> allVms) {
+        Map<Guid, Guid> outputMap = new HashMap<>();
+
+        for(VM vm : vmDao.getVmsByIds(new ArrayList<>(allVms))) {
+            Guid hostId = vm.getRunOnVds();
+
+            if(hostId != null) {
+                outputMap.put(vm.getId(), hostId);
+            }
+        }
+
+        return outputMap;
     }
 
     /**
