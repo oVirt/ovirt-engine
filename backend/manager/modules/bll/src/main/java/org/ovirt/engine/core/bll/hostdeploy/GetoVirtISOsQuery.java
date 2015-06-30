@@ -16,7 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.dao.VdsDynamicDAO;
  * the available ISOs files by there associated version files, read the iSOs' version from within the version files,
  * verifies image files exist, and returns list of ISOs sorted by their version.
  */
-public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCommandBase<P> {
+public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     private static final String OVIRT_ISO_VERSION_PREFIX = "version";
     private static final String OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX = "vdsm-compatibility";
 
@@ -48,7 +48,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
     protected void executeQueryCommand() {
         List<RpmVersion> availableISOsList = new ArrayList<>();
 
-        VDS vds = getVdsByVdsId(getParameters().getVdsId());
+        VDS vds = getVdsByVdsId(getParameters().getId());
         if (vds == null) {
             getQueryReturnValue().setReturnValue(availableISOsList);
             return;
@@ -134,7 +134,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
     }
 
     private boolean isNewerVersion(Version isoClusterVersion) {
-        VDS vds = getVdsByVdsId(getParameters().getVdsId());
+        VDS vds = getVdsByVdsId(getParameters().getId());
         Version vdsClusterVersion = vds.getVdsGroupCompatibilityVersion();
         log.debug(
             "vdsClusterVersion '{}' isoClusterVersion '{}'",

@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -571,8 +570,8 @@ public class BackendHostResourceTest
         retVal.setSucceeded(true);
         retVal.setReturnValue(new FenceOperationResult(FenceOperationResult.Status.SUCCESS, PowerStatus.ON));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsFenceStatus,
-                VdsIdParametersBase.class,
-                new String[] { "VdsId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 retVal);
         control.replay();
@@ -593,8 +592,8 @@ public class BackendHostResourceTest
                         PowerStatus.UNKNOWN,
                         "some_error"));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsFenceStatus,
-                VdsIdParametersBase.class,
-                new String[] { "VdsId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 retVal);
         control.replay();

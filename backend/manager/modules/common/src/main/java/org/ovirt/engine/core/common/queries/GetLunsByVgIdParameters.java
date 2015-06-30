@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetLunsByVgIdParameters extends VdsIdParametersBase {
+public class GetLunsByVgIdParameters extends IdQueryParameters {
     private static final long serialVersionUID = 423980044505739585L;
 
     public GetLunsByVgIdParameters() {

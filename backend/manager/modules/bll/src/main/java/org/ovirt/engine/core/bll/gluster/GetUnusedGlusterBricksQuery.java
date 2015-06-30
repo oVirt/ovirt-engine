@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetUnusedGlusterBricksQuery<P extends VdsIdParametersBase> extends QueriesCommandBase<P> {
+public class GetUnusedGlusterBricksQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     public GetUnusedGlusterBricksQuery(P parameters) {
         super(parameters);
@@ -19,13 +19,13 @@ public class GetUnusedGlusterBricksQuery<P extends VdsIdParametersBase> extends 
     @Override
     protected void executeQueryCommand() {
         List<StorageDevice> storageDevicesInHost =
-                getDbFacade().getStorageDeviceDao().getStorageDevicesInHost(getParameters().getVdsId());
+                getDbFacade().getStorageDeviceDao().getStorageDevicesInHost(getParameters().getId());
         getQueryReturnValue().setReturnValue(getUnUsedBricks(storageDevicesInHost));
     }
 
     private List<StorageDevice> getUnUsedBricks(List<StorageDevice> storageDevicesInHost) {
         List<GlusterBrickEntity> usedBricks =
-                getDbFacade().getGlusterBrickDao().getGlusterVolumeBricksByServerId(getParameters().getVdsId());
+                getDbFacade().getGlusterBrickDao().getGlusterVolumeBricksByServerId(getParameters().getId());
         List<StorageDevice> freeBricks = new ArrayList<StorageDevice>();
         for (StorageDevice storageDevice : storageDevicesInHost) {
             if (storageDevice.getMountPoint() != null

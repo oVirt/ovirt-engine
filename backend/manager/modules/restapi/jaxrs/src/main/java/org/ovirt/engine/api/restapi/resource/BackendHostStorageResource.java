@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 
 public class BackendHostStorageResource
     extends AbstractBackendCollectionResource<Storage, LUNs>
@@ -72,7 +72,7 @@ public class BackendHostStorageResource
     protected List<org.ovirt.engine.core.common.businessentities.StorageDomain> getVolumeGroups() {
         return getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                                     VdcQueryType.GetVgList,
-                                    new VdsIdParametersBase(asGuid(hostId)));
+                                    new IdQueryParameters(asGuid(hostId)));
     }
 
     protected Storage map(org.ovirt.engine.core.common.businessentities.StorageDomain entity) {

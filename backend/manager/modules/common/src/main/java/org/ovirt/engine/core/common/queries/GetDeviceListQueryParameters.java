@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.queries;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetDeviceListQueryParameters extends VdsIdParametersBase {
+public class GetDeviceListQueryParameters extends IdQueryParameters {
     private static final long serialVersionUID = -3909252459169512472L;
     private StorageType privateStorageType;
 

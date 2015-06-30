@@ -122,14 +122,14 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
     private void prepareParameters() {
 
         vdsId = Guid.newGuid();
-        when(getQueryParameters().getVdsId()).thenReturn(vdsId);
+        when(getQueryParameters().getId()).thenReturn(vdsId);
 
         storageType = StorageType.UNKNOWN;
         when(getQueryParameters().getStorageType()).thenReturn(storageType);
 
         vds = new VDS();
         vds.setVdsGroupCompatibilityVersion(Version.v3_1);
-        when(vdsDAOMock.get(getQueryParameters().getVdsId())).thenReturn(vds);
+        when(vdsDAOMock.get(getQueryParameters().getId())).thenReturn(vds);
 
         List<StorageDomain> domainsList = Collections.emptyList();
         when(storageDomainDAOMock.getAll()).thenReturn(domainsList);

@@ -25,14 +25,14 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
     @Override
     protected void executeQueryCommand() {
         List<LUNs> returnValue = new ArrayList<>();
-        VDS vds = getDbFacade().getVdsDao().get(getParameters().getVdsId());
+        VDS vds = getDbFacade().getVdsDao().get(getParameters().getId());
         boolean filteringLUNsEnabled = Config.<Boolean> getValue(ConfigValues.FilteringLUNsEnabled,
                 vds.getVdsGroupCompatibilityVersion().getValue());
 
         // Get Device List
         VDSBrokerFrontend vdsBrokerFrontend = getVdsBroker();
         GetDeviceListVDSCommandParameters parameters = new GetDeviceListVDSCommandParameters(
-                getParameters().getVdsId(), getParameters().getStorageType());
+                getParameters().getId(), getParameters().getStorageType());
         List<LUNs> luns = (List<LUNs>) vdsBrokerFrontend.RunVdsCommand(
                 VDSCommandType.GetDeviceList, parameters).getReturnValue();
 

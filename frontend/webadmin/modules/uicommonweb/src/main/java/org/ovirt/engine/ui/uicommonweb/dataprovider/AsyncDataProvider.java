@@ -144,7 +144,6 @@ import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParamete
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookContentQueryParameters;
@@ -2482,7 +2481,7 @@ public class AsyncDataProvider {
                         : new ArrayList<RpmVersion>();
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetoVirtISOs, new VdsIdParametersBase(id), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetoVirtISOs, new IdQueryParameters(id), aQuery);
     }
 
     public void getLunsByVgId(AsyncQuery aQuery, String vgId, Guid vdsId) {
@@ -4213,7 +4212,7 @@ public class AsyncDataProvider {
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterStorageDevices,
-                new VdsIdParametersBase(hostId),
+                new IdQueryParameters(hostId),
                 aQuery);
     }
 
@@ -4239,7 +4238,7 @@ public class AsyncDataProvider {
                 return source;
             }
         };
-        VdsIdParametersBase parameters = new VdsIdParametersBase(hostId);
+        IdQueryParameters parameters = new IdQueryParameters(hostId);
         Frontend.getInstance().runQuery(VdcQueryType.GetUnusedGlusterBricks, parameters, asyncQuery);
     }
 

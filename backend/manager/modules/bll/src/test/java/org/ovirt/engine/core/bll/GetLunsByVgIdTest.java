@@ -74,7 +74,7 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
 
     private void commonTestFlow(boolean withDummyLun) {
         when(getQueryParameters().getVgId()).thenReturn(VG_ID);
-        when(getQueryParameters().getVdsId()).thenReturn(VDS_ID);
+        when(getQueryParameters().getId()).thenReturn(VDS_ID);
 
         expectGetLunsForVg(VG_ID, withDummyLun);
         expectGetDeviceList();

@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetExistingStorageDomainListParameters extends VdsIdParametersBase {
+public class GetExistingStorageDomainListParameters extends IdQueryParameters {
     private static final long serialVersionUID = 7478078947370484916L;
     private StorageType privateStorageType;
 

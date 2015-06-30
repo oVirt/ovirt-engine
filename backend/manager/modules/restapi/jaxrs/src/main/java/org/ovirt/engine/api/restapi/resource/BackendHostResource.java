@@ -65,7 +65,6 @@ import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsPa
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -396,7 +395,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         VDSReturnValue result = getEntity(
                 VDSReturnValue.class,
                 VdcQueryType.GetVdsFenceStatus,
-                new VdsIdParametersBase(guid),
+                new IdQueryParameters(guid),
                 guid.toString());
         FenceOperationResult fenceResult = (FenceOperationResult) result.getReturnValue();
         if (fenceResult.getStatus() == Status.SUCCESS) {

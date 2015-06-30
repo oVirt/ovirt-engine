@@ -9,9 +9,9 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetGlusterStorageDevicesQuery<P extends VdsIdParametersBase> extends QueriesCommandBase<P> {
+public class GetGlusterStorageDevicesQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     public GetGlusterStorageDevicesQuery(P parameters) {
         super(parameters);
@@ -21,7 +21,7 @@ public class GetGlusterStorageDevicesQuery<P extends VdsIdParametersBase> extend
     protected void executeQueryCommand() {
         // Get Device List
         List<StorageDevice> storageDevices =
-                getDbFacade().getStorageDeviceDao().getStorageDevicesInHost(getParameters().getVdsId());
+                getDbFacade().getStorageDeviceDao().getStorageDevicesInHost(getParameters().getId());
         getQueryReturnValue().setReturnValue(filterStorageDevices(storageDevices));
 
     }

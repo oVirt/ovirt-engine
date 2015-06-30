@@ -13,8 +13,8 @@ import org.ovirt.engine.api.resource.StorageResource;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostStorageResourceTest
@@ -77,14 +77,14 @@ public class BackendHostStorageResourceTest
 
         setUpEntityQueryExpectations(VdcQueryType.GetDeviceList,
                                      GetDeviceListQueryParameters.class,
-                                     new String[] { "VdsId" },
+                                     new String[] { "Id" },
                                      new Object[] { HOST_GUID },
                                      setUpLuns(),
                                      failure);
         if (vgs_query && failure == null) {
             setUpEntityQueryExpectations(VdcQueryType.GetVgList,
-                                         VdsIdParametersBase.class,
-                                         new String[] { "VdsId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { HOST_GUID },
                                          setUpVgs(),
                                          failure);

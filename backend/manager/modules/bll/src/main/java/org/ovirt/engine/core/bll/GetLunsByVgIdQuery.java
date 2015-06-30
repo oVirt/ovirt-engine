@@ -89,13 +89,13 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
     protected Map<String, LUNs> getLunsFromDeviceMap(StorageType storageType) {
         Map<String, LUNs> lunsMap = new HashMap<>();
 
-        if (getParameters().getVdsId() == null) {
+        if (getParameters().getId() == null) {
             return lunsMap;
         }
 
         VDSBrokerFrontend vdsBrokerFrontend = getVdsBroker();
         GetDeviceListVDSCommandParameters parameters = new GetDeviceListVDSCommandParameters(
-                getParameters().getVdsId(), storageType);
+                getParameters().getId(), storageType);
         List<LUNs> lunsList = (List<LUNs>) vdsBrokerFrontend.RunVdsCommand(
                 VDSCommandType.GetDeviceList, parameters).getReturnValue();
 

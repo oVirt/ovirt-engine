@@ -18,7 +18,7 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
@@ -26,7 +26,7 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, GetoVirtISOsQuery<VdsIdParametersBase>> {
+public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoVirtISOsQuery<IdQueryParameters>> {
 
     private static final String OVIRT_INIT_SUPPORTED_VERSION = "5.8";
     private static final String OVIRT_ISO_PREFIX = "^rhevh-(.*)\\.*\\.iso$";
@@ -67,7 +67,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
         vds.setVdsGroupCompatibilityVersion(EXISTING_CLUSTER_VERSION);
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
 
-        when(getQueryParameters().getVdsId()).thenReturn(vdsId);
+        when(getQueryParameters().getId()).thenReturn(vdsId);
 
         getQuery().setInternalExecution(true);
         getQuery().executeCommand();
@@ -86,7 +86,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
         vds.setVdsGroupCompatibilityVersion(EXISTING_CLUSTER_VERSION);
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
 
-        when(getQueryParameters().getVdsId()).thenReturn(vdsId);
+        when(getQueryParameters().getId()).thenReturn(vdsId);
 
         getQuery().setInternalExecution(true);
         getQuery().executeCommand();
@@ -97,7 +97,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
 
     @Test
     public void testQueryWithNonExistingHostId() {
-        when(getQueryParameters().getVdsId()).thenReturn(Guid.newGuid());
+        when(getQueryParameters().getId()).thenReturn(Guid.newGuid());
         getQuery().setInternalExecution(true);
         getQuery().executeCommand();
 
@@ -136,13 +136,13 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
     }
 
     @SuppressWarnings("unchecked")
-    private static void checkReturnValue(GetoVirtISOsQuery<VdsIdParametersBase> query) {
+    private static void checkReturnValue(GetoVirtISOsQuery<IdQueryParameters> query) {
         List<RpmVersion> isosList = (List<RpmVersion>) query.getQueryReturnValue().getReturnValue();
         assertTrue(!isosList.isEmpty());
     }
 
     @SuppressWarnings("unchecked")
-    private static void checkReturnValueEmpty(GetoVirtISOsQuery<VdsIdParametersBase> query) {
+    private static void checkReturnValueEmpty(GetoVirtISOsQuery<IdQueryParameters> query) {
         List<RpmVersion> isosList = (List<RpmVersion>) query.getQueryReturnValue().getReturnValue();
         assertTrue(isosList.isEmpty());
     }

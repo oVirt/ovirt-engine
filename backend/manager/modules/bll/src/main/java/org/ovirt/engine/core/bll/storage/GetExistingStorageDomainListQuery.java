@@ -35,7 +35,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                 .RunVdsCommand(
                         VDSCommandType.HSMGetStorageDomainsList,
                         new HSMGetStorageDomainsListVDSCommandParameters(getParameters()
-                                .getVdsId(), Guid.Empty, null, getParameters()
+                                .getId(), Guid.Empty, null, getParameters()
                                 .getStorageDomainType(), getParameters().getPath()));
         if (vdsReturnValue.getSucceeded()) {
             ArrayList<Guid> guidsFromIrs = (ArrayList<Guid>) vdsReturnValue.getReturnValue();
@@ -54,7 +54,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                                         .RunVdsCommand(
                                                 VDSCommandType.HSMGetStorageDomainInfo,
                                                 new HSMGetStorageDomainInfoVDSCommandParameters(
-                                                        getParameters().getVdsId(), domainId))
+                                                        getParameters().getId(), domainId))
                                         .getReturnValue();
                         StorageDomain domain = new StorageDomain();
                         domain.setStorageStaticData(domainFromIrs.getFirst());

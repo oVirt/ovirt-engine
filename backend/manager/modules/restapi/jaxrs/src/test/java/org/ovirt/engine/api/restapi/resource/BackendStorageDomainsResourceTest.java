@@ -92,7 +92,7 @@ public class BackendStorageDomainsResourceTest
                 setUpPosixStorageServerConnection(POSIX_IDX));
         setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
                 GetExistingStorageDomainListParameters.class,
-                new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
+                new String[] { "Id", "StorageType", "StorageDomainType", "Path" },
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[POSIX_IDX], TYPES_MAPPED[0], ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX] },
                 new ArrayList<StorageDomainStatic>());
 
@@ -184,7 +184,7 @@ public class BackendStorageDomainsResourceTest
 
         setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
                 GetExistingStorageDomainListParameters.class,
-                new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
+                new String[] { "Id", "StorageType", "StorageDomainType", "Path" },
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[idx], TYPES_MAPPED[idx],
                         ADDRESSES[idx] + ":" + PATHS[idx] },
                 getExistingStorageDomains(existing));
@@ -278,7 +278,7 @@ public class BackendStorageDomainsResourceTest
 
         setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
                 GetExistingStorageDomainListParameters.class,
-                new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
+                new String[] { "Id", "StorageType", "StorageDomainType", "Path" },
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[POSIX_IDX], TYPES_MAPPED[0], ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX] },
                 new ArrayList<StorageDomainStatic>());
 
@@ -323,7 +323,7 @@ public class BackendStorageDomainsResourceTest
 
         setUpGetEntityExpectations(VdcQueryType.GetDeviceList,
                 GetDeviceListQueryParameters.class,
-                new String[] { "VdsId", "StorageType" },
+                new String[] { "Id", "StorageType" },
                 new Object[] { GUIDS[0], org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI },
                 "this return value isn't used");
 
@@ -366,7 +366,7 @@ public class BackendStorageDomainsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetDeviceList,
                 GetDeviceListQueryParameters.class,
-                new String[] { "VdsId", "StorageType" },
+                new String[] { "Id", "StorageType" },
                 new Object[] { GUIDS[0], org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI },
                 "this return value isn't used");
 
@@ -439,7 +439,7 @@ public class BackendStorageDomainsResourceTest
 
         setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
                 GetExistingStorageDomainListParameters.class,
-                new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
+                new String[] { "Id", "StorageType", "StorageDomainType", "Path" },
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[0], TYPES_MAPPED[0], ADDRESSES[0] + ":" + PATHS[0] },
                 new ArrayList<StorageDomainStatic>());
 

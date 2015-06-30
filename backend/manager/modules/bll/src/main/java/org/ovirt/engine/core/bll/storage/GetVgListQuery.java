@@ -7,7 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-public class GetVgListQuery<P extends VdsIdParametersBase> extends QueriesCommandBase<P> {
+public class GetVgListQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVgListQuery(P parameters) {
         super(parameters);
     }
@@ -24,7 +24,7 @@ public class GetVgListQuery<P extends VdsIdParametersBase> extends QueriesComman
     protected void executeQueryCommand() {
         ArrayList<StorageDomain> vgsFromVds = (ArrayList<StorageDomain>) (Backend.getInstance()
                 .getResourceManager().RunVdsCommand(VDSCommandType.GetVGList,
-                                                    new VdsIdVDSCommandParametersBase(getParameters().getVdsId())))
+                                                    new VdsIdVDSCommandParametersBase(getParameters().getId())))
                 .getReturnValue();
 
         List<StorageDomain> vgsFromDb = LinqUtils.filter(DbFacade.getInstance().getStorageDomainDao().getAll(),
