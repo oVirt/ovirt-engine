@@ -6,11 +6,13 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionConfigParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepConfigVdsParameters;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeOptionVDSParameters;
 
 public class SetGeoRepConfigCommand extends GeoRepSessionCommandBase<GlusterVolumeGeoRepSessionConfigParameters> {
 
@@ -46,7 +48,14 @@ public class SetGeoRepConfigCommand extends GeoRepSessionCommandBase<GlusterVolu
                                 configKey,
                                 configValue,
                                 session.getUserName()));
-        setSucceeded(returnValue.getSucceeded());
+        boolean succeeded = returnValue.getSucceeded();
+        if (succeeded && configKey.equals("use_meta_volume")) {
+            // Not handling failures as there's no way to figure out if the error is that the option is already set.
+            runVdsCommand(VDSCommandType.SetGlusterVolumeOption,
+                    new GlusterVolumeOptionVDSParameters(upServer.getId(), "all", new GlusterVolumeOptionEntity(
+                            getGeoRepSession().getMasterVolumeId(), "cluster.enable-shared-storage", "enable")));
+        }
+        setSucceeded(succeeded);
         if (getSucceeded()) {
             GlusterGeoRepSessionConfiguration geoRepSessionConfig = new GlusterGeoRepSessionConfiguration();
             geoRepSessionConfig.setValue(configValue);
