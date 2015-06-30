@@ -176,21 +176,16 @@ class Plugin(plugin.PluginBase):
         artifact,
         destination_path=ovmpcons.FileLocations.OVIRT_VMCONSOLE_PROXY_PKIDIR
     ):
-        install_cmd = get_install_command(
-            artifact=artifact,
-            destination_path=destination_path
-        )
-
         self.dialog.note(
-            _(
-                'Manual intervention is required, because '
-                'setup was run in developer mode. '
-                'Please run with root privileges:\n'
-                '\n'
-                '{install_cmd}'
-                '\n'.format(
-                    install_cmd=install_cmd
-                )
+            '{text}'
+            '\n'
+            '{install_cmd}'
+            '\n'.format(
+                text=ovmpcons.Const.MANUAL_INTERVENTION_TEXT,
+                install_cmd=get_install_command(
+                    artifact=artifact,
+                    destination_path=destination_path
+                ),
             )
         )
 

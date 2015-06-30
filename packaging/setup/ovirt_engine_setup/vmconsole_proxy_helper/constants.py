@@ -50,6 +50,12 @@ class Const(object):
     # this is also used for SSH keys enrollment
     OVIRT_VMCONSOLE_PROXY_SERVICE_NAME = 'ovirt-vmconsole-proxy'
 
+    MANUAL_INTERVENTION_TEXT = _(
+        'Manual intervention is required, because '
+        'setup was run in developer mode. '
+        'Please run with root privileges:\n'
+    )
+
 
 @util.export
 class FileLocations(object):

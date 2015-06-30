@@ -370,21 +370,15 @@ class Plugin(plugin.PluginBase):
             )
         else:
             self.dialog.note(
-                _(
-                    'Manual intervention is required, because '
-                    'setup was run under unprivileged user.\n'
-                    'Cannot copy ovirt-vmconsole config snippet '
-                    'into the proper directory.\n'
-                    'Please make sure to run as root:\n'
-                    '\n'
-                    '{cp_cmd}'.format(
-                        cp_cmd='cp -p {conf_file} {vmconsole_confdir}'.format(
-                            conf_file=conf_file,
-                            vmconsole_confdir=self.environment[
-                                ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIGD_PATH
-                            ],
-                        )
-                    )
+                '{text}'
+                '\n'
+                'cp -p {conf_file} {vmconsole_confdir}\n'
+                '\n'.format(
+                    text=ovmpcons.Const.MANUAL_INTERVENTION_TEXT,
+                    conf_file=conf_file,
+                    vmconsole_confdir=self.environment[
+                        ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIGD_PATH
+                    ],
                 )
             )
 
