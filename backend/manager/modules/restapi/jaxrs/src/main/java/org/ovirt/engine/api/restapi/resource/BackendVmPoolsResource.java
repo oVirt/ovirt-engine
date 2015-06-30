@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.VmPools;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.resource.VmPoolsResource;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
+import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -110,6 +111,7 @@ public class BackendVmPoolsResource
             model.setTemplate(new Template());
             model.getTemplate().setId(vm.getVmtGuid().toString());
             model = getMapper(VM.class, VmPool.class).map(vm, model);
+            DisplayHelper.adjustDisplayData(this, model.getVm());
         }
         return model;
     }
