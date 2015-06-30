@@ -549,6 +549,7 @@ public class ResourceManager implements BackendService {
     }
 
     public void subscribe(EventSubscriber subscriber) {
+        log.debug("subscribe called with subscription id: {}", subscriber.getSubsctibtionId());
         ReactorFactory.getWorker(this.parallelism).getPublisher().subscribe(subscriber);
     }
 

@@ -19,6 +19,7 @@ import org.ovirt.engine.core.vdsbroker.VmsMonitoring;
 import org.ovirt.engine.core.vdsbroker.VmsStatisticsFetcher;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -52,6 +53,8 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
             @Override
             public void onNext(Map<String, Object> map) {
                 try {
+                    printEventInDebug(map);
+
                     List<Pair<VM, VmInternalData>> changedVms = new ArrayList<>();
                     List<Pair<VM, VmInternalData>> devicesChangedVms = new ArrayList<>();
 
@@ -63,6 +66,16 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
                 } finally {
                     subscription.request(1);
                 }
+            }
+
+            private void printEventInDebug(Map<String, Object> map) {
+                if (!log.isDebugEnabled()) {
+                    return;
+                }
+                StringBuilder sb = new StringBuilder();
+                XmlRpcObjectDescriptor.toStringBuilder(map, sb);
+
+                log.debug("processing event for host {} data:\n{}", manager.getVdsName(), sb);
             }
 
             private VmsMonitoring getVmsMonitoring(List<Pair<VM, VmInternalData>> changedVms, List<Pair<VM, VmInternalData>> devicesChangedVms) {
