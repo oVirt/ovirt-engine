@@ -114,8 +114,18 @@ public class FOPMessageBodyWriter implements MessageBodyWriter<Object> {
             );
         }
 
-        // Create the XSLT transformer factory:
-        transformerFactory = TransformerFactory.newInstance();
+        // Create the XSLT transformer factory. Note that we need to explicitly use Xalan to avoid an unresolved issue
+        // with WildFly:
+        //
+        //   Xalan Linkage error : TransformerConfigurationException
+        //   https://issues.jboss.org/browse/WFCORE-519
+        //
+        // If/when this issue is solved this code can be changed to use the default implementation, calling the
+        // "newInstance" method without parameters.
+        transformerFactory = TransformerFactory.newInstance(
+            "org.apache.xalan.processor.TransformerFactoryImpl",
+            FOPMessageBodyWriter.class.getClassLoader()
+        );
 
         // Create the FOP factory:
         fopFactory = FopFactory.newInstance();

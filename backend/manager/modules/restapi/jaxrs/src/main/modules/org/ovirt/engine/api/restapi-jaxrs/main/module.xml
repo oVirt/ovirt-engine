@@ -44,6 +44,16 @@ limitations under the License.
     <module name="org.ovirt.engine.core.compat"/>
     <module name="org.ovirt.engine.core.utils"/>
     <module name="org.slf4j"/>
+
+    <!-- This dependency is needed to workaround the following WildFly issue:
+
+           Xalan Linkage error : TransformerConfigurationException
+           https://issues.jboss.org/browse/WFCORE-519
+
+         Without this the FOP message body writer used to generate PDF
+         documents won't work correctly. -->
+    <module name="org.apache.xalan"/>
+
   </dependencies>
 
 </module>
