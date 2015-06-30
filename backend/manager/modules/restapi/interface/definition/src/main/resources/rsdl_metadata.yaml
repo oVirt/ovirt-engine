@@ -3238,21 +3238,28 @@ actions:
     body:
       parameterType: StorageConnection
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments:  {storage_connection.port: 'xs:int', storage_connection.username: 'xs:string', storage_connection.password: 'xs:string',
-                             storage_connection.iqn: 'xs:string', storage_connection.address: 'xs:string' }
-        description: update the specified iSCSI storage connection in the system
-      - mandatoryArguments: {}
-        optionalArguments:  {storage_connection.nfs_timeo: 'xs:string', storage_connection.nfs_version: 'xs:string', storage_connection.nfs_retrans: 'xs:string',
-                             storage_connection.address: 'xs:string', storage_connection.path: 'xs:string'}
-        description: update the specified nfs storage connection in the system
-      - mandatoryArguments: {}
-        optionalArguments:  {storage_connection.mount_options: 'xs:string', storage_connection.vfs_type: 'xs:string',
-                             storage_connection.address: 'xs:string', storage_connection.path: 'xs:string'}
-        description: update the specified vfs storage connection in the system
-      - mandatoryArguments: {}
-        optionalArguments:  {storage_connection.path: 'xs:string'}
-        description: update the specified local storage connection in the system
+      - description: update the specified iSCSI storage connection in the system
+        optionalArguments:
+          storage_connection.password: xs:string
+          storage_connection.port: xs:int
+          storage_connection.target: xs:string
+          storage_connection.username: xs:string
+      - description: update the specified nfs storage connection in the system
+        optionalArguments:
+          storage_connection.address: xs:string
+          storage_connection.nfs_retrans: xs:string
+          storage_connection.nfs_timeo: xs:string
+          storage_connection.nfs_version: xs:string
+          storage_connection.path: xs:string
+      - description: update the specified vfs storage connection in the system
+        optionalArguments:
+          storage_connection.address: xs:string
+          storage_connection.mount_options: xs:string
+          storage_connection.path: xs:string
+          storage_connection.vfs_type: xs:string
+      - description: update the specified local storage connection in the system
+        optionalArguments:
+          storage_connection.path: xs:string
 
 - name: /storageconnections|rel=add
   description: add a new storage connection to the system
@@ -3260,18 +3267,36 @@ actions:
     body:
       parameterType: StorageConnection
       signatures:
-      - mandatoryArguments: {storage_connection.address: 'xs:string', storage_connection.type: 'xs:string', storage_connection.iqn: 'xs:string', storage_connection.port: 'xs:int'}
-        optionalArguments:  {storage_connection.username: 'xs:string', storage_connection.password: 'xs:string'}
-        description: add a iSCSI storage connection to the system
-      - mandatoryArguments: {storage_connection.address: 'xs:string', storage_connection.type: 'xs:string', storage_connection.path: 'xs:string'}
-        optionalArguments:  {storage_connection.nfs_timeo: 'xs:string', storage_connection.nfs_version: 'xs:string', storage_connection.nfs_retrans: 'xs:string'}
-        description: add a nfs storage connection to the system
-      - mandatoryArguments: {storage_connection.type: 'xs:string', storage_connection.path: 'xs:string', storage_connection.vfs_type: 'xs:string'}
-        optionalArguments:  {storage_connection.address: 'xs:string', storage_connection.mount_options: 'xs:string'}
-        description: add a vfs storage connection to the system
-      - mandatoryArguments: {storage_connection.type: 'xs:string', storage_connection.path: 'xs:string'}
-        optionalArguments:  {}
-        description: add a local storage connection to the system
+      - description: add a iSCSI storage connection to the system
+        mandatoryArguments:
+          storage_connection.address: xs:string
+          storage_connection.port: xs:int
+          storage_connection.target: xs:string
+          storage_connection.type: xs:string
+        optionalArguments:
+          storage_connection.password: xs:string
+          storage_connection.username: xs:string
+      - description: add a nfs storage connection to the system
+        mandatoryArguments:
+          storage_connection.address: xs:string
+          storage_connection.path: xs:string
+          storage_connection.type: xs:string
+        optionalArguments:
+          storage_connection.nfs_retrans: xs:string
+          storage_connection.nfs_timeo: xs:string
+          storage_connection.nfs_version: xs:string
+      - description: add a vfs storage connection to the system
+        mandatoryArguments:
+          storage_connection.path: xs:string
+          storage_connection.type: xs:string
+          storage_connection.vfs_type: xs:string
+        optionalArguments:
+          storage_connection.address: xs:string
+          storage_connection.mount_options: xs:string
+      - description: add a local storage connection to the system
+        mandatoryArguments:
+          storage_connection.path: xs:string
+          storage_connection.type: xs:string
 
 - name: /clusters/{cluster:id}/glusterhooks|rel=get
 - name: /clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=get
