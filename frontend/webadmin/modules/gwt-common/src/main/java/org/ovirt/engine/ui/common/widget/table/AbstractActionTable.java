@@ -75,6 +75,24 @@ import com.google.gwt.view.client.SelectionModel;
  */
 public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T> {
 
+    /**
+     * Allows customizing table row elements after the table finished loading its items.
+     *
+     * @param <T>
+     *            Table row data type.
+     */
+    public interface RowVisitor<T> {
+
+        /**
+         * @param row
+         *            Table row element.
+         * @param item
+         *            Value associated with this row.
+         */
+        void visit(TableRowElement row, T item);
+
+    }
+
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
@@ -113,6 +131,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     private boolean doAutoSelect;
 
     private int scrollOffset = 0;
+
+    private RowVisitor<T> rowVisitor;
 
     public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources, EventBus eventBus, ClientStorage clientStorage) {
@@ -181,6 +201,20 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                         @Override
                         public void execute() {
                             doAutoSelect = true;
+                        }
+                    });
+                } else if (state == LoadingState.LOADED) {
+                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            if (rowVisitor != null) {
+                                int count = getVisibleItemCount();
+                                for (int i = 0; i < count; i++) {
+                                    TableRowElement row = getChildElement(i);
+                                    T item = getVisibleItem(i);
+                                    rowVisitor.visit(row, item);
+                                }
+                            }
                         }
                     });
                 }
@@ -274,6 +308,10 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         }
         addModelSearchStringChangeListener(dataProvider.getModel());
         addScrollSelectionModelChangeListener();
+    }
+
+    public void setRowVisitor(RowVisitor<T> rowVisitor) {
+        this.rowVisitor = rowVisitor;
     }
 
     @Override
