@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
+
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmOperationParameterBase extends VdcActionParametersBase implements Serializable {
@@ -36,5 +38,10 @@ public class VmOperationParameterBase extends VdcActionParametersBase implements
     @Override
     public int hashCode() {
         return vmId == null ? 0 : vmId.hashCode();
+    }
+
+    @Override
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb).append("vmId", getVmId());
     }
 }

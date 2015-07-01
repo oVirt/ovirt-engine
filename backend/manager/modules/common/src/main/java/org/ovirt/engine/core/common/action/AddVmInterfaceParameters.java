@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.action;
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmInterfaceParameters extends VmOperationParameterBase {
@@ -54,5 +55,12 @@ public class AddVmInterfaceParameters extends VmOperationParameterBase {
 
     public boolean isPortMirroring() {
         return portMirroring;
+    }
+
+    @Override
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb).
+                append("nic", getInterface()).
+                append("network", getNetworkName());
     }
 }
