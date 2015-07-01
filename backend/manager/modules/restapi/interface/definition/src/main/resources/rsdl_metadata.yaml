@@ -383,6 +383,8 @@ actions:
           action.vm.initialization.cloud_init.timezone: 'xs:string',
           action.vm.initialization.cloud_init.users.user--COLLECTION: {user.password: 'xs:string', user.name: 'xs:string'},
           action.vm.initialization.cloud_init.payload_files.payload_file--COLLECTION: {payload_file.name: 'xs:string',
+          action.use_sysprep: 'xs:boolean',
+          action.use_cloud_init: 'xs:boolean',
           payload_file.content: 'xs:string',payload_file.type: 'xs:string'}}
         description: start a virtual machine in the system identified by the given id with the options specified in the request body
     urlparams: {}

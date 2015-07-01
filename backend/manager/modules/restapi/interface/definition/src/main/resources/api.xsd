@@ -207,6 +207,10 @@
       <xs:element name="maintenance_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <!-- for getting storage domains which are candidates to be imported -->
       <xs:element ref="storage_domains" minOccurs="0" maxOccurs="1"/>
+      <!-- For VM that runs with Sysprep -->
+      <xs:element name="use_sysprep" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <!-- For VM that runs with Cloud-Init -->
+      <xs:element name="use_cloud_init" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:group>
 
