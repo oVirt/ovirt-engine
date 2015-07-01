@@ -85,7 +85,11 @@ public class RestApiSessionMgmtFilter implements Filter {
                                 );
                         HttpSession session = req.getSession(false);
                         if (session != null) {
-                            session.invalidate();
+                            try {
+                                session.invalidate();
+                            } catch (IllegalStateException e) {
+                                // ignore
+                            }
                         }
                     } finally {
                         ctx.close();

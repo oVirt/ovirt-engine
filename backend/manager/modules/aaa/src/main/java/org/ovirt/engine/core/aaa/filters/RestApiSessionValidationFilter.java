@@ -25,8 +25,11 @@ public class RestApiSessionValidationFilter implements Filter {
         if ((prefer & FiltersHelper.PREFER_NEW_AUTH) != 0 || (prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) == 0) {
             HttpSession session = req.getSession(false);
             if (session != null) {
-                session.invalidate();
-                session = null;
+                try {
+                    session.invalidate();
+                } catch (IllegalStateException e) {
+                    // ignore
+                }
             }
         }
         chain.doFilter(request, response);

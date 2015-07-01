@@ -59,7 +59,11 @@ public class SessionValidationFilter implements Filter {
                 String engineSession = (String) httpSession.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
                 if (engineSession != null) {
                     if (!isSessionValid(engineSession)) {
-                        httpSession.invalidate();
+                        try {
+                            httpSession.invalidate();
+                        } catch (IllegalStateException e) {
+                            // ignore
+                        }
                     }
                 }
             }

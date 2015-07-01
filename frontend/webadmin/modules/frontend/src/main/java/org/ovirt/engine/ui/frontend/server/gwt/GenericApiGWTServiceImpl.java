@@ -176,9 +176,15 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     @Override
     public VdcReturnValueBase login(String userName, String password, String profileName, VdcActionType loginType) {
         LoginUserParameters params = new LoginUserParameters(profileName, userName, password);
-        HttpSession originalSession = getSession();
+        HttpSession originalSession = this.getThreadLocalRequest().getSession(false);
         // Prevent session fixation.
-        getSession().invalidate();
+        if (originalSession != null) {
+            try {
+                originalSession.invalidate();
+            } catch (IllegalStateException e) {
+                // ignore
+            }
+        }
         // Calling getSession again after invalidating it should create a new session.
         HttpSession newSession = getSession();
         assert !newSession.equals(originalSession) : "new session the same as old session"; //$NON-NLS-1$
@@ -188,7 +194,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         VdcLoginReturnValueBase returnValue = (VdcLoginReturnValueBase) getBackend().login(params);
         if (returnValue.getSucceeded()) {
             this.getThreadLocalResponse().addHeader("OVIRT-SSO-TOKEN", returnValue.getSessionId()); //$NON-NLS-1$
-            getSession().setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY, returnValue.getSessionId()); //$NON-NLS-1$)
+            newSession.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY, returnValue.getSessionId()); //$NON-NLS-1$)
         }
         return returnValue;
     }
