@@ -146,6 +146,7 @@ public abstract class BackendTemplateBasedResourceTest<
 
     @Test
     public void testUpdate() throws Exception {
+        setUpGetGraphicsExpectations(1);
         setUpUpdateExpectations();
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,

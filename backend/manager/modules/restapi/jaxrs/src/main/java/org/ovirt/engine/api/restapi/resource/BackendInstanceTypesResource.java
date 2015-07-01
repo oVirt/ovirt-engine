@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.InstanceTypes;
+import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
 import org.ovirt.engine.api.resource.InstanceTypesResource;
@@ -70,8 +71,8 @@ public class BackendInstanceTypesResource
         addInstanceTypeParameters.setPublicUse(true);
 
         addInstanceTypeParameters.setConsoleEnabled(instanceType.getConsole() != null && instanceType.getConsole().isSetEnabled() ?
-                        instanceType.getConsole().isEnabled() :
-                        false);
+                instanceType.getConsole().isEnabled() :
+                false);
         addInstanceTypeParameters.setVirtioScsiEnabled(instanceType.isSetVirtioScsi() && instanceType.getVirtioScsi().isSetEnabled() ?
                 instanceType.getVirtioScsi().isEnabled() : null);
 
@@ -79,11 +80,19 @@ public class BackendInstanceTypesResource
             addInstanceTypeParameters.setSoundDeviceEnabled(instanceType.isSoundcardEnabled());
         }
 
+        DisplayHelper.setGraphicsToParams(instanceType.getDisplay(), addInstanceTypeParameters);
 
-        return performCreate(VdcActionType.AddVmTemplate,
-                               addInstanceTypeParameters,
+        Response response = performCreate(VdcActionType.AddVmTemplate,
+                addInstanceTypeParameters,
                 new QueryIdResolver<Guid>(VdcQueryType.GetInstanceType,
-                                                   GetVmTemplateParameters.class));
+                        GetVmTemplateParameters.class));
+
+        Template result = (Template) response.getEntity();
+        if (result != null) {
+            DisplayHelper.adjustDisplayData(this, result);
+        }
+
+        return response;
     }
 
     @Override

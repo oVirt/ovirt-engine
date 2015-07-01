@@ -39,7 +39,7 @@ public class BackendTemplateResourceTest
     }
 
     public void testUpdate() throws Exception {
-        setUpGetGraphicsExpectations(1);
+        setUpGetGraphicsExpectations(0);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
             IdQueryParameters.class,
             new String[]{"Id"},
