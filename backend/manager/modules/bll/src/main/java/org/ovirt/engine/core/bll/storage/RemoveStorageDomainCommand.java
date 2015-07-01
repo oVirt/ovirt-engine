@@ -142,7 +142,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             }
         }
 
-        if (dom.getStorageType() == StorageType.GLANCE) {
+        if (dom.getStorageType().isOpenStackDomain()) {
             return failCanDoAction(VdcBllMessages.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
         }
 

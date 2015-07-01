@@ -933,11 +933,11 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         getEditCommand().setIsExecutionAllowed(items.size() == 1 && isEditAvailable(item));
 
         getRemoveCommand().setIsExecutionAllowed(items.size() == 1
-                && items.get(0).getStorageType() != StorageType.GLANCE
+                && !items.get(0).getStorageType().isOpenStackDomain()
                 && Linq.findAllStorageDomainsBySharedStatus(items, StorageDomainSharedStatus.Unattached).size() == items.size());
 
         getDestroyCommand().setIsExecutionAllowed(item != null && items.size() == 1
-                && items.get(0).getStorageType() != StorageType.GLANCE
+                && !items.get(0).getStorageType().isOpenStackDomain()
                 && item.getStatus() != StorageDomainStatus.Active);
 
         // System tree dependent actions.
