@@ -402,6 +402,8 @@ actions:
             payload_file.name: xs:string
             payload_file.content: xs:string
             payload_file.type: xs:string
+          action.use_sysprep: xs:boolean
+          action.use_cloud_init: xs:boolean
         description: start a virtual machine in the system identified by the given id with the options specified in the request body
     headers:
       Filter: {value: true|false, required: false}

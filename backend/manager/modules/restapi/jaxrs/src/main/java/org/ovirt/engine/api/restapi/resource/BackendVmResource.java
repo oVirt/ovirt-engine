@@ -20,6 +20,7 @@ import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Display;
+import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Template;
@@ -384,6 +385,23 @@ public class BackendVmResource extends
         }
         if (action.isSetPause() && action.isPause()) {
             params.setRunAndPause(true);
+        }
+
+        boolean useSysprep = action.isSetUseSysprep() && action.isUseSysprep();
+        boolean useCloudInit = action.isSetUseCloudInit() && action.isUseCloudInit();
+        if (useSysprep && useCloudInit) {
+            Fault fault = new Fault();
+            fault.setReason(localize(Messages.CANT_USE_SYSPREP_AND_CLOUD_INIT_SIMULTANEOUSLY));
+            return Response.status(Response.Status.CONFLICT).entity(fault).build();
+        }
+        if (useSysprep) {
+            params.setInitializationType(InitializationType.Sysprep);
+        }
+        else if (useCloudInit) {
+            params.setInitializationType(InitializationType.CloudInit);
+        }
+        else {
+            params.setInitializationType(InitializationType.None);
         }
         return doAction(actionType, params, action);
     }

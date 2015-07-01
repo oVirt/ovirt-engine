@@ -213,6 +213,10 @@
       <xs:element name="reason" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <!-- For storage domain refresh LUNs -->
       <xs:element ref="logical_units" minOccurs="0"/>
+      <!-- For VM that runs with Sysprep -->
+      <xs:element name="use_sysprep" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <!-- For VM that runs with Cloud-Init -->
+      <xs:element name="use_cloud_init" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:group>
 
