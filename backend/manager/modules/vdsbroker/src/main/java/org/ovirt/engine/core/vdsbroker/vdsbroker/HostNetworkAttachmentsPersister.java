@@ -163,9 +163,17 @@ public class HostNetworkAttachmentsPersister {
                     reportedNicsByNetworkId.get(networkAttachment.getNetworkId());
 
                 Guid reportedNicId = baseInterfaceOfNic(reportedNicToWhichIsNetworkAttached).getId();
-                if (!networkAttachment.getNicId().equals(reportedNicId)) {
-                    throw new IllegalStateException(
-                        INCONSISTENCY_NETWORK_IS_REPORTED_ON_DIFFERENT_NIC_THAN_WAS_SPECIFIED);
+
+                /*this is needed for attaching network to newly created bond, where network attachment
+                does not have nicId set and that nic id is known only after vdsm call.
+                * */
+                if (networkAttachment.getNicId() == null) {
+                    networkAttachment.setNicId(reportedNicId);
+                } else {
+                    if (!networkAttachment.getNicId().equals(reportedNicId)) {
+                        throw new IllegalStateException(
+                            INCONSISTENCY_NETWORK_IS_REPORTED_ON_DIFFERENT_NIC_THAN_WAS_SPECIFIED);
+                    }
                 }
 
                 boolean alreadyExistingAttachment = validDbAttachmentsById.containsKey(networkAttachment.getId());
