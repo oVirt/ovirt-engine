@@ -620,10 +620,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         hostsWithBrokenConnectivityThresholdEditor = new ListModelListBoxEditor<Integer>(new NullSafeRenderer<Integer>() {
             @Override
             public String renderNullSafe(Integer object) {
-                return object.toString();
+                return object.toString() + "%"; //$NON-NLS-1$
             }
         });
-        hostsWithBrokenConnectivityThresholdEditor.getContentWidgetContainer().setWidth("75px"); //$NON-NLS-1$
 
         autoConvergeEditor = new ListModelListBoxEditor<Boolean>(
                 new BooleanRendererWithNullText(constants.autoConverge(), constants.dontAutoConverge(), constants.inheritFromGlobal()));
@@ -657,13 +656,10 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         rngHwrngSourceRequired = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         fencingEnabledCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
-        fencingEnabledCheckBox.getContentWidgetContainer().setWidth("150px"); //$NON-NLS-1$
 
         skipFencingIfSDActiveCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
-        skipFencingIfSDActiveCheckBox.getContentWidgetContainer().setWidth("450px"); //$NON-NLS-1$
 
         skipFencingIfConnectivityBrokenCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
-        skipFencingIfConnectivityBrokenCheckBox.getContentWidgetContainer().setWidth("420px"); //$NON-NLS-1$
 
         additionalFeaturesEditor = new ListModelCheckBoxGroup<>(new AbstractRenderer<AdditionalFeature>() {
             @Override

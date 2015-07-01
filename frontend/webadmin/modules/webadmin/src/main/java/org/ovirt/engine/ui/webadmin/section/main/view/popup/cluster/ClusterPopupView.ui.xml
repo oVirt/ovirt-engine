@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget" xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
-    xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm">
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
+    xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
@@ -172,6 +176,17 @@
             padding: 0px;
         }
 
+        .container {
+            width: 100%;
+        }
+
+        .floatLeft {
+            float: left
+        }
+
+        .topElement {
+            padding-top: 15px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="800px" height="560px">
@@ -309,21 +324,29 @@
                 <t:tab>
                     <t:DialogTab ui:field="fencingPolicyTab">
                         <t:content>
-                            <g:FlowPanel addStyleNames="cvp_fencingPolicyContent_pfly_fix">
-                                <g:HorizontalPanel>
-                                    <ge:EntityModelCheckBoxEditor ui:field="fencingEnabledCheckBox" />
-                                    <d:InfoIcon ui:field="fencingEnabledInfo" addStyleNames="cpv_fencingEnabledInfo_pfly_fix" />
-                                </g:HorizontalPanel>
-                                <g:HorizontalPanel addStyleNames="cpv_skipFencingIfSDActiveInfo_line_pfly_fix">
-                                    <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfSDActiveCheckBox" />
-                                    <d:InfoIcon ui:field="skipFencingIfSDActiveInfo" addStyleNames="cpv_skipFencingIfSDActiveInfo_pfly_fix" />
-                                </g:HorizontalPanel>
-                                <g:HorizontalPanel addStyleNames="cpv_hostsWithBrokenConnectivityThresholdEditor_line_pfly_fix">
-                                    <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" />
-                                    <d:InfoIcon ui:field="skipFencingIfConnectivityBrokenInfo" />
-                                    <e:ListModelListBoxEditor ui:field="hostsWithBrokenConnectivityThresholdEditor" addStyleNames="cpv_hostsWithBrokenConnectivityThresholdEditor_pfly_fix" />
-                                </g:HorizontalPanel>
-                            </g:FlowPanel>
+                          <b:Container addStyleNames="{style.container}">
+                            <b:Row addStyleNames="{style.topElement}">
+                              <b:Column size="LG_12">
+                                <ge:EntityModelCheckBoxEditor ui:field="fencingEnabledCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft}" />
+                                <d:InfoIcon ui:field="fencingEnabledInfo" />
+                              </b:Column>
+                            </b:Row>
+                            <b:Row>
+                              <b:Column size="LG_12">
+                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfSDActiveCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft}" />
+                                <d:InfoIcon ui:field="skipFencingIfSDActiveInfo" />
+                              </b:Column>
+                            </b:Row>
+                            <b:Row>
+                              <b:Column size="LG_7">
+                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft}" />
+                                <d:InfoIcon ui:field="skipFencingIfConnectivityBrokenInfo" />
+                              </b:Column>
+                              <b:Column size="LG_5">
+                                <e:ListModelListBoxEditor ui:field="hostsWithBrokenConnectivityThresholdEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7" addStyleNames="{style.floatLeft}" />
+                              </b:Column>
+                            </b:Row>
+                          </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
