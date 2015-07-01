@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
 /**
  * This class is responsible for returning the correct service strategy, according to the service the cluster supports
@@ -19,7 +19,7 @@ public class MonitoringStrategyFactory {
         multipleMonitoringStrategy.addMonitoringStrategy(glusterMonitoringStrategy);
     }
 
-    private static VdsGroupDAO vdsGroupDao = DbFacade.getInstance().getVdsGroupDao();
+    private static VdsGroupDao vdsGroupDao = DbFacade.getInstance().getVdsGroupDao();
 
     /**
      * This method gets the VDS, and returns the correct service strategy, according to the service the cluster that the VDS belongs to supports

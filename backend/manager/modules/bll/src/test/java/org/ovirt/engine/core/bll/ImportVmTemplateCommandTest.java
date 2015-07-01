@@ -45,10 +45,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.springframework.util.Assert;
 
 public class ImportVmTemplateCommandTest {
@@ -152,7 +152,7 @@ public class ImportVmTemplateCommandTest {
         doReturn(true).when(command).validateNoDuplicateDiskImages(any(Iterable.class));
         mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType, command);
         mockStorageDomainStatic(command, storageType);
-        doReturn(mock(VmTemplateDAO.class)).when(command).getVmTemplateDAO();
+        doReturn(mock(VmTemplateDao.class)).when(command).getVmTemplateDao();
         doReturn(Mockito.mock(MacPoolManagerStrategy.class)).when(command).getMacPool();
         mockStoragePool(command);
         mockStorageDomains(command);
@@ -165,7 +165,7 @@ public class ImportVmTemplateCommandTest {
 
     private static void mockStorageDomains(ImportVmTemplateCommand command) {
         final ImportVmTemplateParameters parameters = command.getParameters();
-        final StorageDomainDAO dao = mock(StorageDomainDAO.class);
+        final StorageDomainDao dao = mock(StorageDomainDao.class);
 
         final StorageDomain srcDomain = new StorageDomain();
         srcDomain.setStorageDomainType(StorageDomainType.ImportExport);
@@ -181,17 +181,17 @@ public class ImportVmTemplateCommandTest {
         when(dao.getForStoragePool(parameters.getDestDomainId(), parameters.getStoragePoolId()))
                 .thenReturn(destDomain);
 
-        doReturn(dao).when(command).getStorageDomainDAO();
+        doReturn(dao).when(command).getStorageDomainDao();
     }
 
     private static void mockStoragePool(ImportVmTemplateCommand command) {
-        final StoragePoolDAO dao = mock(StoragePoolDAO.class);
+        final StoragePoolDao dao = mock(StoragePoolDao.class);
 
         final StoragePool pool = new StoragePool();
         pool.setId(command.getParameters().getStoragePoolId());
         when(dao.get(any(Guid.class))).thenReturn(pool);
 
-        doReturn(dao).when(command).getStoragePoolDAO();
+        doReturn(dao).when(command).getStoragePoolDao();
     }
 
     private static void mockGetTemplatesFromExportDomainQuery(VolumeFormat volumeFormat,
@@ -216,13 +216,13 @@ public class ImportVmTemplateCommandTest {
     private static void mockStorageDomainStatic(
             ImportVmTemplateCommand command,
             StorageType storageType) {
-        final StorageDomainStaticDAO dao = mock(StorageDomainStaticDAO.class);
+        final StorageDomainStaticDao dao = mock(StorageDomainStaticDao.class);
 
         final StorageDomainStatic domain = new StorageDomainStatic();
         domain.setStorageType(storageType);
         when(dao.get(any(Guid.class))).thenReturn(domain);
 
-        doReturn(dao).when(command).getStorageDomainStaticDAO();
+        doReturn(dao).when(command).getStorageDomainStaticDao();
     }
 
     protected ImportVmTemplateParameters createParameters() {

@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmPoolDAO;
+import org.ovirt.engine.core.dao.VmPoolDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,7 +133,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             return false;
         }
 
-        List<DbUser> users = getDbUserDAO().getAllForVm(getVmId());
+        List<DbUser> users = getDbUserDao().getAllForVm(getVmId());
         // check if this VM is attached to a user
         if (users == null || users.isEmpty()) {
             // if not, check if new version or need to restore stateless
@@ -144,7 +144,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             }
             return true;
         }
-        VmPool pool = getVmPoolDAO().get(getVm().getVmPoolId());
+        VmPool pool = getVmPoolDao().get(getVm().getVmPoolId());
         if (pool != null && pool.getVmPoolType() == VmPoolType.Automatic) {
             // should be only one user in the collection
             for (DbUser dbUser : users) {
@@ -161,7 +161,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         return false;
     }
 
-    private VmPoolDAO getVmPoolDAO() {
+    private VmPoolDao getVmPoolDao() {
         return DbFacade.getInstance().getVmPoolDao();
     }
 
@@ -217,9 +217,9 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     private void applyNextRunConfiguration() {
         // Remove snpashot first, in case other update is in progress, it will block this one with exclusive lock
         // and any newer update should be preffered to this one.
-        Snapshot runSnap = getSnapshotDAO().get(getVmId(), SnapshotType.NEXT_RUN);
+        Snapshot runSnap = getSnapshotDao().get(getVmId(), SnapshotType.NEXT_RUN);
         if (runSnap != null) {
-            getSnapshotDAO().remove(runSnap.getId());
+            getSnapshotDao().remove(runSnap.getId());
             Date originalCreationDate = getVm().getVmCreationDate();
             new SnapshotsManager().updateVmFromConfiguration(getVm(), runSnap.getVmConfiguration());
             // override creation date because the value in the config is the creation date of the config, not the vm
@@ -292,7 +292,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     }
 
     private void removeVmStatelessImages() {
-        if (getSnapshotDAO().exists(getVmId(), SnapshotType.STATELESS)) {
+        if (getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)) {
             log.info("Deleting snapshot for stateless vm '{}'", getVmId());
             runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(getVmId()),

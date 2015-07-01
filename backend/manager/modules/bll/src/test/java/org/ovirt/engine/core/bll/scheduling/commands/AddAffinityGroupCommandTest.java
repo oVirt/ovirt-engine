@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmStaticDAO;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 
@@ -36,7 +36,7 @@ public class AddAffinityGroupCommandTest {
     AffinityGroupDao affinityGroupDao;
 
     @Mock
-    VmStaticDAO vmStaticDao;
+    VmStaticDao vmStaticDao;
 
     @Mock
     AffinityGroupCRUDParameters parameters;
@@ -48,7 +48,7 @@ public class AddAffinityGroupCommandTest {
         command = spy(new AddAffinityGroupCommand(parameters));
         doReturn(createAffinityGroup()).when(parameters).getAffinityGroup();
         doReturn(affinityGroupDao).when(command).getAffinityGroupDao();
-        doReturn(vmStaticDao).when(command).getVmStaticDAO();
+        doReturn(vmStaticDao).when(command).getVmStaticDao();
         doReturn(new VDSGroup()).when(command).getVdsGroup();
         VmStatic vmStatic = new VmStatic();
         vmStatic.setVdsGroupId(clusterId);

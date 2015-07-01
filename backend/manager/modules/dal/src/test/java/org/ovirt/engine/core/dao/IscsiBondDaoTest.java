@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.compat.Guid;
 
-public class IscsiBondDaoTest extends BaseDAOTestCase {
+public class IscsiBondDaoTest extends BaseDaoTestCase {
 
     private IscsiBondDao dao;
     private Guid storagePoolId;

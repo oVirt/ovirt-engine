@@ -25,7 +25,7 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
         super(parameters);
     }
 
-    protected LibvirtSecretDao getLibvirtSecretDAO() {
+    protected LibvirtSecretDao getLibvirtSecretDao() {
         return getDbFacade().getLibvirtSecretDao();
     }
 
@@ -55,14 +55,14 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
     public StorageDomain getStorageDomain() {
         if (storageDomain == null) {
             Guid providerId = getParameters().getLibvirtSecret().getProviderId();
-            List<StorageDomain> storageDomains = getStorageDomainDAO().getAllByConnectionId(providerId);
+            List<StorageDomain> storageDomains = getStorageDomainDao().getAllByConnectionId(providerId);
             storageDomain = storageDomains.get(0);
         }
         return storageDomain;
     }
 
     protected List<VDS> getAllRunningVdssInPool() {
-        return getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
+        return getVdsDao().getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
     }
 
     protected void registerLibvirtSecret() {

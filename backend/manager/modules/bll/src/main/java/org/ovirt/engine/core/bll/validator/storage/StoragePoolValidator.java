@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
 /**
  * CanDoAction validation methods for storage pool handling
@@ -25,11 +25,11 @@ public class StoragePoolValidator {
         this.storagePool = storagePool;
     }
 
-    protected VdsGroupDAO getVdsGroupDao() {
+    protected VdsGroupDao getVdsGroupDao() {
         return DbFacade.getInstance().getVdsGroupDao();
     }
 
-    public StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
+    public StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
         return DbFacade.getInstance().getStoragePoolIsoMapDao();
     }
 

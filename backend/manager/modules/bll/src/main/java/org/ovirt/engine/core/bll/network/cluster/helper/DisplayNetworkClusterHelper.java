@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
 public final class DisplayNetworkClusterHelper {
@@ -20,7 +20,7 @@ public final class DisplayNetworkClusterHelper {
 
     public DisplayNetworkClusterHelper(
             NetworkClusterDao networkClusterDao,
-            VmDAO vmDao,
+            VmDao vmDao,
             NetworkCluster networkCluster,
             String networkName,
             AuditLogDirector auditLogDirector) {

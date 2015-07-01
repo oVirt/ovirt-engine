@@ -140,7 +140,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             return VolumeFormat.COW;
         }
 
-        StorageDomainStatic destDomain = getStorageDomainStaticDAO().get(getParameters().getStorageDomainId());
+        StorageDomainStatic destDomain = getStorageDomainStaticDao().get(getParameters().getStorageDomainId());
         if (destDomain.getStorageType().isBlockDomain() && getParameters().getVolumeType() == VolumeType.Sparse) {
             return VolumeFormat.COW;
         }

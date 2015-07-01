@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -41,7 +41,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
     private HostDeviceDao hostDeviceDao;
 
     @Inject
-    private VmDeviceDAO vmDeviceDao;
+    private VmDeviceDao vmDeviceDao;
 
     @Inject
     private HostDeviceManager hostDeviceManager;

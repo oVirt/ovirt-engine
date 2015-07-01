@@ -11,8 +11,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.RoleDAO;
-import org.ovirt.engine.core.dao.RoleGroupMapDAO;
+import org.ovirt.engine.core.dao.RoleDao;
+import org.ovirt.engine.core.dao.RoleGroupMapDao;
 
 /** An abstract base class for tests for roles commands */
 @RunWith(MockitoJUnitRunner.class)
@@ -22,10 +22,10 @@ public abstract class AbstractRolesCommandTestBase {
     private Role role;
 
     @Mock
-    private RoleDAO roleDAOMock;
+    private RoleDao roleDaoMock;
 
     @Mock
-    private RoleGroupMapDAO roleGroupMapDAOMock;
+    private RoleGroupMapDao roleGroupMapDaoMock;
 
     @Before
     public void setUp() {
@@ -34,9 +34,9 @@ public abstract class AbstractRolesCommandTestBase {
         role = new Role();
         role.setId(params.getRoleId());
 
-        doReturn(roleDAOMock).when(command).getRoleDao();
-        when(roleDAOMock.get(params.getRoleId())).thenReturn(role);
-        doReturn(roleGroupMapDAOMock).when(command).getRoleGroupMapDAO();
+        doReturn(roleDaoMock).when(command).getRoleDao();
+        when(roleDaoMock.get(params.getRoleId())).thenReturn(role);
+        doReturn(roleGroupMapDaoMock).when(command).getRoleGroupMapDao();
     }
 
     protected RolesParameterBase generateParameters() {
@@ -57,11 +57,11 @@ public abstract class AbstractRolesCommandTestBase {
         return role;
     }
 
-    protected RoleDAO getRoleDAOMock() {
-        return roleDAOMock;
+    protected RoleDao getRoleDaoMock() {
+        return roleDaoMock;
     }
 
-    protected RoleGroupMapDAO getRoleGroupMapDAOMock() {
-        return roleGroupMapDAOMock;
+    protected RoleGroupMapDao getRoleGroupMapDaoMock() {
+        return roleGroupMapDaoMock;
     }
 }

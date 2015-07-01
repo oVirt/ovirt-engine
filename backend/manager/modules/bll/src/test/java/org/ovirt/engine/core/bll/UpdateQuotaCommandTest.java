@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /** A test case for the {@link UpdateQuotaCommand} class. */
@@ -36,16 +36,16 @@ public class UpdateQuotaCommandTest {
     /** The quota to use for testing */
     private Quota quota;
 
-    /** A mock of the QuotaDAO used by the command */
+    /** A mock of the QuotaDao used by the command */
     @Mock
-    private QuotaDAO quotaDAO;
+    private QuotaDao quotaDao;
 
     @Before
     public void setUp() {
         setUpQuota();
         params = new QuotaCRUDParameters(quota);
         command = spy(new UpdateQuotaCommand(params));
-        doReturn(quotaDAO).when(command).getQuotaDAO();
+        doReturn(quotaDao).when(command).getQuotaDao();
         doNothing().when(command).removeQuotaFromCache();
         doNothing().when(command).afterUpdate();
     }
@@ -88,7 +88,7 @@ public class UpdateQuotaCommandTest {
         }
 
         // Verify the quota was updated in the database
-        verify(quotaDAO).update(quota);
+        verify(quotaDao).update(quota);
 
         // Assert the return value
         assertTrue("Execution should be successful", command.getReturnValue().getSucceeded());

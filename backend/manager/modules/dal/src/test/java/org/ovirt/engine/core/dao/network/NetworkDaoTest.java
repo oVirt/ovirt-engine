@@ -14,10 +14,10 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class NetworkDaoTest extends BaseDAOTestCase {
+public class NetworkDaoTest extends BaseDaoTestCase {
     private static final Guid MANAGEMENT_NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-1234567890ab");
 
     private NetworkDao dao;

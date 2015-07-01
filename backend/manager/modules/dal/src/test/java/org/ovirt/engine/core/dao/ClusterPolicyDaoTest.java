@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 
-public class ClusterPolicyDaoTest extends BaseDAOTestCase {
+public class ClusterPolicyDaoTest extends BaseDaoTestCase {
 
     private static final int NUMBER_OF_CLUSTER_POLICIES = 2;
 

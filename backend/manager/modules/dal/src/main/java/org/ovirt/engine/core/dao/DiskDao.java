@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface DiskDao extends ReadDao<Disk, Guid>, SearchDAO<Disk> {
+public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
 
     /**
      * Retrieves all disks for the specified virtual machine id.

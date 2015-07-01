@@ -32,8 +32,8 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
-import org.ovirt.engine.core.dao.EngineSessionDAO;
+import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
+import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -59,9 +59,9 @@ public class CommandBaseTest {
         DbFacade dbFacadeMock = mock(DbFacade.class);
         SessionDataContainer.getInstance().setDbFacade(dbFacadeMock);
 
-        EngineSessionDAO engineSessionDAOMock = mock(EngineSessionDAO.class);
-        when(engineSessionDAOMock.remove(any(Long.class))).thenReturn(1);
-        when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDAOMock);
+        EngineSessionDao engineSessionDaoMock = mock(EngineSessionDao.class);
+        when(engineSessionDaoMock.remove(any(Long.class))).thenReturn(1);
+        when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDaoMock);
 
         SessionDataContainer.getInstance().setUser(session, user);
     }
@@ -91,8 +91,8 @@ public class CommandBaseTest {
         }
 
         @Override
-        protected BusinessEntitySnapshotDAO getBusinessEntitySnapshotDAO() {
-            return mock(BusinessEntitySnapshotDAO.class);
+        protected BusinessEntitySnapshotDao getBusinessEntitySnapshotDao() {
+            return mock(BusinessEntitySnapshotDao.class);
         }
 
         @Override

@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -61,7 +61,7 @@ public class HostSetupNetworksValidator {
     private final NetworkClusterDao networkClusterDao;
     private final NetworkAttachmentDao networkAttachmentDao;
     private final NetworkDao networkDao;
-    private final VdsDAO vdsDao;
+    private final VdsDao vdsDao;
 
     public HostSetupNetworksValidator(VDS host,
         HostSetupNetworksParameters params,
@@ -72,7 +72,7 @@ public class HostSetupNetworksValidator {
         NetworkClusterDao networkClusterDao,
         NetworkAttachmentDao networkAttachmentDao,
         NetworkDao networkDao,
-        VdsDAO vdsDao) {
+        VdsDao vdsDao) {
 
         this.host = host;
         this.params = params;

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
-import org.ovirt.engine.core.dao.DbGroupDAO;
+import org.ovirt.engine.core.dao.DbGroupDao;
 
 public class AddGroupCommand<T extends AddGroupParameters>
     extends CommandBase<T> {
@@ -41,7 +41,7 @@ public class AddGroupCommand<T extends AddGroupParameters>
     protected void executeCommand() {
         // First check if the group is already in the database, if it is we
         // need to update, if not we need to insert:
-        DbGroupDAO dao = getAdGroupDAO();
+        DbGroupDao dao = getAdGroupDao();
         DbGroup groupToAdd = getParameters().getGroupToAdd();
         DbGroup dbGroup = dao.getByExternalId(groupToAdd.getDomain(), groupToAdd.getExternalId());
         if (dbGroup == null) {

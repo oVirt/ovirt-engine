@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -27,7 +27,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest {
     GlusterVolumeDao volumeDao;
 
     @Mock
-    VdsDAO vdsDao;
+    VdsDao vdsDao;
 
     private SetupGlusterGeoRepMountBrokerInternalCommand command;
 

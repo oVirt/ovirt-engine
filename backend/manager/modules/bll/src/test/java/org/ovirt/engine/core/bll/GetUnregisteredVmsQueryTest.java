@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 /** A test case for the {@link GetUnregisteredVmsQuery} class. */
@@ -83,12 +83,12 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
         List<OvfEntityData> expectedResultQuery2 = new ArrayList<>();
         expectedResultQuery2.add(ovfEntityData);
 
-        // Mock the DAOs
-        UnregisteredOVFDataDAO unregisteredOVFDataDAOMock = mock(UnregisteredOVFDataDAO.class);
-        when(getDbFacadeMockInstance().getUnregisteredOVFDataDao()).thenReturn(unregisteredOVFDataDAOMock);
-        when(unregisteredOVFDataDAOMock.getAllForStorageDomainByEntityType(storageDomainId, entityType)).thenReturn(expectedResult);
-        when(unregisteredOVFDataDAOMock.getByEntityIdAndStorageDomain(newVmGuid2, storageDomainId)).thenReturn(expectedResultQuery2);
-        when(unregisteredOVFDataDAOMock.getByEntityIdAndStorageDomain(newVmGuid, storageDomainId)).thenReturn(expectedResultQuery1);
+        // Mock the Daos
+        UnregisteredOVFDataDao unregisteredOVFDataDaoMock = mock(UnregisteredOVFDataDao.class);
+        when(getDbFacadeMockInstance().getUnregisteredOVFDataDao()).thenReturn(unregisteredOVFDataDaoMock);
+        when(unregisteredOVFDataDaoMock.getAllForStorageDomainByEntityType(storageDomainId, entityType)).thenReturn(expectedResult);
+        when(unregisteredOVFDataDaoMock.getByEntityIdAndStorageDomain(newVmGuid2, storageDomainId)).thenReturn(expectedResultQuery2);
+        when(unregisteredOVFDataDaoMock.getByEntityIdAndStorageDomain(newVmGuid, storageDomainId)).thenReturn(expectedResultQuery1);
 
         // Mock OVF
         OvfHelper ovfHelperMock = mock(OvfHelper.class);

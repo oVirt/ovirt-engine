@@ -35,12 +35,12 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> extends CommandBase<T> {
 
     @Inject
-    private VmTemplateDAO vmTemplateDao;
+    private VmTemplateDao vmTemplateDao;
     /**
      * Constructor for command creation when compensation is applied on startup
      *

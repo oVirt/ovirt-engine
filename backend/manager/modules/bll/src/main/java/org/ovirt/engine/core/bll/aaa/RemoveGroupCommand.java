@@ -31,14 +31,14 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
 
         // Remove the permissions of the group:
         // TODO: This should be done without invoking the command to avoid the overhead.
-        for (Permission permission : getPermissionDAO().getAllDirectPermissionsForAdElement(id)) {
+        for (Permission permission : getPermissionDao().getAllDirectPermissionsForAdElement(id)) {
             PermissionsOperationsParameters param = new PermissionsOperationsParameters(permission);
             param.setSessionId(getParameters().getSessionId());
             runInternalActionWithTasksContext(VdcActionType.RemovePermission, param);
         }
 
         // Remove the group itself:
-        getAdGroupDAO().remove(id);
+        getAdGroupDao().remove(id);
 
         setSucceeded(true);
     }

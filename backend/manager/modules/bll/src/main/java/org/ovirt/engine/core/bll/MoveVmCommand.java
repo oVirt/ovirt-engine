@@ -162,7 +162,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected void incrementDbGeneration() {
-        getVmStaticDAO().incrementDbGeneration(getVm().getId());
+        getVmStaticDao().incrementDbGeneration(getVm().getId());
     }
 
     @Override

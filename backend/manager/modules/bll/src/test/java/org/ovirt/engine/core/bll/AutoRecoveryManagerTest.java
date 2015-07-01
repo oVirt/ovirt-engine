@@ -34,8 +34,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -61,7 +61,7 @@ public class AutoRecoveryManagerTest {
         doReturn(backendMock).when(manager).getBackend();
         final DbFacade dbFacadeMock = mock(DbFacade.class);
         doReturn(dbFacadeMock).when(manager).getDbFacade();
-        final VdsDAO vdsDaoMock = mock(VdsDAO.class);
+        final VdsDao vdsDaoMock = mock(VdsDao.class);
 
         final VDS vds = new VDS();
         vdss.add(vds);
@@ -71,7 +71,7 @@ public class AutoRecoveryManagerTest {
         StorageDomain domain = new StorageDomain();
         domain.setStoragePoolId(Guid.newGuid());
         storageDomains.add(domain);
-        final StorageDomainDAO storageDomainDaoMock = mock(StorageDomainDAO.class);
+        final StorageDomainDao storageDomainDaoMock = mock(StorageDomainDao.class);
         when(storageDomainDaoMock.listFailedAutorecoverables()).thenReturn(storageDomains);
         when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDaoMock);
 

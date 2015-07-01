@@ -6,9 +6,9 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -36,21 +36,21 @@ public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest 
         // mock current time
         doReturn(TIME_FORMAT.parse("2015-01-01 12:00:00")).when(unit).getTime();
 
-        // mock cluster DAO
-        VdsGroupDAO vdsGroupDAO = mock(VdsGroupDAO.class);
-        doReturn(vdsGroupDAO).when(unit).getVdsGroupDao();
-        doReturn(cluster).when(vdsGroupDAO).get(any(Guid.class));
+        // mock cluster Dao
+        VdsGroupDao vdsGroupDao = mock(VdsGroupDao.class);
+        doReturn(vdsGroupDao).when(unit).getVdsGroupDao();
+        doReturn(cluster).when(vdsGroupDao).get(any(Guid.class));
 
-        // mock host DAO
-        VdsDAO vdsDAO = mock(VdsDAO.class);
-        doReturn(vdsDAO).when(unit).getVdsDao();
-        doReturn(new ArrayList(hosts.values())).when(vdsDAO).getAllForVdsGroup(any(Guid.class));
+        // mock host Dao
+        VdsDao vdsDao = mock(VdsDao.class);
+        doReturn(vdsDao).when(unit).getVdsDao();
+        doReturn(new ArrayList(hosts.values())).when(vdsDao).getAllForVdsGroup(any(Guid.class));
 
-        // mock VM DAO
-        VmDAO vmDAO = mock(VmDAO.class);
-        doReturn(vmDAO).when(unit).getVmDao();
+        // mock VM Dao
+        VmDao vmDao = mock(VmDao.class);
+        doReturn(vmDao).when(unit).getVmDao();
         for (Guid guid: hosts.keySet()) {
-            doReturn(vmsOnAHost(vms.values(), guid)).when(vmDAO).getAllRunningForVds(guid);
+            doReturn(vmsOnAHost(vms.values(), guid)).when(vmDao).getAllRunningForVds(guid);
         }
 
         return unit;

@@ -27,11 +27,11 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
@@ -73,13 +73,13 @@ public class VmsMonitoringTest {
     VmsMonitoring vmsMonitoring;
 
     @Mock
-    VdsGroupDAO groupDAO;
+    VdsGroupDao groupDao;
 
     @Mock
-    VmDAO vmDAO;
+    VmDao vmDao;
 
     @Mock
-    DiskDao diskDAO;
+    DiskDao diskDao;
 
     @Mock
     DbFacade dbFacade;
@@ -88,13 +88,13 @@ public class VmsMonitoringTest {
     VDSGroup cluster;
 
     @Mock
-    VmDeviceDAO vmDeviceDAO;
+    VmDeviceDao vmDeviceDao;
 
     @Mock
-    VmDynamicDAO vmDynamicDao;
+    VmDynamicDao vmDynamicDao;
 
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
 
     VM vm_1_db;
     VM vm_1_vdsm;
@@ -138,14 +138,14 @@ public class VmsMonitoringTest {
     }
 
     private void initConditions() {
-        when(dbFacade.getVdsGroupDao()).thenReturn(groupDAO);
-        when(dbFacade.getVmDao()).thenReturn(vmDAO);
-        when(dbFacade.getVmDeviceDao()).thenReturn(vmDeviceDAO);
+        when(dbFacade.getVdsGroupDao()).thenReturn(groupDao);
+        when(dbFacade.getVmDao()).thenReturn(vmDao);
+        when(dbFacade.getVmDeviceDao()).thenReturn(vmDeviceDao);
         when(dbFacade.getVmDynamicDao()).thenReturn(vmDynamicDao);
-        when(dbFacade.getDiskDao()).thenReturn(diskDAO);
+        when(dbFacade.getDiskDao()).thenReturn(diskDao);
         when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        when(groupDAO.get((Guid) any())).thenReturn(cluster);
-        when(vmDAO.getAllRunningByVds(vds.getId())).thenReturn(Collections.singletonMap(VM_1, vm_1_db));
+        when(groupDao.get((Guid) any())).thenReturn(cluster);
+        when(vmDao.getAllRunningByVds(vds.getId())).thenReturn(Collections.singletonMap(VM_1, vm_1_db));
         when(vdsDao.get((Guid) any())).thenReturn(vds);
     }
 

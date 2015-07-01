@@ -15,17 +15,17 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class ClusterUtilsTest {
 
     private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-    VdsDAO vdsDao;
+    VdsDao vdsDao;
     ClusterUtils clusterUtils;
 
     @Before
     public void mockDbFacadeAndDao() {
-        vdsDao = mock(VdsDAO.class);
+        vdsDao = mock(VdsDao.class);
         when(vdsDao.getAllForVdsGroupWithStatus(CLUSTER_ID, VDSStatus.Up)).thenReturn(mockGetAllVdsForwithStatus(VDSStatus.Up));
 
         clusterUtils = spy(ClusterUtils.getInstance());

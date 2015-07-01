@@ -16,19 +16,19 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
 /**
  * This class defines virt strategy entry points, which are needed in host monitoring phase
  */
 public class VirtMonitoringStrategy implements MonitoringStrategy {
 
-    private final VdsGroupDAO vdsGroupDao;
+    private final VdsGroupDao vdsGroupDao;
 
-    private final VdsDAO vdsDao;
+    private final VdsDao vdsDao;
 
-    protected VirtMonitoringStrategy(VdsGroupDAO vdsGroupDao, VdsDAO vdsDao) {
+    protected VirtMonitoringStrategy(VdsGroupDao vdsGroupDao, VdsDao vdsDao) {
         this.vdsGroupDao = vdsGroupDao;
         this.vdsDao = vdsDao;
     }

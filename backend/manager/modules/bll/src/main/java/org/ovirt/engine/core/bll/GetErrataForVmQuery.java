@@ -10,13 +10,13 @@ import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 public class GetErrataForVmQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     @Inject
     private ProviderDao providerDao;

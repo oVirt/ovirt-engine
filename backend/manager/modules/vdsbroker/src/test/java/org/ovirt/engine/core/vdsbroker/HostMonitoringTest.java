@@ -24,7 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -56,7 +56,7 @@ public class HostMonitoringTest {
     private HostMonitoring updater;
 
     @Mock
-    VdsGroupDAO groupDAO;
+    VdsGroupDao groupDao;
     @Mock
     InterfaceDao interfaceDao;
     @Mock
@@ -87,8 +87,8 @@ public class HostMonitoringTest {
     }
 
     private void initConditions() {
-        when(dbFacade.getVdsGroupDao()).thenReturn(groupDAO);
-        when(groupDAO.get((Guid) any())).thenReturn(cluster);
+        when(dbFacade.getVdsGroupDao()).thenReturn(groupDao);
+        when(groupDao.get((Guid) any())).thenReturn(cluster);
         when(dbFacade.getInterfaceDao()).thenReturn(interfaceDao);
         when(interfaceDao.getAllInterfacesForVds(((Guid) any()))).thenReturn(Collections.<VdsNetworkInterface>emptyList());
     }

@@ -85,7 +85,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
     }
 
     private void mockGetAllForRole(List<RoleGroupMap> groups) {
-        when(getRoleGroupMapDAOMock().getAllForRole(getParams().getRoleId())).thenReturn(groups);
+        when(getRoleGroupMapDaoMock().getAllForRole(getParams().getRoleId())).thenReturn(groups);
     }
 
     /* execute related tests */
@@ -117,12 +117,12 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
 
     private void verifyRoleSaving(boolean roleStatusChanged) {
         for (ActionGroup group : getParams().getActionGroups()) {
-            verify(getRoleGroupMapDAOMock()).save(new RoleGroupMap(group, getParams().getRoleId()));
+            verify(getRoleGroupMapDaoMock()).save(new RoleGroupMap(group, getParams().getRoleId()));
         }
 
         if (roleStatusChanged) {
-            verify(getRoleDAOMock()).update(getRole());
+            verify(getRoleDaoMock()).update(getRole());
         }
-        verifyNoMoreInteractions(getRoleGroupMapDAOMock());
+        verifyNoMoreInteractions(getRoleGroupMapDaoMock());
     }
 }

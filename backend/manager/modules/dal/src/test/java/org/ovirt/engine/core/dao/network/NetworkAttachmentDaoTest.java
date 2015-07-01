@@ -16,11 +16,11 @@ import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 
-public class NetworkAttachmentDaoTest extends BaseDAOTestCase {
+public class NetworkAttachmentDaoTest extends BaseDaoTestCase {
 
     private NetworkAttachment networkAttachment;
     private NetworkAttachmentDao dao;

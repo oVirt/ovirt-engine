@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DiskValidatorTest {
@@ -46,7 +46,7 @@ public class DiskValidatorTest {
     @Mock
     private OsRepository osRepository;
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
     private DiskValidator validator;
     private DiskImage disk;
     private LunDisk lunDisk;
@@ -98,13 +98,13 @@ public class DiskValidatorTest {
         disk.setDiskAlias("disk1");
         disk.setDiskInterface(DiskInterface.VirtIO);
         validator = spy(new DiskValidator(disk));
-        doReturn(vmDAO).when(validator).getVmDAO();
+        doReturn(vmDao).when(validator).getVmDao();
     }
 
     private void setupForLun() {
         lunDisk = createLunDisk();
         lunValidator = spy(new DiskValidator(lunDisk));
-        doReturn(vmDAO).when(lunValidator).getVmDAO();
+        doReturn(vmDao).when(lunValidator).getVmDao();
     }
 
     private VmDevice createVmDeviceForDisk(VM vm, Disk disk, Guid snapshotId, boolean isPlugged) {
@@ -123,7 +123,7 @@ public class DiskValidatorTest {
         List<Pair<VM, VmDevice>> vmsInfo = new LinkedList<>();
         vmsInfo.add(new Pair<>(vm1, device1));
         vmsInfo.add(new Pair<>(vm2, device2));
-        when(vmDAO.getVmsWithPlugInfo(disk.getId())).thenReturn(vmsInfo);
+        when(vmDao.getVmsWithPlugInfo(disk.getId())).thenReturn(vmsInfo);
         return vmsInfo;
     }
 

@@ -16,15 +16,15 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SnapshotVmConfigurationHelperTest {
     private SnapshotDao snapshotDaoMock;
-    private DiskImageDAO diskImageDaoMock;
-    private VmDAO vmDaoMock;
+    private DiskImageDao diskImageDaoMock;
+    private VmDao vmDaoMock;
     private Guid existingSnapshotId = Guid.newGuid();
     private Guid existingVmId = Guid.newGuid();
     private Guid existingImageId = Guid.newGuid();
@@ -46,17 +46,17 @@ public class SnapshotVmConfigurationHelperTest {
         snapshotVmConfigurationHelper = spy(new SnapshotVmConfigurationHelper());
         snapshotsManager = mock(SnapshotsManager.class);
         when(snapshotVmConfigurationHelper.getSnapshotManager()).thenReturn(snapshotsManager);
-        setUpDAOMocks();
+        setUpDaoMocks();
     }
 
-    private void setUpDAOMocks() {
-        vmDaoMock = mock(VmDAO.class);
+    private void setUpDaoMocks() {
+        vmDaoMock = mock(VmDao.class);
         doReturn(vmDaoMock).when(snapshotVmConfigurationHelper).getVmDao();
 
         snapshotDaoMock = mock(SnapshotDao.class);
         doReturn(snapshotDaoMock).when(snapshotVmConfigurationHelper).getSnapshotDao();
 
-        diskImageDaoMock = mock(DiskImageDAO.class);
+        diskImageDaoMock = mock(DiskImageDao.class);
         doReturn(diskImageDaoMock).when(snapshotVmConfigurationHelper).getDiskImageDao();
 
         when(diskImageDaoMock.get(existingImageId)).thenReturn(existingDiskImage);

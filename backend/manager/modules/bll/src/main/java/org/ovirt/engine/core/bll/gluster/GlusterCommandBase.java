@@ -171,7 +171,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     }
 
     protected boolean updateBrickServerAndInterfaceName(GlusterBrickEntity brick, boolean addCanDoActionMessage) {
-        VdsStatic server = getVdsStaticDAO().get(brick.getServerId());
+        VdsStatic server = getVdsStaticDao().get(brick.getServerId());
         if ((server == null || !server.getVdsGroupId().equals(getVdsGroupId()))) {
             if (addCanDoActionMessage) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID);
@@ -189,7 +189,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
             }
         } else {
             // network id has been set, update the address
-            Network network = getNetworkDAO().get(brick.getNetworkId());
+            Network network = getNetworkDao().get(brick.getNetworkId());
             if (network != null) {
                 brick.setNetworkAddress(getGlusterNetworkAddress(server.getId(), network.getName()));
             }
@@ -200,7 +200,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     private Network getGlusterNetwork() {
         if (glusterNetwork == null) {
-            List<Network> allNetworksInCluster = getNetworkDAO().getAllForCluster(getVdsGroupId());
+            List<Network> allNetworksInCluster = getNetworkDao().getAllForCluster(getVdsGroupId());
 
             for (Network network : allNetworksInCluster) {
                 if (network.getCluster().isGluster()) {
@@ -214,7 +214,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     private String getGlusterNetworkAddress(Guid hostId, String glusterNetworkName) {
         final List<VdsNetworkInterface> nics =
-                getInterfaceDAO().getAllInterfacesForVds(hostId);
+                getInterfaceDao().getAllInterfacesForVds(hostId);
 
         for (VdsNetworkInterface nic : nics) {
             if (glusterNetworkName.equals(nic.getNetworkName())) {
@@ -251,14 +251,14 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         return new GlusterVolumeValidator();
     }
 
-    protected InterfaceDao getInterfaceDAO() {
+    protected InterfaceDao getInterfaceDao() {
         return getDbFacade().getInterfaceDao();
     }
 
     @Override
     // overriding for Junit visibility
-    protected NetworkDao getNetworkDAO() {
-        return super.getNetworkDAO();
+    protected NetworkDao getNetworkDao() {
+        return super.getNetworkDao();
     }
 
 }

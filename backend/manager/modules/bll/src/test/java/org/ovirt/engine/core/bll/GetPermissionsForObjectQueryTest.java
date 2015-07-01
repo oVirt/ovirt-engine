@@ -13,14 +13,14 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetPermissionsForObjectParameters, GetPermissionsForObjectQuery<GetPermissionsForObjectParameters>> {
     /** The object id to query on */
     private Guid objectID;
 
-    /** The mocked permissions the DAO should return */
+    /** The mocked permissions the Dao should return */
     private List<Permission> mockedPermissions;
 
     @Before
@@ -37,11 +37,11 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
 
     @Test
     public void testExecuteQueryWithDirectOnly() {
-        PermissionDAO permissionDAOMock = mock(PermissionDAO.class);
-        when(permissionDAOMock.getAllForEntity(objectID, UNPRIVILEGED_USER_SESSION_ID, getQueryParameters().isFiltered(), false)).thenReturn(mockedPermissions);
-        when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDAOMock);
+        PermissionDao permissionDaoMock = mock(PermissionDao.class);
+        when(permissionDaoMock.getAllForEntity(objectID, UNPRIVILEGED_USER_SESSION_ID, getQueryParameters().isFiltered(), false)).thenReturn(mockedPermissions);
+        when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDaoMock);
 
-        assertQueryDAOCall(true);
+        assertQueryDaoCall(true);
     }
 
     @Test
@@ -49,17 +49,17 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
         VdcObjectType type = RandomUtils.instance().pickRandom(VdcObjectType.values());
         when(getQueryParameters().getVdcObjectType()).thenReturn(type);
 
-        PermissionDAO permissionDAOMock = mock(PermissionDAO.class);
-        when(permissionDAOMock.getTreeForEntity(objectID,
+        PermissionDao permissionDaoMock = mock(PermissionDao.class);
+        when(permissionDaoMock.getTreeForEntity(objectID,
                 type,
                 UNPRIVILEGED_USER_SESSION_ID,
                 getQueryParameters().isFiltered())).thenReturn(mockedPermissions);
-        when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDAOMock);
+        when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDaoMock);
 
-        assertQueryDAOCall(false);
+        assertQueryDaoCall(false);
     }
 
-    private void assertQueryDAOCall(boolean isDirectOnly) {
+    private void assertQueryDaoCall(boolean isDirectOnly) {
         when(getQueryParameters().getObjectId()).thenReturn(objectID);
         when(getQueryParameters().getDirectOnly()).thenReturn(isDirectOnly);
         when(getQuery().getEngineSessionSeqId()).thenReturn(UNPRIVILEGED_USER_SESSION_ID);

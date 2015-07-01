@@ -35,8 +35,8 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -64,10 +64,10 @@ public class StorageDeviceSyncJobTest {
     private GlusterUtil glusterUtil;
 
     @Mock
-    private VdsGroupDAO clusterDao;
+    private VdsGroupDao clusterDao;
 
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
 
     @Spy
     private StorageDeviceSyncJob syncJob;

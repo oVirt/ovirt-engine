@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.LunDAO;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,10 +49,10 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
     private final Guid existingStorageDomainId = Guid.newGuid();
 
     @Mock
-    private StorageDomainDAO storageDomainDAO;
+    private StorageDomainDao storageDomainDao;
 
     @Mock
-    private LunDAO lunDAO;
+    private LunDao lunDao;
 
     @Override
     @Before
@@ -69,9 +69,9 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         BackendInternal backendMock = mock(BackendInternal.class);
         doReturn(backendMock).when(getQuery()).getBackend();
 
-        doReturn(storageDomainDAO).when(getQuery()).getStorageDomainDAO();
-        doReturn(getExistingStorageDomains()).when(storageDomainDAO).getAll();
-        doReturn(lunDAO).when(getQuery()).getLunDAO();
+        doReturn(storageDomainDao).when(getQuery()).getStorageDomainDao();
+        doReturn(getExistingStorageDomains()).when(storageDomainDao).getAll();
+        doReturn(lunDao).when(getQuery()).getLunDao();
     }
 
     @Test
@@ -81,7 +81,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         when(getQueryParameters().getVdsId()).thenReturn(Guid.newGuid());
 
         List<LUNs> luns = getLUNs(storageDomainId, vgId);
-        doReturn(Collections.emptyList()).when(lunDAO).getAll();
+        doReturn(Collections.emptyList()).when(lunDao).getAll();
 
         doReturn(createSuccessVdcReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
@@ -119,7 +119,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         List<LUNs> luns = getLUNs(storageDomainId, vgId);
         List<LUNs> externalLuns = new ArrayList<>();
         externalLuns.add(luns.get(1));
-        doReturn(luns).when(lunDAO).getAll();
+        doReturn(luns).when(lunDao).getAll();
 
         doReturn(createSuccessVdcReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
@@ -152,7 +152,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
 
         List<LUNs> luns = getLUNs(existingStorageDomainId, existingVgId);
 
-        doReturn(Collections.emptyList()).when(lunDAO).getAll();
+        doReturn(Collections.emptyList()).when(lunDao).getAll();
         doReturn(createSuccessVdcReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
 
@@ -183,7 +183,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
 
         List<LUNs> luns = getLUNs(storageDomainId, vgId);
 
-        doReturn(Collections.emptyList()).when(lunDAO).getAll();
+        doReturn(Collections.emptyList()).when(lunDao).getAll();
         doReturn(createGetDeviceListReturnValue(luns)).when(getQuery()).
                 executeGetDeviceList(any(GetDeviceListQueryParameters.class));
 
@@ -212,7 +212,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         when(getQueryParameters().getVdsId()).thenReturn(Guid.newGuid());
         List<LUNs> luns = getLUNs(existingStorageDomainId, existingVgId);
 
-        doReturn(Collections.emptyList()).when(lunDAO).getAll();
+        doReturn(Collections.emptyList()).when(lunDao).getAll();
         doReturn(createSuccessVdcReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
 

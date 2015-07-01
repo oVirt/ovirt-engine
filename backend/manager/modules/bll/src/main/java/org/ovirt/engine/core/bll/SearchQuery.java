@@ -45,7 +45,7 @@ import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.ListUtils.Filter;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.TimeSpan;
-import org.ovirt.engine.core.dao.SearchDAO;
+import org.ovirt.engine.core.dao.SearchDao;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -264,12 +264,12 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getVmTemplateDao(), true);
     }
 
-    private <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
+    private <T extends IVdcQueryable> List<T> genericSearch(final SearchDao<T> dao,
             final boolean useCache) {
         return genericSearch(dao, useCache, null);
     }
 
-    private <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
+    private <T extends IVdcQueryable> List<T> genericSearch(final SearchDao<T> dao,
             final boolean useCache,
             final Filter<T> filter) {
         final QueryData data = initQueryData(useCache);

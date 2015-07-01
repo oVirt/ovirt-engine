@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeIn
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
 public class GeoRepCreateEligibilityBaseTest {
@@ -42,7 +42,7 @@ public class GeoRepCreateEligibilityBaseTest {
     }
 
     @Before
-    public void setupMock(GlusterGeoRepUtil geoRepUtil, GlusterGeoRepDao geoRepDao, VdsGroupDAO vdsGroupDao) {
+    public void setupMock(GlusterGeoRepUtil geoRepUtil, GlusterGeoRepDao geoRepDao, VdsGroupDao vdsGroupDao) {
         doReturn(geoRepDao).when(geoRepUtil).getGeoRepDao();
         doReturn(getGeoRepSessions()).when(geoRepDao).getAllSessions();
         doReturn(vdsGroupDao).when(geoRepUtil).getVdsGroupDao();

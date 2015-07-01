@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 
 /**
@@ -52,7 +52,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     private DbFacade dbFacade;
 
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
 
     private VdsFenceOptions vdsFenceOptions;
 

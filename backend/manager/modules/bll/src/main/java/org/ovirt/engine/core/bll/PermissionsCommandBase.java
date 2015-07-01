@@ -89,10 +89,10 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
 
     public void initUserAndGroupData() {
         if (dbUser == null) {
-            dbUser = getDbUserDAO().get(getParameters().getPermission().getAdElementId());
+            dbUser = getDbUserDao().get(getParameters().getPermission().getAdElementId());
         }
         if (dbUser == null && dbGroup == null) {
-            dbGroup = getAdGroupDAO().get(getParameters().getPermission().getAdElementId());
+            dbGroup = getAdGroupDao().get(getParameters().getPermission().getAdElementId());
         }
     }
 

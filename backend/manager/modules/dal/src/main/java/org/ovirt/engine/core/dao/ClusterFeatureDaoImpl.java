@@ -21,7 +21,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class ClusterFeatureDaoImpl extends BaseDAODbFacade implements ClusterFeatureDao {
+public class ClusterFeatureDaoImpl extends BaseDaoDbFacade implements ClusterFeatureDao {
 
     private static final RowMapper<SupportedAdditionalClusterFeature> supportedClusterFeatureRowMapper =
             new SupportedClusterFeatureRowMapper();

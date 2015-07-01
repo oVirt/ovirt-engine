@@ -26,8 +26,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
-import org.ovirt.engine.core.dao.VdsStatisticsDAO;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -92,10 +91,10 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     @Override
     protected boolean canDoAction() {
         boolean returnValue = canRemoveVds(getVdsId(), getReturnValue().getCanDoActionMessages());
-        StoragePool storagePool = getStoragePoolDAO().getForVds(getParameters().getVdsId());
+        StoragePool storagePool = getStoragePoolDao().getForVds(getParameters().getVdsId());
 
         if (returnValue && storagePool != null && storagePool.isLocal()) {
-            if (!getStorageDomainDAO().getAllForStoragePool(storagePool.getId()).isEmpty()) {
+            if (!getStorageDomainDao().getAllForStoragePool(storagePool.getId()).isEmpty()) {
                 returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE);
             }
         }
@@ -135,10 +134,6 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         return getSucceeded() ? AuditLogType.USER_REMOVE_VDS : errorType;
     }
 
-    protected VdsDynamicDAO getVdsDynamicDAO() {
-        return getDbFacade().getVdsDynamicDao();
-    }
-
     private boolean statusLegalForRemove(VDS vds) {
         return ((vds.getStatus() == VDSStatus.NonResponsive) || (vds.getStatus() == VDSStatus.Maintenance)
                 || (vds.getStatus() == VDSStatus.Down) || (vds.getStatus() == VDSStatus.Unassigned)
@@ -151,25 +146,25 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private void RemoveVdsStaticFromDb() {
-        getVdsStaticDAO().remove(getVdsId());
+        getVdsStaticDao().remove(getVdsId());
     }
 
     private void RemoveVdsDynamicFromDb() {
-        getVdsDynamicDAO().remove(getVdsId());
+        getVdsDynamicDao().remove(getVdsId());
     }
 
     private void RemoveVdsStatisticsFromDb() {
         getVdsStatisticsDao().remove(getVdsId());
     }
 
-    protected VdsStatisticsDAO getVdsStatisticsDao() {
+    protected VdsStatisticsDao getVdsStatisticsDao() {
         return getDbFacade().getVdsStatisticsDao();
     }
 
     private boolean canRemoveVds(Guid vdsId, List<String> text) {
         boolean returnValue = true;
         // check if vds id is valid
-        VDS vds = getVdsDAO().get(vdsId);
+        VDS vds = getVdsDao().get(vdsId);
         if (vds == null) {
             text.add(VdcBllMessages.VDS_INVALID_SERVER_ID.toString());
             returnValue = false;
@@ -180,7 +175,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
             text.add(VdcBllMessages.VDS_CANNOT_REMOVE_VDS_DETECTED_RUNNING_VM.toString());
             returnValue = false;
         } else {
-            List<String> vmNamesPinnedToHost = getVmStaticDAO().getAllNamesPinnedToHost(vdsId);
+            List<String> vmNamesPinnedToHost = getVmStaticDao().getAllNamesPinnedToHost(vdsId);
             if (!vmNamesPinnedToHost.isEmpty()) {
                 text.add(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS.toString());
                 text.add(String.format("$VmNames %s", StringUtils.join(vmNamesPinnedToHost, ',')));

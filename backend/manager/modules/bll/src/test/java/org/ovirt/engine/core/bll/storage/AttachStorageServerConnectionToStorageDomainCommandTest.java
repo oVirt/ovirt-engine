@@ -22,9 +22,9 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.LunDAO;
-import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
-import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDAO;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 import java.util.ArrayList;
@@ -50,13 +50,13 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest {
     private StorageDomain domain = null;
 
     @Mock
-    LunDAO lunDao;
+    LunDao lunDao;
 
     @Mock
-    StorageServerConnectionDAO connectionDAO;
+    StorageServerConnectionDao connectionDao;
 
     @Mock
-    StorageServerConnectionLunMapDAO lunMapDAO;
+    StorageServerConnectionLunMapDao lunMapDao;
 
     @Before
     public void init() {
@@ -69,8 +69,8 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest {
         command = spy(new AttachStorageConnectionToStorageDomainCommand<AttachDetachStorageConnectionParameters>(parameters));
         doReturn(validator).when(command).createStorageConnectionValidator();
         doReturn(lunDao).when(command).getLunDao();
-        doReturn(connectionDAO).when(command).getStorageServerConnectionDAO();
-        doReturn(lunMapDAO).when(command).getStorageServerConnectionLunMapDao();
+        doReturn(connectionDao).when(command).getStorageServerConnectionDao();
+        doReturn(lunMapDao).when(command).getStorageServerConnectionLunMapDao();
         domain = new StorageDomain();
         domain.setId(domainId);
         domain.setStorageDomainType(StorageDomainType.Data);
@@ -119,12 +119,12 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest {
        connection.setiqn("iqn.1.2.3.4.com");
        connection.setconnection("123.345.266.255");
        connectionsForDomain.add(connection);
-       when(connectionDAO.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
+       when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
        LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUN_id(), connection.getid());
-       when(lunMapDAO.get(map_id)).thenReturn(null);
+       when(lunMapDao.get(map_id)).thenReturn(null);
        //dummy lun already exists, thus no need to save
        verify(lunDao, never()).save(dummyLun);
-       verify(lunMapDAO, never()).save(new LUNStorageServerConnectionMap());
+       verify(lunMapDao, never()).save(new LUNStorageServerConnectionMap());
        command.executeCommand();
        CommandAssertUtils.checkSucceeded(command, true);
     }
@@ -142,11 +142,11 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest {
        connection.setiqn("iqn.1.2.3.4.com");
        connection.setconnection("123.345.266.255");
        connectionsForDomain.add(connection);
-       when(connectionDAO.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
+       when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
        LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUN_id(), connection.getid());
-       when(lunMapDAO.get(map_id)).thenReturn(null);
+       when(lunMapDao.get(map_id)).thenReturn(null);
        LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
-       doNothing().when(lunMapDAO).save(map);
+       doNothing().when(lunMapDao).save(map);
        command.executeCommand();
        CommandAssertUtils.checkSucceeded(command, true);
     }

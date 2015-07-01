@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<GlusterParameters, GetGlusterVolumeOptionsInfoQuery<GlusterParameters>> {
 
@@ -31,7 +31,7 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
     GlusterParameters parameters;
     private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
-    VdsDAO vdsDao;
+    VdsDao vdsDao;
     ClusterUtils clusterUtils;
 
     private List<VDS> mockGetAllVdsForwithStatus(VDSStatus status) {
@@ -50,7 +50,7 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
     }
 
     public void mockVdsDbFacadeAndDao() {
-        vdsDao = mock(VdsDAO.class);
+        vdsDao = mock(VdsDao.class);
         when(vdsDao.getAllForVdsGroupWithStatus(CLUSTER_ID, VDSStatus.Up)).thenReturn(mockGetAllVdsForwithStatus(VDSStatus.Up));
 
         clusterUtils = mock(ClusterUtils.class);

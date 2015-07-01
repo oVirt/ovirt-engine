@@ -95,9 +95,7 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.PermissionDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.dao.VmStaticDAO;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.utils.linq.All;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -150,7 +148,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
 
             if (parameters.getVmStaticData().isUseLatestVersion()) {
-                VmTemplate latest = getVmTemplateDAO().getTemplateWithLatestVersionInChain(templateIdToUse);
+                VmTemplate latest = getVmTemplateDao().getTemplateWithLatestVersionInChain(templateIdToUse);
 
                 if (latest != null) {
                     // if not using original template, need to override storage mappings
@@ -238,7 +236,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected ImageType getImageType() {
         if (imageType == null && imageTypeId != null) {
-            imageType = getVmTemplateDAO().getImageType(imageTypeId);
+            imageType = getVmTemplateDao().getImageType(imageTypeId);
         }
         return imageType;
     }
@@ -802,7 +800,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected List<StorageDomain> getPoolDomains() {
         if (poolDomains == null) {
-            poolDomains = getStorageDomainDAO().getAllForStoragePool(vmDisksSource.getStoragePoolId());
+            poolDomains = getStorageDomainDao().getAllForStoragePool(vmDisksSource.getStoragePoolId());
         }
         return poolDomains;
     }
@@ -1345,7 +1343,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private void copyTemplatePermissions(UniquePermissionsSet permissionsToAdd) {
-        PermissionDAO dao = getDbFacade().getPermissionDao();
+        PermissionDao dao = getDbFacade().getPermissionDao();
 
         List<Permission> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getEngineSessionSeqId(), false);
 
@@ -1394,15 +1392,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return null;
-    }
-
-    @Override
-    protected VmDynamicDAO getVmDynamicDao() {
-        return DbFacade.getInstance().getVmDynamicDao();
-    }
-
-    protected VmStaticDAO getVmStaticDao() {
-        return DbFacade.getInstance().getVmStaticDao();
     }
 
     @Override

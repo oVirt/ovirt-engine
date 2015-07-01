@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -102,13 +101,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         super.endWithFailure();
     }
 
-    protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
-    }
-
     @Override
     protected void endSuccessfully() {
-        getVmStaticDAO().incrementDbGeneration(getVm().getId());
+        getVmStaticDao().incrementDbGeneration(getVm().getId());
         endActionOnDisks();
 
         if (getVm() != null) {
@@ -178,7 +173,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 if (!filteredImages.isEmpty()) {
                     getCompensationContext().stateChanged();
                 } else {
-                    getVmStaticDAO().incrementDbGeneration(getVm().getId());
+                    getVmStaticDao().incrementDbGeneration(getVm().getId());
                     restoreVmConfigFromSnapshot();
                 }
                 return null;

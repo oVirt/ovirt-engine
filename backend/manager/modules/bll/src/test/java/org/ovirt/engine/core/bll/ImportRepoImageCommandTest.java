@@ -34,8 +34,8 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
         cmd = spy(new ImportRepoImageCommand<>(importParameters));
 
-        doReturn(getStorageDomainDao()).when(cmd).getStorageDomainDAO();
-        doReturn(getStoragePoolDao()).when(cmd).getStoragePoolDAO();
+        doReturn(getStorageDomainDao()).when(cmd).getStorageDomainDao();
+        doReturn(getStoragePoolDao()).when(cmd).getStoragePoolDao();
         doReturn(getProviderProxy()).when(cmd).getProviderProxy();
         doReturn(true).when(cmd).validateSpaceRequirements(any(DiskImage.class));
     }

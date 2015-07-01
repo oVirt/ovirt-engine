@@ -15,8 +15,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.SnapshotDao;
 
 @InternalCommandAttribute
 public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
@@ -106,9 +104,5 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
         restoreParameters.setShouldBeLogged(false);
         restoreParameters.setImages(imagesList);
         return restoreParameters;
-    }
-
-    private SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
     }
 }

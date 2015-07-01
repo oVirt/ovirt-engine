@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -45,7 +45,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     private GlusterVolumeProfileParameters params;
 
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
 
     @Mock
     private ClusterUtils clusterUtils;

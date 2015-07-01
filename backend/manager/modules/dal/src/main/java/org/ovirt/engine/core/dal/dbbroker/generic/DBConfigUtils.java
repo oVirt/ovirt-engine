@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
 import org.ovirt.engine.core.common.config.Reloadable;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdcOptionDAO;
+import org.ovirt.engine.core.dao.VdcOptionDao;
 import org.ovirt.engine.core.utils.ConfigUtilsBase;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
@@ -242,7 +242,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
      * Refreshes only the reloadable configurations in the VDC option cache.
      */
     public static void refreshReloadableConfigsInVdcOptionCache() {
-        List<VdcOption> list = getVdcOptionDAO().getAll();
+        List<VdcOption> list = getVdcOptionDao().getAll();
         for (VdcOption option : list) {
             try {
                 if (isReloadable(option.getoption_name())) {
@@ -255,7 +255,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
         }
     }
 
-    private static VdcOptionDAO getVdcOptionDAO() {
+    private static VdcOptionDao getVdcOptionDao() {
         return DbFacade.getInstance().getVdcOptionDao();
     }
 

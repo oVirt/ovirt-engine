@@ -71,7 +71,7 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
         List<ActionGroup> groups = getParameters().getActionGroups();
         for (ActionGroup group : groups) {
             addedGroupThatAllowsViewingChildren |= group.allowsViewingChildren();
-            getRoleGroupMapDAO().save(new RoleGroupMap(group, getParameters().getRoleId()));
+            getRoleGroupMapDao().save(new RoleGroupMap(group, getParameters().getRoleId()));
             appendCustomValue("ActionGroup", group.toString(), ", ");
         }
 

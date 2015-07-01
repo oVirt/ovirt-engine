@@ -11,11 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 /**
  * A test case for {@link GetDataCentersWithPermittedActionOnClusters}.
- * This test mocks away all the DAOs, and just tests the flow of the query itself.
+ * This test mocks away all the Daos, and just tests the flow of the query itself.
  */
 public class GetDataCentersWithPermittedActionOnClustersQueryTest
         extends AbstractGetEntitiesWithPermittedActionParametersQueryTest
@@ -34,10 +34,10 @@ public class GetDataCentersWithPermittedActionOnClustersQueryTest
         // Set up the expected data
         StoragePool expected = new StoragePool();
 
-        // Mock the DAO
-        StoragePoolDAO storagePoolDAOMock = mock(StoragePoolDAO.class);
-        when(storagePoolDAOMock.getDataCentersWithPermittedActionOnClusters(getUser().getId(), getActionGroup(), true, false)).thenReturn(Collections.singletonList(expected));
-        when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(storagePoolDAOMock);
+        // Mock the Dao
+        StoragePoolDao storagePoolDaoMock = mock(StoragePoolDao.class);
+        when(storagePoolDaoMock.getDataCentersWithPermittedActionOnClusters(getUser().getId(), getActionGroup(), true, false)).thenReturn(Collections.singletonList(expected));
+        when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(storagePoolDaoMock);
 
         getQuery().executeQueryCommand();
 

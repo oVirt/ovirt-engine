@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 
 import java.util.Arrays;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest {
 
     @Mock
-    protected VmDAO vmDao;
+    protected VmDao vmDao;
 
     protected ExportRepoImageCommand<ExportRepoImageParameters> cmd;
 
@@ -47,9 +47,9 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
         cmd = spy(new ExportRepoImageCommand<>(exportParameters));
 
-        doReturn(vmDao).when(cmd).getVmDAO();
-        doReturn(getStorageDomainDao()).when(cmd).getStorageDomainDAO();
-        doReturn(getStoragePoolDao()).when(cmd).getStoragePoolDAO();
+        doReturn(vmDao).when(cmd).getVmDao();
+        doReturn(getStorageDomainDao()).when(cmd).getStorageDomainDao();
+        doReturn(getStoragePoolDao()).when(cmd).getStoragePoolDao();
         doReturn(getDiskDao()).when(cmd).getDiskDao();
         doReturn(getProviderProxy()).when(cmd).getProviderProxy();
     }

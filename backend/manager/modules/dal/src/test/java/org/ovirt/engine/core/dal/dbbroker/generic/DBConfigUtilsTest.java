@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.OptionBehaviour;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
 import org.ovirt.engine.core.common.config.TypeConverterAttribute;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
-public class DBConfigUtilsTest extends BaseDAOTestCase {
+public class DBConfigUtilsTest extends BaseDaoTestCase {
     private DBConfigUtils config;
 
     @Override

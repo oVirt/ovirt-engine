@@ -280,7 +280,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
         if (getSourceCluster().getStoragePoolId() != null
                 && (targetStoragePool== null || !getSourceCluster().getStoragePoolId().equals(targetStoragePool.getId()))) {
-            getVdsSpmIdMapDAO().removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getStoragePoolId());
+            getVdsSpmIdMapDao().removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getStoragePoolId());
         }
 
         if (targetClusterSupportsSetupNetworks()) {
@@ -420,10 +420,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             targetCluster = DbFacade.getInstance().getVdsGroupDao().get(getParameters().getClusterId());
         }
         return targetCluster;
-    }
-
-    private NetworkDao getNetworkDao() {
-        return networkDao;
     }
 
     private class ChangeClusterParametersBuilder extends NetworkParametersBuilder {

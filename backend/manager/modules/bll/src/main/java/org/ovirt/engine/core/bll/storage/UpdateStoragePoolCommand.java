@@ -38,7 +38,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -76,7 +76,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     protected void executeCommand() {
         updateQuotaCache();
         copyUnchangedStoragePoolProperties(getStoragePool(), oldStoragePool);
-        getStoragePoolDAO().updatePartial(getStoragePool());
+        getStoragePoolDao().updatePartial(getStoragePool());
 
         updateStoragePoolFormatType();
         setSucceeded(true);
@@ -116,10 +116,10 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 new TransactionMethod<Object>() {
                     @Override
                     public Object runInTransaction() {
-                             getStoragePoolDAO().updatePartial(storagePool);
+                             getStoragePoolDao().updatePartial(storagePool);
                         updateMemberDomainsFormat(targetFormat);
                         if (FeatureSupported.ovfStoreOnAnyDomain(spVersion)) {
-                            getVmStaticDAO().incrementDbGenerationForAllInStoragePool(spId);
+                            getVmStaticDao().incrementDbGenerationForAllInStoragePool(spId);
                         }
                         return null;
                     }
@@ -143,7 +143,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     private void updateMemberDomainsFormat(StorageFormatType targetFormat) {
         Guid spId = getStoragePool().getId();
-        StorageDomainStaticDAO sdStatDao = DbFacade.getInstance().getStorageDomainStaticDao();
+        StorageDomainStaticDao sdStatDao = DbFacade.getInstance().getStorageDomainStaticDao();
         List<StorageDomainStatic> domains = sdStatDao.getAllForStoragePool(spId);
         for (StorageDomainStatic domain : domains) {
             StorageDomainType sdType = domain.getStorageDomainType();
@@ -184,7 +184,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             return false;
         }
 
-        List<StorageDomainStatic> poolDomains = getStorageDomainStaticDAO().getAllForStoragePool(getStoragePool().getId());
+        List<StorageDomainStatic> poolDomains = getStorageDomainStaticDao().getAllForStoragePool(getStoragePool().getId());
         if ( getOldStoragePool().isLocal() != getStoragePool().isLocal() && !poolDomains.isEmpty() ) {
             return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
         }
@@ -198,7 +198,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 if (!poolDomains.isEmpty() && !isCompatibilityVersionChangeAllowedForDomains(poolDomains)) {
                     return false;
                 }
-                List<Network> networks = getNetworkDAO().getAllForDataCenter(getStoragePoolId());
+                List<Network> networks = getNetworkDao().getAllForDataCenter(getStoragePoolId());
                 for (Network network : networks) {
                     NetworkValidator validator = getNetworkValidator(network);
                     validator.setDataCenter(getStoragePool());
@@ -260,7 +260,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     protected boolean checkAllClustersLevel() {
         boolean returnValue = true;
-        List<VDSGroup> clusters = getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
+        List<VDSGroup> clusters = getVdsGroupDao().getAllForStoragePool(getStoragePool().getId());
         List<String> lowLevelClusters = new ArrayList<>();
         for (VDSGroup cluster : clusters) {
             if (getStoragePool().getCompatibilityVersion().compareTo(cluster.getCompatibilityVersion()) > 0) {
@@ -281,16 +281,16 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     private StorageDomain getMasterDomain() {
         if (masterDomainForPool == null) {
-            Guid masterId = getStorageDomainDAO().getMasterStorageDomainIdForPool(getStoragePoolId());
+            Guid masterId = getStorageDomainDao().getMasterStorageDomainIdForPool(getStoragePoolId());
             if (Guid.Empty.equals(masterId)) {
-                masterDomainForPool = getStorageDomainDAO().get(masterId);
+                masterDomainForPool = getStorageDomainDao().get(masterId);
             }
         }
         return masterDomainForPool;
     }
 
     @Override
-    protected NetworkDao getNetworkDAO() {
+    protected NetworkDao getNetworkDao() {
         return getDbFacade().getNetworkDao();
     }
 
@@ -342,7 +342,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     private StoragePool getOldStoragePool() {
         if (oldStoragePool == null) {
-            oldStoragePool = getStoragePoolDAO().get(getStoragePool().getId());
+            oldStoragePool = getStoragePoolDao().get(getStoragePool().getId());
         }
 
         return oldStoragePool;

@@ -24,18 +24,18 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ActivateStorageDomainCommandTest {
     @Mock
-    StorageDomainDAO storageDomainDAO;
+    StorageDomainDao storageDomainDao;
     @Mock
-    StoragePoolDAO storagePoolDAO;
+    StoragePoolDao storagePoolDao;
     @Mock
-    VdsDAO vdsDAO;
+    VdsDao vdsDao;
 
     private ActivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd;
 
@@ -155,25 +155,25 @@ public class ActivateStorageDomainCommandTest {
         StorageDomain domain = new StorageDomain();
         domain.setStatus(status);
         domain.setId(Guid.newGuid());
-        when(storageDomainDAO.get(any(Guid.class))).thenReturn(domain);
-        when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(domain);
+        when(storageDomainDao.get(any(Guid.class))).thenReturn(domain);
+        when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(domain);
     }
 
     private void createUpStoragePool() {
         StoragePool pool = new StoragePool();
         pool.setId(Guid.newGuid());
         pool.setStatus(StoragePoolStatus.Up);
-        when(storagePoolDAO.get(any(Guid.class))).thenReturn(pool);
+        when(storagePoolDao.get(any(Guid.class))).thenReturn(pool);
     }
 
     private void createUpVds() {
         List<VDS> vdss = new ArrayList<VDS>();
         vdss.add(new VDS());
-        when(vdsDAO.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(vdss);
+        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(vdss);
     }
 
     private void createNonUpVds() {
-        when(vdsDAO.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(new ArrayList<VDS>());
+        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(new ArrayList<VDS>());
     }
 
     private void createCommand() {
@@ -181,9 +181,9 @@ public class ActivateStorageDomainCommandTest {
         params.setStorageDomainId(Guid.newGuid());
         params.setStoragePoolId(Guid.newGuid());
         cmd = spy(new ActivateStorageDomainCommand<StorageDomainPoolParametersBase>(params));
-        doReturn(storageDomainDAO).when(cmd).getStorageDomainDAO();
-        doReturn(storagePoolDAO).when(cmd).getStoragePoolDAO();
-        doReturn(vdsDAO).when(cmd).getVdsDAO();
+        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
+        doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
+        doReturn(vdsDao).when(cmd).getVdsDao();
     }
 
     private void canDoActionSucceeds() {

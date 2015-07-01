@@ -34,7 +34,7 @@ public class EngineConfigTest {
     public void getValueWithMultipleVersions() throws Exception {
         final String key = "MaxNumOfVmSockets";
         log.info("getValue: Testing fetch multiple version of {}", key);
-        List<ConfigKey> keys = config.getEngineConfigLogic().getConfigDAO().getKeysForName(key);
+        List<ConfigKey> keys = config.getEngineConfigLogic().getConfigDao().getKeysForName(key);
         for (ConfigKey configKey : keys) {
             log.info("{} version: {}", configKey.getDisplayValue(), configKey.getVersion());
         }

@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         AbstractQueryTest<StorageDomainsAndStoragePoolIdQueryParameters, GetFileStorageDomainsWithAttachedStoragePoolGuidQuery<StorageDomainsAndStoragePoolIdQueryParameters>> {
@@ -49,11 +49,11 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
-        VdsDAO vdsDAOMock = mock(VdsDAO.class);
+        VdsDao vdsDaoMock = mock(VdsDao.class);
         List<VDS> listVds = new ArrayList<>();
         listVds.add(vds);
-        when(vdsDAOMock.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(listVds);
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDAOMock);
+        when(vdsDaoMock.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(listVds);
+        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMock);
     }
 
     @Test
@@ -300,7 +300,7 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
     }
 
     private void mockStoragePoolDao(StoragePool storagePool) {
-        StoragePoolDAO storagePoolDaoMock = mock(StoragePoolDAO.class);
+        StoragePoolDao storagePoolDaoMock = mock(StoragePoolDao.class);
         when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(storagePoolDaoMock);
         when(storagePoolDaoMock.get(any(Guid.class))).thenReturn(storagePool);
     }

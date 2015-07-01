@@ -148,7 +148,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             return false;
         }
 
-        List<StoragePoolIsoMap> domains = getStoragePoolIsoMapDAO()
+        List<StoragePoolIsoMap> domains = getStoragePoolIsoMapDao()
                 .getAllForStoragePool(getStoragePool().getId());
 
         // set to true here in case of failure in executing/getting answer from the reconstruct vds command,
@@ -172,7 +172,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             // all vms/templates metadata should be copied to the new master domain, so we need
             // to perform increment of the db version for all the vms in the storage pool.
             // currently this method is used for both templates and vms.
-            getVmStaticDAO().incrementDbGenerationForAllInStoragePool(getStoragePoolId());
+            getVmStaticDao().incrementDbGenerationForAllInStoragePool(getStoragePoolId());
         }
         if (isLastMaster) {
             getCompensationContext().resetCompensation();
@@ -253,7 +253,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                             return null;
                         }
 
-                        List<StoragePoolIsoMap> storagePoolIsoMap = getStoragePoolIsoMapDAO()
+                        List<StoragePoolIsoMap> storagePoolIsoMap = getStoragePoolIsoMapDao()
                                 .getAllForStoragePool(getStoragePool().getId());
                         try {
                             runVdsCommand(

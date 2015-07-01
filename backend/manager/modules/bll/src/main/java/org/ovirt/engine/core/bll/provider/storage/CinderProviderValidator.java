@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 public class CinderProviderValidator extends ProviderValidator {
 
@@ -52,7 +52,7 @@ public class CinderProviderValidator extends ProviderValidator {
         return getStoragePoolDao().get(storagePoolId);
     }
 
-    protected StoragePoolDAO getStoragePoolDao() {
+    protected StoragePoolDao getStoragePoolDao() {
         return DbFacade.getInstance().getStoragePoolDao();
     }
 

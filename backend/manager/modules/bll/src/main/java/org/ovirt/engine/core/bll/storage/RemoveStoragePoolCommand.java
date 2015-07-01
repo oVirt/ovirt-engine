@@ -63,7 +63,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         /**
          * Detach master storage domain last.
          */
-        List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
+        List<StorageDomain> storageDomains = getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
         Collections.sort(storageDomains, new Comparator<StorageDomain>() {
             @Override
             public int compare(StorageDomain o1, StorageDomain o2) {
@@ -95,7 +95,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             @Override
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(getStoragePool());
-                getStoragePoolDAO().remove(getStoragePool().getId());
+                getStoragePoolDao().remove(getStoragePool().getId());
                 getCompensationContext().stateChanged();
 
                 return null;
@@ -104,7 +104,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     }
 
     private void removeNetworks() {
-        final List<Network> networks = getNetworkDAO().getAllForDataCenter(getStoragePoolId());
+        final List<Network> networks = getNetworkDao().getAllForDataCenter(getStoragePoolId());
         for (Network network : networks) {
             if (network.isExternal()) {
                 for (VmNic nic : getVmNicDao().getAllForNetwork(network.getId())) {
@@ -124,7 +124,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                         getDbFacade().getVnicProfileDao().remove(vnicProfile.getId());
                     }
                     getCompensationContext().snapshotEntity(net);
-                    getNetworkDAO().remove(net.getId());
+                    getNetworkDao().remove(net.getId());
                 }
                 getCompensationContext().stateChanged();
                 return null;
@@ -260,7 +260,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 // as it will be impossible to remove it.
                 StorageHelperDirector.getInstance().getItem(domain.getStorageType())
                         .storageDomainRemoved(domain.getStorageStaticData());
-                getStorageDomainDAO().remove(domain.getId());
+                getStorageDomainDao().remove(domain.getId());
                 return null;
             }
         });
@@ -311,7 +311,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
 
         final List<StorageDomain> poolDomains =
-                getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
+                getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
         final List<StorageDomain> activeOrLockedDomains = getActiveOrLockedDomainList(poolDomains);
 
         if (!activeOrLockedDomains.isEmpty()) {
@@ -325,7 +325,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 return false;
             }
         } else {
-            List<VDS> poolHosts = getVdsDAO().getAllForStoragePool(getParameters().getStoragePoolId());
+            List<VDS> poolHosts = getVdsDao().getAllForStoragePool(getParameters().getStoragePoolId());
 
             sharedLocks = new HashMap<>();
             for (VDS host : poolHosts) {

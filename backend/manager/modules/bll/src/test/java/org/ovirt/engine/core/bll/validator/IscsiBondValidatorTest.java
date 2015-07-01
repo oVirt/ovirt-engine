@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.IscsiBondDao;
-import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
@@ -39,7 +39,7 @@ public class IscsiBondValidatorTest {
     @Mock
     private NetworkClusterDao networkClusterDao;
     @Mock
-    private StorageServerConnectionDAO storageServerConnectionDAO;
+    private StorageServerConnectionDao storageServerConnectionDao;
 
     private IscsiBondValidator validator;
 
@@ -51,7 +51,7 @@ public class IscsiBondValidatorTest {
         doReturn(iscsiBondDao).when(dbFacade).getIscsiBondDao();
         doReturn(networkDao).when(dbFacade).getNetworkDao();
         doReturn(networkClusterDao).when(dbFacade).getNetworkClusterDao();
-        doReturn(storageServerConnectionDAO).when(dbFacade).getStorageServerConnectionDao();
+        doReturn(storageServerConnectionDao).when(dbFacade).getStorageServerConnectionDao();
     }
 
     @Test
@@ -181,7 +181,7 @@ public class IscsiBondValidatorTest {
         List<StorageServerConnections> conns = new ArrayList<>();
         conns.add(createStorageConnection());
         conns.add(createStorageConnection());
-        doReturn(conns).when(storageServerConnectionDAO).getConnectableStorageConnectionsByStorageType(iscsiBond.getStoragePoolId(), StorageType.ISCSI);
+        doReturn(conns).when(storageServerConnectionDao).getConnectableStorageConnectionsByStorageType(iscsiBond.getStoragePoolId(), StorageType.ISCSI);
 
         iscsiBond.getStorageConnectionIds().add(conns.get(0).getid());
         iscsiBond.getStorageConnectionIds().add(conns.get(1).getid());
@@ -195,7 +195,7 @@ public class IscsiBondValidatorTest {
 
         List<StorageServerConnections> conns = new ArrayList<>();
         conns.add(createStorageConnection());
-        doReturn(conns).when(storageServerConnectionDAO).getConnectableStorageConnectionsByStorageType(iscsiBond.getStoragePoolId(), StorageType.ISCSI);
+        doReturn(conns).when(storageServerConnectionDao).getConnectableStorageConnectionsByStorageType(iscsiBond.getStoragePoolId(), StorageType.ISCSI);
 
         iscsiBond.getStorageConnectionIds().add(conns.get(0).getid());
         iscsiBond.getStorageConnectionIds().add(Guid.newGuid().toString());

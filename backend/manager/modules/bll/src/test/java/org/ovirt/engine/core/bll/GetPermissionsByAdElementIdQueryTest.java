@@ -11,11 +11,11 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.dao.PermissionDao;
 
 /**
  * A test case for {@link GetPermissionsByAdElementIdQuery}.
- * This test mocks away all the DAOs, and just tests the flow of the query itself.
+ * This test mocks away all the Daos, and just tests the flow of the query itself.
  */
 public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetPermissionsByAdElementIdQuery<IdQueryParameters>> {
 
@@ -29,12 +29,12 @@ public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<
         Permission expected = new Permission();
         expected.setAdElementId(adElementGuid);
 
-        // Mock the DAOs
-        PermissionDAO permissionDAOMock = mock(PermissionDAO.class);
-        when(permissionDAOMock.getAllForAdElement
+        // Mock the Daos
+        PermissionDao permissionDaoMock = mock(PermissionDao.class);
+        when(permissionDaoMock.getAllForAdElement
                 (adElementGuid, getQuery().getEngineSessionSeqId(), getQueryParameters().isFiltered())).
                 thenReturn(Collections.singletonList(expected));
-        when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDAOMock);
+        when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDaoMock);
 
         getQuery().executeQueryCommand();
 

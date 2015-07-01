@@ -16,12 +16,12 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmsAndNetworkInterfacesByNetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 /**
  * A test for the {@link GetVmsAndNetworkInterfacesByNetworkIdQuery} class. It tests the flow (i.e., that the query
- * delegates properly to the DAO}). The internal workings of the DAO are not tested.
+ * delegates properly to the Dao}). The internal workings of the Dao are not tested.
  */
 public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
         extends AbstractQueryTest<GetVmsAndNetworkInterfacesByNetworkIdParameters,
@@ -34,7 +34,7 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
 
     @Test
     public void testExecuteQueryCommand() {
-        // Set up the DAOs
+        // Set up the Daos
         setupVmDao(Collections.singletonList(vm));
         setupVmNetworkInterfaceDao(Collections.singletonList(vmNetworkInterface));
 
@@ -88,7 +88,7 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
     }
 
     private void setupVmDao(List<VM> expectedVms) {
-        VmDAO vmDaoMock = mock(VmDAO.class);
+        VmDao vmDaoMock = mock(VmDao.class);
         when(vmDaoMock.getAllForNetwork(networkId)).thenReturn(expectedVms);
         when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDaoMock);
     }

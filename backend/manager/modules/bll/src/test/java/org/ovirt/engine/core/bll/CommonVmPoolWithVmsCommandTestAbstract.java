@@ -52,12 +52,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmPoolDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -98,25 +98,25 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     protected DbFacade dbFacada;
 
     @Mock
-    protected VdsGroupDAO vdsGroupDAO;
+    protected VdsGroupDao vdsGroupDao;
 
     @Mock
-    protected DiskImageDAO diskImageDAO;
+    protected DiskImageDao diskImageDao;
 
     @Mock
-    protected VmPoolDAO vmPoolDAO;
+    protected VmPoolDao vmPoolDao;
 
     @Mock
-    protected StoragePoolDAO storagePoolDAO;
+    protected StoragePoolDao storagePoolDao;
 
     @Mock
-    protected VmTemplateDAO vmTemplateDAO;
+    protected VmTemplateDao vmTemplateDao;
 
     @Mock
     protected VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     @Mock
-    protected StorageDomainDAO storageDomainDAO;
+    protected StorageDomainDao storageDomainDao;
 
     @Mock
     private MultipleStorageDomainsValidator multipleSdValidator;
@@ -168,7 +168,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         mockGlobalParameters();
         setUpCommand();
         mockVds();
-        mockDbDAO();
+        mockDbDao();
         command.postConstruct();
     }
 
@@ -205,22 +205,22 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         // Mock Dao
         storageDomainsList =
                 getStorageDomainList(availableDiskSizeFirstDomain, availableDiskSizeSecondDomain);
-        mockDiskImageDAO();
-        mockStorageDomainDAO(storageDomainsList);
+        mockDiskImageDao();
+        mockStorageDomainDao(storageDomainsList);
     }
 
-    private void mockVMPoolDAO() {
-        doReturn(vmPoolDAO).when(command).getVmPoolDAO();
+    private void mockVMPoolDao() {
+        doReturn(vmPoolDao).when(command).getVmPoolDao();
     }
 
-    private void mockStoragePoolDAO() {
-        doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
-        when(storagePoolDAO.get(storagePoolId)).thenReturn(storagePool);
+    private void mockStoragePoolDao() {
+        doReturn(storagePoolDao).when(command).getStoragePoolDao();
+        when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
     }
 
-    private void mockVMTemplateDAO() {
-        doReturn(vmTemplateDAO).when(command).getVmTemplateDAO();
-        when(vmTemplateDAO.get(vmTemplateId)).thenReturn(vmTemplate);
+    private void mockVMTemplateDao() {
+        doReturn(vmTemplateDao).when(command).getVmTemplateDao();
+        when(vmTemplateDao.get(vmTemplateId)).thenReturn(vmTemplate);
     }
 
     private void mockVmNetworkInterfaceDao() {
@@ -229,19 +229,19 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
                 .thenReturn(Collections.<VmNetworkInterface> emptyList());
     }
 
-    private void mockVdsGroupDAO() {
-        doReturn(vdsGroupDAO).when(command).getVdsGroupDAO();
-        when(vdsGroupDAO.get(vdsGroupId)).thenReturn(vdsGroup);
+    private void mockVdsGroupDao() {
+        doReturn(vdsGroupDao).when(command).getVdsGroupDao();
+        when(vdsGroupDao.get(vdsGroupId)).thenReturn(vdsGroup);
     }
 
-    private void mockDiskImageDAO() {
-        when(diskImageDAO.getSnapshotById(Matchers.<Guid> any(Guid.class))).thenReturn(getDiskImageList().get(0));
+    private void mockDiskImageDao() {
+        when(diskImageDao.getSnapshotById(Matchers.<Guid> any(Guid.class))).thenReturn(getDiskImageList().get(0));
     }
 
-    private void mockStorageDomainDAO(List<StorageDomain> storageDomains) {
-        doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
+    private void mockStorageDomainDao(List<StorageDomain> storageDomains) {
+        doReturn(storageDomainDao).when(command).getStorageDomainDao();
         for (StorageDomain storageDomain : storageDomains) {
-            when(storageDomainDAO.getForStoragePool(storageDomain.getId(), storagePoolId)).thenReturn(storageDomain);
+            when(storageDomainDao.getForStoragePool(storageDomain.getId(), storagePoolId)).thenReturn(storageDomain);
         }
     }
 
@@ -377,12 +377,12 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         return pool;
     }
 
-    private void mockDbDAO() {
-        mockVdsGroupDAO();
-        mockVMPoolDAO();
-        mockVMTemplateDAO();
+    private void mockDbDao() {
+        mockVdsGroupDao();
+        mockVMPoolDao();
+        mockVMTemplateDao();
         mockVmNetworkInterfaceDao();
-        mockStoragePoolDAO();
+        mockStoragePoolDao();
     }
 
 

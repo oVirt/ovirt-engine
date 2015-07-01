@@ -30,6 +30,6 @@ public abstract class StorageDomainManagementCommandBase<T extends StorageDomain
     }
 
     protected boolean isStorageWithSameNameExists() {
-        return getStorageDomainStaticDAO().getByName(getStorageDomain().getStorageName()) != null;
+        return getStorageDomainStaticDao().getByName(getStorageDomain().getStorageName()) != null;
     }
 }

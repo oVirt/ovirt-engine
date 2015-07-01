@@ -31,7 +31,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.TagDAO;
+import org.ovirt.engine.core.dao.TagDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TagsDirectorTest {
@@ -39,7 +39,7 @@ public class TagsDirectorTest {
     private TagsDirector tagsDirector;
 
     @Mock
-    private TagDAO tagDao;
+    private TagDao tagDao;
 
     @BeforeClass
     public static void beforeClass() {
@@ -56,7 +56,7 @@ public class TagsDirectorTest {
     public void setup() {
         tagsDirector = spy(TagsDirector.getInstance());
         when(tagDao.getAllForParent(any(Guid.class))).thenReturn(Collections.<Tags> emptyList());
-        doReturn(tagDao).when(tagsDirector).getTagDAO();
+        doReturn(tagDao).when(tagsDirector).getTagDao();
         doNothing().when(tagsDirector).updateTagInBackend(any(Tags.class));
         tagsDirector.init();
     }

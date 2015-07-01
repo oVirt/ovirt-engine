@@ -11,9 +11,9 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
-public class GlusterVolumeSnapshotScheduleDaoTest extends BaseDAOTestCase {
+public class GlusterVolumeSnapshotScheduleDaoTest extends BaseDaoTestCase {
 
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid VOLUME_ID_1 = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");

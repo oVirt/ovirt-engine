@@ -257,7 +257,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getVdsGroup().getCompatibilityVersion());
         }
 
-        getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
+        getVmStaticDao().incrementDbGeneration(getVmTemplate().getId());
         updateOriginalTemplateNameOnDerivedVms();
         List<Guid> oldIconIds = Collections.emptyList();
         if (isTemplate()) {
@@ -282,7 +282,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         // get vms from db
-        List<VM> vmsToUpdate = getVmDAO().getVmsListByInstanceType(getVmTemplateId());
+        List<VM> vmsToUpdate = getVmDao().getVmsListByInstanceType(getVmTemplateId());
         for (VM vm : vmsToUpdate) {
             VmManagementParametersBase params = new VmManagementParametersBase(vm);
             params.setApplyChangesLater(true);
@@ -312,7 +312,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     private void updateOriginalTemplateNameOnDerivedVms() {
         boolean templateNameChanged = !ObjectUtils.equals(mOldTemplate.getName(), getVmTemplate().getName());
         if (templateNameChanged) {
-            getVmDAO().updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
+            getVmDao().updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
         }
     }
 

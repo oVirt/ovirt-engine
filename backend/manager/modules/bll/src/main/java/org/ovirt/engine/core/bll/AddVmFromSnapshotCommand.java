@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -191,10 +190,6 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         return vmFromConfiguration;
     }
 
-    protected SnapshotDao getSnapshotDao() {
-        return getDbFacade().getSnapshotDao();
-    }
-
     @Override
     protected void lockEntities() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -215,7 +210,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     protected VM getSourceVmFromDb() {
         if (sourceVmFromDb == null) {
-            sourceVmFromDb = getVmDAO().get(getVmIdFromSnapshot());
+            sourceVmFromDb = getVmDao().get(getVmIdFromSnapshot());
         }
         return sourceVmFromDb;
     }

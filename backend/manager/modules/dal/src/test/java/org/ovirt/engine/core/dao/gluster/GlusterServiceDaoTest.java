@@ -9,9 +9,9 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
-public class GlusterServiceDaoTest extends BaseDAOTestCase {
+public class GlusterServiceDaoTest extends BaseDaoTestCase {
     private static final String GLUSTER_SERVICE = "gluster-test";
     private static final Guid GLUSTER_SERVICE_ID = new Guid("fc00df54-4fcd-4495-8756-b217780bdad7");
     private static final String GLUSTER_SWIFT_SERVICE1 = "gluster-swift-test-1";

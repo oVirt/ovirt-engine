@@ -64,7 +64,7 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
 
     protected List<ActionGroup> getActionGroupsByRoleId(Guid roleId) {
         List<ActionGroup> allGroups = new ArrayList<>();
-        List<RoleGroupMap> allGroupsMaps = getRoleGroupMapDAO().getAllForRole(roleId);
+        List<RoleGroupMap> allGroupsMaps = getRoleGroupMapDao().getAllForRole(roleId);
         for (RoleGroupMap map : allGroupsMaps) {
             allGroups.add(map.getActionGroup());
         }

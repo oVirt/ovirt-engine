@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public class GetWatchdogQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
@@ -22,7 +22,7 @@ public class GetWatchdogQuery<P extends IdQueryParameters> extends QueriesComman
 
     @Override
     protected void executeQueryCommand() {
-        final List<VmDevice> vmDevices = getVmDeviceDAO().getVmDeviceByVmIdAndType(getParameters().getId(),
+        final List<VmDevice> vmDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getId(),
                 VmDeviceGeneralType.WATCHDOG);
         if (vmDevices != null && !vmDevices.isEmpty()) {
             setReturnValue(Collections.singletonList(new VmWatchdog(vmDevices.get(0))));
@@ -31,7 +31,7 @@ public class GetWatchdogQuery<P extends IdQueryParameters> extends QueriesComman
         }
     }
 
-    protected VmDeviceDAO getVmDeviceDAO() {
+    protected VmDeviceDao getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
     }
 

@@ -13,10 +13,10 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
-public class NetworkClusterDaoTest extends BaseDAOTestCase {
+public class NetworkClusterDaoTest extends BaseDaoTestCase {
     private static final int NETWORK_CLUSTER_COUNT = 4;
     private NetworkClusterDao dao;
     private VDSGroup cluster;
@@ -32,15 +32,15 @@ public class NetworkClusterDaoTest extends BaseDAOTestCase {
 
         dao = dbFacade.getNetworkClusterDao();
 
-        VdsGroupDAO vdsGroupDAO = dbFacade.getVdsGroupDao();
+        VdsGroupDao vdsGroupDao = dbFacade.getVdsGroupDao();
 
-        cluster = vdsGroupDAO.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1"));
-        freeCluster = vdsGroupDAO.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3"));
+        cluster = vdsGroupDao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1"));
+        freeCluster = vdsGroupDao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3"));
 
-        NetworkDao networkDAO = dbFacade.getNetworkDao();
+        NetworkDao networkDao = dbFacade.getNetworkDao();
 
-        network = networkDAO.getByName("engine");
-        networkNoCluster = networkDAO.getByName("engine3");
+        network = networkDao.getByName("engine");
+        networkNoCluster = networkDao.getByName("engine3");
 
         createNewNetworkCluster();
 

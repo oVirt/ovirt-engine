@@ -27,8 +27,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -44,10 +44,10 @@ public class CreateGlusterVolumeCommandTest {
     GlusterBrickDao brickDao;
 
     @Mock
-    VdsStaticDAO vdsStaticDao;
+    VdsStaticDao vdsStaticDao;
 
     @Mock
-    VdsGroupDAO vdsGroupDao;
+    VdsGroupDao vdsGroupDao;
 
     @Mock
     GlusterVolumeValidator validator;
@@ -96,13 +96,13 @@ public class CreateGlusterVolumeCommandTest {
     }
 
     private void prepareMocks(CreateGlusterVolumeCommand command) {
-        doReturn(vdsGroupDao).when(command).getVdsGroupDAO();
+        doReturn(vdsGroupDao).when(command).getVdsGroupDao();
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(vdsStaticDao).when(command).getVdsStaticDAO();
+        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(brickDao).when(command).getGlusterBrickDao();
         doReturn(validator).when(command).createVolumeValidator();
-        doReturn(networkDao).when(command).getNetworkDAO();
-        doReturn(interfaceDao).when(command).getInterfaceDAO();
+        doReturn(networkDao).when(command).getNetworkDao();
+        doReturn(interfaceDao).when(command).getInterfaceDao();
 
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);

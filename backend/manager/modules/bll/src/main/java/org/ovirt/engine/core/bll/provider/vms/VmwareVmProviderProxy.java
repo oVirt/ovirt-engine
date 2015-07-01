@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class VmwareVmProviderProxy implements ProviderProxy {
 
@@ -85,7 +85,7 @@ public class VmwareVmProviderProxy implements ProviderProxy {
                 return ValidationResult.VALID;
             }
 
-            private VdsDAO getVdsDao() {
+            private VdsDao getVdsDao() {
                 return DbFacade.getInstance().getVdsDao();
             }
         };

@@ -44,9 +44,9 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.RepoFileMetaDataDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -74,7 +74,7 @@ public class IsoDomainListSyncronizer {
     private static volatile IsoDomainListSyncronizer isoDomainListSyncronizer;
     private static final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<>();
     private int isoDomainRefreshRate;
-    private RepoFileMetaDataDAO repoStorageDom;
+    private RepoFileMetaDataDao repoStorageDom;
     private ProviderDao providerDao;
 
     public static final String TOOL_CLUSTER_LEVEL = "clusterLevel";
@@ -224,7 +224,7 @@ public class IsoDomainListSyncronizer {
     }
 
     private boolean refreshImageDomain(final StorageDomain storageDomain, final ImageFileType imageType) {
-        final RepoFileMetaDataDAO repoFileMetaDataDao = repoStorageDom;
+        final RepoFileMetaDataDao repoFileMetaDataDao = repoStorageDom;
 
         Provider provider = providerDao.get(new Guid(storageDomain.getStorage()));
         final OpenStackImageProviderProxy client = ProviderProxyFactory.getInstance().create(provider);
@@ -572,7 +572,7 @@ public class IsoDomainListSyncronizer {
     }
 
     private static boolean refreshIsoFileListMetaData(final Guid repoStorageDomainId,
-                                                      final RepoFileMetaDataDAO repoFileMetaDataDao,
+                                                      final RepoFileMetaDataDao repoFileMetaDataDao,
                                                       final Map<String, Map<String, Object>> fileStats,
                                                       final ImageFileType imageType) {
         Lock syncObject = getSyncObject(repoStorageDomainId, imageType);
@@ -814,7 +814,7 @@ public class IsoDomainListSyncronizer {
             VDSCommandType alternateGetFileStatsCommand) {
 
         try {
-            StoragePool dc = getStoragePoolDAO().get(repoStoragePoolId);
+            StoragePool dc = getStoragePoolDao().get(repoStoragePoolId);
             VDSBrokerFrontend resourceManager = Backend.getInstance().getResourceManager();
             boolean vdsmFileStatsSupported = FeatureSupported.getFileStats(dc.getCompatibilityVersion());
             if (vdsmFileStatsSupported) {
@@ -897,7 +897,7 @@ public class IsoDomainListSyncronizer {
      * @return Iso Guid of active Iso, and null if not.
      */
     public Guid findActiveISODomain(Guid storagePoolId) {
-        List<StorageDomain> domains = getStorageDomainDAO().getAllForStoragePool(
+        List<StorageDomain> domains = getStorageDomainDao().getAllForStoragePool(
                 storagePoolId);
         for (StorageDomain domain : domains) {
             if (domain.getStorageDomainType() == StorageDomainType.ISO &&
@@ -908,11 +908,11 @@ public class IsoDomainListSyncronizer {
         return null;
     }
 
-    private StorageDomainDAO getStorageDomainDAO() {
+    private StorageDomainDao getStorageDomainDao() {
         return DbFacade.getInstance().getStorageDomainDao();
     }
 
-    private StoragePoolDAO getStoragePoolDAO() {
+    private StoragePoolDao getStoragePoolDao() {
         return DbFacade.getInstance().getStoragePoolDao();
     }
 }

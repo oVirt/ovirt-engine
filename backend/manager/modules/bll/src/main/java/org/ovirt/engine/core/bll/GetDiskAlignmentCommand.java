@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -117,7 +116,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
                 return false;
             }
 
-            StorageDomainStatic sds = getStorageDomainStaticDAO().get(((DiskImage) getDisk()).getStorageIds().get(0));
+            StorageDomainStatic sds = getStorageDomainStaticDao().get(((DiskImage) getDisk()).getStorageIds().get(0));
             if (!sds.getStorageType().isBlockDomain()) {
                 addCanDoActionMessageVariable("diskAlias", getDiskAlias());
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
@@ -245,7 +244,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
 
     protected Guid getVdsIdInGroup() {
         if (vdsInPool == null && getVdsGroup() != null) {
-            List<VDS> vdsInPoolList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroup().getId(), VDSStatus.Up);
+            List<VDS> vdsInPoolList = getVdsDao().getAllForVdsGroupWithStatus(getVdsGroup().getId(), VDSStatus.Up);
             if (!vdsInPoolList.isEmpty()) {
                 vdsInPool = vdsInPoolList.get(0).getId();
             }
@@ -261,14 +260,10 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         return getDbFacade().getBaseDiskDao();
     }
 
-    protected StoragePoolDAO getStoragePoolDao() {
-        return getDbFacade().getStoragePoolDao();
-    }
-
     @Override
     public VM getVm() {
         if (diskVm == null && getDisk() != null) {
-            for (VM vm : getVmDAO().getVmsListForDisk(getDisk().getId(), false)) {
+            for (VM vm : getVmDao().getVmsListForDisk(getDisk().getId(), false)) {
                 diskVm = vm;
                 break;
             }

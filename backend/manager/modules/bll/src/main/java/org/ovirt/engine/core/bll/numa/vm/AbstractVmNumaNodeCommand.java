@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsNumaNodeDAO;
-import org.ovirt.engine.core.dao.VmNumaNodeDAO;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
 public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationParameters> extends VmCommand<T> {
 
@@ -24,12 +24,12 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
         super(parameters);
     }
 
-    protected VdsNumaNodeDAO getVdsNumaNodeDao() {
-        return getDbFacade().getVdsNumaNodeDAO();
+    protected VdsNumaNodeDao getVdsNumaNodeDao() {
+        return getDbFacade().getVdsNumaNodeDao();
     }
 
-    protected VmNumaNodeDAO getVmNumaNodeDao() {
-        return getDbFacade().getVmNumaNodeDAO();
+    protected VmNumaNodeDao getVmNumaNodeDao() {
+        return getDbFacade().getVmNumaNodeDao();
     }
 
     protected List<Guid> getDedicatedHostList() {

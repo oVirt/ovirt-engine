@@ -52,7 +52,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -959,7 +959,7 @@ public final class ImagesHandler {
         return clonedDiskImage;
     }
 
-    private static DiskImageDAO getDiskImageDao() {
+    private static DiskImageDao getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDao();
     }
 

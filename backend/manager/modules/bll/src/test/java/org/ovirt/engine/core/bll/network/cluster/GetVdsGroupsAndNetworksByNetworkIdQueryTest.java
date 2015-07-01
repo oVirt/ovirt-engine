@@ -15,13 +15,13 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 /**
  * A test for the {@link GetVdsGroupsAndNetworksByNetworkIdQuery} class. It tests the flow (i.e., that the query delegates properly
- * to the DAO}). The internal workings of the DAO are not tested.
+ * to the Dao}). The internal workings of the Dao are not tested.
  */
 public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
         extends AbstractQueryTest<IdQueryParameters,
@@ -69,7 +69,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
 
     private void setupNetworkClusterDao() {
         List<VDSGroup> expectedVdsGroup = Collections.singletonList(cluster);
-        VdsGroupDAO vdsGroupDaoMock = mock(VdsGroupDAO.class);
+        VdsGroupDao vdsGroupDaoMock = mock(VdsGroupDao.class);
         when(vdsGroupDaoMock.getAllForStoragePool(storagePoolId)).thenReturn(expectedVdsGroup);
         when(getDbFacadeMockInstance().getVdsGroupDao()).thenReturn(vdsGroupDaoMock);
     }

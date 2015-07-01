@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 public class CinderDisksValidator {
 
@@ -236,7 +236,7 @@ public class CinderDisksValidator {
         return DbFacade.getInstance().getDiskDao();
     }
 
-    protected StorageDomainDAO getStorageDomainDao() {
+    protected StorageDomainDao getStorageDomainDao() {
         return DbFacade.getInstance().getStorageDomainDao();
     }
 }

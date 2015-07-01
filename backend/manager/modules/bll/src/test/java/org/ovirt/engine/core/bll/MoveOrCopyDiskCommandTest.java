@@ -34,10 +34,10 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MoveOrCopyDiskCommandTest {
@@ -48,13 +48,13 @@ public class MoveOrCopyDiskCommandTest {
     private final VmDevice vmDevice = new VmDevice();
 
     @Mock
-    private DiskImageDAO diskImageDao;
+    private DiskImageDao diskImageDao;
     @Mock
-    private StorageDomainDAO storageDomainDao;
+    private StorageDomainDao storageDomainDao;
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
     @Mock
-    private VmDeviceDAO vmDeviceDao;
+    private VmDeviceDao vmDeviceDao;
     @Mock
     private SnapshotsValidator snapshotsValidator;
 
@@ -138,7 +138,7 @@ public class MoveOrCopyDiskCommandTest {
         mockGetVmsListForDisk();
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
-        doReturn(vmDeviceDao).when(command).getVmDeviceDAO();
+        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -152,7 +152,7 @@ public class MoveOrCopyDiskCommandTest {
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
-        doReturn(vmDeviceDao).when(command).getVmDeviceDAO();
+        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
                 VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED.toString()));
@@ -232,7 +232,7 @@ public class MoveOrCopyDiskCommandTest {
         vm.setStatus(VMStatus.Down);
 
         // Re-mock the vmDao to return this specific VM for it to be correlated with the vm list mocked by getVmsWithPlugInfo(..).
-        doReturn(vmDao).when(command).getVmDAO();
+        doReturn(vmDao).when(command).getVmDao();
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
         List<Pair<VM, VmDevice>> vmList = Collections.singletonList(new Pair<>(vm, vmDevice));
         when(vmDao.getVmsWithPlugInfo(any(Guid.class))).thenReturn(vmList);
@@ -295,7 +295,7 @@ public class MoveOrCopyDiskCommandTest {
                 operation)));
 
 
-        doReturn(vmDao).when(command).getVmDAO();
+        doReturn(vmDao).when(command).getVmDao();
 
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
@@ -306,7 +306,7 @@ public class MoveOrCopyDiskCommandTest {
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
         doReturn(false).when(command).acquireLock();
         doReturn(true).when(command).setAndValidateDiskProfiles();
-        doReturn(storageDomainDao).when(command).getStorageDomainDAO();
+        doReturn(storageDomainDao).when(command).getStorageDomainDao();
     }
 
     private void initSnapshotValidator() {
@@ -343,7 +343,7 @@ public class MoveOrCopyDiskCommandTest {
         }
 
         @Override
-        protected DiskImageDAO getDiskImageDao() {
+        protected DiskImageDao getDiskImageDao() {
             return diskImageDao;
         }
     }

@@ -118,7 +118,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         }
 
         if (disk.isShareable()
-                && !isVersionSupportedForShareable(disk, getStoragePoolDAO().get(getVm().getStoragePoolId())
+                && !isVersionSupportedForShareable(disk, getStoragePoolDao().get(getVm().getStoragePoolId())
                         .getCompatibilityVersion()
                         .getValue())) {
             return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
@@ -133,7 +133,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
         if (isImageDisk) {
-            StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
+            StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(
                     ((DiskImage) disk).getStorageIds().get(0), ((DiskImage) disk).getStoragePoolId());
             StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
             if (!validate(storageDomainValidator.isDomainExistAndActive())) {
@@ -171,7 +171,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     @Override
     protected void executeVmCommand() {
         if (!isOperationPerformedOnDiskSnapshot()) {
-            getVmStaticDAO().incrementDbGeneration(getVm().getId());
+            getVmStaticDao().incrementDbGeneration(getVm().getId());
         }
 
         final VmDevice vmDevice = createVmDevice();

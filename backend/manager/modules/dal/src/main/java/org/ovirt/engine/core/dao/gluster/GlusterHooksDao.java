@@ -7,14 +7,14 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStage;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DAO;
+import org.ovirt.engine.core.dao.Dao;
 import org.ovirt.engine.core.dao.MassOperationsDao;
-import org.ovirt.engine.core.dao.SearchDAO;
+import org.ovirt.engine.core.dao.SearchDao;
 
 /**
  * Interface for DB operations on Gluster Hooks.
  */
-public interface GlusterHooksDao extends DAO, SearchDAO<GlusterHookEntity>, MassOperationsDao<GlusterHookEntity, Guid> {
+public interface GlusterHooksDao extends Dao, SearchDao<GlusterHookEntity>, MassOperationsDao<GlusterHookEntity, Guid> {
 
     public void save(GlusterHookEntity glusterHook);
 

@@ -29,7 +29,7 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommand extends GlusterComman
 
     @Override
     protected VDS getUpServer() {
-        return getVdsDAO().get(getParameters().getId());
+        return getVdsDao().get(getParameters().getId());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommand extends GlusterComman
         setSucceeded(writePubKeysReturnValue.getSucceeded());
         if (!writePubKeysReturnValue.getSucceeded()) {
             String errorMsg = writePubKeysReturnValue.getVdsError().getMessage();
-            writePubKeysReturnValue.getVdsError().setMessage(errorMsg + " : " + getVdsDAO().get(getParameters().getId()).getName());
+            writePubKeysReturnValue.getVdsError().setMessage(errorMsg + " : " + getVdsDao().get(getParameters().getId()).getName());
             propagateFailure(convertToVdcReturnValueBase(writePubKeysReturnValue));
             return;
         }

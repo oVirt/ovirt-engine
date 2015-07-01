@@ -63,7 +63,7 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVd
         }
 
         public ValidationResult clusterNetworkNotUsedByVms() {
-            return networkNotUsed(getVmStaticDAO().getAllByGroupAndNetworkName(networkCluster.getClusterId(),
+            return networkNotUsed(getVmStaticDao().getAllByGroupAndNetworkName(networkCluster.getClusterId(),
                     network.getName()),
                     VdcBllMessages.VAR__ENTITIES__VMS,
                     VdcBllMessages.VAR__ENTITIES__VM);
@@ -71,7 +71,7 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVd
 
         public ValidationResult clusterNetworkNotUsedByTemplates() {
             List<VmTemplate> templatesUsingNetwork = new ArrayList<>();
-            for (VmTemplate template : getVmTemplateDAO().getAllForVdsGroup(networkCluster.getClusterId())) {
+            for (VmTemplate template : getVmTemplateDao().getAllForVdsGroup(networkCluster.getClusterId())) {
                 for (VmNetworkInterface nic : getVmNetworkInterfaceDao().getAllForTemplate(template.getId())) {
                     if (network.getName().equals(nic.getNetworkName())) {
                         templatesUsingNetwork.add(template);

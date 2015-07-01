@@ -4,12 +4,12 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class IsVmWithSameNameExistQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     public IsVmWithSameNameExistQuery(P parameters) {
         super(parameters);

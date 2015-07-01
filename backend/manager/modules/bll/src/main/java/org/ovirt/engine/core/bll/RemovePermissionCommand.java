@@ -40,7 +40,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        Permission p = getPermissionDAO().get(getParameters().getPermission().getId());
+        Permission p = getPermissionDao().get(getParameters().getPermission().getId());
         if (p.getAdElementId().equals(PredefinedUsers.ADMIN_USER.getId()) &&
                 (p.getRoleId().equals(PredefinedRoles.SUPER_USER.getId()))) {
             addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_ADMIN_USER);
@@ -65,14 +65,14 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
         // check if vm is from pool and detach it
         if (perms.getObjectType().equals(VdcObjectType.VM)
                 && perms.getRoleId().equals(PredefinedRoles.ENGINE_USER.getId())) {
-            VM vm = getVmDAO().get(perms.getObjectId());
+            VM vm = getVmDao().get(perms.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
                 runInternalActionWithTasksContext(VdcActionType.DetachUserFromVmFromPool,
                         new DetachUserFromVmFromPoolParameters(vm.getVmPoolId(), userId, vm.getId(), true));
             }
         }
 
-        getPermissionDAO().remove(perms.getId());
+        getPermissionDao().remove(perms.getId());
         getDbFacade().updateLastAdminCheckStatus(userId);
         setSucceeded(true);
     }

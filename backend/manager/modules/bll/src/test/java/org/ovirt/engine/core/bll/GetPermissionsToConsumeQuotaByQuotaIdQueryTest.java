@@ -14,7 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.dao.PermissionDao;
 
 /**
  * A test case for {@link GetTemplatesRelatedToQuotaIdQuery}.
@@ -22,14 +22,14 @@ import org.ovirt.engine.core.dao.PermissionDAO;
 @RunWith(MockitoJUnitRunner.class)
 public class GetPermissionsToConsumeQuotaByQuotaIdQueryTest extends AbstractQueryTest<IdQueryParameters, GetPermissionsToConsumeQuotaByQuotaIdQuery<IdQueryParameters>> {
     @Mock
-    PermissionDAO permissionDAO;
+    PermissionDao permissionDao;
 
     Guid quotaId = Guid.newGuid();
     List<Permission> returnedPermissions;
 
     @Test
     public void testExecuteQuery() {
-        mockDAOForQuery();
+        mockDaoForQuery();
 
         // Execute query.
         getQuery().executeQueryCommand();
@@ -37,15 +37,15 @@ public class GetPermissionsToConsumeQuotaByQuotaIdQueryTest extends AbstractQuer
     }
 
     /**
-     * Initialize DAO to be used in query.
+     * Initialize Dao to be used in query.
      */
-    private void mockDAOForQuery() {
-        when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDAO);
+    private void mockDaoForQuery() {
+        when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDao);
 
         returnedPermissions = new ArrayList<Permission>();
         Permission permissions = new Permission();
         returnedPermissions.add(permissions);
         when(getQueryParameters().getId()).thenReturn(quotaId);
-        Mockito.when(permissionDAO.getConsumedPermissionsForQuotaId(quotaId)).thenReturn(returnedPermissions);
+        Mockito.when(permissionDao.getConsumedPermissionsForQuotaId(quotaId)).thenReturn(returnedPermissions);
     }
 }

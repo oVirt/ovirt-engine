@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class SupportedHostFeatureDaoImpl extends BaseDAODbFacade implements SupportedHostFeatureDao {
+public class SupportedHostFeatureDaoImpl extends BaseDaoDbFacade implements SupportedHostFeatureDao {
 
     private static class SupportedHostFeatureRowMapper implements RowMapper<String> {
         public static final SupportedHostFeatureRowMapper instance = new SupportedHostFeatureRowMapper();

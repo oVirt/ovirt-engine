@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.LunDAO;
+import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.slf4j.Logger;
 
@@ -112,7 +112,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         return storageConnectionsForStorageTypeMap;
     }
 
-    protected static LunDAO getLunDao() {
+    protected static LunDao getLunDao() {
         return DbFacade.getInstance().getLunDao();
     }
 

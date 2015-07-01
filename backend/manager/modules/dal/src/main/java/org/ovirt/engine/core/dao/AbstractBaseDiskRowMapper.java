@@ -18,7 +18,7 @@ public abstract class AbstractBaseDiskRowMapper<T extends BaseDisk> implements R
     public T mapRow(ResultSet rs, int rowNum) throws SQLException {
         T disk = createDiskEntity();
 
-        disk.setId(BaseDAODbFacade.getGuidDefaultEmpty(rs, "disk_id"));
+        disk.setId(BaseDaoDbFacade.getGuidDefaultEmpty(rs, "disk_id"));
         disk.setDiskAlias(rs.getString("disk_alias"));
         disk.setDiskDescription(rs.getString("disk_description"));
         String diskInterface = rs.getString("disk_interface");

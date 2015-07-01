@@ -417,7 +417,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      */
     protected boolean isStatelessSnapshotExistsForVm() {
         if (cachedStatelessSnapshotExistsForVm == null) {
-            cachedStatelessSnapshotExistsForVm = getSnapshotDAO().exists(getVm().getId(), SnapshotType.STATELESS);
+            cachedStatelessSnapshotExistsForVm = getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS);
         }
         return cachedStatelessSnapshotExistsForVm;
     }
@@ -1143,10 +1143,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return;
         }
 
-        getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
+        getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
 
         // If the memory volumes are not used by any other snapshot, we can remove them
-        if (getSnapshotDAO().getNumOfSnapshotsByMemory(memory) == 0) {
+        if (getSnapshotDao().getNumOfSnapshotsByMemory(memory) == 0) {
             removeMemoryVolumes(memory, getActionType(), true);
         }
     }
@@ -1224,6 +1224,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      */
     @Override
     public void onPowerringUp() {
-        decreasePendingVm(getVmStaticDAO().get(getVmId()));
+        decreasePendingVm(getVmStaticDao().get(getVmId()));
     }
 }

@@ -24,30 +24,30 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.AsyncTaskDAO;
-import org.ovirt.engine.core.dao.AuditLogDAO;
-import org.ovirt.engine.core.dao.DbGroupDAO;
-import org.ovirt.engine.core.dao.DbUserDAO;
-import org.ovirt.engine.core.dao.PermissionDAO;
-import org.ovirt.engine.core.dao.RoleDAO;
-import org.ovirt.engine.core.dao.RoleGroupMapDAO;
+import org.ovirt.engine.core.dao.AsyncTaskDao;
+import org.ovirt.engine.core.dao.AuditLogDao;
+import org.ovirt.engine.core.dao.DbGroupDao;
+import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.RoleDao;
+import org.ovirt.engine.core.dao.RoleGroupMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StepDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmIconDao;
-import org.ovirt.engine.core.dao.VmStaticDAO;
-import org.ovirt.engine.core.dao.VmStatisticsDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
@@ -299,12 +299,12 @@ public class AuditLogableBase extends TimeoutBase {
     public StorageDomain getStorageDomain() {
         if (_storageDomain == null && getStorageDomainId() != null) {
             if (_storagePoolId != null && getStoragePool() != null) {
-                _storageDomain = getStorageDomainDAO().getForStoragePool(
+                _storageDomain = getStorageDomainDao().getForStoragePool(
                         getStorageDomainId(), getStoragePool().getId());
             }
             if (_storageDomain == null) {
                 final List<StorageDomain> storageDomainList =
-                        getStorageDomainDAO().getAllForStorageDomain(getStorageDomainId());
+                        getStorageDomainDao().getAllForStorageDomain(getStorageDomainId());
                 if (storageDomainList.size() != 0) {
                     _storageDomain = storageDomainList.get(0);
                     for (final StorageDomain storageDomainFromList : storageDomainList) {
@@ -345,7 +345,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public StoragePool getStoragePool() {
         if (_storagePool == null && getStoragePoolId() != null && !Guid.Empty.equals(getStoragePoolId())) {
-            _storagePool = getStoragePoolDAO().get(getStoragePoolId());
+            _storagePool = getStoragePoolDao().get(getStoragePoolId());
         }
         return _storagePool;
     }
@@ -391,7 +391,7 @@ public class AuditLogableBase extends TimeoutBase {
                 mVdsId = getVm().getRunOnVds();
             }
             try {
-                mVds = getVdsDAO().get(getVdsId());
+                mVds = getVdsDao().get(getVdsId());
             } catch (final RuntimeException e) {
                 log.info("Failed to get vds '{}', error {}", mVdsId, e.getMessage());
                 log.debug("Exception", e);
@@ -407,7 +407,7 @@ public class AuditLogableBase extends TimeoutBase {
                 mVdsId = getVm().getRunOnVds();
             }
             try {
-                cachedVdsStatic = getVdsStaticDAO().get(getVdsId());
+                cachedVdsStatic = getVdsStaticDao().get(getVdsId());
             } catch (final RuntimeException e) {
                 log.info("Failed to get vds '{}', error: {}", mVdsId, e.getMessage());
                 log.debug("Exception", e);
@@ -427,9 +427,9 @@ public class AuditLogableBase extends TimeoutBase {
     public VM getVm() {
         if (mVm == null && mVmId != null && !mVmId.equals(Guid.Empty)) {
             try {
-                mVm = getVmDAO().get(mVmId);
+                mVm = getVmDao().get(mVmId);
 
-                // TODO: This is done for backwards compatibility with VMDAO.getById(Guid)
+                // TODO: This is done for backwards compatibility with VMDao.getById(Guid)
                 // It should probably be removed, but some research is required
                 if (mVm != null) {
                     mVm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(mVmId));
@@ -449,7 +449,7 @@ public class AuditLogableBase extends TimeoutBase {
     public VmTemplate getVmTemplate() {
         if (mVmTemplate == null && (mVmTemplateId != null || getVm() != null)) {
 
-            mVmTemplate = getVmTemplateDAO()
+            mVmTemplate = getVmTemplateDao()
                     .get(mVmTemplateId != null ? getVmTemplateId() : getVm()
                             .getVmtGuid());
         }
@@ -478,16 +478,16 @@ public class AuditLogableBase extends TimeoutBase {
     public VDSGroup getVdsGroup() {
         if (mVdsGroup == null) {
             if (mVdsGroupId != null) {
-                mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
+                mVdsGroup = getVdsGroupDao().get(mVdsGroupId);
             } else if (getVds() != null) {
                 mVdsGroupId = getVds().getVdsGroupId();
-                mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
+                mVdsGroup = getVdsGroupDao().get(mVdsGroupId);
             } else if (getVm() != null) {
                 mVdsGroupId = getVm().getVdsGroupId();
-                mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
+                mVdsGroup = getVdsGroupDao().get(mVdsGroupId);
             } else if (getVmTemplate() != null) {
                 mVdsGroupId = getVmTemplate().getVdsGroupId();
-                mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
+                mVdsGroup = getVdsGroupDao().get(mVdsGroupId);
             }
         }
         return mVdsGroup;
@@ -623,59 +623,59 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getGlusterBrickDao();
     }
 
-    public StorageDomainDAO getStorageDomainDAO() {
+    public StorageDomainDao getStorageDomainDao() {
         return getDbFacade().getStorageDomainDao();
     }
 
-    public StoragePoolDAO getStoragePoolDAO() {
+    public StoragePoolDao getStoragePoolDao() {
         return getDbFacade().getStoragePoolDao();
     }
 
-    public StorageDomainStaticDAO getStorageDomainStaticDAO() {
+    public StorageDomainStaticDao getStorageDomainStaticDao() {
         return getDbFacade().getStorageDomainStaticDao();
     }
 
-    public VdsDAO getVdsDAO() {
+    public VdsDao getVdsDao() {
         return getDbFacade().getVdsDao();
     }
 
-    public VdsStaticDAO getVdsStaticDAO() {
+    public VdsStaticDao getVdsStaticDao() {
         return getDbFacade().getVdsStaticDao();
     }
 
-    public VdsDynamicDAO getVdsDynamicDao() {
+    public VdsDynamicDao getVdsDynamicDao() {
         return getDbFacade().getVdsDynamicDao();
     }
 
-    public VmTemplateDAO getVmTemplateDAO() {
+    public VmTemplateDao getVmTemplateDao() {
         return getDbFacade().getVmTemplateDao();
     }
 
-    public VmDAO getVmDAO() {
+    public VmDao getVmDao() {
         return getDbFacade().getVmDao();
     }
 
-    public VmStaticDAO getVmStaticDAO() {
+    public VmStaticDao getVmStaticDao() {
         return getDbFacade().getVmStaticDao();
     }
 
-    public SnapshotDao getSnapshotDAO() {
+    public SnapshotDao getSnapshotDao() {
         return getDbFacade().getSnapshotDao();
     }
 
-    public VmAndTemplatesGenerationsDAO getVmAndTemplatesGenerationsDAO() {
+    public VmAndTemplatesGenerationsDao getVmAndTemplatesGenerationsDao() {
         return DbFacade.getInstance().getVmAndTemplatesGenerationsDao();
     }
 
-    public StorageDomainOvfInfoDao getStorageDomainOvfInfoDAO() {
+    public StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {
         return DbFacade.getInstance().getStorageDomainOvfInfoDao();
     }
 
-    public VmDynamicDAO getVmDynamicDAO() {
+    public VmDynamicDao getVmDynamicDao() {
         return getDbFacade().getVmDynamicDao();
     }
 
-    protected VmStatisticsDAO getVmStatisticsDAO() {
+    protected VmStatisticsDao getVmStatisticsDao() {
         return getDbFacade().getVmStatisticsDao();
     }
 
@@ -683,27 +683,27 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getVnicProfileDao();
     }
 
-    public VdsGroupDAO getVdsGroupDAO() {
+    public VdsGroupDao getVdsGroupDao() {
         return getDbFacade().getVdsGroupDao();
     }
 
-    public RoleDAO getRoleDao() {
+    public RoleDao getRoleDao() {
         return getDbFacade().getRoleDao();
     }
 
-    public RoleGroupMapDAO getRoleGroupMapDAO() {
+    public RoleGroupMapDao getRoleGroupMapDao() {
         return getDbFacade().getRoleGroupMapDao();
     }
 
-    public PermissionDAO getPermissionDAO() {
+    public PermissionDao getPermissionDao() {
         return getDbFacade().getPermissionDao();
     }
 
-    public DbUserDAO getDbUserDAO() {
+    public DbUserDao getDbUserDao() {
         return getDbFacade().getDbUserDao();
     }
 
-    public DbGroupDAO getAdGroupDAO() {
+    public DbGroupDao getAdGroupDao() {
         return getDbFacade().getDbGroupDao();
     }
 
@@ -715,11 +715,11 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getVmNicDao();
     }
 
-    protected NetworkClusterDao getNetworkClusterDAO() {
+    protected NetworkClusterDao getNetworkClusterDao() {
         return getDbFacade().getNetworkClusterDao();
     }
 
-    protected NetworkDao getNetworkDAO() {
+    protected NetworkDao getNetworkDao() {
         return getDbFacade().getNetworkDao();
     }
 
@@ -727,7 +727,7 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getInterfaceDao();
     }
 
-    public AsyncTaskDAO getAsyncTaskDao() {
+    public AsyncTaskDao getAsyncTaskDao() {
         return getDbFacade().getAsyncTaskDao();
     }
 
@@ -738,7 +738,7 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getProviderDao();
     }
 
-    public AuditLogDAO getAuditLogDao() {
+    public AuditLogDao getAuditLogDao() {
         return getDbFacade().getAuditLogDao();
     }
 

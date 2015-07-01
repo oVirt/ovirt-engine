@@ -85,7 +85,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
     }
 
     private StorageDomain loadTargetedMasterDomain() {
-        return getStorageDomainDAO().get(getParameters().getNewMasterDomainId());
+        return getStorageDomainDao().get(getParameters().getNewMasterDomainId());
     }
 
     @Override
@@ -125,11 +125,11 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
                             boolean reconstructVerbExecuted = (returnVal.getActionReturnValue() != null) ?
                                     (Boolean) returnVal.getActionReturnValue() : false;
 
-                            getStoragePoolDAO().updateStatus(getStoragePool().getId(),
+                            getStoragePoolDao().updateStatus(getStoragePool().getId(),
                                     StoragePoolStatus.NonResponsive);
 
                             if (!reconstructVerbExecuted) {
-                                getStoragePoolIsoMapDAO().remove(domainPoolMap.getId());
+                                getStoragePoolIsoMapDao().remove(domainPoolMap.getId());
                             }
 
                             if (returnVal.getSucceeded()) {

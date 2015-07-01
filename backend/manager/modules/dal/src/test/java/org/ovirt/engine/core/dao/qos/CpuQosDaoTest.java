@@ -10,10 +10,10 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class CpuQosDaoTest extends BaseDAOTestCase {
+public class CpuQosDaoTest extends BaseDaoTestCase {
 
     private CpuQosDao dao;
 

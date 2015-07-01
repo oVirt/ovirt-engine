@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 /** A test case for the {@link TryBackToAllSnapshotsOfVmCommand} class. */
 @RunWith(MockitoJUnitRunner.class)
@@ -28,7 +28,7 @@ public class TryBackToAllSnapshotsOfVmCommandTest {
     private SnapshotDao snapshotDao;
 
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     private VM vm;
     private Snapshot snapshot;
@@ -52,7 +52,7 @@ public class TryBackToAllSnapshotsOfVmCommandTest {
         cmd = spy(new TryBackToAllSnapshotsOfVmCommand<TryBackToAllSnapshotsOfVmParameters>(params));
         doNothing().when(cmd).updateVmDisksFromDb();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
-        doReturn(vmDao).when(cmd).getVmDAO();
+        doReturn(vmDao).when(cmd).getVmDao();
     }
 
     @Test

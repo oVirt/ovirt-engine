@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmPoolDAO;
+import org.ovirt.engine.core.dao.VmPoolDao;
 
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
@@ -37,7 +37,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     protected VmPool getVmPool() {
         if (mVmPool == null && getVmPoolId() != null) {
-            mVmPool = getVmPoolDAO().get(getVmPoolId());
+            mVmPool = getVmPoolDao().get(getVmPoolId());
         }
         return mVmPool;
     }
@@ -221,7 +221,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
             return false;
         }
 
-        // TODO: This is done to keep consistency with VmDAO.getById.
+        // TODO: This is done to keep consistency with VmDao.getById.
         // It can probably be removed, but that requires some more research
         VmHandler.updateNetworkInterfacesFromDb(vm);
 
@@ -254,7 +254,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         return permissionList;
     }
 
-    protected VmPoolDAO getVmPoolDAO() {
+    protected VmPoolDao getVmPoolDao() {
         return getDbFacade().getVmPoolDao();
     }
 }

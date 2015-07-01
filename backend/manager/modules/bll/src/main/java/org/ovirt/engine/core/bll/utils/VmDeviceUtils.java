@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class VmDeviceUtils {
     public final static Map<String, Object> EMPTY_SPEC_PARAMS = Collections.emptyMap();
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     private static DbFacade dbFacade = SimpleDependecyInjector.getInstance().get(DbFacade.class);
-    private static VmDeviceDAO dao = dbFacade.getVmDeviceDao();
+    private static VmDeviceDao dao = dbFacade.getVmDeviceDao();
 
     /*
      * CD-ROM device

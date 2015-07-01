@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetHostsForStorageOperationParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,10 +27,10 @@ public class GetHostsForStorageOperationQueryTest extends AbstractQueryTest<GetH
         vds.setStoragePoolId(spId);
         List<VDS> result = Collections.singletonList(vds);
 
-        // Mock the DAO
-        VdsDAO vdsDAOMock = mock(VdsDAO.class);
-        when(vdsDAOMock.getHostsForStorageOperation(spId, getQueryParameters().isLocalFsOnly())).thenReturn(result);
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDAOMock);
+        // Mock the Dao
+        VdsDao vdsDaoMock = mock(VdsDao.class);
+        when(vdsDaoMock.getHostsForStorageOperation(spId, getQueryParameters().isLocalFsOnly())).thenReturn(result);
+        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMock);
 
         // Execute the query
         getQuery().executeQueryCommand();

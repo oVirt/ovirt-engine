@@ -40,8 +40,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -51,8 +51,8 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private AddedGlusterServersParameters params;
     private VDSBrokerFrontend vdsBrokerFrontend;
     private BackendInternal backendInternal;
-    private VdsDAO vdsDaoMock;
-    private VdsGroupDAO vdsGroupDaoMock;
+    private VdsDao vdsDaoMock;
+    private VdsGroupDao vdsGroupDaoMock;
     private GlusterDBUtils dbUtils;
     private ClusterUtils clusterUtils;
 
@@ -125,8 +125,8 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private void setupMock() throws Exception {
         vdsBrokerFrontend = mock(VDSBrokerFrontend.class);
         clusterUtils = mock(ClusterUtils.class);
-        vdsDaoMock = mock(VdsDAO.class);
-        vdsGroupDaoMock = mock(VdsGroupDAO.class);
+        vdsDaoMock = mock(VdsDao.class);
+        vdsGroupDaoMock = mock(VdsGroupDao.class);
         dbUtils = mock(GlusterDBUtils.class);
         backendInternal = mock(BackendInternal.class);
 

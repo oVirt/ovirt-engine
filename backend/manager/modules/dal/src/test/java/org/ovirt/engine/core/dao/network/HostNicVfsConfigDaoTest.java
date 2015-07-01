@@ -17,10 +17,10 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class HostNicVfsConfigDaoTest extends BaseDAOTestCase {
+public class HostNicVfsConfigDaoTest extends BaseDaoTestCase {
     private HostNicVfsConfigDao dao;
 
     // Map the vfsConfig id to the number of networks and labels it has
@@ -244,9 +244,9 @@ public class HostNicVfsConfigDaoTest extends BaseDAOTestCase {
         commonRemove(FixturesTool.HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_1);
 
         Set<Guid> networks =
-                ((HostNicVfsConfigDaoDbFacadeImpl) dao).getNetworksByVfsConfigId(FixturesTool.HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_1);
+                ((HostNicVfsConfigDaoImpl) dao).getNetworksByVfsConfigId(FixturesTool.HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_1);
         Set<String> labels =
-                ((HostNicVfsConfigDaoDbFacadeImpl) dao).getLabelsByVfsConfigId(FixturesTool.HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_1);
+                ((HostNicVfsConfigDaoImpl) dao).getLabelsByVfsConfigId(FixturesTool.HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_1);
 
         checkNetworks(networks, 0);
         checkLabels(labels, 0);

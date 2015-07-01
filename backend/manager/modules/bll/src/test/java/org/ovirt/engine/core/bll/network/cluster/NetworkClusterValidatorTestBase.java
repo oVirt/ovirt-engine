@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -44,7 +44,7 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
             NetworkClusterValidatorBase.NETWORK_NAME_REPLACEMENT, NETWORK_NAME);
 
     @Mock
-    protected VdsDAO vdsDao;
+    protected VdsDao vdsDao;
     @Mock
     private DbFacade dbFacade;
     @Mock

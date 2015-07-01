@@ -141,7 +141,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     }
 
     private boolean selectProxyHost() {
-        List<VDS> activeHosts = getVdsDAO().getAllForStoragePoolAndStatus(getStoragePoolId(), VDSStatus.Up);
+        List<VDS> activeHosts = getVdsDao().getAllForStoragePoolAndStatus(getStoragePoolId(), VDSStatus.Up);
         if (activeHosts.isEmpty()) {
             return false;
         }

@@ -70,9 +70,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
             @Override
             public Void runInTransaction() {
-                getNetworkDAO().update(getNetwork());
+                getNetworkDao().update(getNetwork());
 
-                for (NetworkCluster clusterAttachment : getNetworkClusterDAO().getAllForNetwork(getNetwork().getId())) {
+                for (NetworkCluster clusterAttachment : getNetworkClusterDao().getAllForNetwork(getNetwork().getId())) {
                     NetworkClusterHelper.setStatus(clusterAttachment.getClusterId(), getNetwork());
                 }
 
@@ -191,7 +191,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     private Network getOldNetwork() {
         if (oldNetwork == null) {
-            oldNetwork = getNetworkDAO().get(getNetwork().getId());
+            oldNetwork = getNetworkDao().get(getNetwork().getId());
         }
         return oldNetwork;
     }
@@ -440,7 +440,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         private List<VdsNetworkInterface> getLabeledNics(Network network) {
-            List<NetworkCluster> clusters = getNetworkClusterDAO().getAllForNetwork(network.getId());
+            List<NetworkCluster> clusters = getNetworkClusterDao().getAllForNetwork(network.getId());
             List<VdsNetworkInterface> labeledNics = new ArrayList<>();
             for (NetworkCluster networkCluster : clusters) {
                 labeledNics.addAll(getDbFacade().getInterfaceDao()

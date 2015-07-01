@@ -4,13 +4,13 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class IsVmTemlateWithSameNameExistQuery<P extends NameQueryParameters>
         extends QueriesCommandBase<P> {
 
     @Inject
-    private VmTemplateDAO vmTemplateDao;
+    private VmTemplateDao vmTemplateDao;
 
     public IsVmTemlateWithSameNameExistQuery(P parameters) {
         super(parameters);

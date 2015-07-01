@@ -32,11 +32,11 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.utils.CommonConstants;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.QuotaDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.QuotaDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkViewDao;
 import org.ovirt.engine.core.searchbackend.SearchObjectAutoCompleter;
@@ -67,50 +67,50 @@ public class SearchQueryTest extends DbDependentTestBase {
     public void setup() {
         facadeMock = DbFacade.getInstance();
         final DiskDao diskDao = Mockito.mock(DiskDao.class);
-        final QuotaDAO quotaDAO = Mockito.mock(QuotaDAO.class);
-        final VmDAO vmDAO = Mockito.mock(VmDAO.class);
-        final VdsDAO vdsDAO = Mockito.mock(VdsDAO.class);
-        final VdsGroupDAO vdsGroupDAO = Mockito.mock(VdsGroupDAO.class);
-        final StoragePoolDAO storagePoolDAO = Mockito.mock(StoragePoolDAO.class);
+        final QuotaDao quotaDao = Mockito.mock(QuotaDao.class);
+        final VmDao vmDao = Mockito.mock(VmDao.class);
+        final VdsDao vdsDao = Mockito.mock(VdsDao.class);
+        final VdsGroupDao vdsGroupDao = Mockito.mock(VdsGroupDao.class);
+        final StoragePoolDao storagePoolDao = Mockito.mock(StoragePoolDao.class);
         final GlusterVolumeDao glusterVolumeDao = Mockito.mock(GlusterVolumeDao.class);
         final NetworkViewDao networkViewDao = Mockito.mock(NetworkViewDao.class);
 
         Mockito.when(facadeMock.getDiskDao()).thenReturn(diskDao);
-        Mockito.when(facadeMock.getQuotaDao()).thenReturn(quotaDAO);
-        Mockito.when(facadeMock.getVmDao()).thenReturn(vmDAO);
-        Mockito.when(facadeMock.getVdsDao()).thenReturn(vdsDAO);
-        Mockito.when(facadeMock.getVdsGroupDao()).thenReturn(vdsGroupDAO);
-        Mockito.when(facadeMock.getStoragePoolDao()).thenReturn(storagePoolDAO);
+        Mockito.when(facadeMock.getQuotaDao()).thenReturn(quotaDao);
+        Mockito.when(facadeMock.getVmDao()).thenReturn(vmDao);
+        Mockito.when(facadeMock.getVdsDao()).thenReturn(vdsDao);
+        Mockito.when(facadeMock.getVdsGroupDao()).thenReturn(vdsGroupDao);
+        Mockito.when(facadeMock.getStoragePoolDao()).thenReturn(storagePoolDao);
         Mockito.when(facadeMock.getGlusterVolumeDao()).thenReturn(glusterVolumeDao);
         Mockito.when(facadeMock.getNetworkViewDao()).thenReturn(networkViewDao);
-        // mock DAOs
+        // mock Daos
         mockDiskSao(diskDao);
-        mockQuotaDAO(quotaDAO);
-        mockVMDAO(vmDAO);
-        mockVdsDAO(vdsDAO);
-        mockVdsGroupDAO(vdsGroupDAO);
-        mockStoragePoolDAO(storagePoolDAO);
+        mockQuotaDao(quotaDao);
+        mockVMDao(vmDao);
+        mockVdsDao(vdsDao);
+        mockVdsGroupDao(vdsGroupDao);
+        mockStoragePoolDao(storagePoolDao);
         mockGlusterVolumeDao(glusterVolumeDao);
         mockNetworkDao(networkViewDao);
     }
 
     /**
-     * Mock disk DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list will
+     * Mock disk Dao so that when getAllWithQuery will be called with the appropriate query string, a unique list will
      * be returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
      * @param diskDao
      *            - The dao to be used
      */
-    private void mockDiskSao(final DiskDao diskDAO) {
+    private void mockDiskSao(final DiskDao diskDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(diskDAO.getAllWithQuery(Matchers.matches(getDiskImageRegexString(search))))
+        Mockito.when(diskDao.getAllWithQuery(Matchers.matches(getDiskImageRegexString(search))))
                 .thenReturn(diskImageResultList);
     }
 
-    private void mockQuotaDAO(final QuotaDAO quotaDAO) {
+    private void mockQuotaDao(final QuotaDao quotaDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(quotaDAO.getAllWithQuery(Matchers.matches(getQuotaRegexString(search))))
+        Mockito.when(quotaDao.getAllWithQuery(Matchers.matches(getQuotaRegexString(search))))
                 .thenReturn(quotaResultList);
     }
 
@@ -127,35 +127,35 @@ public class SearchQueryTest extends DbDependentTestBase {
     }
 
     /**
-     * Mock vds group DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list
+     * Mock vds group Dao so that when getAllWithQuery will be called with the appropriate query string, a unique list
      * will be returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
-     * @param vdsGroupDAO
+     * @param vdsGroupDao
      *            - The dao to be used
      */
-    private void mockVdsGroupDAO(final VdsGroupDAO vdsGroupDAO) {
+    private void mockVdsGroupDao(final VdsGroupDao vdsGroupDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(vdsGroupDAO.getAllWithQuery(Matchers.matches(getVdsGroupRegexString(search))))
+        Mockito.when(vdsGroupDao.getAllWithQuery(Matchers.matches(getVdsGroupRegexString(search))))
                 .thenReturn(vdsGroupResultList);
     }
 
     /**
-     * Mock storage pool DAO so that when getAllWithQuery will be called with the appropriate query string, a unique
+     * Mock storage pool Dao so that when getAllWithQuery will be called with the appropriate query string, a unique
      * list will be returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
-     * @param storagePoolDAO
+     * @param storagePoolDao
      *            - The dao to be used
      */
-    private void mockStoragePoolDAO(final StoragePoolDAO storagePoolDAO) {
+    private void mockStoragePoolDao(final StoragePoolDao storagePoolDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(storagePoolDAO.getAllWithQuery(Matchers.matches(getStoragePoolRegexString(search))))
+        Mockito.when(storagePoolDao.getAllWithQuery(Matchers.matches(getStoragePoolRegexString(search))))
                 .thenReturn(storagePoolResultList);
     }
 
     /**
-     * Mock Gluster Volume DAO so that when getAllWithQuery will be called with the appropriate query string, a unique
+     * Mock Gluster Volume Dao so that when getAllWithQuery will be called with the appropriate query string, a unique
      * list will be returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
@@ -190,30 +190,30 @@ public class SearchQueryTest extends DbDependentTestBase {
     }
 
     /**
-     * Mock Vds DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list will be
+     * Mock Vds Dao so that when getAllWithQuery will be called with the appropriate query string, a unique list will be
      * returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
      * @param diskImageDao
      *            - The dao to be used
      */
-    private void mockVdsDAO(final VdsDAO vdsDAO) {
+    private void mockVdsDao(final VdsDao vdsDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(vdsDAO.getAllWithQuery(Matchers.matches(getVdsRegexString(search))))
+        Mockito.when(vdsDao.getAllWithQuery(Matchers.matches(getVdsRegexString(search))))
                 .thenReturn(vdsResultList);
     }
 
     /**
-     * Mock VM DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list will be
+     * Mock VM Dao so that when getAllWithQuery will be called with the appropriate query string, a unique list will be
      * returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
-     * @param vmDAO
+     * @param vmDao
      *            - The dao to be used
      */
-    private void mockVMDAO(final VmDAO vmDAO) {
+    private void mockVMDao(final VmDao vmDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(vmDAO.getAllUsingQuery(Matchers.matches(getVMRegexString(search))))
+        Mockito.when(vmDao.getAllUsingQuery(Matchers.matches(getVMRegexString(search))))
                 .thenReturn(vmResultList);
     }
 

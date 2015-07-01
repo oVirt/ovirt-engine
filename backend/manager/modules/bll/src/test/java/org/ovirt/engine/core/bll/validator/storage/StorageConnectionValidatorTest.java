@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StorageConnectionValidatorTest {
@@ -29,7 +29,7 @@ public class StorageConnectionValidatorTest {
     private StorageConnectionValidator validator;
     private StorageDomain domain;
     @Mock
-    protected StorageServerConnectionDAO storageServerConnectionDAO;
+    protected StorageServerConnectionDao storageServerConnectionDao;
 
     @Before
     public void setUp() {

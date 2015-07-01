@@ -49,7 +49,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
  * Restores the given snapshot, including all the VM configuration that was stored in it.<br>
@@ -139,7 +138,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         if (!getTaskIdList().isEmpty()) {
             deleteOrphanedImages();
         } else {
-            getVmStaticDAO().incrementDbGeneration(getVm().getId());
+            getVmStaticDao().incrementDbGeneration(getVm().getId());
             getSnapshotDao().updateStatus(getSnapshot().getId(), SnapshotStatus.OK);
             unlockVm();
         }
@@ -424,10 +423,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
             }
         }
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return getDbFacade().getSnapshotDao();
     }
 
     @Override

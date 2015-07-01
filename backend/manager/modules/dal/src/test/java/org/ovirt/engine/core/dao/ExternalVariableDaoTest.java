@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.ExternalVariable;
 /**
  * {@link ExternalVariableDao} tests
  */
-public class ExternalVariableDaoTest extends BaseDAOTestCase {
+public class ExternalVariableDaoTest extends BaseDaoTestCase {
     /**
      * Test getting existing variable
      */

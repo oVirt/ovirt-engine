@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,7 +37,7 @@ public class GetAllExternalNetworksOnProviderQueryTest
     private ProviderDao providerDao;
 
     @Mock
-    private StoragePoolDAO dcDao;
+    private StoragePoolDao dcDao;
 
     @Mock
     private ProviderProxyFactory providerProxyFactory;

@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public class GetConsoleDevicesQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
@@ -16,7 +16,7 @@ public class GetConsoleDevicesQuery<P extends IdQueryParameters> extends Queries
 
     @Override
     protected void executeQueryCommand() {
-        final List<VmDevice> consoleDevices = getVmDeviceDAO().getVmDeviceByVmIdAndType(getParameters().getId(),
+        final List<VmDevice> consoleDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getId(),
                 VmDeviceGeneralType.CONSOLE);
 
         List<String> result = new ArrayList<>(consoleDevices.size());
@@ -27,7 +27,7 @@ public class GetConsoleDevicesQuery<P extends IdQueryParameters> extends Queries
         getQueryReturnValue().setReturnValue(result);
     }
 
-    protected VmDeviceDAO getVmDeviceDAO() {
+    protected VmDeviceDao getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
     }
 

@@ -19,12 +19,12 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.ActionGroupDAO;
+import org.ovirt.engine.core.dao.ActionGroupDao;
 
 
 public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, GetCommandsCompatibilityVersionsQuery<VdcQueryParametersBase>> {
 
-    private ActionGroupDAO actionGroupDaoMock;
+    private ActionGroupDao actionGroupDaoMock;
     private static final Version RUN_VM_VERSION = Version.v3_0;
     private static final Version ADD_VM_FROM_SNAPSHOT_VERSION = Version.v3_1;
 
@@ -32,7 +32,7 @@ public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQuery
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        setUpDAOMocks();
+        setUpDaoMocks();
     }
     @Test
     public void testExecuteQueryCommand() {
@@ -69,10 +69,10 @@ public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQuery
         assertEquals(version, runVmEntry.getClusterVersion());
     }
 
-    private void setUpDAOMocks() {
-        // Mock the DAOs
+    private void setUpDaoMocks() {
+        // Mock the Daos
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
-        actionGroupDaoMock = mock(ActionGroupDAO.class);
+        actionGroupDaoMock = mock(ActionGroupDao.class);
         when(dbFacadeMock.getActionGroupDao()).thenReturn(actionGroupDaoMock);
     }
 }

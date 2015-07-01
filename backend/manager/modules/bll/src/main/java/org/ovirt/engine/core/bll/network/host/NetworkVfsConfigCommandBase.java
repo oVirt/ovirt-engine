@@ -32,7 +32,7 @@ public abstract class NetworkVfsConfigCommandBase extends VfsConfigCommandBase<V
     }
 
     protected Network getNetwork() {
-        return getNetworkDAO().get(getNetworkId());
+        return getNetworkDao().get(getNetworkId());
     }
 
     public String getNetworkName() {

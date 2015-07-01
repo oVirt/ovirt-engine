@@ -40,8 +40,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StepDao;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -56,8 +56,8 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     private static final Guid STEP_ID = Guid.newGuid();
     private static final Guid SERVER_UUID_1 = Guid.newGuid();
     private GlusterVolumeTaskStatusEntity expectedVolumeStatusDetails;
-    private VdsDAO vdsDao;
-    private VdsGroupDAO clusterDao;
+    private VdsDao vdsDao;
+    private VdsGroupDao clusterDao;
     private GlusterVolumeDao volumeDao;
     private GlusterServerDao glusterServerDao;
     private StepDao stepDao;
@@ -205,8 +205,8 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
 
     private void setupMock() {
         clusterUtils = mock(ClusterUtils.class);
-        vdsDao = mock(VdsDAO.class);
-        clusterDao = mock(VdsGroupDAO.class);
+        vdsDao = mock(VdsDao.class);
+        clusterDao = mock(VdsGroupDao.class);
         volumeDao = mock(GlusterVolumeDao.class);
         glusterServerDao = mock(GlusterServerDao.class);
         stepDao = mock(StepDao.class);

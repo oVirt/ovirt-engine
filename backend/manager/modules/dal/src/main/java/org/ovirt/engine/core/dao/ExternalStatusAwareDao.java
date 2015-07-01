@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 
 /**
- * This is a specific type of DAO that is aware of entities having a "externalStatus" field, and can update this field.
+ * This is a specific type of Dao that is aware of entities having a "externalStatus" field, and can update this field.
  *
  * @param <ID>
  *            The type of the entity's id.
@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @see GenericDao
  */
 
-public interface ExternalStatusAwareDao <ID extends Serializable, S extends Enum<?>> extends DAO {
+public interface ExternalStatusAwareDao <ID extends Serializable, S extends Enum<?>> extends Dao {
 
     /**
      * Update the entity's status field only.

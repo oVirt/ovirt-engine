@@ -14,9 +14,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public class BatchProcedureCallTest extends BaseDAOTestCase {
+public class BatchProcedureCallTest extends BaseDaoTestCase {
 
-    private TagDAO dao;
+    private TagDao dao;
 
     public BatchProcedureCallTest() {
     }

@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>ImageDAO</code> defines a type for performing CRUD operations on instances of {@link Image}.
+ * <code>ImageDao</code> defines a type for performing CRUD operations on instances of {@link Image}.
  */
 public interface ImageDao extends GenericDao<Image, Guid>, StatusAwareDao<Guid, ImageStatus> {
     public void updateStatusOfImagesByImageGroupId(Guid imageGroupId, ImageStatus status);

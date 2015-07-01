@@ -32,12 +32,12 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -52,22 +52,22 @@ public class GetDiskAlignmentCommandTest {
     public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.LOCK_MANAGER, lockManager);
 
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
 
     @Mock
-    private StorageDomainStaticDAO storageDomainStaticDAO;
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     @Mock
-    private StoragePoolDAO spDao;
+    private StoragePoolDao spDao;
 
     @Mock
-    private VmDeviceDAO vmDeviceDao;
+    private VmDeviceDao vmDeviceDao;
 
     @Mock
-    private VdsGroupDAO vdsGroupDao;
+    private VdsGroupDao vdsGroupDao;
 
     private GetDiskAlignmentCommand<GetDiskAlignmentParameters> cmd;
 
@@ -122,16 +122,16 @@ public class GetDiskAlignmentCommandTest {
         when(vdsDao.getAllForVdsGroupWithStatus(groupId, VDSStatus.Up)).thenReturn(Collections.singletonList(vds));
         when(spDao.get(poolId)).thenReturn(storagePool);
         when(vdsGroupDao.get(groupId)).thenReturn(vdsGroup);
-        when(storageDomainStaticDAO.get(storageDomainId)).thenReturn(storageDomain.getStorageStaticData());
+        when(storageDomainStaticDao.get(storageDomainId)).thenReturn(storageDomain.getStorageStaticData());
 
         cmd = spy(new GetDiskAlignmentCommand<GetDiskAlignmentParameters>(new GetDiskAlignmentParameters(diskId)));
 
         doReturn(disk).when(cmd).getDisk();
-        doReturn(vdsDao).when(cmd).getVdsDAO();
-        doReturn(vmDao).when(cmd).getVmDAO();
+        doReturn(vdsDao).when(cmd).getVdsDao();
+        doReturn(vmDao).when(cmd).getVmDao();
         doReturn(spDao).when(cmd).getStoragePoolDao();
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
-        doReturn(storageDomainStaticDAO).when(cmd).getStorageDomainStaticDAO();
+        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        doReturn(storageDomainStaticDao).when(cmd).getStorageDomainStaticDao();
     }
 
     /* Tests for canDoAction() flow */

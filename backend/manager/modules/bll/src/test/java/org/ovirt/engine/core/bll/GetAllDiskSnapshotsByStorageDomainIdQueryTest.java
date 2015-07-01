@@ -20,15 +20,15 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
         extends AbstractQueryTest<IdQueryParameters,
         GetAllDiskSnapshotsByStorageDomainIdQuery<IdQueryParameters>> {
 
-    /** The {@link org.ovirt.engine.core.dao.DiskImageDAO} mocked for the test */
-    private DiskImageDAO diskImageDAO;
+    /** The {@link org.ovirt.engine.core.dao.DiskImageDao} mocked for the test */
+    private DiskImageDao diskImageDao;
 
     /** The {@link org.ovirt.engine.core.dao.SnapshotDao} mocked for the test */
     private SnapshotDao snapshotDaoMock;
@@ -51,16 +51,16 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
     public void setUp() throws Exception {
         super.setUp();
         storageDoaminId = Guid.newGuid();
-        setUpDAOMocks();
+        setUpDaoMocks();
     }
 
-    private void setUpDAOMocks() {
+    private void setUpDaoMocks() {
 
-        // Mock the DAOs
+        // Mock the Daos
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
 
-        diskImageDAO = mock(DiskImageDAO.class);
-        when(dbFacadeMock.getDiskImageDao()).thenReturn(diskImageDAO);
+        diskImageDao = mock(DiskImageDao.class);
+        when(dbFacadeMock.getDiskImageDao()).thenReturn(diskImageDao);
         snapshotDaoMock = mock(SnapshotDao.class);
         when(dbFacadeMock.getSnapshotDao()).thenReturn(snapshotDaoMock);
 
@@ -80,7 +80,7 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
         List diskImages = new ArrayList(Arrays.asList(disk1, disk2, disk3));
         List snapshots = new ArrayList(Arrays.asList(snapshot));
 
-        when(diskImageDAO.getAllSnapshotsForStorageDomain(storageDoaminId)).thenReturn(diskImages);
+        when(diskImageDao.getAllSnapshotsForStorageDomain(storageDoaminId)).thenReturn(diskImages);
         when(snapshotDaoMock.getAllByStorageDomain(storageDoaminId)).thenReturn(snapshots);
     }
 

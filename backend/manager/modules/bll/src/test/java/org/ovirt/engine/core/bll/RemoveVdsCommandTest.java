@@ -36,13 +36,13 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.dao.VdsStatisticsDAO;
-import org.ovirt.engine.core.dao.VmStaticDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
@@ -51,16 +51,16 @@ import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveVdsCommandTest {
     @Mock
-    private VdsDynamicDAO vdsDynamicDAO;
+    private VdsDynamicDao vdsDynamicDao;
 
     @Mock
-    private StoragePoolDAO storagePoolDAO;
+    private StoragePoolDao storagePoolDao;
 
     @Mock
-    private VmStaticDAO vmStaticDAO;
+    private VmStaticDao vmStaticDao;
 
     @Mock
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
 
     @Mock
     private VDSGroup vdsGroup;
@@ -69,7 +69,7 @@ public class RemoveVdsCommandTest {
     private GlusterBrickDao glusterBrickDao;
 
     @Mock
-    private VdsGroupDAO vdsGroupDao;
+    private VdsGroupDao vdsGroupDao;
 
     @Mock
     private ClusterUtils clusterUtils;
@@ -90,10 +90,10 @@ public class RemoveVdsCommandTest {
     private VDSBrokerFrontend vdsBrokerFrontend;
 
     @Mock
-    private VdsStaticDAO vdsStaticDao;
+    private VdsStaticDao vdsStaticDao;
 
     @Mock
-    private VdsStatisticsDAO vdsStatisticsDao;
+    private VdsStatisticsDao vdsStatisticsDao;
 
     /**
      * The command under test.
@@ -108,19 +108,19 @@ public class RemoveVdsCommandTest {
     }
 
     private void prepareMocks() {
-        doReturn(vdsDAO).when(command).getVdsDAO();
-        doReturn(vmStaticDAO).when(command).getVmStaticDAO();
-        doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
-        doReturn(vdsDynamicDAO).when(command).getVdsDynamicDAO();
+        doReturn(vdsDao).when(command).getVdsDao();
+        doReturn(vmStaticDao).when(command).getVmStaticDao();
+        doReturn(storagePoolDao).when(command).getStoragePoolDao();
+        doReturn(vdsDynamicDao).when(command).getVdsDynamicDao();
         doReturn(glusterBrickDao).when(command).getGlusterBrickDao();
-        doReturn(vdsGroupDao).when(command).getVdsGroupDAO();
+        doReturn(vdsGroupDao).when(command).getVdsGroupDao();
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(hooksDao).when(command).getGlusterHooksDao();
         doReturn(vdsGroup).when(vdsGroupDao).get(Mockito.any(Guid.class));
         doReturn(clusterUtils).when(command).getClusterUtils();
         doReturn(backend).when(command).getBackend();
         doReturn(vdsBrokerFrontend).when(backend).getResourceManager();
-        doReturn(vdsStaticDao).when(command).getVdsStaticDAO();
+        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(vdsStatisticsDao).when(command).getVdsStatisticsDao();
         when(clusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
     }
@@ -230,7 +230,7 @@ public class RemoveVdsCommandTest {
         mockForExecute();
         command.executeCommand();
         assertEquals(command.getAuditLogTypeValue(), AuditLogType.USER_REMOVE_VDS);
-        Mockito.verify(vdsDynamicDAO, times(1)).remove(any(Guid.class));
+        Mockito.verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
         Mockito.verify(vdsStatisticsDao, times(1)).remove(any(Guid.class));
         Mockito.verify(volumeDao, never()).removeByClusterId(any(Guid.class));
         Mockito.verify(hooksDao, never()).removeAllInCluster(any(Guid.class));
@@ -248,7 +248,7 @@ public class RemoveVdsCommandTest {
         mockForExecute();
         command.executeCommand();
         assertEquals(command.getAuditLogTypeValue(), AuditLogType.USER_REMOVE_VDS);
-        Mockito.verify(vdsDynamicDAO, times(1)).remove(any(Guid.class));
+        Mockito.verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
         Mockito.verify(vdsStatisticsDao, times(1)).remove(any(Guid.class));
         Mockito.verify(volumeDao, times(1)).removeByClusterId(any(Guid.class));
         Mockito.verify(hooksDao, times(1)).removeAllInCluster(any(Guid.class));
@@ -258,7 +258,7 @@ public class RemoveVdsCommandTest {
         doReturn(null).when(vdsBrokerFrontend).RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class));
         doNothing().when(vdsStaticDao).remove(any(Guid.class));
         doNothing().when(vdsStatisticsDao).remove(any(Guid.class));
-        doNothing().when(vdsDynamicDAO).remove(any(Guid.class));
+        doNothing().when(vdsDynamicDao).remove(any(Guid.class));
         doNothing().when(volumeDao).removeByClusterId(any(Guid.class));
         doNothing().when(hooksDao).removeAllInCluster(any(Guid.class));
     }
@@ -267,7 +267,7 @@ public class RemoveVdsCommandTest {
      * Mocks that a valid {@link VdsDynamic} gets returned.
      */
     private void mockVdsDynamic() {
-        when(vdsDynamicDAO.get(command.getParameters().getVdsId())).thenReturn(new VdsDynamic());
+        when(vdsDynamicDao.get(command.getParameters().getVdsId())).thenReturn(new VdsDynamic());
     }
 
     /**
@@ -278,7 +278,7 @@ public class RemoveVdsCommandTest {
      *            The list of VM names.
      */
     private void mockVmsPinnedToHost(List<String> emptyList) {
-        when(vmStaticDAO.getAllNamesPinnedToHost(command.getParameters().getVdsId())).thenReturn(emptyList);
+        when(vmStaticDao.getAllNamesPinnedToHost(command.getParameters().getVdsId())).thenReturn(emptyList);
     }
 
     /**
@@ -290,7 +290,7 @@ public class RemoveVdsCommandTest {
     private void mockVdsWithStatus(VDSStatus status) {
         VDS vds = new VDS();
         vds.setStatus(status);
-        when(vdsDAO.get(command.getParameters().getVdsId())).thenReturn(vds);
+        when(vdsDao.get(command.getParameters().getVdsId())).thenReturn(vds);
     }
 
     /**

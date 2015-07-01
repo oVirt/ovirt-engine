@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 
 public class GetVmPayloadQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
@@ -23,7 +23,7 @@ public class GetVmPayloadQuery<P extends IdQueryParameters> extends QueriesComma
     @Override
     protected void executeQueryCommand() {
         if (MultiLevelAdministrationHandler.isAdminUser(getUser())) {
-            VmDeviceDAO dao = getDbFacade().getVmDeviceDao();
+            VmDeviceDao dao = getDbFacade().getVmDeviceDao();
             List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceGeneralType.DISK);
 
             for (VmDevice disk : disks) {

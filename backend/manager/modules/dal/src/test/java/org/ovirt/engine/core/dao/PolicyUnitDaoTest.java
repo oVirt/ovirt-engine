@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 
-public class PolicyUnitDaoTest extends BaseDAOTestCase {
+public class PolicyUnitDaoTest extends BaseDaoTestCase {
 
     private static final int NUMBER_OF_POLICY_UNITS = 2;
     PolicyUnitDao dao;

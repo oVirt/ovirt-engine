@@ -42,7 +42,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -91,13 +91,13 @@ public class SetupNetworksHelperTest {
             mockConfig(ConfigValues.DefaultMTU, DEFAULT_MTU));
 
     @Mock
-    private NetworkDao networkDAO;
+    private NetworkDao networkDao;
 
     @Mock
     private VmInterfaceManager vmInterfaceManager;
 
     @Mock
-    private InterfaceDao interfaceDAO;
+    private InterfaceDao interfaceDao;
 
     @Mock
     private HostNetworkQosDao qosDao;
@@ -2232,7 +2232,7 @@ public class SetupNetworksHelperTest {
     }
 
     private void mockExistingNetworks(Network... networks) {
-        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(Arrays.asList(networks));
+        when(networkDao.getAllForCluster(any(Guid.class))).thenReturn(Arrays.asList(networks));
     }
 
     private void mockExistingIfacesWithBond(VdsNetworkInterface bond, List<VdsNetworkInterface> ifacesToBond) {
@@ -2259,7 +2259,7 @@ public class SetupNetworksHelperTest {
                     nics[i].getLabels(),
                     nics[i].getSpeed()));
         }
-        when(interfaceDAO.getAllInterfacesForVds(any(Guid.class))).thenReturn(existingIfaces);
+        when(interfaceDao.getAllInterfacesForVds(any(Guid.class))).thenReturn(existingIfaces);
     }
 
     private SetupNetworksHelper createHelper(SetupNetworksParameters params) {
@@ -2285,9 +2285,9 @@ public class SetupNetworksHelperTest {
         doReturn(null).when(helper).translateErrorMessages(Matchers.<List<String>> any());
         DbFacade dbFacade = mock(DbFacade.class);
         doReturn(dbFacade).when(helper).getDbFacade();
-        doReturn(interfaceDAO).when(dbFacade).getInterfaceDao();
-        doReturn(mock(VdsDAO.class)).when(dbFacade).getVdsDao();
-        doReturn(networkDAO).when(dbFacade).getNetworkDao();
+        doReturn(interfaceDao).when(dbFacade).getInterfaceDao();
+        doReturn(mock(VdsDao.class)).when(dbFacade).getVdsDao();
+        doReturn(networkDao).when(dbFacade).getNetworkDao();
         doReturn(qosDao).when(dbFacade).getHostNetworkQosDao();
         doReturn(brickDao).when(dbFacade).getGlusterBrickDao();
 

@@ -49,9 +49,9 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
         List<VDS> toRemoveHostList = new ArrayList<>();
         List<VmNetworkInterface> vmNICs = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
         Guid clusterId = hosts.get(0).getVdsGroupId();
-        List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(clusterId);
+        List<Network> clusterNetworks = getNetworkDao().getAllForCluster(clusterId);
         Map<String, Network> networksByName = Entities.entitiesByName(clusterNetworks);
-        Map<Guid, List<String>> hostNics = getInterfaceDAO().getHostNetworksByCluster(clusterId);
+        Map<Guid, List<String>> hostNics = getInterfaceDao().getHostNetworksByCluster(clusterId);
         Network displayNetwork = NetworkUtils.getDisplayNetwork(clusterNetworks);
         Map<Guid, VdsNetworkInterface> hostDisplayNics = getDisplayNics(displayNetwork);
 
@@ -82,7 +82,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
     public Map<Guid, VdsNetworkInterface> getDisplayNics(Network displayNetwork) {
         Map<Guid, VdsNetworkInterface> displayNics = new HashMap<>();
         if (displayNetwork != null) {
-            List<VdsNetworkInterface> nics = getInterfaceDAO().getVdsInterfacesByNetworkId(displayNetwork.getId());
+            List<VdsNetworkInterface> nics = getInterfaceDao().getVdsInterfacesByNetworkId(displayNetwork.getId());
             for (VdsNetworkInterface nic : nics) {
                 displayNics.put(nic.getVdsId(), nic);
             }
@@ -239,11 +239,11 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 
-    private InterfaceDao getInterfaceDAO() {
+    private InterfaceDao getInterfaceDao() {
         return DbFacade.getInstance().getInterfaceDao();
     }
 
-    private NetworkDao getNetworkDAO() {
+    private NetworkDao getNetworkDao() {
         return DbFacade.getInstance().getNetworkDao();
     }
 }

@@ -120,7 +120,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
             return false;
         }
 
-        VDS vds = getVdsDAO().get(getParameters().getVdsId());
+        VDS vds = getVdsDao().get(getParameters().getVdsId());
 
         // check if network in cluster and vds active
         if ((vds.getStatus() == VDSStatus.Up || vds.getStatus() == VDSStatus.Installing)

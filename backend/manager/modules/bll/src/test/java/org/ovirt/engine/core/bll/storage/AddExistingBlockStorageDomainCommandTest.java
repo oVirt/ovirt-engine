@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,7 +48,7 @@ public class AddExistingBlockStorageDomainCommandTest {
     private DbFacade dbFacade;
 
     @Mock
-    private StorageDomainStaticDAO storageDomainStaticDAO;
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     @Before
     public void setUp() {
@@ -56,7 +56,7 @@ public class AddExistingBlockStorageDomainCommandTest {
         parameters.setVdsId(Guid.newGuid());
         command = spy(new AddExistingBlockStorageDomainCommand<>(parameters));
         doReturn(dbFacade).when(command).getDbFacade();
-        doReturn(storageDomainStaticDAO).when(command).getStorageDomainStaticDAO();
+        doReturn(storageDomainStaticDao).when(command).getStorageDomainStaticDao();
 
         doNothing().when(command).addStorageDomainInDb();
         doNothing().when(command).updateStorageDomainDynamicFromIrs();
@@ -82,7 +82,7 @@ public class AddExistingBlockStorageDomainCommandTest {
 
     @Test
     public void testAlreadyExistStorageDomain() {
-        when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(getStorageDomain());
+        when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(getStorageDomain());
         assertFalse("Storage Domain already exists", command.canAddDomain());
         assertTrue("Import block Storage Domain should have failed due to already existing Storage Domain",
                 command.getReturnValue()

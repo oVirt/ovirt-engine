@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.LunDAO;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -156,7 +156,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
      * @return the filtered LUNs list
      */
     protected List<LUNs> filterLUNsThatBelongToExistingStorageDomains(List<LUNs> luns) {
-        List<StorageDomain> existingStorageDomains = getStorageDomainDAO().getAll();
+        List<StorageDomain> existingStorageDomains = getStorageDomainDao().getAll();
         final List<Guid> existingStorageDomainIDs = Entities.getIds(existingStorageDomains);
 
         return LinqUtils.filter(luns, new Predicate<LUNs>() {
@@ -211,7 +211,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         List<StorageDomain> storageDomains = new ArrayList<>();
 
         // Get existing PhysicalVolumes.
-        List<String> existingLunIds = Entities.getIds(getLunDAO().getAll());
+        List<String> existingLunIds = Entities.getIds(getLunDao().getAll());
 
         for (String vgID : vgIDs) {
             VDSReturnValue returnValue = null;
@@ -283,11 +283,11 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         return super.getBackend();
     }
 
-    protected StorageDomainDAO getStorageDomainDAO() {
+    protected StorageDomainDao getStorageDomainDao() {
         return getDbFacade().getStorageDomainDao();
     }
 
-    protected LunDAO getLunDAO() {
+    protected LunDao getLunDao() {
         return getDbFacade().getLunDao();
     }
 

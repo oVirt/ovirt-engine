@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -154,7 +154,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
-                            getDiskImageDynamicDAO().remove(diskImage.getImageId());
+                            getDiskImageDynamicDao().remove(diskImage.getImageId());
                             Guid imageTemplate = diskImage.getImageTemplateId();
                             Guid currentGuid = diskImage.getImageId();
                             // next 'while' statement removes snapshots from DB only (the
@@ -177,7 +177,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                             }
 
                             getBaseDiskDao().remove(diskImage.getId());
-                            getVmDeviceDAO().remove(new VmDeviceId(diskImage.getId(), null));
+                            getVmDeviceDao().remove(new VmDeviceId(diskImage.getId(), null));
 
                             for (Snapshot s : updatedSnapshots) {
                                 getSnapshotDao().update(s);
@@ -201,7 +201,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
      */
     protected VM getVmForNonShareableDiskImage(DiskImage disk) {
         if (!disk.isShareable()) {
-            List<VM> vms = getVmDAO().getVmsListForDisk(disk.getId(), false);
+            List<VM> vms = getVmDao().getVmsListForDisk(disk.getId(), false);
             if (!vms.isEmpty()) {
                 return vms.get(0);
             }
@@ -304,7 +304,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                                 getDiskImage().isWipeAfterDelete(), getParameters().getForceDelete())));
     }
 
-    protected VmDeviceDAO getVmDeviceDAO() {
+    protected VmDeviceDao getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
     }
 }

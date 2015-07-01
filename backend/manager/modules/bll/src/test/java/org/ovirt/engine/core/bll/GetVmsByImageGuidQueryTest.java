@@ -12,12 +12,12 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 /**
  * A test for the {@link GetVmsByDiskGuidQuery} class.
- * It tests that flow (i.e., that the query delegates properly to the DAO}).
- * The internal workings of the DAO are not tested.
+ * It tests that flow (i.e., that the query delegates properly to the Dao}).
+ * The internal workings of the Dao are not tested.
  */
 public class GetVmsByImageGuidQueryTest extends AbstractQueryTest<IdQueryParameters, GetVmsByDiskGuidQuery<IdQueryParameters>> {
     @Test
@@ -26,11 +26,11 @@ public class GetVmsByImageGuidQueryTest extends AbstractQueryTest<IdQueryParamet
         Guid imageGuid = Guid.newGuid();
         when(params.getId()).thenReturn(imageGuid);
 
-        // Set up the DAOs
+        // Set up the Daos
         Map<Boolean, List<VM>> expected = Collections.singletonMap(true, Collections.singletonList(new VM()));
-        VmDAO vmDAOMock = mock(VmDAO.class);
-        when(vmDAOMock.getForDisk(imageGuid, true)).thenReturn(expected);
-        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDAOMock);
+        VmDao vmDaoMock = mock(VmDao.class);
+        when(vmDaoMock.getForDisk(imageGuid, true)).thenReturn(expected);
+        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDaoMock);
 
         // Run the query
         GetVmsByDiskGuidQuery<IdQueryParameters> query = getQuery();

@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public class UpdateWatchdogCommandTest {
 
@@ -52,11 +52,11 @@ public class UpdateWatchdogCommandTest {
         params.setId(new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db"));
         params.setAction(VmWatchdogAction.PAUSE);
         params.setModel(vmWatchdogType);
-        final VmDAO vmDaoMock = mock(VmDAO.class);
+        final VmDao vmDaoMock = mock(VmDao.class);
         when(vmDaoMock.get(new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db"))).thenReturn(null);
         UpdateWatchdogCommand command = new UpdateWatchdogCommand(params) {
             @Override
-            public VmDAO getVmDAO() {
+            public VmDao getVmDao() {
                 return vmDaoMock;
             }
         };
@@ -71,19 +71,19 @@ public class UpdateWatchdogCommandTest {
         params.setId(vmGuid);
         params.setAction(VmWatchdogAction.PAUSE);
         params.setModel(vmWatchdogType);
-        final VmDAO vmDaoMock = mock(VmDAO.class);
+        final VmDao vmDaoMock = mock(VmDao.class);
         when(vmDaoMock.get(vmGuid)).thenReturn(new VM());
-        final VmDeviceDAO deviceDAO = mock(VmDeviceDAO.class);
-        when(deviceDAO.getVmDeviceByVmIdAndType(vmGuid, VmDeviceGeneralType.WATCHDOG)).thenReturn(Collections.singletonList(new VmDevice()));
+        final VmDeviceDao deviceDao = mock(VmDeviceDao.class);
+        when(deviceDao.getVmDeviceByVmIdAndType(vmGuid, VmDeviceGeneralType.WATCHDOG)).thenReturn(Collections.singletonList(new VmDevice()));
         UpdateWatchdogCommand command = new UpdateWatchdogCommand(params) {
             @Override
-            public VmDAO getVmDAO() {
+            public VmDao getVmDao() {
                 return vmDaoMock;
             }
 
             @Override
-            protected VmDeviceDAO getVmDeviceDao() {
-                return deviceDAO;
+            protected VmDeviceDao getVmDeviceDao() {
+                return deviceDao;
             }
         };
 

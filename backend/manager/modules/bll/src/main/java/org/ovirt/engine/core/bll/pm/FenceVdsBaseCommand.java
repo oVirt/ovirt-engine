@@ -179,7 +179,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     protected List<VM> getVmList() {
-        return getVmDAO().getAllRunningForVds(getVdsId());
+        return getVmDao().getAllRunningForVds(getVdsId());
     }
 
     // Method needs to be overridden to allow mocking in bll.pm subpackage

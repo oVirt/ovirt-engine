@@ -40,7 +40,7 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
     @Override
     protected void executeCommand() {
         if (getVmPoolId() != null) {
-            getVmPoolDAO().removeVmFromVmPool(getVmId());
+            getVmPoolDao().removeVmFromVmPool(getVmId());
             setSucceeded(true);
         }
     }

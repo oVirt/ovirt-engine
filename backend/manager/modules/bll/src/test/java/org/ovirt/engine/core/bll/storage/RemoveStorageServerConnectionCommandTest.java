@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.LunDAO;
-import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,10 +41,10 @@ public class RemoveStorageServerConnectionCommandTest {
     private StorageServerConnections iSCSIConnection = null;
 
     @Mock
-    private LunDAO lunDAO;
+    private LunDao lunDao;
 
     @Mock
-    private StorageServerConnectionDAO storageServerConnectionDAO;
+    private StorageServerConnectionDao storageServerConnectionDao;
 
     private StorageServerConnectionParametersBase parameters;
 
@@ -76,8 +76,8 @@ public class RemoveStorageServerConnectionCommandTest {
         parameters.setVdsId(Guid.newGuid());
 
         command = spy(new RemoveStorageServerConnectionCommand(parameters));
-        doReturn(lunDAO).when(command).getLunDao();
-        doReturn(storageServerConnectionDAO).when(command).getStorageServerConnectionDao();
+        doReturn(lunDao).when(command).getLunDao();
+        doReturn(storageServerConnectionDao).when(command).getStorageServerConnectionDao();
     }
 
     private StorageServerConnections createNFSConnection(String connection,
@@ -134,7 +134,7 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkRemoveNotExistingConnection() {
         parameters.setStorageServerConnection(NFSConnection);
-        when(storageServerConnectionDAO.get(NFSConnection.getid())).thenReturn(null);
+        when(storageServerConnectionDao.get(NFSConnection.getid())).thenReturn(null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
@@ -142,7 +142,7 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkRemoveNFSConnectionDomainsExist() {
         parameters.setStorageServerConnection(NFSConnection);
-        when(storageServerConnectionDAO.get(NFSConnection.getid())).thenReturn(NFSConnection);
+        when(storageServerConnectionDao.get(NFSConnection.getid())).thenReturn(NFSConnection);
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(NFSConnection.getconnection());
@@ -162,7 +162,7 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkRemoveNFSConnectionNoDomain() {
         parameters.setStorageServerConnection(NFSConnection);
-        when(storageServerConnectionDAO.get(NFSConnection.getid())).thenReturn(NFSConnection);
+        when(storageServerConnectionDao.get(NFSConnection.getid())).thenReturn(NFSConnection);
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
         doReturn(domains).when(command).getStorageDomainsByConnId(NFSConnection.getid());
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
@@ -171,14 +171,14 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkRemoveIscsiConnectionDomainsExist() {
         parameters.setStorageServerConnection(iSCSIConnection);
-        when(storageServerConnectionDAO.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
+        when(storageServerConnectionDao.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
         List<LUNs> luns = new ArrayList<LUNs>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
         lun1.setStorageDomainName("storagedomain1");
         lun1.setvolume_group_id("G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ");
         luns.add(lun1);
-        when(lunDAO.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
+        when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
@@ -186,7 +186,7 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkRemoveIscsiConnectionDomainsAndDisksExist() {
         parameters.setStorageServerConnection(iSCSIConnection);
-        when(storageServerConnectionDAO.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
+        when(storageServerConnectionDao.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
         List<LUNs> luns = new ArrayList<LUNs>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
@@ -199,7 +199,7 @@ public class RemoveStorageServerConnectionCommandTest {
         lun2.setvolume_group_id("");
         lun2.setDiskAlias("disk2");
         luns.add(lun2);
-        when(lunDAO.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
+        when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS_AND_DISKS);
     }
@@ -207,7 +207,7 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkRemoveIscsiConnectionDisksExist() {
         parameters.setStorageServerConnection(iSCSIConnection);
-        when(storageServerConnectionDAO.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
+        when(storageServerConnectionDao.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
         List<LUNs> luns = new ArrayList<LUNs>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
@@ -221,7 +221,7 @@ public class RemoveStorageServerConnectionCommandTest {
         lun2.setvolume_group_id("");
         lun2.setDiskAlias("disk2");
         luns.add(lun2);
-        when(lunDAO.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
+        when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS);
     }
@@ -229,7 +229,7 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkExecuteCommandWithVdsId() {
         parameters.setStorageServerConnection(NFSConnection);
-        doNothing().when(storageServerConnectionDAO).remove(NFSConnection.getid());
+        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getid());
         doReturn(true).when(command).disconnectStorage();
         command.executeCommand();
     }
@@ -238,7 +238,7 @@ public class RemoveStorageServerConnectionCommandTest {
     public void checkExecuteCommandWithEmptyVdsId() {
         parameters.setStorageServerConnection(NFSConnection);
         parameters.setVdsId(Guid.Empty);
-        doNothing().when(storageServerConnectionDAO).remove(NFSConnection.getid());
+        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getid());
         // Test will fail if we try to disconnect
         command.executeCommand();
         verify(command, never()).disconnectStorage();
@@ -248,7 +248,7 @@ public class RemoveStorageServerConnectionCommandTest {
     public void checkExecuteCommandWithNullVdsId() {
         parameters.setStorageServerConnection(NFSConnection);
         parameters.setVdsId(null);
-        doNothing().when(storageServerConnectionDAO).remove(NFSConnection.getid());
+        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getid());
         // Test will fail if we try to disconnect
         command.executeCommand();
         verify(command, never()).disconnectStorage();

@@ -82,9 +82,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.dao.VmNumaNodeDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -158,7 +157,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getVdsGroup().getCompatibilityVersion());
-        getVmStaticDAO().incrementDbGeneration(getVm().getId());
+        getVmStaticDao().incrementDbGeneration(getVm().getId());
         newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
 
@@ -187,7 +186,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         final List<Guid> oldIconIds = IconUtils.updateVmIcon(
                 oldVm.getStaticData(), newVmStatic, getParameters().getVmLargeIcon());
-        getVmStaticDAO().update(newVmStatic);
+        getVmStaticDao().update(newVmStatic);
         if (getVm().isNotRunning()) {
             updateVmPayload();
             VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
@@ -292,10 +291,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 Collections.<DiskImage> emptyList(),
                 VmDeviceUtils.getVmDevicesForNextRun(getVm(), getParameters()),
                 getCompensationContext());
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
     }
 
     private void hotSetCpus(int cpuPerSocket, int newNumOfSockets) {
@@ -456,7 +451,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     protected void updateVmPayload() {
-        VmDeviceDAO dao = getVmDeviceDao();
+        VmDeviceDao dao = getVmDeviceDao();
         VmPayload payload = getParameters().getVmPayload();
 
         if (payload != null || getParameters().isClearPayload()) {
@@ -490,7 +485,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // check if the cluster has changed
         if (!Objects.equals(getVm().getVdsGroupId(), getParameters().getVmStaticData().getVdsGroupId())) {
             List<Network> networks =
-                    getNetworkDAO().getAllForCluster(getParameters().getVmStaticData().getVdsGroupId());
+                    getNetworkDao().getAllForCluster(getParameters().getVmStaticData().getVdsGroupId());
             List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmStaticData().getId());
 
             for (final VmNic iface : interfaces) {
@@ -516,7 +511,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!getParameters().isUpdateNuma()) {
             return;
         }
-        VmNumaNodeDAO dao = DbFacade.getInstance().getVmNumaNodeDAO();
+        VmNumaNodeDao dao = DbFacade.getInstance().getVmNumaNodeDao();
         List<VmNumaNode> addList = new ArrayList<>();
         List<VmNumaNode> oldList = dao.getAllVmNumaNodeByVmId(getVmId());
         Map<Guid, VmNumaNode> removeMap = new HashMap<>();
@@ -592,13 +587,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // check if VM was changed to use latest
         if (vmFromDB.isUseLatestVersion() != vmFromParams.isUseLatestVersion() && vmFromParams.isUseLatestVersion()) {
             // check if a version change is actually required or just let the local command to update this field
-            vmFromParams.setVmtGuid(getVmTemplateDAO().getTemplateWithLatestVersionInChain(getVm().getVmtGuid()).getId());
+            vmFromParams.setVmtGuid(getVmTemplateDao().getTemplateWithLatestVersionInChain(getVm().getVmtGuid()).getId());
         }
 
         // pool VMs are allowed to change template id, this verifies that the change is only between template versions.
         if (!vmFromDB.getVmtGuid().equals(vmFromParams.getVmtGuid())) {
-            VmTemplate origTemplate = getVmTemplateDAO().get(vmFromDB.getVmtGuid());
-            VmTemplate newTemplate = getVmTemplateDAO().get(vmFromParams.getVmtGuid());
+            VmTemplate origTemplate = getVmTemplateDao().get(vmFromDB.getVmtGuid());
+            VmTemplate newTemplate = getVmTemplateDao().get(vmFromParams.getVmtGuid());
             if (newTemplate == null) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             } else if (origTemplate != null && !origTemplate.getBaseTemplateId().equals(newTemplate.getBaseTemplateId())) {

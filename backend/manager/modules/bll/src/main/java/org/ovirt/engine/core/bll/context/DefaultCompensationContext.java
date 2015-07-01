@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.Snap
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
+import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.utils.Serializer;
 
 /**
@@ -40,9 +40,9 @@ public class DefaultCompensationContext implements CompensationContext {
     private Serializer snapshotSerializer;
 
     /**
-     * The DAO which is used to track all the changed business entities.
+     * The Dao which is used to track all the changed business entities.
      */
-    private BusinessEntitySnapshotDAO businessEntitySnapshotDAO;
+    private BusinessEntitySnapshotDao businessEntitySnapshotDao;
 
     /**
      * The id of the command which this context is tracking.
@@ -63,11 +63,11 @@ public class DefaultCompensationContext implements CompensationContext {
     }
 
     /**
-     * @param businessEntitySnapshotDAO
-     *            the businessEntitySnapshotDAO to set
+     * @param businessEntitySnapshotDao
+     *            the businessEntitySnapshotDao to set
      */
-    public void setBusinessEntitySnapshotDAO(BusinessEntitySnapshotDAO businessEntitySnapshotDAO) {
-        this.businessEntitySnapshotDAO = businessEntitySnapshotDAO;
+    public void setBusinessEntitySnapshotDao(BusinessEntitySnapshotDao businessEntitySnapshotDao) {
+        this.businessEntitySnapshotDao = businessEntitySnapshotDao;
     }
 
     /**
@@ -150,7 +150,7 @@ public class DefaultCompensationContext implements CompensationContext {
             throw new IllegalArgumentException("Can not create snapshot from a null entity");
         }
         if (DbFacade.getInstance().getDaoForEntity((Class<BusinessEntity<Serializable>>) entity.getClass()) == null) {
-            throw new IllegalArgumentException("There is no rollback DAO registered for entity type "
+            throw new IllegalArgumentException("There is no rollback Dao registered for entity type "
                     + entity.getClass().getName());
         }
     }
@@ -158,7 +158,7 @@ public class DefaultCompensationContext implements CompensationContext {
     @Override
     public void stateChanged() {
         for (BusinessEntitySnapshot snapshot : entitiesToPersist) {
-            businessEntitySnapshotDAO.save(snapshot);
+            businessEntitySnapshotDao.save(snapshot);
         }
 
         entitiesToPersist.clear();
@@ -166,7 +166,7 @@ public class DefaultCompensationContext implements CompensationContext {
 
     @Override
     public void resetCompensation() {
-        businessEntitySnapshotDAO.removeAllForCommandId(commandId);
+        businessEntitySnapshotDao.removeAllForCommandId(commandId);
         cachedEntities.clear();
         entitiesToPersist.clear();
     }

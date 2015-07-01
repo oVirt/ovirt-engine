@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetManagementInterfaceAddressByVmIdQuery<IdQueryParameters>> {
@@ -30,12 +30,12 @@ public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQu
         IdQueryParameters paramsMock = getQueryParameters();
         when(paramsMock.getId()).thenReturn(vmID);
 
-        InterfaceDao interfaceDAOMock = mock(InterfaceDao.class);
-        VmDAO vmDAOMock = mock(VmDAO.class);
-        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDAOMock);
-        when(vmDAOMock.get(vmID)).thenReturn(vm);
-        when(interfaceDAOMock.getManagedInterfaceForVds(vdsID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(managementInterface);
-        when(getDbFacadeMockInstance().getInterfaceDao()).thenReturn(interfaceDAOMock);
+        InterfaceDao interfaceDaoMock = mock(InterfaceDao.class);
+        VmDao vmDaoMock = mock(VmDao.class);
+        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDaoMock);
+        when(vmDaoMock.get(vmID)).thenReturn(vm);
+        when(interfaceDaoMock.getManagedInterfaceForVds(vdsID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(managementInterface);
+        when(getDbFacadeMockInstance().getInterfaceDao()).thenReturn(interfaceDaoMock);
 
         getQuery().executeQueryCommand();
 

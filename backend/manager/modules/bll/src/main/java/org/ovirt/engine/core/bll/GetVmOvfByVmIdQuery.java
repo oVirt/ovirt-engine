@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends QueriesCommandBase<P> {
 
@@ -28,7 +28,7 @@ public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends Que
         getQueryReturnValue().setReturnValue(ovfData);
     }
 
-    protected VmDAO getVmDao() {
+    protected VmDao getVmDao() {
         return getDbFacade().getVmDao();
     }
 

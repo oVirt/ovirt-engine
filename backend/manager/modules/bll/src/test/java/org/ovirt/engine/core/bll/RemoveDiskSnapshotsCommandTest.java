@@ -28,13 +28,13 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 /** A test case for the {@link RemoveDiskSnapshotsCommand} class. */
 @RunWith(MockitoJUnitRunner.class)
@@ -43,13 +43,13 @@ public class RemoveDiskSnapshotsCommandTest {
     private RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters> cmd;
 
     @Mock
-    private VmTemplateDAO vmTemplateDAO;
+    private VmTemplateDao vmTemplateDao;
 
     @Mock
-    private StorageDomainDAO sdDAO;
+    private StorageDomainDao sdDao;
 
     @Mock
-    private DiskImageDAO diskImageDAO;
+    private DiskImageDao diskImageDao;
 
     @Mock
     private DiskDao diskDao;
@@ -58,13 +58,13 @@ public class RemoveDiskSnapshotsCommandTest {
     private SnapshotDao snapshotDao;
 
     @Mock
-    private StoragePoolDAO spDao;
+    private StoragePoolDao spDao;
 
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     @Mock
-    private VmDeviceDAO vmDeviceDao;
+    private VmDeviceDao vmDeviceDao;
 
     @Mock
     private SnapshotsValidator snapshotsValidator;
@@ -102,11 +102,11 @@ public class RemoveDiskSnapshotsCommandTest {
         });
 
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
-        doReturn(spDao).when(cmd).getStoragePoolDAO();
-        doReturn(vmTemplateDAO).when(cmd).getVmTemplateDAO();
-        doReturn(diskImageDAO).when(cmd).getDiskImageDao();
+        doReturn(spDao).when(cmd).getStoragePoolDao();
+        doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
+        doReturn(diskImageDao).when(cmd).getDiskImageDao();
         doReturn(diskDao).when(cmd).getDiskDao();
-        doReturn(sdDAO).when(cmd).getStorageDomainDAO();
+        doReturn(sdDao).when(cmd).getStorageDomainDao();
         doReturn(vmDeviceDao).when(cmd).getVmDeviceDao();
         doReturn(snapshotsValidator).when(cmd).getSnapshotsValidator();
         doReturn(storageDomainValidator).when(cmd).getStorageDomainValidator();

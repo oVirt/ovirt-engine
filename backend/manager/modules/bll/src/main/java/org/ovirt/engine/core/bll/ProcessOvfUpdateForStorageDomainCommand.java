@@ -42,10 +42,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
-import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDAO;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.archivers.tar.InMemoryTar;
 import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
@@ -216,11 +213,11 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         updateDate = new Date();
 
         List<Guid> vmAndTemplatesIds =
-                getStorageDomainDAO().getVmAndTemplatesIdsByStorageDomainId(getParameters().getStorageDomainId(),
+                getStorageDomainDao().getVmAndTemplatesIdsByStorageDomainId(getParameters().getStorageDomainId(),
                         false,
                         false);
 
-        vmAndTemplatesIds.addAll(getVmStaticDAO().getVmAndTemplatesIdsWithoutAttachedImageDisks(getParameters().getStoragePoolId(), false));
+        vmAndTemplatesIds.addAll(getVmStaticDao().getVmAndTemplatesIdsWithoutAttachedImageDisks(getParameters().getStoragePoolId(), false));
 
         byte[] bytes = buildOvfInfoFileByteArray(vmAndTemplatesIds);
 
@@ -371,14 +368,6 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
             }
         }
         return addedOvfIds;
-    }
-
-    protected VmAndTemplatesGenerationsDAO getVmAndTemplatesGenerationsDao() {
-        return DbFacade.getInstance().getVmAndTemplatesGenerationsDao();
-    }
-
-    protected StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {
-        return DbFacade.getInstance().getStorageDomainOvfInfoDao();
     }
 
     @Override

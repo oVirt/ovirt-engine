@@ -42,7 +42,7 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
 
     @Override
     protected Guid getPoolId() {
-        getVmPoolDAO().update(getVmPool());
+        getVmPoolDao().update(getVmPool());
         return getVmPool().getVmPoolId();
     }
 
@@ -52,7 +52,7 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
             return false;
         }
 
-        oldPool = getVmPoolDAO().get(getVmPool().getVmPoolId());
+        oldPool = getVmPoolDao().get(getVmPool().getVmPoolId());
         if (oldPool == null) {
             return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
         }

@@ -32,8 +32,8 @@ import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -226,7 +226,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
         if (Guid.isNullOrEmpty(clusterId)) {
             // try to get the default cluster id
-            VdsGroupDAO clusterDao = getDbFacade().getVdsGroupDao();
+            VdsGroupDao clusterDao = getDbFacade().getVdsGroupDao();
             VDSGroup cluster = clusterDao.getByName("Default");
             if (cluster != null) {
                 clusterId = cluster.getId();
@@ -479,9 +479,9 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     private boolean HandleOldVdssWithSameName(VDS hostToRegister) {
         log.debug("Entering");
         boolean returnValue = true;
-        VdsDAO vdsDAO = DbFacade.getInstance().getVdsDao();
-        VDS storedHost = vdsDAO.getByName(getParameters().getVdsName());
-        List<String> allHostNames = getAllHostNames(vdsDAO.getAll());
+        VdsDao vdsDao = DbFacade.getInstance().getVdsDao();
+        VDS storedHost = vdsDao.getByName(getParameters().getVdsName());
+        List<String> allHostNames = getAllHostNames(vdsDao.getAll());
         boolean hostExistInDB = hostToRegister != null;
 
         if (storedHost != null) {

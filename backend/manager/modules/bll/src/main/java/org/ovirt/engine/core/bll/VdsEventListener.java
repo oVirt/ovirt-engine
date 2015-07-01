@@ -75,7 +75,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -100,7 +100,7 @@ public class VdsEventListener implements IVdsEventListener {
     @Inject
     AutoStartVmsRunner autoStartVmsRunner;
     @Inject
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
     @Inject
     private BackendInternal backend;
 
@@ -535,7 +535,7 @@ public class VdsEventListener implements IVdsEventListener {
         if (cluster == null || cluster.getCompatibilityVersion().compareTo(Version.v3_4) < 0)
             return;
         List<VDS> activeHostsInCluster =
-                vdsDAO.getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
+                vdsDao.getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
         // collect all Active hosts into a callable list
         List<Callable<Object>> callables = new LinkedList<>();
         for (final VDS vds : activeHostsInCluster) {

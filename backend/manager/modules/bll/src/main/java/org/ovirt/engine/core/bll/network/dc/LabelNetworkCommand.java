@@ -66,7 +66,7 @@ public class LabelNetworkCommand<T extends LabelNetworkParameters> extends Comma
 
     private Network getNetwork() {
         if (network == null) {
-            network = getNetworkDAO().get(getParameters().getNetworkId());
+            network = getNetworkDao().get(getParameters().getNetworkId());
         }
 
         return network;

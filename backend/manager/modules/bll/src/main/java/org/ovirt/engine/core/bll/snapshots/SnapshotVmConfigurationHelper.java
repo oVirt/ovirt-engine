@@ -14,9 +14,9 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +121,7 @@ public class SnapshotVmConfigurationHelper {
         return new SnapshotsManager();
     }
 
-    protected VmDAO getVmDao() {
+    protected VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
     }
 
@@ -133,7 +133,7 @@ public class SnapshotVmConfigurationHelper {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 
-    protected DiskImageDAO getDiskImageDao() {
+    protected DiskImageDao getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDao();
     }
 

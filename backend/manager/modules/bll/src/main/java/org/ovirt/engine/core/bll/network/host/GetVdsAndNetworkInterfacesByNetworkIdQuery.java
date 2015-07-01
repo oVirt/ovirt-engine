@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -27,7 +27,7 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
 
     @Inject
     private InterfaceDao interfaceDao;
@@ -43,8 +43,8 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends IdQueryParamet
     }
 
     @Override
-    public VdsDAO getVdsDao() {
-        return vdsDAO;
+    public VdsDao getVdsDao() {
+        return vdsDao;
     }
 
     InterfaceDao getInterfaceDao() {

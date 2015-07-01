@@ -4,12 +4,12 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class GetInstanceTypeQuery<P extends GetVmTemplateParameters> extends QueriesCommandBase<P> {
 
     @Inject
-    private VmTemplateDAO vmTemplateDao;
+    private VmTemplateDao vmTemplateDao;
 
     public GetInstanceTypeQuery(P parameters) {
         super(parameters);

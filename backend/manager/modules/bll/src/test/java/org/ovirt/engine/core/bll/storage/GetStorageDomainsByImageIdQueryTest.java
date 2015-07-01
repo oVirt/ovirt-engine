@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /** A test case for the {@link GetStorageDomainsByImageIdQuery} class. */
 public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<IdQueryParameters, GetStorageDomainsByImageIdQuery<IdQueryParameters>> {
@@ -24,11 +24,11 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<IdQue
         Guid imageId = Guid.newGuid();
         when(params.getId()).thenReturn(imageId);
 
-        // Set up the DAOs
+        // Set up the Daos
         List<StorageDomain> expected = Collections.singletonList(new StorageDomain());
-        StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
-        when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDomainDAOMock);
-        when(storageDomainDAOMock.getAllStorageDomainsByImageId(imageId)).thenReturn(expected);
+        StorageDomainDao storageDomainDaoMock = mock(StorageDomainDao.class);
+        when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDomainDaoMock);
+        when(storageDomainDaoMock.getAllStorageDomainsByImageId(imageId)).thenReturn(expected);
 
         // Run the query
         GetStorageDomainsByImageIdQuery<IdQueryParameters> query = getQuery();
@@ -53,10 +53,10 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<IdQue
         expected.add(firstStorageDomain);
         expected.add(secondStorageDomain);
 
-        // Set up the DAOs
-        StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
-        when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDomainDAOMock);
-        when(storageDomainDAOMock.getAllStorageDomainsByImageId(imageId)).thenReturn(expected);
+        // Set up the Daos
+        StorageDomainDao storageDomainDaoMock = mock(StorageDomainDao.class);
+        when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDomainDaoMock);
+        when(storageDomainDaoMock.getAllStorageDomainsByImageId(imageId)).thenReturn(expected);
 
         // Run the query
         GetStorageDomainsByImageIdQuery<IdQueryParameters> query = getQuery();

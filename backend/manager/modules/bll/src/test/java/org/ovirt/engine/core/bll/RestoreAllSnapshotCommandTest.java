@@ -39,10 +39,10 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestoreAllSnapshotCommandTest {
@@ -51,10 +51,10 @@ public class RestoreAllSnapshotCommandTest {
     private VDSBrokerFrontend vdsBrokerFrontend;
 
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
 
     @Mock
-    private VmDynamicDAO vmDynamicDAO;
+    private VmDynamicDao vmDynamicDao;
 
     @Mock
     private BackendInternal backend;
@@ -63,10 +63,10 @@ public class RestoreAllSnapshotCommandTest {
     private DiskDao diskDao;
 
     @Mock
-    private StorageDomainDAO storageDomainDAO;
+    private StorageDomainDao storageDomainDao;
 
     @Mock
-    private StoragePoolDAO storagePoolDAO;
+    private StoragePoolDao storagePoolDao;
 
     @Mock
     protected SnapshotDao snapshotDao;
@@ -167,8 +167,8 @@ public class RestoreAllSnapshotCommandTest {
 
     private void mockDynamicVmDao() {
         mockDynamicVm = getVmDynamic();
-        doReturn(vmDynamicDAO).when(spyCommand).getVmDynamicDao();
-        when(vmDynamicDAO.get(vmId)).thenReturn(mockDynamicVm);
+        doReturn(vmDynamicDao).when(spyCommand).getVmDynamicDao();
+        when(vmDynamicDao.get(vmId)).thenReturn(mockDynamicVm);
     }
 
     /**
@@ -190,17 +190,17 @@ public class RestoreAllSnapshotCommandTest {
         // Variables only for passing the available size check.
         storageDomains.setAvailableDiskSize(10000000);
         storageDomains.setUsedDiskSize(10);
-        doReturn(storageDomainDAO).when(spyCommand).getStorageDomainDAO();
-        when(storageDomainDAO.getForStoragePool(storageDomainId, Guid.Empty)).thenReturn(storageDomains);
-        when(storageDomainDAO.get(storageDomainId)).thenReturn(storageDomains);
+        doReturn(storageDomainDao).when(spyCommand).getStorageDomainDao();
+        when(storageDomainDao.getForStoragePool(storageDomainId, Guid.Empty)).thenReturn(storageDomains);
+        when(storageDomainDao.get(storageDomainId)).thenReturn(storageDomains);
     }
 
     private void mockStoragePoolDao() {
         StoragePool sp = new StoragePool();
         sp.setId(spId);
         sp.setStatus(StoragePoolStatus.Up);
-        when(storagePoolDAO.get(spId)).thenReturn(sp);
-        doReturn(storagePoolDAO).when(spyCommand).getStoragePoolDAO();
+        when(storagePoolDao.get(spId)).thenReturn(sp);
+        doReturn(storagePoolDao).when(spyCommand).getStoragePoolDao();
     }
 
     private void mockSnapshotValidator() {
@@ -222,8 +222,8 @@ public class RestoreAllSnapshotCommandTest {
         vm.setId(vmId);
         vm.setStoragePoolId(spId);
         vm.setStatus(VMStatus.Down);
-        doReturn(vmDAO).when(spyCommand).getVmDAO();
-        when(vmDAO.get(vmId)).thenReturn(vm);
+        doReturn(vmDao).when(spyCommand).getVmDao();
+        when(vmDao.get(vmId)).thenReturn(vm);
         return vm;
     }
 

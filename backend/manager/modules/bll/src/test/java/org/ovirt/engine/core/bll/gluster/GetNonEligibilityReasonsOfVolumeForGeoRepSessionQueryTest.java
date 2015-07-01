@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeGeoRepEligibilityParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,7 +32,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
     private GlusterGeoRepDao geoRepDao;
 
     @Mock
-    private VdsGroupDAO vdsGroupDao;
+    private VdsGroupDao vdsGroupDao;
 
     private GeoRepCreateEligibilityBaseTest baseTest = new GeoRepCreateEligibilityBaseTest();
 

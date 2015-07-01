@@ -44,11 +44,11 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -74,16 +74,16 @@ public class LiveMigrateVmDisksCommandTest {
     );
 
     @Mock
-    private DiskImageDAO diskImageDao;
+    private DiskImageDao diskImageDao;
 
     @Mock
-    private StorageDomainDAO storageDomainDao;
+    private StorageDomainDao storageDomainDao;
 
     @Mock
-    private StoragePoolDAO storagePoolDao;
+    private StoragePoolDao storagePoolDao;
 
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     @Mock
     protected SnapshotDao snapshotDao;
@@ -397,7 +397,7 @@ public class LiveMigrateVmDisksCommandTest {
         when(snapshotDao.exists(any(Guid.class), eq(Snapshot.SnapshotStatus.IN_PREVIEW))).thenReturn(isInPreview);
     }
 
-    /** Mock DAOs */
+    /** Mock Daos */
 
     private void mockDaos() {
         mockVmDao();
@@ -408,7 +408,7 @@ public class LiveMigrateVmDisksCommandTest {
     }
 
     private void mockVmDao() {
-        doReturn(vmDao).when(command).getVmDAO();
+        doReturn(vmDao).when(command).getVmDao();
     }
 
     private void mockDiskImageDao() {
@@ -420,7 +420,7 @@ public class LiveMigrateVmDisksCommandTest {
     }
 
     private void mockStoragePoolDao() {
-        doReturn(storagePoolDao).when(command).getStoragePoolDAO();
+        doReturn(storagePoolDao).when(command).getStoragePoolDao();
     }
 
     private void mockValidators() {

@@ -26,9 +26,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -40,13 +40,13 @@ public class HostValidatorTest {
     private DbFacade dbFacade;
 
     @Mock
-    private VdsStaticDAO hostStaticDao;
+    private VdsStaticDao hostStaticDao;
 
     @Mock
-    private VdsDAO hostDao;
+    private VdsDao hostDao;
 
     @Mock
-    private StoragePoolDAO storagePoolDao;
+    private StoragePoolDao storagePoolDao;
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule();

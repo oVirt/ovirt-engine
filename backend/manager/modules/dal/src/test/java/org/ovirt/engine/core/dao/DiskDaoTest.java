@@ -192,7 +192,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     }
 
     /**
-     * Asserts the result of {@link DiskImageDAO#getAllForVm(Guid)} contains the correct disks.
+     * Asserts the result of {@link DiskImageDao#getAllForVm(Guid)} contains the correct disks.
      * @param disks
      *            The result to check
      */
@@ -201,7 +201,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     }
 
     /**
-     * Asserts the result of {@link DiskImageDAO#getAllForVm(Guid)} contains the correct plugged disks.
+     * Asserts the result of {@link DiskImageDao#getAllForVm(Guid)} contains the correct plugged disks.
      * @param disks
      *            The result to check
      */
@@ -211,7 +211,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     }
 
     /**
-     * Asserts the result of {@link DiskDAO#getAllAttachableDisksByPoolId} contains the floating disk.
+     * Asserts the result of {@link DiskDao#getAllAttachableDisksByPoolId} contains the floating disk.
      * @param disks
      *            The result to check
      */

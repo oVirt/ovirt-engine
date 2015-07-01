@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FenceVdsVDSCommandTest {
@@ -38,7 +38,7 @@ public class FenceVdsVDSCommandTest {
     private DbFacade dbFacade;
 
     @Mock
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
 
     @Mock
     private VDS targetHost;
@@ -54,12 +54,12 @@ public class FenceVdsVDSCommandTest {
 
     @Before
     public void setupMocks() {
-        when(dbFacade.getVdsDao()).thenReturn(vdsDAO);
+        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
 
-        when(vdsDAO.get(eq(TARGET_HOST_ID))).thenReturn(targetHost);
+        when(vdsDao.get(eq(TARGET_HOST_ID))).thenReturn(targetHost);
         when(targetHost.getId()).thenReturn(TARGET_HOST_ID);
 
-        when(vdsDAO.get(eq(PROXY_HOST_ID))).thenReturn(proxyHost);
+        when(vdsDao.get(eq(PROXY_HOST_ID))).thenReturn(proxyHost);
         when(proxyHost.getId()).thenReturn(PROXY_HOST_ID);
         when(proxyHost.getVdsGroupCompatibilityVersion()).thenReturn(Version.getLast());
     }

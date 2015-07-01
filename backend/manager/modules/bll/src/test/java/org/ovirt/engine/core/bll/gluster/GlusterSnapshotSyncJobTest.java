@@ -42,7 +42,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotVDS
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
@@ -79,7 +79,7 @@ public class GlusterSnapshotSyncJobTest {
     private GlusterVolumeSnapshotConfigDao snapshotConfigDao;
 
     @Mock
-    private VdsGroupDAO clusterDao;
+    private VdsGroupDao clusterDao;
 
     private GlusterSnapshotSyncJob syncJob;
 

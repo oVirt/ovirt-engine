@@ -33,7 +33,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     @Override
     protected Network getNetwork() {
         if (network == null) {
-            network = getNetworkDAO().get(getParameters().getId());
+            network = getNetworkDao().get(getParameters().getId());
         }
 
         return network;
@@ -57,7 +57,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
                 removeVnicProfiles();
                 removeFromClusters();
                 getCompensationContext().snapshotEntity(getNetwork());
-                getNetworkDAO().remove(getNetwork().getId());
+                getNetworkDao().remove(getNetwork().getId());
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -77,7 +77,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     }
 
     private void removeFromClusters() {
-        for (NetworkCluster networkCluster : getNetworkClusterDAO().getAllForNetwork(getNetwork().getId())) {
+        for (NetworkCluster networkCluster : getNetworkClusterDao().getAllForNetwork(getNetwork().getId())) {
             NetworkClusterHelper helper = new NetworkClusterHelper(networkCluster);
             helper.removeNetworkAndReassignRoles();
         }
@@ -103,7 +103,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
 
     @Override
     protected boolean canDoAction() {
-        NetworkValidator validator = new NetworkValidator(getNetworkDAO().get(getNetwork().getId()));
+        NetworkValidator validator = new NetworkValidator(getNetworkDao().get(getNetwork().getId()));
         return validate(validator.networkIsSet())
                 && validate(validator.notRemovingManagementNetwork())
                 && validate(validator.notIscsiBondNetwork())

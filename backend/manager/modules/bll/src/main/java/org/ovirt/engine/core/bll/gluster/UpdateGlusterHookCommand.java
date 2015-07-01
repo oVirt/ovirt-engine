@@ -73,7 +73,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
         }
 
         for (GlusterServerHook serverHook: getContentConflictServerHooks()) {
-            VDS vds = getVdsDAO().get(serverHook.getServerId());
+            VDS vds = getVdsDao().get(serverHook.getServerId());
             if (vds == null || vds.getStatus() != VDSStatus.Up) {
                 String vdsName = vds != null ? vds.getName() : GlusterConstants.NO_SERVER;
                 setVdsName(vdsName);

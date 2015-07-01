@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -172,7 +172,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
                 // Assumption - a snapshot can be locked only if in status OK, so if canDoAction passed
                 // this is the status of the snapshot. In addition the newly added VM is in down status
                 getCompensationContext().snapshotEntityStatus(getSnapshot());
-                getSnapshotDAO().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.LOCKED);
+                getSnapshotDao().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.LOCKED);
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -181,17 +181,17 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
 
     protected void unlockSnapshot() {
         // Assumption - this is last DB change of command, no need for compensation here
-        getSnapshotDAO().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.OK);
+        getSnapshotDao().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.OK);
     }
 
     private Snapshot getSnapshot() {
         if (cachedSnapshot == null) {
-            cachedSnapshot = getSnapshotDAO().get(getParameters().getSourceSnapshotId());
+            cachedSnapshot = getSnapshotDao().get(getParameters().getSourceSnapshotId());
         }
         return cachedSnapshot;
     }
 
-    protected DiskImageDAO getDiskImageDao() {
+    protected DiskImageDao getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
     }
 

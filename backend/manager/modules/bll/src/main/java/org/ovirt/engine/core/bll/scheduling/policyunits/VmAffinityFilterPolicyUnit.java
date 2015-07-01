@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,7 +162,7 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
         return retList;
     }
 
-    protected static VdsStaticDAO getVdsStaticDao() {
+    protected static VdsStaticDao getVdsStaticDao() {
         return DbFacade.getInstance().getVdsStaticDao();
     }
 
@@ -170,7 +170,7 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
         return DbFacade.getInstance().getAffinityGroupDao();
     }
 
-    protected static VmDAO getVmDao() {
+    protected static VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
     }
 }

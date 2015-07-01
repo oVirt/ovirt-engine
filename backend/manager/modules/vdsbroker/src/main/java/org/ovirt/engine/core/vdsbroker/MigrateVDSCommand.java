@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateBrokerVDSCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,11 +43,11 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Ma
         }
     }
 
-    private VmDynamicDAO getVmDynamicDAO() {
+    private VmDynamicDao getVmDynamicDao() {
         return DbFacade.getInstance().getVmDynamicDao();
     }
 
-    private VmDAO getVmDao() {
+    private VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
     }
 }

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * The snapshot DAO is used to retrieve and manipulate {@link Snapshot} instances in the DB.
+ * The snapshot Dao is used to retrieve and manipulate {@link Snapshot} instances in the DB.
  */
 public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<Guid, SnapshotStatus> {
 

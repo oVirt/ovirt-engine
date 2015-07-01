@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.AsyncTaskDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.AsyncTaskDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
 
 /** A test case for the {@link ForceSelectSPMCommand} command */
 
@@ -37,13 +37,13 @@ public class ForceSelectSPMCommandTest {
     private StoragePool storagePool;
 
     @Mock
-    private VdsDAO vdsDAOMock;
+    private VdsDao vdsDaoMock;
 
     @Mock
-    private StoragePoolDAO storagePoolDAOMock;
+    private StoragePoolDao storagePoolDaoMock;
 
     @Mock
-    private AsyncTaskDAO asyncTaskDAOMock;
+    private AsyncTaskDao asyncTaskDaoMock;
 
     @Before
     public void setup() {
@@ -53,7 +53,7 @@ public class ForceSelectSPMCommandTest {
 
     @Test
     public void testCDANonExistingVds() {
-        doReturn(null).when(vdsDAOMock).get(vdsId);
+        doReturn(null).when(vdsDaoMock).get(vdsId);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure("canDoAction did not fail for non existing VDS",
                 command, VdcBllMessages.VDS_NOT_EXIST);
     }
@@ -100,7 +100,7 @@ public class ForceSelectSPMCommandTest {
     @Test
     public void testCDAStoragePoolHasTasks() {
         List<Guid> tasks = Arrays.asList(Guid.newGuid());
-        doReturn(tasks).when(asyncTaskDAOMock).getAsyncTaskIdsByStoragePoolId(storagePoolId);
+        doReturn(tasks).when(asyncTaskDaoMock).getAsyncTaskIdsByStoragePoolId(storagePoolId);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
                 ("canDoAction did not fail on a Storage Pool with running tasks", command,
                         VdcBllMessages.CANNOT_FORCE_SELECT_SPM_STORAGE_POOL_HAS_RUNNING_TASKS);
@@ -123,10 +123,10 @@ public class ForceSelectSPMCommandTest {
     private void mockCommand() {
         ForceSelectSPMParameters params = new ForceSelectSPMParameters(vdsId);
         command = spy(new ForceSelectSPMCommand<ForceSelectSPMParameters>(params));
-        doReturn(vdsDAOMock).when(command).getVdsDAO();
-        doReturn(storagePoolDAOMock).when(command).getStoragePoolDAO();
-        doReturn(asyncTaskDAOMock).when(command).getAsyncTaskDao();
-        doReturn(storagePool).when(storagePoolDAOMock).getForVds(vdsId);
-        doReturn(vds).when(vdsDAOMock).get(vdsId);
+        doReturn(vdsDaoMock).when(command).getVdsDao();
+        doReturn(storagePoolDaoMock).when(command).getStoragePoolDao();
+        doReturn(asyncTaskDaoMock).when(command).getAsyncTaskDao();
+        doReturn(storagePool).when(storagePoolDaoMock).getForVds(vdsId);
+        doReturn(vds).when(vdsDaoMock).get(vdsId);
     }
 }

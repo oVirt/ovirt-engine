@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -38,7 +38,7 @@ public class ReconstructMasterDomainCommandTest {
     public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.LOCK_MANAGER, lockManager);
 
     @Mock
-    private StoragePoolIsoMapDAO storagePoolIsoMapDao;
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     private ReconstructMasterDomainCommand<ReconstructMasterParameters> cmd;
 

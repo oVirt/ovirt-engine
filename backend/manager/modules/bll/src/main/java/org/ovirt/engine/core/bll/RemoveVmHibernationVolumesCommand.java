@@ -44,7 +44,7 @@ public class RemoveVmHibernationVolumesCommand<T extends RemoveVmHibernationVolu
     }
 
     protected Snapshot getActiveSnapshot() {
-        return getSnapshotDAO().get(getVm().getId(), SnapshotType.ACTIVE);
+        return getSnapshotDao().get(getVm().getId(), SnapshotType.ACTIVE);
     }
 
     @Override

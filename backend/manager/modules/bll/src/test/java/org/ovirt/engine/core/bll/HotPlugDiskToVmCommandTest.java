@@ -51,10 +51,10 @@ import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -73,15 +73,15 @@ public class HotPlugDiskToVmCommandTest {
             mockConfig(ConfigValues.HotPlugDiskSnapshotSupported, Version.v3_1.getValue(), true));
 
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
     @Mock
     protected DiskDao diskDao;
     @Mock
-    private VmDeviceDAO vmDeviceDAO;
+    private VmDeviceDao vmDeviceDao;
     @Mock
-    private StorageDomainDAO storageDomainDao;
+    private StorageDomainDao storageDomainDao;
     @Mock
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
@@ -239,7 +239,7 @@ public class HotPlugDiskToVmCommandTest {
         storageDomain.setId(storageDomainId);
         storageDomain.setStoragePoolId(storagePoolId);
 
-        doReturn(storageDomainDao).when(command).getStorageDomainDAO();
+        doReturn(storageDomainDao).when(command).getStorageDomainDao();
         when(storageDomainDao.get(any(Guid.class))).thenReturn(storageDomain);
         when(storageDomainDao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
     }
@@ -253,8 +253,8 @@ public class HotPlugDiskToVmCommandTest {
     }
 
     private void mockNullVm() {
-        doReturn(vmDAO).when(command).getVmDAO();
-        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(null);
+        doReturn(vmDao).when(command).getVmDao();
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(null);
         cretaeVirtIODisk();
     }
 
@@ -268,13 +268,13 @@ public class HotPlugDiskToVmCommandTest {
         vm.setId(vmId);
         vm.setVdsGroupCompatibilityVersion(Version.v3_1);
         vm.setRunOnVds(Guid.newGuid());
-        doReturn(vmDAO).when(command).getVmDAO();
-        mockVMDAO(vm);
+        doReturn(vmDao).when(command).getVmDao();
+        mockVMDao(vm);
         return vm;
     }
 
-    private void mockVMDAO(VM vm) {
-        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
+    private void mockVMDao(VM vm) {
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
         List<VM> vmList = new ArrayList<VM>();
         VM vm1 = new VM();
         vm1.setId(command.getParameters().getVmId());
@@ -282,7 +282,7 @@ public class HotPlugDiskToVmCommandTest {
         vm2.setId(Guid.newGuid());
         vmList.add(vm1);
         vmList.add(vm2);
-        when(vmDAO.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(vmList);
+        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(vmList);
     }
 
     /**
@@ -291,7 +291,7 @@ public class HotPlugDiskToVmCommandTest {
     protected void mockVds() {
         VDS vds = new VDS();
         vds.setVdsGroupCompatibilityVersion(new Version("3.1"));
-        doReturn(vdsDao).when(command).getVdsDAO();
+        doReturn(vdsDao).when(command).getVdsDao();
         when(vdsDao.get(Mockito.any(Guid.class))).thenReturn(vds);
     }
 
@@ -367,8 +367,8 @@ public class HotPlugDiskToVmCommandTest {
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId());
         vmDevice.setIsPlugged(plugged);
-        doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
-        when(vmDeviceDAO.get(Mockito.any(VmDeviceId.class))).thenReturn(vmDevice);
+        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
+        when(vmDeviceDao.get(Mockito.any(VmDeviceId.class))).thenReturn(vmDevice);
     }
 
 }

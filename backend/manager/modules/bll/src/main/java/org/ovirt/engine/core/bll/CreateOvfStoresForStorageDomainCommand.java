@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -120,9 +119,5 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
         }
 
         return parameters;
-    }
-
-    protected StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {
-        return getDbFacade().getStorageDomainOvfInfoDao();
     }
 }

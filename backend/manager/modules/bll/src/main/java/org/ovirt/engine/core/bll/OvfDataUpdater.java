@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
@@ -34,7 +34,7 @@ public class OvfDataUpdater {
         return INSTANCE;
     }
 
-    protected StoragePoolDAO getStoragePoolDao() {
+    protected StoragePoolDao getStoragePoolDao() {
         return DbFacade.getInstance().getStoragePoolDao();
     }
 

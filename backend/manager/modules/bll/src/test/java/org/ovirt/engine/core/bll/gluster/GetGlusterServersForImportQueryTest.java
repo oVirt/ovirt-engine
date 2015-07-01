@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 
 public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<GlusterServersQueryParameters, GetGlusterServersForImportQuery<GlusterServersQueryParameters>> {
     private static final String SERVER_NAME1 = "testserver1";
@@ -35,7 +35,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     private static final String FINGER_PRINT1 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:31";
     private static final String FINGER_PRINT2 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:32";
 
-    private VdsStaticDAO vdsStaticDao;
+    private VdsStaticDao vdsStaticDao;
     private GlusterUtil glusterUtil;
 
     @Before
@@ -46,7 +46,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     }
 
     private void setupMock() throws AuthenticationException, IOException {
-        vdsStaticDao = mock(VdsStaticDAO.class);
+        vdsStaticDao = mock(VdsStaticDao.class);
         doReturn(vdsStaticDao).when(getQuery()).getVdsStaticDao();
         doReturn(null).when(vdsStaticDao).getByHostName(NEW_SERVER);
         doReturn(getVdsStatic()).when(vdsStaticDao).getByHostName(EXISTING_SERVER);

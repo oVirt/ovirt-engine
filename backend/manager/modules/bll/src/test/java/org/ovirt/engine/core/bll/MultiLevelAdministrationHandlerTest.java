@@ -26,8 +26,8 @@
 //import org.ovirt.engine.core.common.users.VdcUser;
 //import org.ovirt.engine.core.compat.Guid;
 //import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-//import org.ovirt.engine.core.dao.PermissionDAO;
-//import org.ovirt.engine.core.dao.RoleDAO;
+//import org.ovirt.engine.core.dao.PermissionDao;
+//import org.ovirt.engine.core.dao.RoleDao;
 //import org.powermock.core.classloader.annotations.PowerMockIgnore;
 //import org.powermock.core.classloader.annotations.PrepareForTest;
 //import org.powermock.modules.junit4.PowerMockRunner;
@@ -42,10 +42,10 @@
 //    private Guid objectId = new Guid("aaa00000-0000-0000-0000-123456789aaa");
 //
 //    @Mock
-//    PermissionDAO permissionDAO;
+//    PermissionDao permissionDao;
 //
 //    @Mock
-//    RoleDAO roleDAO;
+//    RoleDao roleDao;
 //
 //    private DbFacade getDbFacadeMock() {
 //        return dbFacade;
@@ -56,8 +56,8 @@
 //        MockitoAnnotations.initMocks(this);
 //        mockStatic(DbFacade.class);
 //        when(DbFacade.getInstance()).thenReturn(getDbFacadeMock());
-//        when(getDbFacadeMock().getPermissionDAO()).thenReturn(permissionDAO);
-//        when(getDbFacadeMock().getRoleDAO()).thenReturn(roleDAO);
+//        when(getDbFacadeMock().getPermissionDao()).thenReturn(permissionDao);
+//        when(getDbFacadeMock().getRoleDao()).thenReturn(roleDao);
 //    }
 //
 //    // Tests for isAdminUser Method
@@ -67,7 +67,7 @@
 //        Role role = new Role("admin role", adElementId, "admin");
 //        role.setType(RoleType.ADMIN);
 //        roles.add(role);
-//        when(DbFacade.getInstance().getRoleDAO().getAllForUserAndGroups(adElementId, "")).thenReturn(roles);
+//        when(DbFacade.getInstance().getRoleDao().getAllForUserAndGroups(adElementId, "")).thenReturn(roles);
 //        VdcUser user = new VdcUser();
 //        user.setGroupIds("");
 //        user.setUserId(adElementId);
@@ -80,7 +80,7 @@
 //        Role role = new Role("user role", adElementId, "user");
 //        role.setType(RoleType.USER);
 //        roles.add(role);
-//        when(DbFacade.getInstance().getRoleDAO().getAllForUserAndGroups(adElementId, "")).thenReturn(roles);
+//        when(DbFacade.getInstance().getRoleDao().getAllForUserAndGroups(adElementId, "")).thenReturn(roles);
 //        VdcUser user = new VdcUser();
 //        user.setGroupIds("");
 //        user.setUserId(adElementId);
@@ -93,8 +93,8 @@
 //        List<permissions> permissions = new ArrayList<permissions>();
 //        permissions permisson = new permissions(adElementId,  objectId, PredefinedRoles.SUPER_USER.getId());
 //        permissions.add(permisson);
-//        when(DbFacade.getInstance().getPermissionDAO().getAllForAdElement(adElementId)).thenReturn(permissions);
-//        when(DbFacade.getInstance().getPermissionDAO().getAllForRole(PredefinedRoles.SUPER_USER.getId())).thenReturn(permissions);
+//        when(DbFacade.getInstance().getPermissionDao().getAllForAdElement(adElementId)).thenReturn(permissions);
+//        when(DbFacade.getInstance().getPermissionDao().getAllForRole(PredefinedRoles.SUPER_USER.getId())).thenReturn(permissions);
 //        assertTrue(MultiLevelAdministrationHandler.isLastSuperUserGroup(adElementId));
 //    }
 //
@@ -107,8 +107,8 @@
 //        permissions1.add(permisson1);
 //        permissions2.add(permisson1);
 //        permissions2.add(permisson2);
-//        when(DbFacade.getInstance().getPermissionDAO().getAllForAdElement(adElementId)).thenReturn(permissions1);
-//        when(DbFacade.getInstance().getPermissionDAO().getAllForRole(PredefinedRoles.SUPER_USER.getId())).thenReturn(permissions2);
+//        when(DbFacade.getInstance().getPermissionDao().getAllForAdElement(adElementId)).thenReturn(permissions1);
+//        when(DbFacade.getInstance().getPermissionDao().getAllForRole(PredefinedRoles.SUPER_USER.getId())).thenReturn(permissions2);
 //        assertFalse(MultiLevelAdministrationHandler.isLastSuperUserGroup(adElementId));
 //    }
 //
@@ -119,7 +119,7 @@
 //        List<permissions> permissions = new ArrayList<permissions>();
 //        permissions permisson = new permissions(adElementId,  objectId, PredefinedRoles.SUPER_USER.getId());
 //        permissions.add(permisson);
-//        when(DbFacade.getInstance().getPermissionDAO().getAllForRole(PredefinedRoles.SUPER_USER.getId())).thenReturn(permissions);
+//        when(DbFacade.getInstance().getPermissionDao().getAllForRole(PredefinedRoles.SUPER_USER.getId())).thenReturn(permissions);
 //        assertTrue(MultiLevelAdministrationHandler.isLastSuperUserPermission(permisson.getrole_id()));
 //    }
 //
@@ -130,7 +130,7 @@
 //        permissions permisson2 = new permissions(Guid.NewGuid(), objectId, PredefinedRoles.SUPER_USER.getId());
 //        permissions.add(permisson1);
 //        permissions.add(permisson2);
-//        when(DbFacade.getInstance().getPermissionDAO().getAllForRole(PredefinedRoles.SUPER_USER.getId())).thenReturn(permissions);
+//        when(DbFacade.getInstance().getPermissionDao().getAllForRole(PredefinedRoles.SUPER_USER.getId())).thenReturn(permissions);
 //        assertFalse(MultiLevelAdministrationHandler.isLastSuperUserPermission(permisson1.getrole_id()));
 //    }
 //}

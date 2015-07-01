@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
@@ -49,7 +49,7 @@ public class UpdateStorageDomainCommandTest {
             new MockConfigRule(mockConfig(ConfigValues.StorageDomainNameSizeLimit, STORAGE_DOMAIN_NAME_LENGTH_LIMIT));
 
     @Mock
-    private StorageDomainStaticDAO sdsDao;
+    private StorageDomainStaticDao sdsDao;
 
     @Before
     public void setUp() {
@@ -71,7 +71,7 @@ public class UpdateStorageDomainCommandTest {
         cmd = spy(new UpdateStorageDomainCommand<>(new StorageDomainManagementParameter(newSdStatic)));
         doReturn(sd).when(cmd).getStorageDomain();
         doReturn(sp).when(cmd).getStoragePool();
-        doReturn(sdsDao).when(cmd).getStorageDomainStaticDAO();
+        doReturn(sdsDao).when(cmd).getStorageDomainStaticDao();
 
         when(sdsDao.get(sdId)).thenReturn(oldSdStatic);
     }

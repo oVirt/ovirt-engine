@@ -14,7 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.GetQuotasByAdElementIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.dao.QuotaDao;
 
 /**
  * A test case for {@link GetTemplatesRelatedToQuotaIdQuery}.
@@ -22,7 +22,7 @@ import org.ovirt.engine.core.dao.QuotaDAO;
 @RunWith(MockitoJUnitRunner.class)
 public class GetQuotasByAdElementIdQueryTest extends AbstractQueryTest<GetQuotasByAdElementIdQueryParameters, GetQuotasByAdElementIdQuery<GetQuotasByAdElementIdQueryParameters>> {
     @Mock
-    QuotaDAO quotaDAO;
+    QuotaDao quotaDao;
 
     Guid adElementId = Guid.newGuid();
     Guid storagePoolId = Guid.newGuid();
@@ -31,7 +31,7 @@ public class GetQuotasByAdElementIdQueryTest extends AbstractQueryTest<GetQuotas
 
     @Test
     public void testExecuteQuery() {
-        mockDAOForQuery();
+        mockDaoForQuery();
 
         // Execute query.
         getQuery().executeQueryCommand();
@@ -39,14 +39,14 @@ public class GetQuotasByAdElementIdQueryTest extends AbstractQueryTest<GetQuotas
     }
 
     /**
-     * Initialize DAO to be used in query.
+     * Initialize Dao to be used in query.
      */
-    private void mockDAOForQuery() {
-        when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDAO);
+    private void mockDaoForQuery() {
+        when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDao);
 
         returnedQuotas = new ArrayList<Quota>();
         when(getQueryParameters().getAdElementId()).thenReturn(adElementId);
         when(getQueryParameters().getStoragePoolId()).thenReturn(storagePoolId);
-        Mockito.when(quotaDAO.getQuotaByAdElementId(adElementId, storagePoolId, false)).thenReturn(returnedQuotas);
+        Mockito.when(quotaDao.getQuotaByAdElementId(adElementId, storagePoolId, false)).thenReturn(returnedQuotas);
     }
 }

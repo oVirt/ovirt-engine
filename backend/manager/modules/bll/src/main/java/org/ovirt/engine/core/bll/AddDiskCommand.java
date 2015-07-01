@@ -58,9 +58,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -302,16 +301,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return false;
     }
 
-    @Override
-    protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
-    }
-
     protected DiskLunMapDao getDiskLunMapDao() {
         return DbFacade.getInstance().getDiskLunMapDao();
     }
 
-    protected DiskImageDynamicDAO getDiskImageDynamicDao() {
+    protected DiskImageDynamicDao getDiskImageDynamicDao() {
         return getDbFacade().getDiskImageDynamicDao();
     }
 

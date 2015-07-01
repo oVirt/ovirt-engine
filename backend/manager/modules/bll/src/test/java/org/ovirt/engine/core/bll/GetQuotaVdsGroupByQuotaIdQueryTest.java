@@ -11,11 +11,11 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.dao.QuotaDao;
 
 /**
  * A test for the {@link GetQuotaVdsGroupByQuotaIdQuery} class.
- * This is a flow test that uses mocking to verify the correct DAOs are called.
+ * This is a flow test that uses mocking to verify the correct Daos are called.
  */
 public class GetQuotaVdsGroupByQuotaIdQueryTest
         extends AbstractQueryTest<IdQueryParameters, GetQuotaVdsGroupByQuotaIdQuery<IdQueryParameters>> {
@@ -30,10 +30,10 @@ public class GetQuotaVdsGroupByQuotaIdQueryTest
         QuotaVdsGroup group = new QuotaVdsGroup();
         group.setQuotaId(quotaId);
 
-        // Mock the DAO
-        QuotaDAO quotaDAO = mock(QuotaDAO.class);
-        when(quotaDAO.getQuotaVdsGroupByQuotaGuidWithGeneralDefault(quotaId)).thenReturn(Collections.singletonList(group));
-        when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDAO);
+        // Mock the Dao
+        QuotaDao quotaDao = mock(QuotaDao.class);
+        when(quotaDao.getQuotaVdsGroupByQuotaGuidWithGeneralDefault(quotaId)).thenReturn(Collections.singletonList(group));
+        when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDao);
 
         // Execute the query
         getQuery().executeQueryCommand();

@@ -32,7 +32,7 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
         }
 
         // If the quota is in use by ether VM or image - return false
-        if (!QuotaEnforcementTypeEnum.DISABLED.equals(quota.getQuotaEnforcementType()) && getQuotaDAO().isQuotaInUse(quota)) {
+        if (!QuotaEnforcementTypeEnum.DISABLED.equals(quota.getQuotaEnforcementType()) && getQuotaDao().isQuotaInUse(quota)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IN_USE_BY_VM_OR_DISK);
             return false;
         }
@@ -43,7 +43,7 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     protected void executeCommand() {
-        getQuotaDAO().remove(getParameters().getQuotaId());
+        getQuotaDao().remove(getParameters().getQuotaId());
         getQuotaManager().removeQuotaFromCache(getQuota().getStoragePoolId(), getParameters().getQuotaId());
         getReturnValue().setSucceeded(true);
     }

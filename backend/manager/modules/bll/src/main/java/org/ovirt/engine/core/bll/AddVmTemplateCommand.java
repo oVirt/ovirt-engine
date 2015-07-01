@@ -81,7 +81,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
@@ -543,7 +543,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private VmTemplate getBaseTemplate() {
         if (cachedBaseTemplate == null) {
-            cachedBaseTemplate = getVmTemplateDAO().get(getParameters().getBaseTemplateId());
+            cachedBaseTemplate = getVmTemplateDao().get(getParameters().getBaseTemplateId());
         }
         return cachedBaseTemplate;
     }
@@ -824,7 +824,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setVmId(getVmIdFromImageParameters());
         isVmInDb = getVm() != null;
 
-        getVmStaticDAO().incrementDbGeneration(getVmTemplateId());
+        getVmStaticDao().incrementDbGeneration(getVmTemplateId());
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             Backend.getInstance().endAction(VdcActionType.CreateImageTemplate,
                     p,
@@ -869,7 +869,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @OnTimerMethodAnnotation("updateVmVersion")
     public void updateVmVersion() {
-        for (Guid vmId : getVmDAO().getVmIdsForVersionUpdate(getParameters().getBaseTemplateId())) {
+        for (Guid vmId : getVmDao().getVmIdsForVersionUpdate(getParameters().getBaseTemplateId())) {
             // if the job was removed, stop executing, we probably have new version creation going on
             if (!updateVmsJobIdMap.containsKey(getParameters().getBaseTemplateId())) {
                 break;
@@ -981,7 +981,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return;
         }
 
-        PermissionDAO dao = getDbFacade().getPermissionDao();
+        PermissionDao dao = getDbFacade().getPermissionDao();
 
         List<Permission> vmPermissions = dao.getAllForEntity(getVmId(), getEngineSessionSeqId(), false);
 

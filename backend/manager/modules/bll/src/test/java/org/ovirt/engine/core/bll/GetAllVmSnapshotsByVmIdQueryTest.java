@@ -20,7 +20,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
- * A test case for {@link GetAllVmSnapshotsByVmIdQuery}. This test mocks away all the DAOs, and just tests the flow of
+ * A test case for {@link GetAllVmSnapshotsByVmIdQuery}. This test mocks away all the Daos, and just tests the flow of
  * the query itself.
  */
 public class GetAllVmSnapshotsByVmIdQueryTest
@@ -43,15 +43,15 @@ public class GetAllVmSnapshotsByVmIdQueryTest
         vmId = Guid.newGuid();
         snapshot =
                 new Snapshot(Guid.newGuid(), SnapshotStatus.OK, vmId, null, SnapshotType.REGULAR, "", new Date(), "");
-        setUpDAOMocks();
+        setUpDaoMocks();
     }
 
-    private void setUpDAOMocks() {
+    private void setUpDaoMocks() {
 
-        // Mock the DAOs
+        // Mock the Daos
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
 
-        // Disk Image DAO
+        // Disk Image Dao
         snapshotDaoMock = mock(SnapshotDao.class);
         when(dbFacadeMock.getSnapshotDao()).thenReturn(snapshotDaoMock);
         when(snapshotDaoMock.getAll(vmId, getUser().getId(), getQueryParameters().isFiltered()))

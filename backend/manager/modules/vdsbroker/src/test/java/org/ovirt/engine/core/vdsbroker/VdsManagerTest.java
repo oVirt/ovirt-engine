@@ -26,7 +26,7 @@ package org.ovirt.engine.core.vdsbroker;
 //import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 //import org.ovirt.engine.core.compat.Guid;
 //import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-//import org.ovirt.engine.core.dao.VdsGroupDAO;
+//import org.ovirt.engine.core.dao.VdsGroupDao;
 //import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 //import org.powermock.core.classloader.annotations.PrepareForTest;
 //import org.powermock.modules.junit4.PowerMockRunner;
@@ -41,7 +41,7 @@ package org.ovirt.engine.core.vdsbroker;
 //    private SchedulerUtilQuartzImpl schedUtil;
 //
 //    @Mock
-//    private VdsGroupDAO vdsGroupDAO;
+//    private VdsGroupDao vdsGroupDao;
 //
 //    public VdsManagerTest() {
 //        MockitoAnnotations.initMocks(this);
@@ -52,8 +52,8 @@ package org.ovirt.engine.core.vdsbroker;
 //    private void mockDbFacade() {
 //        mockStatic(DbFacade.class);
 //        when(DbFacade.getInstance()).thenReturn(db);
-//        when(db.getVdsGroupDAO()).thenReturn(vdsGroupDAO);
-//        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(mockVirtVDSGroup());
+//        when(db.getVdsGroupDao()).thenReturn(vdsGroupDao);
+//        when(vdsGroupDao.get(any(Guid.class))).thenReturn(mockVirtVDSGroup());
 //    }
 //
 //    private VDSGroup mockVirtVDSGroup() {

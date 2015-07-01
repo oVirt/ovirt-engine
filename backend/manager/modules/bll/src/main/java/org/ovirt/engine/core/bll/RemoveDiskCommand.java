@@ -55,9 +55,9 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -107,7 +107,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         if (getDisk().getVmEntityType() != null && getDisk().getVmEntityType().isVmType()) {
             for (VM vm : getVmsForDiskId()) {
                 if (vm.getStatus() != VMStatus.Down) {
-                    VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(getDisk().getId(), vm.getId()));
+                    VmDevice vmDevice = getVmDeviceDao().get(new VmDeviceId(getDisk().getId(), vm.getId()));
                     if (vmDevice.getIsPlugged()) {
                         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
                         return false;
@@ -181,7 +181,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private void setVmTemplateIdParameter() {
         Map<Boolean, VmTemplate> templateMap =
                 // Disk image is the only disk type that can be part of the template disks.
-                getVmTemplateDAO().getAllForImage(getDiskImage().getImageId());
+                getVmTemplateDao().getAllForImage(getDiskImage().getImageId());
 
         if (!templateMap.isEmpty()) {
             setVmTemplateId(templateMap.values().iterator().next().getId());
@@ -194,7 +194,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
      */
     private List<VM> getVmsForDiskId() {
         if (listVms == null) {
-            listVms = getVmDAO().getVmsListForDisk((Guid) getParameters().getDiskId(), true);
+            listVms = getVmDao().getVmsListForDisk((Guid) getParameters().getDiskId(), true);
         }
         return listVms;
     }
@@ -237,7 +237,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private List<String> getNamesOfDerivedVmsFromTemplate(DiskImage diskImage) {
         List<String> result = new ArrayList<>();
-        for (VM vm : getVmDAO().getAllWithTemplate(getVmTemplateId())) {
+        for (VM vm : getVmDao().getAllWithTemplate(getVmTemplateId())) {
             for (Disk vmDisk : getDiskDao().getAllForVm(vm.getId())) {
                 if (vmDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage vmDiskImage = (DiskImage) vmDisk;
@@ -256,7 +256,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveVmImageDisk() {
         if (!listVms.isEmpty()) {
             Guid storagePoolId = listVms.get(0).getStoragePoolId();
-            StoragePool sp = getStoragePoolDAO().get(storagePoolId);
+            StoragePool sp = getStoragePoolDao().get(storagePoolId);
             if (!validate(new StoragePoolValidator(sp).isUp())) {
                 return false;
             }
@@ -278,12 +278,12 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         return true;
     }
 
-    protected VmDeviceDAO getVmDeviceDAO() {
+    protected VmDeviceDao getVmDeviceDao() {
         return DbFacade.getInstance()
                 .getVmDeviceDao();
     }
 
-    protected DiskImageDAO getDiskImageDao() {
+    protected DiskImageDao getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDao();
     }
 
@@ -371,7 +371,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private void incrementVmsGeneration() {
         List<VM> listVms = getVmsForDiskId();
         for (VM vm : listVms) {
-            getVmStaticDAO().incrementDbGeneration(vm.getId());
+            getVmStaticDao().incrementDbGeneration(vm.getId());
         }
     }
 
@@ -518,7 +518,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         return getDbFacade().getBaseDiskDao();
     }
 
-    protected DiskImageDynamicDAO getDiskImageDynamicDAO() {
+    protected DiskImageDynamicDao getDiskImageDynamicDao() {
         return getDbFacade().getDiskImageDynamicDao();
     }
 }

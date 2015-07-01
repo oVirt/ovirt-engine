@@ -376,7 +376,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     private boolean clusterHasNonInitializingServers() {
-        for (VDS vds : getVdsDAO().getAllForVdsGroup(getVdsGroupId())) {
+        for (VDS vds : getVdsDao().getAllForVdsGroup(getVdsGroupId())) {
             if (vds.getStatus() != VDSStatus.Installing &&
                     vds.getStatus() != VDSStatus.InstallingOS &&
                     vds.getStatus() != VDSStatus.PendingApproval &&
@@ -449,7 +449,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 sshclient.authenticate();
 
                 String hostUUID = getInstalledVdsIdIfExists(sshclient);
-                if (hostUUID != null && getVdsDAO().getAllWithUniqueId(hostUUID).size() != 0) {
+                if (hostUUID != null && getVdsDao().getAllWithUniqueId(hostUUID).size() != 0) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_UUID_EXIST);
                 }
 

@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
 public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationParameters> extends
         VdsGroupCommandBase<T> {
@@ -159,7 +159,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
     }
 
     protected boolean isVdsGroupUnique(String vdsGroupName) {
-        VdsGroupDAO vdsGroupDao = getVdsGroupDAO();
+        VdsGroupDao vdsGroupDao = getVdsGroupDao();
         List<VDSGroup> vdsGroups = vdsGroupDao.getByName(vdsGroupName, true);
         return (vdsGroups == null || vdsGroups.isEmpty());
     }

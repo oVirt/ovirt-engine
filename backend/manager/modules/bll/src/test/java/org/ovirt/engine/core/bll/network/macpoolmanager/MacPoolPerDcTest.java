@@ -26,9 +26,9 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.AuditLogDAO;
+import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,7 +37,7 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Mock
-    private StoragePoolDAO storagePoolDao;
+    private StoragePoolDao storagePoolDao;
 
     @Mock
     private VmNicDao vmNicDao;
@@ -46,7 +46,7 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
     private MacPoolDao macPoolDao;
 
     @Mock
-    private AuditLogDAO auditLogDao;
+    private AuditLogDao auditLogDao;
 
     private MacPool macPool;
     private StoragePool dataCenter;

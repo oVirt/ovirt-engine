@@ -48,7 +48,7 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
     protected void executeCommand() {
         List<ActionGroup> groupsToDetach = getParameters().getActionGroups();
         for (ActionGroup group : groupsToDetach) {
-            getRoleGroupMapDAO().remove(group, getParameters().getRoleId());
+            getRoleGroupMapDao().remove(group, getParameters().getRoleId());
             appendCustomValue("ActionGroup", group.toString(), ", ");
         }
 

@@ -200,7 +200,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
         if (getVm() != null) {
             getVm().setStatus(VMStatus.Down);
-            getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
+            getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
 
             getVmDynamicDao().update(getVm().getDynamicData());
         }

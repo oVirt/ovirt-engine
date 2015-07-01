@@ -56,7 +56,7 @@ public class UnlabelNetworkCommand<T extends UnlabelNetworkParameters> extends C
 
     private Network getNetwork() {
         if (network == null) {
-            network = getNetworkDAO().get(getParameters().getNetworkId());
+            network = getNetworkDao().get(getParameters().getNetworkId());
         }
 
         return network;

@@ -75,7 +75,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
     }
 
     private void restartVdsVms() {
-        List<VM> vms = getVmDAO().getAllRunningForVds(getVdsId());
+        List<VM> vms = getVmDao().getAllRunningForVds(getVdsId());
         if (!vms.isEmpty()) {
             RestartVdsVmsOperation restartVmsOper = new RestartVdsVmsOperation(
                     getContext(),

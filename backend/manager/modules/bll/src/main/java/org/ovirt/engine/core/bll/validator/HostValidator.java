@@ -10,16 +10,16 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 
 public class HostValidator {
 
-    private final VdsDAO hostDao;
-    private final StoragePoolDAO storagePoolDao;
-    private final VdsStaticDAO hostStaticDao;
+    private final VdsDao hostDao;
+    private final StoragePoolDao storagePoolDao;
+    private final VdsStaticDao hostStaticDao;
     private final VDS host;
 
     public HostValidator(DbFacade dbFacade, VDS host) {

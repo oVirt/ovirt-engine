@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 public class AttachNetworkToClusterInternalCommandTest {
 
     /**
-     * Since the command isn't in the same package as AuditLogableBase which defines the DAO accessors they
+     * Since the command isn't in the same package as AuditLogableBase which defines the Dao accessors they
      * cannot be spied from here. Instead, will override them manually.
      */
     private class TestAttachNetworkToClusterCommand extends
@@ -41,17 +41,17 @@ public class AttachNetworkToClusterInternalCommandTest {
         }
 
         @Override
-        public VdsGroupDAO getVdsGroupDAO() {
-            return mockVdsGroupDAO;
+        public VdsGroupDao getVdsGroupDao() {
+            return mockVdsGroupDao;
         }
 
         @Override
-        protected NetworkClusterDao getNetworkClusterDAO() {
+        protected NetworkClusterDao getNetworkClusterDao() {
             return mockNetworkClusterDao;
         }
 
         @Override
-        protected NetworkDao getNetworkDAO() {
+        protected NetworkDao getNetworkDao() {
             return mockNetworkDao;
         }
     }
@@ -60,7 +60,7 @@ public class AttachNetworkToClusterInternalCommandTest {
     private NetworkClusterDao mockNetworkClusterDao;
 
     @Mock
-    private VdsGroupDAO mockVdsGroupDAO;
+    private VdsGroupDao mockVdsGroupDao;
 
     @Mock
     private NetworkDao mockNetworkDao;
@@ -125,11 +125,11 @@ public class AttachNetworkToClusterInternalCommandTest {
     }
 
     private void dbFacadeReturnNoVdsGroup() {
-        when(mockVdsGroupDAO.get(any(Guid.class))).thenReturn(null);
+        when(mockVdsGroupDao.get(any(Guid.class))).thenReturn(null);
     }
 
     private void dbFacadeReturnVdsGroup() {
-        when(mockVdsGroupDAO.get(any(Guid.class))).thenReturn(existingGroup);
+        when(mockVdsGroupDao.get(any(Guid.class))).thenReturn(existingGroup);
     }
 
     private void dbFacadeThrowOnNetworkClusterSave() {

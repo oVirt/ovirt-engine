@@ -40,11 +40,11 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /** A test case for the {@link RemoveSnapshotCommand} class. */
@@ -59,16 +59,16 @@ public class RemoveSnapshotCommandTest {
             new MockConfigRule(mockConfig(ConfigValues.LiveMergeSupported, Version.v3_5.toString(), true));
 
     @Mock
-    private VmTemplateDAO vmTemplateDAO;
+    private VmTemplateDao vmTemplateDao;
 
     @Mock
-    StorageDomainDAO sdDAO;
+    StorageDomainDao sdDao;
 
     @Mock
-    private DiskImageDAO diskImageDAO;
+    private DiskImageDao diskImageDao;
 
     @Mock
-    private StoragePoolDAO spDao;
+    private StoragePoolDao spDao;
 
     @Mock
     private SnapshotDao snapshotDao;
@@ -89,10 +89,10 @@ public class RemoveSnapshotCommandTest {
 
         RemoveSnapshotParameters params = new RemoveSnapshotParameters(snapGuid, vmGuid);
         cmd = spy(new RemoveSnapshotCommand<RemoveSnapshotParameters>(params));
-        doReturn(spDao).when(cmd).getStoragePoolDAO();
-        doReturn(vmTemplateDAO).when(cmd).getVmTemplateDAO();
-        doReturn(diskImageDAO).when(cmd).getDiskImageDao();
-        doReturn(sdDAO).when(cmd).getStorageDomainDAO();
+        doReturn(spDao).when(cmd).getStoragePoolDao();
+        doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
+        doReturn(diskImageDao).when(cmd).getDiskImageDao();
+        doReturn(sdDao).when(cmd).getStorageDomainDao();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         mockVm();
         vmValidator = spy(new VmValidator(cmd.getVm()));
@@ -125,7 +125,7 @@ public class RemoveSnapshotCommandTest {
         Set<Guid> sdIds = new HashSet<>(Arrays.asList(STORAGE_DOMAIN_ID));
         storageDomainsValidator = spy(new MultipleStorageDomainsValidator(STORAGE_POOL_ID, sdIds));
         doReturn(storageDomainsValidator).when(cmd).getStorageDomainsValidator(any(Guid.class), anySet());
-        doReturn(sdDAO).when(storageDomainsValidator).getStorageDomainDAO();
+        doReturn(sdDao).when(storageDomainsValidator).getStorageDomainDao();
         doReturn(sdIds).when(cmd).getStorageDomainsIds();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsWithinThresholds();
@@ -134,13 +134,13 @@ public class RemoveSnapshotCommandTest {
 
     @Test
     public void testValidateImageNotInTemplateTrue() {
-        when(vmTemplateDAO.get(mockSourceImageAndGetId())).thenReturn(null);
+        when(vmTemplateDao.get(mockSourceImageAndGetId())).thenReturn(null);
         assertTrue("validation should succeed", cmd.validateImageNotInTemplate());
     }
 
     @Test
     public void testValidateImageNotInTemplateFalse() {
-        when(vmTemplateDAO.get(mockSourceImageAndGetId())).thenReturn(new VmTemplate());
+        when(vmTemplateDao.get(mockSourceImageAndGetId())).thenReturn(new VmTemplate());
         assertFalse("validation should succeed", cmd.validateImageNotInTemplate());
     }
 
@@ -252,7 +252,7 @@ public class RemoveSnapshotCommandTest {
     private DiskImage mockSourceImage() {
         DiskImage image = createDiskImage(STORAGE_DOMAIN_ID);
         doReturn(Collections.singletonList(image)).when(cmd).getSourceImages();
-        when(diskImageDAO.get(image.getImageId())).thenReturn(image);
+        when(diskImageDao.get(image.getImageId())).thenReturn(image);
 
         return image;
     }

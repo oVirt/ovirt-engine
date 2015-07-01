@@ -18,10 +18,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmStaticDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -122,16 +122,16 @@ public class OvfUpdateProcessHelper {
         return ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
     }
 
-    protected VmDAO getVmDao() {
+    protected VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
     }
 
-    protected StorageDomainDAO getStorageDomainDao() {
+    protected StorageDomainDao getStorageDomainDao() {
         return DbFacade.getInstance().getStorageDomainDao();
     }
 
 
-    protected VmTemplateDAO getVmTemplateDao() {
+    protected VmTemplateDao getVmTemplateDao() {
         return DbFacade.getInstance().getVmTemplateDao();
     }
 
@@ -139,7 +139,7 @@ public class OvfUpdateProcessHelper {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 
-    protected VmStaticDAO getVmStaticDao() {
+    protected VmStaticDao getVmStaticDao() {
         return DbFacade.getInstance().getVmStaticDao();
     }
 

@@ -20,7 +20,7 @@ package org.ovirt.engine.core.vdsbroker;
 //import org.ovirt.engine.core.common.businessentities.VDSGroup;
 //import org.ovirt.engine.core.compat.Guid;
 //import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-//import org.ovirt.engine.core.dao.VdsGroupDAO;
+//import org.ovirt.engine.core.dao.VdsGroupDao;
 //import org.powermock.core.classloader.annotations.PrepareForTest;
 //import org.powermock.modules.junit4.PowerMockRunner;
 //
@@ -31,14 +31,14 @@ package org.ovirt.engine.core.vdsbroker;
 //    private DbFacade db;
 //
 //    @Mock
-//    private VdsGroupDAO vdsGroupDAO;
+//    private VdsGroupDao vdsGroupDao;
 //
 //    @Before
 //    public void mockDbFacade() {
 //        mockStatic(DbFacade.class);
 //        when(DbFacade.getInstance()).thenReturn(db);
-//        when(db.getVdsGroupDAO()).thenReturn(vdsGroupDAO);
-//        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(mockVirtVDSGroup()).thenReturn(mockGlusterVDSGroup()).thenReturn(mockBothVDSGroup());
+//        when(db.getVdsGroupDao()).thenReturn(vdsGroupDao);
+//        when(vdsGroupDao.get(any(Guid.class))).thenReturn(mockVirtVDSGroup()).thenReturn(mockGlusterVDSGroup()).thenReturn(mockBothVDSGroup());
 //    }
 //
 //    private VDSGroup mockVirtVDSGroup() {

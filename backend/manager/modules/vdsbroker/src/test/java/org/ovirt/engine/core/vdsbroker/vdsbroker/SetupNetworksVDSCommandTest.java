@@ -36,8 +36,8 @@ import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameter
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -291,8 +291,8 @@ public class SetupNetworksVDSCommandTest {
     private SetupNetworksVDSCommand<SetupNetworksVdsCommandParameters> createCommand(
             SetupNetworksVdsCommandParameters parameters) {
         final DbFacade dbFacade = mock(DbFacade.class);
-        final VdsStaticDAO vdsStaticDao = mock(VdsStaticDAO.class);
-        final VdsDAO vdsDao = mock(VdsDAO.class);
+        final VdsStaticDao vdsStaticDao = mock(VdsStaticDao.class);
+        final VdsDao vdsDao = mock(VdsDao.class);
 
         when(dbFacade.getVdsStaticDao()).thenReturn(vdsStaticDao);
         when(dbFacade.getVdsDao()).thenReturn(vdsDao);

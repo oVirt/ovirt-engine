@@ -122,7 +122,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 CpuProfile cpuProfile = CpuProfileHelper.createCpuProfile(clusterId,
                         getParameters().getVdsGroup().getName());
                 getCpuProfileDao().save(cpuProfile);
-                getVmStaticDAO().updateVmCpuProfileIdForClusterId(clusterId, cpuProfile.getId());
+                getVmStaticDao().updateVmCpuProfileIdForClusterId(clusterId, cpuProfile.getId());
             }
         }
         else if (oldGroup.getArchitecture() != getVdsGroup().getArchitecture()) {
@@ -139,7 +139,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         boolean isKsmPolicyChanged = (getVdsGroup().isKsmMergeAcrossNumaNodes() != getPrevVdsGroup().isKsmMergeAcrossNumaNodes()) ||
                 (getVdsGroup().isEnableKsm() != getPrevVdsGroup().isEnableKsm());
 
-        getVdsGroupDAO().update(getParameters().getVdsGroup());
+        getVdsGroupDao().update(getParameters().getVdsGroup());
         addOrUpdateAddtionalClusterFeatures();
 
         if (isAddedToStoragePool) {
@@ -154,7 +154,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 }
             }
 
-            getNetworkClusterDAO().save(managementNetworkCluster);
+            getNetworkClusterDao().save(managementNetworkCluster);
         }
 
         alertIfFencingDisabled();
@@ -227,7 +227,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
 
         List<VM> vmList = null;
 
-        oldGroup = getVdsGroupDAO().get(getVdsGroup().getId());
+        oldGroup = getVdsGroupDao().get(getVdsGroup().getId());
         if (oldGroup == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             result = false;
@@ -246,7 +246,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         }
 
         if (result) {
-            allForVdsGroup = getVdsDAO().getAllForVdsGroup(oldGroup.getId());
+            allForVdsGroup = getVdsDao().getAllForVdsGroup(oldGroup.getId());
         }
         // decreasing of compatibility version is only allowed when no hosts exists, and not beneath the DC version
         if (result && getVdsGroup().getCompatibilityVersion().compareTo(oldGroup.getCompatibilityVersion()) < 0) {
@@ -256,7 +256,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             }
 
             if (oldGroup.getStoragePoolId() != null) {
-                StoragePool storagePool = getStoragePoolDAO().get(oldGroup.getStoragePoolId());
+                StoragePool storagePool = getStoragePoolDao().get(oldGroup.getStoragePoolId());
                 if (storagePool != null && getVdsGroup().getCompatibilityVersion()
                     .compareTo(storagePool.getCompatibilityVersion()) < 0) {
                     result = false;
@@ -295,7 +295,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         }
 
         if (result) {
-            vmList = getVmDAO().getAllForVdsGroup(oldGroup.getId());
+            vmList = getVmDao().getAllForVdsGroup(oldGroup.getId());
             hasVmOrHost = !vmList.isEmpty() || !allForVdsGroup.isEmpty();
         }
 
@@ -397,10 +397,10 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             }
         }
         if (result && getVdsGroup().getStoragePoolId() != null) {
-            StoragePool storagePool = getStoragePoolDAO().get(getVdsGroup().getStoragePoolId());
+            StoragePool storagePool = getStoragePoolDao().get(getVdsGroup().getStoragePoolId());
             if (oldGroup.getStoragePoolId() == null && storagePool.isLocal()) {
                 // we allow only one cluster in localfs data center
-                if (!getVdsGroupDAO().getAllForStoragePool(getVdsGroup().getStoragePoolId()).isEmpty()) {
+                if (!getVdsGroupDao().getAllForStoragePool(getVdsGroup().getStoragePoolId()).isEmpty()) {
                     getReturnValue()
                             .getCanDoActionMessages()
                             .add(VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE
@@ -519,7 +519,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 return false;
             }
         } else {
-            managementNetwork = getNetworkDAO().get(managementNetworkId);
+            managementNetwork = getNetworkDao().get(managementNetworkId);
             if (managementNetwork == null) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
                 return false;
@@ -588,7 +588,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
     }
 
     @Override
-    protected NetworkDao getNetworkDAO() {
+    protected NetworkDao getNetworkDao() {
         return getDbFacade().getNetworkDao();
     }
 

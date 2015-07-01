@@ -18,10 +18,10 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 /**
  * A validator for the {@link DiskImage} class. Since most usecases require validations of multiple {@link DiskImage}s
@@ -136,11 +136,11 @@ public class DiskImagesValidator {
     public ValidationResult diskImagesSnapshotsNotAttachedToOtherVms(boolean onlyPlugged) {
         LinkedList<String> pluggedDiskSnapshotInfo = new LinkedList<>();
         for (DiskImage diskImage : diskImages) {
-            List<VmDevice> devices = getVmDeviceDAO().getVmDevicesByDeviceId(diskImage.getId(), null);
+            List<VmDevice> devices = getVmDeviceDao().getVmDevicesByDeviceId(diskImage.getId(), null);
             for (VmDevice device : devices) {
                if (device.getSnapshotId() != null && (!onlyPlugged || device.getIsPlugged())) {
-                   VM vm = getVmDAO().get(device.getVmId());
-                   Snapshot snapshot = getSnapshotDAO().get(device.getSnapshotId());
+                   VM vm = getVmDao().get(device.getVmId());
+                   Snapshot snapshot = getSnapshotDao().get(device.getSnapshotId());
                    pluggedDiskSnapshotInfo.add(String.format("%s ,%s, %s",
                            diskImage.getDiskAlias(), snapshot.getDescription(), vm.getName()));
                }
@@ -167,7 +167,7 @@ public class DiskImagesValidator {
         List<String> disksInfo = new LinkedList<>();
         for (DiskImage diskImage : diskImages) {
             if (diskImage.getVmEntityType() != null && diskImage.getVmEntityType().isTemplateType()) {
-                List<DiskImage> basedDisks = getDiskImageDAO().getAllSnapshotsForParent(diskImage.getImageId());
+                List<DiskImage> basedDisks = getDiskImageDao().getAllSnapshotsForParent(diskImage.getImageId());
                 for (DiskImage basedDisk : basedDisks) {
                     if (storageDomainId == null || basedDisk.getStorageIds().contains(storageDomainId)) {
                         disksInfo.add(String.format("%s  (%s) ", basedDisk.getDiskAlias(), basedDisk.getId()));
@@ -244,19 +244,19 @@ public class DiskImagesValidator {
        return DbFacade.getInstance();
     }
 
-    protected VmDeviceDAO getVmDeviceDAO() {
+    protected VmDeviceDao getVmDeviceDao() {
        return getDbFacade().getVmDeviceDao();
     }
 
-    protected VmDAO getVmDAO() {
+    protected VmDao getVmDao() {
         return getDbFacade().getVmDao();
     }
 
-    protected SnapshotDao getSnapshotDAO() {
+    protected SnapshotDao getSnapshotDao() {
         return getDbFacade().getSnapshotDao();
     }
 
-    protected DiskImageDAO getDiskImageDAO() {
+    protected DiskImageDao getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
     }
 }

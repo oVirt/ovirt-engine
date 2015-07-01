@@ -25,7 +25,7 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
 
     protected boolean checkStorageConnection(String storageDomainConnection) {
         List<StorageDomain> domains = null;
-        StorageServerConnections connection = getStorageServerConnectionDAO().get(storageDomainConnection);
+        StorageServerConnections connection = getStorageServerConnectionDao().get(storageDomainConnection);
         if (connection == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
@@ -52,7 +52,7 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
     }
 
     protected List<StorageDomain> getStorageDomainsByConnId(String connectionId) {
-        return getStorageDomainDAO().getAllByConnectionId(Guid.createGuidFromString(connectionId));
+        return getStorageDomainDao().getAllByConnectionId(Guid.createGuidFromString(connectionId));
     }
 
     protected boolean prepareFailureMessageForDomains(String domainNames) {

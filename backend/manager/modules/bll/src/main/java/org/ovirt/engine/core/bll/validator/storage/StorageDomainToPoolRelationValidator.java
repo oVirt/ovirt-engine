@@ -14,9 +14,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -32,10 +32,10 @@ public class StorageDomainToPoolRelationValidator {
         storagePool = pool;
     }
 
-    protected StorageDomainDAO getStorageDomainDao() {
+    protected StorageDomainDao getStorageDomainDao() {
         return DbFacade.getInstance().getStorageDomainDao();
     }
-    protected StoragePoolDAO getStoragePoolDao() {
+    protected StoragePoolDao getStoragePoolDao() {
         return DbFacade.getInstance().getStoragePoolDao();
     }
 
@@ -180,7 +180,7 @@ public class StorageDomainToPoolRelationValidator {
         return ValidationResult.VALID;
     }
 
-    protected StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
+    protected StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
         return DbFacade.getInstance().getStoragePoolIsoMapDao();
     }
 

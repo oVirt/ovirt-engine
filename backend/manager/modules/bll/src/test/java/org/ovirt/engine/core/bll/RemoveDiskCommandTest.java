@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -40,10 +40,10 @@ public class RemoveDiskCommandTest {
     public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.LOCK_MANAGER, lockManager);
 
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     @Mock
-    private VmDeviceDAO vmDeviceDao;
+    private VmDeviceDao vmDeviceDao;
 
     private RemoveDiskCommand<RemoveDiskParameters> cmd;
     private DiskImage disk;
@@ -74,8 +74,8 @@ public class RemoveDiskCommandTest {
 
         cmd = spy(new RemoveDiskCommand<RemoveDiskParameters>(params));
         doReturn(disk).when(cmd).getDisk();
-        doReturn(vmDeviceDao).when(cmd).getVmDeviceDAO();
-        doReturn(vmDao).when(cmd).getVmDAO();
+        doReturn(vmDeviceDao).when(cmd).getVmDeviceDao();
+        doReturn(vmDao).when(cmd).getVmDao();
     }
 
     /* Tests for canDoAction() flow */

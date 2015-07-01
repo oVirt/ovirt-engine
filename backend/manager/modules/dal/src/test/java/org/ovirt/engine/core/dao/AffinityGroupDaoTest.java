@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
-public class AffinityGroupDaoTest extends BaseDAOTestCase {
+public class AffinityGroupDaoTest extends BaseDaoTestCase {
 
     private static final String AFFINITY_GROUP_NAME = "affinityGroup1";
     private static final int NUM_OF_AFFINITY_GROUPS_IN_CLUSTER = 3;

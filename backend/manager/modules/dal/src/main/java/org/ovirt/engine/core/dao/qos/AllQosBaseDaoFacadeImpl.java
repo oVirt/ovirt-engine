@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDaoDbFacadeImpl;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDaoImpl;
 import org.ovirt.engine.core.dao.network.NetworkQoSDaoFacadeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,13 +53,13 @@ public class AllQosBaseDaoFacadeImpl extends QosBaseDaoFacadeImpl<QosBase> imple
             QosType qosType = QosType.forValue(rs.getInt("qos_type"));
             switch (qosType) {
             case STORAGE:
-                return StorageQosDaoDbFacadeImpl.StorageDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
+                return StorageQosDaoImpl.StorageDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
             case CPU:
-                return CpuQosDaoDbFacadeImpl.CpuDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
+                return CpuQosDaoImpl.CpuDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
             case NETWORK:
                 return NetworkQoSDaoFacadeImpl.NetworkQosDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
             case HOSTNETWORK:
-                return HostNetworkQosDaoDbFacadeImpl.HostNetworkQosDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
+                return HostNetworkQosDaoImpl.HostNetworkQosDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
             default:
                 log.debug("not handled/missing qos_type '{}'", qosType);
                 break;

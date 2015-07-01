@@ -77,23 +77,23 @@ public class DetachActionGroupsFromRoleCommandTest extends AbstractRolesCommandT
         for (ActionGroup group : groups) {
             maps.add(new RoleGroupMap(group, getParams().getRoleId()));
         }
-        when(getRoleGroupMapDAOMock().getAllForRole(getParams().getRoleId())).thenReturn(maps);
+        when(getRoleGroupMapDaoMock().getAllForRole(getParams().getRoleId())).thenReturn(maps);
     }
 
     private void verifyRoleSaving(boolean wasInheritable, boolean roleStatusChanged) {
         for (ActionGroup group : getParams().getActionGroups()) {
-            verify(getRoleGroupMapDAOMock()).remove(group, getParams().getRoleId());
+            verify(getRoleGroupMapDaoMock()).remove(group, getParams().getRoleId());
         }
 
         if (wasInheritable) {
-            verify(getRoleDAOMock()).get(getParams().getRoleId());
-            verify(getRoleGroupMapDAOMock()).getAllForRole(getParams().getRoleId());
+            verify(getRoleDaoMock()).get(getParams().getRoleId());
+            verify(getRoleGroupMapDaoMock()).getAllForRole(getParams().getRoleId());
         }
 
         if (roleStatusChanged) {
-            verify(getRoleDAOMock()).update(getRole());
+            verify(getRoleDaoMock()).update(getRole());
         }
 
-        verifyNoMoreInteractions(getRoleGroupMapDAOMock());
+        verifyNoMoreInteractions(getRoleGroupMapDaoMock());
     }
 }

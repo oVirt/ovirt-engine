@@ -57,10 +57,10 @@ public class GetAllVmSnapshotsFromConfigurationByVmIdQueryTest extends AbstractU
         disk2 = new DiskImage();
         snapshotVmConfigurationHelper = spy(new SnapshotVmConfigurationHelper());
         when(getQuery().getSnapshotVmConfigurationHelper()).thenReturn(snapshotVmConfigurationHelper);
-        setUpDAOMocks();
+        setUpDaoMocks();
     }
 
-    private void setUpDAOMocks() {
+    private void setUpDaoMocks() {
         snapshotDaoMock = mock(SnapshotDao.class);
         doReturn(snapshotDaoMock).when(getQuery()).getSnapshotDao();
         when(snapshotDaoMock.getAllWithConfiguration(vmId)).thenReturn(Arrays.asList(snapshot));

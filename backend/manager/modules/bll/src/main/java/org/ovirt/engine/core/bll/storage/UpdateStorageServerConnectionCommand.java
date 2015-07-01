@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -128,7 +128,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             for (LUNs lun : getLuns()) {
                 Guid diskId = lun.getDiskId();
                 if (diskId != null) {
-                    Map<Boolean, List<VM>> vmsMap = getVmDAO().getForDisk(diskId, true);
+                    Map<Boolean, List<VM>> vmsMap = getVmDao().getForDisk(diskId, true);
                     List<VM> pluggedVms = vmsMap.get(Boolean.TRUE);
                     if (pluggedVms != null && !pluggedVms.isEmpty()) {
                         for (VM vm : pluggedVms) {
@@ -318,11 +318,11 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         return newConnectionParametersForVdsm;
     }
 
-    protected StorageDomainDynamicDAO getStorageDomainDynamicDao() {
+    protected StorageDomainDynamicDao getStorageDomainDynamicDao() {
         return getDbFacade().getStorageDomainDynamicDao();
     }
 
-    protected StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
+    protected StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
         return getDbFacade().getStoragePoolIsoMapDao();
     }
 

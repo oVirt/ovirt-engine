@@ -22,8 +22,8 @@ import org.ovirt.engine.core.common.vdscommands.VmReplicateDiskParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -138,7 +138,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
         }
     }
 
-    private static DiskImageDAO getDiskImageDao() {
+    private static DiskImageDao getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDao();
     }
 
@@ -146,7 +146,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
         return DbFacade.getInstance().getImageStorageDomainMapDao();
     }
 
-    private static DiskImageDynamicDAO getDiskImageDynamicDao() {
+    private static DiskImageDynamicDao getDiskImageDynamicDao() {
         return DbFacade.getInstance().getDiskImageDynamicDao();
     }
 

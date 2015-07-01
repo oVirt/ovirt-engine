@@ -21,12 +21,12 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 public class AuditLogableBaseTest {
@@ -1055,8 +1055,8 @@ public class AuditLogableBaseTest {
         public final StorageDomain STORAGE_DOMAIN = new StorageDomain();
 
         @Override
-        public VmTemplateDAO getVmTemplateDAO() {
-            final VmTemplateDAO vt = mock(VmTemplateDAO.class);
+        public VmTemplateDao getVmTemplateDao() {
+            final VmTemplateDao vt = mock(VmTemplateDao.class);
             final VmTemplate t = new VmTemplate();
             t.setId(GUID);
             t.setName(NAME);
@@ -1066,24 +1066,24 @@ public class AuditLogableBaseTest {
         }
 
         @Override
-        public VmDAO getVmDAO() {
-            final VmDAO v = mock(VmDAO.class);
+        public VmDao getVmDao() {
+            final VmDao v = mock(VmDao.class);
             when(v.get(GUID)).thenReturn(new VM());
             when(v.get(GUID3)).thenThrow(new RuntimeException());
             return v;
         }
 
         @Override
-        public StorageDomainDAO getStorageDomainDAO() {
-            final StorageDomainDAO d = mock(StorageDomainDAO.class);
+        public StorageDomainDao getStorageDomainDao() {
+            final StorageDomainDao d = mock(StorageDomainDao.class);
             when(d.getForStoragePool(GUID, GUID)).thenReturn(STORAGE_DOMAIN);
             when(d.getAllForStorageDomain(GUID2)).thenReturn(getStorageDomainList());
             return d;
         }
 
         @Override
-        public StoragePoolDAO getStoragePoolDAO() {
-            final StoragePoolDAO s = mock(StoragePoolDAO.class);
+        public StoragePoolDao getStoragePoolDao() {
+            final StoragePoolDao s = mock(StoragePoolDao.class);
             final StoragePool p = new StoragePool();
             p.setId(GUID);
             when(s.get(GUID)).thenReturn(p);
@@ -1092,8 +1092,8 @@ public class AuditLogableBaseTest {
         }
 
         @Override
-        public VdsDAO getVdsDAO() {
-            final VdsDAO v = mock(VdsDAO.class);
+        public VdsDao getVdsDao() {
+            final VdsDao v = mock(VdsDao.class);
             final VDS vds1 = new VDS();
             vds1.setId(GUID);
             final VDS vds2 = new VDS();
@@ -1105,8 +1105,8 @@ public class AuditLogableBaseTest {
         }
 
         @Override
-        public VdsGroupDAO getVdsGroupDAO() {
-            final VdsGroupDAO v = mock(VdsGroupDAO.class);
+        public VdsGroupDao getVdsGroupDao() {
+            final VdsGroupDao v = mock(VdsGroupDao.class);
             final VDSGroup g = new VDSGroup();
             g.setVdsGroupId(GUID);
             when(v.get(GUID)).thenReturn(g);

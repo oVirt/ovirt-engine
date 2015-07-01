@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.EngineSessionDAO;
-import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.dao.EngineSessionDao;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
@@ -46,13 +46,13 @@ public class SessionDataContainerTest {
         DbFacade dbFacadeMock = mock(DbFacade.class);
         when(container.getDbFacade()).thenReturn(dbFacadeMock);
 
-        EngineSessionDAO engineSessionDAOMock = mock(EngineSessionDAO.class);
-        when(engineSessionDAOMock.remove(any(Long.class))).thenReturn(1);
-        when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDAOMock);
+        EngineSessionDao engineSessionDaoMock = mock(EngineSessionDao.class);
+        when(engineSessionDaoMock.remove(any(Long.class))).thenReturn(1);
+        when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDaoMock);
 
-        PermissionDAO permissionsDAOMock = mock(PermissionDAO.class);
-        when(permissionsDAOMock.getAllForEntity(any(Guid.class), any(Long.class), any(Boolean.class))).thenReturn(new ArrayList<Permission>());
-        when(dbFacadeMock.getPermissionDao()).thenReturn(permissionsDAOMock);
+        PermissionDao permissionsDaoMock = mock(PermissionDao.class);
+        when(permissionsDaoMock.getAllForEntity(any(Guid.class), any(Long.class), any(Boolean.class))).thenReturn(new ArrayList<Permission>());
+        when(dbFacadeMock.getPermissionDao()).thenReturn(permissionsDaoMock);
 
         DbUser user = mock(DbUser.class);
         container.setUser(TEST_SESSION_ID, user);

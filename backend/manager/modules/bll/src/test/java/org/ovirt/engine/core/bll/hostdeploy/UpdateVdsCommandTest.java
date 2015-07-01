@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class UpdateVdsCommandTest {
@@ -56,12 +56,12 @@ public class UpdateVdsCommandTest {
                 parameters.getFenceAgents(),
                 new Version("1.2.3").toString())).thenReturn(true);
 
-        VdsDAO vdsDaoMock = Mockito.mock(VdsDAO.class);
+        VdsDao vdsDaoMock = Mockito.mock(VdsDao.class);
         Mockito.when(vdsDaoMock.get(vdsId)).thenReturn(oldVdsData);
         //now return the old vds data
         Mockito.when(vdsDaoMock.getByName("BAR")).thenReturn(oldVdsData);
 
-        Mockito.when(commandMock.getVdsDAO()).thenReturn(vdsDaoMock);
+        Mockito.when(commandMock.getVdsDao()).thenReturn(vdsDaoMock);
         Mockito.when(commandMock.getDbFacade()).thenReturn(Mockito.mock(DbFacade.class));
         VdsHandler.init();
 

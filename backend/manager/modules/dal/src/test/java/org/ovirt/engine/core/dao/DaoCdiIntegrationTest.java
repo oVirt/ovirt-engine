@@ -16,13 +16,13 @@ import org.reflections.Reflections;
 
 public class DaoCdiIntegrationTest {
 
-    private static Set<Class<? extends DAO>> daoClasses;
+    private static Set<Class<? extends Dao>> daoClasses;
 
     @BeforeClass
     public static void setUp() throws Exception {
         final Reflections reflections = new Reflections("org.ovirt.engine");
 
-        daoClasses = Collections.unmodifiableSet(reflections.getSubTypesOf(DAO.class));
+        daoClasses = Collections.unmodifiableSet(reflections.getSubTypesOf(Dao.class));
     }
 
     @Test
@@ -30,7 +30,7 @@ public class DaoCdiIntegrationTest {
 
         for (Class daoClass : daoClasses) {
             if (isConcreteClass(daoClass)) {
-                assertTrue("A concrete DAO class has to be annotated with @ApplicationScoped or @Singleton: "
+                assertTrue("A concrete Dao class has to be annotated with @ApplicationScoped or @Singleton: "
                         + daoClass.getCanonicalName(),
                         daoClass.isAnnotationPresent(ApplicationScoped.class)
                                 || daoClass.isAnnotationPresent(Singleton.class));
@@ -42,7 +42,7 @@ public class DaoCdiIntegrationTest {
     public void testSingletonDaoAnnotationNotPresentOnAbstractClass() {
         for (Class daoClass : daoClasses) {
             if (isAbstractClass(daoClass)) {
-                assertFalse("An abstract DAO class cannot be annotated with @ApplicationScoped or @Singleton: "
+                assertFalse("An abstract Dao class cannot be annotated with @ApplicationScoped or @Singleton: "
                         + daoClass.getCanonicalName(),
                         daoClass.isAnnotationPresent(ApplicationScoped.class)
                                 || daoClass.isAnnotationPresent(Singleton.class));
@@ -55,7 +55,7 @@ public class DaoCdiIntegrationTest {
         for (Class daoClass : daoClasses) {
             if (isParametrizedClass(daoClass)) {
                 assertFalse(
-                        "A parametrized DAO class cannot be annotated with @ApplicationScoped or @Singleton: "
+                        "A parametrized Dao class cannot be annotated with @ApplicationScoped or @Singleton: "
                                 + daoClass.getCanonicalName(),
                         daoClass.isAnnotationPresent(ApplicationScoped.class)
                                 || daoClass.isAnnotationPresent(Singleton.class));

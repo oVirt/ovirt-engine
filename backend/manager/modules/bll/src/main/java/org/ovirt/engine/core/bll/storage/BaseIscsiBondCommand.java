@@ -45,7 +45,7 @@ public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> ex
     protected void connectAllHostsToStorage(List<String> connectionIds) {
         List<Callable<Void>> tasks = new ArrayList<>();
         final List<StorageServerConnections> connections = getDbFacade().getStorageServerConnectionDao().getByIds(connectionIds);
-        List<VDS> hosts = getVdsDAO().getAllForStoragePoolAndStatus(getIscsiBond().getStoragePoolId(), VDSStatus.Up);
+        List<VDS> hosts = getVdsDao().getAllForStoragePoolAndStatus(getIscsiBond().getStoragePoolId(), VDSStatus.Up);
 
         for (final VDS host : hosts) {
             tasks.add(new Callable<Void>() {

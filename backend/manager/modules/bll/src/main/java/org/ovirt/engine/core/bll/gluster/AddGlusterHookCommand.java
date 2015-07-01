@@ -73,7 +73,7 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
         }
 
         for (GlusterServerHook serverHook: getMissingServerHooks()) {
-            VDS vds = getVdsDAO().get(serverHook.getServerId());
+            VDS vds = getVdsDao().get(serverHook.getServerId());
             if (vds == null || vds.getStatus() != VDSStatus.Up) {
                 String vdsName = vds != null ? vds.getName() : GlusterConstants.NO_SERVER;
                 setVdsName(vdsName);

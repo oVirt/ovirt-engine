@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, GetWatchdogQuery<IdQueryParameters>> {
@@ -26,12 +26,12 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
     private static final Guid TEST_VM_ID = new Guid("ee655a4d-effc-4aab-be2b-2f80ff40cd1c");
 
     @Mock
-    VmDeviceDAO vmDeviceDAO;
+    VmDeviceDao vmDeviceDao;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Mockito.when(getDbFacadeMockInstance().getVmDeviceDao()).thenReturn(vmDeviceDAO);
+        Mockito.when(getDbFacadeMockInstance().getVmDeviceDao()).thenReturn(vmDeviceDao);
         Mockito.when(getQueryParameters().getId()).thenReturn(TEST_VM_ID);
     }
 
@@ -49,7 +49,7 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
         VmDevice vmDevice = new VmDevice(new VmDeviceId(new Guid("6f86b8a4-e721-4149-b2df-056eb621b16a"),
                 TEST_VM_ID), VmDeviceGeneralType.WATCHDOG, VmDeviceType.WATCHDOG.getName(), "", 1, watchdogSpecParams,
                 true, true, true, "", null, null, null);
-        Mockito.when(vmDeviceDAO.getVmDeviceByVmIdAndType(TEST_VM_ID, VmDeviceGeneralType.WATCHDOG))
+        Mockito.when(vmDeviceDao.getVmDeviceByVmIdAndType(TEST_VM_ID, VmDeviceGeneralType.WATCHDOG))
                 .thenReturn(Collections.singletonList(vmDevice));
 
         getQuery().executeQueryCommand();

@@ -116,7 +116,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                             new CollectHostNetworkDataVdsCommandParameters(getVds()));
 
             if (retVal.getSucceeded()) {
-                Guid groupId = getVdsDAO().get(getParameters().getVdsId()).getVdsGroupId();
+                Guid groupId = getVdsDao().get(getParameters().getVdsId()).getVdsGroupId();
                 NetworkClusterHelper.setStatus(groupId, getParameters().getNetwork());
                 setSucceeded(true);
             }
@@ -188,7 +188,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             return false;
         }
 
-        VDS vds = getVdsDAO().get(getParameters().getVdsId());
+        VDS vds = getVdsDao().get(getParameters().getVdsId());
         if (vds.getStatus() != VDSStatus.Maintenance) {
             // check that the old network exists in host
             VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
@@ -257,7 +257,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             }
         }
 
-        Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), vds.getVdsGroupId());
+        Network network = getNetworkDao().getByNameAndCluster(getNetworkName(), vds.getVdsGroupId());
         if (network != null && network.isExternal()) {
             return failCanDoAction(VdcBllMessages.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
         }

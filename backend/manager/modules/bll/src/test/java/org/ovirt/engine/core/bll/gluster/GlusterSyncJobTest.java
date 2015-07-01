@@ -65,11 +65,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.dao.VdsStatisticsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
@@ -148,15 +148,15 @@ public class GlusterSyncJobTest {
     @Mock
     private GlusterOptionDao optionDao;
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
     @Mock
-    private VdsStatisticsDAO vdsStatisticsDao;
+    private VdsStatisticsDao vdsStatisticsDao;
     @Mock
-    private VdsStaticDAO vdsStaticDao;
+    private VdsStaticDao vdsStaticDao;
     @Mock
-    private VdsDynamicDAO vdsDynamicDao;
+    private VdsDynamicDao vdsDynamicDao;
     @Mock
-    private VdsGroupDAO clusterDao;
+    private VdsGroupDao clusterDao;
     @Mock
     private InterfaceDao interfaceDao;
     @Mock

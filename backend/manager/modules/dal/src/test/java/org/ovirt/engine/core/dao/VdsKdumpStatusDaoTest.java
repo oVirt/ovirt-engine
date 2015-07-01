@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * {@link VdsKdumpStatusDao} tests
  */
-public class VdsKdumpStatusDaoTest extends BaseDAOTestCase {
+public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
     /**
      * Test getting status for existing VDS
      */

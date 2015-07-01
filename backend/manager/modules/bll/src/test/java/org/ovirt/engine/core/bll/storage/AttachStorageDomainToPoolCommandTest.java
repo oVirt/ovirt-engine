@@ -49,11 +49,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,15 +61,15 @@ public class AttachStorageDomainToPoolCommandTest {
     @Mock
     private DbFacade dbFacade;
     @Mock
-    private StoragePoolIsoMapDAO isoMapDAO;
+    private StoragePoolIsoMapDao isoMapDao;
     @Mock
-    private StoragePoolDAO storagePoolDAO;
+    private StoragePoolDao storagePoolDao;
     @Mock
-    private StorageDomainDAO storageDomainDAO;
+    private StorageDomainDao storageDomainDao;
     @Mock
-    private StorageDomainStaticDAO storageDomainStaticDAO;
+    private StorageDomainStaticDao storageDomainStaticDao;
     @Mock
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
     @Mock
     private BackendInternal backendInternal;
     @Mock
@@ -93,18 +93,18 @@ public class AttachStorageDomainToPoolCommandTest {
         CommandMocks.mockDbFacade(cmd, dbFacade);
         doNothing().when(cmd).attemptToActivateDomain();
         doReturn(Collections.emptyList()).when(cmd).connectHostsInUpToDomainStorageServer();
-        when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDAO);
-        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDAO);
-        when(dbFacade.getVdsDao()).thenReturn(vdsDAO);
-        when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDAO);
-        when(dbFacade.getStorageDomainStaticDao()).thenReturn(storageDomainStaticDAO);
+        when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDao);
+        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
+        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
+        when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDao);
+        when(dbFacade.getStorageDomainStaticDao()).thenReturn(storageDomainStaticDao);
         StoragePool pool = new StoragePool();
         pool.setId(poolId);
         pool.setStatus(StoragePoolStatus.Up);
-        when(storagePoolDAO.get(any(Guid.class))).thenReturn(pool);
-        when(isoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
-        when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
-        when(storageDomainStaticDAO.get(any(Guid.class))).thenReturn(new StorageDomainStatic());
+        when(storagePoolDao.get(any(Guid.class))).thenReturn(pool);
+        when(isoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
+        when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
+        when(storageDomainStaticDao.get(any(Guid.class))).thenReturn(new StorageDomainStatic());
         doReturn(pool.getId()).when(cmd).getStoragePoolIdFromVds();
         doReturn(backendInternal).when(cmd).getBackend();
         when(backendInternal.getResourceManager()).thenReturn(vdsBrokerFrontend);
@@ -118,7 +118,7 @@ public class AttachStorageDomainToPoolCommandTest {
         storageDomain.setStorageDomainType(StorageDomainType.ImportExport);
         mockGetStorageDomainInfoVdsCommand(storageDomain);
         mockAttachStorageDomainVdsCommand();
-        when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
         doReturn(getUnregisteredList()).when(cmd).getEntitiesFromStorageOvfDisk(storageDomainId, pool.getId());
         doReturn(Collections.<DiskImage>emptyList()).when(cmd).getAllOVFDisks(storageDomainId, pool.getId());
         doAnswer(new Answer<Object>() {
@@ -127,7 +127,7 @@ public class AttachStorageDomainToPoolCommandTest {
                 map = (StoragePoolIsoMap) invocation.getArguments()[0];
                 return null;
             }
-        }).when(isoMapDAO).save(any(StoragePoolIsoMap.class));
+        }).when(isoMapDao).save(any(StoragePoolIsoMap.class));
 
         cmd.setCompensationContext(mock(CompensationContext.class));
         cmd.executeCommand();

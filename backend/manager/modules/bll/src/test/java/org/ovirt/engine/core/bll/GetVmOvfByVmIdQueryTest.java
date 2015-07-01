@@ -20,19 +20,19 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmIdParameters, GetVmOvfByVmIdQuery<GetVmOvfByVmIdParameters>> {
 
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        setUpDAOMocks();
+        setUpDaoMocks();
         doReturn("config").when(getQuery()).generateOvfConfig(any(VM.class));
     }
 
@@ -44,8 +44,8 @@ public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmI
         return vm;
     }
 
-    private void setUpDAOMocks() {
-        doReturn(vmDAO).when(getQuery()).getVmDao();
+    private void setUpDaoMocks() {
+        doReturn(vmDao).when(getQuery()).getVmDao();
     }
 
     @Test
@@ -53,7 +53,7 @@ public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmI
         Guid id = Guid.newGuid();
         long dbGeneration = 5;
         VM vm = createVm(id, dbGeneration);
-        doReturn(vm).when(vmDAO).get(any(Guid.class), any(Guid.class), anyBoolean());
+        doReturn(vm).when(vmDao).get(any(Guid.class), any(Guid.class), anyBoolean());
         when(getQueryParameters().getRequiredGeneration()).thenReturn(dbGeneration - 1);
         GetVmOvfByVmIdQuery query = getQuery();
         query.execute();
@@ -67,7 +67,7 @@ public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmI
         Guid id = Guid.newGuid();
         long dbGeneration = 5;
         VM vm = createVm(id, dbGeneration);
-        doReturn(vm).when(vmDAO).get(any(Guid.class), any(Guid.class), anyBoolean());
+        doReturn(vm).when(vmDao).get(any(Guid.class), any(Guid.class), anyBoolean());
         when(getQueryParameters().getRequiredGeneration()).thenReturn(dbGeneration);
         GetVmOvfByVmIdQuery query = getQuery();
         query.execute();

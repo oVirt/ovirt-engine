@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmStaticDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,13 +64,13 @@ public class IconLoader {
     }
 
     private void updateVmStaticTable() {
-        final VmStaticDAO vmStaticDao = DbFacade.getInstance().getVmStaticDao();
+        final VmStaticDao vmStaticDao = DbFacade.getInstance().getVmStaticDao();
         for (VmStatic vmStatic : vmStaticDao.getAllWithoutIcon()) {
             setIconsByOs(vmStatic);
             vmStaticDao.update(vmStatic);
         }
 
-        final VmTemplateDAO vmTemplateDao = DbFacade.getInstance().getVmTemplateDao();
+        final VmTemplateDao vmTemplateDao = DbFacade.getInstance().getVmTemplateDao();
         for (VmTemplate vmTemplate : vmTemplateDao.getAllWithoutIcon()) {
             setIconsByOs(vmTemplate);
             vmTemplateDao.update(vmTemplate);

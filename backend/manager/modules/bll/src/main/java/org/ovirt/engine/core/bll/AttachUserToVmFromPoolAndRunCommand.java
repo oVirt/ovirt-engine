@@ -74,7 +74,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
         // check user isn't already attached to maximum number of vms from this pool
         if (returnValue) {
-            List<VM> vmsForUser = getVmDAO().getAllForUser(getAdUserId());
+            List<VM> vmsForUser = getVmDao().getAllForUser(getAdUserId());
 
             int vmCount = 0;
             for (VM vm : vmsForUser) {
@@ -113,7 +113,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     }
 
     private Guid getPrestartedVmToAttach(Guid vmPoolId) {
-        List<VmPoolMap> vmPoolMaps = getVmPoolDAO().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
+        List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
                 if (canAttachPrestartedVmToUser(map.getvm_guid())) {
@@ -125,7 +125,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     }
 
     private Guid getNonPrestartedVmToAttach(Guid vmPoolId) {
-        List<VmPoolMap> vmPoolMaps = getVmPoolDAO().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
+        List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
                 if (canAttachNonPrestartedVmToUser(map.getvm_guid())) {
@@ -209,7 +209,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
         // Only when using a Vm that is not prestarted do we need to run the vm
         if (!isPrestartedVm) {
-            setVm(getVmDAO().get(vmToAttach));
+            setVm(getVmDao().get(vmToAttach));
             RunVmParams runVmParams = new RunVmParams(vmToAttach);
             runVmParams.setSessionId(getParameters().getSessionId());
             runVmParams.setParentParameters(getParameters());
@@ -328,7 +328,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
         if (vmToAttach != null) {
-            VM vm = getVmDAO().get(vmToAttach);
+            VM vm = getVmDao().get(vmToAttach);
 
             setStoragePoolId(vm.getStoragePoolId());
 

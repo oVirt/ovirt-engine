@@ -35,7 +35,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,7 +46,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
     AddGlusterHookCommand cmd;
 
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
 
     private static final Guid SERVER_ID = Guid.newGuid();
 
@@ -78,7 +78,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
 
     private void setUpMocksForAdd(boolean hookFound, GlusterHookEntity hook, VDSStatus status) {
         setupMocks(cmd, hookFound, hook);
-        doReturn(vdsDao).when(cmd).getVdsDAO();
+        doReturn(vdsDao).when(cmd).getVdsDao();
         when(vdsDao.get(any(Guid.class))).thenReturn(getServer(SERVER_ID, "gfs1", CLUSTER_ID, status));
     }
 

@@ -16,10 +16,10 @@ import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class GlusterBrickDaoTest extends BaseDAOTestCase {
+public class GlusterBrickDaoTest extends BaseDaoTestCase {
     private GlusterBrickDao dao;
     private VdsStatic server;
 

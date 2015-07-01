@@ -14,12 +14,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerServic
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
 /**
- * Tests for Services DAO
+ * Tests for Services Dao
  */
-public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
+public class GlusterServerServiceDaoTest extends BaseDaoTestCase {
     private static final Guid NEW_SERVICE_ID = new Guid("d1745ef8-8369-43e5-b55a-b4fceea63877");
     private static final Guid SERVER1_ID = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
     private static final Guid SERVER2_ID = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");

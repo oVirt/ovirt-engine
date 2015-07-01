@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public interface ClusterFeatureDao extends DAO {
+public interface ClusterFeatureDao extends Dao {
 
     /**
      * Add the given feature as a supported for the cluster

@@ -45,7 +45,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dao.StepDao;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -75,7 +75,7 @@ public class GlusterTasksSyncJobTest {
     private StepDao stepDao;
 
     @Mock
-    private VdsGroupDAO clusterDao;
+    private VdsGroupDao clusterDao;
 
     @Mock
     private GlusterVolumeDao volumeDao;

@@ -9,10 +9,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class HostNetworkQosDaoTest extends BaseDAOTestCase {
+public class HostNetworkQosDaoTest extends BaseDaoTestCase {
 
     private HostNetworkQosDao dao;
 

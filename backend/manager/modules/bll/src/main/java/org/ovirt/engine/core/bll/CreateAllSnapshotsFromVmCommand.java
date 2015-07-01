@@ -65,7 +65,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -220,7 +219,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private void incrementVmGeneration() {
-        getVmStaticDAO().incrementDbGeneration(getVm().getId());
+        getVmStaticDao().incrementDbGeneration(getVm().getId());
     }
 
     @Override
@@ -535,10 +534,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             getSnapshotDao().updateId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE), createdSnapshotId);
         }
         setSucceeded(false);
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
     }
 
     @Override

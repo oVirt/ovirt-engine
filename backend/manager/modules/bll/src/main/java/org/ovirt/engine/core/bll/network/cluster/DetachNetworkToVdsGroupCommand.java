@@ -82,7 +82,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     private Network getPersistedNetwork() {
         if (persistedNetwork == null) {
-            persistedNetwork = getNetworkDAO().get(getNetwork().getId());
+            persistedNetwork = getNetworkDao().get(getNetwork().getId());
         }
 
         return persistedNetwork;

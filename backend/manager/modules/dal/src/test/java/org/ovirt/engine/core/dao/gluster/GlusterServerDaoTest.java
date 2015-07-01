@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 
-public class GlusterServerDaoTest extends BaseDAOTestCase {
+public class GlusterServerDaoTest extends BaseDaoTestCase {
 
     private static final Guid SERVER_ID1 = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
     private static final Guid SERVER_ID2 = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");

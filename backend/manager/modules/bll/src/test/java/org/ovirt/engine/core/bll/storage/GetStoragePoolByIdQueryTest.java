@@ -10,11 +10,11 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 /**
  * A test case for {@link GetStoragePoolByIdQuery}.
- * It does not test database implementation, but rather tests that the right delegations to the DAO occur.
+ * It does not test database implementation, but rather tests that the right delegations to the Dao occur.
  */
 public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetStoragePoolByIdQuery<IdQueryParameters>> {
 
@@ -26,11 +26,11 @@ public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<IdQueryPa
         IdQueryParameters paramsMock = getQueryParameters();
         when(paramsMock.getId()).thenReturn(storagePoolID);
 
-        StoragePoolDAO storagePoolDAOMock = mock(StoragePoolDAO.class);
-        when(storagePoolDAOMock.get(storagePoolID, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
+        StoragePoolDao storagePoolDaoMock = mock(StoragePoolDao.class);
+        when(storagePoolDaoMock.get(storagePoolID, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
 
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
-        when(dbFacadeMock.getStoragePoolDao()).thenReturn(storagePoolDAOMock);
+        when(dbFacadeMock.getStoragePoolDao()).thenReturn(storagePoolDaoMock);
 
         getQuery().executeQueryCommand();
 

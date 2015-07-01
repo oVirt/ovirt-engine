@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VmJobState;
 import org.ovirt.engine.core.common.businessentities.VmJobType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmJobDaoTest extends BaseDAOTestCase {
+public class VmJobDaoTest extends BaseDaoTestCase {
     private VmJobDao dao;
 
     @Override

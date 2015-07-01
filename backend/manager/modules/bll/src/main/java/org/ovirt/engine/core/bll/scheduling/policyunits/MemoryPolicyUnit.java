@@ -40,7 +40,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         if (vm.getStatus() == VMStatus.Paused) {
             return hosts;
         }
-        List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(vm.getId());
+        List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(vm.getId());
         for (VDS vds : hosts) {
             if (!isVMSwapValueLegal(vds)) {
                 log.debug("Host '{}' swap value is illegal", vds.getName());
@@ -75,7 +75,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
     }
 
     private boolean canVmNumaPinnedToVds(VM vm, List<VmNumaNode> nodes, VDS vds) {
-        List<VdsNumaNode> pNodes = DbFacade.getInstance().getVdsNumaNodeDAO().getAllVdsNumaNodeByVdsId(vds.getId());
+        List<VdsNumaNode> pNodes = DbFacade.getInstance().getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vds.getId());
         if (pNodes == null || pNodes.isEmpty()) {
             return false;
         }

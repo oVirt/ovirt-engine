@@ -27,8 +27,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
@@ -36,7 +36,7 @@ import org.ovirt.engine.core.utils.lock.LockManager;
 public class HostDeviceManager implements BackendService {
 
     @Inject
-    private VdsDynamicDAO hostDynamicDao;
+    private VdsDynamicDao hostDynamicDao;
 
     @Inject
     private LockManager lockManager;
@@ -45,7 +45,7 @@ public class HostDeviceManager implements BackendService {
     private HostDeviceDao hostDeviceDao;
 
     @Inject
-    private VmDeviceDAO vmDeviceDao;
+    private VmDeviceDao vmDeviceDao;
 
     @Inject
     private BackendInternal backend;

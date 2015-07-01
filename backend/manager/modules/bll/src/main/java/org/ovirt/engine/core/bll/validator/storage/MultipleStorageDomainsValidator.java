@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 /**
@@ -152,14 +152,14 @@ public class MultipleStorageDomainsValidator {
     /** @return The lazy-loaded validator for the given map entry */
     protected StorageDomainValidator getStorageDomainValidator(Map.Entry<Guid, StorageDomainValidator> entry) {
         if (entry.getValue() == null) {
-            entry.setValue(new StorageDomainValidator(getStorageDomainDAO().getForStoragePool(entry.getKey(), storagePoolId)));
+            entry.setValue(new StorageDomainValidator(getStorageDomainDao().getForStoragePool(entry.getKey(), storagePoolId)));
         }
 
         return entry.getValue();
     }
 
-    /** @return The DAO object used to retrieve storage domains */
-    public StorageDomainDAO getStorageDomainDAO() {
+    /** @return The Dao object used to retrieve storage domains */
+    public StorageDomainDao getStorageDomainDao() {
         return DbFacade.getInstance().getStorageDomainDao();
     }
 

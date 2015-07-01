@@ -45,7 +45,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.AsyncTaskDAO;
+import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -81,7 +81,7 @@ public class BackwardCompatibilityTaskCreationTest extends DbDependentTestBase {
 
     @Before
     public void before() {
-        AsyncTaskDAO asyncTaskDao = mock(AsyncTaskDAO.class);
+        AsyncTaskDao asyncTaskDao = mock(AsyncTaskDao.class);
         when(asyncTaskDao.getAll()).thenReturn(Collections.<AsyncTask> emptyList());
         when(DbFacade.getInstance().getAsyncTaskDao()).thenReturn(asyncTaskDao);
         CommandEntityDao cmdEntityDao = mock(CommandEntityDao.class);

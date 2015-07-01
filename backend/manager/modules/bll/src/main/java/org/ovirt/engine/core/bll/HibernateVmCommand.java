@@ -143,7 +143,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         Guid guid2 = createTask(taskId2, ret2.getCreationInfo(), VdcActionType.HibernateVm);
         getReturnValue().getVdsmTaskIdList().add(guid2);
 
-        getSnapshotDAO().updateHibernationMemory(getVmId(),
+        getSnapshotDao().updateHibernationMemory(getVmId(),
                 MemoryUtils.createMemoryStateString(
                         getStorageDomainId(), getStoragePoolId(),
                         image1GroupId, hiberVol1, image2GroupId, hiberVol2));
@@ -272,7 +272,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     protected void endWithFailure() {
         revertTasks();
         if (getVm().getRunOnVds() != null) {
-            getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
+            getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
             setSucceeded(true);
         }
 

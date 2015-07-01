@@ -257,9 +257,9 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private EventResult runConnectHostToPoolEvent(final Guid storagePoolId, final VDS vds) {
         EventResult result = new EventResult(true, EventType.VDSCONNECTTOPOOL);
-        StoragePool storagePool = getStoragePoolDAO().get(storagePoolId);
-        StorageDomain masterDomain = getStorageDomainDAO().getStorageDomain(storagePoolId, StorageDomainType.Master);
-        List<StoragePoolIsoMap> storagePoolIsoMap = getStoragePoolIsoMapDAO().getAllForStoragePool(storagePoolId);
+        StoragePool storagePool = getStoragePoolDao().get(storagePoolId);
+        StorageDomain masterDomain = getStorageDomainDao().getStorageDomain(storagePoolId, StorageDomainType.Master);
+        List<StoragePoolIsoMap> storagePoolIsoMap = getStoragePoolIsoMapDao().getAllForStoragePool(storagePoolId);
         boolean masterDomainInactiveOrUnknown = masterDomain.getStatus() == StorageDomainStatus.Inactive
                 || masterDomain.getStatus() == StorageDomainStatus.Unknown;
         VDSError error = null;
@@ -328,7 +328,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 List<Guid> problematicDomainsIds =
                         IrsBrokerCommand.fetchDomainsReportedAsProblematic(getVds().getDomains(), storagePool);
                 for (Guid domainId : problematicDomainsIds) {
-                    StorageDomainStatic domainInfo = getStorageDomainStaticDAO().get(domainId);
+                    StorageDomainStatic domainInfo = getStorageDomainStaticDao().get(domainId);
                     log.error("Storage Domain '{}' of pool '{}' is in problem in host '{}'",
                             domainInfo != null ? domainInfo.getStorageName() : domainId,
                             getStoragePool().getName(),
@@ -433,7 +433,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             glusterPeerListSucceeded = true;
             glusterPeerProbeSucceeded = true;
             Map<String, String> customLogValues = new HashMap<>();
-            List<VDS> vdsList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
+            List<VDS> vdsList = getVdsDao().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
             // If the cluster already having Gluster servers, get an up server
             if (vdsList != null && vdsList.size() > 0) {
                 VDS upServer = null;
@@ -502,7 +502,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     }
 
     private VDS getNewUpServer(VDS upServer) {
-        List<VDS> vdsList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
+        List<VDS> vdsList = getVdsDao().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
         VDS newUpServer = null;
         for (VDS vds : vdsList) {
             if (!getVdsId().equals(vds.getId()) && !upServer.getId().equals(vds.getId())) {

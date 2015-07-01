@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -72,7 +72,7 @@ public class QuotaManager implements BackendService {
     /**
      * This method is protected for testing use only
      */
-    protected QuotaDAO getQuotaDAO() {
+    protected QuotaDao getQuotaDao() {
         return DbFacade.getInstance().getQuotaDao();
     }
 
@@ -541,7 +541,7 @@ public class QuotaManager implements BackendService {
             return false;
         }
 
-        Quota quota = getQuotaDAO().getById(quotaId);
+        Quota quota = getQuotaDao().getById(quotaId);
 
         if (quota == null) {
             return false;
@@ -819,7 +819,7 @@ public class QuotaManager implements BackendService {
     }
 
     /**
-     * Get Quota by Id. If in cache - get from cache. else get from DAO and add to cache.
+     * Get Quota by Id. If in cache - get from cache. else get from Dao and add to cache.
      *
      * @param quotaId - quota id
      * @param storagePoolId - storage pool containing this quota
@@ -834,7 +834,7 @@ public class QuotaManager implements BackendService {
         quota = quotaMap.get(quotaId);
         // if quota was not found in cache - look for it in DB
         if (quota == null) {
-            quota = getQuotaDAO().getById(quotaId);
+            quota = getQuotaDao().getById(quotaId);
             if (quota != null) {
                 // cache in quota map
                 if (storagePoolId.equals(quota.getStoragePoolId())) {
@@ -1080,7 +1080,7 @@ public class QuotaManager implements BackendService {
 
         log.debug("Updating Quota Cache...");
         long timeStart = System.currentTimeMillis();
-        List<Quota> allQuotaIncludingConsumption = getQuotaDAO().getAllQuotaIncludingConsumption();
+        List<Quota> allQuotaIncludingConsumption = getQuotaDao().getAllQuotaIncludingConsumption();
 
         if (allQuotaIncludingConsumption.isEmpty()) {
             return;
@@ -1105,7 +1105,7 @@ public class QuotaManager implements BackendService {
     }
 
     public boolean isCacheUpdateNeeded() {
-        int quotaCount = getQuotaDAO().getQuotaCount();
+        int quotaCount = getQuotaDao().getQuotaCount();
         int cacheCount = 0;
 
         lock.readLock().lock();

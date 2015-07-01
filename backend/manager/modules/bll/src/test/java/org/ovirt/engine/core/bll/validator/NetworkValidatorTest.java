@@ -34,10 +34,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.IscsiBondDao;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -60,7 +60,7 @@ public class NetworkValidatorTest {
     private DbFacade dbFacade;
 
     @Mock
-    private StoragePoolDAO dataCenterDao;
+    private StoragePoolDao dataCenterDao;
 
     @Mock
     private NetworkDao networkDao;
@@ -86,7 +86,7 @@ public class NetworkValidatorTest {
         doReturn(dbFacade).when(validator).getDbFacade();
         doReturn(managementNetworkUtil).when(validator).getManagementNetworkUtil();
 
-        // mock some commonly used DAOs
+        // mock some commonly used Daos
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         when(dbFacade.getNetworkDao()).thenReturn(networkDao);
 
@@ -334,7 +334,7 @@ public class NetworkValidatorTest {
     }
 
     private void networkNotUsedByVmsTest(Matcher<ValidationResult> matcher, List<VM> vms) {
-        VmDAO vmDao = mock(VmDAO.class);
+        VmDao vmDao = mock(VmDao.class);
         when(vmDao.getAllForNetwork(any(Guid.class))).thenReturn(vms);
         when(dbFacade.getVmDao()).thenReturn(vmDao);
         assertThat(validator.networkNotUsedByVms(), matcher);
@@ -354,7 +354,7 @@ public class NetworkValidatorTest {
     }
 
     private void networkNotUsedByHostsTest(Matcher<ValidationResult> matcher, List<VDS> hosts) {
-        VdsDAO hostDao = mock(VdsDAO.class);
+        VdsDao hostDao = mock(VdsDao.class);
         when(hostDao.getAllForNetwork(any(Guid.class))).thenReturn(hosts);
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
         assertThat(validator.networkNotUsedByHosts(), matcher);
@@ -374,7 +374,7 @@ public class NetworkValidatorTest {
     }
 
     private void networkNotUsedByTemplatesTest(Matcher<ValidationResult> matcher, List<VmTemplate> templates) {
-        VmTemplateDAO templateDao = mock(VmTemplateDAO.class);
+        VmTemplateDao templateDao = mock(VmTemplateDao.class);
         when(templateDao.getAllForNetwork(any(Guid.class))).thenReturn(templates);
         when(dbFacade.getVmTemplateDao()).thenReturn(templateDao);
         assertThat(validator.networkNotUsedByTemplates(), matcher);

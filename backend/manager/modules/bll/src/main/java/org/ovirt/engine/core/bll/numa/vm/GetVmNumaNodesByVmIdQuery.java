@@ -14,7 +14,7 @@ public class GetVmNumaNodesByVmIdQuery<P extends IdQueryParameters> extends Quer
 
     @Override
     protected void executeQueryCommand() {
-        List<VmNumaNode> numaNodes = getDbFacade().getVmNumaNodeDAO()
+        List<VmNumaNode> numaNodes = getDbFacade().getVmNumaNodeDao()
                 .getAllVmNumaNodeByVmId(getParameters().getId());
         getQueryReturnValue().setReturnValue(numaNodes);
     }

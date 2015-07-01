@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OvfDataUpdaterTest {
@@ -33,13 +33,13 @@ public class OvfDataUpdaterTest {
     private StoragePool pool2;
 
     @Mock
-    private StoragePoolDAO storagePoolDAO;
+    private StoragePoolDao storagePoolDao;
 
     @Before
     public void setUp() {
         ovfDataUpdater = Mockito.spy(OvfDataUpdater.getInstance());
         map = new HashMap<>();
-        doReturn(storagePoolDAO).when(ovfDataUpdater).getStoragePoolDao();
+        doReturn(storagePoolDao).when(ovfDataUpdater).getStoragePoolDao();
         mockAnswers();
 
         pool1 = new StoragePool();
@@ -48,7 +48,7 @@ public class OvfDataUpdaterTest {
         pool2 = new StoragePool();
         pool2.setId(Guid.newGuid());
 
-        doReturn(Arrays.asList(pool1, pool2)).when(storagePoolDAO).getAllByStatus(StoragePoolStatus.Up);
+        doReturn(Arrays.asList(pool1, pool2)).when(storagePoolDao).getAllByStatus(StoragePoolStatus.Up);
     }
 
     @Test

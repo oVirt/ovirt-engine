@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
  * @param <ID>
  *            The type of the entity's id.
  */
-public interface ModificationDao<T extends BusinessEntity<ID>, ID extends Serializable> extends DAO {
+public interface ModificationDao<T extends BusinessEntity<ID>, ID extends Serializable> extends Dao {
 
     /**
      * Persist a new instance of the entity.

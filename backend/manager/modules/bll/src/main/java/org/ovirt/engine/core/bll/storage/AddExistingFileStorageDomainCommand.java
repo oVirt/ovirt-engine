@@ -53,7 +53,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
     }
 
     protected boolean checkExistingStorageDomain() {
-        if (getStorageDomainStaticDAO().get(getStorageDomain().getId()) != null) {
+        if (getStorageDomainStaticDao().get(getStorageDomain().getId()) != null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
         }
 

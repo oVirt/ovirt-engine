@@ -70,7 +70,7 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
                 public VdcReturnValueBase call() throws Exception {
                     String currentHostNameToLog = getCustomValue(GlusterConstants.VDS_NAME);
                     getCustomValues().remove(currentHostNameToLog);
-                    addCustomValue(GlusterConstants.VDS_NAME, getVdsDAO().get(currentRemoteHostId).getName());
+                    addCustomValue(GlusterConstants.VDS_NAME, getVdsDao().get(currentRemoteHostId).getName());
                     return getBackend().runInternalAction(VdcActionType.UpdateGlusterHostPubKeyToSlaveInternal,
                             new UpdateGlusterHostPubKeyToSlaveParameters(currentRemoteHostId,
                                     pubKeys, userName));

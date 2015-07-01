@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -78,7 +78,7 @@ public class VfsConfigValidatorTest {
     private HostNicVfsConfigDao vfsConfigDao;
 
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
 
     @Mock
     private HostNicVfsConfigHelper hostNicVfsConfigHelper;

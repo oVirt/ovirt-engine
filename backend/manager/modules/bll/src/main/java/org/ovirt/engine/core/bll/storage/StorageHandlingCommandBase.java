@@ -56,9 +56,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
@@ -106,14 +106,14 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected List<VDS> getAllRunningVdssInPool() {
-        return getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
+        return getVdsDao().getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
     }
 
     protected void updateStoragePoolMasterDomainVersionInDiffTransaction() {
         executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                int master_domain_version = getStoragePoolDAO().increaseStoragePoolMasterVersion(getStoragePool().getId());
+                int master_domain_version = getStoragePoolDao().increaseStoragePoolMasterVersion(getStoragePool().getId());
                 getStoragePool().setMasterDomainVersion(master_domain_version);
                 return null;
             }
@@ -147,7 +147,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected VDS checkForActiveVds() {
-        List<VDS> hosts = getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(),
+        List<VDS> hosts = getVdsDao().getAllForStoragePoolAndStatus(getStoragePool().getId(),
                 VDSStatus.Up);
         if (!hosts.isEmpty()) {
             return hosts.get(new Random().nextInt(hosts.size()));
@@ -171,7 +171,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         List<String> vmsInPreview = new ArrayList<>();
-        List<VM> vmRelatedToDomain = getVmDAO().getAllForStorageDomain(storageDomain.getId());
+        List<VM> vmRelatedToDomain = getVmDao().getAllForStorageDomain(storageDomain.getId());
         for (VM vm : vmRelatedToDomain) {
             if (!snapshotsValidator.vmNotInPreview(vm.getId()).isValid()) {
                 vmsInPreview.add(vm.getName());
@@ -191,9 +191,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             }
         }
 
-        List<VmTemplate> templatesRelatedToDomain = getVmTemplateDAO().getAllForStorageDomain(storageDomain.getId());
+        List<VmTemplate> templatesRelatedToDomain = getVmTemplateDao().getAllForStorageDomain(storageDomain.getId());
         List<VmTemplate> vmTemplatesWithDisksOnMultipleStorageDomain =
-                getVmTemplateDAO().getAllTemplatesWithDisksOnOtherStorageDomain(storageDomain.getId());
+                getVmTemplateDao().getAllTemplatesWithDisksOnOtherStorageDomain(storageDomain.getId());
         templatesRelatedToDomain.removeAll(vmTemplatesWithDisksOnMultipleStorageDomain);
 
         for (VmTemplate vmTemplate : templatesRelatedToDomain) {
@@ -223,8 +223,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected void detachStorageDomainWithEntities(StorageDomain storageDomain) {
         // Check if we have entities related to the Storage Domain.
-        List<VM> vmsForStorageDomain = getVmDAO().getAllForStorageDomain(storageDomain.getId());
-        List<VmTemplate> vmTemplatesForStorageDomain = getVmTemplateDAO().getAllForStorageDomain(storageDomain.getId());
+        List<VM> vmsForStorageDomain = getVmDao().getAllForStorageDomain(storageDomain.getId());
+        List<VmTemplate> vmTemplatesForStorageDomain = getVmTemplateDao().getAllForStorageDomain(storageDomain.getId());
         List<DiskImage> disksForStorageDomain = getDiskImageDao().getAllForStorageDomain(storageDomain.getId());
         removeEntitiesFromStorageDomain(vmsForStorageDomain, vmTemplatesForStorageDomain, disksForStorageDomain, storageDomain.getId());
     }
@@ -271,19 +271,19 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                                 vmTemplate.getName(),
                                 VmEntityType.TEMPLATE,
                                 vmTemplate.getClusterArch(),
-                                getVdsGroupDAO().get(vmTemplate.getVdsGroupId()).getCompatibilityVersion(),
+                                getVdsGroupDao().get(vmTemplate.getVdsGroupId()).getCompatibilityVersion(),
                                 storageDomainId,
                                 null,
                                 null));
                     }
-                    getStorageDomainDAO().removeEntitesFromStorageDomain(storageDomainId);
+                    getStorageDomainDao().removeEntitesFromStorageDomain(storageDomainId);
                     return null;
                 }
             });
         }
     }
 
-    protected UnregisteredOVFDataDAO getUnregisteredOVFDataDao() {
+    protected UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
         return getDbFacade().getUnregisteredOVFDataDao();
     }
 
@@ -324,7 +324,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected void calcStoragePoolStatusByDomainsStatus() {
-        List<StorageDomain> domains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
+        List<StorageDomain> domains = getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
 
         // set masterDomain to the first element of domains with type=master, or null if non have this type.
         StorageDomain masterDomain = LinqUtils.firstOrNull(domains, new Predicate<StorageDomain>() {
@@ -344,7 +344,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         if (newStatus != getStoragePool().getStatus()) {
             getCompensationContext().snapshotEntity(getStoragePool());
             getStoragePool().setStatus(newStatus);
-            StoragePool poolFromDb = getStoragePoolDAO().get(getStoragePool().getId());
+            StoragePool poolFromDb = getStoragePoolDao().get(getStoragePool().getId());
             if ((getStoragePool().getSpmVdsId() == null && poolFromDb.getSpmVdsId() != null)
                     || (getStoragePool().getSpmVdsId() != null && !getStoragePool().getSpmVdsId().equals(
                             poolFromDb.getSpmVdsId()))) {
@@ -357,7 +357,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             executeInScope(TransactionScopeOption.Required, new TransactionMethod<StoragePool>() {
                 @Override
                 public StoragePool runInTransaction() {
-                    getStoragePoolDAO().update(getStoragePool());
+                    getStoragePoolDao().update(getStoragePool());
                     return null;
                 }
             });
@@ -417,7 +417,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             log.info("Updating storage domain '{}' (type '{}') to format '{}'",
                     getStorageDomain().getId(), sdType, targetFormat);
             storageStaticData.setStorageFormat(targetFormat);
-            getStorageDomainStaticDAO().update(storageStaticData);
+            getStorageDomainStaticDao().update(storageStaticData);
         } else {
             log.debug("Skipping format update for domain '{}' format is '{}'",
                     getStorageDomain().getId(), storageStaticData.getStorageFormat());
@@ -646,18 +646,18 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return Config.<Integer> getValue(ConfigValues.StoragePoolNameSizeLimit);
     }
 
-    /* Overidden DAO access methods, for easier testing */
+    /* Overidden Dao access methods, for easier testing */
 
     @Override
     public BackendInternal getBackend() {
         return super.getBackend();
     }
 
-    protected StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
+    protected StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
         return getDbFacade().getStoragePoolIsoMapDao();
     }
 
-    protected DiskImageDAO getDiskImageDao() {
+    protected DiskImageDao getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
     }
 

@@ -398,7 +398,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         if (getParameters().getCopyCollapse() && !isTemplateExistsOnExportDomain()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING,
                     String.format("$DomainName %1$s",
-                            getStorageDomainStaticDAO().get(getParameters().getSourceDomainId()).getStorageName()));
+                            getStorageDomainStaticDao().get(getParameters().getSourceDomainId()).getStorageName()));
         }
 
         if (!validateVmArchitecture()){
@@ -678,7 +678,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         params.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
         params.setParentParameters(getParameters());
 
-        StorageDomainStatic storageDomain = getStorageDomainStaticDAO().get(storageId);
+        StorageDomainStatic storageDomain = getStorageDomainStaticDao().get(storageId);
         if (storageDomain.getStorageType().isBlockDomain()) {
             params.setUseCopyCollapse(true);
             params.setVolumeType(VolumeType.Preallocated);
@@ -845,7 +845,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(disk.getImageId());
         diskDynamic.setactual_size(disk.getActualSizeInBytes());
-        getDiskImageDynamicDAO().save(diskDynamic);
+        getDiskImageDynamicDao().save(diskDynamic);
     }
 
     /**
@@ -971,9 +971,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             removeVmSnapshots();
             endActionOnAllImageGroups();
             removeVmNetworkInterfaces();
-            getVmDynamicDAO().remove(getVmId());
-            getVmStatisticsDAO().remove(getVmId());
-            getVmStaticDAO().remove(getVmId());
+            getVmDynamicDao().remove(getVmId());
+            getVmStatisticsDao().remove(getVmId());
+            getVmStaticDao().remove(getVmId());
             setSucceeded(true);
         } else {
             setVm(getParameters().getVm()); // Setting VM from params, for logging purposes

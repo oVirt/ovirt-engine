@@ -13,7 +13,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 @TransactionConfiguration(transactionManager = "transactionManagerJPA", defaultRollback = true)
 public abstract class BaseHibernateDaoTestCase<T extends GenericDao<E, ID>, E extends BusinessEntity<ID>, ID extends Serializable>
-        extends BaseDAOTestCase {
+        extends BaseDaoTestCase {
 
     protected abstract T getDao();
 

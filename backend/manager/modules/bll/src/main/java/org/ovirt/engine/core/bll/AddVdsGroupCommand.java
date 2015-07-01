@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
@@ -38,7 +38,7 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
 
     @Inject
-    private VdsGroupDAO vdsGroupDao;
+    private VdsGroupDao vdsGroupDao;
 
     @Inject
     private NetworkClusterDao networkClusterDao;

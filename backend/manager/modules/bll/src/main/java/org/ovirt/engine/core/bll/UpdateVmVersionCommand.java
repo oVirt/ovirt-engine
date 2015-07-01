@@ -59,9 +59,9 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
         if (getVm() != null) {
             if (parameters.getNewTemplateVersion() != null) {
-                setVmTemplate(getVmTemplateDAO().get(parameters.getNewTemplateVersion()));
+                setVmTemplate(getVmTemplateDao().get(parameters.getNewTemplateVersion()));
             } else {
-                setVmTemplate(getVmTemplateDAO().getTemplateWithLatestVersionInChain(getVm().getVmtGuid()));
+                setVmTemplate(getVmTemplateDao().getTemplateWithLatestVersionInChain(getVm().getVmtGuid()));
             }
         }
     }
@@ -156,7 +156,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             return null;
         }
 
-        List<Permission> perms = getPermissionDAO().getAllForRoleAndObject(PredefinedRoles.DISK_OPERATOR.getId(), diskIds.iterator().next().getId());
+        List<Permission> perms = getPermissionDao().getAllForRoleAndObject(PredefinedRoles.DISK_OPERATOR.getId(), diskIds.iterator().next().getId());
         if (perms.isEmpty()) {
             return null;
         }

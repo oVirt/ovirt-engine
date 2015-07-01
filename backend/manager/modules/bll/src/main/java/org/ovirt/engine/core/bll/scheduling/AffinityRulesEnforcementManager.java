@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.di.qualifier.Updated;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -55,9 +55,9 @@ public class AffinityRulesEnforcementManager implements BackendService {
     @Inject
     protected AuditLogDirector auditLogDirector;
     @Inject
-    protected VdsDAO vdsDao;
+    protected VdsDao vdsDao;
     @Inject
-    protected VdsGroupDAO vdsGroupDao;
+    protected VdsGroupDao vdsGroupDao;
     @Inject
     protected Instance<AffinityRulesEnforcementPerCluster> perClusterProvider;
 

@@ -18,13 +18,13 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddQuotaCommandTest {
     @Mock
-    private QuotaDAO quotaDAO;
+    private QuotaDao quotaDao;
 
     /**
      * The command under test.
@@ -41,11 +41,11 @@ public class AddQuotaCommandTest {
 
     @Before
     public void testSetup() {
-        mockQuotaDAO();
+        mockQuotaDao();
     }
 
-    private void mockQuotaDAO() {
-        when(quotaDAO.getById(any(Guid.class))).thenReturn(mockGeneralStorageQuota());
+    private void mockQuotaDao() {
+        when(quotaDao.getById(any(Guid.class))).thenReturn(mockGeneralStorageQuota());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class AddQuotaCommandTest {
     private AddQuotaCommand createCommand() {
         QuotaCRUDParameters param = new QuotaCRUDParameters(mockGeneralStorageQuota());
         command = spy(new AddQuotaCommand(param));
-        doReturn(quotaDAO).when(command).getQuotaDAO();
+        doReturn(quotaDao).when(command).getQuotaDao();
 
         return command;
     }

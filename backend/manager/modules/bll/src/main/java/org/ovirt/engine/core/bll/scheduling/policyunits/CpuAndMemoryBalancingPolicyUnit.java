@@ -16,9 +16,9 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
@@ -297,15 +297,15 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                 * Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage) / vds.getCpuCores());
     }
 
-    protected VdsDAO getVdsDao() {
+    protected VdsDao getVdsDao() {
         return DbFacade.getInstance().getVdsDao();
     }
 
-    protected VmDAO getVmDao() {
+    protected VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
     }
 
-    protected VdsGroupDAO getVdsGroupDao() {
+    protected VdsGroupDao getVdsGroupDao() {
         return DbFacade.getInstance().getVdsGroupDao();
     }
 

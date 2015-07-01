@@ -285,7 +285,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Network migrationNetwork = null;
 
         // Find migrationNetworkCluster
-        List<Network> allNetworksInCluster = getNetworkDAO().getAllForCluster(getVm().getVdsGroupId());
+        List<Network> allNetworksInCluster = getNetworkDao().getAllForCluster(getVm().getVdsGroupId());
 
         for (Network tempNetwork : allNetworksInCluster) {
             if (tempNetwork.getCluster().isMigration()) {
@@ -375,7 +375,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     protected void setDestinationVdsId(Guid vdsId) {
-        destinationVds = vdsId != null ? getVdsDAO().get(vdsId) : null;
+        destinationVds = vdsId != null ? getVdsDao().get(vdsId) : null;
     }
 
     @Override

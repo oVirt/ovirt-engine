@@ -9,11 +9,11 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmPoolDAO;
+import org.ovirt.engine.core.dao.VmPoolDao;
 
 /**
  * A test case for {@link GetVmPoolByIdQuery}.
- * It does not test database implementation, but rather tests that the right delegations to the DAO occur.
+ * It does not test database implementation, but rather tests that the right delegations to the Dao occur.
  */
 public class GetVmPoolByIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmPoolByIdQuery<IdQueryParameters>> {
     @Test
@@ -25,11 +25,11 @@ public class GetVmPoolByIdQueryTest extends AbstractUserQueryTest<IdQueryParamet
         IdQueryParameters paramsMock = getQueryParameters();
         when(paramsMock.getId()).thenReturn(vmPoolID);
 
-        VmPoolDAO vmPoolDAOMock = mock(VmPoolDAO.class);
-        when(vmPoolDAOMock.get(vmPoolID, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
+        VmPoolDao vmPoolDaoMock = mock(VmPoolDao.class);
+        when(vmPoolDaoMock.get(vmPoolID, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
 
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
-        when(dbFacadeMock.getVmPoolDao()).thenReturn(vmPoolDAOMock);
+        when(dbFacadeMock.getVmPoolDao()).thenReturn(vmPoolDaoMock);
 
         getQuery().executeQueryCommand();
 

@@ -54,7 +54,7 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
         }
 
         // Delete the user itself:
-        getDbUserDAO().remove(id);
+        getDbUserDao().remove(id);
 
         setSucceeded(true);
     }
@@ -77,7 +77,7 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
         }
 
         // Check that the user exists in the database:
-        DbUser dbUser = getDbUserDAO().get(id);
+        DbUser dbUser = getDbUserDao().get(id);
         if (dbUser == null) {
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DB);
             return false;

@@ -69,7 +69,7 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                 .addValue("quota_id", entity.getQuotaId())
                 .addValue("migration_support", entity.getMigrationSupport().getValue())
                 .addValue("dedicated_vm_for_vds", entity.getDedicatedVmForVdsList().isEmpty() ?
-                        null : StringUtils.join(entity.getDedicatedVmForVdsList(), BaseDAODbFacade.SEPARATOR))
+                        null : StringUtils.join(entity.getDedicatedVmForVdsList(), BaseDaoDbFacade.SEPARATOR))
                 .addValue("min_allocated_mem", entity.getMinAllocatedMem())
                 .addValue("is_run_and_pause", entity.isRunAndPause())
                 .addValue("created_by_user_id", entity.getCreatedByUserId())

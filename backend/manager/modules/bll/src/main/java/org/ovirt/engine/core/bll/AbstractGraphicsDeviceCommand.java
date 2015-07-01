@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public abstract class AbstractGraphicsDeviceCommand<T extends GraphicsParameters> extends CommandBase<T> {
 
@@ -51,7 +51,7 @@ public abstract class AbstractGraphicsDeviceCommand<T extends GraphicsParameters
         return permissionList;
     }
 
-    protected VmDeviceDAO getVmDeviceDao() {
+    protected VmDeviceDao getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
     }
 

@@ -144,7 +144,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         // check no vms from this template on selected domains
-        List<VM> vms = getVmDAO().getAllWithTemplate(vmTemplateId);
+        List<VM> vms = getVmDao().getAllWithTemplate(vmTemplateId);
         List<String> problematicVmNames = new ArrayList<>();
         for (VM vm : vms) {
             problematicVmNames.add(vm.getName());
@@ -157,7 +157,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
         // for base templates, make sure it has no versions that need to be removed first
         if (vmTemplateId.equals(template.getBaseTemplateId())) {
-            List<VmTemplate> templateVersions = getVmTemplateDAO().getTemplateVersionsForBaseTemplate(vmTemplateId);
+            List<VmTemplate> templateVersions = getVmTemplateDao().getTemplateVersionsForBaseTemplate(vmTemplateId);
             if (!templateVersions.isEmpty()) {
                 List<String> templateVersionsNames = new ArrayList<>();
                 for (VmTemplate version : templateVersions) {

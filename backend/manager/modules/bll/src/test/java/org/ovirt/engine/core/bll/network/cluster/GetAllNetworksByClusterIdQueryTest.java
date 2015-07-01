@@ -17,18 +17,18 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetAllNetworksByClusterIdQuery<? extends IdQueryParameters>> {
 
-    /** Tests that {@link GetAllNetworksByClusterIdQuery#executeQueryCommand()} delegated to the correct DAOs, using mock objects */
+    /** Tests that {@link GetAllNetworksByClusterIdQuery#executeQueryCommand()} delegated to the correct Daos, using mock objects */
     @Test
     public void testExecuteQueryCommand() {
         Guid clusterID = Guid.newGuid();
 
         Network networkMock = mock(Network.class);
 
-        NetworkDao networkDAOMock = mock(NetworkDao.class);
-        when(networkDAOMock.getAllForCluster(clusterID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(networkMock));
+        NetworkDao networkDaoMock = mock(NetworkDao.class);
+        when(networkDaoMock.getAllForCluster(clusterID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(networkMock));
 
         DbFacade dbFacade = getDbFacadeMockInstance();
-        when(dbFacade.getNetworkDao()).thenReturn(networkDAOMock);
+        when(dbFacade.getNetworkDao()).thenReturn(networkDaoMock);
 
         when(getQueryParameters().getId()).thenReturn(clusterID);
         getQuery().executeQueryCommand();

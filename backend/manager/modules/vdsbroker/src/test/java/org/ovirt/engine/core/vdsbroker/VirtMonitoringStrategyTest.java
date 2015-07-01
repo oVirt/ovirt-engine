@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
 public class VirtMonitoringStrategyTest {
 
@@ -121,8 +121,8 @@ public class VirtMonitoringStrategyTest {
         assertTrue(virtStrategy.processHardwareCapabilitiesNeeded(oldVds, newVds));
     }
 
-    private VdsGroupDAO mockVdsGroup() {
-        VdsGroupDAO mock = mock(VdsGroupDAO.class);
+    private VdsGroupDao mockVdsGroup() {
+        VdsGroupDao mock = mock(VdsGroupDao.class);
         VDSGroup value = new VDSGroup();
         value.setEmulatedMachine("pc-1.0");
         value.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
@@ -130,8 +130,8 @@ public class VirtMonitoringStrategyTest {
         return mock;
     }
 
-    private VdsDAO mockVdsDao() {
-        VdsDAO mock = mock(VdsDAO.class);
+    private VdsDao mockVdsDao() {
+        VdsDao mock = mock(VdsDao.class);
         when(mock.getFirstUpRhelForVdsGroup(any(Guid.class))).thenReturn(vdsFromDb);
         return mock;
     }

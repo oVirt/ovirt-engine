@@ -14,7 +14,7 @@ public class GetCpuStatisticsByVdsIdQuery<P extends IdQueryParameters> extends Q
 
     @Override
     protected void executeQueryCommand() {
-       List<CpuStatistics> stats = getDbFacade().getVdsCpuStatisticsDAO()
+       List<CpuStatistics> stats = getDbFacade().getVdsCpuStatisticsDao()
                .getAllCpuStatisticsByVdsId(getParameters().getId());
         getQueryReturnValue().setReturnValue(stats);
     }

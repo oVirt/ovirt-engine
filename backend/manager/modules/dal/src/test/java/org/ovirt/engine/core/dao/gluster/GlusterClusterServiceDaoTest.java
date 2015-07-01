@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterServi
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
-public class GlusterClusterServiceDaoTest extends BaseDAOTestCase {
+public class GlusterClusterServiceDaoTest extends BaseDaoTestCase {
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid NEW_CLUSTER_ID = new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7e");
     private GlusterClusterServiceDao dao;

@@ -8,11 +8,11 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
 /**
  * A test case for {@link GetVdsGroupByIdQuery}.
- * This test mocks away all the DAOs, and just tests the flow of the query itself.
+ * This test mocks away all the Daos, and just tests the flow of the query itself.
  */
 public class GetVdsGroupByIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVdsGroupByIdQuery<IdQueryParameters>> {
 
@@ -26,10 +26,10 @@ public class GetVdsGroupByIdQueryTest extends AbstractUserQueryTest<IdQueryParam
         // Mock the query's parameters
         when(getQueryParameters().getId()).thenReturn(vdsGroupID);
 
-        // Mock the DAOs
-        VdsGroupDAO vdsGropDAOMock = mock(VdsGroupDAO.class);
-        when(vdsGropDAOMock.get(vdsGroupID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(expected);
-        when(getDbFacadeMockInstance().getVdsGroupDao()).thenReturn(vdsGropDAOMock);
+        // Mock the Daos
+        VdsGroupDao vdsGropDaoMock = mock(VdsGroupDao.class);
+        when(vdsGropDaoMock.get(vdsGroupID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(expected);
+        when(getDbFacadeMockInstance().getVdsGroupDao()).thenReturn(vdsGropDaoMock);
 
         getQuery().executeQueryCommand();
 

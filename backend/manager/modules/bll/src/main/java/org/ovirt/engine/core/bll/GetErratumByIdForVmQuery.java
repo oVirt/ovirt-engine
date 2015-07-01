@@ -7,13 +7,13 @@ import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.HostErratumQueryParameters;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 public class GetErratumByIdForVmQuery<P extends HostErratumQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     @Inject
     private ProviderDao providerDao;

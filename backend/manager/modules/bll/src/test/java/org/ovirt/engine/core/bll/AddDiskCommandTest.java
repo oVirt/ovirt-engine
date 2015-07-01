@@ -53,11 +53,11 @@ import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.slf4j.Logger;
@@ -77,25 +77,25 @@ public class AddDiskCommandTest {
             );
 
     @Mock
-    private StorageDomainDAO storageDomainDAO;
+    private StorageDomainDao storageDomainDao;
 
     @Mock
-    private StoragePoolIsoMapDAO storagePoolIsoMapDAO;
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     @Mock
-    private VmNicDao vmNicDAO;
+    private VmNicDao vmNicDao;
 
     @Mock
-    private DiskLunMapDao diskLunMapDAO;
+    private DiskLunMapDao diskLunMapDao;
 
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
 
     @Mock
-    private StoragePoolDAO storagePoolDAO;
+    private StoragePoolDao storagePoolDao;
 
     @Mock
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
 
     @Mock
     private OsRepository osRepository;
@@ -353,12 +353,12 @@ public class AddDiskCommandTest {
         params.setStorageDomainId(storageId);
         command = spy(new AddDiskCommand<AddDiskParameters>(params));
         doReturn(true).when(command).acquireLockInternal();
-        doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
-        doReturn(storagePoolIsoMapDAO).when(command).getStoragePoolIsoMapDao();
-        doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
-        doReturn(vmNicDAO).when(command).getVmNicDao();
-        doReturn(diskLunMapDAO).when(command).getDiskLunMapDao();
-        doReturn(vmDAO).when(command).getVmDAO();
+        doReturn(storageDomainDao).when(command).getStorageDomainDao();
+        doReturn(storagePoolIsoMapDao).when(command).getStoragePoolIsoMapDao();
+        doReturn(storagePoolDao).when(command).getStoragePoolDao();
+        doReturn(vmNicDao).when(command).getVmNicDao();
+        doReturn(diskLunMapDao).when(command).getDiskLunMapDao();
+        doReturn(vmDao).when(command).getVmDao();
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();
         doReturn(mockSnapshotValidator()).when(command).getSnapshotsValidator();
@@ -387,7 +387,7 @@ public class AddDiskCommandTest {
      */
     private void mockStoragePoolIsoMap() {
         StoragePoolIsoMap spim = new StoragePoolIsoMap();
-        when(storagePoolIsoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(spim);
+        when(storagePoolIsoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(spim);
     }
 
     protected void mockInterfaceList() {
@@ -410,7 +410,7 @@ public class AddDiskCommandTest {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         vm.setStoragePoolId(Guid.newGuid());
-        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
 
         return vm;
     }
@@ -457,7 +457,7 @@ public class AddDiskCommandTest {
         Guid vdsId = Guid.newGuid();
         VDS vds = new VDS();
         vds.setId(vdsId);
-        when(vdsDAO.get(vdsId)).thenReturn(vds);
+        when(vdsDao.get(vdsId)).thenReturn(vds);
         return vds;
     }
 
@@ -473,7 +473,7 @@ public class AddDiskCommandTest {
         storagePool.setId(storagePoolId);
         storagePool.setCompatibilityVersion(compatibilityVersion);
         storagePool.setStatus(StoragePoolStatus.Up);
-        when(storagePoolDAO.get(storagePoolId)).thenReturn(storagePool);
+        when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
 
         return storagePool;
     }
@@ -511,9 +511,9 @@ public class AddDiskCommandTest {
         sd.setStoragePoolId(storagePoolId);
         sd.setStatus(StorageDomainStatus.Active);
         sd.setStorageType(storageType);
-        when(storageDomainDAO.get(storageId)).thenReturn(sd);
-        when(storageDomainDAO.getAllForStorageDomain(storageId)).thenReturn(Collections.singletonList(sd));
-        when(storageDomainDAO.getForStoragePool(storageId, storagePoolId)).thenReturn(sd);
+        when(storageDomainDao.get(storageId)).thenReturn(sd);
+        when(storageDomainDao.getAllForStorageDomain(storageId)).thenReturn(Collections.singletonList(sd));
+        when(storageDomainDao.getForStoragePool(storageId, storagePoolId)).thenReturn(sd);
 
         return sd;
     }
@@ -594,7 +594,7 @@ public class AddDiskCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
-        when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
+        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
         assertTrue("checkIfLunDiskCanBeAdded() failed for valid iscsi lun",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
     }
@@ -765,7 +765,7 @@ public class AddDiskCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
-        when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
+        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
         VM vm = mockVm();
 
         mockMaxPciSlots();
@@ -787,7 +787,7 @@ public class AddDiskCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
-        when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
+        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
         VM vm = mockVm();
         mockMaxPciSlots();
 

@@ -8,11 +8,11 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 /**
  * A test case for {@link GetVdsByVdsIdQuery}.
- * This test mocks away all the DAOs, and just tests the flow of the query itself.
+ * This test mocks away all the Daos, and just tests the flow of the query itself.
  */
 public class GetVdsByVdsIdQueryTest extends AbstractQueryTest<IdQueryParameters, GetVdsByVdsIdQuery<IdQueryParameters>> {
 
@@ -26,10 +26,10 @@ public class GetVdsByVdsIdQueryTest extends AbstractQueryTest<IdQueryParameters,
         // Mock the query's parameters
         when(getQueryParameters().getId()).thenReturn(vdsID);
 
-        // Mock the DAOs
-        VdsDAO vdsDAOMock = mock(VdsDAO.class);
-        when(vdsDAOMock.get(vdsID)).thenReturn(expected);
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDAOMock);
+        // Mock the Daos
+        VdsDao vdsDaoMock = mock(VdsDao.class);
+        when(vdsDaoMock.get(vdsID)).thenReturn(expected);
+        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMock);
 
         getQuery().executeQueryCommand();
 

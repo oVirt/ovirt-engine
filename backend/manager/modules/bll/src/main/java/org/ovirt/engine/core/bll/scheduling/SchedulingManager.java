@@ -49,9 +49,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
@@ -278,7 +278,7 @@ public class SchedulingManager {
             log.debug("Scheduling started, correlation Id: {}", correlationId);
             checkAllowOverbooking(cluster);
             lockCluster(cluster.getId());
-            List<VDS> vdsList = getVdsDAO()
+            List<VDS> vdsList = getVdsDao()
                     .getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
             updateInitialHostList(vdsList, hostBlackList, true);
             updateInitialHostList(vdsList, hostWhiteList, false);
@@ -466,7 +466,7 @@ public class SchedulingManager {
             List<Guid> vdsWhiteList,
             List<Guid> destVdsIdList,
             List<String> messages) {
-        List<VDS> vdsList = getVdsDAO()
+        List<VDS> vdsList = getVdsDao()
                 .getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
         updateInitialHostList(vdsList, vdsBlackList, true);
         updateInitialHostList(vdsList, vdsWhiteList, false);
@@ -821,15 +821,15 @@ public class SchedulingManager {
         policyMap.remove(clusterPolicyId);
     }
 
-    protected VdsDAO getVdsDAO() {
+    protected VdsDao getVdsDao() {
         return DbFacade.getInstance().getVdsDao();
     }
 
-    protected VdsGroupDAO getVdsGroupDao() {
+    protected VdsGroupDao getVdsGroupDao() {
         return DbFacade.getInstance().getVdsGroupDao();
     }
 
-    protected VdsDynamicDAO getVdsDynamicDao() {
+    protected VdsDynamicDao getVdsDynamicDao() {
         return DbFacade.getInstance().getVdsDynamicDao();
     }
 
@@ -927,7 +927,7 @@ public class SchedulingManager {
             PolicyUnitImpl policyUnit = policyUnits.get(policy.getBalance());
             Pair<List<Guid>, Guid> balanceResult = null;
             if (policyUnit.getPolicyUnit().isEnabled()) {
-                List<VDS> hosts = getVdsDAO().getAllForVdsGroupWithoutMigrating(cluster.getId());
+                List<VDS> hosts = getVdsDao().getAllForVdsGroupWithoutMigrating(cluster.getId());
                 if (policyUnit.getPolicyUnit().isInternal()) {
                     balanceResult = internalRunBalance(policyUnit, cluster, hosts);
                 } else if (Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled)) {

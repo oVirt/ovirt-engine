@@ -45,7 +45,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -92,7 +92,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private NetworkDao networkDao;
 
     @Inject
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
 
     public HostSetupNetworksCommand(T parameters) {
         this(parameters, null);
@@ -404,7 +404,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private BusinessEntityMap<Network> getNetworkBusinessEntityMap() {
         if (networkBusinessEntityMap == null) {
-            List<Network> networks = getNetworkDAO().getAllForCluster(getVdsGroupId());
+            List<Network> networks = getNetworkDao().getAllForCluster(getVdsGroupId());
             networkBusinessEntityMap = new BusinessEntityMap<>(networks);
         }
 

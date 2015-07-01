@@ -47,9 +47,8 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.BaseDiskDao;
-import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
-import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -101,7 +100,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
      * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
      */
     protected boolean validateNoDuplicateVm() {
-        VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
+        VmStatic duplicateVm = getVmStaticDao().get(getVm().getId());
         return duplicateVm == null ? true :
             failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS, String.format("$VmName %1$s", duplicateVm.getName()));
     }
@@ -121,7 +120,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
      * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
      */
     protected boolean validateVdsCluster() {
-        VDSGroup vdsGroup = getVdsGroupDAO().get(getVdsGroupId());
+        VDSGroup vdsGroup = getVdsGroupDao().get(getVdsGroupId());
         return vdsGroup == null ?
                 failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID)
                 : vdsGroup.getArchitecture() != getVm().getClusterArch() ?
@@ -333,7 +332,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     protected StorageDomain getSourceDomain() {
         if (sourceDomain == null && !Guid.Empty.equals(sourceDomainId)) {
-            sourceDomain = getStorageDomainDAO().getForStoragePool(sourceDomainId, getStoragePool().getId());
+            sourceDomain = getStorageDomainDao().getForStoragePool(sourceDomainId, getStoragePool().getId());
         }
         return sourceDomain;
     }
@@ -350,19 +349,15 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         return getDbFacade().getBaseDiskDao();
     }
 
-    protected DiskImageDynamicDAO getDiskImageDynamicDAO() {
+    protected DiskImageDynamicDao getDiskImageDynamicDao() {
         return getDbFacade().getDiskImageDynamicDao();
     }
 
-    protected SnapshotDao getSnapshotDao() {
-        return getDbFacade().getSnapshotDao();
-    }
-
     protected StorageDomain getStorageDomain(Guid domainId) {
-        return getStorageDomainDAO().getForStoragePool(domainId, getStoragePool().getId());
+        return getStorageDomainDao().getForStoragePool(domainId, getStoragePool().getId());
     }
 
-    protected UnregisteredOVFDataDAO getUnregisteredOVFDataDao() {
+    protected UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
         return getDbFacade().getUnregisteredOVFDataDao();
     }
 
@@ -412,7 +407,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         if (getVm().getOriginalTemplateGuid() != null && !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getOriginalTemplateGuid())) {
             // no need to check this for blank
-            VmTemplate originalTemplate = getVmTemplateDAO().get(getVm().getOriginalTemplateGuid());
+            VmTemplate originalTemplate = getVmTemplateDao().get(getVm().getOriginalTemplateGuid());
             if (originalTemplate != null) {
                 // in case the original template name has been changed in the meantime
                 getVm().getStaticData().setOriginalTemplateName(originalTemplate.getName());
@@ -422,7 +417,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (getParameters().getCopyCollapse()) {
             getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         }
-        getVmStaticDAO().save(getVm().getStaticData());
+        getVmStaticDao().save(getVm().getStaticData());
         getCompensationContext().snapshotNewEntity(getVm().getStaticData());
     }
 
@@ -511,7 +506,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     private void addVmDynamic() {
         VmDynamic tempVar = createVmDynamic();
-        getVmDynamicDAO().save(tempVar);
+        getVmDynamicDao().save(tempVar);
         getCompensationContext().snapshotNewEntity(tempVar);
     }
 
@@ -530,7 +525,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private void addVmStatistics() {
         VmStatistics stats = new VmStatistics();
         stats.setId(getVmId());
-        getVmStatisticsDAO().save(stats);
+        getVmStatisticsDao().save(stats);
         getCompensationContext().snapshotNewEntity(stats);
         getCompensationContext().stateChanged();
     }

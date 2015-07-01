@@ -17,7 +17,7 @@ public abstract class VmPoolUserCommandBase<T extends VmPoolUserParameters> exte
         DbUser user = getDbUser();
         if (user != null && user.getId() == null) {
             user.setId(Guid.newGuid());
-            getDbUserDAO().save(user);
+            getDbUserDao().save(user);
         }
     }
 }

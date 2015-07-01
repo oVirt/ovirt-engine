@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class DiskSnapshotsValidatorTest {
     private DiskSnapshotsValidator validator;
 
     @Mock
-    private DiskImageDAO diskImageDao;
+    private DiskImageDao diskImageDao;
 
     @Mock
     private SnapshotDao snapshotDao;

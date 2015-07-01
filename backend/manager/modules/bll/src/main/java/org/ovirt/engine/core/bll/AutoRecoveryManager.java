@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.AutoRecoverDAO;
+import org.ovirt.engine.core.dao.AutoRecoverDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -121,7 +121,7 @@ public class AutoRecoveryManager {
      * @param filter            a filter to select the recoverable resources
      * @param logMsg            a user-readable name for the failing resource type
      */
-    <T extends BusinessEntity<Guid>> void check(final AutoRecoverDAO<T> dao,
+    <T extends BusinessEntity<Guid>> void check(final AutoRecoverDao<T> dao,
             final VdcActionType actionType,
             final DoWithClosure<T, VdcActionParametersBase> paramsCallback,
             final FilterClosure<T> filter,

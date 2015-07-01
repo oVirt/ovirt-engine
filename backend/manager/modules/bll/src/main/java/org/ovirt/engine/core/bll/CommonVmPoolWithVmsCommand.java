@@ -97,7 +97,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
         // if set to use latest version, get it from db and use it as template
         if (getParameters().getVmStaticData().isUseLatestVersion()) {
-            VmTemplate latest = getVmTemplateDAO().getTemplateWithLatestVersionInChain(templateIdToUse);
+            VmTemplate latest = getVmTemplateDao().getTemplateWithLatestVersionInChain(templateIdToUse);
 
             if (latest != null) {
                 // if not using original template, need to override storage mappings
@@ -280,7 +280,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
-        VmPool pool = getVmPoolDAO().getByName(getParameters().getVmPool().getName());
+        VmPool pool = getVmPoolDao().getByName(getParameters().getVmPool().getName());
         if (pool != null
                 && (getActionType() == VdcActionType.AddVmPoolWithVms || !pool.getVmPoolId().equals(
                         getParameters().getVmPoolId()))) {
@@ -403,7 +403,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             }
             StorageDomain domain = destStorages.get(domainId);
             if (domain == null) {
-                domain = getStorageDomainDAO().getForStoragePool(domainId, getVmTemplate().getStoragePoolId());
+                domain = getStorageDomainDao().getForStoragePool(domainId, getVmTemplate().getStoragePoolId());
                 destStorages.put(domainId, domain);
             }
             if (storageToDisksMap.containsKey(domainId)) {

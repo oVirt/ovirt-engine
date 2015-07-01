@@ -35,7 +35,7 @@ public class GetGlusterBrickByIdQueryTest extends AbstractQueryTest<IdQueryParam
         // Mock the query's parameters
         when(getQueryParameters().getId()).thenReturn(expected.getId());
 
-        // Mock the DAO
+        // Mock the Dao
         glusterBrickDaoMock = mock(GlusterBrickDao.class);
         when(glusterBrickDaoMock.getById(expected.getId())).thenReturn(expected);
         doReturn(glusterBrickDaoMock).when(getQuery()).getGlusterBrickDao();

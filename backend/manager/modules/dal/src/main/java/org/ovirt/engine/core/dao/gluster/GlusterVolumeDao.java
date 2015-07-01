@@ -10,14 +10,14 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeIn
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DAO;
+import org.ovirt.engine.core.dao.Dao;
 import org.ovirt.engine.core.dao.MassOperationsDao;
-import org.ovirt.engine.core.dao.SearchDAO;
+import org.ovirt.engine.core.dao.SearchDao;
 
 /**
  * Interface for DB operations on Gluster Volumes.
  */
-public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity>, MassOperationsDao<GlusterVolumeEntity, Guid> {
+public interface GlusterVolumeDao extends Dao, SearchDao<GlusterVolumeEntity>, MassOperationsDao<GlusterVolumeEntity, Guid> {
 
     public void save(GlusterVolumeEntity volume);
 

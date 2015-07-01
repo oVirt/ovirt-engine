@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * A utility class for DAO testing which maps the fixtures entities to constants, for easy testing.
+ * A utility class for Dao testing which maps the fixtures entities to constants, for easy testing.
  */
 public class FixturesTool {
     /**

@@ -56,7 +56,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -66,7 +66,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         implements QuotaStorageDependent {
 
     @Inject
-    private VmTemplateDAO vmTemplateDao;
+    private VmTemplateDao vmTemplateDao;
 
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
         super(parameters);
@@ -175,7 +175,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         if (retVal) {
-            VmTemplate duplicateTemplate = getVmTemplateDAO()
+            VmTemplate duplicateTemplate = getVmTemplateDao()
                     .get(getParameters().getVmTemplate().getId());
             // check that the template does not exists in the target domain
             if (duplicateTemplate != null) {
@@ -205,7 +205,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
         // if this is a template version, check base template exist
         if (retVal && !getVmTemplate().isBaseTemplate()) {
-            VmTemplate baseTemplate = getVmTemplateDAO().get(getVmTemplate().getBaseTemplateId());
+            VmTemplate baseTemplate = getVmTemplateDao().get(getVmTemplate().getBaseTemplateId());
             if (baseTemplate == null) {
                 retVal = false;
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
@@ -336,7 +336,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     private void updateOriginalTemplateNameOnDerivedVms() {
         if (!getParameters().isImportAsNewEntity()) {
             // in case it has been renamed
-            getVmDAO().updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
+            getVmDao().updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
         }
     }
 

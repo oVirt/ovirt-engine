@@ -18,9 +18,9 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -64,7 +64,7 @@ public class AffinityRulesEnforcementManagerTest {
     private AffinityRulesEnforcementPerCluster perCluster;
 
     @Mock
-    private VdsGroupDAO _vdsGroupDao; //Clusters
+    private VdsGroupDao _vdsGroupDao; //Clusters
 
     @Mock
     private AffinityGroupDao _affinityGroupDao;
@@ -72,10 +72,10 @@ public class AffinityRulesEnforcementManagerTest {
     private VDSGroup cluster;
 
     @Mock
-    private VdsDAO _vdsDao;
+    private VdsDao _vdsDao;
 
     @Mock
-    private VmDAO _vmDao;
+    private VmDao _vmDao;
 
     @Mock
     private AuditLogDirector _auditLogDirector;

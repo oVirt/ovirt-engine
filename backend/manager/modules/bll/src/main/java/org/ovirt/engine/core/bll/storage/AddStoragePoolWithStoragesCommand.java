@@ -197,7 +197,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                             updateStoragePoolMasterDomainVersionInDiffTransaction();
                         }
                         if (staticDomainChanged) {
-                            getStorageDomainStaticDAO().update(staticDomain);
+                            getStorageDomainStaticDao().update(staticDomain);
                         }
                         storageDomain.setStatus(StorageDomainStatus.Locked);
                         if (existingInDb) {
@@ -347,7 +347,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     private boolean isDomainAttachedToDifferentStoragePool() {
         if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
             for (Guid storageDomainId : getParameters().getStorages()) {
-                StorageDomain domain = getStorageDomainDAO().get(storageDomainId);
+                StorageDomain domain = getStorageDomainDao().get(storageDomainId);
                 if (domain.getStorageDomainType().isDataDomain() && isStorageDomainAttachedToStoragePool(domain)) {
                     return failCanDoAction(VdcBllMessages.ERROR_CANNOT_ADD_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
                 }

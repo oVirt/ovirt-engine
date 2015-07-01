@@ -43,10 +43,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
-import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
@@ -62,10 +61,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     private CinderBroker cinderBroker;
 
     @Inject
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     @Inject
-    private VmDeviceDAO vmDeviceDao;
+    private VmDeviceDao vmDeviceDao;
 
     public AbstractDiskVmCommand(T parameters) {
         this(parameters, null);
@@ -253,7 +252,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     private boolean isDiskExistInVm(Disk disk) {
-        List<VM> listVms = getVmDAO().getVmsListForDisk(disk.getId(), true);
+        List<VM> listVms = getVmDao().getVmsListForDisk(disk.getId(), true);
         for (VM vm : listVms) {
             if (vm.getId().equals(getVmId())) {
                 return true;
@@ -291,15 +290,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return getDbFacade().getBaseDiskDao();
     }
 
-    protected SnapshotDao getSnapshotDao() {
-        return getDbFacade().getSnapshotDao();
-    }
-
-
     /**
-     * @return The StoragePoolIsoMapDAO
+     * @return The StoragePoolIsoMapDao
      */
-    protected StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
+    protected StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
         return getDbFacade().getStoragePoolIsoMapDao();
     }
 

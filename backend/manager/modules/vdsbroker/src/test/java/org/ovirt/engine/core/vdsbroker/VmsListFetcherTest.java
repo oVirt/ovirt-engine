@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
 import java.util.Collections;
@@ -44,17 +44,17 @@ public class VmsListFetcherTest {
     @Mock
     ResourceManager resourceManager;
     @Mock
-    VdsDAO vdsDAO;
+    VdsDao vdsDao;
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
     @Captor
     ArgumentCaptor<List<VM>> vdsManagerArgumentCaptor;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        when(dbFacade.getVdsDao()).thenReturn(vdsDAO);
-        when(dbFacade.getVmDao()).thenReturn(vmDAO);
+        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
+        when(dbFacade.getVmDao()).thenReturn(vmDao);
         VDS vds = new VDS();
         vds.setId(VmTestPairs.SRC_HOST_ID);
         when(vdsManager.getCopyVds()).thenReturn(vds);
@@ -132,7 +132,7 @@ public class VmsListFetcherTest {
                 any(VdsIdAndVdsVDSCommandParametersBase.class))).
                 thenReturn(getVdsReturnValue(data.vdsmVm()));
         if (data.dbVm() != null) {
-            when(vmDAO.getAllRunningByVds(VmTestPairs.SRC_HOST_ID)).
+            when(vmDao.getAllRunningByVds(VmTestPairs.SRC_HOST_ID)).
                     thenReturn(Collections.singletonMap(data.dbVm().getId(), data.dbVm()));
         }
         if (data.vdsmVm() != null) {

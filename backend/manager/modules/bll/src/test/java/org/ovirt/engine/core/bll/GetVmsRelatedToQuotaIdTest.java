@@ -13,7 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 /**
  * A test case for {@link GetVmsRelatedToQuotaIdQuery}.
@@ -21,14 +21,14 @@ import org.ovirt.engine.core.dao.VmDAO;
 @RunWith(MockitoJUnitRunner.class)
 public class GetVmsRelatedToQuotaIdTest extends AbstractQueryTest<IdQueryParameters, GetVmsRelatedToQuotaIdQuery<IdQueryParameters>> {
     @Mock
-    VmDAO vmDAO;
+    VmDao vmDao;
 
     Guid quotaId = Guid.newGuid();
     List<VM> returnedVms;
 
     @Test
     public void testExecuteQuery() {
-        mockDAOForQuery();
+        mockDaoForQuery();
 
         // Execute query.
         getQuery().executeQueryCommand();
@@ -36,13 +36,13 @@ public class GetVmsRelatedToQuotaIdTest extends AbstractQueryTest<IdQueryParamet
     }
 
     /**
-     * Initialize DAO to be used in query.
+     * Initialize Dao to be used in query.
      */
-    private void mockDAOForQuery() {
-        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDAO);
+    private void mockDaoForQuery() {
+        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDao);
 
         returnedVms = new ArrayList<VM>();
         when(getQueryParameters().getId()).thenReturn(quotaId);
-        when(vmDAO.getAllVmsRelatedToQuotaId(quotaId)).thenReturn(returnedVms);
+        when(vmDao.getAllVmsRelatedToQuotaId(quotaId)).thenReturn(returnedVms);
     }
 }

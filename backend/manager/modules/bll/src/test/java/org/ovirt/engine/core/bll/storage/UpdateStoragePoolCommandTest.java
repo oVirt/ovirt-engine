@@ -30,10 +30,10 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -62,15 +62,15 @@ public class UpdateStoragePoolCommandTest {
     private UpdateStoragePoolCommand<StoragePoolManagementParameter> cmd;
 
     @Mock
-    private StoragePoolDAO spDao;
+    private StoragePoolDao spDao;
     @Mock
-    private StorageDomainStaticDAO sdDao;
+    private StorageDomainStaticDao sdDao;
     @Mock
     private List<StorageDomainStatic> sdList;
     @Mock
-    private VdsGroupDAO vdsGroupDao;
+    private VdsGroupDao vdsGroupDao;
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
     @Mock
     private NetworkDao networkDao;
     @Mock
@@ -98,11 +98,11 @@ public class UpdateStoragePoolCommandTest {
         doReturn(10).when(cmd).getStoragePoolNameSizeLimit();
         doReturn(createVersionSet().contains(cmd.getStoragePool().getCompatibilityVersion())).when(cmd)
                 .isStoragePoolVersionSupported();
-        doReturn(spDao).when(cmd).getStoragePoolDAO();
-        doReturn(sdDao).when(cmd).getStorageDomainStaticDAO();
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
-        doReturn(vdsDao).when(cmd).getVdsDAO();
-        doReturn(networkDao).when(cmd).getNetworkDAO();
+        doReturn(spDao).when(cmd).getStoragePoolDao();
+        doReturn(sdDao).when(cmd).getStorageDomainStaticDao();
+        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        doReturn(vdsDao).when(cmd).getVdsDao();
+        doReturn(networkDao).when(cmd).getNetworkDao();
         doReturn(managementNetworkUtil).when(cmd).getManagementNetworkUtil();
         doReturn(poolValidator).when(cmd).createStoragePoolValidator();
         doReturn(true).when(sdList).isEmpty();
@@ -489,7 +489,7 @@ public class UpdateStoragePoolCommandTest {
         }
 
         // This function overrides a protected function in StoragePoolValidator (which is not accessible in this package) for mocking ability.
-        public VdsGroupDAO getVdsGroupDao() {
+        public VdsGroupDao getVdsGroupDao() {
             return super.getVdsGroupDao();
         }
     }
@@ -500,7 +500,7 @@ public class UpdateStoragePoolCommandTest {
         }
 
         // This function overrides a protected function in StorageDomainToPoolRelationValidator (which is not accessible in this package) for mocking ability.
-        public StoragePoolDAO getStoragePoolDao() {
+        public StoragePoolDao getStoragePoolDao() {
             return super.getStoragePoolDao();
         }
     }

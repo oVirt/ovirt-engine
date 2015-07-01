@@ -42,10 +42,10 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
@@ -59,16 +59,16 @@ public class DiskImagesValidatorTest {
     private DiskImagesValidator validator;
 
     @Mock
-    private VmDeviceDAO vmDeviceDAO;
+    private VmDeviceDao vmDeviceDao;
 
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
 
     @Mock
     private SnapshotDao snapshotDao;
 
     @Mock
-    private DiskImageDAO diskImageDao;
+    private DiskImageDao diskImageDao;
 
     @Before
     public void setUp() {
@@ -77,10 +77,10 @@ public class DiskImagesValidatorTest {
         disk2 = createDisk();
         disk2.setDiskAlias("disk2");
         validator = spy(new DiskImagesValidator(Arrays.asList(disk1, disk2)));
-        doReturn(vmDAO).when(validator).getVmDAO();
-        doReturn(vmDeviceDAO).when(validator).getVmDeviceDAO();
-        doReturn(snapshotDao).when(validator).getSnapshotDAO();
-        doReturn(diskImageDao).when(validator).getDiskImageDAO();
+        doReturn(vmDao).when(validator).getVmDao();
+        doReturn(vmDeviceDao).when(validator).getVmDeviceDao();
+        doReturn(snapshotDao).when(validator).getSnapshotDao();
+        doReturn(diskImageDao).when(validator).getDiskImageDao();
     }
 
     private static DiskImage createDisk() {
@@ -224,9 +224,9 @@ public class DiskImagesValidatorTest {
     private List<VmDevice> prepareForCheckingIfDisksSnapshotsAttachedToOtherVms() {
         VmDevice device1 = createVmDeviceForDisk(disk1);
         VmDevice device2 = createVmDeviceForDisk(disk2);
-        when(vmDeviceDAO.getVmDevicesByDeviceId(disk1.getId(), null)).thenReturn(Collections.singletonList(device1));
-        when(vmDeviceDAO.getVmDevicesByDeviceId(disk2.getId(), null)).thenReturn(Collections.singletonList(device2));
-        when(vmDAO.get(any(Guid.class))).thenReturn(new VM());
+        when(vmDeviceDao.getVmDevicesByDeviceId(disk1.getId(), null)).thenReturn(Collections.singletonList(device1));
+        when(vmDeviceDao.getVmDevicesByDeviceId(disk2.getId(), null)).thenReturn(Collections.singletonList(device2));
+        when(vmDao.get(any(Guid.class))).thenReturn(new VM());
         when(snapshotDao.get(any(Guid.class))).thenReturn(new Snapshot());
         return Arrays.asList(device1, device2);
     }

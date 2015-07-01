@@ -39,8 +39,8 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
@@ -86,7 +86,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             setVmId(getParameters().getContainerId());
         }
         else {
-            List<VM> listVms = getVmDAO().getVmsListForDisk(representativeImage.getId(), false);
+            List<VM> listVms = getVmDao().getVmsListForDisk(representativeImage.getId(), false);
             if (!listVms.isEmpty()) {
                 VM vm = listVms.get(0);
                 setVm(vm);
@@ -433,7 +433,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         return new VmValidator(vm);
     }
 
-    protected DiskImageDAO getDiskImageDao() {
+    protected DiskImageDao getDiskImageDao() {
         return super.getDiskImageDao();
     }
 
@@ -441,7 +441,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         return getDbFacade().getDiskDao();
     }
 
-    protected VmDeviceDAO getVmDeviceDao() {
+    protected VmDeviceDao getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
     }
 

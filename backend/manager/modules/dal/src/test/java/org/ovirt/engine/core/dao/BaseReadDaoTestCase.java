@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 
 public abstract class BaseReadDaoTestCase<ID extends Serializable, T extends BusinessEntity<ID>,
-D extends ReadDao<T, ID>> extends BaseDAOTestCase {
+D extends ReadDao<T, ID>> extends BaseDaoTestCase {
 
     protected D dao;
     protected T existingEntity;

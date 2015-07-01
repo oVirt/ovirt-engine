@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /** A test class for the {@link MultipleStorageDomainsValidator} class. */
 @RunWith(MockitoJUnitRunner.class)
@@ -37,7 +37,7 @@ public class MultipleStorageDomainsValidatorTest {
     private final static int CRITICAL_SPACE_THRESHOLD = 5;
 
     @Mock
-    private StorageDomainDAO dao;
+    private StorageDomainDao dao;
 
     private Guid spId;
 
@@ -71,7 +71,7 @@ public class MultipleStorageDomainsValidatorTest {
         when(dao.getForStoragePool(sdId2, spId)).thenReturn(domain2);
 
         validator = spy(new MultipleStorageDomainsValidator(spId, Arrays.asList(sdId1, sdId2)));
-        doReturn(dao).when(validator).getStorageDomainDAO();
+        doReturn(dao).when(validator).getStorageDomainDao();
     }
 
     @Test

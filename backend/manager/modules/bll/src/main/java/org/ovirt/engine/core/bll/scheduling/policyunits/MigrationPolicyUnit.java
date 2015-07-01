@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +70,7 @@ public class MigrationPolicyUnit extends PolicyUnitImpl {
 
         if (vm.getRunOnVds() != null) {
             List<VDS> hostsToRunOn = new ArrayList<>();
-            VDS srcVds = getVdsDAO().get(vm.getRunOnVds());
+            VDS srcVds = getVdsDao().get(vm.getRunOnVds());
 
             for (VDS host : hosts) {
                 if (host.getId().equals(vm.getRunOnVds())) {
@@ -94,7 +94,7 @@ public class MigrationPolicyUnit extends PolicyUnitImpl {
         return hosts;
     }
 
-    protected VdsDAO getVdsDAO() {
+    protected VdsDao getVdsDao() {
         return DbFacade.getInstance().getVdsDao();
     }
 }

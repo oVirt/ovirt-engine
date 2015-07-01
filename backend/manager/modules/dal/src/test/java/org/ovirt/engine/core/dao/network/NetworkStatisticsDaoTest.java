@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
-public abstract class NetworkStatisticsDaoTest<T extends NetworkStatistics> extends BaseDAOTestCase  {
+public abstract class NetworkStatisticsDaoTest<T extends NetworkStatistics> extends BaseDaoTestCase  {
 
     protected abstract List<? extends NetworkInterface<T>> getAllInterfaces();
 

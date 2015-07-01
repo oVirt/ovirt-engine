@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 
 /**
  * Query to fetch list of gluster servers via ssh using the given serverName and password.
@@ -90,7 +90,7 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
         return true;
     }
 
-    protected VdsStaticDAO getVdsStaticDao() {
+    protected VdsStaticDao getVdsStaticDao() {
         return DbFacade.getInstance().getVdsStaticDao();
     }
 }

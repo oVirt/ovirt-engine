@@ -8,10 +8,10 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DAO;
+import org.ovirt.engine.core.dao.Dao;
 
 //TODO: Split to 2 interfaces - one for statistics and one for interfaces. Both should extend MassOperation
-public interface InterfaceDao extends DAO {
+public interface InterfaceDao extends Dao {
     /**
      * Saves the specified statistics
      *

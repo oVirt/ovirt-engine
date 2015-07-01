@@ -204,7 +204,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     protected StorageDomainValidator getStorageDomainValidator(DiskImage diskImage) {
-        StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
+        StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(
                 diskImage.getStorageIds().get(0), diskImage.getStoragePoolId());
         return new StorageDomainValidator(storageDomain);
     }
@@ -272,7 +272,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
         if (isUpdatedToShareable(getOldDisk(), getNewDisk())) {
 
-            StorageDomainStatic sds = getStorageDomainStaticDAO().get(((DiskImage)getNewDisk()).getStorageIds().get(0));
+            StorageDomainStatic sds = getStorageDomainStaticDao().get(((DiskImage)getNewDisk()).getStorageIds().get(0));
             if (sds.getStorageType() == StorageType.GLUSTERFS) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
             }
@@ -286,7 +286,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return failCanDoAction(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
             }
 
-            if (!isVersionSupportedForShareable(getOldDisk(), getStoragePoolDAO().get(getVm().getStoragePoolId())
+            if (!isVersionSupportedForShareable(getOldDisk(), getStoragePoolDao().get(getVm().getStoragePoolId())
                     .getCompatibilityVersion()
                     .getValue())) {
                 return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
@@ -389,7 +389,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
-                getVmStaticDAO().incrementDbGeneration(getVm().getId());
+                getVmStaticDao().incrementDbGeneration(getVm().getId());
                 updateDeviceProperties();
                 getBaseDiskDao().update(disk);
                 switch (disk.getDiskStorageType()) {
@@ -455,7 +455,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private void updateMetaDataDescription(DiskImage diskImage) {
         StorageDomain storageDomain =
-                getStorageDomainDAO().getForStoragePool(diskImage.getStorageIds().get(0),
+                getStorageDomainDao().getForStoragePool(diskImage.getStorageIds().get(0),
                         getVm().getStoragePoolId());
         if (!getStorageDomainValidator((DiskImage) getNewDisk()).isDomainExistAndActive().isValid()) {
             auditLogForNoMetadataDescriptionUpdate(AuditLogType.UPDATE_DESCRIPTION_FOR_DISK_SKIPPED_SINCE_STORAGE_DOMAIN_NOT_ACTIVE,
@@ -835,7 +835,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private void loadVmDiskAttachedToInfo() {
         if (getOldDisk() != null) {
-            List<Pair<VM, VmDevice>> attachedVmsInfo = getVmDAO().getVmsWithPlugInfo(getOldDisk().getId());
+            List<Pair<VM, VmDevice>> attachedVmsInfo = getVmDao().getVmsWithPlugInfo(getOldDisk().getId());
             for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
                 VM vm = pair.getFirst();
                 vmsDiskOrSnapshotAttachedTo.add(vm);

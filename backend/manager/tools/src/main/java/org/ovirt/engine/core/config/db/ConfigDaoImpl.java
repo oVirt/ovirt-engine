@@ -18,7 +18,7 @@ import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
 import org.ovirt.engine.core.utils.db.StandaloneDataSource;
 
-public class ConfigDaoImpl implements ConfigDAO {
+public class ConfigDaoImpl implements ConfigDao {
 
     private String updateSql;
     private String selectSql;

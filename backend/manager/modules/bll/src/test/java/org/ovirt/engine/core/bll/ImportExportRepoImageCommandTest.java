@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -36,16 +36,16 @@ public class ImportExportRepoImageCommandTest {
     public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.LOCK_MANAGER, lockManager);
 
     @Mock
-    private StorageDomainDAO storageDomainDao;
+    private StorageDomainDao storageDomainDao;
 
     @Mock
-    private StoragePoolDAO storagePoolDao;
+    private StoragePoolDao storagePoolDao;
 
     @Mock
     private DiskDao diskDao;
 
     @Mock
-    private DiskImageDAO diskImageDao;
+    private DiskImageDao diskImageDao;
 
     @Mock
     private OpenStackImageProviderProxy providerProxy;
@@ -90,11 +90,11 @@ public class ImportExportRepoImageCommandTest {
         return repoImageId;
     }
 
-    public StorageDomainDAO getStorageDomainDao() {
+    public StorageDomainDao getStorageDomainDao() {
         return storageDomainDao;
     }
 
-    public StoragePoolDAO getStoragePoolDao() {
+    public StoragePoolDao getStoragePoolDao() {
         return storagePoolDao;
     }
 
@@ -118,7 +118,7 @@ public class ImportExportRepoImageCommandTest {
         return diskDao;
     }
 
-    public DiskImageDAO getDiskImageDao() {
+    public DiskImageDao getDiskImageDao() {
         return diskImageDao;
     }
 

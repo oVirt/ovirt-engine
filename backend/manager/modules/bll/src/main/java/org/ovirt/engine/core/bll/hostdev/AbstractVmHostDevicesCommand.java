@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dao.HostDeviceDao;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
     private static final String CAPABILITY_PCI = "pci";
 
     @Inject
-    private VmDeviceDAO vmDeviceDao;
+    private VmDeviceDao vmDeviceDao;
 
     @Inject
     private HostDeviceDao hostDeviceDao;
@@ -77,7 +77,7 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
         return primaryDeviceNames;
     }
 
-    protected VmDeviceDAO getVmDeviceDao() {
+    protected VmDeviceDao getVmDeviceDao() {
         return vmDeviceDao;
     }
 

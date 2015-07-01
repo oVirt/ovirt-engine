@@ -84,7 +84,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
             return true;
         }
         DiskImage diskImage = (DiskImage) getDisk();
-        StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
+        StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(
                 diskImage.getStorageIds().get(0), diskImage.getStoragePoolId());
         StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
         return validate(storageDomainValidator.isDomainExistAndActive());
@@ -147,7 +147,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
             updateBootOrder();
         }
 
-        getVmStaticDAO().incrementDbGeneration(getVm().getId());
+        getVmStaticDao().incrementDbGeneration(getVm().getId());
         setSucceeded(true);
     }
 

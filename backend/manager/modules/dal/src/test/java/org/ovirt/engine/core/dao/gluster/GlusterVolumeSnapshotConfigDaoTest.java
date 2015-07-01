@@ -10,9 +10,9 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
-public class GlusterVolumeSnapshotConfigDaoTest extends BaseDAOTestCase {
+public class GlusterVolumeSnapshotConfigDaoTest extends BaseDaoTestCase {
 
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid VOLUME_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");

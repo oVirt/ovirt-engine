@@ -10,11 +10,11 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
 /**
  * A test case for {@link GetClustersWithPermittedActionQuery}.
- * This test mocks away all the DAOs, and just tests the flow of the query itself.
+ * This test mocks away all the Daos, and just tests the flow of the query itself.
  */
 public class GetClustersWithPermittedActionQueryTest
         extends AbstractGetEntitiesWithPermittedActionParametersQueryTest
@@ -25,10 +25,10 @@ public class GetClustersWithPermittedActionQueryTest
         // Set up the expected data
         VDSGroup expected = new VDSGroup();
 
-        // Mock the DAO
-        VdsGroupDAO vdsGroupDAOMock = mock(VdsGroupDAO.class);
-        when(vdsGroupDAOMock.getClustersWithPermittedAction(getUser().getId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
-        when(getDbFacadeMockInstance().getVdsGroupDao()).thenReturn(vdsGroupDAOMock);
+        // Mock the Dao
+        VdsGroupDao vdsGroupDaoMock = mock(VdsGroupDao.class);
+        when(vdsGroupDaoMock.getClustersWithPermittedAction(getUser().getId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
+        when(getDbFacadeMockInstance().getVdsGroupDao()).thenReturn(vdsGroupDaoMock);
 
         getQuery().executeQueryCommand();
 

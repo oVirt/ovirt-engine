@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,13 +48,13 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
             );
 
     @Mock
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDAO);
+        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDao);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
         vds.setVdsType(VDSType.oVirtNode);
         vds.setHostOs(AVAILABLE_OVIRT_ISO_VERSION);
         vds.setVdsGroupCompatibilityVersion(EXISTING_CLUSTER_VERSION);
-        when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
 
         when(getQueryParameters().getId()).thenReturn(vdsId);
 
@@ -84,7 +84,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
         vds.setVdsType(VDSType.oVirtNode);
         vds.setHostOs(UNAVAILABLE_OVIRT_ISO_VERSION);
         vds.setVdsGroupCompatibilityVersion(EXISTING_CLUSTER_VERSION);
-        when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
 
         when(getQueryParameters().getId()).thenReturn(vdsId);
 

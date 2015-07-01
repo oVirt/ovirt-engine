@@ -40,9 +40,9 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
@@ -58,11 +58,11 @@ public class AddVmTemplateCommandTest {
     private VDSGroup vdsGroup;
     private Guid spId;
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
     @Mock
-    private VdsGroupDAO vdsGroupDao;
+    private VdsGroupDao vdsGroupDao;
     @Mock
-    private StoragePoolDAO storagePoolDao;
+    private StoragePoolDao storagePoolDao;
     @Mock
     private OsRepository osRepository;
     @Mock
@@ -118,8 +118,8 @@ public class AddVmTemplateCommandTest {
             }
         });
         cmd.postConstruct();
-        doReturn(vmDao).when(cmd).getVmDAO();
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
+        doReturn(vmDao).when(cmd).getVmDao();
+        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
         cmd.setVmId(vmId);
         cmd.setVdsGroupId(vdsGroupId);
     }
@@ -251,7 +251,7 @@ public class AddVmTemplateCommandTest {
         StoragePool storagePool = new StoragePool();
         storagePool.setId(spId);
         storagePool.setStatus(StoragePoolStatus.Up);
-        doReturn(storagePoolDao).when(cmd).getStoragePoolDAO();
+        doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         when(storagePoolDao.get(spId)).thenReturn(storagePool);
     }
 

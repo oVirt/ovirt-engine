@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.TagDAO;
+import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.utils.collections.CopyOnAccessMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +108,7 @@ public class TagsDirector {
 
     private void addChildren(Tags tag) {
         log.info("Tag '{}' added to tree", tag.gettag_name());
-        List<Tags> children = getTagDAO().getAllForParent(tag.gettag_id());
+        List<Tags> children = getTagDao().getAllForParent(tag.gettag_id());
         for (Tags child : children) {
             addChildren(child);
             log.info("Tag '{}' added as child to parent '{}'", child.gettag_name(), tag.gettag_name());
@@ -118,7 +118,7 @@ public class TagsDirector {
         }
     }
 
-    protected TagDAO getTagDAO() {
+    protected TagDao getTagDao() {
         return DbFacade.getInstance().getTagDao();
     }
 

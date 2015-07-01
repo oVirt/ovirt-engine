@@ -34,7 +34,7 @@ public class DetachStorageConnectionFromStorageDomainCommand<T extends AttachDet
 
     protected StorageConnectionValidator createStorageConnectionValidator() {
         String connectionId = getParameters().getStorageConnectionId();
-        StorageServerConnections connection = getStorageServerConnectionDAO().get(connectionId);
+        StorageServerConnections connection = getStorageServerConnectionDao().get(connectionId);
 
         return new StorageConnectionValidator(connection);
     }

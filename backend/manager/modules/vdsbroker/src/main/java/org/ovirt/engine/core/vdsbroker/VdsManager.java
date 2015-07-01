@@ -456,7 +456,7 @@ public class VdsManager {
         final List<VdsNumaNode> numaNodesToUpdate = new ArrayList<>();
         final List<Guid> numaNodesToRemove = new ArrayList<>();
 
-        List<VdsNumaNode> dbVdsNumaNodes = dbFacade.getVdsNumaNodeDAO().getAllVdsNumaNodeByVdsId(vds.getId());
+        List<VdsNumaNode> dbVdsNumaNodes = dbFacade.getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vds.getId());
         for (VdsNumaNode node : vds.getNumaNodeList()) {
             VdsNumaNode searchNode = NumaUtils.getVdsNumaNodeByIndex(dbVdsNumaNodes, node.getIndex());
             if (searchNode != null) {
@@ -479,13 +479,13 @@ public class VdsManager {
                     @Override
                     public Void runInTransaction() {
                         if (!numaNodesToRemove.isEmpty()) {
-                            dbFacade.getVdsNumaNodeDAO().massRemoveNumaNodeByNumaNodeId(numaNodesToRemove);
+                            dbFacade.getVdsNumaNodeDao().massRemoveNumaNodeByNumaNodeId(numaNodesToRemove);
                         }
                         if (!numaNodesToUpdate.isEmpty()) {
-                            dbFacade.getVdsNumaNodeDAO().massUpdateNumaNode(numaNodesToUpdate);
+                            dbFacade.getVdsNumaNodeDao().massUpdateNumaNode(numaNodesToUpdate);
                         }
                         if (!numaNodesToSave.isEmpty()) {
-                            dbFacade.getVdsNumaNodeDAO().massSaveNumaNode(numaNodesToSave, vds.getId(), null);
+                            dbFacade.getVdsNumaNodeDao().massSaveNumaNode(numaNodesToSave, vds.getId(), null);
                         }
                         return null;
                     }

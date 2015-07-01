@@ -24,9 +24,9 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,16 +35,16 @@ public class StorageHandlingCommandBaseTest {
     StorageHandlingCommandBase<StoragePoolManagementParameter> cmd;
 
     @Mock
-    StoragePoolDAO storagePoolDAO;
+    StoragePoolDao storagePoolDao;
 
     @Mock
     DbFacade facade;
 
     @Mock
-    StorageDomainDAO storageDomainDAO;
+    StorageDomainDao storageDomainDao;
 
     @Mock
-    private StoragePoolIsoMapDAO storagePoolIsoMapDAO;
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     List<StorageDomain> attachedDomains = new ArrayList<StorageDomain>();
 
@@ -76,14 +76,14 @@ public class StorageHandlingCommandBaseTest {
 
         initCommand();
 
-        when(facade.getStoragePoolDao()).thenReturn(storagePoolDAO);
+        when(facade.getStoragePoolDao()).thenReturn(storagePoolDao);
         when(facade.getStoragePoolDao().get(storagePool.getId())).thenReturn(storagePool);
 
-        when(facade.getStorageDomainDao()).thenReturn(storageDomainDAO);
-        when(storageDomainDAO.getAllForStoragePool(storagePool.getId())).thenReturn(attachedDomains);
+        when(facade.getStorageDomainDao()).thenReturn(storageDomainDao);
+        when(storageDomainDao.getAllForStoragePool(storagePool.getId())).thenReturn(attachedDomains);
 
-        when(facade.getStoragePoolIsoMapDao()).thenReturn(storagePoolIsoMapDAO);
-        when(storagePoolIsoMapDAO.getAllForStorage(any(Guid.class))).thenReturn(isoMap);
+        when(facade.getStoragePoolIsoMapDao()).thenReturn(storagePoolIsoMapDao);
+        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(isoMap);
     }
 
     public void initCommand() {

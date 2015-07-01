@@ -34,8 +34,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.LibvirtSecretDao;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -162,7 +162,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
             public Object call() {
                 StoragePoolIsoMap storagePoolIsoMap =
                         new StoragePoolIsoMap(storageDomainId, storagePoolId, StorageDomainStatus.Maintenance);
-                getStoragePoolIsoMapDAO().save(storagePoolIsoMap);
+                getStoragePoolIsoMapDao().save(storagePoolIsoMap);
                 return null;
             }
         });
@@ -198,7 +198,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         execute(new Callable<Object>() {
             @Override
             public Object call() {
-                getStoragePoolIsoMapDAO().remove(new StoragePoolIsoMapId(mapToRemove.getstorage_id(),
+                getStoragePoolIsoMapDao().remove(new StoragePoolIsoMapId(mapToRemove.getstorage_id(),
                         mapToRemove.getstorage_pool_id()));
                 return null;
             }
@@ -212,9 +212,9 @@ public class CINDERStorageHelper extends StorageHelperBase {
             @Override
             public Object call() {
                 StoragePoolIsoMap map =
-                        getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(storageDomainId, storagePoolId));
+                        getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(storageDomainId, storagePoolId));
                 map.setStatus(storageDomainStatus);
-                getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getStatus());
+                getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
                 return null;
             }
         });
@@ -233,7 +233,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return storageSubjects.toArray(new SubjectEntity[storageSubjects.size()]);
     }
 
-    private StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
+    private StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
         return getDbFacade().getStoragePoolIsoMapDao();
     }
 
@@ -241,7 +241,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return getDbFacade().getProviderDao();
     }
 
-    private VdsDAO getVdsDao() {
+    private VdsDao getVdsDao() {
         return getDbFacade().getVdsDao();
     }
 

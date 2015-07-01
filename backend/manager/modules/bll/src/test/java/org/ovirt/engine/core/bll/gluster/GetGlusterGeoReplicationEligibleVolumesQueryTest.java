@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -32,7 +32,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     private GlusterGeoRepDao geoRepDao;
 
     @Mock
-    private VdsGroupDAO vdsGroupDao;
+    private VdsGroupDao vdsGroupDao;
 
     @Mock
     private GlusterVolumeDao volumeDao;

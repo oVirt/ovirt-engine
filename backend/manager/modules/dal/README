@@ -54,7 +54,7 @@ You can change the database configuration in ~/.m2/settings.xml e.g.
     </properties>
   </profile>
 
-== More on DbFacadeImpl DAOs ==
+== More on Impl DAOs ==
 
 Most methods in these classes execute a stored procedure (see
 packaging/dbscripts/*_sp.sql) using the supplied parameters and

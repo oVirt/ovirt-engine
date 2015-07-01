@@ -58,13 +58,13 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmStaticDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -73,25 +73,25 @@ public class ProcessOvfUpdateForStoragePoolCommandTest {
     private ProcessOvfUpdateForStoragePoolCommand<StoragePoolParametersBase> command;
 
     @Mock
-    private StoragePoolDAO storagePoolDAO;
+    private StoragePoolDao storagePoolDao;
 
     @Mock
-    private VmAndTemplatesGenerationsDAO vmAndTemplatesGenerationsDAO;
+    private VmAndTemplatesGenerationsDao vmAndTemplatesGenerationsDao;
 
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
 
     @Mock
-    private VmStaticDAO vmStaticDAO;
+    private VmStaticDao vmStaticDao;
 
     @Mock
-    private SnapshotDao snapshotDAO;
+    private SnapshotDao snapshotDao;
 
     @Mock
-    private VmTemplateDAO vmTemplateDAO;
+    private VmTemplateDao vmTemplateDao;
 
     @Mock
-    private StorageDomainDAO storageDomainDAO;
+    private StorageDomainDao storageDomainDao;
 
     @Mock
     private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
@@ -125,14 +125,14 @@ public class ProcessOvfUpdateForStoragePoolCommandTest {
         initMembers();
 
         //init daos
-        doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
-        doReturn(vmAndTemplatesGenerationsDAO).when(command).getVmAndTemplatesGenerationsDAO();
-        doReturn(vmDAO).when(command).getVmDAO();
-        doReturn(vmStaticDAO).when(command).getVmStaticDAO();
-        doReturn(snapshotDAO).when(command).getSnapshotDAO();
-        doReturn(vmTemplateDAO).when(command).getVmTemplateDAO();
-        doReturn(storageDomainOvfInfoDao).when(command).getStorageDomainOvfInfoDAO();
-        doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
+        doReturn(storagePoolDao).when(command).getStoragePoolDao();
+        doReturn(vmAndTemplatesGenerationsDao).when(command).getVmAndTemplatesGenerationsDao();
+        doReturn(vmDao).when(command).getVmDao();
+        doReturn(vmStaticDao).when(command).getVmStaticDao();
+        doReturn(snapshotDao).when(command).getSnapshotDao();
+        doReturn(vmTemplateDao).when(command).getVmTemplateDao();
+        doReturn(storageDomainOvfInfoDao).when(command).getStorageDomainOvfInfoDao();
+        doReturn(storageDomainDao).when(command).getStorageDomainDao();
 
         doReturn(ovfUpdateProcessHelper).when(command).getOvfUpdateProcessHelper();
 
@@ -144,10 +144,10 @@ public class ProcessOvfUpdateForStoragePoolCommandTest {
         doNothing().when(command).updateTemplateDisksFromDb(any(VmTemplate.class));
 
         // dao related mocks.
-        doReturn(1L).when(vmStaticDAO).getDbGeneration(any(Guid.class));
+        doReturn(1L).when(vmStaticDao).getDbGeneration(any(Guid.class));
         doReturn(pool1).when(command).getStoragePool();
         List<Snapshot> snapshots = new ArrayList<>();
-        doReturn(snapshots).when(snapshotDAO).getAllWithConfiguration(any(Guid.class));
+        doReturn(snapshots).when(snapshotDao).getAllWithConfiguration(any(Guid.class));
         mockAnswers();
     }
 
@@ -210,7 +210,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest {
                 return toReturn;
             }
 
-        }).when(vmDAO).getVmsByIds(anyList());
+        }).when(vmDao).getVmsByIds(anyList());
 
         doAnswer(new Answer<List<VmTemplate>>() {
             @Override
@@ -223,7 +223,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest {
                 return toReturn;
             }
 
-        }).when(vmTemplateDAO).getVmTemplatesByIds(anyList());
+        }).when(vmTemplateDao).getVmTemplatesByIds(anyList());
 
         doAnswer(new Answer<Boolean>() {
             @Override
@@ -266,7 +266,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest {
                 return null;
             }
 
-        }).when(vmAndTemplatesGenerationsDAO).updateOvfGenerations(anyList(), anyList(), anyList());
+        }).when(vmAndTemplatesGenerationsDao).updateOvfGenerations(anyList(), anyList(), anyList());
 
         doAnswer(new Answer<Object>() {
             @Override
@@ -282,7 +282,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest {
                 return toReturn;
             }
 
-        }).when(storagePoolDAO).getAllByStatus(any(StoragePoolStatus.class));
+        }).when(storagePoolDao).getAllByStatus(any(StoragePoolStatus.class));
 
         doAnswer(new Answer<Object>() {
             @Override
@@ -296,7 +296,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest {
                 return toReturn;
             }
 
-        }).when(storageDomainDAO).getAllForStoragePool(any(Guid.class));
+        }).when(storageDomainDao).getAllForStoragePool(any(Guid.class));
 
         doAnswer(new Answer<Object>() {
             @Override
@@ -393,9 +393,9 @@ public class ProcessOvfUpdateForStoragePoolCommandTest {
 
     private void initTestForPool(StoragePool pool, List<Guid> vmGuids, List<Guid> templatesGuids, List<Guid> removedGuids) {
         Guid poolId = pool.getId();
-        doReturn(vmGuids).when(vmAndTemplatesGenerationsDAO).getVmsIdsForOvfUpdate(poolId);
-        doReturn(templatesGuids).when(vmAndTemplatesGenerationsDAO).getVmTemplatesIdsForOvfUpdate(poolId);
-        doReturn(removedGuids).when(vmAndTemplatesGenerationsDAO).getIdsForOvfDeletion(poolId);
+        doReturn(vmGuids).when(vmAndTemplatesGenerationsDao).getVmsIdsForOvfUpdate(poolId);
+        doReturn(templatesGuids).when(vmAndTemplatesGenerationsDao).getVmTemplatesIdsForOvfUpdate(poolId);
+        doReturn(removedGuids).when(vmAndTemplatesGenerationsDao).getIdsForOvfDeletion(poolId);
         pool.setStatus(StoragePoolStatus.Up);
     }
 
@@ -714,7 +714,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest {
 
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
-        doReturn(2L).when(vmStaticDAO).getDbGeneration(any(Guid.class));
+        doReturn(2L).when(vmStaticDao).getDbGeneration(any(Guid.class));
 
         executeCommand();
 

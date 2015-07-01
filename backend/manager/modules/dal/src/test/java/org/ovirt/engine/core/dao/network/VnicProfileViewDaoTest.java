@@ -10,10 +10,10 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class VnicProfileViewDaoTest extends BaseDAOTestCase {
+public class VnicProfileViewDaoTest extends BaseDaoTestCase {
 
     private VnicProfileViewDao dao;
 

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.dao.QuotaDao;
 
 public class UpdateQuotaCommand extends QuotaCRUDCommand {
 
@@ -32,7 +32,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
         } else if (getParameters().getQuota().getId() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
             return false;
-        } else if (getQuotaDAO().getById(getParameters().getQuota().getId()) == null) {
+        } else if (getQuotaDao().getById(getParameters().getQuota().getId()) == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
@@ -43,7 +43,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
     protected void executeCommand() {
         removeQuotaFromCache();
         setQuotaParameter();
-        QuotaDAO dao = getQuotaDAO();
+        QuotaDao dao = getQuotaDao();
         dao.update(getParameters().getQuota());
         getReturnValue().setSucceeded(true);
         afterUpdate();

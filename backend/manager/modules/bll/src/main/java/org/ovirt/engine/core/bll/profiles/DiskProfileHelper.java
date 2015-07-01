@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,7 +104,7 @@ public class DiskProfileHelper {
             DbUser user) {
         return user == null
                 || permittedDiskProfilesIds.contains(diskProfile.getId())
-                || getPermissionDAO().getEntityPermissions(user.getId(),
+                || getPermissionDao().getEntityPermissions(user.getId(),
                         ActionGroup.ATTACH_DISK_PROFILE,
                         diskProfile.getId(),
                         VdcObjectType.DiskProfile) != null;
@@ -114,7 +114,7 @@ public class DiskProfileHelper {
         return DbFacade.getInstance().getDiskProfileDao();
     }
 
-    private static PermissionDAO getPermissionDAO() {
+    private static PermissionDao getPermissionDao() {
         return DbFacade.getInstance().getPermissionDao();
     }
 }

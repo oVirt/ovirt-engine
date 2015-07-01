@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 
 public class CreateCinderSnapshotCommandCallback extends AbstractCinderDiskCommandCallback<CreateCinderSnapshotCommand<ImagesContainterParametersBase>> {
@@ -63,7 +63,7 @@ public class CreateCinderSnapshotCommandCallback extends AbstractCinderDiskComma
     @Override
     protected CinderDisk getDisk() {
         if (disk == null) {
-            disk = (CinderDisk) getDiskImageDAO().getSnapshotById(getDiskId());
+            disk = (CinderDisk) getDiskImageDao().getSnapshotById(getDiskId());
         }
         return disk;
     }
@@ -80,7 +80,7 @@ public class CreateCinderSnapshotCommandCallback extends AbstractCinderDiskComma
         return DbFacade.getInstance().getBaseDiskDao();
     }
 
-    protected DiskImageDAO getDiskImageDAO() {
+    protected DiskImageDao getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDao();
     }
 

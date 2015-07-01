@@ -28,11 +28,11 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -47,15 +47,15 @@ public class AddStorageDomainCommonTest {
     );
 
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
     @Mock
-    private StorageDomainDAO sdDao;
+    private StorageDomainDao sdDao;
     @Mock
-    private StorageDomainStaticDAO sdsDao;
+    private StorageDomainStaticDao sdsDao;
     @Mock
-    private StoragePoolDAO spDao;
+    private StoragePoolDao spDao;
     @Mock
-    private StorageServerConnectionDAO sscDao;
+    private StorageServerConnectionDao sscDao;
 
     private StorageDomainStatic sd;
     private VDS vds;
@@ -99,11 +99,11 @@ public class AddStorageDomainCommonTest {
         params.setVdsId(vdsId);
 
         cmd = spy(new AddStorageDomainCommon<>(params));
-        doReturn(vdsDao).when(cmd).getVdsDAO();
-        doReturn(sdDao).when(cmd).getStorageDomainDAO();
-        doReturn(sdsDao).when(cmd).getStorageDomainStaticDAO();
-        doReturn(spDao).when(cmd).getStoragePoolDAO();
-        doReturn(sscDao).when(cmd).getStorageServerConnectionDAO();
+        doReturn(vdsDao).when(cmd).getVdsDao();
+        doReturn(sdDao).when(cmd).getStorageDomainDao();
+        doReturn(sdsDao).when(cmd).getStorageDomainStaticDao();
+        doReturn(spDao).when(cmd).getStoragePoolDao();
+        doReturn(sscDao).when(cmd).getStorageServerConnectionDao();
     }
 
     @Test

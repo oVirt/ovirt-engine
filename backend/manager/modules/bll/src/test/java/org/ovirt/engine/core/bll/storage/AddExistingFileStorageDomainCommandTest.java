@@ -35,9 +35,9 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -62,13 +62,13 @@ public class AddExistingFileStorageDomainCommandTest {
     private DbFacade dbFacade;
 
     @Mock
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
 
     @Mock
-    private StoragePoolDAO storagePoolDAO;
+    private StoragePoolDao storagePoolDao;
 
     @Mock
-    private StorageDomainStaticDAO storageDomainStaticDAO;
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     @Before
     public void setUp() {
@@ -80,22 +80,22 @@ public class AddExistingFileStorageDomainCommandTest {
         command.setStoragePool(getStoragePool());
 
         CommandMocks.mockDbFacade(command, dbFacade);
-        doReturn(vdsDAO).when(command).getVdsDAO();
-        doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
-        doReturn(storageDomainStaticDAO).when(command).getStorageDomainStaticDAO();
+        doReturn(vdsDao).when(command).getVdsDao();
+        doReturn(storagePoolDao).when(command).getStoragePoolDao();
+        doReturn(storageDomainStaticDao).when(command).getStorageDomainStaticDao();
 
         doReturn(false).when(command).isStorageWithSameNameExists();
 
         doNothing().when(command).addStorageDomainInDb();
         doNothing().when(command).updateStorageDomainDynamicFromIrs();
 
-        when(command.getVdsDAO().getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(getHosts());
-        when(command.getStoragePoolDAO().get(any(Guid.class))).thenReturn(getStoragePool());
+        when(command.getVdsDao().getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(getHosts());
+        when(command.getStoragePoolDao().get(any(Guid.class))).thenReturn(getStoragePool());
     }
 
     @Test
     public void testAddExistingSuccessfully() {
-        when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(null);
+        when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(null);
 
         StorageDomainStatic sdStatic = command.getStorageDomain().getStorageStaticData();
         doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
@@ -109,7 +109,7 @@ public class AddExistingFileStorageDomainCommandTest {
 
     @Test
     public void testAlreadyExistStorageDomain() {
-        when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(parameters.getStorageDomain());
+        when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(parameters.getStorageDomain());
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
@@ -117,7 +117,7 @@ public class AddExistingFileStorageDomainCommandTest {
 
     @Test
     public void testNonExistingStorageDomain() {
-        when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(null);
+        when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(null);
 
         doReturn(null).when(command).executeHSMGetStorageDomainInfo(
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
@@ -128,7 +128,7 @@ public class AddExistingFileStorageDomainCommandTest {
 
     @Test
     public void testSwitchStorageDomainType() {
-        when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(null);
+        when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(null);
 
         StorageDomainStatic sdStatic = command.getStorageDomain().getStorageStaticData();
         doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
@@ -141,7 +141,7 @@ public class AddExistingFileStorageDomainCommandTest {
     public void testAddHostedEngineStorageFails() {
         parameters.getStorageDomain().setStorageName(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME);
 
-        when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(null);
+        when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(null);
 
         StorageDomainStatic sdStatic = command.getStorageDomain().getStorageStaticData();
         doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(

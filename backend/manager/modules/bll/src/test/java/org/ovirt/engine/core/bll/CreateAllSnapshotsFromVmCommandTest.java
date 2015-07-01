@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 /** A test case for the {@link CreateAllSnapshotsFromVmCommand} class. */
 @RunWith(MockitoJUnitRunner.class)
@@ -42,7 +42,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     private SnapshotDao snapshotDao;
 
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     @Mock
     private VmValidator vmValidator;

@@ -35,7 +35,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -49,7 +49,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     private static final String SERVER_NAME = "server1";
     private GlusterVolumeAdvancedDetails expectedVolumeAdvancedDetails;
     private ClusterUtils clusterUtils;
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
     private GlusterVolumeDao volumeDao;
     private GlusterBrickDao brickDao;
 
@@ -149,7 +149,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
 
     private void setupMock() {
         clusterUtils = mock(ClusterUtils.class);
-        vdsDao = mock(VdsDAO.class);
+        vdsDao = mock(VdsDao.class);
         volumeDao = mock(GlusterVolumeDao.class);
         brickDao = mock(GlusterBrickDao.class);
 

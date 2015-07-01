@@ -28,7 +28,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
@@ -133,7 +133,7 @@ public class VnicProfileHelper {
 
     private static boolean isVnicProfilePermitted(DbUser user, VnicProfile profile, boolean portMirroringRequired) {
         return portMirroringRequired == profile.isPortMirroring()
-                && getPermissionDAO().getEntityPermissions(user.getId(),
+                && getPermissionDao().getEntityPermissions(user.getId(),
                         ActionGroup.CONFIGURE_VM_NETWORK,
                         profile.getId(),
                         VdcObjectType.VnicProfile) != null;
@@ -257,7 +257,7 @@ public class VnicProfileHelper {
         return DbFacade.getInstance().getVnicProfileDao();
     }
 
-    private static PermissionDAO getPermissionDAO() {
+    private static PermissionDao getPermissionDao() {
         return DbFacade.getInstance().getPermissionDao();
     }
 }

@@ -39,13 +39,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.AsyncTaskDAO;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.dao.VmStaticDAO;
+import org.ovirt.engine.core.dao.AsyncTaskDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 
@@ -58,25 +58,25 @@ public class DeactivateStorageDomainCommandTest {
     @Mock
     private DbFacade dbFacade;
     @Mock
-    private StoragePoolIsoMapDAO isoMapDAO;
+    private StoragePoolIsoMapDao isoMapDao;
     @Mock
-    private StoragePoolDAO storagePoolDAO;
+    private StoragePoolDao storagePoolDao;
     @Mock
-    private StorageDomainDAO storageDomainDAO;
+    private StorageDomainDao storageDomainDao;
     @Mock
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
     @Mock
     private BackendInternal backendInternal;
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
     @Mock
-    private AsyncTaskDAO asyncTaskDAO;
+    private AsyncTaskDao asyncTaskDao;
     @Mock
     private VDS vds;
     @Mock
-    private VmStaticDAO vmStaticDAO;
+    private VmStaticDao vmStaticDao;
     @Mock
-    private VmDynamicDAO vmDynamicDAO;
+    private VmDynamicDao vmDynamicDao;
     @Mock
     private EventQueue eventQueue;
 
@@ -94,29 +94,29 @@ public class DeactivateStorageDomainCommandTest {
     @Before
     public void setup() {
         CommandMocks.mockDbFacade(cmd, dbFacade);
-        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDAO);
-        when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDAO);
+        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
+        when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDao);
         doReturn(eventQueue).when(cmd).getEventQueue();
     }
 
     @Test
     public void statusSetInMap() {
         doReturn(mock(IStorageHelper.class)).when(cmd).getStorageHelper(any(StorageDomain.class));
-        when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDAO);
-        when(dbFacade.getVdsDao()).thenReturn(vdsDAO);
-        when(dbFacade.getAsyncTaskDao()).thenReturn(asyncTaskDAO);
-        when(storagePoolDAO.get(any(Guid.class))).thenReturn(new StoragePool());
-        when(isoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
-        when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
+        when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDao);
+        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
+        when(dbFacade.getAsyncTaskDao()).thenReturn(asyncTaskDao);
+        when(storagePoolDao.get(any(Guid.class))).thenReturn(new StoragePool());
+        when(isoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
+        when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
 
         doReturn(backendInternal).when(cmd).getBackend();
-        when(vdsDAO.getAllForStoragePoolAndStatus(any(Guid.class), any(VDSStatus.class))).thenReturn(new ArrayList<VDS>());
+        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), any(VDSStatus.class))).thenReturn(new ArrayList<VDS>());
         when(backendInternal.getResourceManager()).thenReturn(vdsBrokerFrontend);
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         when(vdsBrokerFrontend.RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class)))
                 .thenReturn(returnValue);
-        when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
         map.setStatus(StorageDomainStatus.Active);
 
         cmd.setCompensationContext(mock(CompensationContext.class));
@@ -128,9 +128,9 @@ public class DeactivateStorageDomainCommandTest {
     public void testVmsWithNoIsoAttached() {
         mockDomain();
         doReturn(domain).when(cmd).getStorageDomain();
-        when(dbFacade.getVmStaticDao()).thenReturn(vmStaticDAO);
+        when(dbFacade.getVmStaticDao()).thenReturn(vmStaticDao);
         List<VmStatic> listVMs = new ArrayList<>();
-        when(vmStaticDAO.getAllByStoragePoolId(any(Guid.class))).thenReturn(listVMs);
+        when(vmStaticDao.getAllByStoragePoolId(any(Guid.class))).thenReturn(listVMs);
         assertTrue(cmd.isRunningVmsWithIsoAttached());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
     }
@@ -140,8 +140,8 @@ public class DeactivateStorageDomainCommandTest {
         setup();
         mockDomain();
         doReturn(domain).when(cmd).getStorageDomain();
-        when(dbFacade.getVmStaticDao()).thenReturn(vmStaticDAO);
-        when(dbFacade.getVmDynamicDao()).thenReturn(vmDynamicDAO);
+        when(dbFacade.getVmStaticDao()).thenReturn(vmStaticDao);
+        when(dbFacade.getVmDynamicDao()).thenReturn(vmDynamicDao);
 
         List<VmStatic> listVMs = new ArrayList<>();
         VmStatic vmStatic = new VmStatic();

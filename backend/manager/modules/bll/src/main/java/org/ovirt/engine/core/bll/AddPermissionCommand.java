@@ -82,8 +82,8 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         // give permission
         if (getParameters().getUser() == null
                 && getParameters().getGroup() == null
-                && getDbUserDAO().get(adElementId) == null
-                && getAdGroupDAO().get(adElementId) == null) {
+                && getDbUserDao().get(adElementId) == null
+                && getAdGroupDao().get(adElementId) == null) {
             getReturnValue().getCanDoActionMessages().add(VdcBllMessages.USER_MUST_EXIST_IN_DB.toString());
             return false;
         }
@@ -96,7 +96,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
 
         // don't allow adding permissions to vms from pool externally
         if (!isInternalExecution() && perm.getObjectType() == VdcObjectType.VM) {
-            VM vm = getVmDAO().get(perm.getObjectId());
+            VM vm = getVmDao().get(perm.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
                 addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_VM_IN_POOL);
                 return false;
@@ -118,7 +118,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             Guid id = user.getId();
             String directory = user.getDomain();
             String externalId = user.getExternalId();
-            DbUser existing = getDbUserDAO().getByIdOrExternalId(id, directory, externalId);
+            DbUser existing = getDbUserDao().getByIdOrExternalId(id, directory, externalId);
             if (existing != null) {
                 user = existing;
             }
@@ -135,7 +135,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             Guid id = group.getId();
             String directory = group.getDomain();
             String externalId = group.getExternalId();
-            DbGroup existing = getAdGroupDAO().getByIdOrExternalId(id, directory, externalId);
+            DbGroup existing = getAdGroupDao().getByIdOrExternalId(id, directory, externalId);
             if (existing != null) {
                 group = existing;
             }
@@ -164,7 +164,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         final Permission paramPermission = parameters.getPermission();
 
         Permission permission =
-                getPermissionDAO().getForRoleAndAdElementAndObject(paramPermission.getRoleId(), principalId,
+                getPermissionDao().getForRoleAndAdElementAndObject(paramPermission.getRoleId(), principalId,
                         paramPermission.getObjectId());
 
         if (permission == null) {
@@ -173,7 +173,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
-                    getPermissionDAO().save(paramPermission);
+                    getPermissionDao().save(paramPermission);
                     getCompensationContext().snapshotNewEntity(paramPermission);
                     getCompensationContext().stateChanged();
                     return null;
@@ -231,7 +231,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             if (result.getSucceeded()) {
                 Guid id = (Guid) result.getActionReturnValue();
                 if (id != null) {
-                    return getDbUserDAO().get(id);
+                    return getDbUserDao().get(id);
                 }
                 return null;
             }
@@ -248,7 +248,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             if (result.getSucceeded()) {
                 Guid id = (Guid) result.getActionReturnValue();
                 if (id != null) {
-                    return getAdGroupDAO().get(id);
+                    return getAdGroupDao().get(id);
                 }
                 return null;
             }

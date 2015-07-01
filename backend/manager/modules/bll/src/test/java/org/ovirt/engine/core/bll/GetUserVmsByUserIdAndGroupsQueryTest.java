@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class GetUserVmsByUserIdAndGroupsQueryTest
         extends AbstractUserQueryTest<GetUserVmsByUserIdAndGroupsParameters, GetUserVmsByUserIdAndGroupsQuery<GetUserVmsByUserIdAndGroupsParameters>> {
@@ -39,8 +39,8 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
     public void assertExecuteQueryCommandResult(Guid requestedUser, boolean includeDiskData, boolean expectedResults) {
         mockQueryParameters(requestedUser, includeDiskData);
 
-        // Mock the result of the DAO
-        final VM expectedVM = mockVMFromDAO(requestedUser);
+        // Mock the result of the Dao
+        final VM expectedVM = mockVMFromDao(requestedUser);
         final DiskImage expectedDisk = mockDisk();
 
         final ArrayList<DiskImage> snapshots = mockSnapshots();
@@ -105,13 +105,13 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
     }
 
     /**
-     * Mocks the DAOs to return a VM
+     * Mocks the Daos to return a VM
      * @param requestedUser The user on the parameter object to return the VM for
-     * @return The VM the mocked DAO will return
+     * @return The VM the mocked Dao will return
      */
-    private VM mockVMFromDAO(Guid requestedUser) {
+    private VM mockVMFromDao(Guid requestedUser) {
         VM expectedVM = new VM();
-        VmDAO vmDaoMock = mock(VmDAO.class);
+        VmDao vmDaoMock = mock(VmDao.class);
         when(vmDaoMock.getAllForUserWithGroupsAndUserRoles(requestedUser)).thenReturn(Collections.singletonList(expectedVM));
         when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDaoMock);
 

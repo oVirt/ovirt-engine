@@ -47,12 +47,12 @@ public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> ex
     }
 
     public String getDataCenterName() {
-        return getStoragePoolDAO().get(getNetwork().getDataCenterId()).getName();
+        return getStoragePoolDao().get(getNetwork().getDataCenterId()).getName();
     }
 
     private Network getNetwork() {
         if (network == null) {
-            network = getNetworkDAO().get(getVnicProfile().getNetworkId());
+            network = getNetworkDao().get(getVnicProfile().getNetworkId());
         }
 
         return network;

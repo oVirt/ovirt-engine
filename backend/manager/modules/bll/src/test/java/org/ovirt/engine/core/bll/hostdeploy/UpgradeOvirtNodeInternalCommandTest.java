@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 import static org.junit.Assert.assertFalse;
@@ -44,19 +44,19 @@ public class UpgradeOvirtNodeInternalCommandTest {
             );
 
     @Mock
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
 
     private UpgradeOvirtNodeInternalCommand<InstallVdsParameters> createCommand(InstallVdsParameters params) {
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = spy(new UpgradeOvirtNodeInternalCommand<InstallVdsParameters>(params, null));
-        doReturn(vdsDAO).when(command).getVdsDAO();
+        doReturn(vdsDao).when(command).getVdsDao();
         return command;
     }
 
     @Before
-    public void mockVdsDAO() {
+    public void mockVdsDao() {
         VDS vds = new VDS();
         vds.setVdsType(VDSType.oVirtNode);
-        when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
     }
 
     private static InstallVdsParameters createParameters() {
@@ -69,7 +69,7 @@ public class UpgradeOvirtNodeInternalCommandTest {
         VDS vds = new VDS();
         vds.setVdsType(VDSType.oVirtNode);
         vds.setHostOs(osVersion);
-        when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
     }
 
     private static void assertFailsWithCanDoActionMessage
@@ -116,7 +116,7 @@ public class UpgradeOvirtNodeInternalCommandTest {
 
     @Test
     public void canDoActionFailsIHostDoesNotExists() {
-        when(vdsDAO.get(any(Guid.class))).thenReturn(null);
+        when(vdsDao.get(any(Guid.class))).thenReturn(null);
         InstallVdsParameters param = createParameters();
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
         assertFailsWithCanDoActionMessage(command, VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);

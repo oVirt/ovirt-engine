@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DbUserDAO;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
@@ -86,7 +86,7 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
      * Check if the authenticated user exist in the DB. Add it if its missing.
      */
     public static DbUser persistAuthenticatedUser(DirectoryUser directoryUser) {
-        DbUserDAO dao = DbFacade.getInstance().getDbUserDao();
+        DbUserDao dao = DbFacade.getInstance().getDbUserDao();
         DbUser dbUser = dao.getByExternalId(directoryUser.getDirectoryName(), directoryUser.getId());
         if (dbUser != null) {
             dao.update(dbUser);

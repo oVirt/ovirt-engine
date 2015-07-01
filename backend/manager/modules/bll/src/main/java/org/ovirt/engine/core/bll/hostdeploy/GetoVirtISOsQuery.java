@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 
 /**
  * The {@code GetoVirtISOsQuery} is responsible to detect all available oVirt images installed on engine server. It detects
@@ -33,7 +33,7 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
     private static final String OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX = "vdsm-compatibility";
 
     @Inject
-    private VdsDynamicDAO hostDynamicDao;
+    private VdsDynamicDao hostDynamicDao;
 
     public GetoVirtISOsQuery(P parameters) {
         super(parameters);

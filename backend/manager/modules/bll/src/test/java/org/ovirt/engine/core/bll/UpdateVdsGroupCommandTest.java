@@ -35,11 +35,11 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -88,15 +88,15 @@ public class UpdateVdsGroupCommandTest {
             );
 
     @Mock
-    private VdsGroupDAO vdsGroupDAO;
+    private VdsGroupDao vdsGroupDao;
     @Mock
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
     @Mock
-    private StoragePoolDAO storagePoolDAO;
+    private StoragePoolDao storagePoolDao;
     @Mock
     private GlusterVolumeDao glusterVolumeDao;
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
     @Mock
     private NetworkDao networkDao;
     @Mock
@@ -130,7 +130,7 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void invalidVdsGroup() {
         createSimpleCommand();
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(null);
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(null);
         canDoActionFailedWithReason(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
     }
 
@@ -209,18 +209,18 @@ public class UpdateVdsGroupCommandTest {
     public void versionDecreaseNoHostsOrNetwork() {
         createCommandWithOlderVersion();
         setupCpu();
-        StoragePoolDAO storagePoolDAO2 = Mockito.mock(StoragePoolDAO.class);
-        when(storagePoolDAO2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFS());
-        doReturn(storagePoolDAO2).when(cmd).getStoragePoolDAO();
+        StoragePoolDao storagePoolDao2 = Mockito.mock(StoragePoolDao.class);
+        when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFS());
+        doReturn(storagePoolDao2).when(cmd).getStoragePoolDao();
         assertTrue(cmd.canDoAction());
     }
 
     @Test
     public void versionDecreaseLowerVersionThanDC() {
         createCommandWithOlderVersion();
-        StoragePoolDAO storagePoolDAO2 = Mockito.mock(StoragePoolDAO.class);
-        when(storagePoolDAO2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFSOldVersion());
-        doReturn(storagePoolDAO2).when(cmd).getStoragePoolDAO();
+        StoragePoolDao storagePoolDao2 = Mockito.mock(StoragePoolDao.class);
+        when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFSOldVersion());
+        doReturn(storagePoolDao2).when(cmd).getStoragePoolDao();
         setupCpu();
         canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
     }
@@ -358,8 +358,8 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void vdsGroupWithNoCpu() {
         createCommandWithNoCpuName();
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
-        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         when(glusterVolumeDao.getByClusterId(any(Guid.class))).thenReturn(new ArrayList<GlusterVolumeEntity>());
         allQueriesForVms();
         assertTrue(cmd.canDoAction());
@@ -368,8 +368,8 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void vdsGroupWithNoServiceEnabled() {
         createCommandWithNoService();
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
-        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         cpuExists();
         allQueriesForVms();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
@@ -378,8 +378,8 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void vdsGroupWithVirtGlusterServicesNotAllowed() {
         createCommandWithVirtGlusterEnabled();
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
-        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         mcr.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, Boolean.FALSE);
         mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.TRUE);
         cpuExists();
@@ -390,8 +390,8 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void vdspysGroupWithVirtGlusterNotSupported() {
         createCommandWithGlusterEnabled();
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
-        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         mcr.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, Boolean.FALSE);
         mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.FALSE);
         cpuExists();
@@ -402,8 +402,8 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void disableVirtWhenVmsExist() {
         createCommandWithGlusterEnabled();
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
-        when(vdsGroupDAO.getByName(anyString())).thenReturn(createDefaultVdsGroup());
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
+        when(vdsGroupDao.getByName(anyString())).thenReturn(createDefaultVdsGroup());
         mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.TRUE);
         cpuExists();
         cpuFlagsNotMissing();
@@ -416,8 +416,8 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void disableGlusterWhenVolumesExist() {
         createCommandWithVirtEnabled();
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
-        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         cpuExists();
         cpuFlagsNotMissing();
         allQueriesForVms();
@@ -429,8 +429,8 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void enableNewAddtionalFeatureWhenHostDoesnotSupport() {
         createCommandWithAddtionalFeature();
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
-        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         cpuExists();
         cpuFlagsNotMissing();
         allQueriesForVms();
@@ -443,8 +443,8 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void enableNewAddtionalFeatureWhenHostSupports() {
         createCommandWithAddtionalFeature();
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
-        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDao.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         cpuExists();
         cpuFlagsNotMissing();
         allQueriesForVms();
@@ -515,12 +515,12 @@ public class UpdateVdsGroupCommandTest {
 
         doReturn(0).when(cmd).compareCpuLevels(any(VDSGroup.class));
 
-        doReturn(vdsGroupDAO).when(cmd).getVdsGroupDAO();
-        doReturn(vdsDAO).when(cmd).getVdsDAO();
-        doReturn(storagePoolDAO).when(cmd).getStoragePoolDAO();
+        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        doReturn(vdsDao).when(cmd).getVdsDao();
+        doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         doReturn(glusterVolumeDao).when(cmd).getGlusterVolumeDao();
-        doReturn(vmDao).when(cmd).getVmDAO();
-        doReturn(networkDao).when(cmd).getNetworkDAO();
+        doReturn(vmDao).when(cmd).getVmDao();
+        doReturn(networkDao).when(cmd).getNetworkDao();
         doReturn(defaultManagementNetworkFinder).when(cmd).getDefaultManagementNetworkFinder();
         doReturn(clusterFeatureDao).when(cmd).getClusterFeatureDao();
         doReturn(hostFeatureDao).when(cmd).getHostFeatureDao();
@@ -533,11 +533,11 @@ public class UpdateVdsGroupCommandTest {
             doReturn(ArchitectureType.x86_64).when(cmd).getArchitecture();
         }
 
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
-        when(vdsGroupDAO.getByName(anyString())).thenReturn(createDefaultVdsGroup());
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
+        when(vdsGroupDao.getByName(anyString())).thenReturn(createDefaultVdsGroup());
         List<VDSGroup> vdsGroupList = new ArrayList<>();
         vdsGroupList.add(createDefaultVdsGroup());
-        when(vdsGroupDAO.getByName(anyString(), anyBoolean())).thenReturn(vdsGroupList);
+        when(vdsGroupDao.getByName(anyString(), anyBoolean())).thenReturn(vdsGroupList);
     }
 
     private void createCommandWithDifferentName() {
@@ -649,18 +649,18 @@ public class UpdateVdsGroupCommandTest {
     }
 
     private void storagePoolIsLocalFS() {
-        when(storagePoolDAO.get(DC_ID1)).thenReturn(createStoragePoolLocalFS());
+        when(storagePoolDao.get(DC_ID1)).thenReturn(createStoragePoolLocalFS());
     }
 
     private void oldGroupIsDetachedDefault() {
-        when(vdsGroupDAO.get(DEFAULT_VDS_GROUP_ID)).thenReturn(createDetachedDefaultVdsGroup());
+        when(vdsGroupDao.get(DEFAULT_VDS_GROUP_ID)).thenReturn(createDetachedDefaultVdsGroup());
     }
 
     private void storagePoolAlreadyHasCluster() {
         VDSGroup group = new VDSGroup();
         List<VDSGroup> groupList = new ArrayList<VDSGroup>();
         groupList.add(group);
-        when(vdsGroupDAO.getAllForStoragePool(any(Guid.class))).thenReturn(groupList);
+        when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(groupList);
     }
 
     private void VdsExist() {
@@ -668,7 +668,7 @@ public class UpdateVdsGroupCommandTest {
         vds.setStatus(VDSStatus.Up);
         List<VDS> vdsList = new ArrayList<VDS>();
         vdsList.add(vds);
-        when(vdsDAO.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
+        when(vdsDao.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
     }
 
     private void VdsExistWithHigherVersion() {
@@ -677,7 +677,7 @@ public class UpdateVdsGroupCommandTest {
         vds.setVdsGroupCompatibilityVersion(VERSION_1_2);
         List<VDS> vdsList = new ArrayList<VDS>();
         vdsList.add(vds);
-        when(vdsDAO.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
+        when(vdsDao.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
     }
 
     private void allQueriesForVms() {
@@ -690,7 +690,7 @@ public class UpdateVdsGroupCommandTest {
         vds.setSupportedClusterLevels(VERSION_1_1.toString());
         List<VDS> vdsList = new ArrayList<VDS>();
         vdsList.add(vds);
-        when(vdsDAO.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
+        when(vdsDao.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
     }
 
     private void clusterHasGlusterVolumes() {

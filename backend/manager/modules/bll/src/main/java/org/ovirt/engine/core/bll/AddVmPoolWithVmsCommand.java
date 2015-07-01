@@ -68,14 +68,14 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     protected Guid getPoolId() {
         VmPool vmPool = getVmPool();
 
-        getVmPoolDAO().save(vmPool);
+        getVmPoolDao().save(vmPool);
 
         return vmPool.getVmPoolId();
     }
 
     @Override
     protected void onNoVmsAdded(Guid poolId) {
-        getVmPoolDAO().remove(poolId);
+        getVmPoolDao().remove(poolId);
     }
 
     @Override

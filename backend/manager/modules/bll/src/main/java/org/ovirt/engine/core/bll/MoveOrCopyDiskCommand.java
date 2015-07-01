@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
@@ -73,7 +73,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (getImage() == null) {
             return null;
         }
-        Collection<VmTemplate> templates = getVmTemplateDAO().getAllForImage(getImage().getImageId()).values();
+        Collection<VmTemplate> templates = getVmTemplateDao().getAllForImage(getImage().getImageId()).values();
         return !templates.isEmpty() ? templates.iterator().next() : null;
     }
 
@@ -219,7 +219,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             getParameters().setSourceDomainId(sourceDomainId);
         }
         StorageDomainValidator validator =
-                new StorageDomainValidator(getStorageDomainDAO().getForStoragePool(sourceDomainId,
+                new StorageDomainValidator(getStorageDomainDao().getForStoragePool(sourceDomainId,
                         getImage().getStoragePoolId()));
         return validate(validator.isDomainExistAndActive());
     }
@@ -238,7 +238,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      */
     protected List<Pair<VM, VmDevice>> getVmsWithVmDeviceInfoForDiskId() {
         if (cachedVmsDeviceInfo == null) {
-            cachedVmsDeviceInfo = getVmDAO().getVmsWithPlugInfo(getImage().getId());
+            cachedVmsDeviceInfo = getVmDao().getVmsWithPlugInfo(getImage().getId());
         }
         return cachedVmsDeviceInfo;
     }
@@ -259,7 +259,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return true;
     }
 
-    protected VmDeviceDAO getVmDeviceDAO() {
+    protected VmDeviceDao getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
     }
 
@@ -304,11 +304,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private void incrementDbGenerationForRelatedEntities() {
         if (getParameters().getOperation() == ImageOperation.Copy) {
-            getVmStaticDAO().incrementDbGeneration(getVmTemplateId());
+            getVmStaticDao().incrementDbGeneration(getVmTemplateId());
         } else {
             List<Pair<VM, VmDevice>> vmsForDisk = getVmsWithVmDeviceInfoForDiskId();
             for (Pair<VM, VmDevice> pair : vmsForDisk) {
-                getVmStaticDAO().incrementDbGeneration(pair.getFirst().getId());
+                getVmStaticDao().incrementDbGeneration(pair.getFirst().getId());
             }
         }
     }
@@ -489,7 +489,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     public Map<String, String> getJobMessageProperties() {
-        List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStorageDomain(getParameters().getSourceDomainId());
+        List<StorageDomain> storageDomains = getStorageDomainDao().getAllForStorageDomain(getParameters().getSourceDomainId());
         String sourceSDName = StringUtils.EMPTY;
 
         if (storageDomains.size() > 0) {

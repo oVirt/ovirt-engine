@@ -25,8 +25,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MoveDisksCommandTest {
@@ -37,10 +37,10 @@ public class MoveDisksCommandTest {
     private final Guid dstStorageId = Guid.newGuid();
 
     @Mock
-    private DiskImageDAO diskImageDao;
+    private DiskImageDao diskImageDao;
 
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     /**
      * The command under test
@@ -231,7 +231,7 @@ public class MoveDisksCommandTest {
         return diskImage;
     }
 
-    /** Mock DAOs */
+    /** Mock Daos */
 
     private void mockDaos() {
         mockVmDao();
@@ -239,7 +239,7 @@ public class MoveDisksCommandTest {
     }
 
     private void mockVmDao() {
-        doReturn(vmDao).when(command).getVmDAO();
+        doReturn(vmDao).when(command).getVmDao();
     }
 
     private void mockDiskImageDao() {

@@ -70,13 +70,13 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -110,19 +110,19 @@ public class AddVmCommandTest {
     public MockConfigRule mcr = new MockConfigRule();
 
     @Mock
-    StorageDomainDAO sdDAO;
+    StorageDomainDao sdDao;
 
     @Mock
-    VmTemplateDAO vmTemplateDAO;
+    VmTemplateDao vmTemplateDao;
 
     @Mock
-    VmDAO vmDAO;
+    VmDao vmDao;
 
     @Mock
-    DiskImageDAO diskImageDAO;
+    DiskImageDao diskImageDao;
 
     @Mock
-    VdsGroupDAO vdsGroupDao;
+    VdsGroupDao vdsGroupDao;
 
     @Mock
     BackendInternal backend;
@@ -137,7 +137,7 @@ public class AddVmCommandTest {
     OsRepository osRepository;
 
     @Mock
-    VmDeviceDAO deviceDao;
+    VmDeviceDao deviceDao;
 
     @Mock
     DbFacade dbFacade;
@@ -153,10 +153,10 @@ public class AddVmCommandTest {
         VM vm = createVm();
         AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
 
-        mockStorageDomainDAOGetForStoragePool();
-        mockVdsGroupDAOReturnVdsGroup();
-        mockVmTemplateDAOReturnVmTemplate();
-        mockDiskImageDAOGetSnapshotById();
+        mockStorageDomainDaoGetForStoragePool();
+        mockVdsGroupDaoReturnVdsGroup();
+        mockVmTemplateDaoReturnVmTemplate();
+        mockDiskImageDaoGetSnapshotById();
         mockVerifyAddVM(cmd);
         mockConfig();
         mockMaxPciSlots();
@@ -254,9 +254,9 @@ public class AddVmCommandTest {
         AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
         VDSGroup vdsGroup = createVdsGroup();
 
-        mockStorageDomainDAOGetForStoragePool();
-        mockVmTemplateDAOReturnVmTemplate();
-        mockDiskImageDAOGetSnapshotById();
+        mockStorageDomainDaoGetForStoragePool();
+        mockVmTemplateDaoReturnVmTemplate();
+        mockDiskImageDaoGetSnapshotById();
         mockVerifyAddVM(cmd);
         mockConfig();
         mockMaxPciSlots();
@@ -327,9 +327,9 @@ public class AddVmCommandTest {
 
         AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
 
-        mockStorageDomainDAOGetForStoragePool();
-        mockVmTemplateDAOReturnVmTemplate();
-        mockDiskImageDAOGetSnapshotById();
+        mockStorageDomainDaoGetForStoragePool();
+        mockVmTemplateDaoReturnVmTemplate();
+        mockDiskImageDaoGetSnapshotById();
         mockVerifyAddVM(cmd);
         mockConfig();
         mockMaxPciSlots();
@@ -397,7 +397,7 @@ public class AddVmCommandTest {
         doReturn(true).when(result).checkNumberOfMonitors();
         doReturn(createVmTemplate()).when(result).getVmTemplate();
         doReturn(true).when(result).validateCustomProperties(any(VmStatic.class), any(ArrayList.class));
-        mockDAOs(result);
+        mockDaos(result);
         mockBackend(result);
         initCommandMethods(result);
         result.postConstruct();
@@ -429,7 +429,7 @@ public class AddVmCommandTest {
                 };
         cmd = spy(cmd);
         doReturn(vm).when(cmd).getVm();
-        mockDAOs(cmd);
+        mockDaos(cmd);
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         mockBackend(cmd);
         return cmd;
@@ -439,14 +439,14 @@ public class AddVmCommandTest {
             final int sizeRequired,
             Guid sourceSnapshotId) {
         VM vm = initializeMock(domainSizeGB, sizeRequired);
-        initializeVmDAOMock(vm);
+        initializeVmDaoMock(vm);
         AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = createVmFromSnapshotCommand(vm, sourceSnapshotId);
         initCommandMethods(cmd);
         return cmd;
     }
 
-    private void initializeVmDAOMock(VM vm) {
-        when(vmDAO.get(Matchers.<Guid>any(Guid.class))).thenReturn(vm);
+    private void initializeVmDaoMock(VM vm) {
+        when(vmDao.get(Matchers.<Guid>any(Guid.class))).thenReturn(vm);
     }
 
     private AddVmCommand<AddVmParameters> setupCanAddVmTests(final int domainSizeGB,
@@ -466,10 +466,10 @@ public class AddVmCommandTest {
     }
 
     private VM initializeMock(final int domainSizeGB, final int sizeRequired) {
-        mockVmTemplateDAOReturnVmTemplate();
-        mockDiskImageDAOGetSnapshotById();
-        mockStorageDomainDAOGetForStoragePool(domainSizeGB);
-        mockStorageDomainDAOGet(domainSizeGB);
+        mockVmTemplateDaoReturnVmTemplate();
+        mockDiskImageDaoGetSnapshotById();
+        mockStorageDomainDaoGetForStoragePool(domainSizeGB);
+        mockStorageDomainDaoGet(domainSizeGB);
         mockConfig();
         VM vm = createVm();
         return vm;
@@ -480,19 +480,19 @@ public class AddVmCommandTest {
         doReturn(backend).when(cmd).getBackend();
     }
 
-    private void mockDAOs(AddVmCommand<?> cmd) {
-        doReturn(vmDAO).when(cmd).getVmDAO();
-        doReturn(sdDAO).when(cmd).getStorageDomainDAO();
-        doReturn(vmTemplateDAO).when(cmd).getVmTemplateDAO();
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
+    private void mockDaos(AddVmCommand<?> cmd) {
+        doReturn(vmDao).when(cmd).getVmDao();
+        doReturn(sdDao).when(cmd).getStorageDomainDao();
+        doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
+        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
         doReturn(deviceDao).when(cmd).getVmDeviceDao();
     }
 
-    private void mockStorageDomainDAOGetForStoragePool(int domainSpaceGB) {
-        when(sdDAO.getForStoragePool(Matchers.<Guid> any(Guid.class), Matchers.<Guid> any(Guid.class))).thenReturn(createStorageDomain(domainSpaceGB));
+    private void mockStorageDomainDaoGetForStoragePool(int domainSpaceGB) {
+        when(sdDao.getForStoragePool(Matchers.<Guid> any(Guid.class), Matchers.<Guid> any(Guid.class))).thenReturn(createStorageDomain(domainSpaceGB));
     }
 
-    private void mockStorageDomainDAOGet(final int domainSpaceGB) {
+    private void mockStorageDomainDaoGet(final int domainSpaceGB) {
         doAnswer(new Answer<StorageDomain>() {
 
             @Override
@@ -502,22 +502,22 @@ public class AddVmCommandTest {
                 return result;
             }
 
-        }).when(sdDAO).get(any(Guid.class));
+        }).when(sdDao).get(any(Guid.class));
     }
 
     private void mockStorageDomainDaoGetAllStoragesForPool(int domainSpaceGB) {
-        when(sdDAO.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(createStorageDomain(domainSpaceGB)));
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(createStorageDomain(domainSpaceGB)));
     }
 
-    private void mockStorageDomainDAOGetForStoragePool() {
-        mockStorageDomainDAOGetForStoragePool(AVAILABLE_SPACE_GB);
+    private void mockStorageDomainDaoGetForStoragePool() {
+        mockStorageDomainDaoGetForStoragePool(AVAILABLE_SPACE_GB);
     }
 
-    private void mockVmTemplateDAOReturnVmTemplate() {
-        when(vmTemplateDAO.get(Matchers.<Guid> any(Guid.class))).thenReturn(createVmTemplate());
+    private void mockVmTemplateDaoReturnVmTemplate() {
+        when(vmTemplateDao.get(Matchers.<Guid> any(Guid.class))).thenReturn(createVmTemplate());
     }
 
-    private void mockVdsGroupDAOReturnVdsGroup() {
+    private void mockVdsGroupDaoReturnVdsGroup() {
         when(vdsGroupDao.get(Matchers.<Guid>any(Guid.class))).thenReturn(createVdsGroup());
     }
 
@@ -566,8 +566,8 @@ public class AddVmCommandTest {
         return i;
     }
 
-    private void mockDiskImageDAOGetSnapshotById() {
-        when(diskImageDAO.getSnapshotById(Matchers.<Guid> any(Guid.class))).thenReturn(createDiskImage(REQUIRED_DISK_SIZE_GB));
+    private void mockDiskImageDaoGetSnapshotById() {
+        when(diskImageDao.getSnapshotById(Matchers.<Guid> any(Guid.class))).thenReturn(createDiskImage(REQUIRED_DISK_SIZE_GB));
     }
 
     private static DiskImage createDiskImage(int size) {
@@ -635,7 +635,7 @@ public class AddVmCommandTest {
             }
         };
         cmd = spy(cmd);
-        mockDAOs(cmd);
+        mockDaos(cmd);
         mockBackend(cmd);
         doReturn(new VDSGroup()).when(cmd).getVdsGroup();
         generateStorageToDisksMap(cmd);

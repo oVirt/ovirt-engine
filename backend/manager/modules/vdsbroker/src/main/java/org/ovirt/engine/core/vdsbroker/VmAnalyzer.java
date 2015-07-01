@@ -535,7 +535,7 @@ public class VmAnalyzer {
             dbVm = getDbFacade().getVmDao().get(vdsmVm.getVmDynamic().getId());
             // if vm exists in db update info
             if (dbVm != null) {
-                // TODO: This is done to keep consistency with VmDAO.getById(Guid).
+                // TODO: This is done to keep consistency with VmDao.getById(Guid).
                 // It should probably be removed, but some research is required.
                 dbVm.setInterfaces(getDbFacade()
                         .getVmNetworkInterfaceDao()
@@ -907,14 +907,14 @@ public class VmAnalyzer {
         //Build numa nodes map of the host which the dbVm is running on with node index as the key
         Map<Integer, VdsNumaNode> runOnVdsAllNumaNodesMap = new HashMap<>();
         List<VdsNumaNode> runOnVdsAllNumaNodes =
-                getDbFacade().getVdsNumaNodeDAO().getAllVdsNumaNodeByVdsId(dbVm.getRunOnVds());
+                getDbFacade().getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(dbVm.getRunOnVds());
         for (VdsNumaNode vdsNumaNode : runOnVdsAllNumaNodes) {
             runOnVdsAllNumaNodesMap.put(vdsNumaNode.getIndex(), vdsNumaNode);
         }
 
         //Build numa nodes map of the dbVm with node index as the key
         Map<Integer, VmNumaNode> vmAllNumaNodesMap = new HashMap<>();
-        List<VmNumaNode> vmAllNumaNodes = getDbFacade().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(dbVm.getId());
+        List<VmNumaNode> vmAllNumaNodes = getDbFacade().getVmNumaNodeDao().getAllVmNumaNodeByVmId(dbVm.getId());
         for (VmNumaNode vmNumaNode : vmAllNumaNodes) {
             vmAllNumaNodesMap.put(vmNumaNode.getIndex(), vmNumaNode);
         }

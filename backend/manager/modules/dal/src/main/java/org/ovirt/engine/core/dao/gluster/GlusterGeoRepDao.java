@@ -6,12 +6,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DAO;
+import org.ovirt.engine.core.dao.Dao;
 
 /**
  * Interface for DB operations on Gluster Geo-Replication Entities
  */
-public interface GlusterGeoRepDao extends DAO {
+public interface GlusterGeoRepDao extends Dao {
 
     public void save(GlusterGeoRepSession geoRepSession);
 

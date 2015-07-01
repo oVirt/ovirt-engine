@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /** A test case for the {@link GetStorageDomainsByStoragePoolIdQuery} class. */
 public class GetStorageDomainsByStoragePoolIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetStorageDomainsByStoragePoolIdQuery<IdQueryParameters>> {
@@ -25,15 +25,15 @@ public class GetStorageDomainsByStoragePoolIdQueryTest extends AbstractUserQuery
 
         StorageDomain domain = new StorageDomain();
 
-        StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
-        when(storageDomainDAOMock.getAllForStoragePool
+        StorageDomainDao storageDomainDaoMock = mock(StorageDomainDao.class);
+        when(storageDomainDaoMock.getAllForStoragePool
                 (storagePoolID,
                         getUser().getId(),
                         getQueryParameters().isFiltered())).
                 thenReturn(Collections.singletonList(domain));
 
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
-        when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDAOMock);
+        when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDaoMock);
 
         getQuery().executeQueryCommand();
 

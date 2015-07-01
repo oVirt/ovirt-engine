@@ -70,16 +70,16 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.dao.VmStaticDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -95,13 +95,13 @@ public class UpdateVmDiskCommandTest {
     private Guid spId = Guid.newGuid();
 
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
     @Mock
     private DiskDao diskDao;
     @Mock
-    private VmStaticDAO vmStaticDAO;
+    private VmStaticDao vmStaticDao;
     @Mock
     private BaseDiskDao baseDiskDao;
     @Mock
@@ -109,15 +109,15 @@ public class UpdateVmDiskCommandTest {
     @Mock
     private SnapshotDao snapshotDao;
     @Mock
-    private DiskImageDAO diskImageDao;
+    private DiskImageDao diskImageDao;
     @Mock
-    private VmDeviceDAO vmDeviceDAO;
+    private VmDeviceDao vmDeviceDao;
     @Mock
-    private StoragePoolDAO storagePoolDao;
+    private StoragePoolDao storagePoolDao;
     @Mock
-    private StorageDomainStaticDAO storageDomainStaticDao;
+    private StorageDomainStaticDao storageDomainStaticDao;
     @Mock
-    private StorageDomainDAO storageDomainDao;
+    private StorageDomainDao storageDomainDao;
     @Mock
     private DbFacade dbFacade;
     @Mock
@@ -413,7 +413,7 @@ public class UpdateVmDiskCommandTest {
         command.executeVmCommand();
 
         // verify that device address was cleared exactly once
-        verify(vmDeviceDAO).clearDeviceAddress(diskImageGuid);
+        verify(vmDeviceDao).clearDeviceAddress(diskImageGuid);
     }
 
     private void mockVdsCommandSetVolumeDescription() {
@@ -437,7 +437,7 @@ public class UpdateVmDiskCommandTest {
 
         verify(command, atLeast(1)).updateReadOnlyRequested();
         assertTrue(command.updateReadOnlyRequested());
-        verify(vmDeviceDAO).update(any(VmDevice.class));
+        verify(vmDeviceDao).update(any(VmDevice.class));
     }
 
     @Test
@@ -476,7 +476,7 @@ public class UpdateVmDiskCommandTest {
 
         verify(command, atLeast(1)).updateReadOnlyRequested();
         assertFalse(command.updateReadOnlyRequested());
-        verify(vmDeviceDAO, never()).update(any(VmDevice.class));
+        verify(vmDeviceDao, never()).update(any(VmDevice.class));
     }
 
     @Test
@@ -582,26 +582,26 @@ public class UpdateVmDiskCommandTest {
             }
 
             @Override
-            public VmDAO getVmDAO() {
-                return vmDAO;
+            public VmDao getVmDao() {
+                return vmDao;
             }
 
         });
         doReturn(true).when(command).acquireLockInternal();
         doReturn(snapshotDao).when(command).getSnapshotDao();
         doReturn(diskImageDao).when(command).getDiskImageDao();
-        doReturn(storagePoolDao).when(command).getStoragePoolDAO();
-        doReturn(storageDomainStaticDao).when(command).getStorageDomainStaticDAO();
-        doReturn(storageDomainDao).when(command).getStorageDomainDAO();
-        doReturn(vmStaticDAO).when(command).getVmStaticDAO();
+        doReturn(storagePoolDao).when(command).getStoragePoolDao();
+        doReturn(storageDomainStaticDao).when(command).getStorageDomainStaticDao();
+        doReturn(storageDomainDao).when(command).getStorageDomainDao();
+        doReturn(vmStaticDao).when(command).getVmStaticDao();
         doReturn(baseDiskDao).when(command).getBaseDiskDao();
         doReturn(imageDao).when(command).getImageDao();
-        doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
-        doReturn(vmDAO).when(command).getVmDAO();
+        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
+        doReturn(vmDao).when(command).getVmDao();
         doReturn(diskDao).when(command).getDiskDao();
         doNothing().when(command).reloadDisks();
         doNothing().when(command).updateBootOrder();
-        doNothing().when(vmStaticDAO).incrementDbGeneration(any(Guid.class));
+        doNothing().when(vmStaticDao).incrementDbGeneration(any(Guid.class));
 
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
@@ -708,7 +708,7 @@ public class UpdateVmDiskCommandTest {
     private void mockToUpdateDiskVm(List<VM> vms) {
         for (VM vm: vms) {
             if (vm.getId().equals(command.getParameters().getVmId())) {
-                when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
+                when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
                 break;
             }
         }
@@ -717,7 +717,7 @@ public class UpdateVmDiskCommandTest {
     private void mockNullVm() {
         mockGetForDisk((VM) null);
         mockGetVmsListForDisk(null);
-        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(null);
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(null);
     }
 
     protected void mockInterfaceList() {
@@ -763,7 +763,7 @@ public class UpdateVmDiskCommandTest {
     private void mockGetForDisk(List<VM> vms) {
         Map<Boolean, List<VM>> vmsMap = new HashMap<>();
         vmsMap.put(Boolean.TRUE, vms);
-        when(vmDAO.getForDisk(diskImageGuid, true)).thenReturn(vmsMap);
+        when(vmDao.getForDisk(diskImageGuid, true)).thenReturn(vmsMap);
     }
 
     private void mockGetVmsListForDisk(List<VM> vms) {
@@ -777,8 +777,8 @@ public class UpdateVmDiskCommandTest {
             vms = Collections.emptyList();
         }
 
-        when(vmDAO.getVmsWithPlugInfo(diskImageGuid)).thenReturn(vmsWithVmDevice);
-        when(vmDAO.getVmsListForDisk(diskImageGuid, true)).thenReturn(vms);
+        when(vmDao.getVmsWithPlugInfo(diskImageGuid)).thenReturn(vmsWithVmDevice);
+        when(vmDao.getVmsListForDisk(diskImageGuid, true)).thenReturn(vms);
     }
 
     /**
@@ -788,7 +788,7 @@ public class UpdateVmDiskCommandTest {
         VDS vds = new VDS();
         vds.setVdsGroupCompatibilityVersion(new Version("3.1"));
         command.setVdsId(Guid.Empty);
-        doReturn(vdsDao).when(command).getVdsDAO();
+        doReturn(vdsDao).when(command).getVdsDao();
         when(vdsDao.get(Guid.Empty)).thenReturn(vds);
     }
 

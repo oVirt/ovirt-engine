@@ -14,7 +14,7 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 /** A test case for {@link GetVmInterfacesByVmIdQuery} */
 public class GetVmInterfacesByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmInterfacesByVmIdQuery<IdQueryParameters>> {
 
-    /** A test that checked that all the parameters are passed properly to the DAO */
+    /** A test that checked that all the parameters are passed properly to the Dao */
     @Test
     public void testExectueQuery() {
         DbFacade dbFacadeMock = getDbFacadeMockInstance();

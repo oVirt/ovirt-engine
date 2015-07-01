@@ -40,12 +40,12 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.LunDAO;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -60,22 +60,22 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
     private StorageServerConnections oldPosixConnection = null;
 
     @Mock
-    private StorageServerConnectionDAO storageConnDao;
+    private StorageServerConnectionDao storageConnDao;
 
     @Mock
-    private StorageDomainDynamicDAO storageDomainDynamicDao;
+    private StorageDomainDynamicDao storageDomainDynamicDao;
 
     @Mock
-    private StoragePoolIsoMapDAO storagePoolIsoMapDAO;
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     @Mock
-    private LunDAO lunDAO;
+    private LunDao lunDao;
 
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
 
     @Mock
-    private StorageDomainDAO storageDomainDAO;
+    private StorageDomainDao storageDomainDao;
 
 
     @Before
@@ -106,11 +106,11 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         command = spy(new UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters));
         doReturn(storageConnDao).when(command).getStorageConnDao();
         doReturn(storageDomainDynamicDao).when((UpdateStorageServerConnectionCommand) command).getStorageDomainDynamicDao();
-        doReturn(storagePoolIsoMapDAO).when((UpdateStorageServerConnectionCommand) command).getStoragePoolIsoMapDao();
+        doReturn(storagePoolIsoMapDao).when((UpdateStorageServerConnectionCommand) command).getStoragePoolIsoMapDao();
         doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
-        doReturn(lunDAO).when(command).getLunDao();
-        doReturn(vmDAO).when(command).getVmDAO();
-        doReturn(storageDomainDAO).when(command).getStorageDomainDao();
+        doReturn(lunDao).when(command).getLunDao();
+        doReturn(vmDao).when(command).getVmDao();
+        doReturn(storageDomainDao).when(command).getStorageDomainDao();
     }
 
     protected StorageDomain createDomain(StorageDomainDynamic domainDynamic) {
@@ -316,7 +316,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         unPluggedVms.add(vm3);
         vmsMap.put(Boolean.FALSE, unPluggedVms);
         vmsMap.put(Boolean.TRUE, pluggedVms);
-        when(vmDAO.getForDisk(diskId1, true)).thenReturn(vmsMap);
+        when(vmDao.getForDisk(diskId1, true)).thenReturn(vmsMap);
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getid())).thenReturn(iscsiConnection);
         doReturn(luns).when(command).getLuns();
@@ -328,8 +328,8 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         domain1.setId(storageDomainId);
         domain1.setStorageName("storagedomain4");
 
-        when(storageDomainDAO.get(storageDomainId)).thenReturn(domain1);
-        when(storagePoolIsoMapDAO.getAllForStorage(storageDomainId)).
+        when(storageDomainDao.get(storageDomainId)).thenReturn(domain1);
+        when(storagePoolIsoMapDao.getAllForStorage(storageDomainId)).
                 thenReturn(Collections.singletonList
                         (new StoragePoolIsoMap(storageDomainId, Guid.newGuid(), StorageDomainStatus.Active)));
         List<String> messages = CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
@@ -373,7 +373,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         unPluggedVms.add(vm3);
         vmsMap.put(Boolean.FALSE, unPluggedVms);
         vmsMap.put(Boolean.TRUE, pluggedVms);
-        when(vmDAO.getForDisk(diskId1, true)).thenReturn(vmsMap);
+        when(vmDao.getForDisk(diskId1, true)).thenReturn(vmsMap);
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getid())).thenReturn(iscsiConnection);
         doReturn(luns).when(command).getLuns();
@@ -404,8 +404,8 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         domain1.setId(storageDomainId);
         domain1.setStorageName("storagedomain4");
         domains.add(domain1);
-        when(storageDomainDAO.get(storageDomainId)).thenReturn(domain1);
-        when(storagePoolIsoMapDAO.getAllForStorage(storageDomainId)).
+        when(storageDomainDao.get(storageDomainId)).thenReturn(domain1);
+        when(storagePoolIsoMapDao.getAllForStorage(storageDomainId)).
                 thenReturn(Collections.singletonList
                         (new StoragePoolIsoMap(storageDomainId, Guid.newGuid(), StorageDomainStatus.Active)));
         List<String> messages =
@@ -436,7 +436,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         domain1.setId(storageDomainId);
         domain1.setStorageName("storagedomain4");
         domains.add(domain1);
-        when(storageDomainDAO.get(storageDomainId)).thenReturn(domain1);
+        when(storageDomainDao.get(storageDomainId)).thenReturn(domain1);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
@@ -728,7 +728,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         StorageDomain domain = new StorageDomain();
         domain.setStatus(StorageDomainStatus.Active);
         domain.setStorageDomainSharedStatus(StorageDomainSharedStatus.Active);
-        doReturn(domain).when(storageDomainDAO).get(any(Guid.class));
+        doReturn(domain).when(storageDomainDao).get(any(Guid.class));
 
         initDomainListForConnection(NFSConnection.getid(), domain);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,

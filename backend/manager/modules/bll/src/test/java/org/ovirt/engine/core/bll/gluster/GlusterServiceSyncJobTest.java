@@ -44,7 +44,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServicesListVDSPa
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
@@ -89,7 +89,7 @@ public class GlusterServiceSyncJobTest {
     private ClusterUtils clusterUtil;
 
     @Mock
-    private VdsGroupDAO clusterDao;
+    private VdsGroupDao clusterDao;
 
     @Mock
     private GlusterAuditLogUtil logUtil;

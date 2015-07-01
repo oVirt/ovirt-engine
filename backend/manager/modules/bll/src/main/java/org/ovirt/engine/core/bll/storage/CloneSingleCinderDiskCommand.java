@@ -73,7 +73,7 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
                 getImageDao().save(cinderDisk.getImage());
                 DiskImageDynamic diskDynamic = new DiskImageDynamic();
                 diskDynamic.setId(cinderDisk.getImageId());
-                getDiskImageDynamicDAO().save(diskDynamic);
+                getDiskImageDynamicDao().save(diskDynamic);
                 ImageStorageDomainMap image_storage_domain_map = new ImageStorageDomainMap(cinderDisk.getImageId(),
                         cinderDisk.getStorageIds().get(0), cinderDisk.getQuotaId(), cinderDisk.getDiskProfileId());
                 getDbFacade().getImageStorageDomainMapDao().save(image_storage_domain_map);

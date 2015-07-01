@@ -79,8 +79,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
-import org.ovirt.engine.core.dao.VmInitDAO;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -339,11 +339,11 @@ public class VmHandler {
      * Fetch VmInit from Database
      * @param vm VmBase to set the VmInit into
      * @param secure if true don't return any password field
-     * We want to set false only when running VM becase the VmInitDAO
+     * We want to set false only when running VM becase the VmInitDao
      * decrypt the password.
      */
     public static void updateVmInitFromDB(VmBase vm, boolean secure) {
-        VmInitDAO db = DbFacade.getInstance().getVmInitDao();
+        VmInitDao db = DbFacade.getInstance().getVmInitDao();
         vm.setVmInit(db.get(vm.getId()));
         if (vm.getVmInit() != null) {
             if (secure) {
@@ -358,7 +358,7 @@ public class VmHandler {
     public static void addVmInitToDB(VmBase vm) {
         if (vm.getVmInit() != null) {
             vm.getVmInit().setId(vm.getId());
-            VmInitDAO db = DbFacade.getInstance().getVmInitDao();
+            VmInitDao db = DbFacade.getInstance().getVmInitDao();
             VmInit oldVmInit = db.get(vm.getId());
             if (oldVmInit == null) {
                 db.save(vm.getVmInit());
@@ -385,14 +385,14 @@ public class VmHandler {
     }
 
     public static void removeVmInitFromDB(VmBase vm) {
-        VmInitDAO db = DbFacade.getInstance().getVmInitDao();
+        VmInitDao db = DbFacade.getInstance().getVmInitDao();
         db.remove(vm.getId());
     }
 
     // if secure is true we don't return the stored password, only
     // indicate that the password is set via the PasswordAlreadyStored property
     public static List<VmInit> getVmInitByIds(List<Guid> ids, boolean secure) {
-        VmInitDAO db = DbFacade.getInstance().getVmInitDao();
+        VmInitDao db = DbFacade.getInstance().getVmInitDao();
         List<VmInit> all = db.getVmInitByIds(ids);
 
         for (VmInit vmInit: all) {
@@ -745,7 +745,7 @@ public class VmHandler {
         return validationResult;
     }
 
-    private static VdsDynamicDAO getVdsDynamicDao() {
+    private static VdsDynamicDao getVdsDynamicDao() {
         return DbFacade.getInstance().getVdsDynamicDao();
     }
 
@@ -910,7 +910,7 @@ public class VmHandler {
         boolean emptyParamVmNumaNodes = (paramVmNumaNodes == null) || (paramVmNumaNodes.isEmpty());
         /* origVmNumaNodes = NUMA nodes list prior to update. */
         List<VmNumaNode> origVmNumaNodes =
-                DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(actualVm.getId());
+                DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(actualVm.getId());
         boolean emptyOrigVmNumaNodes = (origVmNumaNodes == null) || (origVmNumaNodes.isEmpty());
 
         int NUMAnodesCount = 0;
@@ -956,7 +956,7 @@ public class VmHandler {
         }
 
         if (vmNumaNodes == null && vmId != null) {
-            vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(vmId);
+            vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(vmId);
         }
 
         // check single node pinned

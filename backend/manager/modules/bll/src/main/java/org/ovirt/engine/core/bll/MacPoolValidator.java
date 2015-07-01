@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.MacPoolDao;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class MacPoolValidator {
@@ -26,7 +26,7 @@ public class MacPoolValidator {
     }
 
     public ValidationResult notRemovingUsedPool() {
-        final StoragePoolDAO storagePoolDao = getDbFacade().getStoragePoolDao();
+        final StoragePoolDao storagePoolDao = getDbFacade().getStoragePoolDao();
         final List<StoragePool> dataCenters = storagePoolDao.getAllDataCentersByMacPoolId(macPool.getId());
 
         final Collection<String> replacements = ReplacementUtils.replaceWithNameable("DATACENTERS_USING_MAC_POOL", dataCenters);

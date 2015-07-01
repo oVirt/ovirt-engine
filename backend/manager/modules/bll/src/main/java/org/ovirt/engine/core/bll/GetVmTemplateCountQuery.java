@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class GetVmTemplateCountQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     public GetVmTemplateCountQuery(P parameters) {
@@ -13,7 +13,7 @@ public class GetVmTemplateCountQuery<P extends VdcQueryParametersBase> extends Q
         getQueryReturnValue().setReturnValue(getVmTemplateDao().getCount());
     }
 
-    private VmTemplateDAO getVmTemplateDao() {
+    private VmTemplateDao getVmTemplateDao() {
         return getDbFacade().getVmTemplateDao();
     }
 }

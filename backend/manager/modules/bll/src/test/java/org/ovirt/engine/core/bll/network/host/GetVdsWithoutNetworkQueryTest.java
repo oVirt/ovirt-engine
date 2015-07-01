@@ -12,11 +12,11 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 /**
  * A test for the {@link GetVdsWithoutNetworkQuery} class. It tests the flow (i.e., that the query delegates properly to
- * the DAO}). The internal workings of the DAO are not tested.
+ * the Dao}). The internal workings of the Dao are not tested.
  */
 public class GetVdsWithoutNetworkQueryTest
         extends AbstractQueryTest<IdQueryParameters,
@@ -28,10 +28,10 @@ public class GetVdsWithoutNetworkQueryTest
         Guid networkId = Guid.newGuid();
         when(params.getId()).thenReturn(networkId);
 
-        // Set up the DAOs
+        // Set up the Daos
         VDS vds = new VDS();
         List<VDS> expected = Collections.singletonList(vds);
-        VdsDAO vdsDaoMock = mock(VdsDAO.class);
+        VdsDao vdsDaoMock = mock(VdsDao.class);
         when(vdsDaoMock.getAllWithoutNetwork(networkId)).thenReturn(expected);
         when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMock);
 

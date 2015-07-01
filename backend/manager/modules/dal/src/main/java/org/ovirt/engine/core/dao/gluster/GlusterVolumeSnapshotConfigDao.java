@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DAO;
-import org.ovirt.engine.core.dao.SearchDAO;
+import org.ovirt.engine.core.dao.Dao;
+import org.ovirt.engine.core.dao.SearchDao;
 
-public interface GlusterVolumeSnapshotConfigDao extends DAO, SearchDAO<GlusterVolumeSnapshotConfig> {
+public interface GlusterVolumeSnapshotConfigDao extends Dao, SearchDao<GlusterVolumeSnapshotConfig> {
     public void save(GlusterVolumeSnapshotConfig entity);
 
     public List<GlusterVolumeSnapshotConfig> getConfigByClusterId(Guid clusterId);

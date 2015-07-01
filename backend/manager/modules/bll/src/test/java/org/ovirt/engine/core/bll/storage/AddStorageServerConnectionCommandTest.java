@@ -25,8 +25,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,10 +37,10 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
     private AddStorageServerConnectionCommand<StorageServerConnectionParametersBase> command = null;
 
     @Mock
-    StorageServerConnectionDAO storageConnDao;
+    StorageServerConnectionDao storageConnDao;
 
     @Mock
-    StorageDomainDAO storageDomainDao;
+    StorageDomainDao storageDomainDao;
 
     @Before
     public void prepareParams() {

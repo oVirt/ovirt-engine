@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class SupportedHostFeatureDaoTest extends BaseDAOTestCase {
+public class SupportedHostFeatureDaoTest extends BaseDaoTestCase {
 
     private static final Guid EXISTING_HOST_ID_1 = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
 

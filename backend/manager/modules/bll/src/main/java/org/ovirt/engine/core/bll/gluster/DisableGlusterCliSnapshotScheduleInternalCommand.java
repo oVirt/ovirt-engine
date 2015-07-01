@@ -42,7 +42,7 @@ public class DisableGlusterCliSnapshotScheduleInternalCommand<T extends GlusterV
             // cliBasedSnapshotSchedulingOn=false and persist in engine side
             if (getParameters().isForceAction()) {
                 cluster.setGlusterCliBasedSchedulingOn(false);
-                getVdsGroupDAO().update(cluster);
+                getVdsGroupDao().update(cluster);
             }
         }
     }

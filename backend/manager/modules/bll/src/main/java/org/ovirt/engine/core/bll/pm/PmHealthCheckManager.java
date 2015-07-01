@@ -29,7 +29,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -53,7 +53,7 @@ public class PmHealthCheckManager implements BackendService {
     @Inject
     private AuditLogDirector auditLogDirector;
     @Inject
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
 
     /**
      * Initializes the PM Health Check Manager
@@ -72,7 +72,7 @@ public class PmHealthCheckManager implements BackendService {
                     TimeUnit.SECONDS);
         }
         // recover from engine failure
-        recover(vdsDAO.getAll());
+        recover(vdsDao.getAll());
         log.info("Finished initializing {}", getClass().getSimpleName());
     }
 

@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
  * {@link VmGuestAgentInterfaceDao} defines a type for performing CRUD operations on instances of
  * {@link VmGuestAgentInterface}.
  */
-public interface VmGuestAgentInterfaceDao extends DAO {
+public interface VmGuestAgentInterfaceDao extends Dao {
 
     /**
      * Returns a list of the VmGuestAgentInterfaces for the given VM Id

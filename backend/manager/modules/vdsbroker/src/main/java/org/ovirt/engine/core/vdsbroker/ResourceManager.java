@@ -49,11 +49,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.dao.VmStatisticsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -89,19 +89,19 @@ public class ResourceManager implements BackendService {
     private AuditLogDirector auditLogDirector;
 
     @Inject
-    private VdsDAO hostDao;
+    private VdsDao hostDao;
 
     @Inject
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     @Inject
-    private VdsDynamicDAO hostDynamicDao;
+    private VdsDynamicDao hostDynamicDao;
 
     @Inject
-    private VmDynamicDAO vmDynamicDao;
+    private VmDynamicDao vmDynamicDao;
 
     @Inject
-    private VmStatisticsDAO vmStatisticsDao;
+    private VmStatisticsDao vmStatisticsDao;
 
     @Inject
     private VmNetworkStatisticsDao vmNetworkStatisticsDao;

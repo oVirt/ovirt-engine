@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 /**
  * A validator for the {@link Disk} class.
@@ -90,7 +90,7 @@ public class DiskValidator {
 
     public ValidationResult isDiskPluggedToVmsThatAreNotDown(boolean checkOnlyVmsSnapshotPluggedTo, List<Pair<VM, VmDevice>> vmsForDisk) {
         if (vmsForDisk == null) {
-            vmsForDisk = getVmDAO().getVmsWithPlugInfo(disk.getId());
+            vmsForDisk = getVmDao().getVmsWithPlugInfo(disk.getId());
         }
 
         for (Pair<VM, VmDevice> pair : vmsForDisk) {
@@ -135,7 +135,7 @@ public class DiskValidator {
         return ValidationResult.VALID;
     }
 
-    protected VmDAO getVmDAO() {
+    protected VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
     }
 

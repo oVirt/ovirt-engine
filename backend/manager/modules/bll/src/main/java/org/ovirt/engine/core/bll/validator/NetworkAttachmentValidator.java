@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.PluralMessages;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class NetworkAttachmentValidator {
 
-    private final VdsDAO vdsDao;
+    private final VdsDao vdsDao;
     private final NetworkDao networkDao;
     private final NetworkAttachmentDao networkAttachmentDao;
     private final NetworkClusterDao networkClusterDao;
@@ -49,7 +49,7 @@ public class NetworkAttachmentValidator {
         NetworkAttachmentDao networkAttachmentDao,
         VmInterfaceManager vmInterfaceManager, NetworkClusterDao networkClusterDao,
         NetworkDao networkDao,
-        VdsDAO vdsDao) {
+        VdsDao vdsDao) {
 
         this.attachment = attachment;
         this.host = host;

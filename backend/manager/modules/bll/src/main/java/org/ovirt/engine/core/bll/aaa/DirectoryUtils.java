@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DbGroupDAO;
+import org.ovirt.engine.core.dao.DbGroupDao;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 
 public class DirectoryUtils {
@@ -33,7 +33,7 @@ public class DirectoryUtils {
         Guid userId = dbUser != null ? dbUser.getId() : Guid.newGuid();
         dbUser = new DbUser(mapPrincipalRecordToDirectoryUser(authz, principal));
         dbUser.setId(userId);
-        DbGroupDAO dao = DbFacade.getInstance().getDbGroupDao();
+        DbGroupDao dao = DbFacade.getInstance().getDbGroupDao();
         Set<Guid> groupIds = new HashSet<>();
         Set<String> groupsNames = new HashSet<>();
         for (ExtMap group : principal.get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {

@@ -19,7 +19,7 @@ public class GetAllVmsWithNumaByVdsGroupIdQuery<P extends IdQueryParameters> ext
     protected void executeQueryCommand() {
         Guid vdsGroupId = getParameters().getId();
         List<VM> vms = getDbFacade().getVmDao().getAllForVdsGroup(vdsGroupId);
-        List<Pair<Guid, VmNumaNode>> nodes = getDbFacade().getVmNumaNodeDAO().getVmNumaNodeInfoByVdsGroupId(vdsGroupId);
+        List<Pair<Guid, VmNumaNode>> nodes = getDbFacade().getVmNumaNodeDao().getVmNumaNodeInfoByVdsGroupId(vdsGroupId);
         for (VM vm : vms) {
             for (Pair<Guid, VmNumaNode> pairnode : nodes) {
                 if (vm.getId().equals(pairnode.getFirst())) {

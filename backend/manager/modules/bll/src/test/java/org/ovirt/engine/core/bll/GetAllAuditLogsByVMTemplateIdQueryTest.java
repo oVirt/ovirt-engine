@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.AuditLogDAO;
+import org.ovirt.engine.core.dao.AuditLogDao;
 
 /** A test case for the {@link GetAllAuditLogsByVMTemplateIdQuery} class. */
 public class GetAllAuditLogsByVMTemplateIdQueryTest
@@ -27,12 +27,12 @@ public class GetAllAuditLogsByVMTemplateIdQueryTest
         AuditLog expectedResult = new AuditLog();
         expectedResult.setVmTemplateId(vmTemplateId);
 
-        // Mock the DAOs
-        AuditLogDAO auditLogDAOMock = mock(AuditLogDAO.class);
-        when(auditLogDAOMock.getAllByVMTemplateId(vmTemplateId,
+        // Mock the Daos
+        AuditLogDao auditLogDaoMock = mock(AuditLogDao.class);
+        when(auditLogDaoMock.getAllByVMTemplateId(vmTemplateId,
                 getUser().getId(),
                 getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(expectedResult));
-        when(getDbFacadeMockInstance().getAuditLogDao()).thenReturn(auditLogDAOMock);
+        when(getDbFacadeMockInstance().getAuditLogDao()).thenReturn(auditLogDaoMock);
 
         getQuery().executeQueryCommand();
 

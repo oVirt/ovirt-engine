@@ -11,10 +11,10 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class DiskProfileDaoTest extends BaseDAOTestCase {
+public class DiskProfileDaoTest extends BaseDaoTestCase {
 
     private DiskProfile diskProfile;
     private DiskProfileDao dao;

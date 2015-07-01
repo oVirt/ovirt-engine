@@ -47,8 +47,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -209,12 +208,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return getDbFacade().getDiskDao();
     }
 
-    protected DiskImageDAO getDiskImageDao() {
+    protected DiskImageDao getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
-    }
-
-    protected StorageDomainDAO getStorageDomainDao() {
-        return getDbFacade().getStorageDomainDao();
     }
 
     private DiskImage getDiskImageByImageId(Guid imageId) {

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
         return list;
     }
 
-    protected VdsGroupDAO getVdsGroupDao() {
+    protected VdsGroupDao getVdsGroupDao() {
         return DbFacade.getInstance().getVdsGroupDao();
     }
 }

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,7 +152,7 @@ public class VmsListFetcher {
                 !Objects.equals(dbVm.getHash(), vdsmVmDynamic.getHash());
     }
 
-    public VmDAO getVmDao() {
+    public VmDao getVmDao() {
         return dbFacade.getVmDao();
     }
 

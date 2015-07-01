@@ -18,7 +18,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.config.db.ConfigDAO;
+import org.ovirt.engine.core.config.db.ConfigDao;
 import org.ovirt.engine.core.config.db.ConfigDaoImpl;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
@@ -49,7 +49,7 @@ public class EngineConfigLogic {
     private HierarchicalConfiguration keysConfig;
     private Map<String, String> alternateKeysMap;
     private ConfigKeyFactory configKeyFactory;
-    private ConfigDAO configDAO;
+    private ConfigDao configDao;
     private EngineConfigCLIParser parser;
 
     public EngineConfigLogic(EngineConfigCLIParser parser) throws Exception {
@@ -70,7 +70,7 @@ public class EngineConfigLogic {
         ConfigKeyFactory.init(keysConfig, alternateKeysMap, parser);
         configKeyFactory = ConfigKeyFactory.getInstance();
         try {
-            this.configDAO = new ConfigDaoImpl(appConfig);
+            this.configDao = new ConfigDaoImpl(appConfig);
         } catch (SQLException se) {
             log.debug("init: caught connection error. Error details: ", se);
             throw new ConnectException("Connection to the Database failed. Please check that the hostname and port number are correct and that the Database service is up and running.");
@@ -221,7 +221,7 @@ public class EngineConfigLogic {
      * @throws Exception
      */
     private void printAllValuesForKey(String key) throws Exception {
-        List<ConfigKey> keysForName = getConfigDAO().getKeysForName(key);
+        List<ConfigKey> keysForName = getConfigDao().getKeysForName(key);
         if (keysForName.size() == 0) {
             log.debug("Failed to fetch value for key \"{}\", no such entry with default version.", key);
             throw new RuntimeException("Error fetching " + key + " value: no such entry with default version.");
@@ -463,7 +463,7 @@ public class EngineConfigLogic {
     private String startVersionDialog(String key) throws IOException, SQLException {
         log.debug("starting version dialog.");
         String version = null;
-        List<ConfigKey> keys = configDAO.getKeysForName(key);
+        List<ConfigKey> keys = configDao.getKeysForName(key);
         if (keys.size() == 1) {
             version = keys.get(0).getVersion();
         } else if (keys.size() > 1) {
@@ -508,7 +508,7 @@ public class EngineConfigLogic {
 
         try {
             configKey.safeSetValue(value);
-            res = (getConfigDAO().updateKey(configKey) == 1);
+            res = (getConfigDao().updateKey(configKey) == 1);
         } catch (InvalidParameterException ipe) {
             message = ipe.getMessage();
             if (message == null) {
@@ -553,13 +553,13 @@ public class EngineConfigLogic {
         configKey.setVersion(version);
         log.debug("Fetching key={} ver={}", configKey.getKey(), version);
         try {
-            return getConfigDAO().getKey(configKey);
+            return getConfigDao().getKey(configKey);
         } catch (SQLException e) {
             return null;
         }
     }
 
-    public ConfigDAO getConfigDAO() {
-        return configDAO;
+    public ConfigDao getConfigDao() {
+        return configDao;
     }
 }

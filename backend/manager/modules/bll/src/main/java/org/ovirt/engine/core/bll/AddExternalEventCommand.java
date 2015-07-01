@@ -12,17 +12,17 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 
 import javax.inject.Inject;
 
 public class AddExternalEventCommand<T extends AddExternalEventParameters> extends ExternalEventCommandBase<T> {
     private static final String OVIRT="oVirt";
 
-    @Inject VdsDynamicDAO hostDao;
+    @Inject VdsDynamicDao hostDao;
 
-    @Inject StorageDomainDynamicDAO storageDomainDynamicDao;
+    @Inject StorageDomainDynamicDao storageDomainDynamicDao;
 
     public AddExternalEventCommand(T parameters) {
         super(parameters);

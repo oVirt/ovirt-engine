@@ -37,7 +37,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         getStoragePool().setStatus(StoragePoolStatus.Uninitialized);
 
         getStoragePool().setMacPoolId(calculateMacPoolIdToUse());
-        getStoragePoolDAO().save(getStoragePool());
+        getStoragePoolDao().save(getStoragePool());
     }
 
     private Guid calculateMacPoolIdToUse() {
@@ -74,7 +74,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         net.setDescription(AddVdsGroupCommand.DefaultNetworkDescription);
         net.setDataCenterId(getStoragePool().getId());
         net.setVmNetwork(true);
-        getNetworkDAO().save(net);
+        getNetworkDao().save(net);
         NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), net.getId());
         VnicProfile profile = NetworkHelper.createVnicProfile(net);
         getVnicProfileDao().save(profile);

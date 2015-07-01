@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A shared class for all DAOs that use JPA. Note that our code (that uses DAOs) does not expect to work with attached
+ * A shared class for all Daos that use JPA. Note that our code (that uses Daos) does not expect to work with attached
  * entities, so returned entities are detached.
  *
  * @param <T>  The entity type

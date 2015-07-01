@@ -146,7 +146,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     protected Pair<Boolean, Integer> connectStorage() {
         String connectionId = getStorageDomain().getStorage();
-        StorageServerConnections connection = getStorageServerConnectionDAO().get(connectionId);
+        StorageServerConnections connection = getStorageServerConnectionDao().get(connectionId);
         Map<String, String> result = (Map<String, String>) runVdsCommand(
                         VDSCommandType.ConnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getParameters().getVdsId(), Guid.Empty,
@@ -224,7 +224,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         StoragePool targetStoragePool = getStoragePool();
 
         if (targetStoragePool == null) {
-            targetStoragePool = getStoragePoolDAO().get(getVds().getStoragePoolId());
+            targetStoragePool = getStoragePoolDao().get(getVds().getStoragePoolId());
         }
         return targetStoragePool;
     }

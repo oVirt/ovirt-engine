@@ -14,14 +14,14 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
 public class ClusterValidator {
 
     private final VDSGroup cluster;
-    private final VdsGroupDAO clusterDao;
-    private final StoragePoolDAO dataCenterDao;
+    private final VdsGroupDao clusterDao;
+    private final StoragePoolDao dataCenterDao;
     private StoragePool dataCenter;
 
     public ClusterValidator(DbFacade dbFacade, VDSGroup cluster) {

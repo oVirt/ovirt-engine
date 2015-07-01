@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainM
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
+public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase {
 
     private static final Guid EXISTING_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
     private static final Guid EXISTING_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a35");

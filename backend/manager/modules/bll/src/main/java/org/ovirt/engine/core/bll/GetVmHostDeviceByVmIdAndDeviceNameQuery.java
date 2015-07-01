@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.queries.VmHostDeviceQueryParameters;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 public class GetVmHostDeviceByVmIdAndDeviceNameQuery<P extends VmHostDeviceQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
-    VmDeviceDAO vmDeviceDAO;
+    VmDeviceDao vmDeviceDao;
 
     public GetVmHostDeviceByVmIdAndDeviceNameQuery(P parameters) {
         super(parameters);
@@ -20,7 +20,7 @@ public class GetVmHostDeviceByVmIdAndDeviceNameQuery<P extends VmHostDeviceQuery
 
     @Override
     protected void executeQueryCommand() {
-        List<VmDevice> vmDevices = vmDeviceDAO.getVmDeviceByVmIdTypeAndDevice(getParameters().getId(),
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(getParameters().getId(),
                 VmDeviceGeneralType.HOSTDEV, getParameters().getDeviceName());
         if (vmDevices != null && !vmDevices.isEmpty()) {
             setReturnValue(new VmHostDevice(vmDevices.get(0)));

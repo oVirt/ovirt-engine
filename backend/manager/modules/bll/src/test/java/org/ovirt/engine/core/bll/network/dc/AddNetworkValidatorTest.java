@@ -49,7 +49,7 @@ public class AddNetworkValidatorTest {
         // spy on attempts to access the database
         doReturn(dbFacade).when(validator).getDbFacade();
 
-        // mock some commonly used DAOs
+        // mock some commonly used Daos
         when(dbFacade.getNetworkDao()).thenReturn(networkDao);
 
         // mock their getters

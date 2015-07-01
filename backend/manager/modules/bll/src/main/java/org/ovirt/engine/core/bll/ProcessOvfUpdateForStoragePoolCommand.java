@@ -119,7 +119,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
     }
 
     protected void proccessDomainsForOvfUpdate(StoragePool pool) {
-        List<StorageDomain> domainsInPool = getStorageDomainDAO().getAllForStoragePool(pool.getId());
+        List<StorageDomain> domainsInPool = getStorageDomainDao().getAllForStoragePool(pool.getId());
         for (StorageDomain domain : domainsInPool) {
             if (!domain.getStorageDomainType().isDataDomain() || domain.getStatus() != StorageDomainStatus.Active) {
                 continue;
@@ -127,7 +127,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
 
             activeDataDomainsIds.add(domain.getId());
             Integer ovfStoresCountForDomain = Config.<Integer> getValue(ConfigValues.StorageDomainOvfStoreCount);
-            List<StorageDomainOvfInfo> storageDomainOvfInfos = getStorageDomainOvfInfoDAO().getAllForDomain(domain.getId());
+            List<StorageDomainOvfInfo> storageDomainOvfInfos = getStorageDomainOvfInfoDao().getAllForDomain(domain.getId());
 
             if (storageDomainOvfInfos.size() < ovfStoresCountForDomain) {
                 proccessedDomains.add(domain.getId());
@@ -149,7 +149,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
      */
     protected void updateOvfForVmsOfStoragePool(StoragePool pool) {
         Guid poolId = pool.getId();
-        List<Guid> vmsIdsForUpdate = getVmAndTemplatesGenerationsDAO().getVmsIdsForOvfUpdate(poolId);
+        List<Guid> vmsIdsForUpdate = getVmAndTemplatesGenerationsDao().getVmsIdsForOvfUpdate(poolId);
         int i = 0;
         while (i < vmsIdsForUpdate.size()) {
             int size = Math.min(itemsCountPerUpdate, vmsIdsForUpdate.size() - i);
@@ -171,7 +171,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
      */
     protected void removeOvfForTemplatesAndVmsOfStoragePool(StoragePool pool) {
         Guid poolId = pool.getId();
-        removedOvfIdsInfo = getVmAndTemplatesGenerationsDAO().getIdsForOvfDeletion(poolId);
+        removedOvfIdsInfo = getVmAndTemplatesGenerationsDao().getIdsForOvfDeletion(poolId);
 
         if (!ovfOnAnyDomainSupported(pool)) {
             for (Guid id : removedOvfIdsInfo) {
@@ -180,13 +180,13 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
         }
 
         markDomainsWithOvfsForOvfUpdate(removedOvfIdsInfo);
-        getVmAndTemplatesGenerationsDAO().deleteOvfGenerations(removedOvfIdsInfo);
+        getVmAndTemplatesGenerationsDao().deleteOvfGenerations(removedOvfIdsInfo);
     }
 
     protected void markDomainsWithOvfsForOvfUpdate(Collection<Guid> ovfIds) {
-        List<Guid> relevantDomains = getStorageDomainOvfInfoDAO().loadStorageDomainIdsForOvfIds(ovfIds);
+        List<Guid> relevantDomains = getStorageDomainOvfInfoDao().loadStorageDomainIdsForOvfIds(ovfIds);
         proccessedDomains.addAll(relevantDomains);
-        getStorageDomainOvfInfoDAO().updateOvfUpdatedInfo(proccessedDomains, StorageDomainOvfInfoStatus.OUTDATED, StorageDomainOvfInfoStatus.DISABLED);
+        getStorageDomainOvfInfoDao().updateOvfUpdatedInfo(proccessedDomains, StorageDomainOvfInfoStatus.OUTDATED, StorageDomainOvfInfoStatus.DISABLED);
     }
 
     /**
@@ -207,7 +207,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
             List<Guid> guidsForUpdate = proccessedIdsInfo.subList(i, i + sizeToUpdate);
             List<Long> ovfGenerationsForUpdate = proccessedOvfGenerationsInfo.subList(i, i + sizeToUpdate);
             List<String> ovfConfigurationsInfo = proccessedOvfConfigurationsInfo.subList(i, i + sizeToUpdate);
-            getVmAndTemplatesGenerationsDAO().updateOvfGenerations(guidsForUpdate, ovfGenerationsForUpdate, ovfConfigurationsInfo);
+            getVmAndTemplatesGenerationsDao().updateOvfGenerations(guidsForUpdate, ovfGenerationsForUpdate, ovfConfigurationsInfo);
             i += sizeToUpdate;
             initProcessedInfoLists();
         }
@@ -218,7 +218,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
      */
     protected Map<Guid, KeyValuePairCompat<String, List<Guid>>> populateTemplatesMetadataForOvfUpdate(List<Guid> idsToProcess) {
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata = new HashMap<>();
-        List<VmTemplate> templates = getVmTemplateDAO().getVmTemplatesByIds(idsToProcess);
+        List<VmTemplate> templates = getVmTemplateDao().getVmTemplatesByIds(idsToProcess);
 
         for (VmTemplate template : templates) {
             if (VmTemplateStatus.Locked != template.getStatus()) {
@@ -226,7 +226,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
                 boolean verifyDisksNotLocked = verifyImagesStatus(template.getDiskList());
                 if (verifyDisksNotLocked) {
                     getOvfUpdateProcessHelper().loadTemplateData(template);
-                    Long currentDbGeneration = getVmStaticDAO().getDbGeneration(template.getId());
+                    Long currentDbGeneration = getVmStaticDao().getDbGeneration(template.getId());
                     // currentDbGeneration can be null in case that the template was deleted during the run of OvfDataUpdater.
                     if (currentDbGeneration != null && template.getDbGeneration() == currentDbGeneration) {
                         proccessedOvfConfigurationsInfo.add(getOvfUpdateProcessHelper().buildMetadataDictionaryForTemplate(template, vmsAndTemplateMetadata));
@@ -259,7 +259,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
     protected void updateOvfForTemplatesOfStoragePool(StoragePool pool) {
         Guid poolId = pool.getId();
         List<Guid> templateIdsForUpdate =
-                getVmAndTemplatesGenerationsDAO().getVmTemplatesIdsForOvfUpdate(poolId);
+                getVmAndTemplatesGenerationsDao().getVmTemplatesIdsForOvfUpdate(poolId);
         int i = 0;
         while (i < templateIdsForUpdate.size()) {
             int size = Math.min(templateIdsForUpdate.size() - i, itemsCountPerUpdate);
@@ -304,7 +304,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
      */
     protected Map<Guid, KeyValuePairCompat<String, List<Guid>>> populateVmsMetadataForOvfUpdate(List<Guid> idsToProcess) {
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata = new HashMap<>();
-        List<VM> vms = getVmDAO().getVmsByIds(idsToProcess);
+        List<VM> vms = getVmDao().getVmsByIds(idsToProcess);
         for (VM vm : vms) {
             if (VMStatus.ImageLocked != vm.getStatus()) {
                 updateVmDisksFromDb(vm);
@@ -315,13 +315,13 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
                 if (!verifyImagesStatus(vmImages)) {
                     continue;
                 }
-                vm.setSnapshots(getSnapshotDAO().getAllWithConfiguration(vm.getId()));
+                vm.setSnapshots(getSnapshotDao().getAllWithConfiguration(vm.getId()));
                 if (!verifySnapshotsStatus(vm.getSnapshots())) {
                     continue;
                 }
 
                 getOvfUpdateProcessHelper().loadVmData(vm);
-                Long currentDbGeneration = getVmStaticDAO().getDbGeneration(vm.getId());
+                Long currentDbGeneration = getVmStaticDao().getDbGeneration(vm.getId());
                 if (currentDbGeneration == null) {
                     log.warn("currentDbGeneration of VM (name: '{}', id: '{}') is null, probably because the VM was deleted during the run of OvfDataUpdater.",
                             vm.getName(),

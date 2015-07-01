@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DbUserDAO;
-import org.ovirt.engine.core.dao.PermissionDAO;
-import org.ovirt.engine.core.dao.RoleDAO;
+import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.RoleDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,15 +33,15 @@ public class MultiLevelAdministrationHandler {
 
     private static final Logger log = LoggerFactory.getLogger(MultiLevelAdministrationHandler.class);
 
-    public static PermissionDAO getPermissionDAO() {
+    public static PermissionDao getPermissionDao() {
         return DbFacade.getInstance().getPermissionDao();
     }
 
-    public static RoleDAO getRoleDAO() {
+    public static RoleDao getRoleDao() {
         return DbFacade.getInstance().getRoleDao();
     }
 
-    public static DbUserDAO getDbUserDAO() {
+    public static DbUserDao getDbUserDao() {
         return DbFacade.getInstance().getDbUserDao();
     }
 
@@ -54,7 +54,7 @@ public class MultiLevelAdministrationHandler {
      */
     public static boolean isAdminUser(DbUser user) {
         List<Role> userRoles =
-                getRoleDAO().getAnyAdminRoleForUserAndGroups(user.getId(), StringUtils.join(user.getGroupIds(), ","));
+                getRoleDao().getAnyAdminRoleForUserAndGroups(user.getId(), StringUtils.join(user.getGroupIds(), ","));
         if (!userRoles.isEmpty()) {
             log.debug("LoginAdminUser: User logged to admin using role '{}'", userRoles.get(0).getName());
             return true;
@@ -64,7 +64,7 @@ public class MultiLevelAdministrationHandler {
 
     public static void addPermission(Permission... permissions) {
         for (Permission perms : permissions) {
-            getPermissionDAO().save(perms);
+            getPermissionDao().save(perms);
         }
     }
 
@@ -77,10 +77,10 @@ public class MultiLevelAdministrationHandler {
      * @see {@link DbUser}
      */
     public static void setIsAdminGUIFlag(Guid userId, boolean hasPermissions) {
-        DbUser user = getDbUserDAO().get(userId);
+        DbUser user = getDbUserDao().get(userId);
         if (user.isAdmin() != hasPermissions) {
             user.setAdmin(hasPermissions);
-            getDbUserDAO().update(user);
+            getDbUserDao().update(user);
         }
     }
 
@@ -95,7 +95,7 @@ public class MultiLevelAdministrationHandler {
         boolean retValue=false;
         if (PredefinedRoles.SUPER_USER.getId().equals(roleId)) {
             // check that there is at least one super-user left in the system
-            List<Permission> permissions = getPermissionDAO().getAllForRole(
+            List<Permission> permissions = getPermissionDao().getAllForRole(
                     PredefinedRoles.SUPER_USER.getId());
             if (permissions.size() <= 1) {
                 retValue = true;
@@ -114,11 +114,11 @@ public class MultiLevelAdministrationHandler {
     public static boolean isLastSuperUserGroup(Guid groupId) {
         boolean retValue=false;
         // check that there is at least one super-user left in the system
-        List<Permission> permissions = getPermissionDAO().getAllForRole(
+        List<Permission> permissions = getPermissionDao().getAllForRole(
                 PredefinedRoles.SUPER_USER.getId());
         if (permissions.size() <= 1) {
             // get group role
-            permissions = getPermissionDAO().getAllForAdElement(groupId);
+            permissions = getPermissionDao().getAllForAdElement(groupId);
             for (Permission permission : permissions){
                 if (permission.getRoleId().equals(PredefinedRoles.SUPER_USER.getId())){
                     retValue = true;

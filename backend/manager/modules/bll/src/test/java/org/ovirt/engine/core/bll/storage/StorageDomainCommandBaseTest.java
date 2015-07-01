@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.LunDAO;
+import org.ovirt.engine.core.dao.LunDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StorageDomainCommandBaseTest {
@@ -34,7 +34,7 @@ public class StorageDomainCommandBaseTest {
     };
 
     @Mock
-    private LunDAO lunDAO;
+    private LunDao lunDao;
 
     public StorageDomainCommandBase<StorageDomainParametersBase> cmd;
 
@@ -129,8 +129,8 @@ public class StorageDomainCommandBaseTest {
         lun2.setLUN_id(GUIDS[1].toString());
         lun2.setStorageDomainId(Guid.newGuid());
 
-        doReturn(lunDAO).when(cmd).getLunDao();
-        when(lunDAO.getAll()).thenReturn(Arrays.asList(lun1, lun2));
+        doReturn(lunDao).when(cmd).getLunDao();
+        when(lunDao.getAll()).thenReturn(Arrays.asList(lun1, lun2));
         List<String> specifiedLunIds = Collections.singletonList(GUIDS[0].toString());
 
         assertTrue(cmd.isLunsAlreadyInUse(specifiedLunIds));

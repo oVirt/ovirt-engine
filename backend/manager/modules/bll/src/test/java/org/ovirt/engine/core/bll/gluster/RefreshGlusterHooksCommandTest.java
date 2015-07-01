@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,14 +36,14 @@ public class RefreshGlusterHooksCommandTest {
     RefreshGlusterHooksCommand<GlusterClusterParameters> cmd;
 
     @Mock
-    private VdsGroupDAO vdsGroupDao;
+    private VdsGroupDao vdsGroupDao;
 
     @Mock
     private GlusterHookSyncJob hookSyncJob;
 
     public void setupMocks() {
         when(vdsGroupDao.get(CLUSTER_ID)).thenReturn(getVdsGroup());
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
+        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
         when(cmd.getSyncJobInstance()).thenReturn(hookSyncJob);
     }
 

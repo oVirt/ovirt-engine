@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.MacPoolDao;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MacPoolValidatorTest extends DbDependentTestBase {
@@ -33,7 +33,7 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
     private MacPoolDao macPoolDaoMock;
 
     @Mock
-    private StoragePoolDAO storagePoolDao;
+    private StoragePoolDao storagePoolDao;
 
     @Before
     public void setUp() throws Exception {

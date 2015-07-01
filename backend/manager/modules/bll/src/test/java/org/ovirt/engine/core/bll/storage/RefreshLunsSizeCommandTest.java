@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.LunDAO;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -50,10 +50,10 @@ public class RefreshLunsSizeCommandTest {
     private List<LUNs> lunsFromDb;
 
     @Mock
-    private StorageDomainStaticDAO sdsDao;
+    private StorageDomainStaticDao sdsDao;
 
     @Mock
-    private LunDAO lunsDao;
+    private LunDao lunsDao;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -84,7 +84,7 @@ public class RefreshLunsSizeCommandTest {
         cmd = spy(new RefreshLunsSizeCommand<>(new ExtendSANStorageDomainParameters(sdId, (ArrayList)lunIdList)));
         doReturn(sd).when(cmd).getStorageDomain();
         doReturn(sp).when(cmd).getStoragePool();
-        doReturn(sdsDao).when(cmd).getStorageDomainStaticDAO();
+        doReturn(sdsDao).when(cmd).getStorageDomainStaticDao();
 
         when(sdsDao.get(sdId)).thenReturn(sdStatic);
 

@@ -32,7 +32,7 @@ public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> exte
     @Override
     public VDSGroup getVdsGroup() {
         if (_vdsGroup == null) {
-            _vdsGroup = getVdsGroupDAO().get(getParameters().getVdsGroupId());
+            _vdsGroup = getVdsGroupDao().get(getParameters().getVdsGroupId());
         }
         return _vdsGroup;
     }

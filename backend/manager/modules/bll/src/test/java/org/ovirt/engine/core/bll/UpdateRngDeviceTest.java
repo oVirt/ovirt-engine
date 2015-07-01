@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.dao.VmStaticDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 public class UpdateRngDeviceTest {
 
@@ -33,30 +33,30 @@ public class UpdateRngDeviceTest {
 
         final VmStatic vmMock = Mockito.mock(VmStatic.class);
         Mockito.when(vmMock.getVdsGroupId()).thenReturn(clusterId);
-        final VmStaticDAO vmDaoMock = Mockito.mock(VmStaticDAO.class);
+        final VmStaticDao vmDaoMock = Mockito.mock(VmStaticDao.class);
         Mockito.when(vmDaoMock.get(vmId)).thenReturn(vmMock);
-        final VmDeviceDAO vmDeviceDaoMock = Mockito.mock(VmDeviceDAO.class);
+        final VmDeviceDao vmDeviceDaoMock = Mockito.mock(VmDeviceDao.class);
         Mockito.when(vmDeviceDaoMock.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.RNG)).thenReturn(Collections.singletonList(new VmDevice()));
         final VDSGroup cluster = Mockito.mock(VDSGroup.class);
         Mockito.when(cluster.getCompatibilityVersion()).thenReturn(mockCompatibilityVersion);
         Mockito.when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(VmRngDevice.Source.RANDOM));
-        final VdsGroupDAO vdsGroupMock = Mockito.mock(VdsGroupDAO.class);
+        final VdsGroupDao vdsGroupMock = Mockito.mock(VdsGroupDao.class);
         Mockito.when(vdsGroupMock.get(clusterId)).thenReturn(cluster);
 
         RngDeviceParameters params = new RngDeviceParameters(dev, true);
         UpdateRngDeviceCommand cmd = new UpdateRngDeviceCommand(params) {
             @Override
-            public VmStaticDAO getVmStaticDAO() {
+            public VmStaticDao getVmStaticDao() {
                 return vmDaoMock;
             }
 
             @Override
-            public VdsGroupDAO getVdsGroupDAO() {
+            public VdsGroupDao getVdsGroupDao() {
                 return vdsGroupMock;
             }
 
             @Override
-            protected VmDeviceDAO getVmDeviceDao() {
+            protected VmDeviceDao getVmDeviceDao() {
                 return vmDeviceDaoMock;
             }
 

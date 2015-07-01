@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * A test for the {@link GetVdsAndNetworkInterfacesByNetworkIdQuery} class. It tests the flow (i.e., that the query
- * delegates properly to the DAO}). The internal workings of the DAO are not tested.
+ * delegates properly to the Dao}). The internal workings of the Dao are not tested.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
@@ -39,7 +39,7 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
     private VdsNetworkInterface vdsNetworkInterface = new VdsNetworkInterface();
 
     @Mock
-    private VdsDAO vdsDAOMocked;
+    private VdsDao vdsDaoMocked;
     @Mock
     private InterfaceDao interfaceDaoMocked;
     @Mock
@@ -74,7 +74,7 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
     }
 
     private void setupQuerySpy(){
-        doReturn(vdsDAOMocked).when(getQuery()).getVdsDao();
+        doReturn(vdsDaoMocked).when(getQuery()).getVdsDao();
         doReturn(interfaceDaoMocked).when(getQuery()).getInterfaceDao();
         doReturn(networkDaoMocked).when(getQuery()).getNetworkDao();
         doReturn(hostNetworkQosDaoMocked).when(getQuery()).getHostNetworkQosDao();
@@ -82,7 +82,7 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
 
     private void setupVdsDao() {
         List<VDS> expectedVds = Collections.singletonList(vds);
-        when(vdsDAOMocked.getAllForNetwork(networkId)).thenReturn(expectedVds);
+        when(vdsDaoMocked.getAllForNetwork(networkId)).thenReturn(expectedVds);
     }
 
     private void setupVdsNetworkInterfaceDao() {

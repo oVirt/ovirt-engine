@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
 public class GetVmHostDevicesQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
-    VmDeviceDAO vmDeviceDao;
+    VmDeviceDao vmDeviceDao;
 
     public GetVmHostDevicesQuery(P parameters) {
         super(parameters);

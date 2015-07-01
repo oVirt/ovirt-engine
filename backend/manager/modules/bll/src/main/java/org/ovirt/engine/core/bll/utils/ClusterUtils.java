@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
 public class ClusterUtils {
 
@@ -71,7 +71,7 @@ public class ClusterUtils {
         return getVdsDao().getAllForVdsGroup(clusterId).size();
     }
 
-    public VdsDAO getVdsDao() {
+    public VdsDao getVdsDao() {
         return DbFacade.getInstance()
                 .getVdsDao();
     }
@@ -86,7 +86,7 @@ public class ClusterUtils {
                 : Version.v3_0;
     }
 
-    public VdsGroupDAO getVdsGroupDao() {
+    public VdsGroupDao getVdsGroupDao() {
         return DbFacade.getInstance().getVdsGroupDao();
     }
 }

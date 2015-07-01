@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 /**
  * Validator class for {@link NetworkCluster} instances.
@@ -76,7 +76,7 @@ public abstract class NetworkClusterValidatorBase {
         return getVdsDao().getAllForVdsGroup(networkCluster.getClusterId()).isEmpty();
     }
 
-    VdsDAO getVdsDao() {
+    VdsDao getVdsDao() {
         return DbFacade.getInstance().getVdsDao();
     }
 

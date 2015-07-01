@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.AsyncTaskDAO;
+import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -72,7 +72,7 @@ public class AsyncTaskUtils {
         CommandCoordinatorUtil.addOrUpdateTaskInDB(asyncTask);
     }
 
-    private static AsyncTaskDAO getAsyncTaskDao() {
+    private static AsyncTaskDao getAsyncTaskDao() {
         return DbFacade.getInstance().getAsyncTaskDao();
     }
 }

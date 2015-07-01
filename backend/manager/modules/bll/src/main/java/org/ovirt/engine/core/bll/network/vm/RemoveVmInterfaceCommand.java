@@ -29,7 +29,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
 
     @Override
     protected void executeVmCommand() {
-        this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getName());
+        this.setVmName(getVmStaticDao().get(getParameters().getVmId()).getName());
         VmNic iface = getVmNicDao().get(getParameters().getInterfaceId());
 
         if (iface != null) {

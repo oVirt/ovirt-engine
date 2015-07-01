@@ -31,7 +31,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
         final VM curVm = DbFacade.getInstance().getVmDao().get(parameters.getVmId());
         curVm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(curVm.getId()));
-        curVm.setvNumaNodeList(DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(curVm.getId()));
+        curVm.setvNumaNodeList(DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(curVm.getId()));
 
         DestroyVDSCommand<DestroyVmVDSCommandParameters> vdsBrokerCommand =
                 new DestroyVDSCommand<DestroyVmVDSCommandParameters>(parameters);
@@ -57,7 +57,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                             vmManager.update(stats);
                         }
                         DbFacade.getInstance()
-                                .getVmNumaNodeDAO()
+                                .getVmNumaNodeDao()
                                 .massUpdateVmNumaNodeRuntimePinning(curVm.getvNumaNodeList());
                         return null;
                     }

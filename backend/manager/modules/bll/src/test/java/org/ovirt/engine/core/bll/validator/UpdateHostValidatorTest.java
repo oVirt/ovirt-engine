@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -41,7 +41,7 @@ public class UpdateHostValidatorTest {
     private DbFacade dbFacade;
 
     @Mock
-    private VdsDAO hostDao;
+    private VdsDao hostDao;
 
     @Mock
     private ProviderDao providerDao;

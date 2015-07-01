@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
@@ -59,16 +59,16 @@ public class VmInterfaceManagerTest {
     private MacPoolManagerStrategy macPoolManagerStrategy;
 
     @Mock
-    private VmNetworkStatisticsDao vmNetworkStatisticsDAO;
+    private VmNetworkStatisticsDao vmNetworkStatisticsDao;
 
     @Mock
-    private VmNetworkInterfaceDao vmNetworkInterfaceDAO;
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     @Mock
     private VmNicDao vmNicDao;
 
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
 
     @Mock
     private ExternalNetworkManager externalNetworkManager;
@@ -82,10 +82,10 @@ public class VmInterfaceManagerTest {
     @SuppressWarnings("unchecked")
     public void setupMocks() {
         vmInterfaceManager = Mockito.spy(new VmInterfaceManager(macPoolManagerStrategy));
-        doReturn(vmNetworkStatisticsDAO).when(vmInterfaceManager).getVmNetworkStatisticsDao();
-        doReturn(vmNetworkInterfaceDAO).when(vmInterfaceManager).getVmNetworkInterfaceDao();
+        doReturn(vmNetworkStatisticsDao).when(vmInterfaceManager).getVmNetworkStatisticsDao();
+        doReturn(vmNetworkInterfaceDao).when(vmInterfaceManager).getVmNetworkInterfaceDao();
         doReturn(vmNicDao).when(vmInterfaceManager).getVmNicDao();
-        doReturn(vmDAO).when(vmInterfaceManager).getVmDAO();
+        doReturn(vmDao).when(vmInterfaceManager).getVmDao();
         doNothing().when(vmInterfaceManager).auditLogMacInUseUnplug(any(VmNic.class));
         doNothing().when(vmInterfaceManager).removeFromExternalNetworks(anyList());
 
@@ -163,12 +163,12 @@ public class VmInterfaceManagerTest {
 
     private void mockDaos(boolean pluggedInterface) {
         VM vm = createVM(VM_NAME, NETWORK_NAME, pluggedInterface);
-        when(vmDAO.getAllRunningForVds(any(Guid.class))).thenReturn(Arrays.asList(vm));
-        when(vmNetworkInterfaceDAO.getAllForVm(vm.getId())).thenReturn(vm.getInterfaces());
+        when(vmDao.getAllRunningForVds(any(Guid.class))).thenReturn(Arrays.asList(vm));
+        when(vmNetworkInterfaceDao.getAllForVm(vm.getId())).thenReturn(vm.getInterfaces());
     }
 
     /**
-     * Verify that {@link VmInterfaceManager#add} delegated correctly to {@link MacPoolManagerStrategy} & DAOs.
+     * Verify that {@link VmInterfaceManager#add} delegated correctly to {@link MacPoolManagerStrategy} & Daos.
      *
      * @param iface
      *            The interface to check for.
@@ -178,11 +178,11 @@ public class VmInterfaceManagerTest {
     protected void verifyAddDelegatedCorrectly(VmNic iface, VerificationMode addMacVerification) {
         verify(macPoolManagerStrategy, addMacVerification).forceAddMac(iface.getMacAddress());
         verify(vmNicDao).save(iface);
-        verify(vmNetworkStatisticsDAO).save(iface.getStatistics());
+        verify(vmNetworkStatisticsDao).save(iface.getStatistics());
     }
 
     /**
-     * Verify that {@link VmInterfaceManager#removeAll} delegated correctly to {@link MacPoolManagerStrategy} & DAOs.
+     * Verify that {@link VmInterfaceManager#removeAll} delegated correctly to {@link MacPoolManagerStrategy} & Daos.
      *
      * @param iface
      *            The interface to check for.
@@ -190,7 +190,7 @@ public class VmInterfaceManagerTest {
     protected void verifyRemoveAllDelegatedCorrectly(VmNic iface) {
         verify(macPoolManagerStrategy, times(1)).freeMac(iface.getMacAddress());
         verify(vmNicDao).remove(iface.getId());
-        verify(vmNetworkStatisticsDAO).remove(iface.getId());
+        verify(vmNetworkStatisticsDao).remove(iface.getId());
     }
 
     /**

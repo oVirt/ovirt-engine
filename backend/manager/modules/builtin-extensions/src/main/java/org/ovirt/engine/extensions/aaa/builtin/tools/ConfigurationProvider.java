@@ -26,7 +26,7 @@ public class ConfigurationProvider {
     private EnumMap<ConfigValues, String> configVals = new EnumMap<ConfigValues, String>(ConfigValues.class);
     private String engineConfigExecutable;
     private String engineConfigProperties;
-    private final static Logger log = LoggerFactory.getLogger(ManageDomainsDAOImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(ManageDomainsDaoImpl.class);
 
     public ConfigurationProvider(String adUserName,
             String adUserPassword,

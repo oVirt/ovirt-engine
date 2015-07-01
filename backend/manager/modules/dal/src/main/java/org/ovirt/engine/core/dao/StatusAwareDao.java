@@ -3,7 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.io.Serializable;
 
 /**
- * This is a specific type of DAO that is aware of entities having a "status" field, and can update this field.
+ * This is a specific type of Dao that is aware of entities having a "status" field, and can update this field.
  *
  * @param <ID>
  *            The type of the entity's id.
@@ -11,7 +11,7 @@ import java.io.Serializable;
  *            The type of status.
  * @see GenericDao
  */
-public interface StatusAwareDao<ID extends Serializable, S extends Enum<?>> extends DAO {
+public interface StatusAwareDao<ID extends Serializable, S extends Enum<?>> extends Dao {
     /**
      * Update the entity's status field only.
      *

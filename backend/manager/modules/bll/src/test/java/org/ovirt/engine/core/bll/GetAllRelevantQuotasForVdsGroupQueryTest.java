@@ -11,12 +11,12 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.dao.QuotaDao;
 
 /**
  * A test for the {@link GetAllRelevantQuotasForVdsGroupQuery} class.
- * It tests that flow (i.e., that the query delegates properly to the DAO}).
- * The internal workings of the DAO are not tested.
+ * It tests that flow (i.e., that the query delegates properly to the Dao}).
+ * The internal workings of the Dao are not tested.
  */
 public class GetAllRelevantQuotasForVdsGroupQueryTest extends AbstractQueryTest<IdQueryParameters, GetAllRelevantQuotasForVdsGroupQuery<IdQueryParameters>> {
     @Test
@@ -25,11 +25,11 @@ public class GetAllRelevantQuotasForVdsGroupQueryTest extends AbstractQueryTest<
         Guid quotaID = Guid.newGuid();
         when(params.getId()).thenReturn(quotaID);
 
-        // Set up the DAOs
+        // Set up the Daos
         List<Quota> expected = Collections.singletonList(new Quota());
-        QuotaDAO quotaDAOMock = mock(QuotaDAO.class);
-        when(quotaDAOMock.getAllRelevantQuotasForVdsGroup(quotaID, getQuery().getEngineSessionSeqId(), false)).thenReturn(expected);
-        when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDAOMock);
+        QuotaDao quotaDaoMock = mock(QuotaDao.class);
+        when(quotaDaoMock.getAllRelevantQuotasForVdsGroup(quotaID, getQuery().getEngineSessionSeqId(), false)).thenReturn(expected);
+        when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDaoMock);
 
         // Run the query
         GetAllRelevantQuotasForVdsGroupQuery<IdQueryParameters> query = getQuery();

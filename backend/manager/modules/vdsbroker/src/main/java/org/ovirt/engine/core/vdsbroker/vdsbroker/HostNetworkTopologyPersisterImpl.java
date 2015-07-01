@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.vdscommands.UserConfiguredNetworkData;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -41,7 +41,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.IsNetworkOnInterface
 @Singleton
 final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersister {
 
-    private final VmDynamicDAO vmDynamicDao;
+    private final VmDynamicDao vmDynamicDao;
     private final InterfaceDao interfaceDao;
     private final NetworkDao networkDao;
     private final HostNetworkQosDao hostNetworkQosDao;
@@ -51,7 +51,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     private final NetworkAttachmentDao networkAttachmentDao;
 
     @Inject
-    HostNetworkTopologyPersisterImpl(VmDynamicDAO vmDynamicDao,
+    HostNetworkTopologyPersisterImpl(VmDynamicDao vmDynamicDao,
                                      InterfaceDao interfaceDao,
                                      NetworkAttachmentDao networkAttachmentDao,
                                      NetworkDao networkDao,

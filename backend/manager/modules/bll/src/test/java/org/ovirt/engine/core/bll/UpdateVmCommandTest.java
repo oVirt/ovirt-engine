@@ -56,9 +56,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /** A test case for the {@link UpdateVmCommand}. */
@@ -73,13 +73,13 @@ public class UpdateVmCommandTest {
     private static String vncKeyboardLayoutValues =
             "ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr";
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
     @Mock
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
     @Mock
-    private DiskDao diskDAO;
+    private DiskDao diskDao;
     @Mock
-    private VmDeviceDAO vmDeviceDAO;
+    private VmDeviceDao vmDeviceDao;
 
     @Mock
     OsRepository osRepository;
@@ -223,8 +223,8 @@ public class UpdateVmCommandTest {
     public void testDedicatedHostNotExistOrNotSameCluster() {
         prepareVmToPassCanDoAction();
 
-        // this will cause null to return when getting vds from vdsDAO
-        doReturn(vdsDAO).when(command).getVdsDAO();
+        // this will cause null to return when getting vds from vdsDao
+        doReturn(vdsDao).when(command).getVdsDao();
         doReturn(false).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
 
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
@@ -239,8 +239,8 @@ public class UpdateVmCommandTest {
 
         VDS vds = new VDS();
         vds.setVdsGroupId(group.getId());
-        doReturn(vdsDAO).when(command).getVdsDAO();
-        when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
+        doReturn(vdsDao).when(command).getVdsDao();
+        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
         doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
 
@@ -265,8 +265,8 @@ public class UpdateVmCommandTest {
     }
 
     private void mockVmDevice(VmDevice vmDevice) {
-        when(vmDeviceDAO.getVmDeviceByVmIdAndType(vm.getId(), vmDevice.getType())).thenReturn(Arrays.asList(vmDevice));
-        doReturn(vmDeviceDAO).when(dbFacade).getVmDeviceDao();
+        when(vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), vmDevice.getType())).thenReturn(Arrays.asList(vmDevice));
+        doReturn(vmDeviceDao).when(dbFacade).getVmDeviceDao();
     }
 
     @Test
@@ -317,7 +317,7 @@ public class UpdateVmCommandTest {
         mockDiskDaoGetAllForVm(Collections.<Disk>emptyList(), true);
         mockVmValidator();
 
-        doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
+        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
         doReturn(true).when(command).areUpdatedFieldsLegal();
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
@@ -370,7 +370,7 @@ public class UpdateVmCommandTest {
         VmValidator vmValidator = spy(new VmValidator(vm));
         doReturn(vmValidator).when(command).createVmValidator(vm);
         doReturn(dbFacade).when(vmValidator).getDbFacade();
-        doReturn(diskDAO).when(vmValidator).getDiskDao();
+        doReturn(diskDao).when(vmValidator).getDiskDao();
     }
 
     private VmDevice createVmDevice() {
@@ -410,13 +410,13 @@ public class UpdateVmCommandTest {
     }
 
     private void mockDiskDaoGetAllForVm(List<Disk> disks, boolean onlyPluggedDisks) {
-        doReturn(diskDAO).when(command).getDiskDao();
-        doReturn(disks).when(diskDAO).getAllForVm(vm.getId(), onlyPluggedDisks);
+        doReturn(diskDao).when(command).getDiskDao();
+        doReturn(disks).when(diskDao).getAllForVm(vm.getId(), onlyPluggedDisks);
     }
 
     private void mockVmDaoGetVm() {
-        doReturn(vmDAO).when(command).getVmDAO();
-        when(vmDAO.get(any(Guid.class))).thenReturn(vm);
+        doReturn(vmDao).when(command).getVmDao();
+        when(vmDao.get(any(Guid.class))).thenReturn(vm);
     }
 
     private void mockValidateCustomProperties() {

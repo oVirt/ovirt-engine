@@ -8,17 +8,17 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 @Named
 @Singleton
 final class IsSystemSuperUserPredicate implements Predicate<Guid> {
 
-    private final PermissionDAO permissionDao;
+    private final PermissionDao permissionDao;
 
     @Inject
-    public IsSystemSuperUserPredicate(PermissionDAO permissionDao) {
+    public IsSystemSuperUserPredicate(PermissionDao permissionDao) {
         Objects.requireNonNull(permissionDao, "permissionDao cannot be null");
 
         this.permissionDao = permissionDao;
@@ -34,7 +34,7 @@ final class IsSystemSuperUserPredicate implements Predicate<Guid> {
         return superUserPermission != null;
     }
 
-    PermissionDAO getPermissionDao() {
+    PermissionDao getPermissionDao() {
         return permissionDao;
     }
 }

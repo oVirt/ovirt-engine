@@ -2,9 +2,9 @@ package org.ovirt.engine.core.dao.dwh;
 
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeepingVariable;
-import org.ovirt.engine.core.dao.DAO;
+import org.ovirt.engine.core.dao.Dao;
 
-public interface DwhHistoryTimekeepingDao extends DAO {
+public interface DwhHistoryTimekeepingDao extends Dao {
     /**
      * Retrieves content of the specified variable
      *

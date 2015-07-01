@@ -19,11 +19,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dao.StepDao;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.dao.VdsStatisticsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
@@ -72,15 +72,15 @@ public abstract class GlusterJob {
         return ClusterUtils.getInstance();
     }
 
-    protected VdsStatisticsDAO getVdsStatisticsDao() {
+    protected VdsStatisticsDao getVdsStatisticsDao() {
         return DbFacade.getInstance().getVdsStatisticsDao();
     }
 
-    protected VdsStaticDAO getVdsStaticDao() {
+    protected VdsStaticDao getVdsStaticDao() {
         return DbFacade.getInstance().getVdsStaticDao();
     }
 
-    protected VdsDynamicDAO getVdsDynamicDao() {
+    protected VdsDynamicDao getVdsDynamicDao() {
         return DbFacade.getInstance().getVdsDynamicDao();
     }
 
@@ -88,11 +88,11 @@ public abstract class GlusterJob {
         return DbFacade.getInstance().getInterfaceDao();
     }
 
-    protected VdsGroupDAO getClusterDao() {
+    protected VdsGroupDao getClusterDao() {
         return DbFacade.getInstance().getVdsGroupDao();
     }
 
-    protected VdsDAO getVdsDao() {
+    protected VdsDao getVdsDao() {
         return DbFacade.getInstance().getVdsDao();
     }
 

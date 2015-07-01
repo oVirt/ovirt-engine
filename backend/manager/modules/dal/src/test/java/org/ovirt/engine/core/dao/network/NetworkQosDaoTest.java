@@ -3,7 +3,7 @@ package org.ovirt.engine.core.dao.network;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 import org.springframework.dao.DuplicateKeyException;
 
@@ -11,7 +11,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class NetworkQosDaoTest extends BaseDAOTestCase {
+public class NetworkQosDaoTest extends BaseDaoTestCase {
 
     private NetworkQoSDao dao;
 

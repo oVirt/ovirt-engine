@@ -47,8 +47,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -75,7 +75,7 @@ public class ImportVMFromConfigurationCommandTest {
     private OsRepository osRepository;
 
     @Mock
-    private UnregisteredOVFDataDAO unregisteredOVFDataDao;
+    private UnregisteredOVFDataDao unregisteredOVFDataDao;
 
     @Before
     public void setUp() throws IOException {
@@ -116,8 +116,8 @@ public class ImportVMFromConfigurationCommandTest {
     @Test
     public void testPositiveImportVmFromConfiguration() {
         initCommand(getOvfEntityData());
-        final StorageDomainDAO dao = mock(StorageDomainDAO.class);
-        doReturn(dao).when(cmd).getStorageDomainDAO();
+        final StorageDomainDao dao = mock(StorageDomainDao.class);
+        doReturn(dao).when(cmd).getStorageDomainDao();
         when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(createStorageDomain());
         doReturn(storagePool).when(cmd).getStoragePool();
         doReturn(Boolean.TRUE).when(cmd).canDoActionAfterCloneVm(anyMap());
@@ -134,8 +134,8 @@ public class ImportVMFromConfigurationCommandTest {
         storageDomain.setStatus(StorageDomainStatus.Maintenance);
 
         // Mock Storage Domain.
-        final StorageDomainDAO dao = mock(StorageDomainDAO.class);
-        doReturn(dao).when(cmd).getStorageDomainDAO();
+        final StorageDomainDao dao = mock(StorageDomainDao.class);
+        doReturn(dao).when(cmd).getStorageDomainDao();
         when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
 
         doReturn(storageDomain).when(cmd).getStorageDomain();
@@ -151,7 +151,7 @@ public class ImportVMFromConfigurationCommandTest {
         storageDomain.setStatus(StorageDomainStatus.Inactive);
 
         // Mock Storage Domain.
-        final StorageDomainDAO dao = mock(StorageDomainDAO.class);
+        final StorageDomainDao dao = mock(StorageDomainDao.class);
         when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
         when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
 
@@ -194,7 +194,7 @@ public class ImportVMFromConfigurationCommandTest {
             // Overridden here and not during spying, since it's called in the constructor
             @SuppressWarnings("synthetic-access")
             @Override
-            protected UnregisteredOVFDataDAO getUnregisteredOVFDataDao() {
+            protected UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
                 return unregisteredOVFDataDao;
             }
 

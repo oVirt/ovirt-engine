@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase<T> {
@@ -134,7 +134,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         for (MoveDiskParameters moveDiskParameters : getParameters().getParametersList()) {
             DiskImage diskImage = getDiskImageDao().get(moveDiskParameters.getImageId());
 
-            Map<Boolean, List<VM>> allVmsForDisk = getVmDAO().getForDisk(diskImage.getId(), false);
+            Map<Boolean, List<VM>> allVmsForDisk = getVmDao().getForDisk(diskImage.getId(), false);
             List<VM> vmsForPluggedDisk = allVmsForDisk.get(Boolean.TRUE);
             List<VM> vmsForUnpluggedDisk = allVmsForDisk.get(Boolean.FALSE);
 
@@ -236,7 +236,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         return permissionList;
     }
 
-    protected DiskImageDAO getDiskImageDao() {
+    protected DiskImageDao getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
     }
 

@@ -33,10 +33,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 /** A test case for the {@link RemoveStorageDomainCommand} */
@@ -48,16 +48,16 @@ public class RemoveStorageDomainCommandTest {
     private RemoveStorageDomainCommand<RemoveStorageDomainParameters> command;
 
     @Mock
-    private StorageDomainDAO storageDomainDAOMock;
+    private StorageDomainDao storageDomainDaoMock;
 
     @Mock
-    private StoragePoolDAO storagePoolDAOMock;
+    private StoragePoolDao storagePoolDaoMock;
 
     @Mock
-    private StoragePoolIsoMapDAO storagePoolIsoMapDAOMock;
+    private StoragePoolIsoMapDao storagePoolIsoMapDaoMock;
 
     @Mock
-    private VdsDAO vdsDAOMock;
+    private VdsDao vdsDaoMock;
 
     private StorageDomain storageDomain;
 
@@ -79,26 +79,26 @@ public class RemoveStorageDomainCommandTest {
 
         command = spy(new RemoveStorageDomainCommand<>(params));
 
-        doReturn(storageDomainDAOMock).when(command).getStorageDomainDAO();
-        doReturn(storageDomain).when(storageDomainDAOMock).get(storageDomainID);
-        doReturn(Collections.singletonList(storageDomain)).when(storageDomainDAOMock).getAllForStorageDomain(storageDomainID);
+        doReturn(storageDomainDaoMock).when(command).getStorageDomainDao();
+        doReturn(storageDomain).when(storageDomainDaoMock).get(storageDomainID);
+        doReturn(Collections.singletonList(storageDomain)).when(storageDomainDaoMock).getAllForStorageDomain(storageDomainID);
 
-        doReturn(storagePoolIsoMapDAOMock).when(command).getStoragePoolIsoMapDAO();
-        doReturn(Collections.emptyList()).when(storagePoolIsoMapDAOMock).getAllForStorage(storageDomainID);
+        doReturn(storagePoolIsoMapDaoMock).when(command).getStoragePoolIsoMapDao();
+        doReturn(Collections.emptyList()).when(storagePoolIsoMapDaoMock).getAllForStorage(storageDomainID);
 
-        doReturn(vdsDAOMock).when(command).getVdsDAO();
-        doReturn(vds).when(vdsDAOMock).get(vdsID);
+        doReturn(vdsDaoMock).when(command).getVdsDao();
+        doReturn(vds).when(vdsDaoMock).get(vdsID);
 
         StorageDomainToPoolRelationValidatorTesting domainToPoolValidator = spy(new StorageDomainToPoolRelationValidatorTesting(storageDomain, null));
-        doReturn(storagePoolIsoMapDAOMock).when(domainToPoolValidator).getStoragePoolIsoMapDao();
+        doReturn(storagePoolIsoMapDaoMock).when(domainToPoolValidator).getStoragePoolIsoMapDao();
         doReturn(domainToPoolValidator).when(command).createDomainToPoolValidator(storageDomain);
         doReturn(Boolean.FALSE).when(command).isStorageDomainAttached(storageDomain);
     }
 
     @Test
     public void testCanDoActionNonExistingStorageDomain() {
-        doReturn(null).when(storageDomainDAOMock).get(storageDomain.getId());
-        doReturn(Collections.emptyList()).when(storageDomainDAOMock).getAllForStorageDomain(storageDomain.getId());
+        doReturn(null).when(storageDomainDaoMock).get(storageDomain.getId());
+        doReturn(Collections.emptyList()).when(storageDomainDaoMock).getAllForStorageDomain(storageDomain.getId());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
                 "canDoAction shouldn't be possible for a non-existent storage domain",
                 command, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
@@ -188,7 +188,7 @@ public class RemoveStorageDomainCommandTest {
             super(domain.getStorageStaticData(), pool);
         }
 
-        public StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
+        public StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
             return DbFacade.getInstance().getStoragePoolIsoMapDao();
         }
     }

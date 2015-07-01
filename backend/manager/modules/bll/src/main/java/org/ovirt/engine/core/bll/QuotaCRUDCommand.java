@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.dao.QuotaDao;
 
 public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> {
 
@@ -21,7 +21,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
     public Quota getQuota() {
         if (quota == null) {
-            setQuota(getQuotaDAO().getById(getParameters().getQuotaId()));
+            setQuota(getQuotaDao().getById(getParameters().getQuotaId()));
         }
         return quota;
     }
@@ -49,7 +49,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
     }
 
     public boolean checkQuotaNameExisting(Quota quota, List<String> messages) {
-        Quota quotaByName = getQuotaDAO().getQuotaByQuotaName(quota.getQuotaName());
+        Quota quotaByName = getQuotaDao().getQuotaByQuotaName(quota.getQuotaName());
 
         // Check if there is no quota with the same name that already exists.
         if ((quotaByName != null) && (!quotaByName.getId().equals(quota.getId()))) {
@@ -114,7 +114,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
     }
 
-    protected QuotaDAO getQuotaDAO() {
+    protected QuotaDao getQuotaDao() {
         return getDbFacade().getQuotaDao();
     }
 

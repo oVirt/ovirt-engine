@@ -42,11 +42,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
-import org.ovirt.engine.core.dao.TagDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.TagDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -232,7 +231,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void removeVmStatic(boolean removePermissions) {
-        getVmStaticDAO().remove(getVmId(), removePermissions);
+        getVmStaticDao().remove(getVmId(), removePermissions);
     }
 
     protected List<VmNic> getInterfaces() {
@@ -264,7 +263,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected void endVmCommand() {
         if (getVm() != null) {
-            getVmStaticDAO().incrementDbGeneration(getVm().getId());
+            getVmStaticDao().incrementDbGeneration(getVm().getId());
         }
         endActionOnDisks();
         unlockVm();
@@ -506,7 +505,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return true;
     }
 
-    protected VmDeviceDAO getVmDeviceDao() {
+    protected VmDeviceDao getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
     }
 
@@ -516,11 +515,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return super.getVmNicDao();
     }
 
-    protected VmDynamicDAO getVmDynamicDao() {
-        return getDbFacade().getVmDynamicDao();
-    }
-
-    protected TagDAO getTagDao() {
+    protected TagDao getTagDao() {
         return getDbFacade().getTagDao();
     }
 
@@ -528,7 +523,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return getDbFacade().getDiskDao();
     }
 
-    protected DiskImageDAO getDiskImageDao() {
+    protected DiskImageDao getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
     }
 
@@ -591,6 +586,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected Snapshot getActiveSnapshot() {
-        return getSnapshotDAO().get(getVm().getId(), SnapshotType.ACTIVE);
+        return getSnapshotDao().get(getVm().getId(), SnapshotType.ACTIVE);
     }
 }

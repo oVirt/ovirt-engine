@@ -51,8 +51,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -485,7 +485,7 @@ public class RunVmValidator {
         return DbFacade.getInstance().getNetworkDao();
     }
 
-    protected VdsDynamicDAO getVdsDynamicDao() {
+    protected VdsDynamicDao getVdsDynamicDao() {
         return DbFacade.getInstance().getVdsDynamicDao();
     }
 
@@ -497,7 +497,7 @@ public class RunVmValidator {
         return DbFacade.getInstance().getVmNicDao();
     }
 
-    protected StorageDomainDAO getStorageDomainDAO() {
+    protected StorageDomainDao getStorageDomainDao() {
         return DbFacade.getInstance().getStorageDomainDao();
     }
 

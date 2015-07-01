@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.util.TypeLiteral;
 
-import org.ovirt.engine.core.dao.DAO;
+import org.ovirt.engine.core.dao.Dao;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -20,10 +20,10 @@ class CdiIntegration implements BeanDefinitionRegistryPostProcessor {
     private ConfigurableListableBeanFactory beanFactory;
 
     @Bean
-    public Instance<DAO> daos() {
+    public Instance<Dao> daos() {
         // Since the Spring runner doesn't support the CDI @Any annotation - we need to hand it to him manually
-        Map<String, DAO> daoMap = beanFactory.getBeansOfType(DAO.class);
-        Instance<DAO> daos = new InstanceImpl(daoMap.values());
+        Map<String, Dao> daoMap = beanFactory.getBeansOfType(Dao.class);
+        Instance<Dao> daos = new InstanceImpl(daoMap.values());
         return daos;
     }
 
@@ -36,36 +36,36 @@ class CdiIntegration implements BeanDefinitionRegistryPostProcessor {
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
     }
 
-    private static class InstanceImpl implements Instance<DAO> {
-        private Iterable<DAO> daos;
+    private static class InstanceImpl implements Instance<Dao> {
+        private Iterable<Dao> daos;
 
-        public InstanceImpl(Iterable<DAO> daos) {
+        public InstanceImpl(Iterable<Dao> daos) {
             super();
             this.daos = daos;
         }
 
         @Override
-        public DAO get() {
+        public Dao get() {
             return daos.iterator().next();
         }
 
         @Override
-        public Iterator<DAO> iterator() {
+        public Iterator<Dao> iterator() {
             return daos.iterator();
         }
 
         @Override
-        public <U extends DAO> Instance<U> select(TypeLiteral<U> subtype, Annotation... qualifiers) {
+        public <U extends Dao> Instance<U> select(TypeLiteral<U> subtype, Annotation... qualifiers) {
             return null;
         }
 
         @Override
-        public <U extends DAO> Instance<U> select(Class<U> subtype, Annotation... qualifiers) {
+        public <U extends Dao> Instance<U> select(Class<U> subtype, Annotation... qualifiers) {
             return null;
         }
 
         @Override
-        public Instance<DAO> select(Annotation... qualifiers) {
+        public Instance<Dao> select(Annotation... qualifiers) {
             return null;
         }
 

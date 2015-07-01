@@ -11,10 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class StorageQosDaoTest extends BaseDAOTestCase {
+public class StorageQosDaoTest extends BaseDaoTestCase {
 
     private StorageQosDao dao;
 

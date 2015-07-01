@@ -26,7 +26,7 @@ public class AddLibvirtSecretCommand extends LibvirtSecretCommandBase {
     protected void executeCommand() {
         super.executeCommand();
         getParameters().getLibvirtSecret().setCreationDate(new Date());
-        getLibvirtSecretDAO().save(getParameters().getLibvirtSecret());
+        getLibvirtSecretDao().save(getParameters().getLibvirtSecret());
         registerLibvirtSecret();
         setSucceeded(true);
     }

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.LunDAO;
+import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class DetachStorageConnectionFromStorageDomainCommandTest {
     Guid domainId = Guid.newGuid();
 
     @Mock
-    LunDAO lunDao;
+    LunDao lunDao;
 
     @Before
     public void init() {

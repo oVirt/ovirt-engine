@@ -23,7 +23,7 @@ public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesComman
                 addCanDoActionMessage(VdcBllMessages.VAR__TYPE__ROLE);
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
             } else {
-                if (getPermissionDAO().getAllForRole(getParameters().getRoleId()).size() != 0) {
+                if (getPermissionDao().getAllForRole(getParameters().getRoleId()).size() != 0) {
                     returnValue = false;
                     addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_ROLE_ATTACHED_TO_PERMISSION);
 

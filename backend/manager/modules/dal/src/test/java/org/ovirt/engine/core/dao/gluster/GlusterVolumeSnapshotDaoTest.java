@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStat
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
-public class GlusterVolumeSnapshotDaoTest extends BaseDAOTestCase {
+public class GlusterVolumeSnapshotDaoTest extends BaseDaoTestCase {
     private static final Guid VOLUME_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid EXISTING_SNAPSHOT_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea6");

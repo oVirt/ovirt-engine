@@ -45,7 +45,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
             @Override
             public Void runInTransaction() {
-                getNetworkDAO().save(getNetwork());
+                getNetworkDao().save(getNetwork());
 
                 if (getNetwork().isVmNetwork() && getParameters().isVnicProfileRequired()) {
                     getVnicProfileDao().save(NetworkHelper.createVnicProfile(getNetwork()));

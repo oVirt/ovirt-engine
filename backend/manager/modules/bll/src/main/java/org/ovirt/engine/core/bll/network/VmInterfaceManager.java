@@ -28,7 +28,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
@@ -168,7 +168,7 @@ public class VmInterfaceManager {
             return Collections.emptyList();
         }
 
-        List<VM> runningVms = getVmDAO().getAllRunningForVds(vdsId);
+        List<VM> runningVms = getVmDao().getAllRunningForVds(vdsId);
         List<String> vmNames = new ArrayList<>();
         for (VM vm : runningVms) {
             List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
@@ -257,7 +257,7 @@ public class VmInterfaceManager {
         return DbFacade.getInstance().getVmNicDao();
     }
 
-    protected VmDAO getVmDAO() {
+    protected VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
     }
 

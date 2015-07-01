@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.dao.UserProfileDAO;
+import org.ovirt.engine.core.dao.UserProfileDao;
 import org.ovirt.engine.core.uutils.ssh.OpenSSHUtils;
 
 
@@ -19,7 +19,7 @@ public abstract class UserProfilesOperationCommandBase<T extends UserProfilePara
     static final private String SSH_RSA = "ssh-rsa";
 
     @Inject
-    protected UserProfileDAO userProfileDao;
+    protected UserProfileDao userProfileDao;
 
     public UserProfilesOperationCommandBase(T parameters) {
         this(parameters, null);

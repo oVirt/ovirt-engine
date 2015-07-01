@@ -91,7 +91,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
 
     private StoragePool getStoragePoolForVds() {
         if (storagePoolForVds == null) {
-            storagePoolForVds = getStoragePoolDAO().getForVds(getVds().getId());
+            storagePoolForVds = getStoragePoolDao().getForVds(getVds().getId());
         }
         return storagePoolForVds;
     }

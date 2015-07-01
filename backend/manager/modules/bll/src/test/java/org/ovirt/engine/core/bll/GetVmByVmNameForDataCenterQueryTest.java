@@ -9,11 +9,11 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 /**
  * A test case for {@link GetVmByVmNameForDataCenterQuery}.
- * It does not test database implementation, but rather tests that the right delegations to the DAO occur.
+ * It does not test database implementation, but rather tests that the right delegations to the Dao occur.
  */
 public class GetVmByVmNameForDataCenterQueryTest extends AbstractUserQueryTest<GetVmByVmNameForDataCenterParameters, GetVmByVmNameForDataCenterQuery<GetVmByVmNameForDataCenterParameters>> {
     @Test
@@ -27,9 +27,9 @@ public class GetVmByVmNameForDataCenterQueryTest extends AbstractUserQueryTest<G
         when(paramsMock.getName()).thenReturn(VM_NAME);
         when(paramsMock.getDataCenterId()).thenReturn(dataCenterId);
 
-        VmDAO vmDAOMock = mock(VmDAO.class);
-        when(vmDAOMock.getByNameForDataCenter(dataCenterId, VM_NAME, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
-        when(getQuery().getDbFacade().getVmDao()).thenReturn(vmDAOMock);
+        VmDao vmDaoMock = mock(VmDao.class);
+        when(vmDaoMock.getByNameForDataCenter(dataCenterId, VM_NAME, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
+        when(getQuery().getDbFacade().getVmDao()).thenReturn(vmDaoMock);
 
         doNothing().when(getQuery()).updateVMDetails(expectedResult);
         getQuery().executeQueryCommand();

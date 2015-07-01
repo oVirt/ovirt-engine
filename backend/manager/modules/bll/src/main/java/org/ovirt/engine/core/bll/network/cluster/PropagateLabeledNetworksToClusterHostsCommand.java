@@ -60,7 +60,7 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
     }
 
     private boolean isSetupNetworkSupported(Guid clusterId) {
-        final VDSGroup cluster = getVdsGroupDAO().get(clusterId);
+        final VDSGroup cluster = getVdsGroupDao().get(clusterId);
         return NetworkHelper.setupNetworkSupported(cluster.getCompatibilityVersion());
     }
 

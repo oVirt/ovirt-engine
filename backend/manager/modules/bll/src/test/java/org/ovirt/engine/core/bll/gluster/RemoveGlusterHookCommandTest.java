@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,7 +45,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
     RemoveGlusterHookCommand cmd;
 
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
 
     private void setUpMocksForRemove() {
         setUpMocksForRemove(true);
@@ -57,7 +57,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
 
     private void setUpMocksForRemove(boolean hookFound, GlusterHookEntity hook, VDSStatus status) {
         setupMocks(cmd, hookFound, hook);
-        doReturn(vdsDao).when(cmd).getVdsDAO();
+        doReturn(vdsDao).when(cmd).getVdsDao();
         when(vdsDao.getAllForVdsGroup(any(Guid.class))).thenReturn(getServers(status));
     }
 

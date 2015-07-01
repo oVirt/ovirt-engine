@@ -45,13 +45,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmJobDao;
-import org.ovirt.engine.core.dao.VmStaticDAO;
-import org.ovirt.engine.core.dao.VmStatisticsDAO;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 @RunWith(Theories.class)
@@ -75,17 +75,17 @@ public class VmAnalyzerTest {
     @Captor
     private ArgumentCaptor<VDSParametersBase> vdsParamsCaptor;
     @Mock
-    private VmStatisticsDAO vmStatisticsDAO;
+    private VmStatisticsDao vmStatisticsDao;
     @Mock
-    private VmStaticDAO vmStaticDAO;
+    private VmStaticDao vmStaticDao;
     @Mock
-    private VmDynamicDAO vmDynamicDao;
+    private VmDynamicDao vmDynamicDao;
     @Mock
     private VDSGroup vdsGroup;
     @Mock
-    private VdsGroupDAO vdsGroupDAO;
+    private VdsGroupDao vdsGroupDao;
     @Mock
-    private VdsDAO vdsDAO;
+    private VdsDao vdsDao;
     @Mock
     private VDS srcHost;
     @Mock
@@ -101,7 +101,7 @@ public class VmAnalyzerTest {
     @Mock
     private VmJobDao vmJobsDao;
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
     @Mock
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
@@ -374,18 +374,18 @@ public class VmAnalyzerTest {
         mockCluster();
         mockVdsDao();
         doReturn(dbFacade).when(vmsMonitoring).getDbFacade();
-        doReturn(vmStatisticsDAO).when(dbFacade).getVmStatisticsDao();
+        doReturn(vmStatisticsDao).when(dbFacade).getVmStatisticsDao();
         doReturn(vmDynamicDao).when(dbFacade).getVmDynamicDao();
-        doReturn(vmStaticDAO).when(dbFacade).getVmStaticDao();
+        doReturn(vmStaticDao).when(dbFacade).getVmStaticDao();
         doReturn(vmNetworkInterfaceDao).when(dbFacade).getVmNetworkInterfaceDao();
         doReturn(vmJobsDao).when(dbFacade).getVmJobDao();
-        doReturn(vdsGroupDAO).when(dbFacade).getVdsGroupDao();
-        doReturn(vdsDAO).when(dbFacade).getVdsDao();
-        doReturn(vmDAO).when(dbFacade).getVmDao();
+        doReturn(vdsGroupDao).when(dbFacade).getVdsGroupDao();
+        doReturn(vdsDao).when(dbFacade).getVdsDao();
+        doReturn(vmDao).when(dbFacade).getVmDao();
     }
 
     private void mockStatistics() {
-        when(vmStatisticsDAO.get((Guid) anyObject())).thenReturn(mock(VmStatistics.class));
+        when(vmStatisticsDao.get((Guid) anyObject())).thenReturn(mock(VmStatistics.class));
     }
 
     private void mockVmDynamic() {
@@ -393,8 +393,8 @@ public class VmAnalyzerTest {
     }
 
     private void mockVmStatic(boolean stubExists) {
-        Mockito.reset(vmStaticDAO);
-        when(vmStaticDAO.get((Guid) anyObject())).thenReturn(stubExists ? mock(VmStatic.class) : null);
+        Mockito.reset(vmStaticDao);
+        when(vmStaticDao.get((Guid) anyObject())).thenReturn(stubExists ? mock(VmStatic.class) : null);
     }
 
     private void mockVmJob() {
@@ -403,12 +403,12 @@ public class VmAnalyzerTest {
     }
 
     private void mockCluster() {
-        when(vdsGroupDAO.get(VmTestPairs.CLUSTER_ID)).thenReturn(vdsGroup);
+        when(vdsGroupDao.get(VmTestPairs.CLUSTER_ID)).thenReturn(vdsGroup);
     }
 
     private void mockVdsDao() {
-        when(vdsDAO.get(VmTestPairs.SRC_HOST_ID)).thenReturn(srcHost);
-        when(vdsDAO.get(VmTestPairs.DST_HOST_ID)).thenReturn(dstHost);
+        when(vdsDao.get(VmTestPairs.SRC_HOST_ID)).thenReturn(srcHost);
+        when(vdsDao.get(VmTestPairs.DST_HOST_ID)).thenReturn(dstHost);
     }
 
     private void mockDstHostStatus(VDSStatus status) {
@@ -419,13 +419,13 @@ public class VmAnalyzerTest {
     private void mockVmInDbForDstVms(VmTestPairs vmData) {
         if (vmData.dbVm() == null && vmData.vdsmVm() != null) {
             VM dbVm = vmData.createDbVm();
-            when(vmDAO.get(vmData.vdsmVm().getVmDynamic().getId()))
+            when(vmDao.get(vmData.vdsmVm().getVmDynamic().getId()))
                     .thenReturn(dbVm);
         }
     }
     private void mockVmNotInDb(VmTestPairs vmData) {
         if (vmData.vdsmVm() != null) {
-            when(vmDAO.get(vmData.vdsmVm().getVmDynamic().getId()))
+            when(vmDao.get(vmData.vdsmVm().getVmDynamic().getId()))
                     .thenReturn(null);
         }
     }

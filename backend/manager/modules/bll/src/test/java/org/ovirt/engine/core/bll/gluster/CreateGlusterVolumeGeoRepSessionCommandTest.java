@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -52,10 +52,10 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
     GlusterVolumeDao volumeDao;
 
     @Mock
-    VdsDAO vdsDao;
+    VdsDao vdsDao;
 
     @Mock
-    VdsGroupDAO vdsGroupDao;
+    VdsGroupDao vdsGroupDao;
 
     @Mock
     GlusterGeoRepDao geoRepDao;
@@ -93,8 +93,8 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest {
         doReturn(volume).when(volumeDao).getById(masterVolumeId);
         doReturn(GlusterStatus.UP).when(volume).getStatus();
         doReturn(vdsGroup).when(command).getVdsGroup();
-        doReturn(vdsGroupDao).when(command).getVdsGroupDAO();
-        doReturn(vdsDao).when(command).getVdsDAO();
+        doReturn(vdsGroupDao).when(command).getVdsGroupDao();
+        doReturn(vdsDao).when(command).getVdsDao();
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(geoRepDao).when(command).getGeoRepDao();
         doReturn(vds).when(command).getUpServer();

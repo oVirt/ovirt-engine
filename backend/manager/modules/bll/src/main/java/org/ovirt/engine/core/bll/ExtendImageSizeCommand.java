@@ -181,7 +181,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
 
     private List<VM> getVmsDiskPluggedTo() {
         if (vmsDiskPluggedTo == null) {
-            List<Pair<VM, VmDevice>> attachedVmsInfo = getVmDAO().getVmsWithPlugInfo(getImage().getId());
+            List<Pair<VM, VmDevice>> attachedVmsInfo = getVmDao().getVmsWithPlugInfo(getImage().getId());
             vmsDiskPluggedTo = new LinkedList<>();
 
             for (Pair<VM, VmDevice> pair : attachedVmsInfo) {

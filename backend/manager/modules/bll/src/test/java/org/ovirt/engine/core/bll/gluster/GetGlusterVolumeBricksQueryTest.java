@@ -50,7 +50,7 @@ AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParamete
         // Mock the query's parameters
         when(getQueryParameters().getId()).thenReturn(expected.getId());
 
-        // Mock the DAO
+        // Mock the Dao
         glusterBrickDaoMock = mock(GlusterBrickDao.class);
         when(glusterBrickDaoMock.getBricksOfVolume(expected.getId())).thenReturn(bricks);
         doReturn(glusterBrickDaoMock).when(getQuery()).getGlusterBrickDao();

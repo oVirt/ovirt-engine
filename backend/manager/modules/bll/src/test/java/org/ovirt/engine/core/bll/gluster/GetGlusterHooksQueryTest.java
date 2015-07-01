@@ -42,7 +42,7 @@ public class GetGlusterHooksQueryTest extends
         // Mock the query's parameters
         doReturn(CLUSTER_ID).when(getQueryParameters()).getClusterId();
 
-        // Mock the DAO
+        // Mock the Dao
         glusterHookDaoMock = mock(GlusterHooksDao.class);
         doReturn(glusterHookDaoMock).when(getQuery()).getGlusterHookDao();
     }

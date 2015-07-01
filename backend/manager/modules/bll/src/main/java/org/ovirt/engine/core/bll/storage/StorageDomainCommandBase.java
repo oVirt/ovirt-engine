@@ -40,12 +40,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
-import org.ovirt.engine.core.dao.LunDAO;
-import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -103,7 +102,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 && isMaster()) {
 
             StorageDomain storage_domains =
-                    LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool
+                    LinqUtils.firstOrNull(getStorageDomainDao().getAllForStoragePool
                             (getStorageDomain().getStoragePoolId()),
                             new Predicate<StorageDomain>() {
                                 @Override
@@ -132,7 +131,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     private StoragePoolIsoMap getStoragePoolIsoMap() {
-        return getStoragePoolIsoMapDAO()
+        return getStoragePoolIsoMapDao()
                 .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getStoragePoolId()));
     }
@@ -195,7 +194,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean checkMasterDomainIsUp() {
         boolean returnValue = true;
-        List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
+        List<StorageDomain> storageDomains = getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
         storageDomains = LinqUtils.filter(storageDomains, new Predicate<StorageDomain>() {
             @Override
             public boolean eval(StorageDomain a) {
@@ -217,7 +216,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 context.snapshotEntityStatus(map);
             }
             getStorageDomain().setStatus(status);
-            getStoragePoolIsoMapDAO().updateStatus(map.getId(), status);
+            getStoragePoolIsoMapDao().updateStatus(map.getId(), status);
         }
     }
 
@@ -269,7 +268,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         proceedLUNInDb(lun, storageType, "");
     }
 
-    protected LunDAO getLunDao() {
+    protected LunDao getLunDao() {
         return DbFacade.getInstance().getLunDao();
     }
 
@@ -389,7 +388,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             return null;
         }
 
-        List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
+        List<StorageDomain> storageDomains = getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
 
         if (storageDomains.isEmpty()) {
             log.warn("Cannot elect new master, no storage domains found for pool {}", getStoragePool().getName());
@@ -451,7 +450,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             public StoragePoolIsoMap runInTransaction() {
                 context.snapshotEntityStatus(map);
                 map.setStatus(status);
-                getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getStatus());
+                getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
                 context.stateChanged();
                 return null;
             }
@@ -489,19 +488,15 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return getDbFacade().getImageDao();
     }
 
-    protected DiskImageDynamicDAO getDiskImageDynamicDAO() {
+    protected DiskImageDynamicDao getDiskImageDynamicDao() {
         return getDbFacade().getDiskImageDynamicDao();
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return getDbFacade().getSnapshotDao();
     }
 
     protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {
         return getDbFacade().getImageStorageDomainMapDao();
     }
 
-    protected StorageServerConnectionDAO getStorageServerConnectionDAO() {
+    protected StorageServerConnectionDao getStorageServerConnectionDao() {
         return getDbFacade().getStorageServerConnectionDao();
     }
 

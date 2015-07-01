@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VdsKdumpStatus;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface VdsKdumpStatusDao extends DAO {
+public interface VdsKdumpStatusDao extends Dao {
     /**
      * Updates kdump status record for specified VDS
      *

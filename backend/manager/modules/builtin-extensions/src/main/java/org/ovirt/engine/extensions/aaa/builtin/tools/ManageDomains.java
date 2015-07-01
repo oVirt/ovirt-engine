@@ -92,7 +92,7 @@ public class ManageDomains {
     private final ManageDomainsResult OK_RESULT = new ManageDomainsResult(ManageDomainsResultEnum.OK);
     private ManageDomainsConfiguration utilityConfiguration;
     private ConfigurationProvider configurationProvider;
-    private ManageDomainsDAOImpl daoImpl;
+    private ManageDomainsDaoImpl daoImpl;
     private boolean useDnsLookup;
 
     private final static Logger log = LoggerFactory.getLogger(ManageDomains.class);
@@ -141,7 +141,7 @@ public class ManageDomains {
         }
 
         try {
-            daoImpl = new ManageDomainsDAOImpl();
+            daoImpl = new ManageDomainsDaoImpl();
         } catch (SQLException e) {
             throw new ManageDomainsResult("Please verify the following:\n1. Your database credentials are valid.\n2. The database machine is accessible.\n3. The database service is running",
                     ManageDomainsResultEnum.DB_EXCEPTION,

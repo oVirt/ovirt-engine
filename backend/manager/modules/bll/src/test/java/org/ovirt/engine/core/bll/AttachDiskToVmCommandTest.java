@@ -29,10 +29,10 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AttachDiskToVmCommandTest {
@@ -45,16 +45,16 @@ public class AttachDiskToVmCommandTest {
     private DiskDao diskDao;
 
     @Mock
-    private VmDeviceDAO vmDeviceDAO;
+    private VmDeviceDao vmDeviceDao;
 
     @Mock
-    private StorageDomainDAO storageDomainDAO;
+    private StorageDomainDao storageDomainDao;
 
     @Mock
-    private StoragePoolIsoMapDAO storagePoolIsoMapDAO;
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
 
     @Mock
     private DiskValidator diskValidator;
@@ -87,9 +87,9 @@ public class AttachDiskToVmCommandTest {
         doReturn(true).when(command).checkDiskUsedAsOvfStore(diskValidator);
         doReturn(false).when(command).isOperationPerformedOnDiskSnapshot();
 
-        doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
-        doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
-        doReturn(storagePoolIsoMapDAO).when(command).getStoragePoolIsoMapDao();
+        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
+        doReturn(storageDomainDao).when(command).getStorageDomainDao();
+        doReturn(storagePoolIsoMapDao).when(command).getStoragePoolIsoMapDao();
         mockStoragePoolIsoMap();
     }
 
@@ -143,7 +143,7 @@ public class AttachDiskToVmCommandTest {
         vm.setStatus(VMStatus.Down);
         vm.setStoragePoolId(Guid.newGuid());
         vm.setId(vmId);
-        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
 
         return vm;
     }
@@ -174,7 +174,7 @@ public class AttachDiskToVmCommandTest {
 
     private void mockStoragePoolIsoMap() {
         StoragePoolIsoMap spim = new StoragePoolIsoMap();
-        when(storagePoolIsoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(spim);
+        when(storagePoolIsoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(spim);
     }
 
     private DiskImage createDiskImage() {

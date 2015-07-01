@@ -91,7 +91,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
     }
 
     private boolean networkExists() {
-        return getNetworkClusterDAO().get(getNetworkCluster().getId()) != null;
+        return getNetworkClusterDao().get(getNetworkCluster().getId()) != null;
     }
 
     private boolean vdsGroupExists() {
@@ -107,7 +107,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
     }
 
     private void attachNetwork(Guid clusterId, NetworkCluster networkCluster, Network network) {
-        getNetworkClusterDAO().save(new NetworkCluster(clusterId, network.getId(),
+        getNetworkClusterDao().save(new NetworkCluster(clusterId, network.getId(),
                 NetworkStatus.OPERATIONAL,
                 false,
                 networkCluster.isRequired(),
@@ -117,8 +117,8 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
 
         if (network.getCluster().isDisplay()) {
             final DisplayNetworkClusterHelper displayNetworkClusterHelper = new DisplayNetworkClusterHelper(
-                    getNetworkClusterDAO(),
-                    getVmDAO(),
+                    getNetworkClusterDao(),
+                    getVmDao(),
                     networkCluster,
                     network.getName(),
                     auditLogDirector);
@@ -126,11 +126,11 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
                 displayNetworkClusterHelper.warnOnActiveVm();
             }
 
-            getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(clusterId, network.getId());
+            getNetworkClusterDao().setNetworkExclusivelyAsDisplay(clusterId, network.getId());
         }
 
         if (network.getCluster().isMigration()) {
-            getNetworkClusterDAO().setNetworkExclusivelyAsMigration(clusterId, network.getId());
+            getNetworkClusterDao().setNetworkExclusivelyAsMigration(clusterId, network.getId());
         }
 
         NetworkClusterHelper.setStatus(clusterId, network);

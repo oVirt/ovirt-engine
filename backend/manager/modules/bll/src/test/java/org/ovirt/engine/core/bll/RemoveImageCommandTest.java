@@ -48,7 +48,7 @@ public class RemoveImageCommandTest {
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Mock
-    private SnapshotDao snapshotDAO;
+    private SnapshotDao snapshotDao;
 
     @Mock
     OsRepository osRepository;
@@ -82,7 +82,7 @@ public class RemoveImageCommandTest {
             }
 
         });
-        doReturn(snapshotDAO).when(cmd).getSnapshotDao();
+        doReturn(snapshotDao).when(cmd).getSnapshotDao();
 
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
@@ -108,7 +108,7 @@ public class RemoveImageCommandTest {
         snap.setVmConfiguration(ovf);
         snap.setId(vmSnapshotId);
 
-        when(snapshotDAO.get(vmSnapshotId)).thenReturn(snap);
+        when(snapshotDao.get(vmSnapshotId)).thenReturn(snap);
         doReturn(disk2).when(cmd).getDiskImage();
         doReturn(disk2).when(cmd).getImage();
         doReturn(disk2.getId()).when(cmd).getImageId();
@@ -142,7 +142,7 @@ public class RemoveImageCommandTest {
         snap.setVmConfiguration(ovf);
         snap.setId(vmSnapshotId);
 
-        when(snapshotDAO.get(vmSnapshotId)).thenReturn(snap);
+        when(snapshotDao.get(vmSnapshotId)).thenReturn(snap);
         doReturn(disk2).when(cmd).getDiskImage();
         doReturn(disk2).when(cmd).getImage();
         doReturn(disk2.getId()).when(cmd).getImageId();

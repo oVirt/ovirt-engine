@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
-import org.ovirt.engine.core.dao.RoleDAO;
+import org.ovirt.engine.core.dao.RoleDao;
 
 /** A test case for the {@link GetAllRolesQuery} class. */
 public class GetAllRolesQueryTest extends AbstractUserQueryTest<MultilevelAdministrationsQueriesParameters, GetAllRolesQuery<MultilevelAdministrationsQueriesParameters>> {
@@ -22,10 +22,10 @@ public class GetAllRolesQueryTest extends AbstractUserQueryTest<MultilevelAdmini
         role.setName("test role");
         List<Role> result = Collections.singletonList(role);
 
-        // Mock the DAO
-        RoleDAO roleDAOMock = mock(RoleDAO.class);
-        when(roleDAOMock.getAll()).thenReturn(result);
-        when(getDbFacadeMockInstance().getRoleDao()).thenReturn(roleDAOMock);
+        // Mock the Dao
+        RoleDao roleDaoMock = mock(RoleDao.class);
+        when(roleDaoMock.getAll()).thenReturn(result);
+        when(getDbFacadeMockInstance().getRoleDao()).thenReturn(roleDaoMock);
 
         // Execute the query
         getQuery().executeQueryCommand();

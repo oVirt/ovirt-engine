@@ -14,10 +14,10 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
+public class GlusterGeoRepDaoTest extends BaseDaoTestCase {
 
     private static final String GEOREP_CONFIG_CRAWL = "georep-crawl";
     private static final Guid SESSION_ID = new Guid("4f4f751e-549b-4e7a-aff6-32d36856c125");

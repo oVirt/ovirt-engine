@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public class GlusterDBUtils {
@@ -68,7 +68,7 @@ public class GlusterDBUtils {
         updateBricksStatuses(volumeId, newStatus);
     }
 
-    private VdsStaticDAO getVdsStaticDao() {
+    private VdsStaticDao getVdsStaticDao() {
         return DbFacade.getInstance().getVdsStaticDao();
     }
 

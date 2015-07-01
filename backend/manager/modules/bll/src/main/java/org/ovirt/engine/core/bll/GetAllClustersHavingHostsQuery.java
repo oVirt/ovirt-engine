@@ -3,11 +3,11 @@ package org.ovirt.engine.core.bll;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 
 public class GetAllClustersHavingHostsQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     @Inject
-    private VdsGroupDAO clusterDao;
+    private VdsGroupDao clusterDao;
 
     public GetAllClustersHavingHostsQuery(P parameters) {
         super(parameters);

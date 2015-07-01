@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDAO;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
 public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetachStorageConnectionParameters>
         extends StorageDomainCommandBase<T> {
@@ -40,7 +40,7 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
 
     protected StorageConnectionValidator createStorageConnectionValidator() {
         String connectionId = getParameters().getStorageConnectionId();
-        StorageServerConnections connection = getStorageServerConnectionDAO().get(connectionId);
+        StorageServerConnections connection = getStorageServerConnectionDao().get(connectionId);
 
         return new StorageConnectionValidator(connection);
     }
@@ -60,7 +60,7 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
             getLunDao().save(dummyLun);
 
             // Save connection maps when creating the dummy lun for the first time
-            connectionsForDomain = getStorageServerConnectionDAO().getAllForDomain(getStorageDomainId());
+            connectionsForDomain = getStorageServerConnectionDao().getAllForDomain(getStorageDomainId());
             for (StorageServerConnections connection : connectionsForDomain) {
                 saveConnection(new LUNStorageServerConnectionMap(dummyLun.getLUN_id(), connection.getid()));
             }
@@ -103,7 +103,7 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__CONNECTION);
     }
 
-    protected StorageServerConnectionLunMapDAO getStorageServerConnectionLunMapDao() {
+    protected StorageServerConnectionLunMapDao getStorageServerConnectionLunMapDao() {
         return getDbFacade().getStorageServerConnectionLunMapDao();
     }
 }

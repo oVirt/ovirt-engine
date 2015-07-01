@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 
 @InternalCommandAttribute
@@ -96,9 +95,5 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         StorageDomainOvfInfo storageDomainOvfInfo =
                 new StorageDomainOvfInfo(getStorageDomainId(), null, diskId, StorageDomainOvfInfoStatus.DISABLED, null);
         getStorageDomainOvfInfoDao().save(storageDomainOvfInfo);
-    }
-
-    protected StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {
-        return getDbFacade().getStorageDomainOvfInfoDao();
     }
 }

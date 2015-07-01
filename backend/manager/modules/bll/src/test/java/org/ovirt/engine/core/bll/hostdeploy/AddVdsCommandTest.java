@@ -36,8 +36,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.slf4j.Logger;
@@ -51,9 +51,9 @@ public class AddVdsCommandTest {
     @Mock
     private AddVdsCommand<AddVdsActionParameters> commandMock;
     @Mock
-    private VdsGroupDAO groupDAOMock;
+    private VdsGroupDao groupDaoMock;
     @Mock
-    private VdsDAO vdsDaoMock;
+    private VdsDao vdsDaoMock;
     @Mock
     private ClusterUtils clusterUtils;
     @Mock
@@ -101,11 +101,11 @@ public class AddVdsCommandTest {
         when(commandMock.getParameters()).thenReturn(parameters);
 
         when(commandMock.isGlusterSupportEnabled()).thenReturn(glusterEnabled);
-        when(commandMock.getVdsGroupDAO()).thenReturn(groupDAOMock);
+        when(commandMock.getVdsGroupDao()).thenReturn(groupDaoMock);
         when(commandMock.getClusterUtils()).thenReturn(clusterUtils);
 
         when(vdsDaoMock.get(vdsId)).thenReturn(null);
-        when(commandMock.getVdsDAO()).thenReturn(vdsDaoMock);
+        when(commandMock.getVdsDao()).thenReturn(vdsDaoMock);
         when(commandMock.validateVdsGroup()).thenReturn(true);
         when(commandMock.isPowerManagementLegal(any(Boolean.class), anyListOf(FenceAgent.class), any(String.class))).thenReturn(true);
         when(commandMock.getSSHClient()).thenReturn(sshClient);

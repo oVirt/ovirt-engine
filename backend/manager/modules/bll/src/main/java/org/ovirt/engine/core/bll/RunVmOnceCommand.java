@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.OsRepositoryImpl;
 
 @NonTransactiveCommandAttribute
@@ -105,7 +105,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     }
 
     private void loadPayload() {
-        VmDeviceDAO dao = getDbFacade().getVmDeviceDao();
+        VmDeviceDao dao = getDbFacade().getVmDeviceDao();
         List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getParameters().getVmId(), VmDeviceGeneralType.DISK);
 
         for (VmDevice disk : disks) {

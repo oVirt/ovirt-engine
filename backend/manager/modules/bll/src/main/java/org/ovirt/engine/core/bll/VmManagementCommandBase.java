@@ -63,7 +63,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     protected InstanceType getInstanceType() {
         if (instanceType == null && getInstanceTypeId() != null) {
-            instanceType = getVmTemplateDAO().getInstanceType(getInstanceTypeId());
+            instanceType = getVmTemplateDao().getInstanceType(getInstanceTypeId());
         }
         return instanceType;
     }
@@ -151,7 +151,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     }
 
     protected VDS getVds(Guid id) {
-        return getVdsDAO().get(id);
+        return getVdsDao().get(id);
     }
 
     private Collection<Integer> parsePCpuPinningNumbers(final String text) {

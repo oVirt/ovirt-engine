@@ -20,11 +20,11 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class InterfaceDaoTest extends BaseDAOTestCase {
+public class InterfaceDaoTest extends BaseDaoTestCase {
     private static final String IP_ADDR = "10.35.110.10";
     private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
@@ -139,7 +139,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
 
     /**
      * Ensures that statistics are removed for the specified VDS interface, in which case it shouldn't be returned by
-     * the DAO (as the interface view is an inner join with the statistics).
+     * the Dao (as the interface view is an inner join with the statistics).
      */
     @Test
     public void testRemoveStatisticsForVdsInterface() {

@@ -34,9 +34,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -49,11 +49,11 @@ public class StorageDomainToPoolRelationValidatorTest {
     private StorageDomainToPoolRelationValidator validator;
 
     @Mock
-    private StoragePoolDAO storagePoolDAO;
+    private StoragePoolDao storagePoolDao;
     @Mock
-    private StorageDomainDAO storageDomainDAO;
+    private StorageDomainDao storageDomainDao;
     @Mock
-    private StoragePoolIsoMapDAO storagePoolIsoMapDAO;
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     @Before
     public void setUp() throws Exception {
@@ -68,7 +68,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         storagePool.setId(Guid.newGuid());
         storagePool.setCompatibilityVersion(Version.v3_5);
 
-        when(storagePoolIsoMapDAO.getAllForStorage(any(Guid.class))).thenReturn(new ArrayList<StoragePoolIsoMap>());
+        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(new ArrayList<StoragePoolIsoMap>());
         spyValidator();
     }
 
@@ -76,10 +76,10 @@ public class StorageDomainToPoolRelationValidatorTest {
         // Create the spied validators.
         validator = spy(new StorageDomainToPoolRelationValidator(storageDomain.getStorageStaticData(), storagePool));
 
-        doReturn(storagePoolIsoMapDAO).when(validator).getStoragePoolIsoMapDao();
+        doReturn(storagePoolIsoMapDao).when(validator).getStoragePoolIsoMapDao();
 
-        doReturn(storagePoolDAO).when(validator).getStoragePoolDao();
-        doReturn(storageDomainDAO).when(validator).getStorageDomainDao();
+        doReturn(storagePoolDao).when(validator).getStoragePoolDao();
+        doReturn(storageDomainDao).when(validator).getStorageDomainDao();
     }
 
     @ClassRule
@@ -119,7 +119,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         storageDomain.setStorageFormat(StorageFormatType.V1);
 
         // Mock the pool to have a NFS type domain
-        when(storagePoolDAO.getStorageTypesInPool(storagePool.getId())).thenReturn(Collections.singletonList(StorageType.NFS));
+        when(storagePoolDao.getStorageTypesInPool(storagePool.getId())).thenReturn(Collections.singletonList(StorageType.NFS));
 
         storageDomain.setStorageType(StorageType.ISCSI);
         for (Version version : Version.ALL) {
@@ -238,7 +238,7 @@ public class StorageDomainToPoolRelationValidatorTest {
     public void testAttachFailDomainAlreadyInPool() {
         List<StoragePoolIsoMap> isoMap = new ArrayList<>();
         isoMap.add(new StoragePoolIsoMap());
-        when(storagePoolIsoMapDAO.getAllForStorage(any(Guid.class))).thenReturn(isoMap);
+        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(isoMap);
 
         ValidationResult attachedDomainInsertionResult = validator.validateDomainCanBeAttachedToPool();
         assertFalse("Attaching domain that is already in a pool succeeded while it should have failed",
@@ -285,7 +285,7 @@ public class StorageDomainToPoolRelationValidatorTest {
             StorageDomain domainWithSameType = new StorageDomain();
             domainWithSameType.setStorageDomainType(type);
             domainList.add(domainWithSameType);
-            when(storageDomainDAO.getAllForStoragePool(any(Guid.class))).thenReturn(domainList);
+            when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(domainList);
 
             ValidationResult attachMultipleISOOrExportResult = validator.validateDomainCanBeAttachedToPool();
             assertFalse("Attaching domain of type " + type + " succeeded while it should have failed",

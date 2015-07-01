@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
@@ -53,9 +53,9 @@ public class FindVmAndDestinations {
         this.requiredMemory = requiredMemory;
     }
 
-    public Result invoke(List<VDS> sourceHosts, List<VDS> destinationHosts, VmDAO vmDAO) {
+    public Result invoke(List<VDS> sourceHosts, List<VDS> destinationHosts, VmDao vmDao) {
         VDS randomHost = sourceHosts.get(new Random().nextInt(sourceHosts.size()));
-        List<VM> migrableVmsOnRandomHost = getMigratableVmsRunningOnVds(vmDAO, randomHost.getId());
+        List<VM> migrableVmsOnRandomHost = getMigratableVmsRunningOnVds(vmDao, randomHost.getId());
 
         VM vmToMigrate = getBestVmToMigrate(migrableVmsOnRandomHost);
 
@@ -91,12 +91,12 @@ public class FindVmAndDestinations {
     /**
      * Return all VMs that run on a host and can be migrated away.
      *
-     * @param vmDAO The data source to get the VM information
+     * @param vmDao The data source to get the VM information
      * @param hostId Id of a host the returned VMs run at
      * @return list od VM that run on host and can be migrated
      */
-    private List<VM> getMigratableVmsRunningOnVds(final VmDAO vmDAO, final Guid hostId) {
-        List<VM> vmsFromDB = vmDAO.getAllRunningForVds(hostId);
+    private List<VM> getMigratableVmsRunningOnVds(final VmDao vmDao, final Guid hostId) {
+        List<VM> vmsFromDB = vmDao.getAllRunningForVds(hostId);
 
         List<VM> vms = LinqUtils.filter(vmsFromDB, new Predicate<VM>() {
             @Override

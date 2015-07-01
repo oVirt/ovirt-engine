@@ -275,7 +275,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
         // Check that the user exists in the database, if it doesn't exist then we need to add it now:
         DbUser dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(AuthzUtils.getName(profile.getAuthz()), principalRecord);
-        getDbUserDAO().saveOrUpdate(dbUser);
+        getDbUserDao().saveOrUpdate(dbUser);
 
         // Check login permissions. We do it here and not via the
         // getPermissionCheckSubjects mechanism, because we need the user to be logged in to

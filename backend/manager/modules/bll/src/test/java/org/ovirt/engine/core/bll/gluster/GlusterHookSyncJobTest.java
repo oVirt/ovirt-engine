@@ -42,7 +42,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -65,7 +65,7 @@ public class GlusterHookSyncJobTest {
     private GlusterHooksDao hooksDao;
 
     @Mock
-    private VdsGroupDAO clusterDao;
+    private VdsGroupDao clusterDao;
 
     private GlusterHookSyncJob hookSyncJob;
     private GlusterAuditLogUtil logUtil;

@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.dao.VmStatisticsDAO;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -69,11 +69,11 @@ public class VmManager {
         );
     }
 
-    private VmDynamicDAO getVmDynamicDao() {
+    private VmDynamicDao getVmDynamicDao() {
         return db().getVmDynamicDao();
     }
 
-    private VmStatisticsDAO getVmStatisticsDao() {
+    private VmStatisticsDao getVmStatisticsDao() {
         return db().getVmStatisticsDao();
     }
 

@@ -9,12 +9,12 @@ import java.util.Date;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeepingVariable;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
 /**
  * {@link DwhHistoryTimekeepingDao} tests
  */
-public class DwhHistoryTimekeepingDaoTest extends BaseDAOTestCase {
+public class DwhHistoryTimekeepingDaoTest extends BaseDaoTestCase {
     /**
      * Tests reading existing variables
      */

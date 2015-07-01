@@ -28,9 +28,9 @@ import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.LunDAO;
-import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
-import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDAO;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
 public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters, GetLunsByVgIdQuery<? extends GetLunsByVgIdParameters>> {
     private static final Guid[] GUIDS = new Guid[] {
@@ -49,17 +49,17 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
     private static final String DUMMY_LUN_ID = BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX+"89871115-e64d-4754-bacd-556cc249761b";
     private VDSBrokerFrontend vdsBrokerFrontendMock;
     @Mock
-    StorageServerConnectionLunMapDAO storageServerConnectionLunMapDAO;
+    StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
     @Mock
-    StorageServerConnectionDAO storageServerConnectionDAO;
+    StorageServerConnectionDao storageServerConnectionDao;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         prepareMocks();
-        setUpStorageServerConnectionLunMapDAO();
-        setUpStorageServerConnectionDAO();
+        setUpStorageServerConnectionLunMapDao();
+        setUpStorageServerConnectionDao();
     }
 
     @Test
@@ -79,8 +79,8 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
         expectGetLunsForVg(VG_ID, withDummyLun);
         expectGetDeviceList();
 
-        expectGetLunsMap(storageServerConnectionLunMapDAO);
-        expectGetConnections(storageServerConnectionDAO);
+        expectGetLunsMap(storageServerConnectionLunMapDao);
+        expectGetConnections(storageServerConnectionDao);
 
         getQuery().setInternalExecution(true);
         getQuery().executeCommand();
@@ -94,20 +94,20 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
         doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
     }
 
-    protected StorageServerConnectionDAO setUpStorageServerConnectionDAO() {
-        storageServerConnectionDAO = mock(StorageServerConnectionDAO.class);
-        when(getDbFacadeMockInstance().getStorageServerConnectionDao()).thenReturn(storageServerConnectionDAO);
-        return storageServerConnectionDAO;
+    protected StorageServerConnectionDao setUpStorageServerConnectionDao() {
+        storageServerConnectionDao = mock(StorageServerConnectionDao.class);
+        when(getDbFacadeMockInstance().getStorageServerConnectionDao()).thenReturn(storageServerConnectionDao);
+        return storageServerConnectionDao;
     }
 
-    protected StorageServerConnectionLunMapDAO setUpStorageServerConnectionLunMapDAO() {
-        storageServerConnectionLunMapDAO = mock(StorageServerConnectionLunMapDAO.class);
-        when(getDbFacadeMockInstance().getStorageServerConnectionLunMapDao()).thenReturn(storageServerConnectionLunMapDAO);
-        return storageServerConnectionLunMapDAO;
+    protected StorageServerConnectionLunMapDao setUpStorageServerConnectionLunMapDao() {
+        storageServerConnectionLunMapDao = mock(StorageServerConnectionLunMapDao.class);
+        when(getDbFacadeMockInstance().getStorageServerConnectionLunMapDao()).thenReturn(storageServerConnectionLunMapDao);
+        return storageServerConnectionLunMapDao;
     }
 
     protected void expectGetLunsForVg(String vgId, boolean withDummyLun) {
-        LunDAO dao = mock(LunDAO.class);
+        LunDao dao = mock(LunDao.class);
         when(getDbFacadeMockInstance().getLunDao()).thenReturn(dao);
         when(dao.getAllForVolumeGroup(vgId)).thenReturn(setUpLuns(withDummyLun));
     }
@@ -120,13 +120,13 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
                 any(GetDeviceListVDSCommandParameters.class))).thenReturn(returnValue);
     }
 
-    protected void expectGetLunsMap(StorageServerConnectionLunMapDAO dao) {
+    protected void expectGetLunsMap(StorageServerConnectionLunMapDao dao) {
         for (int i = 0; i < GUIDS.length; i++) {
             expectGetLunsMap(dao, GUIDS[i].toString(), GUIDS[i].toString());
         }
     }
 
-    protected void expectGetLunsMap(StorageServerConnectionLunMapDAO dao, String lunId, String cnxId) {
+    protected void expectGetLunsMap(StorageServerConnectionLunMapDao dao, String lunId, String cnxId) {
         List<LUNStorageServerConnectionMap> ret = new ArrayList<LUNStorageServerConnectionMap>();
         LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
         map.setLunId(lunId);
@@ -135,7 +135,7 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
         when(dao.getAll(lunId)).thenReturn(ret);
     }
 
-    protected void expectGetConnections(StorageServerConnectionDAO dao) {
+    protected void expectGetConnections(StorageServerConnectionDao dao) {
         for (int i = 0; i < GUIDS.length; i++) {
             when(dao.get(GUIDS[i].toString())).thenReturn(setUpConnection(i));
         }

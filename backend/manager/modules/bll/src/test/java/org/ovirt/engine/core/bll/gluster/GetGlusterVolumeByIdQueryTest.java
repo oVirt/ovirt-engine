@@ -35,7 +35,7 @@ public class GetGlusterVolumeByIdQueryTest extends AbstractQueryTest<IdQueryPara
         // Mock the query's parameters
         when(getQueryParameters().getId()).thenReturn(expected.getId());
 
-        // Mock the DAO
+        // Mock the Dao
         glusterVolumeDaoMock = mock(GlusterVolumeDao.class);
         when(glusterVolumeDaoMock.getById(expected.getId())).thenReturn(expected);
         doReturn(glusterVolumeDaoMock).when(getQuery()).getGlusterVolumeDao();

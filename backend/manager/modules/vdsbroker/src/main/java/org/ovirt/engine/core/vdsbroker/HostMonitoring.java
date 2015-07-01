@@ -192,14 +192,14 @@ public class HostMonitoring {
 
         cpuStatisticsToSave.addAll(vds.getStatisticsData().getCpuCoreStatistics());
         if (!cpuStatisticsToSave.isEmpty()) {
-            List<CpuStatistics> dbCpuStats = getDbFacade().getVdsCpuStatisticsDAO()
+            List<CpuStatistics> dbCpuStats = getDbFacade().getVdsCpuStatisticsDao()
                     .getAllCpuStatisticsByVdsId(vds.getId());
             if (dbCpuStats.isEmpty()) {
                 TransactionSupport.executeInScope(TransactionScopeOption.Required,
                         new TransactionMethod<Void>() {
                             @Override
                             public Void runInTransaction() {
-                                getDbFacade().getVdsCpuStatisticsDAO().massSaveCpuStatistics(
+                                getDbFacade().getVdsCpuStatisticsDao().massSaveCpuStatistics(
                                         cpuStatisticsToSave, vds.getId());
                                 return null;
                             }
@@ -212,8 +212,8 @@ public class HostMonitoring {
                             new TransactionMethod<Void>() {
                                 @Override
                                 public Void runInTransaction() {
-                                    getDbFacade().getVdsCpuStatisticsDAO().removeAllCpuStatisticsByVdsId(vds.getId());
-                                    getDbFacade().getVdsCpuStatisticsDAO().massSaveCpuStatistics(
+                                    getDbFacade().getVdsCpuStatisticsDao().removeAllCpuStatisticsByVdsId(vds.getId());
+                                    getDbFacade().getVdsCpuStatisticsDao().massSaveCpuStatistics(
                                             cpuStatisticsToSave, vds.getId());
                                     return null;
                                 }
@@ -224,7 +224,7 @@ public class HostMonitoring {
                             new TransactionMethod<Void>() {
                                 @Override
                                 public Void runInTransaction() {
-                                    getDbFacade().getVdsCpuStatisticsDAO().massUpdateCpuStatistics(
+                                    getDbFacade().getVdsCpuStatisticsDao().massUpdateCpuStatistics(
                                             cpuStatisticsToSave, vds.getId());
                                     return null;
                                 }
@@ -259,7 +259,7 @@ public class HostMonitoring {
         final List<VdsNumaNode> vdsNumaNodesToSave = new ArrayList<>();
         List<VdsNumaNode> updateNumaNodes = vds.getNumaNodeList();
         if (!updateNumaNodes.isEmpty()) {
-            List<VdsNumaNode> dbVdsNumaNodes = getDbFacade().getVdsNumaNodeDAO()
+            List<VdsNumaNode> dbVdsNumaNodes = getDbFacade().getVdsNumaNodeDao()
                     .getAllVdsNumaNodeByVdsId(vds.getId());
             Map<Integer, VdsNumaNode> nodesMap = new HashMap<>();
             for (VdsNumaNode node : dbVdsNumaNodes) {
@@ -276,7 +276,7 @@ public class HostMonitoring {
             }
         }
         if (!vdsNumaNodesToSave.isEmpty()) {
-            getDbFacade().getVdsNumaNodeDAO().massUpdateNumaNodeStatistics(vdsNumaNodesToSave);
+            getDbFacade().getVdsNumaNodeDao().massUpdateNumaNodeStatistics(vdsNumaNodesToSave);
         }
     }
 

@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,7 @@ public class ImportValidator {
         }
 
         for (DiskImage image : images) {
-            StorageDomain sd = getStorageDomainDAO().getForStoragePool(
+            StorageDomain sd = getStorageDomainDao().getForStoragePool(
                     image.getStorageIds().get(0), getStoragePool().getId());
             ValidationResult result = new StorageDomainValidator(sd).isDomainExistAndActive();
             if (!result.isValid()) {
@@ -177,31 +177,31 @@ public class ImportValidator {
     }
 
     protected StorageDomain getStorageDomain(Guid domainId) {
-        return getStorageDomainDAO().getForStoragePool(domainId, getStoragePool().getId());
+        return getStorageDomainDao().getForStoragePool(domainId, getStoragePool().getId());
     }
 
     protected MacPoolManagerStrategy getMacPool() {
         return MacPoolPerDcSingleton.getInstance().poolForDataCenter(params.getStoragePoolId());
     }
 
-    public StorageDomainDAO getStorageDomainDAO() {
+    public StorageDomainDao getStorageDomainDao() {
         return DbFacade.getInstance().getStorageDomainDao();
     }
 
-    protected StoragePoolDAO getStoragePoolDAO() {
+    protected StoragePoolDao getStoragePoolDao() {
         return DbFacade.getInstance().getStoragePoolDao();
     }
 
     public StoragePool getStoragePool() {
         if (cachedStoragePool == null) {
-            cachedStoragePool = getStoragePoolDAO().get(params.getStoragePoolId());
+            cachedStoragePool = getStoragePoolDao().get(params.getStoragePoolId());
         }
         return cachedStoragePool;
     }
 
     public StorageDomain getStorageDomain() {
         if (cachedStorageDomain == null) {
-            cachedStorageDomain = getStorageDomainDAO().get(params.getStorageDomainId());
+            cachedStorageDomain = getStorageDomainDao().get(params.getStorageDomainId());
         }
         return cachedStorageDomain;
     }

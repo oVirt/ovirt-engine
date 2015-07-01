@@ -2,7 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import org.ovirt.engine.core.common.ExternalVariable;
 
-public interface ExternalVariableDao extends DAO {
+public interface ExternalVariableDao extends Dao {
     /**
      * Inserts variable in db
      *

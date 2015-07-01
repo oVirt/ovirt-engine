@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmGuestAgentInterfaceDaoTest extends BaseDAOTestCase {
+public class VmGuestAgentInterfaceDaoTest extends BaseDaoTestCase {
 
     static final private Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final int VM_GUEST_AGENT_INTERFACES_SIZE = 2;

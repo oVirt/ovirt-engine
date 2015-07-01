@@ -11,11 +11,11 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 /**
  * A test case for {@link GetDataCentersWithPermittedActionOnClusters}.
- * This test mocks away all the DAOs, and just tests the flow of the query itself.
+ * This test mocks away all the Daos, and just tests the flow of the query itself.
  */
 public class GetVmTemplatesWithPermittedActionQueryTest
         extends AbstractGetEntitiesWithPermittedActionParametersQueryTest
@@ -26,10 +26,10 @@ public class GetVmTemplatesWithPermittedActionQueryTest
         // Set up the expected data
         VmTemplate expected = new VmTemplate();
 
-        // Mock the DAO
-        VmTemplateDAO vmTemplateDAOMock = mock(VmTemplateDAO.class);
-        when(vmTemplateDAOMock.getTemplatesWithPermittedAction(getUser().getId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
-        when(getDbFacadeMockInstance().getVmTemplateDao()).thenReturn(vmTemplateDAOMock);
+        // Mock the Dao
+        VmTemplateDao vmTemplateDaoMock = mock(VmTemplateDao.class);
+        when(vmTemplateDaoMock.getTemplatesWithPermittedAction(getUser().getId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
+        when(getDbFacadeMockInstance().getVmTemplateDao()).thenReturn(vmTemplateDaoMock);
 
         getQuery().executeQueryCommand();
 

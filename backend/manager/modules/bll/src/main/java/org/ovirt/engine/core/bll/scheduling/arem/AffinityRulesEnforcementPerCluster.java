@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +45,11 @@ public class AffinityRulesEnforcementPerCluster {
     @Inject
     protected AffinityGroupDao affinityGroupDao;
     @Inject
-    protected VmDAO vmDao;
+    protected VmDao vmDao;
     @Inject
-    protected VdsDAO vdsDao;
+    protected VdsDao vdsDao;
     @Inject
-    protected VdsGroupDAO vdsGroupDao;
+    protected VdsGroupDao vdsGroupDao;
 
     protected final SchedulingManager schedulingManager = SchedulingManager.getInstance();
 

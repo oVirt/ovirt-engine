@@ -40,7 +40,7 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
 
     protected DbGroup getGroup() {
         if (mGroup == null && !getGroupId().equals(Guid.Empty)) {
-            mGroup = getAdGroupDAO().get(getParameters().getId());
+            mGroup = getAdGroupDao().get(getParameters().getId());
         }
         return mGroup;
     }

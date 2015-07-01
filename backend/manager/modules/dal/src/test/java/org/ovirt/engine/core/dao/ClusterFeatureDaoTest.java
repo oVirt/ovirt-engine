@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterF
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ClusterFeatureDaoTest extends BaseDAOTestCase {
+public class ClusterFeatureDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_VDS_GROUP = FixturesTool.VDS_GROUP_RHEL6_ISCSI;
 
     private static final Guid NEW_SUPPORTED_FEATURE_1 = new Guid("00000000-0000-0000-0000-000000000004");

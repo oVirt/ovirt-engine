@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
@@ -56,7 +56,7 @@ public class VnicProfileValidatorTest {
     private NetworkQoSDao networkQosDao;
 
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
 
     @Mock
     private VnicProfile vnicProfile;
@@ -78,7 +78,7 @@ public class VnicProfileValidatorTest {
         validator = spy(new VnicProfileValidator(vnicProfile));
         doReturn(dbFacade).when(validator).getDbFacade();
 
-        // mock some commonly used DAOs
+        // mock some commonly used Daos
         when(dbFacade.getVnicProfileDao()).thenReturn(vnicProfileDao);
         when(dbFacade.getNetworkDao()).thenReturn(networkDao);
         when(dbFacade.getNetworkQosDao()).thenReturn(networkQosDao);
@@ -258,7 +258,7 @@ public class VnicProfileValidatorTest {
     }
 
     private void vnicProfileNotUsedByTemplatesTest(Matcher<ValidationResult> matcher, List<VmTemplate> templates) {
-        VmTemplateDAO templateDao = mock(VmTemplateDAO.class);
+        VmTemplateDao templateDao = mock(VmTemplateDao.class);
         when(templateDao.getAllForVnicProfile(any(Guid.class))).thenReturn(templates);
         when(dbFacade.getVmTemplateDao()).thenReturn(templateDao);
         assertThat(validator.vnicProfileNotUsedByTemplates(), matcher);

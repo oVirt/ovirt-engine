@@ -24,7 +24,7 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
 
     protected Network getPersistedNetwork() {
         if (persistedNetwork == null) {
-            persistedNetwork = getNetworkDAO().get(getNetworkCluster().getNetworkId());
+            persistedNetwork = getNetworkDao().get(getNetworkCluster().getNetworkId());
         }
         return persistedNetwork;
     }

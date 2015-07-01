@@ -86,10 +86,10 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
+import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.StatusAwareDao;
-import org.ovirt.engine.core.dao.VdsSpmIdMapDAO;
+import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.Deserializer;
@@ -316,17 +316,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         DefaultCompensationContext defaultContext = new DefaultCompensationContext();
         defaultContext.setCommandId(commandId);
         defaultContext.setCommandType(getClass().getName());
-        defaultContext.setBusinessEntitySnapshotDAO(getBusinessEntitySnapshotDAO());
+        defaultContext.setBusinessEntitySnapshotDao(getBusinessEntitySnapshotDao());
         defaultContext.setSnapshotSerializer(
                 SerializationFactory.getSerializer());
         return defaultContext;
     }
 
-    protected BusinessEntitySnapshotDAO getBusinessEntitySnapshotDAO() {
+    protected BusinessEntitySnapshotDao getBusinessEntitySnapshotDao() {
         return DbFacade.getInstance().getBusinessEntitySnapshotDao();
     }
 
-    protected VdsSpmIdMapDAO getVdsSpmIdMapDAO() {
+    protected VdsSpmIdMapDao getVdsSpmIdMapDao() {
         return DbFacade.getInstance().getVdsSpmIdMapDao();
     }
 
@@ -414,7 +414,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * <li>For each snapshot:</li>
      * <ol>
      * <li>Deserialize the entity.</li>
-     * <li>Using the entity DAO:</li>
+     * <li>Using the entity Dao:</li>
      * <ul>
      * <li>If the entity was added by the command, remove it.</li>
      * <li>Otherwise, If the entity is not in DB anymore, restore it.</li>
@@ -448,7 +448,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 Deserializer deserializer =
                         SerializationFactory.getDeserializer();
                 List<BusinessEntitySnapshot> entitySnapshots =
-                        getBusinessEntitySnapshotDAO().getAllForCommandId(commandId);
+                        getBusinessEntitySnapshotDao().getAllForCommandId(commandId);
                 log.debug("Command [id={}]: {} compensation data.", commandId,
                         entitySnapshots.isEmpty() ? "No" : "Going over");
                 for (BusinessEntitySnapshot snapshot : entitySnapshots) {
@@ -501,7 +501,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     private void cleanUpCompensationData() {
         if (!(getCompensationContext() instanceof NoOpCompensationContext)) {
-            getBusinessEntitySnapshotDAO().removeAllForCommandId(commandId);
+            getBusinessEntitySnapshotDao().removeAllForCommandId(commandId);
         }
     }
 
@@ -986,7 +986,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     type.name());
         }
         final Guid permId =
-                getPermissionDAO().getEntityPermissionsForUserAndGroups(userId, StringUtils.join(groupIds, ","), actionGroup, object, type, ignoreEveryone);
+                getPermissionDao().getEntityPermissionsForUserAndGroups(userId, StringUtils.join(groupIds, ","), actionGroup, object, type, ignoreEveryone);
         if (permId != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Found permission '{}' for user when running '{}', on '{}' with id '{}'",

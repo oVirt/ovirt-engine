@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public class IsBalloonEnabledQuery <P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
@@ -11,7 +11,7 @@ public class IsBalloonEnabledQuery <P extends IdQueryParameters> extends Queries
 
     @Override
     protected void executeQueryCommand() {
-        VmDeviceDAO dao = getDbFacade().getVmDeviceDao();
+        VmDeviceDao dao = getDbFacade().getVmDeviceDao();
         getQueryReturnValue().setReturnValue(dao.isMemBalloonEnabled(getParameters().getId()));
     }
 }

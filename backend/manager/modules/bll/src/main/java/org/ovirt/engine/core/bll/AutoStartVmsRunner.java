@@ -24,8 +24,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -184,11 +184,11 @@ public class AutoStartVmsRunner implements BackendService{
         return VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
     }
 
-    protected VmDynamicDAO getVmDynamicDao() {
+    protected VmDynamicDao getVmDynamicDao() {
         return DbFacade.getInstance().getVmDynamicDao();
     }
 
-    protected VmDAO getVmDao() {
+    protected VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
     }
 

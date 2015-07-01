@@ -16,10 +16,10 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
+public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase {
     private static final Guid TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
 

@@ -49,8 +49,8 @@ public class MergeStatusCommand<T extends MergeParameters>
 
     public void attemptResolution() {
         Set<Guid> images;
-        if (getVmDAO().get(getParameters().getVmId()).isDown()) {
-            StoragePool pool = getStoragePoolDAO().get(getParameters().getStoragePoolId());
+        if (getVmDao().get(getParameters().getVmId()).isDown()) {
+            StoragePool pool = getStoragePoolDao().get(getParameters().getStoragePoolId());
             if (pool.getSpmVdsId() == null || pool.getStatus() != StoragePoolStatus.Up) {
                 log.info("VM down, waiting on SPM election to resolve Live Merge");
                 setSucceeded(true);
@@ -93,7 +93,7 @@ public class MergeStatusCommand<T extends MergeParameters>
     private Set<Guid> getVolumeChain() {
         List<String> vmIds = new ArrayList<>();
         vmIds.add(getParameters().getVmId().toString());
-        VDS vds = getVdsDAO().get(getParameters().getVdsId());
+        VDS vds = getVdsDao().get(getParameters().getVdsId());
         Map[] vms = (Map[]) (new FullListVdsCommand<>(
                 new FullListVDSCommandParameters(vds, vmIds)).executeWithReturnValue());
 

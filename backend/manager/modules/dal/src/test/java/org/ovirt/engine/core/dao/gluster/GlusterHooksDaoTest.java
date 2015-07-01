@@ -16,10 +16,10 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStage;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class GlusterHooksDaoTest extends BaseDAOTestCase {
+public class GlusterHooksDaoTest extends BaseDaoTestCase {
     private static final String GLUSTER_COMMAND = "start volume";
     private static final GlusterHookStage STAGE = GlusterHookStage.POST;
     private static final String EXISTING_HOOK_NAME = "28cifs_config";

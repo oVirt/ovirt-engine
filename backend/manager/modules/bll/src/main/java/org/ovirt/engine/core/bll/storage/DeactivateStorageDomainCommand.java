@@ -99,7 +99,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (!getParameters().getIsInternal()
                 && getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
             List<StorageDomain> domains =
-                    getStorageDomainDAO().getAllForStoragePool(getStorageDomain().getStoragePoolId());
+                    getStorageDomainDao().getAllForStoragePool(getStorageDomain().getStoragePoolId());
 
             List<StorageDomain> activeDomains = filterDomainsByStatus(domains, StorageDomainStatus.Active);
 
@@ -129,7 +129,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             return false;
         }
         if (!getParameters().getIsInternal()
-                && !getVmDAO()
+                && !getVmDao()
                         .getAllActiveForStorageDomain(getStorageDomain().getId())
                         .isEmpty()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS);
@@ -161,10 +161,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     protected List<String> getVmsWithAttachedISO() {
-        List<VmStatic> vms = getVmStaticDAO().getAllByStoragePoolId(getStorageDomain().getStoragePoolId());
+        List<VmStatic> vms = getVmStaticDao().getAllByStoragePoolId(getStorageDomain().getStoragePoolId());
         List<String> vmNames = new LinkedList<>();
         for (VmStatic vmStatic : vms) {
-            VmDynamic vmDynamic = getVmDynamicDAO().get(vmStatic.getId());
+            VmDynamic vmDynamic = getVmDynamicDao().get(vmStatic.getId());
             if (vmDynamic.getStatus() != VMStatus.Down && !StringUtils.isEmpty(vmDynamic.getCurrentCd())) {
                 vmNames.add(vmStatic.getName());
             }
@@ -200,7 +200,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             return;
         }
         final StoragePoolIsoMap map =
-                getStoragePoolIsoMapDAO().get
+                getStoragePoolIsoMapDao().get
                         (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
                                 getParameters().getStoragePoolId()));
         map.setStatus(StorageDomainStatus.Unknown);
@@ -226,7 +226,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 public Object runInTransaction() {
                     getCompensationContext().snapshotEntityStatus(getStoragePool());
                     getStoragePool().setStatus(StoragePoolStatus.Maintenance);
-                    getStoragePoolDAO().updateStatus(getStoragePool().getId(), getStoragePool().getStatus());
+                    getStoragePoolDao().updateStatus(getStoragePool().getId(), getStoragePool().getStatus());
                     getCompensationContext().stateChanged();
                     return null;
                 }
@@ -247,7 +247,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
         VDS spm = null;
         if (getStoragePool().getSpmVdsId() != null) {
-            spm = getVdsDAO().get(getStoragePool().getSpmVdsId());
+            spm = getVdsDao().get(getStoragePool().getSpmVdsId());
         }
 
         if (isLastMaster) {
@@ -297,11 +297,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                     log.info("Domain '{}' will remain in '{}' status until deactivated on all hosts",
                             getStorageDomain().getId(), map.getStatus());
                 }
-                getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getStatus());
+                getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
                 if (newMaster != null) {
                     StoragePoolIsoMap mapOfNewMaster = newMaster.getStoragePoolIsoMapData();
                     mapOfNewMaster.setStatus(StorageDomainStatus.Active);
-                    getStoragePoolIsoMapDAO().updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getStatus());
+                    getStoragePoolIsoMapDao().updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getStatus());
                 }
                 return null;
             }
@@ -320,10 +320,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             if (!pair.getSecond()) {
                 log.error("Failed to deactivate Cinder storage domain '{}' due to secrets un-registration failure.",
                         getStorageDomain().getName());
-                StoragePoolIsoMap map = getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(
+                StoragePoolIsoMap map = getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                         getParameters().getStorageDomainId(), getParameters().getStoragePoolId()));
                 map.setStatus(StorageDomainStatus.Inactive);
-                getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getStatus());
+                getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
                 return;
             }
         }
@@ -375,7 +375,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         newMasterMap.setStatus(StorageDomainStatus.Unknown);
                         getCompensationContext().snapshotEntityStatus(newMasterMap);
                         newMaster.setStatus(StorageDomainStatus.Locked);
-                        getStoragePoolIsoMapDAO().updateStatus(newMasterMap.getId(), newMasterMap.getStatus());
+                        getStoragePoolIsoMapDao().updateStatus(newMasterMap.getId(), newMasterMap.getStatus());
                     }
                     updateStorageDomainStaticData(newMaster.getStorageStaticData());
                     getCompensationContext().snapshotEntityUpdated(getStorageDomain().getStorageStaticData());

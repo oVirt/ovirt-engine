@@ -53,7 +53,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
 
     @Override
     protected void executeCommand() {
-        List<VM> vms = getVmDAO().getAllRunningForVds(getVdsId());
+        List<VM> vms = getVmDao().getAllRunningForVds(getVdsId());
         Collections.sort(vms, Collections.reverseOrder(new VmsComparer()));
         List<Guid> autoStartVmIdsToRerun = new ArrayList<>();
         for (VM vm : vms) {
@@ -96,6 +96,6 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
     }
 
     private boolean hasVMs() {
-        return !getVmDAO().getAllRunningForVds(getVdsId()).isEmpty();
+        return !getVmDao().getAllRunningForVds(getVdsId()).isEmpty();
     }
 }

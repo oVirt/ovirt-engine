@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  *            The type of the entity's id.
  */
 public abstract class DefaultReadDaoDbFacade<T extends BusinessEntity<ID>, ID extends Serializable>
-        extends BaseDAODbFacade implements ReadDao<T, ID> {
+        extends BaseDaoDbFacade implements ReadDao<T, ID> {
 
     protected static final String DEFAULT_GET_PROCEDURE_FORMAT = "Get{0}By{0}Id";
     protected static final String DEFAULT_GET_ALL_PROCEDURE_FORMAT = "GetAllFrom{0}s";

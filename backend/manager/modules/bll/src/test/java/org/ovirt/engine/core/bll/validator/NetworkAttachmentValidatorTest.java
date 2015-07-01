@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -55,7 +55,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     private NetworkClusterDao networkClusterDaoMock;
 
     @Mock
-    private VdsDAO vdsDaoMock;
+    private VdsDao vdsDaoMock;
 
     @Mock
     private NetworkValidator networkValidatorMock;

@@ -14,7 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 /**
  * A test case for {@link GetTemplatesRelatedToQuotaIdQuery}.
@@ -22,7 +22,7 @@ import org.ovirt.engine.core.dao.VmTemplateDAO;
 @RunWith(MockitoJUnitRunner.class)
 public class GetTemplatesRelatedToQuotaIdQueryTest extends AbstractQueryTest<IdQueryParameters, GetTemplatesRelatedToQuotaIdQuery<IdQueryParameters>> {
     @Mock
-    VmTemplateDAO vmTemplateDAO;
+    VmTemplateDao vmTemplateDao;
 
     Guid quotaId = Guid.newGuid();
 
@@ -30,7 +30,7 @@ public class GetTemplatesRelatedToQuotaIdQueryTest extends AbstractQueryTest<IdQ
 
     @Test
     public void testExecuteQuery() {
-        mockDAOForQuery();
+        mockDaoForQuery();
 
         // Execute query.
         getQuery().executeQueryCommand();
@@ -38,13 +38,13 @@ public class GetTemplatesRelatedToQuotaIdQueryTest extends AbstractQueryTest<IdQ
     }
 
     /**
-     * Initialize DAO to be used in query.
+     * Initialize Dao to be used in query.
      */
-    private void mockDAOForQuery() {
-        when(getDbFacadeMockInstance().getVmTemplateDao()).thenReturn(vmTemplateDAO);
+    private void mockDaoForQuery() {
+        when(getDbFacadeMockInstance().getVmTemplateDao()).thenReturn(vmTemplateDao);
 
         returnedVmTemplates = new ArrayList<VmTemplate>();
         when(getQueryParameters().getId()).thenReturn(quotaId);
-        Mockito.when(vmTemplateDAO.getAllTemplatesRelatedToQuotaId(quotaId)).thenReturn(returnedVmTemplates);
+        Mockito.when(vmTemplateDao.getAllTemplatesRelatedToQuotaId(quotaId)).thenReturn(returnedVmTemplates);
     }
 }

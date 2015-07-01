@@ -46,7 +46,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -89,7 +88,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     /**
      * @return The image snapshots associated with the VM snapshot.
-     * Note that the first time this method is run it issues DAO call.
+     * Note that the first time this method is run it issues Dao call.
      */
     protected List<DiskImage> getSourceImages() {
         if (_sourceImages == null) {
@@ -106,7 +105,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                     log.error("Cannot remove VM snapshot. Vm is not Down, Up or Paused");
                     throw new VdcBLLException(VdcBllErrors.VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE);
                 } else if (getVm().getRunOnVds() == null ||
-                        !getVdsDAO().get(getVm().getRunOnVds()).getLiveMergeSupport()) {
+                        !getVdsDao().get(getVm().getRunOnVds()).getLiveMergeSupport()) {
                     log.error("Cannot remove VM snapshot. The host on which VM is running does not support Live Merge");
                     throw new VdcBLLException(VdcBllErrors.VM_HOST_CANNOT_LIVE_MERGE);
                 }
@@ -450,7 +449,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     protected boolean validateImageNotInTemplate() {
-        return getVmTemplateDAO().get(getRepresentativeSourceImageId()) == null;
+        return getVmTemplateDao().get(getRepresentativeSourceImageId()) == null;
     }
 
     private boolean hasImages() {
@@ -492,10 +491,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getVmId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return getDbFacade().getSnapshotDao();
     }
 
     @Override

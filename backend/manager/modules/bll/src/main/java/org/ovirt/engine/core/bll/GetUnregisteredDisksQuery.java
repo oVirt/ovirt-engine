@@ -48,7 +48,7 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
         @SuppressWarnings("unchecked")
         List<Guid> imagesList = (List<Guid>) imagesListResult.getReturnValue();
 
-        // fromDao is a list of all disk images on the domain from the DAO
+        // fromDao is a list of all disk images on the domain from the Dao
         List<DiskImage> fromDao = getDbFacade().getDiskImageDao().getAllSnapshotsForStorageDomain(getStorageDomainId());
 
         // then, compare the list of all images on the domain with the list oVirt recognizes

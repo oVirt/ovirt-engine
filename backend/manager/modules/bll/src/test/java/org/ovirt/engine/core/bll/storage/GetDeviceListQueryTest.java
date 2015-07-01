@@ -27,15 +27,15 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.LunDAO;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQueryParameters, GetDeviceListQuery<GetDeviceListQueryParameters>> {
     private DbFacade dbFacadeMock;
-    private LunDAO lunDAOMock;
-    private VdsDAO vdsDAOMock;
-    private StorageDomainDAO storageDomainDAOMock;
+    private LunDao lunDaoMock;
+    private VdsDao vdsDaoMock;
+    private StorageDomainDao storageDomainDaoMock;
     private VDSBrokerFrontend vdsBrokerFrontendMock;
 
     private Guid vdsId;
@@ -89,7 +89,7 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
                 any(GetDeviceListVDSCommandParameters.class))).thenReturn(returnValue);
 
         // Return 'lunsFromDb'
-        when(lunDAOMock.getAll()).thenReturn(lunsFromDb);
+        when(lunDaoMock.getAll()).thenReturn(lunsFromDb);
 
         // Execute command
         getQuery().executeQueryCommand();
@@ -101,19 +101,19 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
     }
 
     /**
-     * Mock the DbFacade/VDSBroker and the DAOs
+     * Mock the DbFacade/VDSBroker and the Daos
      */
     private void prepareMocks() {
         dbFacadeMock = getDbFacadeMockInstance();
         vdsBrokerFrontendMock = mock(VDSBrokerFrontend.class);
         doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
 
-        lunDAOMock = mock(LunDAO.class);
-        when(dbFacadeMock.getLunDao()).thenReturn(lunDAOMock);
-        vdsDAOMock = mock(VdsDAO.class);
-        when(dbFacadeMock.getVdsDao()).thenReturn(vdsDAOMock);
-        storageDomainDAOMock = mock(StorageDomainDAO.class);
-        when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDAOMock);
+        lunDaoMock = mock(LunDao.class);
+        when(dbFacadeMock.getLunDao()).thenReturn(lunDaoMock);
+        vdsDaoMock = mock(VdsDao.class);
+        when(dbFacadeMock.getVdsDao()).thenReturn(vdsDaoMock);
+        storageDomainDaoMock = mock(StorageDomainDao.class);
+        when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDaoMock);
     }
 
     /**
@@ -129,10 +129,10 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
 
         vds = new VDS();
         vds.setVdsGroupCompatibilityVersion(Version.v3_1);
-        when(vdsDAOMock.get(getQueryParameters().getId())).thenReturn(vds);
+        when(vdsDaoMock.get(getQueryParameters().getId())).thenReturn(vds);
 
         List<StorageDomain> domainsList = Collections.emptyList();
-        when(storageDomainDAOMock.getAll()).thenReturn(domainsList);
+        when(storageDomainDaoMock.getAll()).thenReturn(domainsList);
     }
 
     /**

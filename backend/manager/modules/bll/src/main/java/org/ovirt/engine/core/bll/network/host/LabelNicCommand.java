@@ -79,7 +79,7 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
 
     private List<Network> getClusterNetworksWithLabel(String label) {
         if (labeledNetworks == null) {
-            labeledNetworks = getNetworkDAO().getAllByLabelForCluster(label, getVds().getVdsGroupId());
+            labeledNetworks = getNetworkDao().getAllByLabelForCluster(label, getVds().getVdsGroupId());
         }
 
         return labeledNetworks;

@@ -43,7 +43,7 @@
         <constructor-arg ref="engineDataSource"/>
     </bean>
 
-    <bean id="engineDataSource" class="org.ovirt.engine.core.dao.BaseDAOTestCase"
+    <bean id="engineDataSource" class="org.ovirt.engine.core.dao.BaseDaoTestCase"
           factory-method="getDataSource"/>
 
     <bean id="transactionManagerJPA" class="org.springframework.orm.jpa.JpaTransactionManager">

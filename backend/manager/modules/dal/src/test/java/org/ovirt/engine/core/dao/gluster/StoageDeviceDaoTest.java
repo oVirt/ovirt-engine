@@ -11,10 +11,10 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class StoageDeviceDaoTest extends BaseDAOTestCase {
+public class StoageDeviceDaoTest extends BaseDaoTestCase {
 
     private static final Guid NEW_STORAGE_DEVICE_ID = new Guid("00000000-0000-0000-0000-000000000003");
     private static final Guid EXISTING_STORAGE_DEVICE_ID_1 = new Guid("00000000-0000-0000-0000-000000000001");

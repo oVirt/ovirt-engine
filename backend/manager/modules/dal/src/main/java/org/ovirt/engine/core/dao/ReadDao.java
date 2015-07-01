@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
  * @param <ID>
  *            The type of the entity's id.
  */
-public interface ReadDao<T extends BusinessEntity<ID>, ID extends Serializable> extends DAO {
+public interface ReadDao<T extends BusinessEntity<ID>, ID extends Serializable> extends Dao {
 
     /**
      * Retrieves the entity with the given id.

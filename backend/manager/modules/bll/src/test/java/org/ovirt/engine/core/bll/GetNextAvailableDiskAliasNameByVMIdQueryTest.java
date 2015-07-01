@@ -17,12 +17,12 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetNextAvailableDiskAliasNameByVMIdQuery<IdQueryParameters>> {
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
 
     private VM vm;
     private final Guid vmId = Guid.newGuid();
@@ -36,8 +36,8 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
 
     @Test
     public void testExecuteQueryVmWithNoDisks() throws Exception {
-        mockDAOForQuery();
-        vm = mockVmAndReturnFromDAO();
+        mockDaoForQuery();
+        vm = mockVmAndReturnFromDao();
         String diskAliasName = ImagesHandler.getDefaultDiskAlias(vm.getName(), "1");
 
         // Execute query.
@@ -47,7 +47,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
 
     @Test
     public void testExecuteQueryWithInValidVmIdOrMissingPermissions() throws Exception {
-        mockDAOForQuery();
+        mockDaoForQuery();
         vm = mockVm();
 
         // Execute query.
@@ -57,8 +57,8 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
 
     @Test
     public void testExecuteQueryVmWithMultipleDisks() throws Exception {
-        mockDAOForQuery();
-        vm = mockVmAndReturnFromDAO();
+        mockDaoForQuery();
+        vm = mockVmAndReturnFromDao();
         populateVmDiskMap(vm, 5);
         String expectedDiskAlias = ImagesHandler.getDefaultDiskAlias(vm.getName(), "6");
 
@@ -72,8 +72,8 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
      */
     @Test
     public void testExecuteQueryRecycling() throws Exception {
-        mockDAOForQuery();
-        vm = mockVmAndReturnFromDAO();
+        mockDaoForQuery();
+        vm = mockVmAndReturnFromDao();
         populateVmDiskMap(vm, 5);
 
         String expectedDiskAlias = ImagesHandler.getDefaultDiskAlias(vm.getName(), "3");
@@ -105,12 +105,12 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     }
 
    /**
-     * Initialize DAO to be used in query.
+     * Initialize Dao to be used in query.
      *
      * @throws Exception
      */
-    private void mockDAOForQuery() throws Exception {
-        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDAO);
+    private void mockDaoForQuery() throws Exception {
+        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDao);
         when(getQueryParameters().getId()).thenReturn(vmId);
     }
 
@@ -122,9 +122,9 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
         return vm;
     }
 
-    private VM mockVmAndReturnFromDAO() {
+    private VM mockVmAndReturnFromDao() {
         vm = mockVm();
-        when(vmDAO.get(vmId, getQuery().getUserID(), getQueryParameters().isFiltered())).thenReturn(vm);
+        when(vmDao.get(vmId, getQuery().getUserID(), getQueryParameters().isFiltered())).thenReturn(vm);
         return vm;
     }
 }

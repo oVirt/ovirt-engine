@@ -1288,8 +1288,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private void addNumaSetting(final String compatibilityVersion) {
         if (Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinningEnabled,
                 compatibilityVersion))) {
-            List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(vm.getId());
-            List<VdsNumaNode> totalVdsNumaNodes = DbFacade.getInstance().getVdsNumaNodeDAO()
+            List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(vm.getId());
+            List<VdsNumaNode> totalVdsNumaNodes = DbFacade.getInstance().getVdsNumaNodeDao()
                     .getAllVdsNumaNodeByVdsId(vdsId);
             if (totalVdsNumaNodes.isEmpty()) {
                 log.warn("No NUMA nodes found for host {} for vm {} {}",  vdsId, vm.getName(), vm.getId());

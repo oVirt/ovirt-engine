@@ -80,7 +80,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             @Override
             public Object runInTransaction() {
                 getStorageHelper(dom).storageDomainRemoved(dom.getStorageStaticData());
-                getStorageDomainDAO().remove(dom.getId());
+                getStorageDomainDao().remove(dom.getId());
                 return null;
             }
         });

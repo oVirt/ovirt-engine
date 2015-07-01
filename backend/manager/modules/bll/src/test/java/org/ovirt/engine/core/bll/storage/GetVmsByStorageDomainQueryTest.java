@@ -16,10 +16,10 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryParameters, GetVmsByStorageDomainQuery<IdQueryParameters>> {
-    VmDAO vmDao = mock(VmDAO.class);
+    VmDao vmDao = mock(VmDao.class);
     Guid domainId = Guid.newGuid();
     GetVmsByStorageDomainQuery<IdQueryParameters> query;
 

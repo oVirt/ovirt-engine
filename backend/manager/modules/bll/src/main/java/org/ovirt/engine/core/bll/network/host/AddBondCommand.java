@@ -137,7 +137,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
 
         // check that the network exists in current cluster
         Network network =
-                getNetworkDAO().getByNameAndCluster(getParameters().getNetwork().getName(), getVds().getVdsGroupId());
+                getNetworkDao().getByNameAndCluster(getParameters().getNetwork().getName(), getVds().getVdsGroupId());
         if (network == null) {
             return failCanDoAction(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
         }

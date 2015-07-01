@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DAO;
+import org.ovirt.engine.core.dao.Dao;
 import org.ovirt.engine.core.dao.MassOperationsDao;
 
 /**
  * Interface for DB operations on Gluster Options.
  */
-public interface GlusterOptionDao extends DAO, MassOperationsDao<GlusterVolumeOptionEntity, Guid> {
+public interface GlusterOptionDao extends Dao, MassOperationsDao<GlusterVolumeOptionEntity, Guid> {
     public void save(GlusterVolumeOptionEntity option);
 
     public GlusterVolumeOptionEntity getById(Guid id);

@@ -11,11 +11,11 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 
-public class VnicProfileDaoTest extends BaseDAOTestCase {
+public class VnicProfileDaoTest extends BaseDaoTestCase {
 
     private VnicProfile vnicProfile;
     private VnicProfileDao dao;

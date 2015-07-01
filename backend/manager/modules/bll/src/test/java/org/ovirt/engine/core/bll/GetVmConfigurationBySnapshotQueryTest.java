@@ -23,7 +23,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
  * A test case for {@GetVmConfigurationBySnapshotQuery}. This test mocks away all
- * the DAOs, and just tests the flow of the query itself.
+ * the Daos, and just tests the flow of the query itself.
  */
 public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmConfigurationBySnapshotQuery<IdQueryParameters>> {
     private SnapshotDao snapshotDaoMock;
@@ -47,7 +47,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         when(getQuery().getSnapshotVmConfigurationHelper()).thenReturn(snapshotVmConfigurationHelper);
         snapshotsManager = mock(SnapshotsManager.class);
         when(snapshotVmConfigurationHelper.getSnapshotManager()).thenReturn(snapshotsManager);
-        setUpDAOMocks();
+        setUpDaoMocks();
     }
 
     private VM createVm(Guid existingVmId) {
@@ -71,7 +71,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         return diskImage;
     }
 
-    private void setUpDAOMocks() {
+    private void setUpDaoMocks() {
         snapshotDaoMock = mock(SnapshotDao.class);
         doReturn(snapshotDaoMock).when(getQuery()).getSnapshotDao();
         when(snapshotDaoMock.get(existingSnapshotId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(existingSnapshot);

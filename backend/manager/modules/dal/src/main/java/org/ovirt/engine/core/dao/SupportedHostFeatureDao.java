@@ -5,7 +5,7 @@ import java.util.Set;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public interface SupportedHostFeatureDao extends DAO {
+public interface SupportedHostFeatureDao extends Dao {
 
     /**
      * Add the given feature to the supported_host_features table.

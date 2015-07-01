@@ -87,7 +87,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
     private void cancelIncommingMigrations() {
         for (Guid hostId :vdssToMaintenance.keySet()) {
-            for (VM vm : getVmDAO().getAllMigratingToHost(hostId)) {
+            for (VM vm : getVmDao().getAllMigratingToHost(hostId)) {
                 if (vm.getStatus() == VMStatus.MigratingFrom) {
                     log.info("Cancelling incoming migration of '{}' id '{}'", vm, vm.getId());
                     runVdsCommand(VDSCommandType.CancelMigrate, new CancelMigrationVDSParameters(vm.getRunOnVds(), vm.getId(), true));
@@ -193,7 +193,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             for (Guid vdsId : getParameters().getVdsIdList()) {
                 VDS vds = vdssToMaintenance.get(vdsId);
                 if (vds != null) {
-                    List<VM> vms = getVmDAO().getAllRunningForVds(vdsId);
+                    List<VM> vms = getVmDao().getAllRunningForVds(vdsId);
                     if ((vds.getStatus() != VDSStatus.Maintenance) && (vds.getStatus() != VDSStatus.NonResponsive)
                             && (vds.getStatus() != VDSStatus.Up) && (vds.getStatus() != VDSStatus.Error)
                             && (vds.getStatus() != VDSStatus.PreparingForMaintenance)

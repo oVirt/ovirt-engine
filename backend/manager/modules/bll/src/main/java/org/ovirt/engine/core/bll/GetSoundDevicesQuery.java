@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public class GetSoundDevicesQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
@@ -17,7 +17,7 @@ public class GetSoundDevicesQuery<P extends IdQueryParameters> extends QueriesCo
     @Override
     protected void executeQueryCommand() {
         List<VmDevice> soundDevList =
-                getVmDeviceDAO().getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceGeneralType.SOUND);
+                getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceGeneralType.SOUND);
 
         List<String> result = new ArrayList<>(soundDevList.size());
         for (VmDevice v : soundDevList) {
@@ -26,7 +26,7 @@ public class GetSoundDevicesQuery<P extends IdQueryParameters> extends QueriesCo
         getQueryReturnValue().setReturnValue(result);
     }
 
-    protected VmDeviceDAO getVmDeviceDAO() {
+    protected VmDeviceDao getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
     }
 }

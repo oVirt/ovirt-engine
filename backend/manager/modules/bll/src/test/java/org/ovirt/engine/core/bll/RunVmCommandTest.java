@@ -62,10 +62,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Theories.class)
@@ -85,13 +85,13 @@ public class RunVmCommandTest {
     private VDSBrokerFrontend vdsBrokerFrontend;
 
     @Mock
-    private VmDAO vmDAO;
+    private VmDao vmDao;
 
     @Mock
-    private StoragePoolDAO spDao;
+    private StoragePoolDao spDao;
 
     @Mock
-    private VmDeviceDAO deviceDao;
+    private VmDeviceDao deviceDao;
 
     @Mock
     private BackendInternal backend;
@@ -299,7 +299,7 @@ public class RunVmCommandTest {
         command.createVm();
 
         // Check Vm
-        VM vm = vmDAO.get(command.getParameters().getVmId());
+        VM vm = vmDao.get(command.getParameters().getVmId());
         return vm;
     }
 
@@ -309,8 +309,8 @@ public class RunVmCommandTest {
     private VM mockVm(RunVmCommand<RunVmParams> spyVmCommand) {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
-        doReturn(vmDAO).when(command).getVmDAO();
-        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
+        doReturn(vmDao).when(command).getVmDao();
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
         doReturn(new VDSGroup()).when(command).getVdsGroup();
         // Avoid referencing the unmockable static VmHandler.updateCurrentCd
         doNothing().when(command).updateCurrentCd(any(String.class));
@@ -352,7 +352,7 @@ public class RunVmCommandTest {
         final ArrayList<Disk> disks = new ArrayList<Disk>();
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
-        initDAOMocks(disks);
+        initDaoMocks(disks);
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         doReturn(new StoragePool()).when(command).getStoragePool();
@@ -478,15 +478,15 @@ public class RunVmCommandTest {
      * @param disks
      * @param guid
      */
-    protected void initDAOMocks(final List<Disk> disks) {
+    protected void initDaoMocks(final List<Disk> disks) {
         final DiskDao diskDao = mock(DiskDao.class);
         when(diskDao.getAllForVm(Guid.Empty, true)).thenReturn(disks);
         doReturn(diskDao).when(command).getDiskDao();
 
-        final StorageDomainDAO storageDomainDAO = mock(StorageDomainDAO.class);
-        when(storageDomainDAO.getAllForStoragePool(Guid.Empty))
+        final StorageDomainDao storageDomainDao = mock(StorageDomainDao.class);
+        when(storageDomainDao.getAllForStoragePool(Guid.Empty))
                 .thenReturn(new ArrayList<StorageDomain>());
-        doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
+        doReturn(storageDomainDao).when(command).getStorageDomainDao();
     }
 
     private SnapshotsValidator mockSuccessfulSnapshotValidator() {

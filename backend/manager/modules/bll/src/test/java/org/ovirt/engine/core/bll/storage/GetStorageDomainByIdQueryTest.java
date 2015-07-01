@@ -9,11 +9,11 @@ import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /**
  * A test case for the {@link GetStorageDomainByIdQuery} class.
- * This test mocks away all the DAOs, and just tests the flow of the query itself.
+ * This test mocks away all the Daos, and just tests the flow of the query itself.
  */
 public class GetStorageDomainByIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetStorageDomainByIdQuery<IdQueryParameters>> {
 
@@ -26,10 +26,10 @@ public class GetStorageDomainByIdQueryTest extends AbstractUserQueryTest<IdQuery
 
         when(getQueryParameters().getId()).thenReturn(storageDomainId);
 
-        // Mock the DAOs
-        StorageDomainDAO storageDoaminDAOMock = mock(StorageDomainDAO.class);
-        when(storageDoaminDAOMock.get(storageDomainId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(expected);
-        when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDoaminDAOMock);
+        // Mock the Daos
+        StorageDomainDao storageDoaminDaoMock = mock(StorageDomainDao.class);
+        when(storageDoaminDaoMock.get(storageDomainId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(expected);
+        when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDoaminDaoMock);
 
         getQuery().executeQueryCommand();
 

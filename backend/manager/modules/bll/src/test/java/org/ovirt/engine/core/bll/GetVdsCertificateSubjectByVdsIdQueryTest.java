@@ -10,11 +10,11 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 /**
  * A test case for {@link GetVdsCertificateSubjectByVdsIdQuery}.
- * It does not test database implementation, but rather tests that the right delegations to the DAO occur.
+ * It does not test database implementation, but rather tests that the right delegations to the Dao occur.
  */
 public class GetVdsCertificateSubjectByVdsIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVdsCertificateSubjectByVdsIdQuery<IdQueryParameters>> {
     @Test
@@ -33,9 +33,9 @@ public class GetVdsCertificateSubjectByVdsIdQueryTest extends AbstractUserQueryT
         IdQueryParameters paramsMock = getQueryParameters();
         when(paramsMock.getId()).thenReturn(vdsID);
 
-        VdsDAO vdsDAOMock = mock(VdsDAO.class);
-        when(vdsDAOMock.get(vdsID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(vds);
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDAOMock);
+        VdsDao vdsDaoMock = mock(VdsDao.class);
+        when(vdsDaoMock.get(vdsID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(vds);
+        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMock);
 
         getQuery().executeQueryCommand();
 

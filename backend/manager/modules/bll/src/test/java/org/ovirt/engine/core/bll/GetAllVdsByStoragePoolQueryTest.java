@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDao;
 
 /** A test case for the {@link GetAllVdsByStoragePoolQuery} class. */
 public class GetAllVdsByStoragePoolQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetAllVdsByStoragePoolQuery<IdQueryParameters>> {
@@ -27,10 +27,10 @@ public class GetAllVdsByStoragePoolQueryTest extends AbstractUserQueryTest<IdQue
         vds.setStoragePoolId(spId);
         List<VDS> result = Collections.singletonList(vds);
 
-        // Mock the DAO
-        VdsDAO vdsDAOMock = mock(VdsDAO.class);
-        when(vdsDAOMock.getAllForStoragePool(spId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(result);
-        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDAOMock);
+        // Mock the Dao
+        VdsDao vdsDaoMock = mock(VdsDao.class);
+        when(vdsDaoMock.getAllForStoragePool(spId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(result);
+        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMock);
 
         // Execute the query
         getQuery().executeQueryCommand();

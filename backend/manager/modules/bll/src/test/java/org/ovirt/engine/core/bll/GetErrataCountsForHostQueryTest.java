@@ -29,14 +29,14 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryParameters, GetErrataCountsForHostQuery<IdQueryParameters>> {
 
     @Mock
-    private VdsStaticDAO vdsStaticDao;
+    private VdsStaticDao vdsStaticDao;
 
     @Mock
     private ProviderDao providerDao;

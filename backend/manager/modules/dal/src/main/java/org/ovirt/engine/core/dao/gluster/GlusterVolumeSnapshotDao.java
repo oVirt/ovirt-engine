@@ -6,10 +6,10 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DAO;
-import org.ovirt.engine.core.dao.SearchDAO;
+import org.ovirt.engine.core.dao.Dao;
+import org.ovirt.engine.core.dao.SearchDao;
 
-public interface GlusterVolumeSnapshotDao extends DAO, SearchDAO<GlusterVolumeSnapshotEntity> {
+public interface GlusterVolumeSnapshotDao extends Dao, SearchDao<GlusterVolumeSnapshotEntity> {
     public void save(GlusterVolumeSnapshotEntity snapshot);
 
     public void saveAll(List<GlusterVolumeSnapshotEntity> snapshots);

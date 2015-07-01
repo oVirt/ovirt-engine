@@ -45,11 +45,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.AuditLogDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.AuditLogDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StartVdsCommandTest extends DbDependentTestBase {
@@ -64,15 +64,15 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     private FenceAgent agent2;
     private DbFacade dbFacade;
     @Mock
-    private VdsDAO vdsDao;
+    private VdsDao vdsDao;
     @Mock
-    private VdsDynamicDAO vdsDynamicDAO;
+    private VdsDynamicDao vdsDynamicDao;
     @Mock
-    private VmDAO vmDao;
+    private VmDao vmDao;
     @Mock
-    private AuditLogDAO auditLogDao;
+    private AuditLogDao auditLogDao;
     @Mock
-    private VdsGroupDAO vdsGroupDao;
+    private VdsGroupDao vdsGroupDao;
     @Mock
     private BackendInternal backend;
     @Mock
@@ -127,8 +127,8 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         VdsDynamic currentVds = new VdsDynamic();
         currentVds.setId(FENCECD_HOST_ID);
         currentVds.setStatus(VDSStatus.NonResponsive);
-        when(vdsDynamicDAO.get(FENCECD_HOST_ID)).thenReturn(currentVds);
-        when(dbFacade.getVdsDynamicDao()).thenReturn(vdsDynamicDAO);
+        when(vdsDynamicDao.get(FENCECD_HOST_ID)).thenReturn(currentVds);
+        when(dbFacade.getVdsDynamicDao()).thenReturn(vdsDynamicDao);
     }
 
     private void initAgents() {

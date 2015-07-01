@@ -58,7 +58,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         }
 
         // update vm interfaces
-        List<Network> networks = getNetworkDAO().getAllForCluster(getParameters().getClusterId());
+        List<Network> networks = getNetworkDao().getAllForCluster(getParameters().getClusterId());
         List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmId());
 
         for (final VmNic iface : interfaces) {

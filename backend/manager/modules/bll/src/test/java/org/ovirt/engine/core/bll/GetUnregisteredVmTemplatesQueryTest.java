@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 /** A test case for the {@link GetUnregisteredVmTemplatesQuery} class. */
@@ -83,12 +83,12 @@ public class GetUnregisteredVmTemplatesQueryTest extends AbstractQueryTest<IdQue
         List<OvfEntityData> expectedResultQuery2 = new ArrayList<>();
         expectedResultQuery2.add(ovfEntityData);
 
-        // Mock the DAOs
-        UnregisteredOVFDataDAO unregisteredOVFDataDAOMock = mock(UnregisteredOVFDataDAO.class);
-        when(getDbFacadeMockInstance().getUnregisteredOVFDataDao()).thenReturn(unregisteredOVFDataDAOMock);
-        when(unregisteredOVFDataDAOMock.getAllForStorageDomainByEntityType(storageDomainId, entityType)).thenReturn(expectedResult);
-        when(unregisteredOVFDataDAOMock.getByEntityIdAndStorageDomain(newVmTemplateGuid, storageDomainId)).thenReturn(expectedResultQuery1);
-        when(unregisteredOVFDataDAOMock.getByEntityIdAndStorageDomain(newVmTemplateGuid2, storageDomainId)).thenReturn(expectedResultQuery2);
+        // Mock the Daos
+        UnregisteredOVFDataDao unregisteredOVFDataDaoMock = mock(UnregisteredOVFDataDao.class);
+        when(getDbFacadeMockInstance().getUnregisteredOVFDataDao()).thenReturn(unregisteredOVFDataDaoMock);
+        when(unregisteredOVFDataDaoMock.getAllForStorageDomainByEntityType(storageDomainId, entityType)).thenReturn(expectedResult);
+        when(unregisteredOVFDataDaoMock.getByEntityIdAndStorageDomain(newVmTemplateGuid, storageDomainId)).thenReturn(expectedResultQuery1);
+        when(unregisteredOVFDataDaoMock.getByEntityIdAndStorageDomain(newVmTemplateGuid2, storageDomainId)).thenReturn(expectedResultQuery2);
 
         // Mock OVF
         OvfHelper ovfHelperMock = mock(OvfHelper.class);

@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -38,7 +38,7 @@ public class ReplaceGlusterVolumeBrickCommandTest {
     GlusterVolumeDao volumeDao;
 
     @Mock
-    VdsStaticDAO vdsStaticDao;
+    VdsStaticDao vdsStaticDao;
 
     @Mock
     NetworkDao networkDao;
@@ -61,9 +61,9 @@ public class ReplaceGlusterVolumeBrickCommandTest {
 
     private void prepareMocks(ReplaceGlusterVolumeBrickCommand command) {
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(vdsStaticDao).when(command).getVdsStaticDAO();
-        doReturn(networkDao).when(command).getNetworkDAO();
-        doReturn(interfaceDao).when(command).getInterfaceDAO();
+        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
+        doReturn(networkDao).when(command).getNetworkDao();
+        doReturn(interfaceDao).when(command).getInterfaceDao();
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getDistributedVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getDistributedVolume(volumeId2)).when(volumeDao).getById(volumeId2);

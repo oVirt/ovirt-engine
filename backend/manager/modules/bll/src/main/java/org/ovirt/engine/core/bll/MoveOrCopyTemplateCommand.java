@@ -88,7 +88,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected StorageDomain getSourceDomain() {
         if (sourceDomain == null && !Guid.Empty.equals(sourceDomainId)) {
-            sourceDomain = getStorageDomainDAO().getForStoragePool(sourceDomainId, getStoragePool().getId());
+            sourceDomain = getStorageDomainDao().getForStoragePool(sourceDomainId, getStoragePool().getId());
         }
         return sourceDomain;
     }
@@ -164,7 +164,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         }
 
         for (DiskImage image : getImages()) {
-            StorageDomain sd = getStorageDomainDAO().getForStoragePool(
+            StorageDomain sd = getStorageDomainDao().getForStoragePool(
                     image.getStorageIds().get(0), getStoragePool().getId());
             if (!validate(new StorageDomainValidator(sd).isDomainExistAndActive())) {
                 return false;
@@ -309,7 +309,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     protected void incrementDbGeneration() {
-        getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
+        getVmStaticDao().incrementDbGeneration(getVmTemplate().getId());
     }
 
     @Override
@@ -335,7 +335,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     protected StorageDomain getStorageDomain(Guid domainId) {
-        return getStorageDomainDAO().getForStoragePool(domainId, getStoragePool().getId());
+        return getStorageDomainDao().getForStoragePool(domainId, getStoragePool().getId());
     }
 
     /**

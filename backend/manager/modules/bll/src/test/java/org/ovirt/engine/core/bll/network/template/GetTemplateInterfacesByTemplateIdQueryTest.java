@@ -16,7 +16,7 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 /**
  * A test case for {@link GetTemplateInterfacesByTemplateIdQuery}.
- * It does not test database implementation, but rather tests that the right delegations to the DAO occur.
+ * It does not test database implementation, but rather tests that the right delegations to the Dao occur.
  */
 public class GetTemplateInterfacesByTemplateIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetTemplateInterfacesByTemplateIdQuery<IdQueryParameters>> {
     @Test
@@ -27,9 +27,9 @@ public class GetTemplateInterfacesByTemplateIdQueryTest extends AbstractUserQuer
         IdQueryParameters paramsMock = getQueryParameters();
         when(paramsMock.getId()).thenReturn(templateID);
 
-        VmNetworkInterfaceDao vmNetworkInterfaceDAOMock = mock(VmNetworkInterfaceDao.class);
-        when(vmNetworkInterfaceDAOMock.getAllForTemplate(templateID, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
-        when(getDbFacadeMockInstance().getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDAOMock);
+        VmNetworkInterfaceDao vmNetworkInterfaceDaoMock = mock(VmNetworkInterfaceDao.class);
+        when(vmNetworkInterfaceDaoMock.getAllForTemplate(templateID, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
+        when(getDbFacadeMockInstance().getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDaoMock);
 
         getQuery().executeQueryCommand();
 

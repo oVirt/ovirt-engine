@@ -68,26 +68,26 @@ import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.ActionGroupDAO;
-import org.ovirt.engine.core.dao.AsyncTaskDAO;
-import org.ovirt.engine.core.dao.AuditLogDAO;
+import org.ovirt.engine.core.dao.ActionGroupDao;
+import org.ovirt.engine.core.dao.AsyncTaskDao;
+import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.BaseDiskDao;
-import org.ovirt.engine.core.dao.BookmarkDAO;
-import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
+import org.ovirt.engine.core.dao.BookmarkDao;
+import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.CommandEntityDao;
-import org.ovirt.engine.core.dao.DAO;
-import org.ovirt.engine.core.dao.DbGroupDAO;
-import org.ovirt.engine.core.dao.DbUserDAO;
+import org.ovirt.engine.core.dao.Dao;
+import org.ovirt.engine.core.dao.DbGroupDao;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.EngineBackupLogDao;
-import org.ovirt.engine.core.dao.EngineSessionDAO;
-import org.ovirt.engine.core.dao.EventDAO;
+import org.ovirt.engine.core.dao.EngineSessionDao;
+import org.ovirt.engine.core.dao.EventDao;
 import org.ovirt.engine.core.dao.ExternalVariableDao;
-import org.ovirt.engine.core.dao.FenceAgentDAO;
+import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.ImageDao;
@@ -96,51 +96,51 @@ import org.ovirt.engine.core.dao.IscsiBondDao;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.LibvirtSecretDao;
-import org.ovirt.engine.core.dao.LunDAO;
+import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
-import org.ovirt.engine.core.dao.PermissionDAO;
-import org.ovirt.engine.core.dao.QuotaDAO;
-import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
-import org.ovirt.engine.core.dao.RoleDAO;
-import org.ovirt.engine.core.dao.RoleGroupMapDAO;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.QuotaDao;
+import org.ovirt.engine.core.dao.RepoFileMetaDataDao;
+import org.ovirt.engine.core.dao.RoleDao;
+import org.ovirt.engine.core.dao.RoleGroupMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StepDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
-import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDAO;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
-import org.ovirt.engine.core.dao.TagDAO;
-import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
-import org.ovirt.engine.core.dao.UserProfileDAO;
-import org.ovirt.engine.core.dao.VdcOptionDAO;
-import org.ovirt.engine.core.dao.VdsCpuStatisticsDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.TagDao;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
+import org.ovirt.engine.core.dao.UserProfileDao;
+import org.ovirt.engine.core.dao.VdcOptionDao;
+import org.ovirt.engine.core.dao.VdsCpuStatisticsDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VdsKdumpStatusDao;
-import org.ovirt.engine.core.dao.VdsNumaNodeDAO;
-import org.ovirt.engine.core.dao.VdsSpmIdMapDAO;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.dao.VdsStatisticsDAO;
-import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDAO;
-import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
+import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
 import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.dao.VmIconDefaultDao;
-import org.ovirt.engine.core.dao.VmInitDAO;
+import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.dao.VmJobDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDAO;
-import org.ovirt.engine.core.dao.VmPoolDAO;
-import org.ovirt.engine.core.dao.VmStaticDAO;
-import org.ovirt.engine.core.dao.VmStatisticsDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.dwh.DwhHistoryTimekeepingDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
@@ -195,31 +195,31 @@ public class DbFacade {
     private final static Map<Class<?>, Class<?>> mapEntityToDao = new HashMap<Class<?>, Class<?>>()
     {
         {
-            put(StoragePool.class, StoragePoolDAO.class);
-            put(StoragePoolIsoMap.class, StoragePoolIsoMapDAO.class);
-            put(StorageDomainStatic.class, StorageDomainStaticDAO.class);
-            put(StorageDomainDynamic.class, StorageDomainDynamicDAO.class);
-            put(VdsStatic.class, VdsStaticDAO.class);
-            put(VdsDynamic.class, VdsDynamicDAO.class);
-            put(VdsStatistics.class, VdsStatisticsDAO.class);
-            put(vds_spm_id_map.class, VdsSpmIdMapDAO.class);
-            put(Role.class, RoleDAO.class);
-            put(VmTemplate.class, VmTemplateDAO.class);
-            put(VmDynamic.class, VmDynamicDAO.class);
-            put(VmStatic.class, VmStaticDAO.class);
-            put(VmStatistics.class, VmStatisticsDAO.class);
+            put(StoragePool.class, StoragePoolDao.class);
+            put(StoragePoolIsoMap.class, StoragePoolIsoMapDao.class);
+            put(StorageDomainStatic.class, StorageDomainStaticDao.class);
+            put(StorageDomainDynamic.class, StorageDomainDynamicDao.class);
+            put(VdsStatic.class, VdsStaticDao.class);
+            put(VdsDynamic.class, VdsDynamicDao.class);
+            put(VdsStatistics.class, VdsStatisticsDao.class);
+            put(vds_spm_id_map.class, VdsSpmIdMapDao.class);
+            put(Role.class, RoleDao.class);
+            put(VmTemplate.class, VmTemplateDao.class);
+            put(VmDynamic.class, VmDynamicDao.class);
+            put(VmStatic.class, VmStaticDao.class);
+            put(VmStatistics.class, VmStatisticsDao.class);
             put(BaseDisk.class, BaseDiskDao.class);
             put(DiskImage.class, BaseDiskDao.class);
-            put(DiskImageDynamic.class, DiskImageDynamicDAO.class);
+            put(DiskImageDynamic.class, DiskImageDynamicDao.class);
             put(VmNic.class, VmNicDao.class);
             put(VmNetworkInterface.class, VmNicDao.class);
             put(VmNetworkStatistics.class, VmNetworkStatisticsDao.class);
             put(Network.class, NetworkDao.class);
             put(Provider.class, ProviderDao.class);
             put(Snapshot.class, SnapshotDao.class);
-            put(VmDevice.class, VmDeviceDAO.class);
+            put(VmDevice.class, VmDeviceDao.class);
             put(ImageStorageDomainMap.class, ImageStorageDomainMapDao.class);
-            put(Permission.class, PermissionDAO.class);
+            put(Permission.class, PermissionDao.class);
             put(Image.class, ImageDao.class);
             put(Job.class, JobDao.class);
             put(Step.class, StepDao.class);
@@ -227,20 +227,20 @@ public class DbFacade {
             put(VnicProfileView.class, VnicProfileDao.class);
             put(DwhHistoryTimekeeping.class, DwhHistoryTimekeepingDao.class);
             put(IscsiBond.class, IscsiBondDao.class);
-            put(VmInit.class, VmInitDAO.class);
-            put(CpuStatistics.class, VdsCpuStatisticsDAO.class);
-            put(VdsNumaNode.class, VdsNumaNodeDAO.class);
-            put(VmNumaNode.class, VmNumaNodeDAO.class);
+            put(VmInit.class, VmInitDao.class);
+            put(CpuStatistics.class, VdsCpuStatisticsDao.class);
+            put(VdsNumaNode.class, VdsNumaNodeDao.class);
+            put(VmNumaNode.class, VmNumaNodeDao.class);
             put(CommandEntity.class, CommandEntityDao.class);
             put(ExternalVariable.class, ExternalVariableDao.class);
             put(VdsKdumpStatus.class, VdsKdumpStatusDao.class);
             put(VmJob.class, VmJobDao.class);
             put(MacPool.class, MacPoolDao.class);
             put(DiskProfile.class, DiskProfileDao.class);
-            put(FenceAgent.class, FenceAgentDAO.class);
-            put(EngineSession.class, EngineSessionDAO.class);
+            put(FenceAgent.class, FenceAgentDao.class);
+            put(EngineSession.class, EngineSessionDao.class);
             put(HostDevice.class, HostDeviceDao.class);
-            put(UserProfile.class, UserProfileDAO.class);
+            put(UserProfile.class, UserProfileDao.class);
             put(VmIcon.class, VmIconDao.class);
             put(VmIconDefault.class, VmIconDefaultDao.class);
             put(LibvirtSecret.class, LibvirtSecretDao.class);
@@ -255,7 +255,7 @@ public class DbFacade {
     private final SimpleJdbcCallsHandler callsHandler;
 
     @Inject
-    private Instance<DAO> daos;
+    private Instance<Dao> daos;
 
 
     private int onStartConnectionTimeout;
@@ -297,13 +297,13 @@ public class DbFacade {
     }
 
     /**
-     * Return the correct DAO for the given {@link BusinessEntity} class.
+     * Return the correct Dao for the given {@link BusinessEntity} class.
      *
      * @param <T>
-     *            The Type of DAO which is returned.
+     *            The Type of Dao which is returned.
      * @param entityClass
      *            The class of the entity.
-     * @return The DAO for the entity.
+     * @return The Dao for the entity.
      */
     public <T extends GenericDao<?, ?>> T getDaoForEntity(Class<? extends BusinessEntity<?>> entityClass) {
         @SuppressWarnings("unchecked")
@@ -316,8 +316,8 @@ public class DbFacade {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends DAO> T getDao(Class<T> daoType) {
-        for (DAO dao : daos) {
+    private <T extends Dao> T getDao(Class<T> daoType) {
+        for (Dao dao : daos) {
             if (daoType.isAssignableFrom(dao.getClass())) {
                 return (T) dao;
             }
@@ -409,12 +409,12 @@ public class DbFacade {
     }
 
     /**
-     * Returns a singleton instance of {@link BookmarkDAO}.
+     * Returns a singleton instance of {@link BookmarkDao}.
      *
      * @return the dao
      */
-    public BookmarkDAO getBookmarkDao() {
-        return getDao(BookmarkDAO.class);
+    public BookmarkDao getBookmarkDao() {
+        return getDao(BookmarkDao.class);
 
     }
 
@@ -428,111 +428,111 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link DbUserDAO}.
+     * Returns the singleton instance of {@link DbUserDao}.
      *
      * @return the dao
      */
-    public DbUserDAO getDbUserDao() {
-        return getDao(DbUserDAO.class);
+    public DbUserDao getDbUserDao() {
+        return getDao(DbUserDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link UserProfileDAO}.
+     * Returns the singleton instance of {@link UserProfileDao}.
      *
      * @return the dao
      */
-    public UserProfileDAO getUserProfileDao() {
-        return getDao(UserProfileDAO.class);
+    public UserProfileDao getUserProfileDao() {
+        return getDao(UserProfileDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VdsDAO}.
+     * Returns the singleton instance of {@link VdsDao}.
      *
      * @return the dao
      */
-    public VdsDAO getVdsDao() {
-        return getDao(VdsDAO.class);
+    public VdsDao getVdsDao() {
+        return getDao(VdsDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link UnregisteredOVFDataDAO}.
+     * Returns the singleton instance of {@link UnregisteredOVFDataDao}.
      *
      * @return the dao
      */
-    public UnregisteredOVFDataDAO getUnregisteredOVFDataDao() {
-        return getDao(UnregisteredOVFDataDAO.class);
+    public UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
+        return getDao(UnregisteredOVFDataDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VmAndTemplatesGenerationsDAO}.
+     * Returns the singleton instance of {@link VmAndTemplatesGenerationsDao}.
      *
      * @return the dao
      */
-    public VmAndTemplatesGenerationsDAO getVmAndTemplatesGenerationsDao() {
-        return getDao(VmAndTemplatesGenerationsDAO.class);
+    public VmAndTemplatesGenerationsDao getVmAndTemplatesGenerationsDao() {
+        return getDao(VmAndTemplatesGenerationsDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VdsStaticDAO}.
+     * Returns the singleton instance of {@link VdsStaticDao}.
      *
      * @return the dao
      */
-    public VdsStaticDAO getVdsStaticDao() {
-        return getDao(VdsStaticDAO.class);
+    public VdsStaticDao getVdsStaticDao() {
+        return getDao(VdsStaticDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VdsDynamicDAO}.
+     * Returns the singleton instance of {@link VdsDynamicDao}.
      *
      * @return the dao
      */
-    public VdsDynamicDAO getVdsDynamicDao() {
-        return getDao(VdsDynamicDAO.class);
+    public VdsDynamicDao getVdsDynamicDao() {
+        return getDao(VdsDynamicDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VdsStatisticsDAO}.
+     * Returns the singleton instance of {@link VdsStatisticsDao}.
      *
      * @return the dao
      */
-    public VdsStatisticsDAO getVdsStatisticsDao() {
-        return getDao(VdsStatisticsDAO.class);
+    public VdsStatisticsDao getVdsStatisticsDao() {
+        return getDao(VdsStatisticsDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VdsSpmIdMapDAO}.
+     * Returns the singleton instance of {@link VdsSpmIdMapDao}.
      *
      * @return the dao
      */
-    public VdsSpmIdMapDAO getVdsSpmIdMapDao() {
-        return getDao(VdsSpmIdMapDAO.class);
+    public VdsSpmIdMapDao getVdsSpmIdMapDao() {
+        return getDao(VdsSpmIdMapDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VdsGroupDAO}.
+     * Returns the singleton instance of {@link VdsGroupDao}.
      *
      * @return the dao
      */
-    public VdsGroupDAO getVdsGroupDao() {
-        return getDao(VdsGroupDAO.class);
+    public VdsGroupDao getVdsGroupDao() {
+        return getDao(VdsGroupDao.class);
     }
 
     /**
-     * Returns the single instance of {@link AuditLogDAO}.
+     * Returns the single instance of {@link AuditLogDao}.
      *
      * @return the dao
      */
-    public AuditLogDAO getAuditLogDao() {
-        return getDao(AuditLogDAO.class);
+    public AuditLogDao getAuditLogDao() {
+        return getDao(AuditLogDao.class);
     }
 
     /**
-     * Retrieves the singleton instance of {@link LunDAO}.
+     * Retrieves the singleton instance of {@link LunDao}.
      *
      * @return the dao
      */
-    public LunDAO getLunDao() {
-        return getDao(LunDAO.class);
+    public LunDao getLunDao() {
+        return getDao(LunDao.class);
     }
 
     /**
@@ -563,30 +563,30 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link RoleGroupMapDAO}.
+     * Returns the singleton instance of {@link RoleGroupMapDao}.
      *
      * @return the dao
      */
-    public RoleGroupMapDAO getRoleGroupMapDao() {
-        return getDao(RoleGroupMapDAO.class);
+    public RoleGroupMapDao getRoleGroupMapDao() {
+        return getDao(RoleGroupMapDao.class);
     }
 
     /**
-     * * Returns the singleton instance of {@link VmTemplateDAO}.
+     * * Returns the singleton instance of {@link VmTemplateDao}.
      *
      * @return the dao
      */
-    public VmTemplateDAO getVmTemplateDao() {
-        return getDao(VmTemplateDAO.class);
+    public VmTemplateDao getVmTemplateDao() {
+        return getDao(VmTemplateDao.class);
     }
 
     /**
-     * * Returns the singleton instance of {@link VmDAO}.
+     * * Returns the singleton instance of {@link VmDao}.
      *
      * @return the dao
      */
-    public VmDAO getVmDao() {
-        return getDao(VmDAO.class);
+    public VmDao getVmDao() {
+        return getDao(VmDao.class);
     }
 
     /**
@@ -603,21 +603,21 @@ public class DbFacade {
     }
 
     /**
-     * * Returns the singleton instance of {@link VmDynamicDAO}.
+     * * Returns the singleton instance of {@link VmDynamicDao}.
      *
      * @return the dao
      */
-    public VmDynamicDAO getVmDynamicDao() {
-        return getDao(VmDynamicDAO.class);
+    public VmDynamicDao getVmDynamicDao() {
+        return getDao(VmDynamicDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link TagDAO}.
+     * Returns the singleton instance of {@link TagDao}.
      *
      * @return the dao
      */
-    public TagDAO getTagDao() {
-        return getDao(TagDAO.class);
+    public TagDao getTagDao() {
+        return getDao(TagDao.class);
     }
 
     /**
@@ -657,75 +657,75 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link DiskImageDAO}.
+     * Returns the singleton instance of {@link DiskImageDao}.
      *
      * @return the dao
      */
-    public DiskImageDAO getDiskImageDao() {
-        return getDao(DiskImageDAO.class);
+    public DiskImageDao getDiskImageDao() {
+        return getDao(DiskImageDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link DiskImageDynamicDAO}.
+     * Returns the singleton instance of {@link DiskImageDynamicDao}.
      *
      * @return the dao
      */
-    public DiskImageDynamicDAO getDiskImageDynamicDao() {
-        return getDao(DiskImageDynamicDAO.class);
+    public DiskImageDynamicDao getDiskImageDynamicDao() {
+        return getDao(DiskImageDynamicDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link EventDAO}.
+     * Returns the singleton instance of {@link EventDao}.
      *
      * @return the dao
      */
-    public EventDAO getEventDao() {
-        return getDao(EventDAO.class);
+    public EventDao getEventDao() {
+        return getDao(EventDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link ActionGroupDAO}.
+     * Returns the singleton instance of {@link ActionGroupDao}.
      *
      * @return the dao
      */
-    public ActionGroupDAO getActionGroupDao() {
-        return getDao(ActionGroupDAO.class);
+    public ActionGroupDao getActionGroupDao() {
+        return getDao(ActionGroupDao.class);
     }
 
     /**
-     * Retrieves the singleton instance of {@link RoleDAO}.
+     * Retrieves the singleton instance of {@link RoleDao}.
      *
      * @return the dao
      */
-    public RoleDAO getRoleDao() {
-        return getDao(RoleDAO.class);
+    public RoleDao getRoleDao() {
+        return getDao(RoleDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link AsyncTaskDAO}.
+     * Returns the singleton instance of {@link AsyncTaskDao}.
      *
      * @return the dao
      */
-    public AsyncTaskDAO getAsyncTaskDao() {
-        return getDao(AsyncTaskDAO.class);
+    public AsyncTaskDao getAsyncTaskDao() {
+        return getDao(AsyncTaskDao.class);
     }
 
     /**
-     * Retrieves the singleton instance of {@link DbGroupDAO}.
+     * Retrieves the singleton instance of {@link DbGroupDao}.
      *
      * @return the dao
      */
-    public DbGroupDAO getDbGroupDao() {
-        return getDao(DbGroupDAO.class);
+    public DbGroupDao getDbGroupDao() {
+        return getDao(DbGroupDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link EngineSessionDAO}.
+     * Returns the singleton instance of {@link EngineSessionDao}.
      *
      * @return the dao
      */
-    public EngineSessionDAO getEngineSessionDao() {
-        return getDao(EngineSessionDAO.class);
+    public EngineSessionDao getEngineSessionDao() {
+        return getDao(EngineSessionDao.class);
     }
 
     /**
@@ -765,21 +765,21 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link PermissionDAO}.
+     * Returns the singleton instance of {@link PermissionDao}.
      *
      * @return the dao
      */
-    public PermissionDAO getPermissionDao() {
-        return getDao(PermissionDAO.class);
+    public PermissionDao getPermissionDao() {
+        return getDao(PermissionDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link StorageDomainDAO}.
+     * Returns the singleton instance of {@link StorageDomainDao}.
      *
      * @return the dao
      */
-    public StorageDomainDAO getStorageDomainDao() {
-        return getDao(StorageDomainDAO.class);
+    public StorageDomainDao getStorageDomainDao() {
+        return getDao(StorageDomainDao.class);
     }
 
     /**
@@ -792,30 +792,30 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link StorageDomainDAO}.
+     * Returns the singleton instance of {@link StorageDomainDao}.
      *
      * @return the dao
      */
-    public StorageDomainStaticDAO getStorageDomainStaticDao() {
-        return getDao(StorageDomainStaticDAO.class);
+    public StorageDomainStaticDao getStorageDomainStaticDao() {
+        return getDao(StorageDomainStaticDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link StorageDomainDAO}.
+     * Returns the singleton instance of {@link StorageDomainDao}.
      *
      * @return the dao
      */
-    public StorageDomainDynamicDAO getStorageDomainDynamicDao() {
-        return getDao(StorageDomainDynamicDAO.class);
+    public StorageDomainDynamicDao getStorageDomainDynamicDao() {
+        return getDao(StorageDomainDynamicDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link RepoFileMetaDataDAO}.
+     * Returns the singleton instance of {@link RepoFileMetaDataDao}.
      *
      * @return Repository file meta data dao.
      */
-    public RepoFileMetaDataDAO getRepoFileMetaDataDao() {
-        return getDao(RepoFileMetaDataDAO.class);
+    public RepoFileMetaDataDao getRepoFileMetaDataDao() {
+        return getDao(RepoFileMetaDataDao.class);
     }
 
     /**
@@ -837,12 +837,12 @@ public class DbFacade {
     }
 
     /**
-     * Retrieves the singleton instance of {@link StoragePoolDAO}.
+     * Retrieves the singleton instance of {@link StoragePoolDao}.
      *
      * @return the dao
      */
-    public StoragePoolDAO getStoragePoolDao() {
-        return getDao(StoragePoolDAO.class);
+    public StoragePoolDao getStoragePoolDao() {
+        return getDao(StoragePoolDao.class);
     }
 
     /**
@@ -855,83 +855,83 @@ public class DbFacade {
     }
 
     /**
-     * Retrieves the singleton instance of {@link StoragePoolIsoMapDAO}.
+     * Retrieves the singleton instance of {@link StoragePoolIsoMapDao}.
      *
      * @return the dao
      */
-    public StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
-        return getDao(StoragePoolIsoMapDAO.class);
+    public StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
+        return getDao(StoragePoolIsoMapDao.class);
     }
 
     /**
-     * Retrieves the singleton instance of {@link StorageServerConnectionDAO}.
+     * Retrieves the singleton instance of {@link StorageServerConnectionDao}.
      *
      * @return the dao
      */
-    public StorageServerConnectionDAO getStorageServerConnectionDao() {
-        return getDao(StorageServerConnectionDAO.class);
+    public StorageServerConnectionDao getStorageServerConnectionDao() {
+        return getDao(StorageServerConnectionDao.class);
     }
 
     /**
-     * Retrieves the singleton instance of {@link StorageServerConnectionLunMapDAO}.
+     * Retrieves the singleton instance of {@link StorageServerConnectionLunMapDao}.
      *
      * @return the dao
      */
-    public StorageServerConnectionLunMapDAO getStorageServerConnectionLunMapDao() {
-        return getDao(StorageServerConnectionLunMapDAO.class);
+    public StorageServerConnectionLunMapDao getStorageServerConnectionLunMapDao() {
+        return getDao(StorageServerConnectionLunMapDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VdcOptionDAO}.
+     * Returns the singleton instance of {@link VdcOptionDao}.
      *
      * @return the dao
      */
-    public VdcOptionDAO getVdcOptionDao() {
-        return getDao(VdcOptionDAO.class);
+    public VdcOptionDao getVdcOptionDao() {
+        return getDao(VdcOptionDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link BusinessEntitySnapshotDAO}.
+     * Returns the singleton instance of {@link BusinessEntitySnapshotDao}.
      *
      * @return the dao
      */
-    public BusinessEntitySnapshotDAO getBusinessEntitySnapshotDao() {
-        return getDao(BusinessEntitySnapshotDAO.class);
+    public BusinessEntitySnapshotDao getBusinessEntitySnapshotDao() {
+        return getDao(BusinessEntitySnapshotDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VmPoolDAO}.
+     * Returns the singleton instance of {@link VmPoolDao}.
      *
      * @return the dao
      */
-    public VmPoolDAO getVmPoolDao() {
-        return getDao(VmPoolDAO.class);
+    public VmPoolDao getVmPoolDao() {
+        return getDao(VmPoolDao.class);
     }
 
-    public VmStaticDAO getVmStaticDao() {
-        return getDao(VmStaticDAO.class);
+    public VmStaticDao getVmStaticDao() {
+        return getDao(VmStaticDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VmStatisticsDAO}.
+     * Returns the singleton instance of {@link VmStatisticsDao}.
      *
      * @return the dao
      */
-    public VmStatisticsDAO getVmStatisticsDao() {
-        return getDao(VmStatisticsDAO.class);
+    public VmStatisticsDao getVmStatisticsDao() {
+        return getDao(VmStatisticsDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link QuotaDAO}.
+     * Returns the singleton instance of {@link QuotaDao}.
      *
      * @return the dao
      */
-    public QuotaDAO getQuotaDao() {
-        return getDao(QuotaDAO.class);
+    public QuotaDao getQuotaDao() {
+        return getDao(QuotaDao.class);
     }
 
-    public VmDeviceDAO getVmDeviceDao() {
-        return getDao(VmDeviceDAO.class);
+    public VmDeviceDao getVmDeviceDao() {
+        return getDao(VmDeviceDao.class);
     }
 
     /**
@@ -1177,8 +1177,8 @@ public class DbFacade {
         return getDao(VmNicDao.class);
     }
 
-    public VmInitDAO getVmInitDao() {
-        return getDao(VmInitDAO.class);
+    public VmInitDao getVmInitDao() {
+        return getDao(VmInitDao.class);
     }
 
     /**
@@ -1242,30 +1242,30 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link VdsCpuStatisticsDAO}.
+     * Returns the singleton instance of {@link VdsCpuStatisticsDao}.
      *
      * @return the dao instance
      */
-    public VdsCpuStatisticsDAO getVdsCpuStatisticsDAO() {
-        return getDao(VdsCpuStatisticsDAO.class);
+    public VdsCpuStatisticsDao getVdsCpuStatisticsDao() {
+        return getDao(VdsCpuStatisticsDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VdsNumaNodeDAO}.
+     * Returns the singleton instance of {@link VdsNumaNodeDao}.
      *
      * @return the dao instance
      */
-    public VdsNumaNodeDAO getVdsNumaNodeDAO() {
-        return getDao(VdsNumaNodeDAO.class);
+    public VdsNumaNodeDao getVdsNumaNodeDao() {
+        return getDao(VdsNumaNodeDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VmNumaNodeDAO}.
+     * Returns the singleton instance of {@link VmNumaNodeDao}.
      *
      * @return the dao instance
      */
-    public VmNumaNodeDAO getVmNumaNodeDAO() {
-        return getDao(VmNumaNodeDAO.class);
+    public VmNumaNodeDao getVmNumaNodeDao() {
+        return getDao(VmNumaNodeDao.class);
     }
 
     /**
@@ -1286,8 +1286,8 @@ public class DbFacade {
         return getDao(CpuProfileDao.class);
     }
 
-    public FenceAgentDAO getFenceAgentDao() {
-        return getDao(FenceAgentDAO.class);
+    public FenceAgentDao getFenceAgentDao() {
+        return getDao(FenceAgentDao.class);
     }
 
     /**

@@ -41,14 +41,14 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.dao.VmStaticDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -698,7 +698,7 @@ public class SnapshotsManager {
         }
     }
 
-    protected VmDeviceDAO getVmDeviceDao() {
+    protected VmDeviceDao getVmDeviceDao() {
         return DbFacade.getInstance().getVmDeviceDao();
     }
 
@@ -710,15 +710,15 @@ public class SnapshotsManager {
         return DbFacade.getInstance().getSnapshotDao();
     }
 
-    protected VmDynamicDAO getVmDynamicDao() {
+    protected VmDynamicDao getVmDynamicDao() {
         return DbFacade.getInstance().getVmDynamicDao();
     }
 
-    protected VmStaticDAO getVmStaticDao() {
+    protected VmStaticDao getVmStaticDao() {
         return DbFacade.getInstance().getVmStaticDao();
     }
 
-    protected DiskImageDAO getDiskImageDao() {
+    protected DiskImageDao getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDao();
     }
 
@@ -726,11 +726,11 @@ public class SnapshotsManager {
         return DbFacade.getInstance().getDiskDao();
     }
 
-    protected VdsGroupDAO getVdsGroupDao() {
+    protected VdsGroupDao getVdsGroupDao() {
         return DbFacade.getInstance().getVdsGroupDao();
     }
 
-    protected VmTemplateDAO getVmTemplateDao() {
+    protected VmTemplateDao getVmTemplateDao() {
         return DbFacade.getInstance().getVmTemplateDao();
     }
 
@@ -738,7 +738,7 @@ public class SnapshotsManager {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 
-    protected QuotaDAO getQuotaDao() {
+    protected QuotaDao getQuotaDao() {
         return DbFacade.getInstance().getQuotaDao();
     }
 }
