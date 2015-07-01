@@ -172,6 +172,36 @@ public class PendingResourceManager {
     }
 
     /**
+     * Return all currently pending resources of type "type" associated with VM "vm".
+     * @param vm ID of a VM
+     * @param type Class object identifying the type of pending resources we are interested in
+     * @return Iterable object with the requested resources
+     */
+    public <T extends PendingResource> Iterable<T> pendingVmResources(Guid vm, Class<T> type) {
+        if (!resourcesByVm.containsKey(vm)) {
+            return Collections.emptyList();
+        }
+
+        List<T> list = new ArrayList<>();
+        for (PendingResource resource: resourcesByVm.get(vm)) {
+            if (resource.getClass().equals(type)) {
+                list.add((T)resource);
+            }
+        }
+
+        return list;
+    }
+
+    /**
+     * Find pending resource that matches the provided template and return it.
+     * @param template resource template filled with identification-specific fields
+     * @return The actual pending resource
+     */
+    public <T extends PendingResource> T getExactPendingResource(T template) {
+        return (T)pendingResources.get(template);
+    }
+
+    /**
      * Return all currently pending resources of type "type".
      * @param type Class object identifying the type of pending resources we are interested in
      * @return Iterable object with the requested resources

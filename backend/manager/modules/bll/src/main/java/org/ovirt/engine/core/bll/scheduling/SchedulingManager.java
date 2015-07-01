@@ -1066,4 +1066,12 @@ public class SchedulingManager {
             releaseCluster(host.getVdsGroupId());
         }
     }
+
+    /**
+     * Get the host scheduled to receive a VM.
+     * This is best effort only.
+     */
+    public Guid getPendingHostForVm(VM vm) {
+        return PendingVM.getScheduledHost(getPendingResourceManager(), vm);
+    }
 }

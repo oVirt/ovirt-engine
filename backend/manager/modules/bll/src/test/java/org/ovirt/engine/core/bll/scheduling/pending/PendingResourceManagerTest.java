@@ -92,5 +92,35 @@ public class PendingResourceManagerTest {
         assertEquals(2, pending.size());
         assertEquals(11, PendingCpuCores.collectForHost(manager, host.getId()));
         assertEquals(1024+768, PendingMemory.collectForHost(manager, host.getId()));
+        assertEquals(host.getId(), PendingVM.getScheduledHost(manager, vm1));
+        assertEquals(host.getId(), PendingVM.getScheduledHost(manager, vm2));
+    }
+
+    @Test
+    public void testGetScheduledHost() throws Exception {
+        PendingResourceManager manager = new PendingResourceManager();
+
+        VDS host1 = new VDS();
+        host1.setId(Guid.newGuid());
+
+        VDS host2 = new VDS();
+        host2.setId(Guid.newGuid());
+
+        VM vm1 = new VM();
+        vm1.setId(Guid.newGuid());
+
+        VM vm2 = new VM();
+        vm2.setId(Guid.newGuid());
+
+        manager.addPending(new PendingVM(host1, vm1));
+        manager.addPending(new PendingMemory(host1, vm1, 768));
+        manager.addPending(new PendingCpuCores(host1, vm1, 1));
+
+        manager.addPending(new PendingVM(host2, vm2));
+        manager.addPending(new PendingMemory(host2, vm2, 1024));
+        manager.addPending(new PendingCpuCores(host2, vm2, 10));
+
+        assertEquals(host1.getId(), PendingVM.getScheduledHost(manager, vm1));
+        assertEquals(host2.getId(), PendingVM.getScheduledHost(manager, vm2));
     }
 }

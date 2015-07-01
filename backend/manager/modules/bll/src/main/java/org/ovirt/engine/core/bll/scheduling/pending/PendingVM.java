@@ -47,4 +47,10 @@ public class PendingVM extends PendingResource {
 
         return ids;
     }
+
+    public static Guid getScheduledHost(PendingResourceManager manager, VM vm) {
+        PendingVM template = new PendingVM((Guid)null, vm);
+        PendingVM pending = manager.getExactPendingResource(template);
+        return pending == null ? null : pending.getHost();
+    }
 }
