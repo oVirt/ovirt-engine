@@ -18,6 +18,10 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.ENGINE_BACKUP_STARTED);
         AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.ENGINE_BACKUP_COMPLETED);
         AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.ENGINE_BACKUP_FAILED);
+        AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.ENGINE_CA_CERTIFICATION_IS_ABOUT_TO_EXPIRE);
+        AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.ENGINE_CA_CERTIFICATION_HAS_EXPIRED);
+        AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.ENGINE_CERTIFICATION_IS_ABOUT_TO_EXPIRE);
+        AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.ENGINE_CERTIFICATION_HAS_EXPIRED);
 
         // VDS GROUP
         AddEventNotificationEntry(EventNotificationEntity.VdsGroup, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
@@ -47,6 +51,8 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_BOND_SLAVE_STATE_DOWN);
         AddEventNotificationEntry(EventNotificationEntity.Host,
                 AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_CERTIFICATION_HAS_EXPIRED);
         AddEventNotificationEntry(EventNotificationEntity.VirtHost, AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN);
         AddEventNotificationEntry(EventNotificationEntity.VirtHost, AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM);
         AddEventNotificationEntry(EventNotificationEntity.VirtHost, AuditLogType.SYSTEM_DEACTIVATED_STORAGE_DOMAIN);
