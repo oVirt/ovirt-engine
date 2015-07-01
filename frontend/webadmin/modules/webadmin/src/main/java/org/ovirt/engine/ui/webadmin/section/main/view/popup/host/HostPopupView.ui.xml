@@ -42,10 +42,6 @@
             margin-top: 10px;
         }
 
-        .rootPasswordLabel {
-            line-height: 5px;
-        }
-
         .headerFp {
             margin: 5px;
             margin-bottom: 5px;
@@ -327,7 +323,7 @@
                                 <b:Row ui:field="passwordSection">
                                     <b:Column size="LG_5">
                                         <g:RadioButton ui:field="rbPassword" />
-                                        <g:Label ui:field="rootPasswordLabel" addStyleNames="{style.headerAuthLabel} {style.rootPasswordLabel}" visible="false"/>
+                                        <g:Label ui:field="rootPasswordLabel" addStyleNames="{style.headerAuthLabel}" visible="false"/>
                                     </b:Column>
                                     <b:Column size="LG_7">
                                         <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" usePatternFly="true" />
