@@ -182,7 +182,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         return sb.toString();
     }
 
-    final static Regex validChar = new Regex("^[^\\<\\>&^#!']*$");
+    final static Regex validChar = new Regex("^[^\\<\\>&^!']*$");
 
     public final static ValueValidationFunction validCharacters = new ValueValidationFunction() {
         @Override

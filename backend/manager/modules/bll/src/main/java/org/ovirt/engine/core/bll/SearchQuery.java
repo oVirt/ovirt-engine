@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
@@ -311,6 +313,18 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getProviderDao(), true);
     }
 
+    private static final String[] AD_SEARCH_TYPES = {
+            SearchObjects.AD_USER_OBJ_NAME,
+            SearchObjects.AD_USER_PLU_OBJ_NAME,
+            SearchObjects.AD_GROUP_OBJ_NAME,
+            SearchObjects.AD_GROUP_PLU_OBJ_NAME
+    };
+
+    private static final Pattern adSearchPattern = Pattern.compile(
+            String.format(
+                    "^((?<prefix>(%s))@)(?<content>.*)",
+                    StringUtils.join(AD_SEARCH_TYPES, "|")));
+
     private QueryData initQueryData(boolean useCache) {
         QueryData data = null;
         boolean isExistsValue = false;
@@ -336,23 +350,48 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             // search text.
             if (!isExistsValue || IsFromYesterday) {
                 log.debugFormat("ResourceManager::searchBusinessObjects(''{0}'') - entered", searchText);
+                final char AT='@';
                 String queryAuthz = null;
                 String queryNamespace = null;
                 ISyntaxChecker curSyntaxChecker;
-                String[] splitted = searchText.split("[:@ ]");
-                final String objectName = splitted[0].toUpperCase();
-                if ((SearchObjects.AD_USER_OBJ_NAME.equals(objectName))
-                        || (SearchObjects.AD_USER_PLU_OBJ_NAME.equals(objectName))
-                        || (SearchObjects.AD_GROUP_OBJ_NAME.equals(objectName))
-                        || (SearchObjects.AD_GROUP_PLU_OBJ_NAME.equals(objectName))) {
-                    if (searchText.indexOf('@') > 0 && splitted.length > 1) {
-                        queryAuthz = splitted[1];
-                        queryNamespace = splitted[2];
-                        searchText = searchText.substring(0, searchText.indexOf('@'))
-                                + searchText.substring(searchText.indexOf(':', searchText.indexOf(':') + 1));
-                    } else {
+                Matcher m = adSearchPattern.matcher(searchText);
+                // checks if this is a AD query, if it is, verify given profile and namespace and pass the query
+                if (m.matches()) {
+                    final String COLON = ":";
+                    String prefix = m.group("prefix");
+                    searchText =  m.group("content");
+                    // get profile
+                    List<String> profiles = getBackend().runInternalQuery(VdcQueryType.GetDomainList,
+                            new VdcQueryParametersBase()).getReturnValue();
+                    for (String profile : profiles) {
+                        if (searchText.startsWith(profile + COLON)) {
+                            queryAuthz = profile;
+                            searchText = searchText.replace(profile + COLON, StringUtils.EMPTY);
+                            break;
+                        }
+                    }
+                    if (queryAuthz == null) {
                         queryAuthz = getDefaultAuthz();
-                        queryNamespace = null;
+                    }
+                    // get namespace
+                    HashMap<String, List<String>> namespacesMap =
+                            getBackend().runInternalQuery(VdcQueryType.GetAvailableNamespaces,
+                                    new VdcQueryParametersBase()).getReturnValue();
+                    List<String> namespaces = namespacesMap.get(queryAuthz);
+                    for (String namespace : namespaces) {
+                        if (searchText.startsWith(namespace + COLON)) {
+                            queryNamespace = namespace;
+                            searchText = searchText.replace(namespace + COLON, StringUtils.EMPTY);
+                            break;
+                        }
+                    }
+                    // Check if query is for all namespaces (REST) i.e.:
+                    // ADUSER/ADGROUP<profile>::<query>
+                    if (searchText.startsWith(COLON)) {
+                        searchText = prefix + searchText;
+                    }
+                    else {
+                        searchText = prefix + COLON + searchText;
                     }
                     curSyntaxChecker = SyntaxCheckerFactory.createADSyntaxChecker(Config
                             .<String>getValue(ConfigValues.AuthenticationMethod));
