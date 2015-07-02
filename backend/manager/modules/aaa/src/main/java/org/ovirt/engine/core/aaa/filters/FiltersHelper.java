@@ -19,6 +19,8 @@ public class FiltersHelper {
         public static final String REQUEST_PROFILE_KEY = "ovirt_aaa_profile";
         public static final String REQUEST_AUTH_TYPE_KEY = "ovirt_aaa_auth_type";
         public static final String REQUEST_PASSWORD_KEY = "ovirt_aaa_password";
+        public static final String REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE =
+                "ovirt_aaa_login_filter_authentication_done";
         public static final String HEADER_AUTHORIZATION = "Authorization";
         public static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate";
         public static final String HEADER_PREFER = "Prefer";

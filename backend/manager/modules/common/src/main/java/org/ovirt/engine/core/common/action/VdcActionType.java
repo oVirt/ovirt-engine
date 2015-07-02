@@ -448,6 +448,8 @@ public enum VdcActionType {
     ClearAllAuditLogAlerts(2103, false, QuotaDependency.NONE),
     DisplayAllAuditLogAlerts(2104, false, QuotaDependency.NONE),
 
+    SetSesssionSoftLimit(3000, false, QuotaDependency.NONE),
+
     // Mac Pool
     AddMacPool(3100, ActionGroup.CREATE_MAC_POOL, false, QuotaDependency.NONE),
     UpdateMacPool(3101, ActionGroup.EDIT_MAC_POOL, false, QuotaDependency.NONE),

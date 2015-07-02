@@ -39,6 +39,7 @@ public class SessionDataContainer {
     private static final String ENGINE_SESSION_ID = "engine_session_id";
     private static final String AUTH_RECORD_PARAMETER_NAME = "auth_record";
     private static final String PRINCIPAL_RECORD_PARAMETER_NAME = "principal_record";
+    private static final String SOFT_LIMIT_INTERVAL_PARAMETER_NAME = "soft_limit_interval";
 
     private static SessionDataContainer dataProviderInstance = new SessionDataContainer();
 
@@ -84,6 +85,9 @@ public class SessionDataContainer {
         if (sessionInfo == null) {
             sessionInfo = new SessionInfo();
             sessionInfo.contentOfSession.put(ENGINE_SESSION_ID, sessionId);
+            // Add default soft-limit interval for new sessions
+            sessionInfo.contentOfSession.put(SOFT_LIMIT_INTERVAL_PARAMETER_NAME,
+                    Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInterval));
             SessionInfo oldSessionInfo = sessionInfoMap.putIfAbsent(sessionId, sessionInfo);
             if (oldSessionInfo != null) {
                sessionInfo = oldSessionInfo;
@@ -169,6 +173,10 @@ public class SessionDataContainer {
         setData(sessionId, HARD_LIMIT_PARAMETER_NAME, hardLimit);
     }
 
+    public final void setSoftLimitInterval(String sessionId, int softLimitInterval) {
+        setData(sessionId, SOFT_LIMIT_INTERVAL_PARAMETER_NAME, softLimitInterval);
+    }
+
     /**
      * @param sessionId The session to get the user for
      * @param refresh Whether refreshing the session is needed
@@ -242,7 +250,7 @@ public class SessionDataContainer {
     }
 
     private void refresh(SessionInfo sessionInfo) {
-        int softLimitValue = Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInterval);
+        int softLimitValue = (Integer) (sessionInfo.contentOfSession.get(SOFT_LIMIT_INTERVAL_PARAMETER_NAME));
         if (softLimitValue > 0) {
             sessionInfo.contentOfSession.put(SOFT_LIMIT_PARAMETER_NAME,
                     DateUtils.addMinutes(new Date(), softLimitValue));

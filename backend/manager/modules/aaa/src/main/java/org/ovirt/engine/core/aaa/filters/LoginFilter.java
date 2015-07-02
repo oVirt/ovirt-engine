@@ -59,6 +59,7 @@ public class LoginFilter implements Filter {
                                     SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY,
                                     returnValue.getSessionId()
                                     );
+                            request.setAttribute(FiltersHelper.Constants.REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE, true);
                         }
                     } finally {
                         context.close();

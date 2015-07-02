@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.aaa.filters;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -13,19 +15,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.ovirt.engine.core.common.action.SetSesssionSoftLimitCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class RestApiSessionMgmtFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(RestApiSessionMgmtFilter.class);
 
     private static final int MINIMAL_SESSION_TTL = 1;
-    private static final int SECONDS_IN_MINUTE = 60;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -35,40 +36,50 @@ public class RestApiSessionMgmtFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
 
-        HttpServletRequest req = (HttpServletRequest) request;
-
-        String engineSessionId = (String) request.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
-        if (engineSessionId == null) {
-            HttpSession session = req.getSession(false);
-            if (session != null) {
-                engineSessionId = (String) session.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
-                if (engineSessionId != null) {
-                    request.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY, engineSessionId);
-                }
-            }
-        }
-
-        if (engineSessionId == null) {
-            throw new ServletException("No engine session");
-        }
-
-        int prefer = FiltersHelper.getPrefer(req);
-        if ((prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) != 0) {
-            HttpSession session = req.getSession(true);
-            session.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY, engineSessionId);
-            try {
-                int ttlValue = Integer.parseInt(req.getHeader("Session-TTL")) * SECONDS_IN_MINUTE;
-                if (ttlValue >= MINIMAL_SESSION_TTL) {
-                    session.setMaxInactiveInterval(ttlValue);
-                }
-            } catch (NumberFormatException ex) {
-                // ignore error
-            }
-        }
-
-        chain.doFilter(request, response);
-
         try {
+            HttpServletRequest req = (HttpServletRequest) request;
+
+            String engineSessionId = (String) request.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
+            if (engineSessionId == null) {
+                HttpSession session = req.getSession(false);
+                if (session != null) {
+                    engineSessionId =
+                            (String) session.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
+                    if (engineSessionId != null) {
+                        request.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY, engineSessionId);
+                    }
+                }
+            }
+
+            if (engineSessionId == null) {
+                throw new ServletException("No engine session");
+            }
+
+            int prefer = FiltersHelper.getPrefer(req);
+            if ((prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) != 0) {
+                HttpSession session = req.getSession(true);
+                session.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY, engineSessionId);
+                try {
+                    int ttlMinutes = Integer.parseInt(req.getHeader("Session-TTL"));
+                    if (ttlMinutes >= MINIMAL_SESSION_TTL) {
+                        // Save Session-TTL on the HTTP session (in seconds).
+                        // TODO: Once UI plugins stop manipulating sessions using the 'Session-TTL' header
+                        // (https://bugzilla.redhat.com/1236976) - do this only for new sessions, i.e,
+                        // move it into the next 'if' block.
+                        session.setMaxInactiveInterval((int) TimeUnit.MINUTES.toSeconds(ttlMinutes));
+                        // For new sessions:
+                        if (isNewSession(req)) {
+                            // Save Session-TTL in the Engine.
+                            setEngineSessionSoftLimit(engineSessionId, ttlMinutes);
+                        }
+                    }
+                } catch (NumberFormatException ex) {
+                    // ignore error
+                }
+            }
+
+            chain.doFilter(request, response);
+
             if (FiltersHelper.isAuthenticated(req)) {
                 if ((prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) != 0) {
                     HttpSession session = req.getSession(false);
@@ -99,6 +110,33 @@ public class RestApiSessionMgmtFilter implements Filter {
         } catch (Exception ex) {
             log.error("Error in REST-API session management. ", ex);
             throw new ServletException(ex);
+        }
+    }
+
+    /*
+     * A session is considered new if this request has resulted in a log-in. At this point in time we are after the
+     * log-in, but we can know if it took place by the value of 'ovirt_aaa_login_filter_authentication_done' attribute.
+     * LoginFilter sets 'true' for this attribute and when a log-in is performed.
+     */
+    private boolean isNewSession(HttpServletRequest req) {
+        return req.getAttribute(FiltersHelper.Constants.REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE) != null
+                && (boolean) req.getAttribute(FiltersHelper.Constants.REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE);
+    }
+
+    private void setEngineSessionSoftLimit(String engineSessionId, int ttlValue) throws IOException, NamingException {
+
+        InitialContext context = null;
+        try {
+            context = new InitialContext();
+            FiltersHelper.getBackend(context).runAction(VdcActionType.SetSesssionSoftLimit,
+                    new SetSesssionSoftLimitCommandParameters(engineSessionId, ttlValue));
+        } finally {
+            try {
+                context.close();
+            } catch (NamingException e) {
+                log.error("Error in REST-API session management. 'Context' object could not be manually closed. " +
+                        "This is a cleanup error only; it does not disturb application flow", e);
+            }
         }
     }
 
