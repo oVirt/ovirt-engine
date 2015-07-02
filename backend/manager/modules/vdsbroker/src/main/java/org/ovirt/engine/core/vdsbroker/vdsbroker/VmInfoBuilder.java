@@ -1267,6 +1267,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         for (VmDevice vmDevice : vmDevices) {
             Map<String, Object> struct = new HashMap<>();
             struct.put(VdsProperties.Type, VmDeviceGeneralType.RNG.getValue());
+            struct.put(VdsProperties.Device, VmDeviceType.VIRTIO.getName());
             struct.put(VdsProperties.Model, VdsProperties.Virtio);
             struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
             addDevice(struct, vmDevice, null);
