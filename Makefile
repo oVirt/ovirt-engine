@@ -171,6 +171,8 @@ BUILD_TARGET=install
 	-e "s|@PYFLAKES@|$(PYFLAKES)|g" \
 	-e "s|@DEVMODE@|$(BUILD_DEV)|g" \
 	-e "s|@VMCONSOLE_PROXY_HELPER_PATH@|$(LIBEXEC_DIR)/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py|g" \
+	-e "s|@BIN_DIR@|$(BIN_DIR)|g" \
+	-e "s|@AAA_JDBC_USR@|$(DATAROOT_DIR)/ovirt-engine-extension-aaa-jdbc|g" \
 	$< > $@
 
 # List of files that will be generated from templates:
