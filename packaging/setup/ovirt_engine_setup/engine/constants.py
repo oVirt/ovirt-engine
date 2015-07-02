@@ -24,6 +24,7 @@ import os
 
 from otopi import util
 
+from ovirt_engine_setup import config as osetupconfig
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.constants import classproperty
 from ovirt_engine_setup.constants import osetupattrs
@@ -323,6 +324,23 @@ class FileLocations(object):
     AIO_POST_INSTALL_CONFIG = os.path.join(
         '%s.d' % osetupcons.FileLocations.OVIRT_OVIRT_SETUP_CONFIG_FILE,
         '20-setup-aio.conf'
+    )
+
+    AAA_JDBC_DB_SCHMA_TOOL = os.path.join(
+        config.AAA_JDBC_DATADIR,
+        'dbscripts',
+        'schema.sh'
+    )
+
+    AAA_JDBC_TOOL = os.path.join(
+        osetupconfig.BIR_DIR,
+        'ovirt-aaa-jdbc-tool'
+    )
+
+    AAA_JDBC_CONFIG_DB = os.path.join(
+        OVIRT_ENGINE_SYSCONFDIR,
+        'aaa',
+        'internal.properties'
     )
 
 
