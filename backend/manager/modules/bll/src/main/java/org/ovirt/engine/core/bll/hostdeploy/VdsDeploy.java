@@ -595,6 +595,14 @@ public class VdsDeploy extends VdsDeployBase {
         new Callable<Boolean>() {@CallWhen("VMCONSOLE_ENABLE")
         public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
+                VMConsoleEnv.CERTIFICATE_ENROLLMENT,
+                Const.CERTIFICATE_ENROLLMENT_INLINE
+            );
+            return true;
+        }},
+        new Callable<Boolean>() {@CallWhen("VMCONSOLE_ENABLE")
+        public Boolean call() throws Exception {
+            _parser.cliEnvironmentSet(
                 VMConsoleEnv.CAKEY,
                 PKIResources.Resource.CACertificate.toString(
                     PKIResources.Format.OPENSSH_PUBKEY
