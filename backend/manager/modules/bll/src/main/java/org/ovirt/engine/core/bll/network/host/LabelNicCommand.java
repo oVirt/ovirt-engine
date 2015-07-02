@@ -31,6 +31,8 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
 
     @Override
     protected void executeCommand() {
+        addCustomValue("NicName", getNic().getName());
+
         VdcReturnValueBase result = runInternalAction(VdcActionType.PersistentSetupNetworks,
                 createPersistentSetupNetworksParameters(),
                 cloneContextAndDetachFromParent());

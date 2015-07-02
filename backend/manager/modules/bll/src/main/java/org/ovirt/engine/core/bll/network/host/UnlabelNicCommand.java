@@ -27,6 +27,8 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
 
     @Override
     protected void executeCommand() {
+        addCustomValue("NicName", getNic().getName());
+
         VdcReturnValueBase result =
                 runInternalAction(VdcActionType.PersistentSetupNetworks,
                         new RemoveNetworksByLabelParametersBuilder(getContext()).buildParameters(getNic(),
@@ -70,10 +72,6 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
         }
 
         return nic;
-    }
-
-    public String getNickName() {
-        return getNic().getName();
     }
 
     public String getLabel() {
