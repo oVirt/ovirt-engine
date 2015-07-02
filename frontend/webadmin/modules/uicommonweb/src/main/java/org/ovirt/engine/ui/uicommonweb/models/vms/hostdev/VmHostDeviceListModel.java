@@ -56,7 +56,18 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
 
     private void updateActionAvailability() {
         boolean hasSelectedItems = getSelectedItems() != null && getSelectedItems().size() > 0;
-        getRemoveCommand().setIsExecutionAllowed(hasSelectedItems);
+        getRemoveCommand().setIsExecutionAllowed(hasSelectedItems && !selectionContainsPlaceholderDevices());
+    }
+
+    private boolean selectionContainsPlaceholderDevices() {
+        if (getSelectedItems() != null) {
+            for (HostDeviceView hostDeviceView : getSelectedItems()) {
+                if (hostDeviceView.isIommuPlaceholder()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

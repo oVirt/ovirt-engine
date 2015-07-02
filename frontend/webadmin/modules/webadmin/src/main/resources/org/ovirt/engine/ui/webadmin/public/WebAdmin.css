@@ -118,3 +118,11 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 .gwt-MenuBar .gwt-MenuItem {
     padding: 0 10px !important;
 }
+
+.cellTableDisabledRow {
+    color: #bababa;
+}
+
+.cellTableSelectedRow.cellTableDisabledRow {
+    color: white;
+}
