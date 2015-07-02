@@ -7,7 +7,11 @@ import java.util.List;
 
 public class HostDeviceView extends HostDevice {
 
+    /** VM view only field */
     private Guid configuredVmId;
+    /** VM view only field */
+    private boolean iommuPlaceholder;
+
     private List<String> attachedVmNames;
     private String runningVmName;
 
@@ -39,6 +43,14 @@ public class HostDeviceView extends HostDevice {
         this.configuredVmId = configuredVmId;
     }
 
+    public boolean isIommuPlaceholder() {
+        return iommuPlaceholder;
+    }
+
+    public void setIommuPlaceholder(boolean iommuPlaceholder) {
+        this.iommuPlaceholder = iommuPlaceholder;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -49,7 +61,8 @@ public class HostDeviceView extends HostDevice {
 
         return ObjectUtils.objectsEqual(configuredVmId, other.configuredVmId) &&
                 ObjectUtils.objectsEqual(attachedVmNames, other.attachedVmNames) &&
-                ObjectUtils.objectsEqual(runningVmName, other.runningVmName);
+                ObjectUtils.objectsEqual(runningVmName, other.runningVmName) &&
+                ObjectUtils.objectsEqual(iommuPlaceholder, other.iommuPlaceholder);
     }
 
     @Override
@@ -58,6 +71,7 @@ public class HostDeviceView extends HostDevice {
         result = 31 * result + (configuredVmId != null ? configuredVmId.hashCode() : 0);
         result = 31 * result + (attachedVmNames != null ? attachedVmNames.hashCode() : 0);
         result = 31 * result + (runningVmName != null ? runningVmName.hashCode() : 0);
+        result = 31 * result + (iommuPlaceholder ? 1 : 0);
         return result;
     }
 }

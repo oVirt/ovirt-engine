@@ -3290,6 +3290,7 @@ OUTER JOIN vm_static ON vm_numa_node.vm_id = vm_static.vm_guid;
 CREATE OR REPLACE VIEW host_device_view AS
 SELECT host_device.*,
     NULL::UUID AS configured_vm_id,
+    NULL::VARCHAR AS spec_params,
     (SELECT array_to_string(array_agg(vm_name), ',')
      FROM   vm_device INNER JOIN vm_static ON vm_device.vm_id = vm_static.vm_guid
      WHERE  vm_device.device = host_device.device_name
@@ -3300,6 +3301,7 @@ FROM   host_device;
 CREATE OR REPLACE VIEW vm_host_device_view AS
 SELECT host_device.*,
     vm_device.vm_id AS configured_vm_id,
+    vm_device.spec_params AS spec_params,
     array_to_string(array_agg(vm_name) OVER (PARTITION BY host_id, device_name), ',') AS attached_vm_names,
     (SELECT vm_name FROM vm_static WHERE vm_static.vm_guid = host_device.vm_id) AS running_vm_name
 FROM vm_device

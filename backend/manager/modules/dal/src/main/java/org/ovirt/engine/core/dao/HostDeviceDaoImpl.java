@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Named;
@@ -10,7 +11,9 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceId;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
+import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -160,6 +163,11 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDaoDbFacade<HostDevi
             device.setConfiguredVmId(getGuid(rs, "configured_vm_id"));
             device.setAttachedVmNames(split(rs.getString("attached_vm_names")));
             device.setRunningVmName(rs.getString("running_vm_name"));
+
+            HashMap specParams = SerializationFactory.getDeserializer()
+                    .deserializeOrCreateNew(rs.getString("spec_params"), HashMap.class);
+
+            device.setIommuPlaceholder(specParams != null && VmHostDevice.isIommuPlaceHolder(specParams));
 
             return device;
         }

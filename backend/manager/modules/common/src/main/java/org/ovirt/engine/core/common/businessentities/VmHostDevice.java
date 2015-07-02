@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import org.ovirt.engine.core.compat.Guid;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class VmHostDevice extends VmDevice {
 
@@ -41,6 +42,10 @@ public class VmHostDevice extends VmDevice {
     }
 
     public boolean isIommuPlaceholder() {
-        return Boolean.TRUE.equals(getSpecParams().get(IOMMU_PLACEHOLDER));
+        return isIommuPlaceHolder(getSpecParams());
+    }
+
+    public static boolean isIommuPlaceHolder(Map<String, Object> specParams) {
+        return Boolean.TRUE.equals(specParams.get(IOMMU_PLACEHOLDER));
     }
 }
