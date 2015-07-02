@@ -490,6 +490,9 @@ public enum EngineError {
     PROVIDER_AUTHENTICATION_FAILURE(5056),
     PROVIDER_IMPORT_CERTIFICATE_ERROR(5059),
     REFRESH_LUN_ERROR(5060),
+    VMCantBeObtained(5061),
+    GraphicsConsoleCantBeObtained(5062),
+    FailedToCreateWebsocketProxyTicket(5063),
 
     // Network Labels
     LABELED_NETWORK_INTERFACE_NOT_FOUND(5200),

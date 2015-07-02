@@ -158,6 +158,8 @@ public enum VdcQueryType implements Serializable {
     GetCACertificate(VdcQueryAuthType.User),
     SignString(VdcQueryAuthType.User),
 
+    GetSignedWebsocketProxyTicket(VdcQueryAuthType.User),
+
     // VM Template based entities queries
     IsVmTemlateWithSameNameExist(VdcQueryAuthType.User),
     GetVmTemplate(VdcQueryAuthType.User),

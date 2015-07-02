@@ -36,7 +36,8 @@ public class WebClientConsoleInvoker {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 VdcQueryReturnValue queryRetVal = (VdcQueryReturnValue) returnValue;
-                invokeClientNative((String) queryRetVal.getReturnValue());
+                String signedTicket = queryRetVal.getReturnValue();
+                invokeClientNative(signedTicket);
             }
         };
 

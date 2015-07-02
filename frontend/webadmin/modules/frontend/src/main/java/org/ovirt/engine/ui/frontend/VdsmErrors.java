@@ -973,4 +973,14 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Unable to thaw guest filesystems")
     String thawErr();
+
+    @DefaultStringValue("VM can't be obtained")
+    String VMCantBeObtained();
+
+    @DefaultStringValue("Graphics console can't be obtained. Is vm ready for connecting to console?")
+    String GraphicsConsoleCantBeObtained();
+
+    @DefaultStringValue("Failed to create signed websocket proxy ticket")
+    String FailedToCreateWebsocketProxyTicket();
+
 }
