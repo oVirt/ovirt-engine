@@ -41,25 +41,25 @@ public class SubTabStorageSnapshotView extends AbstractSubTabTableView<StorageDo
     void initTable() {
         getTable().enableColumnResizing();
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.getSnapshotSizeColumn(null), constants.diskSnapshotSize(), true, "130px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.getDateCreatedColumn(null), constants.creationDateDisk(), true, "130px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.getAliasColumn(null), constants.diskSnapshotAlias(), true, "130px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.getSnapshotDescriptionColumn(null), constants.diskSnapshotDescription(), true, "160px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), true, "130px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.getStatusColumn(null), constants.statusDisk(), true, "80px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.getDiskSnapshotIDColumn(null), constants.diskSnapshotIDDisk(),
                 true, "260px"); //$NON-NLS-1$
 

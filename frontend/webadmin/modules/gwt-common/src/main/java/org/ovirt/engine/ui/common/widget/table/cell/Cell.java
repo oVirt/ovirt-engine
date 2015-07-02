@@ -20,12 +20,13 @@ public interface Cell<C> extends com.google.gwt.cell.client.Cell<C>, CellWithEle
      * Column is that here we ask the column to provide us a tooltip value in addition to the cell's
      * C value.
      */
-    public void onBrowserEvent(Context context, final Element parent, C value, final SafeHtml tooltipContent,
+    void onBrowserEvent(Context context, final Element parent, C value, final SafeHtml tooltipContent,
             final NativeEvent event, ValueUpdater<C> valueUpdater);
 
     /**
      * Called by AbstractColumn to render a cell. Sends the cell id so your template can include it
      * in the render.
      */
-    public abstract void render(Context context, C value, SafeHtmlBuilder sb, String id);
+    void render(Context context, C value, SafeHtmlBuilder sb, String id);
+
 }

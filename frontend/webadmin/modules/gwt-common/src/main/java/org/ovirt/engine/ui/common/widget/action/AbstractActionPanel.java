@@ -510,7 +510,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
      * Show the context menu.
      * @param event The {@code ContextMenuEvent}
      */
-    protected void onContextMenu(final ContextMenuEvent event) {
+    protected void onContextMenu(ContextMenuEvent event) {
         final int eventX = event.getNativeEvent().getClientX();
         final int eventY = event.getNativeEvent().getClientY();
 

@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.widget.table.resize;
+package org.ovirt.engine.ui.common.widget.table;
 
 import org.ovirt.engine.ui.common.widget.table.header.ResizableHeader;
 import com.google.gwt.dom.client.BrowserEvents;

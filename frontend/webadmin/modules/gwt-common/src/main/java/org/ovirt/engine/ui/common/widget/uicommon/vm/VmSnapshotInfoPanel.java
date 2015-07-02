@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -37,7 +36,6 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
 
     private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private VmSnapshotInfoGeneral generalForm;
     private EntityModelCellTable<ListModel> disksTable;

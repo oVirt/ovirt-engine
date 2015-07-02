@@ -29,15 +29,19 @@ public abstract class AbstractMainTabTableView<T, M extends SearchableListModel>
     public AbstractMainTabTableView(MainModelProvider<T, M> modelProvider) {
         this.modelProvider = modelProvider;
         this.table = createActionTable();
-        this.table.showRefreshButton();
-        this.table.showPagingButtons();
-        this.table.showItemsCount();
-        this.table.showSelectionCountTooltip();
     }
 
     protected SimpleActionTable<T> createActionTable() {
         return new SimpleActionTable<T>(modelProvider, getTableHeaderlessResources(), getTableResources(),
-                ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage());
+                ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage()) {
+            {
+                showRefreshButton();
+                showPagingButtons();
+                showItemsCount();
+                showSelectionCountTooltip();
+                enableHeaderContextMenu();
+            }
+        };
     }
 
     protected Resources getTableHeaderlessResources() {

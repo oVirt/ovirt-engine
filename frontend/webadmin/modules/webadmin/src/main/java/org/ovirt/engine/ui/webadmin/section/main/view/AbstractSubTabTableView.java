@@ -36,7 +36,21 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
 
     protected SimpleActionTable<T> createActionTable() {
         return new SimpleActionTable<T>(modelProvider, getTableHeaderlessResources(), getTableResources(),
-                ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage());
+                ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage()) {
+            {
+                if (useTableWidgetForContent()) {
+                    enableHeaderContextMenu();
+                }
+            }
+        };
+    }
+
+    /**
+     * Returns {@code true} if table content is provided by the {@link #table} widget itself.
+     * Returns {@code false} if table content is provided by a custom widget, e.g. a tree.
+     */
+    protected boolean useTableWidgetForContent() {
+        return true;
     }
 
     protected Resources getTableHeaderlessResources() {

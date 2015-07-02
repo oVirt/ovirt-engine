@@ -11,16 +11,12 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * A Header that renders SafeHtml. Supports tooltips. Supports element-id framework.
- *
- * @param <H> Cell data type.
  */
 public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWithElementId, TooltipHeader {
 
     private SafeHtml headerText;
     private SafeHtml renderedHeaderText;
     private SafeHtml tooltipText;
-
-    public static final SafeHtmlHeader BLANK_HEADER = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("")); //$NON-NLS-1$
 
     public SafeHtmlHeader(SafeHtmlCell safeHtmlCell) {
         this(null, null, safeHtmlCell);
@@ -50,6 +46,7 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
             public Set<String> getConsumedEvents() {
                 Set<String> set = new HashSet<>(super.getConsumedEvents());
                 set.add(BrowserEvents.CLICK); // for sorting
+                set.add(BrowserEvents.CONTEXTMENU); // for column context menu
                 return set;
             }
         };
@@ -93,8 +90,7 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
     protected void setHeaderTooltipStyle(SafeHtml tooltipText) {
         if (tooltipText == null || tooltipText.asString().isEmpty()) {
             renderedHeaderText = this.headerText;
-        }
-        else {
+        } else {
             renderedHeaderText = templates.hasTooltip(headerText);
         }
     }

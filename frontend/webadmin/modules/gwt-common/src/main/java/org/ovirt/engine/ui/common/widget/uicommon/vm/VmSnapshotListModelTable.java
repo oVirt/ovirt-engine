@@ -135,19 +135,19 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             return;
         }
 
-        getTable().ensureColumnPresent(SnapshotsViewColumns.dateColumn,
+        getTable().ensureColumnVisible(SnapshotsViewColumns.dateColumn,
                 constants.dateSnapshot(), true, "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(SnapshotsViewColumns.statusColumn,
+        getTable().ensureColumnVisible(SnapshotsViewColumns.statusColumn,
                 constants.statusSnapshot(), true, "75px"); //$NON-NLS-1$
 
         boolean memorySnapshotSupported =
                 getModel().isMemorySnapshotSupported();
 
-        getTable().ensureColumnPresent(SnapshotsViewColumns.memoryColumn,
+        getTable().ensureColumnVisible(SnapshotsViewColumns.memoryColumn,
                 constants.memorySnapshot(), memorySnapshotSupported, "55px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(SnapshotsViewColumns.descriptionColumn,
+        getTable().ensureColumnVisible(SnapshotsViewColumns.descriptionColumn,
                 constants.descriptionSnapshot(), true, "300px"); //$NON-NLS-1$
     }
 

@@ -1,28 +1,40 @@
-package org.ovirt.engine.ui.common.widget.table.resize;
+package org.ovirt.engine.ui.common.widget.table;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.utils.JqueryUtils;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.AbstractHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizableHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizeableCheckboxHeader;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
+import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.dom.client.TableRowElement;
@@ -52,7 +64,42 @@ import com.google.gwt.view.client.ProvidesKey;
  * @param <T>
  *            Table row data type.
  */
-public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizableColumns<T> {
+public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizableColumns<T>, ColumnController<T> {
+
+    /**
+     * {@link #emptyNoWidthColumn} header that supports handling context menu events.
+     */
+    private class EmptyColumnHeader extends Header<String> {
+
+        public EmptyColumnHeader() {
+            super(new TextCell() {
+                @Override
+                public Set<String> getConsumedEvents() {
+                    return new HashSet<>(Collections.singletonList(BrowserEvents.CONTEXTMENU));
+                }
+            });
+        }
+
+        @Override
+        public String getValue() {
+            return null;
+        }
+
+        @Override
+        public void onBrowserEvent(Context context, Element elem, NativeEvent event) {
+            super.onBrowserEvent(context, elem, event);
+
+            if (BrowserEvents.CONTEXTMENU.equals(event.getType())) {
+                ensureContextMenuHandler().onContextMenu(event);
+            }
+        }
+
+    }
+
+    private static final Logger logger = Logger.getLogger(ColumnResizeCellTable.class.getName());
+
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     private static final int DEFAULT_MINIMUM_COLUMN_WIDTH = 30;
 
@@ -61,12 +108,16 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     // Prefix for keys used to store widths of individual columns
     private static final String GRID_COLUMN_WIDTH_PREFIX = "GridColumnWidth"; //$NON-NLS-1$
 
-    //This is 1px instead of 0px as 0 size columns seem to confuse the cell table.
+    // This is 1px instead of 0px as zero-size columns seem to confuse the cell table.
     private static final String HIDDEN_WIDTH = "1px"; //$NON-NLS-1$
 
-    // Empty, no-width column used with resizable columns feature
+    // Context menu event handler attached to all column headers
+    private NativeContextMenuHandler headerContextMenuHandler;
+
+    // Empty no-width column used with resizable columns feature
     // that occupies remaining horizontal space within the table
-    private Column<T, ?> emptyNoWidthColumn;
+    private final Column<T, ?> emptyNoWidthColumn = new EmptyColumn<>();
+    private final Header<?> emptyNoWidthColumnHeader = new EmptyColumnHeader();
 
     private boolean columnResizingEnabled = false;
     private boolean columnResizePersistenceEnabled = false;
@@ -78,9 +129,19 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     // used to store column width preferences
     private GridController gridController;
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    // Column visibility, controlled via ensureColumnVisible method
+    private final Map<Column<T, ?>, Boolean> columnVisibleMap = new HashMap<>();
 
-    private final Map<Integer, Boolean> columnVisibleMap = new HashMap<Integer, Boolean>();
+    // Column visibility override, controlled via setColumnVisible method
+    private final Map<Column<T, ?>, Boolean> columnVisibleMapOverride = new HashMap<>();
+
+    // Current column widths
+    private final Map<Column<T, ?>, String> columnWidthMap = new HashMap<>();
+
+    // Column header context menu popup
+    private final ColumnContextPopup<T> contextPopup = new ColumnContextPopup<>(this);
+
+    private boolean headerContextMenuEnabled = false;
 
     public ColumnResizeCellTable() {
         super();
@@ -112,9 +173,26 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         super(keyProvider);
     }
 
+    private NativeContextMenuHandler ensureContextMenuHandler() {
+        if (headerContextMenuHandler == null) {
+            headerContextMenuHandler = new NativeContextMenuHandler() {
+                @Override
+                public void onContextMenu(NativeEvent event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    if (headerContextMenuEnabled) {
+                        contextPopup.getContextMenu().update();
+                        contextPopup.showAndFitToScreen(event.getClientX(), event.getClientY());
+                    }
+                }
+            };
+        }
+        return headerContextMenuHandler;
+    }
+
     @Override
     public void addColumn(Column<T, ?> column, Header<?> header) {
-
         // build resizable headers, if necessary
         if (columnResizingEnabled && header instanceof AbstractCheckboxHeader) {
             header = createResizableCheckboxHeader(header, column);
@@ -134,15 +212,18 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         // actually add the column
         super.addColumn(column, header);
 
-        // add emptyNoWidthColumn if necessary
+        // Add empty no-width column as the last column
         if (columnResizingEnabled) {
-            if (emptyNoWidthColumn != null) {
+            if (isColumnPresent(emptyNoWidthColumn)) {
                 removeColumn(emptyNoWidthColumn);
             }
+            super.addColumn(emptyNoWidthColumn, emptyNoWidthColumnHeader);
+        }
 
-            // Add empty, no-width column as the last column
-            emptyNoWidthColumn = new EmptyColumn<T>();
-            super.addColumn(emptyNoWidthColumn);
+        // Add column to header context menu
+        if (header instanceof AbstractHeader) {
+            ((AbstractHeader) header).setContextMenuHandler(ensureContextMenuHandler());
+            contextPopup.getContextMenu().addItem(column);
         }
     }
 
@@ -175,7 +256,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     protected Header<?> createResizableHeader(Column<T, ?> column, Header<?> header) {
         if (header instanceof SafeHtmlHeader) {
             SafeHtmlHeader safeHtmlHeader = (SafeHtmlHeader) header;
-            return new ResizableHeader<T>(safeHtmlHeader, column, this, applyHeaderStyle);
+            return new ResizableHeader<>(safeHtmlHeader, column, this, applyHeaderStyle);
         }
         return header;
     }
@@ -187,102 +268,237 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
      */
     protected Header<?> createResizableCheckboxHeader(Header<?> header, Column<T, ?> column) {
         if (header instanceof AbstractCheckboxHeader) {
-            return new ResizeableCheckboxHeader<T>((AbstractCheckboxHeader) header, column, this);
+            return new ResizeableCheckboxHeader<>((AbstractCheckboxHeader) header, column, this);
         }
         return header;
     }
 
     /**
-     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     * Ensures that the given column is visible or hidden.
      */
-    public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present) {
-        ensureColumnPresent(column, SafeHtmlUtils.fromTrustedString(headerText), present);
+    public void ensureColumnVisible(Column<T, ?> column, String headerText, boolean visible) {
+        ensureColumnVisible(column, SafeHtmlUtils.fromTrustedString(headerText), visible);
     }
 
     /**
-     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     * Ensures that the given column is visible or hidden.
      */
-    public void ensureColumnPresent(Column<T, ?> column, SafeHtml headerHtml, boolean present) {
-        ensureColumnPresent(column, new SafeHtmlHeader(headerHtml), present, null);
+    public void ensureColumnVisible(Column<T, ?> column, SafeHtml headerHtml, boolean visible) {
+        ensureColumnVisible(column, new SafeHtmlHeader(headerHtml), visible, null);
     }
 
     /**
-     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     * Ensures that the given column is visible or hidden.
      */
-    public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present, String width) {
-        ensureColumnPresent(column, SafeHtmlUtils.fromTrustedString(headerText), present, width);
+    public void ensureColumnVisible(Column<T, ?> column, String headerText, boolean visible, String width) {
+        ensureColumnVisible(column, SafeHtmlUtils.fromTrustedString(headerText), visible, width);
     }
 
     /**
-     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     * Ensures that the given column is visible or hidden.
      */
-    public void ensureColumnPresent(Column<T, ?> column, SafeHtml headerHtml, boolean present, String width) {
-        ensureColumnPresent(column, new SafeHtmlHeader(headerHtml), present, width);
+    public void ensureColumnVisible(Column<T, ?> column, SafeHtml headerHtml, boolean visible, String width) {
+        ensureColumnVisible(column, new SafeHtmlHeader(headerHtml), visible, width);
     }
 
+    /**
+     * Ensures that the given column is visible or hidden.
+     */
+    public void ensureColumnVisible(Column<T, ?> column, SafeHtmlHeader header, boolean visible, String width) {
+        ensureColumnVisible(column, header, visible, width, true);
+    }
 
     /**
-     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     * Ensures that the given column is visible or hidden.
      * <p>
      * This method also sets the column width in case the column needs to be added.
-     * @param column The column to ensure is there.
-     * @param header The header
-     * @param present If true make sure the column is there, if false make sure it is not.
+     *
+     * @param column The column to update.
+     * @param header The header for the column (used only when adding new column).
+     * @param visible {@code true} to ensure the column is visible, {@code false} to ensure the column is hidden.
      * @param width The width of the column.
+     * @param removeFromContextMenuIfNotVisible {@code true} to remove corresponding context menu item when the column is to be hidden.
      */
-    public void ensureColumnPresent(Column<T, ?> column, SafeHtmlHeader header, boolean present, String width) {
-        Integer index = getColumnIndex(column);
-        boolean columnPresent = index != -1;
-        if (!columnPresent) {
+    private void ensureColumnVisible(Column<T, ?> column, SafeHtmlHeader header, boolean visible, String width,
+            boolean removeFromContextMenuIfNotVisible) {
+        if (!isColumnPresent(column)) {
             // Add the column
             if (width == null) {
                 addColumn(column, header);
             } else {
                 addColumnAndSetWidth(column, header, width);
             }
-            index = getColumnIndex(column);
         }
-        columnVisibleMap.put(index, present);
+
+        columnVisibleMap.put(column, visible);
+
         if (columnResizePersistenceEnabled) {
             String persistedWidth = readColumnWidth(column);
             if (persistedWidth != null) {
                 width = persistedWidth;
             }
         }
+
         setColumnWidth(column, width);
+
+        // Update header context menu
+        if (removeFromContextMenuIfNotVisible && !visible) {
+            contextPopup.getContextMenu().removeItem(column);
+        } else if (removeFromContextMenuIfNotVisible && !contextPopup.getContextMenu().containsItem(column)) {
+            contextPopup.getContextMenu().addItem(column);
+        }
+
+        contextPopup.getContextMenu().update();
     }
 
     @Override
     public void setColumnWidth(Column<T, ?> column, String width) {
-        Integer index = getColumnIndex(column);
-        if (columnVisibleMap.get(index) != null && !columnVisibleMap.get(index)) {
+        boolean columnVisible = isColumnVisible(column);
+
+        if (columnVisible) {
+            columnWidthMap.put(column, width);
+        } else {
             width = HIDDEN_WIDTH;
+        }
+
+        // Update header cell visibility
+        TableCellElement headerCell = getHeaderCell(getElement().<TableElement> cast(), getColumnIndex(column));
+        if (headerCell != null) {
+            headerCell.getStyle().setVisibility(columnVisible ? Visibility.VISIBLE : Visibility.HIDDEN);
+        }
+
+        // Prevent resizing of "hidden" (1px wide) columns
+        if (columnResizingEnabled) {
+            Header<?> header = getHeader(getColumnIndex(column));
+            if (header instanceof ResizableHeader) {
+                ((ResizableHeader<?>) header).setResizeEnabled(columnVisible);
+            }
         }
 
         super.setColumnWidth(column, width);
     }
 
-    List<TableCellElement> getTableBodyCells(TableElement tableElement, int columnIndex) {
-        TableSectionElement firstTBodyElement = tableElement.getTBodies().getItem(0);
-        return firstTBodyElement != null ? getCells(firstTBodyElement.getRows(), columnIndex)
-                : Collections.<TableCellElement> emptyList();
-    }
-
-    List<TableCellElement> getTableHeaderCells(TableElement tableElement, int columnIndex) {
+    private TableCellElement getHeaderCell(TableElement tableElement, int columnIndex) {
         TableSectionElement tHeadElement = tableElement.getTHead();
-        return tHeadElement != null ? getCells(tHeadElement.getRows(), columnIndex)
-                : Collections.<TableCellElement> emptyList();
+        if (tHeadElement == null) {
+            return null;
+        }
+
+        List<TableCellElement> cells = getCells(tHeadElement.getRows(), columnIndex);
+        return (cells.size() == 1) ? cells.get(0) : null;
     }
 
-    List<TableCellElement> getCells(NodeList<TableRowElement> rows, int columnIndex) {
-        List<TableCellElement> result = new ArrayList<TableCellElement>();
+    private List<TableCellElement> getCells(NodeList<TableRowElement> rows, int columnIndex) {
+        List<TableCellElement> result = new ArrayList<>();
+
         for (int i = 0; i < rows.getLength(); i++) {
             TableCellElement cell = rows.getItem(i).getCells().getItem(columnIndex);
             if (cell != null) {
                 result.add(cell);
             }
         }
+
         return result;
+    }
+
+    private boolean isColumnPresent(Column<T, ?> column) {
+        return getColumnIndex(column) != -1;
+    }
+
+    @Override
+    public String getColumnContextMenuTitle(Column<T, ?> column) {
+        if (!isColumnPresent(column)) {
+            return null;
+        }
+
+        Header<?> header = getHeader(getColumnIndex(column));
+        String title = null;
+
+        if (column instanceof AbstractColumn) {
+            // Might return null (no custom title defined)
+            title = ((AbstractColumn) column).getContextMenuTitle();
+        }
+        if (title == null && header instanceof SafeHtmlHeader) {
+            // Might return empty string (header's HTML contains no text)
+            title = JqueryUtils.getTextFromHtml(((SafeHtmlHeader) header).getValue().asString());
+        }
+        if (StringUtils.isEmpty(title)) {
+            title = constants.missingColumnContextMenuTitle();
+            logger.warning("Column with missing context menu title at index " + getColumnIndex(column)); //$NON-NLS-1$
+        }
+
+        return title;
+    }
+
+    @Override
+    public boolean isColumnVisible(Column<T, ?> column) {
+        if (!isColumnPresent(column)) {
+            return false;
+        }
+
+        // Columns are visible by default
+        boolean visible = true;
+
+        if (columnVisibleMap.containsKey(column)) {
+            visible = columnVisibleMap.get(column);
+        }
+
+        if (visible && columnVisibleMapOverride.containsKey(column)) {
+            visible = columnVisibleMapOverride.get(column);
+        }
+
+        return visible;
+    }
+
+    @Override
+    public void setColumnVisible(Column<T, ?> column, boolean visible) {
+        if (isColumnPresent(column)) {
+            columnVisibleMapOverride.put(column, visible);
+            ensureColumnVisible(column, null, visible, columnWidthMap.get(column), false);
+        }
+    }
+
+    @Override
+    public void swapColumns(Column<T, ?> columnOne, Column<T, ?> columnTwo) {
+        if (isColumnPresent(columnOne) && isColumnPresent(columnTwo)) {
+            int columnOneIndex = getColumnIndex(columnOne);
+            int columnTwoIndex = getColumnIndex(columnTwo);
+            boolean oneWasBeforeTwo = columnOneIndex < columnTwoIndex;
+
+            // columnOne gets removed first
+            int columnTwoRemovalIndex = oneWasBeforeTwo ? columnTwoIndex - 1 : columnTwoIndex;
+
+            int columnOneInsertionIndex = oneWasBeforeTwo ? columnTwoIndex - 1 : columnTwoIndex;
+            int columnTwoInsertionIndex = oneWasBeforeTwo ? columnOneIndex : columnOneIndex - 1;
+
+            Header<?> columnOneHeader = getHeader(columnOneIndex);
+            Header<?> columnTwoHeader = getHeader(columnTwoIndex);
+
+            removeColumn(columnOneIndex);
+            removeColumn(columnTwoRemovalIndex);
+
+            if (oneWasBeforeTwo) {
+                insertColumn(columnOneInsertionIndex, columnOne, columnOneHeader);
+                insertColumn(columnTwoInsertionIndex, columnTwo, columnTwoHeader);
+            } else {
+                insertColumn(columnTwoInsertionIndex, columnTwo, columnTwoHeader);
+                insertColumn(columnOneInsertionIndex, columnOne, columnOneHeader);
+            }
+
+            contextPopup.getContextMenu().update();
+        }
+    }
+
+    /**
+     * Enables header context menu triggered by right-clicking table header area.
+     * <p>
+     * <em>After calling this method, each column must have non-empty header HTML content <b>or</b>
+     * {@linkplain org.ovirt.engine.ui.common.widget.table.column.AbstractColumn#setContextMenuTitle
+     * custom context menu title} defined, otherwise the context menu will contain "unnamed column"
+     * items.</em>
+     */
+    public void enableHeaderContextMenu() {
+        headerContextMenuEnabled = true;
     }
 
     /**
@@ -332,12 +548,11 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     /**
      * Enables saving this table's column widths to LocalStorage (or a cookie if LocalStorage unsupported).
-     * @param clientStorage
-     * @param gridController
      */
     public void enableColumnWidthPersistence(ClientStorage clientStorage, GridController gridController) {
         this.clientStorage = clientStorage;
         this.gridController = gridController;
+
         if (clientStorage != null && gridController != null) {
             columnResizePersistenceEnabled = true;
         }

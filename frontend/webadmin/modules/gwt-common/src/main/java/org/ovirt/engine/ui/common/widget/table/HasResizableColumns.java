@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.widget.table.resize;
+package org.ovirt.engine.ui.common.widget.table;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.cellview.client.Column;

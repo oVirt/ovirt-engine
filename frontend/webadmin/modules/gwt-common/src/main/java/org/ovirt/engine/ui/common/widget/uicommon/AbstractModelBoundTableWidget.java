@@ -43,7 +43,21 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
     SimpleActionTable<T> createActionTable(EventBus eventBus, ClientStorage clientStorage) {
         return new SimpleActionTable<T>(modelProvider,
                 getTableHeaderlessResources(), getTableResources(),
-                eventBus, clientStorage);
+                eventBus, clientStorage) {
+            {
+                if (useTableWidgetForContent()) {
+                    enableHeaderContextMenu();
+                }
+            }
+        };
+    }
+
+    /**
+     * Returns {@code true} if table content is provided by the {@link #table} widget itself.
+     * Returns {@code false} if table content is provided by a custom widget, e.g. a tree.
+     */
+    protected boolean useTableWidgetForContent() {
+        return true;
     }
 
     /**

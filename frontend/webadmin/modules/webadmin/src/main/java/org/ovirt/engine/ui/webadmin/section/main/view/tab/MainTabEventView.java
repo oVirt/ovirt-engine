@@ -71,40 +71,40 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
     void handleViewButtonClick(ClickEvent event) {
         boolean advancedViewEnabled = advancedViewButton.getValue();
 
-        getTable().ensureColumnPresent(AdvancedViewColumns.logTypeColumn, constants.eventIdEvent(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.logTypeColumn, constants.eventIdEvent(),
                 advancedViewEnabled,
                 "80px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(AdvancedViewColumns.userColumn, constants.userEvent(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.userColumn, constants.userEvent(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(AdvancedViewColumns.hostColumn, constants.hostEvent(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.hostColumn, constants.hostEvent(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(AdvancedViewColumns.virtualMachineColumn, constants.vmEvent(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.virtualMachineColumn, constants.vmEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(AdvancedViewColumns.templateColumn, constants.templateEvent(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.templateColumn, constants.templateEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(AdvancedViewColumns.dataCenterColumn, constants.dcEvent(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.dataCenterColumn, constants.dcEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(AdvancedViewColumns.storageColumn, constants.storageEvent(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.storageColumn, constants.storageEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(AdvancedViewColumns.clusterColumn, constants.clusterEvent(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.clusterColumn, constants.clusterEvent(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(AdvancedViewColumns.volumeColumn, constants.volumeEvent(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.volumeColumn, constants.volumeEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly),
                 "120px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(AdvancedViewColumns.corrIdColumn, constants.eventCorrelationId(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.corrIdColumn, constants.eventCorrelationId(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(AdvancedViewColumns.originColumn, constants.eventOrigin(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.originColumn, constants.eventOrigin(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(AdvancedViewColumns.customEventIdColumn, constants.eventCustomEventId(),
+        getTable().ensureColumnVisible(AdvancedViewColumns.customEventIdColumn, constants.eventCustomEventId(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
 

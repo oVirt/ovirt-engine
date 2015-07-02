@@ -289,6 +289,21 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                 AbstractActionTable.this.clearColumnSort();
             }
 
+            @Override
+            public void setColumnVisible(Column<T, ?> column, boolean visible) {
+                super.setColumnVisible(column, visible);
+
+                // Update main table
+                table.setColumnVisible(column, visible);
+            }
+
+            @Override
+            public void swapColumns(Column<T, ?> columnOne, Column<T, ?> columnTwo) {
+                super.swapColumns(columnOne, columnTwo);
+
+                // Update main table
+                table.swapColumns(columnOne, columnTwo);
+            }
         };
 
         this.tableHeader.setRowData(new ArrayList<T>());
@@ -677,49 +692,54 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     }
 
     /**
-     * Removes the given column.
+     * Ensures that the given column is visible or hidden.
      */
-    void removeColumn(Column<T, ?> column) {
-        table.removeColumn(column);
-        tableHeader.removeColumn(column);
+    public void ensureColumnVisible(Column<T, ?> column, String headerText, boolean visible) {
+        table.ensureColumnVisible(column, headerText, visible);
+        tableHeader.ensureColumnVisible(column, headerText, visible);
     }
 
     /**
-     * Ensures that the given column is added (or removed), unless it's already present (or absent).
-     */
-    public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present) {
-        table.ensureColumnPresent(column, headerText, present);
-        tableHeader.ensureColumnPresent(column, headerText, present);
-    }
-
-    /**
-     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     * Ensures that the given column is visible or hidden.
      * <p>
      * This method also sets the column width in case the column needs to be added.
      */
-    public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present, String width) {
-        table.ensureColumnPresent(column, headerText, present, width);
-        tableHeader.ensureColumnPresent(column, headerText, present, width);
+    public void ensureColumnVisible(Column<T, ?> column, String headerText, boolean visible, String width) {
+        table.ensureColumnVisible(column, headerText, visible, width);
+        tableHeader.ensureColumnVisible(column, headerText, visible, width);
     }
 
     /**
-     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     * Ensures that the given column is visible or hidden.
      * <p>
      * This method also sets the column width in case the column needs to be added.
      */
-    public void ensureColumnPresent(Column<T, ?> column, SafeHtml headerHtml, boolean present, String width) {
-        table.ensureColumnPresent(column, headerHtml, present, width);
-        tableHeader.ensureColumnPresent(column, headerHtml, present, width);
+    public void ensureColumnVisible(Column<T, ?> column, SafeHtml headerHtml, boolean visible, String width) {
+        table.ensureColumnVisible(column, headerHtml, visible, width);
+        tableHeader.ensureColumnVisible(column, headerHtml, visible, width);
     }
 
     /**
-     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     * Ensures that the given column is visible or hidden.
      * <p>
      * This method also sets the column width in case the column needs to be added.
      */
-    public void ensureColumnPresent(Column<T, ?> column, SafeHtmlHeader header, boolean present, String width) {
-        table.ensureColumnPresent(column, header, present, width);
-        tableHeader.ensureColumnPresent(column, header, present, width);
+    public void ensureColumnVisible(Column<T, ?> column, SafeHtmlHeader header, boolean visible, String width) {
+        table.ensureColumnVisible(column, header, visible, width);
+        tableHeader.ensureColumnVisible(column, header, visible, width);
+    }
+
+    /**
+     * Enables header context menu triggered by right-clicking table header area.
+     * <p>
+     * <em>After calling this method, each column must have non-empty header HTML content <b>or</b>
+     * {@linkplain org.ovirt.engine.ui.common.widget.table.column.AbstractColumn#setContextMenuTitle
+     * custom context menu title} defined, otherwise the context menu will contain "unnamed column"
+     * items.</em>
+     */
+    public void enableHeaderContextMenu() {
+        ActionCellTable<T> tableWithHeader = isTableHeaderVisible() ? tableHeader : table;
+        tableWithHeader.enableHeaderContextMenu();
     }
 
     /**

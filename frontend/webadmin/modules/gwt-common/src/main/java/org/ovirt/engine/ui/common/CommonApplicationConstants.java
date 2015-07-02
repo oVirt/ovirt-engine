@@ -40,6 +40,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue(" ")
     String space();
 
+    @DefaultStringValue("(unnamed column)")
+    String missingColumnContextMenuTitle();
+
     // Widgets
 
     @DefaultStringValue("Next >>")

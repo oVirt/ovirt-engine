@@ -82,7 +82,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         };
         dcColumn.makeSortable(NetworkConditionFieldAutoCompleter.DATA_CENTER);
 
-        getTable().ensureColumnPresent(dcColumn, constants.dcNetwork(), virtMode, "200px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(dcColumn, constants.dcNetwork(), virtMode, "200px"); //$NON-NLS-1$
 
 
         AbstractTextColumn<NetworkView> descriptionColumn = new AbstractTextColumn<NetworkView>() {
@@ -132,7 +132,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
             }
         };
         vlanColumn.makeSortable(NetworkConditionFieldAutoCompleter.VLAN_ID);
-        getTable().ensureColumnPresent(vlanColumn, constants.vlanNetwork(), virtMode, "60px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(vlanColumn, constants.vlanNetwork(), virtMode, "60px"); //$NON-NLS-1$
 
         AbstractTextColumn<NetworkView> qosColumn = new AbstractTextColumn<NetworkView>() {
             @Override
@@ -141,7 +141,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
             }
         };
         qosColumn.makeSortable(NetworkConditionFieldAutoCompleter.QOS);
-        getTable().ensureColumnPresent(qosColumn, constants.qosName(), virtMode, "60px");//$NON-NLS-1$
+        getTable().ensureColumnVisible(qosColumn, constants.qosName(), virtMode, "60px");//$NON-NLS-1$
 
         AbstractTextColumn<NetworkView> labelColumn = new AbstractTextColumn<NetworkView>() {
             @Override
@@ -159,9 +159,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
             }
         };
         providerColumn.makeSortable(NetworkConditionFieldAutoCompleter.PROVIDER_NAME);
-        getTable().ensureColumnPresent(providerColumn, constants.providerNetwork(), virtMode, "200px"); //$NON-NLS-1$
-
-
+        getTable().ensureColumnVisible(providerColumn, constants.providerNetwork(), virtMode, "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.newNetwork()) {
             @Override

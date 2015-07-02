@@ -225,30 +225,30 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
 
         boolean attached = viewRadioGroup.getSelectedValue() == NetworkHostFilter.attached;
 
-        getTable().ensureColumnPresent(hostStatus, constants.empty(), true, "30px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(nameColumn, constants.nameHost(), true, "200px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(clusterColumn, constants.clusterHost(), true, "200px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(dcColumn, constants.dcHost(), true, "200px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(nicStatusColumn, constants.statusNetworkHost(), attached, "140px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(hostOutOfSync, constants.hostOutOfSync(), attached, "75px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(nicColumn, constants.nicNetworkHost(), attached, "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(speedColumn,
+        getTable().ensureColumnVisible(hostStatus, constants.empty(), true, "30px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(nameColumn, constants.nameHost(), true, "200px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(clusterColumn, constants.clusterHost(), true, "200px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(dcColumn, constants.dcHost(), true, "200px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(nicStatusColumn, constants.statusNetworkHost(), attached, "140px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(hostOutOfSync, constants.hostOutOfSync(), attached, "75px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(nicColumn, constants.nicNetworkHost(), attached, "100px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(speedColumn,
                 templates.sub(constants.speedNetworkHost(), constants.mbps()).asString(),
                 attached,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(nicRxColumn,
+        getTable().ensureColumnVisible(nicRxColumn,
                 templates.sub(constants.rxNetworkHost(), constants.mbps()).asString(),
                 attached,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(nicTxColumn,
+        getTable().ensureColumnVisible(nicTxColumn,
                 templates.sub(constants.txNetworkHost(), constants.mbps()).asString(),
                 attached,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(totalRxColumn,
+        getTable().ensureColumnVisible(totalRxColumn,
                 templates.sub(constants.rxTotal(), constants.bytes()).asString(),
                 attached,
                 "150px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(totalTxColumn,
+        getTable().ensureColumnVisible(totalTxColumn,
                 templates.sub(constants.txTotal(), constants.bytes()).asString(),
                 attached,
                 "150px"); //$NON-NLS-1$

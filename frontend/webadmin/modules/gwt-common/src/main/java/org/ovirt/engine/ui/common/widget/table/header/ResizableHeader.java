@@ -3,9 +3,10 @@ package org.ovirt.engine.ui.common.widget.table.header;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.ovirt.engine.ui.common.widget.table.ColumnResizeHandler;
+import org.ovirt.engine.ui.common.widget.table.HasResizableColumns;
 import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
-import org.ovirt.engine.ui.common.widget.table.resize.ColumnResizeHandler;
-import org.ovirt.engine.ui.common.widget.table.resize.HasResizableColumns;
+
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -86,16 +87,20 @@ public class ResizableHeader<T> extends SafeHtmlHeader {
      * The resize-able column.
      */
     private final Column<T, ?> column;
+
     /**
      * The table that contains the header and columns.
      */
     private final HasResizableColumns<T> table;
+
     /**
      * The styles for the header.
      */
     private final ResizableHeaderCss style;
 
     private final boolean applyStyle;
+
+    private boolean resizeEnabled = true;
 
     /**
      * Constructor.
@@ -122,6 +127,7 @@ public class ResizableHeader<T> extends SafeHtmlHeader {
             public Set<String> getConsumedEvents() {
                 Set<String> set = new HashSet<>(super.getConsumedEvents());
                 set.add(BrowserEvents.CLICK); // for sorting
+                set.add(BrowserEvents.CONTEXTMENU); // for column context menu
                 set.add(BrowserEvents.MOUSEMOVE); // for changing mouse cursor
                 set.add(BrowserEvents.CHANGE); // for checkbox toggle
                 return set;
@@ -137,6 +143,10 @@ public class ResizableHeader<T> extends SafeHtmlHeader {
     @Override
     public void onBrowserEvent(Context context, Element target, NativeEvent event) {
         super.onBrowserEvent(context, target, event);
+
+        if (!resizeEnabled) {
+            return;
+        }
 
         int clientX = event.getClientX();
         int absoluteLeft = target.getAbsoluteLeft();
@@ -179,6 +189,10 @@ public class ResizableHeader<T> extends SafeHtmlHeader {
             return elm;
         }
         return findThElement(elm.getParentElement());
+    }
+
+    public void setResizeEnabled(boolean resizeEnabled) {
+        this.resizeEnabled = resizeEnabled;
     }
 
 }

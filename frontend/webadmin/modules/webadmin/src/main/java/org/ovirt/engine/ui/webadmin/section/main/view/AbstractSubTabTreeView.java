@@ -123,9 +123,14 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
     }
 
     @Override
+    protected boolean useTableWidgetForContent() {
+        return false;
+    }
+
+    @Override
     protected void generateIds() {
         //Do nothing, we don't want the tree tables to have ids.
-    };
+    }
 
     interface WidgetStyle extends CssResource {
         String treeContainer();

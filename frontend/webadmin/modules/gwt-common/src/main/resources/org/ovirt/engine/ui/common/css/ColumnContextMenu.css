@@ -1,0 +1,65 @@
+@external columnContextMenuContainer;
+@external columnContextMenuItem;
+@external columnContextMenuItemMoving;
+@external columnContextMenuItem-title;
+@external columnContextMenuItem-button;
+@external columnContextMenuItem-visibleIcon;
+@external columnContextMenuItem-hiddenIcon;
+@external columnContextMenuItem-moveUpIcon;
+@external columnContextMenuItem-moveDownIcon;
+
+@def itemMoving_backgroundColor #B5DD65;
+
+.columnContextMenuContainer {
+    border: 1px solid #D3D3D3;
+    padding: 3px;
+}
+
+.columnContextMenuItem {
+    padding: 0 10px;
+    height: 24px;
+    position: relative;
+}
+
+.columnContextMenuItem:hover {
+    background-color: #C3D0E0;
+}
+
+.columnContextMenuItemMoving {
+    background-color: itemMoving_backgroundColor;
+}
+
+.columnContextMenuItemMoving:hover {
+    background-color: itemMoving_backgroundColor;
+}
+
+.columnContextMenuItem-title {
+    font-family: Arial,sans-serif;
+    font-size: small;
+    line-height: 24px;
+    cursor: default;
+}
+
+.columnContextMenuItem-button {
+    float: right;
+    cursor: pointer;
+    margin-left: 5px;
+    position: relative;
+    top: 5px;
+}
+
+@sprite .columnContextMenuItem-visibleIcon {
+    gwt-image: 'visibleIcon';
+}
+
+@sprite .columnContextMenuItem-hiddenIcon {
+    gwt-image: 'hiddenIcon';
+}
+
+@sprite .columnContextMenuItem-moveUpIcon {
+    gwt-image: 'moveUpIcon';
+}
+
+@sprite .columnContextMenuItem-moveDownIcon {
+    gwt-image: 'moveDownIcon';
+}

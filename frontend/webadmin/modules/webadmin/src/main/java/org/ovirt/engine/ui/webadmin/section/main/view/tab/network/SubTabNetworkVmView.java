@@ -79,39 +79,39 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
 
         boolean running = viewRadioGroup.getSelectedValue() == NetworkVmFilter.running;
 
-        getTable().ensureColumnPresent(vmStatusColumn, constants.empty(), true, "30px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(vmStatusColumn, constants.empty(), true, "30px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(nameColumn, constants.nameVm(), true, "150px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(nameColumn, constants.nameVm(), true, "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(clusterColumn, constants.clusterVm(), true, "150px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(clusterColumn, constants.clusterVm(), true, "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(ipColumn, constants.ipVm(), true, "150px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(ipColumn, constants.ipVm(), true, "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(fqdnColumn, constants.fqdn(), true, "150px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(fqdnColumn, constants.fqdn(), true, "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(nicActivateStatusColumn, constants.vnicStatusNetworkVM(), true, "100px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(nicActivateStatusColumn, constants.vnicStatusNetworkVM(), true, "100px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(vnicNameColumn, constants.vnicNetworkVM(), true, "100px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(vnicNameColumn, constants.vnicNetworkVM(), true, "100px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(rxColumn,
+        getTable().ensureColumnVisible(rxColumn,
                 templates.sub(constants.rxNetworkVM(), constants.mbps()).asString(),
                 running, "100px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(txColumn,
+        getTable().ensureColumnVisible(txColumn,
                 templates.sub(constants.txNetworkVM(), constants.mbps()).asString(),
                 running, "100px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(totalRxColumn,
+        getTable().ensureColumnVisible(totalRxColumn,
                 templates.sub(constants.rxTotal(), constants.bytes()).asString(),
                 running,
                 "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(totalTxColumn,
+        getTable().ensureColumnVisible(totalTxColumn,
                 templates.sub(constants.txTotal(), constants.bytes()).asString(),
                 running,
                 "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(descriptionColumn, constants.descriptionVm(), true, "150px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(descriptionColumn, constants.descriptionVm(), true, "150px"); //$NON-NLS-1$
     }
 
     private final VmStatusColumn<PairQueryable<VmNetworkInterface, VM>> vmStatusColumn =

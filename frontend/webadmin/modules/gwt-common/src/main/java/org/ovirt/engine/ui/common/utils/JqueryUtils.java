@@ -1,24 +1,17 @@
 package org.ovirt.engine.ui.common.utils;
 
-
 /**
- * A collection of native functions for executing jquery code.
- *
- * Please have a *really* good reason to use jquery.
- *
+ * A collection of native functions for executing jQuery code.
+ * <p>
+ * <em>Please have a *really* good reason to use jQuery!</em>
  */
 public class JqueryUtils {
 
     /**
-     * Fire a mouseenter event at an element found at x,y. Must use jquery because
-     * GWT doesn't support 'mouseenter.'
-     *
-     * @param clientX
-     * @param clientY
-     * @return
+     * Fire a mouseenter event at an element found at [x,y].
+     * Must use jQuery because GWT doesn't support mouseenter.
      */
-    public static native void fireMouseEnter(int clientX, int clientY)
-    /*-{
+    public static native void fireMouseEnter(int clientX, int clientY) /*-{
         var el = $wnd.document.elementFromPoint(clientX, clientY);
         if(el != null && el.nodeType == 3) {
             el = el.parentNode;
@@ -29,20 +22,24 @@ public class JqueryUtils {
 
     /**
      * Is there any open tooltip visible?
-     *
-     * @return
      */
     public static native boolean anyTooltipVisible() /*-{
         var $tooltip = $wnd.jQuery("div.tooltip:visible");
-        if ($tooltip.length == 0) return false;
-        return true;
+        return $tooltip.length != 0;
     }-*/;
 
     /**
-     * Get mouse position
+     * Get mouse position.
      */
     public static native String getMousePosition() /*-{
         return "" + $wnd.mouseX + "," + $wnd.mouseY;
+    }-*/;
+
+    /**
+     * Extract text from HTML. Returned string is never null.
+     */
+    public static native String getTextFromHtml(String html) /*-{
+        return $wnd.jQuery(html).text();
     }-*/;
 
 }

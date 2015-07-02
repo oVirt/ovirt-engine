@@ -92,79 +92,79 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
         getModel().setItems(null);
         getModel().search();
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.diskStatusColumn, constants.empty(), all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 aliasColumn, constants.aliasDisk(), all || images || luns || cinder, "120px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.bootableDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.bootableDiskColumn.getDefaultImage(),
                         SafeHtmlUtils.fromSafeConstant(constants.bootableDisk())),
                         all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.shareableDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.shareableDiskColumn.getDefaultImage(),
                         SafeHtmlUtils.fromSafeConstant(constants.shareable())),
                         all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.readOnlyDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.readOnlyDiskColumn.getDefaultImage(),
                         SafeHtmlUtils.fromSafeConstant(constants.readOnly())),
                         all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 sizeColumn, constants.provisionedSizeDisk(), all || images || luns || cinder, "110px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 actualSizeColumn, constants.sizeDisk(), images, "110px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 allocationColumn, constants.allocationDisk(), images, "125px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.storageDomainsColumn, constants.storageDomainDisk(), images || cinder, "125px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.storageTypeColumn, constants.storageTypeDisk(), images, "100px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 cinderVolumeTypeColumn, constants.cinderVolumeTypeDisk(), cinder, "80px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 dateCreatedColumn, constants.creationDateDisk(), images || cinder, "120px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 lunIdColumn, constants.lunIdSanStorage(), luns, "130px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 lunSerialColumn, constants.serialSanStorage(), luns, "130px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 lunVendorIdColumn, constants.vendorIdSanStorage(), luns, "130px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 lunProductIdColumn, constants.productIdSanStorage(), luns, "130px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns || cinder, "110px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 interfaceColumn, constants.interfaceDisk(), all || images || luns || cinder, "100px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 DisksViewColumns.diskAlignmentColumn, constants.diskAlignment(), all || images || luns, "100px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 statusColumn, constants.statusDisk(), images || cinder || all, "80px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 diskStorageTypeColumn, constants.typeDisk(), all, "80px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(
+        getTable().ensureColumnVisible(
                 descriptionColumn, constants.descriptionDisk(), all || images || luns, "90px"); //$NON-NLS-1$
 
     }

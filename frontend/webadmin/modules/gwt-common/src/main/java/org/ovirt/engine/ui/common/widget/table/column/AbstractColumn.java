@@ -31,6 +31,9 @@ public abstract class AbstractColumn<T, C> extends Column<T, C> implements Colum
     // (applies in case of client-side sorting)
     private Comparator<? super T> comparator;
 
+    // Custom title for use with ColumnContextMenu (optional)
+    private String contextMenuTitle;
+
     public AbstractColumn(Cell<C> cell) {
         super(cell);
     }
@@ -98,7 +101,6 @@ public abstract class AbstractColumn<T, C> extends Column<T, C> implements Colum
         return comparator;
     }
 
-
     /**
      * Default implementation of tooltip -- return null for no tooltip.
      *
@@ -111,6 +113,19 @@ public abstract class AbstractColumn<T, C> extends Column<T, C> implements Colum
     @Override
     public SafeHtml getTooltip(T object) {
         return null;
+    }
+
+    public String getContextMenuTitle() {
+        return contextMenuTitle;
+    }
+
+    /**
+     * Sets a custom title for use with table header context menu.
+     *
+     * @see org.ovirt.engine.ui.common.widget.table.ColumnResizeCellTable#enableHeaderContextMenu
+     */
+    public void setContextMenuTitle(String contextMenuTitle) {
+        this.contextMenuTitle = contextMenuTitle;
     }
 
 }

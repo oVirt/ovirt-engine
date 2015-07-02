@@ -15,21 +15,22 @@ public interface CellWithElementId<C> extends Cell<C> {
      * Set the element id prefix.
      * @param elementIdPrefix
      */
-    public void setElementIdPrefix(String elementIdPrefix);
+    void setElementIdPrefix(String elementIdPrefix);
 
     /**
      * Set the column id.
      * @param columnId
      */
-    public void setColumnId(String columnId);
+    void setColumnId(String columnId);
 
     /**
      * Get the element id prefix.
      */
-    public String getElementIdPrefix();
+    String getElementIdPrefix();
 
     /**
      * Get the column id.
      */
-    public String getColumnId();
+    String getColumnId();
+
 }

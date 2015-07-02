@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.header;
 
-import org.ovirt.engine.ui.common.widget.table.resize.HasResizableColumns;
+import org.ovirt.engine.ui.common.widget.table.HasResizableColumns;
+
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
