@@ -2,12 +2,14 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.Iterator;
 
-import org.jboss.resteasy.spi.NotFoundException;
 import org.ovirt.engine.api.model.QuotaClusterLimit;
 import org.ovirt.engine.api.resource.QuotaClusterLimitResource;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 public class BackendQuotaClusterLimitResource extends BackendQuotaLimitResource<QuotaClusterLimit> implements
         QuotaClusterLimitResource {
@@ -48,7 +50,7 @@ public class BackendQuotaClusterLimitResource extends BackendQuotaLimitResource<
             }
         }
         if (throw404) {
-            throw new NotFoundException("");
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
     }
 }

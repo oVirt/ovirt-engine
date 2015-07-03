@@ -1,10 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.jboss.resteasy.spi.NotFoundException;
 import org.ovirt.engine.api.model.QuotaStorageLimit;
 import org.ovirt.engine.api.resource.QuotaStorageLimitResource;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.Guid;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 public class BackendQuotaStorageLimitResource extends BackendQuotaLimitResource<QuotaStorageLimit> implements
         QuotaStorageLimitResource {
@@ -44,7 +46,7 @@ public class BackendQuotaStorageLimitResource extends BackendQuotaLimitResource<
             }
         }
         if (throw404) {
-            throw new NotFoundException("");
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
     }
 }
