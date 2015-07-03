@@ -34,7 +34,6 @@ limitations under the License.
     <module name="org.codehaus.jackson.jackson-jaxrs"/>
     <module name="org.codehaus.jackson.jackson-mapper-asl"/>
     <module name="org.codehaus.jackson.jackson-xc"/>
-    <module name="org.jboss.resteasy.resteasy-jaxb-provider"/>
     <module name="org.jboss.resteasy.resteasy-jaxrs"/>
     <module name="org.ovirt.engine.api.interface-common-jaxrs"/>
     <module name="org.ovirt.engine.api.restapi-definition"/>
