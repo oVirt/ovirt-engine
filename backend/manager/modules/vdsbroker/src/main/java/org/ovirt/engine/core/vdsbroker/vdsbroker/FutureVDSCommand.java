@@ -79,6 +79,12 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
             log.error("Timeout waiting for VDSM response: {}", e.getMessage());
             log.debug("Exception", e);
             throw e;
+        } catch (VDSNetworkException e) {
+            setVdsRuntimeError(e);
+            log.error("Error: {}", e.getMessage());
+            if (!"Policy reset".equals(e.getVdsError().getMessage())) {
+                log.error("Exception", e);
+            }
         } catch (Exception e) {
             log.error("Error: {}", e.getMessage());
             log.error("Exception", e);
