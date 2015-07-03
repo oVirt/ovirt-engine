@@ -1,12 +1,14 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 
 public class GraphicsParameters extends VdcActionParametersBase {
 
     private boolean vm = true;
     private GraphicsDevice dev;
+
+    public GraphicsParameters() {
+    }
 
     public GraphicsParameters(GraphicsDevice dev) {
         this.dev = dev;

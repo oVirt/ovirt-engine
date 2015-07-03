@@ -31,6 +31,7 @@ import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.action.HotSetNumerOfCpusParameters;
 import org.ovirt.engine.core.common.action.HotSetAmountOfMemoryParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
