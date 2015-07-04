@@ -802,7 +802,11 @@ public class VdsManager {
         AuditLogableBase logable;
         logable = new AuditLogableBase(cachedVds.getId());
         logable.updateCallStackFromThrowable(ex);
-        auditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
+        if (ex.getCause() instanceof java.net.UnknownHostException){
+            auditLogDirector.log(logable, AuditLogType.VDS_UNKNOWN_HOST);
+        } else {
+            auditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
+        }
     }
 
     private void logChangeStatusToConnecting(long timeoutToFence) {

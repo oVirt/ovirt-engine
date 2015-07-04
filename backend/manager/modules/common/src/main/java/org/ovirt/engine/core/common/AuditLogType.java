@@ -1261,6 +1261,9 @@ public enum AuditLogType {
     VDS_BROKER_COMMAND_FAILURE(10802, AuditLogSeverity.ERROR),
     IRS_BROKER_COMMAND_FAILURE(10803, AuditLogSeverity.ERROR),
 
+    // Unable to resolve ip of host registered using hostname
+    VDS_UNKNOWN_HOST(10804, AuditLogSeverity.ERROR),
+
     // DC status
     SYSTEM_CHANGE_STORAGE_POOL_STATUS_UP_REPORTING_HOSTS(10810, AuditLogSeverity.NORMAL),
     SYSTEM_CHANGE_STORAGE_POOL_STATUS_NON_RESPONSIVE_NO_REPORTING_HOSTS(10811, AuditLogSeverity.ALERT);
