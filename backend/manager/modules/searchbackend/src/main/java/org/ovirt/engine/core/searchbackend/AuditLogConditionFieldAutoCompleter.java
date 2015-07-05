@@ -21,6 +21,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
     public static final String EVENT_STORAGE = "EVENT_STORAGE";
     public static final String EVENT_DATACENTER = "EVENT_DATACENTER";
     public static final String EVENT_VOLUME = "EVENT_VOLUME";
+    public static final String DELETED = "DELETED";
 
     public AuditLogConditionFieldAutoCompleter() {
         super();
@@ -39,7 +40,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         mVerbs.add(CORRELATION_ID);
         mVerbs.add(ORIGIN);
         mVerbs.add(CUSTOM_EVENT_ID);
-        mVerbs.add("DELETED");
+        mVerbs.add(DELETED);
         buildCompletions();
         // These search options remain hidden from the autocompletion
         // but still available for the user interface
@@ -74,7 +75,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         getTypeDictionary().put(CORRELATION_ID, String.class);
         getTypeDictionary().put(ORIGIN, String.class);
         getTypeDictionary().put(CUSTOM_EVENT_ID, Integer.class);
-        getTypeDictionary().put("DELETED", Boolean.class);
+        getTypeDictionary().put(DELETED, Boolean.class);
         // building the ColumnName Dict
         columnNameDict.put(TYPE, "log_type");
         columnNameDict.put(SEVERITY, "severity");
@@ -98,7 +99,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         columnNameDict.put(CORRELATION_ID, "correlation_id::varchar");
         columnNameDict.put(ORIGIN, "origin::varchar");
         columnNameDict.put(CUSTOM_EVENT_ID, "custom_event_id::int");
-        columnNameDict.put("DELETED", "deleted::boolean");
+        columnNameDict.put(DELETED, "deleted::boolean");
         // Building the validation dict
         buildBasicValidationTable();
     }
@@ -122,7 +123,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
                 || "_EVENT_QUOTA_ID".equals(fieldName)
                 || EVENT_VOLUME.equals(fieldName) || "_EVENT_VOLUME_ID".equals(fieldName) ||
                 CORRELATION_ID.equals(fieldName) || ORIGIN.equals(fieldName) ||
-                CUSTOM_EVENT_ID.equals(fieldName) || "DELETED".equals(fieldName)) {
+                CUSTOM_EVENT_ID.equals(fieldName) || DELETED.equals(fieldName)) {
             return StringConditionRelationAutoCompleter.INSTANCE;
         } else {
             return null;
@@ -136,6 +137,8 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         }
         else if (TIME.equals(fieldName)) {
             return new DateEnumValueAutoCompleter(DateEnumForSearch.class);
+        } else if (DELETED.equals(fieldName)) {
+            return new BitValueAutoCompleter();
         } else {
             return null;
         }

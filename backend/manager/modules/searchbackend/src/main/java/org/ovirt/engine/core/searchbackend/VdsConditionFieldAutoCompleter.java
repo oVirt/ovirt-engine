@@ -133,6 +133,9 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         } else if ("ARCHITECTURE".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(ArchitectureType.class);
         }
+        else if (UPDATE_AVAILABLE.equals(fieldName)) {
+            retval = new BitValueAutoCompleter();
+        }
         return retval;
     }
 }
