@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -146,7 +146,7 @@ public class RunVmValidator {
         }
 
         if (vm.getMemSizeMb() > maxSize) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
         }
 
         return ValidationResult.VALID;
@@ -156,7 +156,7 @@ public class RunVmValidator {
 
         if (StringUtils.isNotEmpty(runVmParam.getFloppyPath()) && !VmValidationUtils.isFloppySupported(vm.getOs(),
                 vm.getVdsGroupCompatibilityVersion())) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_FLOPPY_IS_NOT_SUPPORTED_BY_OS);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_FLOPPY_IS_NOT_SUPPORTED_BY_OS);
         }
 
         return ValidationResult.VALID;
@@ -190,7 +190,7 @@ public class RunVmValidator {
                 getVmActiveGraphics(),
                 vm.getDefaultDisplayType())) {
             return new ValidationResult(
-                    VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS);
+                    EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS);
         }
 
         return ValidationResult.VALID;
@@ -230,20 +230,20 @@ public class RunVmValidator {
         // Block from running a VM with no HDD when its first boot device is
         // HD and no other boot devices are configured
         if (bootSequence == BootSequence.C && vmDisks.isEmpty()) {
-            return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
+            return new ValidationResult(EngineMessage.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
         }
 
         // If CD appears as first and there is no ISO in storage
         // pool/ISO inactive - you cannot run this VM
         if (bootSequence == BootSequence.CD && activeIsoDomainId == null) {
-            return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+            return new ValidationResult(EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
         // if there is network in the boot sequence, check that the
         // vm has network, otherwise the vm cannot be run in vdsm
         if (bootSequence == BootSequence.N
                 && getVmNicDao().getAllForVm(vm.getId()).isEmpty()) {
-            return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
+            return new ValidationResult(EngineMessage.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
         }
 
         return ValidationResult.VALID;
@@ -308,15 +308,15 @@ public class RunVmValidator {
         }
 
         if (activeIsoDomainId == null) {
-            return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+            return new ValidationResult(EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
         if (!StringUtils.isEmpty(diskPath) && !isRepoImageExists(diskPath, activeIsoDomainId, ImageFileType.ISO)) {
-            return new ValidationResult(VdcBllMessages.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
+            return new ValidationResult(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
         }
 
         if (!StringUtils.isEmpty(floppyPath) && !isRepoImageExists(floppyPath, activeIsoDomainId, ImageFileType.Floppy)) {
-            return new ValidationResult(VdcBllMessages.ERROR_CANNOT_FIND_FLOPPY_IMAGE_PATH);
+            return new ValidationResult(EngineMessage.ERROR_CANNOT_FIND_FLOPPY_IMAGE_PATH);
         }
 
         return ValidationResult.VALID;
@@ -325,7 +325,7 @@ public class RunVmValidator {
     protected ValidationResult vmDuringInitialization(VM vm) {
         if (vm.isRunning() || vm.getStatus() == VMStatus.NotResponding ||
                 isVmDuringInitiating(vm)) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
 
         return ValidationResult.VALID;
@@ -335,8 +335,8 @@ public class RunVmValidator {
         if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null &&
                 getVdsDynamic(vm.getRunOnVds()).getStatus() != VDSStatus.Up) {
             return new ValidationResult(
-                    VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
-                    VdcBllMessages.VAR__HOST_STATUS__UP.toString());
+                    EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
+                    EngineMessage.VAR__HOST_STATUS__UP.toString());
         }
 
         return ValidationResult.VALID;
@@ -355,7 +355,7 @@ public class RunVmValidator {
 
         // if the VM itself is stateless or run once as stateless
         if (vm.isAutoStartup()) {
-            return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA);
+            return new ValidationResult(EngineMessage.VM_CANNOT_RUN_STATELESS_HA);
         }
 
         ValidationResult hasSpaceValidation = hasSpaceForSnapshots();
@@ -369,7 +369,7 @@ public class RunVmValidator {
     protected ValidationResult validateVmStatusUsingMatrix(VM vm) {
         if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class,
                 VdcActionType.RunVm)) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
         }
 
         return ValidationResult.VALID;
@@ -415,7 +415,7 @@ public class RunVmValidator {
             if (nic.getVnicProfileId() == null) {
                 return FeatureSupported.networkLinking(vm.getVdsGroupCompatibilityVersion()) ?
                         ValidationResult.VALID:
-                            new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
+                            new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
             }
         }
 
@@ -442,7 +442,7 @@ public class RunVmValidator {
         return result.isEmpty() ?
                 ValidationResult.VALID
                 : new ValidationResult(
-                        VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_IN_CLUSTER,
+                        EngineMessage.ACTION_TYPE_FAILED_NETWORK_NOT_IN_CLUSTER,
                         String.format("$networks %1$s", StringUtils.join(result, ",")));
     }
 
@@ -461,7 +461,7 @@ public class RunVmValidator {
         return nonVmNetworkNames.isEmpty() ?
                 ValidationResult.VALID
                 : new ValidationResult(
-                        VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK,
+                        EngineMessage.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK,
                         String.format("$networks %1$s", StringUtils.join(nonVmNetworkNames, ",")));
     }
 

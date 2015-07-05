@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -24,7 +24,7 @@ public class StorageConnectionValidator {
 
     public ValidationResult isConnectionExists() {
         if (connection == null) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
 
         return ValidationResult.VALID;
@@ -35,7 +35,7 @@ public class StorageConnectionValidator {
         StorageType storageDomainType = storageDomain.getStorageType();
 
         if (!connectionStorageType.equals(storageDomainType)) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_NOT_SAME_STORAGE_TYPE);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_NOT_SAME_STORAGE_TYPE);
         }
 
         return ValidationResult.VALID;
@@ -51,7 +51,7 @@ public class StorageConnectionValidator {
         StorageType storageDomainType = storageDomain.getStorageType();
 
         if (!connectionStorageType.equals(StorageType.ISCSI) || !storageDomainType.equals(StorageType.ISCSI)) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_ISCSI_DOMAINS);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_ISCSI_DOMAINS);
         }
 
         return ValidationResult.VALID;
@@ -59,11 +59,11 @@ public class StorageConnectionValidator {
 
     public ValidationResult isDomainOfConnectionExistsAndInactive(StorageDomain storageDomain) {
         if (storageDomain == null) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
         if (storageDomain.getStatus() != StorageDomainStatus.Maintenance
                 && storageDomain.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED,
                     String.format(STORAGE_DOMAIN_NAME_REPLACEMENT, storageDomain.getStorageName()));
         }
 

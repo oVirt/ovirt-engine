@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.PauseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,7 +39,7 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm == null) {
             retValue = false;
-            message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
+            message.add(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
         } else {
 
             ValidationResult nonManagedVmValidationResult = VmHandler.canRunActionOnNonManagedVm(getVm(), this.getActionType());
@@ -51,17 +51,17 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
             if (retValue && (vm.getStatus() == VMStatus.WaitForLaunch || vm.getStatus() == VMStatus.MigratingFrom
                     || vm.getStatus() == VMStatus.NotResponding)) {
                 retValue = false;
-                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
+                message.add(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
                 message.add(LocalizedVmStatus.from(vm.getStatus()));
             } else if (!vm.isRunning()) {
                 retValue = false;
-                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.toString());
+                message.add(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.toString());
             }
         }
 
         if (!retValue) {
-            message.add(VdcBllMessages.VAR__ACTION__PAUSE.toString());
-            message.add(VdcBllMessages.VAR__TYPE__VM.toString());
+            message.add(EngineMessage.VAR__ACTION__PAUSE.toString());
+            message.add(EngineMessage.VAR__TYPE__VM.toString());
         }
         return retValue;
     }

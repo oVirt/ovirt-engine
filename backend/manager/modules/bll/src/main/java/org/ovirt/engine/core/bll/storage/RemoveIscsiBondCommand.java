@@ -4,7 +4,7 @@ import org.ovirt.engine.core.bll.validator.IscsiBondValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveIscsiBondCommand<T extends RemoveIscsiBondParameters> extends BaseIscsiBondCommand<T> {
@@ -58,7 +58,7 @@ public class RemoveIscsiBondCommand<T extends RemoveIscsiBondParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__ISCSI_BOND);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__ISCSI_BOND);
     }
 }

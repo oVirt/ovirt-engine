@@ -33,8 +33,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
@@ -89,7 +89,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                     updateTasksInCluster(cluster, runningTasks);
                     tasksFromClustersMap.put(cluster.getId(), runningTasks.keySet());
                 }
-            } catch (VdcBLLException e) {
+            } catch (EngineException e) {
                 log.error("Error updating tasks from CLI", e);
             }
         }
@@ -124,7 +124,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                     public Void runInTransaction() {
                         try {
                             createJobToMonitor(cluster, task);
-                        } catch (VdcBLLException e) {
+                        } catch (EngineException e) {
                             log.error("Error creating job for task from CLI", e);
                         }
                         return null;
@@ -183,7 +183,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
         if (!result.getSucceeded()) {
             //log and return
-            throw new VdcBLLException(result.getFault().getError());
+            throw new EngineException(result.getFault().getError());
         }
 
         Guid asyncStepId = (Guid)result.getActionReturnValue();
@@ -196,7 +196,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                 new AddStepParameters(jobId, ExecutionMessageDirector.resolveStepMessage(StepEnum.EXECUTING, null), StepEnum.EXECUTING));
         if (!result.getSucceeded()) {
             //log and return
-            throw new VdcBLLException(result.getFault().getError());
+            throw new EngineException(result.getFault().getError());
         }
 
         Guid execStepId = (Guid)result.getActionReturnValue();
@@ -210,7 +210,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                         actionType, true, VdcObjectType.GlusterVolume, vol.getId()) );
         if (!result.getSucceeded()) {
             //log and return
-            throw new VdcBLLException(result.getFault().getError());
+            throw new EngineException(result.getFault().getError());
         }
         Guid jobId = (Guid)result.getActionReturnValue();
         return jobId;
@@ -256,7 +256,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             // Release the lock only if there is any exception,
             // otherwise the lock will be released once the task is completed
             releaseLock(vol.getId());
-            throw new VdcBLLException(VdcBllErrors.GeneralException, e.getMessage());
+            throw new EngineException(EngineError.GeneralException, e.getMessage());
         }
     }
 

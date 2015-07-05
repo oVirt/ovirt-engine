@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentT
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -46,8 +46,8 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_HOOK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
     }
 
     private List<GlusterServerHook> getContentConflictServerHooks() {
@@ -68,7 +68,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
         }
 
         if (getContentConflictServerHooks().isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS);
             return false;
         }
 
@@ -77,7 +77,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
             if (vds == null || vds.getStatus() != VDSStatus.Up) {
                 String vdsName = vds != null ? vds.getName() : GlusterConstants.NO_SERVER;
                 setVdsName(vdsName);
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
                 addCanDoActionMessage(String.format("$%1$s %2$s", "VdsName", vdsName));
                 return false;
             }
@@ -112,7 +112,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
             if (!retValue.getSucceeded()) {
                 // throw exception as we cannot continue without content
                 log.error("Failed to get content from server with id '{}': {}", getParameters().getSourceServerId(), retValue.getExceptionString());
-                throw new VdcBLLException(retValue.getVdsError().getCode(), retValue.getVdsError().getMessage());
+                throw new EngineException(retValue.getVdsError().getCode(), retValue.getVdsError().getMessage());
             }
             hookContent = (String) retValue.getReturnValue();
             hookChecksum = sourceServerHook.getChecksum();

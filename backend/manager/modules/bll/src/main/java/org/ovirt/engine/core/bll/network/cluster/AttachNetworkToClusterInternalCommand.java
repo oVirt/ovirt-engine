@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -68,14 +68,14 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
             return true;
         }
 
-        addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
+        addCanDoActionMessage(EngineMessage.NETWORK_NOT_EXISTS);
         return false;
     }
 
     private boolean changesAreClusterCompatible() {
         if (!getParameters().getNetwork().isVmNetwork()) {
             if (!FeatureSupported.nonVmNetwork(getVdsGroup().getCompatibilityVersion())) {
-                addCanDoActionMessage(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
+                addCanDoActionMessage(EngineMessage.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
                 return false;
             }
         }
@@ -84,7 +84,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
 
     private boolean networkNotAttachedToCluster() {
         if (networkExists()) {
-            return failCanDoAction(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_CLUSTER);
+            return failCanDoAction(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_CLUSTER);
         }
 
         return true;
@@ -96,7 +96,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
 
     private boolean vdsGroupExists() {
         if (!vdsGroupInDb()) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+            addCanDoActionMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
         return true;
@@ -145,8 +145,8 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ATTACH);
     }
 
     @Override

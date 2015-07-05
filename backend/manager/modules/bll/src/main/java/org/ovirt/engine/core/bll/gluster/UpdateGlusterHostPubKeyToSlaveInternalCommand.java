@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterHostPubKeyToSlaveParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.UpdateGlusterGeoRepKeysVDSParameters;
@@ -35,17 +35,17 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommand extends GlusterComman
     @Override
     protected boolean canDoAction() {
         if (getParameters().getPubKeys().isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_NO_PUB_KEYS_PASSED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_NO_PUB_KEYS_PASSED);
         }
         if (getParameters().getId() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
         return super.canDoAction();
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__WRITE_PUB_KEYS);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__WRITE_PUB_KEYS);
     }
 
     @Override

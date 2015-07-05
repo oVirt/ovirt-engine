@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
@@ -95,7 +95,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
         if (returnValue && storagePool != null && storagePool.isLocal()) {
             if (!getStorageDomainDao().getAllForStoragePool(storagePool.getId()).isEmpty()) {
-                returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE);
+                returnValue = failCanDoAction(EngineMessage.VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE);
             }
         }
 
@@ -105,17 +105,17 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
             if (!getParameters().isForceAction()) {
                 // fail if host has bricks on a volume
                 if (hasVolumeBricksOnServer()) {
-                    returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                    returnValue = failCanDoAction(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 } else if (upServer == null && clusterHasMultipleHosts()) {
                     // fail if there is no up server in cluster, and if host being removed is not
                     // the last server in cluster
                     addCanDoActionMessageVariable("clusterName", getVdsGroup().getName());
-                    returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+                    returnValue = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
                 }
             } else {
                 // if force, cannot remove only if there are bricks on server and there is an up server.
                 if (hasVolumeBricksOnServer() && upServer != null) {
-                    returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                    returnValue = failCanDoAction(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 }
             }
         }
@@ -125,8 +125,8 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     @Override
@@ -166,18 +166,18 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         // check if vds id is valid
         VDS vds = getVdsDao().get(vdsId);
         if (vds == null) {
-            text.add(VdcBllMessages.VDS_INVALID_SERVER_ID.toString());
+            text.add(EngineMessage.VDS_INVALID_SERVER_ID.toString());
             returnValue = false;
         } else if (!statusLegalForRemove(vds)) {
-            text.add(VdcBllMessages.VDS_CANNOT_REMOVE_VDS_STATUS_ILLEGAL.toString());
+            text.add(EngineMessage.VDS_CANNOT_REMOVE_VDS_STATUS_ILLEGAL.toString());
             returnValue = false;
         } else if (vds.getVmCount() > 0) {
-            text.add(VdcBllMessages.VDS_CANNOT_REMOVE_VDS_DETECTED_RUNNING_VM.toString());
+            text.add(EngineMessage.VDS_CANNOT_REMOVE_VDS_DETECTED_RUNNING_VM.toString());
             returnValue = false;
         } else {
             List<String> vmNamesPinnedToHost = getVmStaticDao().getAllNamesPinnedToHost(vdsId);
             if (!vmNamesPinnedToHost.isEmpty()) {
-                text.add(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS.toString());
+                text.add(EngineMessage.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS.toString());
                 text.add(String.format("$VmNames %s", StringUtils.join(vmNamesPinnedToHost, ',')));
                 returnValue = false;
             }
@@ -220,14 +220,14 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                                         getParameters().isForceAction()));
                 // If the host is already removed Cluster using Gluster CLI then we can setSucceeded to true.
                 setSucceeded(returnValue.getSucceeded()
-                        || VdcBllErrors.GlusterHostIsNotPartOfCluster == returnValue.getVdsError().getCode());
+                        || EngineError.GlusterHostIsNotPartOfCluster == returnValue.getVdsError().getCode());
                 if (!getSucceeded()) {
                     // VDSM in 3.3 (or less) cluster will return GlusterHostRemoveFailedException
                     // if the host is not part of the cluster
                     // So if peer detach is failed, check the peer list to decide that the host is not part of the
                     // cluster
 
-                    if (returnValue.getVdsError().getCode() == VdcBllErrors.GlusterHostRemoveFailedException) {
+                    if (returnValue.getVdsError().getCode() == EngineError.GlusterHostRemoveFailedException) {
                         List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer);
                         if (glusterServers != null) {
                             if (!GlusterUtil.getInstance().isHostExists(glusterServers, getVds())) {
@@ -274,7 +274,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         Map<String, Pair<String, String>> locks = new HashMap<>();
         locks.put(getParameters().getVdsId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;
     }
 }

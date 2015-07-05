@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -39,7 +39,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
             StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVds(getParameters().getVdsId());
 
             if (storagePool == null) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_CLUSTER_HAVE_NOT_EXISTING_DATA_CENTER_NETWORK);
+                addCanDoActionMessage(EngineMessage.NETWORK_CLUSTER_HAVE_NOT_EXISTING_DATA_CENTER_NETWORK);
                 retVal = false;
             } else {
                 setStoragePool(storagePool);
@@ -48,7 +48,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
             if (retVal &&
                     getStorageDomain().getStorageType() == StorageType.LOCALFS &&
                     !storagePool.isLocal()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_IS_NOT_LOCAL);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_IS_NOT_LOCAL);
                 retVal = false;
             }
 
@@ -65,7 +65,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
 
                 String rhevhLocalFSPath = Config.<String> getValue(ConfigValues.RhevhLocalFSPath);
                 if (!conn.getconnection().equals(rhevhLocalFSPath)) {
-                    addCanDoActionMessage(VdcBllMessages.RHEVH_LOCALFS_WRONG_PATH_LOCATION);
+                    addCanDoActionMessage(EngineMessage.RHEVH_LOCALFS_WRONG_PATH_LOCATION);
                     addCanDoActionMessageVariable("path", rhevhLocalFSPath);
                     retVal = false;
                 }

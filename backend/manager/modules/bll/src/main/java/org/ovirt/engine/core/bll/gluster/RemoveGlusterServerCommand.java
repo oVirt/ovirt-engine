@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.RemoveGlusterServerParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
@@ -30,15 +30,15 @@ public class RemoveGlusterServerCommand extends GlusterCommandBase<RemoveGluster
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_SERVER);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_SERVER);
     }
 
     @Override
     protected boolean canDoAction() {
         super.canDoAction();
         if (StringUtils.isEmpty(getParameters().getHostnameOrIp())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SERVER_NAME_REQUIRED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_SERVER_NAME_REQUIRED);
             return false;
         }
         return true;

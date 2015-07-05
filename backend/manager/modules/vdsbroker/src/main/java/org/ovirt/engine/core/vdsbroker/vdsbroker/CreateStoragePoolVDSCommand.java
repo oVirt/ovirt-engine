@@ -3,7 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.CreateStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -34,13 +34,13 @@ public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandPa
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         // fail the operation without throwing exception
         case StorageDomainAccessError:
             getVDSReturnValue().setSucceeded(false);
             VDSError tempVar = new VDSError();
-            tempVar.setCode(VdcBllErrors.StorageDomainAccessError);
+            tempVar.setCode(EngineError.StorageDomainAccessError);
             tempVar.setMessage(getReturnStatus().mMessage);
             getVDSReturnValue().setVdsError(tempVar);
             break;

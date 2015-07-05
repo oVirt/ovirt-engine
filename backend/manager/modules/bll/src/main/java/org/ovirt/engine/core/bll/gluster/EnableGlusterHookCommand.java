@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
 public class EnableGlusterHookCommand<T extends GlusterHookParameters> extends GlusterHookStatusChangeCommand<T> {
@@ -20,8 +20,8 @@ public class EnableGlusterHookCommand<T extends GlusterHookParameters> extends G
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ENABLE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_HOOK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ENABLE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
     }
 
     @Override

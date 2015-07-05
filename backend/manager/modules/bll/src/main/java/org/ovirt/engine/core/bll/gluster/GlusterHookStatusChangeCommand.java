@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -53,7 +53,7 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
         }
 
         if (getAllUpServers() == null || getAllUpServers().isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
             return false;
         }
 
@@ -66,7 +66,7 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
         addCustomValue(GlusterConstants.HOOK_NAME, entity.getName());
 
         if (getAllUpServers().size() < getClusterUtils().getServerCount(getGlusterHook().getClusterId())) {
-            errors.add(VdcBllMessages.CLUSTER_ALL_SERVERS_NOT_UP.toString());
+            errors.add(EngineMessage.CLUSTER_ALL_SERVERS_NOT_UP.toString());
         }
 
         List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<>();

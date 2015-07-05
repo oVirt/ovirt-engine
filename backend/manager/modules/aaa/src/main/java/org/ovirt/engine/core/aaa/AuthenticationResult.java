@@ -14,7 +14,7 @@ public abstract class AuthenticationResult {
     public abstract boolean isSuccessful();
 
     /**
-     * Resolves the detailed information into VdcBll messages
+     * Resolves the detailed information into engine messages
      * @return
      */
     public abstract List<String> resolveMessage();

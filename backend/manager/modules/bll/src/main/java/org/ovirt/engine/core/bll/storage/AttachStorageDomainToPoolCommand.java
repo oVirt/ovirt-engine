@@ -31,9 +31,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
@@ -145,9 +145,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                             getParameters().getStorageDomainId(),
                                             Guid.Empty,
                                             0);
-                                    throw new VdcBLLException(
+                                    throw new EngineException(
                                             returnValue.getVdsError() != null ? returnValue.getVdsError().getCode()
-                                                    : VdcBllErrors.ENGINE,
+                                                    : EngineError.ENGINE,
                                             returnValue.getExceptionString());
                                 }
                             }
@@ -234,7 +234,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     protected void attemptToActivateDomain() {
@@ -277,7 +277,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         if (returnValue && getStoragePool().getStatus() == StoragePoolStatus.Uninitialized
                 && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {
             returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
+            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
         }
         if (returnValue && getStoragePool().getStatus() != StoragePoolStatus.Uninitialized) {
             returnValue = checkMasterDomainIsUp();
@@ -287,8 +287,8 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ATTACH);
     }
 
     @Override

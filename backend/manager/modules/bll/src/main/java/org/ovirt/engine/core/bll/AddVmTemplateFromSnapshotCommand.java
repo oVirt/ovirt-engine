@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -83,13 +83,13 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         }
 
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION,
                     String.format("$VmName %1$s", getVmName()),
                     String.format("$SnapshotName %1$s", getSnapshotName()));
         }
 
         if (getVdsGroup() == null) {
-            return failCanDoAction(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
+            return failCanDoAction(EngineMessage.VMT_CLUSTER_IS_NOT_VALID);
         }
 
         return super.canDoAction();
@@ -216,7 +216,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         }
         if (getVm() != null) {
             locks.put(getVmId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return locks;
     }

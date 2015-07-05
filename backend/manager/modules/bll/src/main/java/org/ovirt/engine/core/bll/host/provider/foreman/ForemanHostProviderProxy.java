@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.ExternalOperatingSystem;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.uutils.crypto.CryptMD5;
 
 public class ForemanHostProviderProxy extends BaseProviderProxy implements HostProviderProxy {
@@ -285,7 +285,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 && connection.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP) {
             ForemanErrorWrapper ferr = objectMapper.readValue(response, ForemanErrorWrapper.class);
             String err = StringUtils.join(ferr.getForemanError().getFull_messages(), ", ");
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, err);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, err);
         }
     }
 

@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
@@ -28,12 +28,12 @@ public class UpdateHostValidator extends HostValidator {
     }
 
     public ValidationResult hostExists() {
-        return ValidationResult.failWith(VdcBllMessages.VDS_INVALID_SERVER_ID)
+        return ValidationResult.failWith(EngineMessage.VDS_INVALID_SERVER_ID)
                 .when(oldHost == null || getHost() == null);
     }
 
     public ValidationResult hostStatusValid() {
-        return ValidationResult.failWith(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE).when(!isUpdateValid());
+        return ValidationResult.failWith(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE).when(!isUpdateValid());
     }
 
     protected boolean isUpdateValid() {
@@ -41,7 +41,7 @@ public class UpdateHostValidator extends HostValidator {
     }
 
     public ValidationResult updateHostAddressAllowed() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_HOSTNAME_CANNOT_CHANGE)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_HOSTNAME_CANNOT_CHANGE)
                 .when(oldHost.getStatus() != VDSStatus.InstallFailed
                         && !oldHost.getHostName().equals(getHost().getHostName()));
     }
@@ -63,7 +63,7 @@ public class UpdateHostValidator extends HostValidator {
     }
 
     public ValidationResult statusSupportedForHostInstallation() {
-        return ValidationResult.failWith(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL)
+        return ValidationResult.failWith(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL)
                 .when(installHost
                         && oldHost.getStatus() != VDSStatus.Maintenance
                         && oldHost.getStatus() != VDSStatus.NonOperational
@@ -72,7 +72,7 @@ public class UpdateHostValidator extends HostValidator {
     }
 
     public ValidationResult passwordProvidedForHostInstallation(AuthenticationMethod method, String password) {
-        return ValidationResult.failWith(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD)
+        return ValidationResult.failWith(EngineMessage.VDS_CANNOT_INSTALL_EMPTY_PASSWORD)
                 .when(installHost
                         && method == AuthenticationMethod.Password
                         && StringUtils.isEmpty(password)
@@ -80,7 +80,7 @@ public class UpdateHostValidator extends HostValidator {
     }
 
     public ValidationResult updatePortAllowed() {
-        return ValidationResult.failWith(VdcBllMessages.VDS_PORT_CHANGE_REQUIRE_INSTALL)
+        return ValidationResult.failWith(EngineMessage.VDS_PORT_CHANGE_REQUIRE_INSTALL)
                 .unless(installHost || oldHost.getPort() == getHost().getPort());
     }
 
@@ -89,24 +89,24 @@ public class UpdateHostValidator extends HostValidator {
      * check that must be done both on the VDS and on the VDSGroup
      */
     public ValidationResult clusterNotChanged() {
-        return ValidationResult.failWith(VdcBllMessages.VDS_CANNOT_UPDATE_CLUSTER)
+        return ValidationResult.failWith(EngineMessage.VDS_CANNOT_UPDATE_CLUSTER)
                 .unless(oldHost.getVdsGroupId().equals(getHost().getVdsGroupId()));
     }
 
     public ValidationResult changeProtocolAllowed() {
-        return ValidationResult.failWith(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE)
+        return ValidationResult.failWith(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE)
                 .when(getHost().getProtocol() != oldHost.getProtocol()
                         && oldHost.getStatus() != VDSStatus.Maintenance
                         && oldHost.getStatus() != VDSStatus.InstallingOS);
     }
 
     public ValidationResult hostProviderExists() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST)
                 .when(getHost().getHostProviderId() != null && getProvider() == null);
     }
 
     public ValidationResult hostProviderTypeMatches() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH)
                 .when(getProvider() != null && getProvider().getType() != ProviderType.FOREMAN);
     }
 

@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -60,7 +60,7 @@ public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryPa
 
         assertFalse(getQuery().getQueryReturnValue().getSucceeded());
         assertNull(getQuery().getQueryReturnValue().getReturnValue());
-        assertEquals(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST.name(), getQuery().getQueryReturnValue()
+        assertEquals(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST.name(), getQuery().getQueryReturnValue()
                 .getExceptionString());
     }
 
@@ -71,7 +71,7 @@ public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryPa
 
         assertFalse(getQuery().getQueryReturnValue().getSucceeded());
         assertNull(getQuery().getQueryReturnValue().getReturnValue());
-        assertEquals(VdcBllMessages.NO_HOST_PROVIDER_FOR_SYSTEM.name(), getQuery().getQueryReturnValue()
+        assertEquals(EngineMessage.NO_HOST_PROVIDER_FOR_SYSTEM.name(), getQuery().getQueryReturnValue()
                 .getExceptionString());
     }
 

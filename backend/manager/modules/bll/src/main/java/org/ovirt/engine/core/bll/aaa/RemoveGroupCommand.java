@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandlingCommandBase<T> {
@@ -56,13 +56,13 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
         // Check that the group being removed isn't the last remaining group
         // of super users:
         if (isLastSuperUserGroup(id)) {
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE);
+            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE);
             return false;
         }
 
         // Check that the group being removed isn't the everyone group:
         if (MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID.equals(id)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_BUILTIN_GROUP_EVERYONE);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_BUILTIN_GROUP_EVERYONE);
             return false;
         }
 

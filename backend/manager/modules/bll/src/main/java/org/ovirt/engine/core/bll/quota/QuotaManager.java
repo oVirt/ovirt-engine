@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -177,7 +177,7 @@ public class QuotaManager implements BackendService {
             if (!hasStorageId){
                 if(quota.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT){
                     parameters.getCanDoActionMessages()
-                    .add(VdcBllMessages.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN.toString());
+                    .add(EngineMessage.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN.toString());
                     return false;
                 } else {
                     auditLogPair.setFirst(AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE);
@@ -318,7 +318,7 @@ public class QuotaManager implements BackendService {
                     storageUsagePercentage,
                     storageRequestPercentage);
             if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT == quotaEnforcementTypeEnum) {
-                canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_STORAGE_LIMIT_EXCEEDED.toString());
+                canDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_STORAGE_LIMIT_EXCEEDED.toString());
                 requestIsApproved = false;
             } else {
                 requestIsApproved = true;
@@ -405,7 +405,7 @@ public class QuotaManager implements BackendService {
                     newVcpuPercent > quota.getGraceVdsGroupPercentage() + 100,
                     newMemoryPercent > quota.getGraceVdsGroupPercentage() + 100);
             if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT == quotaEnforcementTypeEnum) {
-                canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_VDS_GROUP_LIMIT_EXCEEDED.toString());
+                canDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_VDS_GROUP_LIMIT_EXCEEDED.toString());
                 requestIsApproved = false;
             } else {
                 requestIsApproved = true;
@@ -452,7 +452,7 @@ public class QuotaManager implements BackendService {
             }
             if (quotaVdsGroup == null) {
                 parameters.getCanDoActionMessages()
-                        .add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+                        .add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
                 result = false;
                 break;
             }
@@ -714,7 +714,7 @@ public class QuotaManager implements BackendService {
             Pair<AuditLogType, AuditLogableBase> auditLogPair)
             throws InvalidQuotaParametersException {
         if(param.getQuotaGuid() == null || Guid.Empty.equals(param.getQuotaGuid())) {
-            parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+            parameters.getCanDoActionMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
             parameters.getCanDoActionMessages().add(String.format("$VmName %1$s",
                     parameters.getAuditLogable()
                             .getVmName()));
@@ -733,7 +733,7 @@ public class QuotaManager implements BackendService {
 
         Quota quota = fetchQuotaFromCache(param.getQuotaGuid(), parameters.getStoragePool().getId());
         if (quota == null) {
-            parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NO_LONGER_AVAILABLE_IN_SYSTEM.toString());
+            parameters.getCanDoActionMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NO_LONGER_AVAILABLE_IN_SYSTEM.toString());
             parameters.getCanDoActionMessages().add(String.format("$VmName %1$s",
                     parameters.getAuditLogable()
                     .getVmName()));
@@ -759,7 +759,7 @@ public class QuotaManager implements BackendService {
         QuotaVdsGroupConsumptionParameter paramVds = (QuotaVdsGroupConsumptionParameter) param;
 
         if (paramVds.getVdsGroupId() == null) {
-            parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+            parameters.getCanDoActionMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
             log.error("Quota Vds parameters from command '{}' are missing vds group id",
                     parameters.getAuditLogable().getClass().getName());
             return false;
@@ -777,7 +777,7 @@ public class QuotaManager implements BackendService {
         }
 
         if (!vdsGroupInQuota) {
-            parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+            parameters.getCanDoActionMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
             log.error("Quota Vds parameters from command '{}'. Vds group does not match quota",
                     parameters.getAuditLogable().getClass().getName());
             return false;
@@ -792,7 +792,7 @@ public class QuotaManager implements BackendService {
         QuotaStorageConsumptionParameter paramStorage = (QuotaStorageConsumptionParameter) param;
 
         if (paramStorage.getStorageDomainId() == null) {
-            parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+            parameters.getCanDoActionMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
             log.error("Quota storage parameters from command '{}' are missing storage domain id",
                     parameters.getAuditLogable().getClass().getName());
             return false;
@@ -810,7 +810,7 @@ public class QuotaManager implements BackendService {
         }
 
         if (!storageDomainInQuota) {
-            parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN.toString());
+            parameters.getCanDoActionMessages().add(EngineMessage.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN.toString());
             log.error("Quota storage parameters from command '{}'. Storage domain does not match quota",
                     parameters.getAuditLogable().getClass().getName());
             return false;

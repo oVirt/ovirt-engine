@@ -14,9 +14,9 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -49,7 +49,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
             // Process failure
             if (!isValidConnection) {
-                throw new VdcBLLException(VdcBllErrors.forValue(result.getSecond()));
+                throw new EngineException(EngineError.forValue(result.getSecond()));
             }
         }
 
@@ -74,7 +74,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         StorageServerConnections paramConnection = getConnection();
         // if an id was sent - it's not ok since only the backend should allocate ids
         if (StringUtils.isNotEmpty(paramConnection.getid())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
         }
 
         if (!isValidConnection(paramConnection)) {
@@ -83,7 +83,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
         Guid storagePoolId = Guid.isNullOrEmpty(getParameters().getVdsId()) ? null : getVds().getStoragePoolId();
         if (isConnWithSameDetailsExists(paramConnection, storagePoolId)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 
         // If a Guid is not supplied, we won't attempt to [dis]connect.
@@ -91,10 +91,10 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         // validate that it's a valid VDS ID and that the VDS is up.
         if (!Guid.isNullOrEmpty(getParameters().getVdsId())) {
             if (getVds() == null) {
-                return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
+                return failCanDoAction(EngineMessage.VDS_INVALID_SERVER_ID);
             }
             if (getVds().getStatus() != VDSStatus.Up) {
-                return failCanDoAction(VdcBllMessages.VDS_ADD_STORAGE_SERVER_STATUS_MUST_BE_UP);
+                return failCanDoAction(EngineMessage.VDS_ADD_STORAGE_SERVER_STATUS_MUST_BE_UP);
             }
         }
         return true;
@@ -113,19 +113,19 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             // add new storage domain to same path or edit another storage server connection to point to same path
             return Collections.singletonMap(getParameters().getStorageServerConnection().getconnection(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
-                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         else { // lock target details
             return Collections.singletonMap(getConnection().getconnection() + ";" + getConnection().getiqn() + ";"
                     + getConnection().getport() + ";" + getConnection().getuser_name(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
-                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__CONNECTION);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
     }
 }

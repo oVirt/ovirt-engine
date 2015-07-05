@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
@@ -27,14 +27,14 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CANCEL_MIGRATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__CANCEL_MIGRATE);
     }
 
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -42,7 +42,7 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
         }
 
         if (getVm().getStatus() != VMStatus.MigratingFrom) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING);
+            return failCanDoAction(EngineMessage.VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING);
         }
 
         return true;

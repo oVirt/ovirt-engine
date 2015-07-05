@@ -19,9 +19,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
@@ -97,7 +97,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     @Override
@@ -108,11 +108,11 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
         StorageDomain dom = getStorageDomain();
         if (dom == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
         if (getParameters().getDoFormat() && isStorageDomainAttached(dom)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
         }
 
         VDS vds = getVds();
@@ -138,12 +138,12 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                     return false;
                 }
             } else {
-                return failCanDoAction(VdcBllMessages.CANNOT_REMOVE_STORAGE_DOMAIN_INVALID_HOST_ID);
+                return failCanDoAction(EngineMessage.CANNOT_REMOVE_STORAGE_DOMAIN_INVALID_HOST_ID);
             }
         }
 
         if (dom.getStorageType().isOpenStackDomain()) {
-            return failCanDoAction(VdcBllMessages.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
+            return failCanDoAction(EngineMessage.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
         }
 
         return true;
@@ -202,8 +202,8 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         try {
             return runVdsCommand(VDSCommandType.FormatStorageDomain,
                             new FormatStorageDomainVDSCommandParameters(vds.getId(), dom.getId())).getSucceeded();
-        } catch (VdcBLLException e) {
-            if (e.getErrorCode() != VdcBllErrors.StorageDomainDoesNotExist) {
+        } catch (EngineException e) {
+            if (e.getErrorCode() != EngineError.StorageDomainDoesNotExist) {
                 throw e;
             }
             log.warn("Storage Domain '{}' which was about to be formatted does not exist in VDS '{}'",
@@ -216,6 +216,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 }

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 
@@ -63,34 +63,34 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     public void testCanDoActionImageDoesNotExist() {
         when(getDiskDao().get(getDiskImageGroupId())).thenReturn(null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+                EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
     public void testCanDoActionDomainInMaintenance() {
         getDiskStorageDomain().setStatus(StorageDomainStatus.Maintenance);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     @Test
     public void testCanDoActionImageHasParent() {
         getDiskImage().setParentId(Guid.newGuid());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
+                EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
     }
 
     @Test
     public void testCanDoActionVmRunning() {
         vm.setStatus(VMStatus.Up);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+                EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
     }
 
     @Test
     public void testCanDoActionImageLocked() {
         getDiskImage().setImageStatus(ImageStatus.LOCKED);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
+                EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 }

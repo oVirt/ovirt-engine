@@ -37,8 +37,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -202,7 +202,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     private void handleCopyResult(DiskImage srcDiskImage, DiskImage copiedDiskImage, VdcReturnValueBase result) {
         // If a copy cannot be made, abort
         if (!result.getSucceeded()) {
-            throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
+            throw new EngineException(EngineError.VolumeCreationError);
         } else {
             ImagesHandler.addDiskImageWithNoVmDevice(copiedDiskImage);
             getTaskIdList().addAll(result.getInternalVdsmTaskIdList());

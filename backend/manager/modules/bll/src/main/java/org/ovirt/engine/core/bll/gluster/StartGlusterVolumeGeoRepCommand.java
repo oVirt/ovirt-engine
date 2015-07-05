@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
@@ -23,7 +23,7 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
             return false;
         }
         if (getGeoRepSession().getStatus().equals(GeoRepSessionStatus.ACTIVE) && !(getParameters().isForce())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_STARTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_STARTED);
         }
         return true;
     }

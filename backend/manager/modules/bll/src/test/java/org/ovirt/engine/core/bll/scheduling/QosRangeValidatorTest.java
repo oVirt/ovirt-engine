@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -52,7 +52,7 @@ public class QosRangeValidatorTest {
                 qos);
 
         assertCanDoMsgCount(canDoMsgs, "$range 1-100", 1);
-        assertCanDoMsgCount(canDoMsgs, VdcBllMessages.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 1);
+        assertCanDoMsgCount(canDoMsgs, EngineMessage.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 1);
     }
 
     private void assertCanDoMsgCount(List<String> canDoMsgs, String msg, int count) {
@@ -74,7 +74,7 @@ public class QosRangeValidatorTest {
                 qos);
 
         assertCanDoMsgCount(canDoMsgs, "$range 0-100", 6);
-        assertCanDoMsgCount(canDoMsgs, VdcBllMessages.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 6);
+        assertCanDoMsgCount(canDoMsgs, EngineMessage.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 6);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class QosRangeValidatorTest {
                 qos);
 
         assertCanDoMsgCount(canDoMsgs, "$range 0-100", 6);
-        assertCanDoMsgCount(canDoMsgs, VdcBllMessages.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 6);
+        assertCanDoMsgCount(canDoMsgs, EngineMessage.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 6);
     }
 
 }

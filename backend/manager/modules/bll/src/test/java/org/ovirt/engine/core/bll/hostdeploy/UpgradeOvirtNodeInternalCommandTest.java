@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -73,7 +73,7 @@ public class UpgradeOvirtNodeInternalCommandTest {
     }
 
     private static void assertFailsWithCanDoActionMessage
-            (UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command, VdcBllMessages message) {
+            (UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command, EngineMessage message) {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains(message.name()));
     }
@@ -93,7 +93,7 @@ public class UpgradeOvirtNodeInternalCommandTest {
         InstallVdsParameters param = createParameters();
         param.setoVirtIsoFile(null);
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertFailsWithCanDoActionMessage(command, VdcBllMessages.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
+        assertFailsWithCanDoActionMessage(command, EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
     }
 
     @Test
@@ -102,7 +102,7 @@ public class UpgradeOvirtNodeInternalCommandTest {
         InstallVdsParameters param = createParameters();
         param.setoVirtIsoFile(INVALID_VERSION_OVIRT_ISO_FILENAME);
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertFailsWithCanDoActionMessage(command, VdcBllMessages.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
+        assertFailsWithCanDoActionMessage(command, EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class UpgradeOvirtNodeInternalCommandTest {
         InstallVdsParameters param = createParameters();
         param.setoVirtIsoFile(VALID_VERSION_OVIRT_ISO_FILENAME);
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertFailsWithCanDoActionMessage(command, VdcBllMessages.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
+        assertFailsWithCanDoActionMessage(command, EngineMessage.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class UpgradeOvirtNodeInternalCommandTest {
         when(vdsDao.get(any(Guid.class))).thenReturn(null);
         InstallVdsParameters param = createParameters();
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertFailsWithCanDoActionMessage(command, VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+        assertFailsWithCanDoActionMessage(command, EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
     }
 
 }

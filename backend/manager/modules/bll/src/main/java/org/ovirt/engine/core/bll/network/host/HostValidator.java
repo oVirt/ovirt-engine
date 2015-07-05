@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class HostValidator {
 
@@ -21,7 +21,7 @@ public class HostValidator {
 
     private ValidationResult hostExist() {
         if (host == null) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
 
         return ValidationResult.VALID;
@@ -35,10 +35,10 @@ public class HostValidator {
                 || host.getStatus() == VDSStatus.Installing && internalExecution;
 
         if (!hostStatusLegalForSetupNetworks) {
-            //            violations.addViolation(VdcBllMessages.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL, host.getName());
-            //            violations.addViolation(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL, host.getName());
+            //            violations.addViolation(EngineMessage.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL, host.getName());
+            //            violations.addViolation(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL, host.getName());
 
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
                 host.getName(),
                 host.getStatus().name()); //TODO MM: fix message & replacements.
         }

@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -178,7 +178,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
 
     /**
      * This test verifies that if the fence operation fails, the initial status is restored (re-set). Without necessary
-     * mocking, VdcBLLException is thrown and the command fails. In the finally() clause, SetVdsStatus is invoked to
+     * mocking, EngineException is thrown and the command fails. In the finally() clause, SetVdsStatus is invoked to
      * restore the old status. This test verifies that this invocation was made.
      */
     @Test()
@@ -186,7 +186,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         mockExecutor(false);
         try {
             command.executeCommand();
-        } catch (VdcBLLException exception) {
+        } catch (EngineException exception) {
             verify(vdsBrokerFrontend).RunVdsCommand(eq(VDSCommandType.SetVdsStatus),
                     any(SetVdsStatusVDSCommandParameters.class));
             return;
@@ -237,7 +237,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         try {
             command.executeCommand();
             fail();
-        } catch (VdcBLLException ex) {
+        } catch (EngineException ex) {
             verify(auditLogDirector, times(3)).log(any(AuditLogableBase.class), any(AuditLogType.class));
         }
     }

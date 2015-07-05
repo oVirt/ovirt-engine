@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -101,8 +101,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     @Override

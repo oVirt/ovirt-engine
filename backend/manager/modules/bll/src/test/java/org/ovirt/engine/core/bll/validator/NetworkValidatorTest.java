@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -107,13 +107,13 @@ public class NetworkValidatorTest {
     @Test
     public void networkNull() throws Exception {
         validator = new NetworkValidator(null);
-        assertThat(validator.networkIsSet(), failsWith(VdcBllMessages.NETWORK_NOT_EXISTS));
+        assertThat(validator.networkIsSet(), failsWith(EngineMessage.NETWORK_NOT_EXISTS));
     }
 
     @Test
     public void dataCenterDoesntExist() throws Exception {
         when(dataCenterDao.get(any(Guid.class))).thenReturn(null);
-        assertThat(validator.dataCenterExists(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST));
+        assertThat(validator.dataCenterExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void nonVmNetworkWhenNotSupported() throws Exception {
-        vmNetworkSetupTest(failsWith(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL),
+        vmNetworkSetupTest(failsWith(EngineMessage.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL),
                 false,
                 false);
     }
@@ -171,7 +171,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void stpWhenNonVmNetwork() throws Exception {
-        stpTest(failsWith(VdcBllMessages.NON_VM_NETWORK_CANNOT_SUPPORT_STP), false, true);
+        stpTest(failsWith(EngineMessage.NON_VM_NETWORK_CANNOT_SUPPORT_STP), false, true);
     }
 
     @Test
@@ -195,7 +195,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void nonZeroMtuWhenNotSupported() throws Exception {
-        mtuValidTest(failsWith(VdcBllMessages.NETWORK_MTU_OVERRIDE_NOT_SUPPORTED), 1, false);
+        mtuValidTest(failsWith(EngineMessage.NETWORK_MTU_OVERRIDE_NOT_SUPPORTED), 1, false);
     }
 
     @Test
@@ -216,7 +216,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void networkPrefixBond() throws Exception {
-        networkPrefixValidTest(failsWith(VdcBllMessages.NETWORK_CANNOT_CONTAIN_BOND_NAME), "bond0");
+        networkPrefixValidTest(failsWith(EngineMessage.NETWORK_CANNOT_CONTAIN_BOND_NAME), "bond0");
     }
 
     @Test
@@ -251,7 +251,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void vlanIdTakenByDifferentNetwork() throws Exception {
-        vlanIdAvailableTest(failsWith(VdcBllMessages.NETWORK_VLAN_IN_USE),
+        vlanIdAvailableTest(failsWith(EngineMessage.NETWORK_VLAN_IN_USE),
                 getSingletonVlanNetworkList(DEFAULT_VLAN_ID, OTHER_GUID));
     }
 
@@ -298,7 +298,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void existingIscsiBondsForNetowrkTest() throws Exception {
-        notIscsiBondNetworkTest(failsWith(VdcBllMessages.NETWORK_CANNOT_REMOVE_ISCSI_BOND_NETWORK), getIscsiBondList());
+        notIscsiBondNetworkTest(failsWith(EngineMessage.NETWORK_CANNOT_REMOVE_ISCSI_BOND_NETWORK), getIscsiBondList());
     }
 
     @Test
@@ -313,7 +313,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void networkNameTakenByDifferentNetwork() throws Exception {
-        networkNameAvailableTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE),
+        networkNameAvailableTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE),
                 getSingletonNamedNetworkList(DEFAULT_NETWORK_NAME, OTHER_GUID));
     }
 
@@ -330,7 +330,7 @@ public class NetworkValidatorTest {
     }
 
     private Matcher<ValidationResult> failsWithNetworkInUse() {
-        return failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE);
+        return failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE);
     }
 
     private void networkNotUsedByVmsTest(Matcher<ValidationResult> matcher, List<VM> vms) {
@@ -401,13 +401,13 @@ public class NetworkValidatorTest {
     @Test
     public void networkLabeled() throws Exception {
         when(network.getLabel()).thenReturn(RandomUtils.instance().nextPropertyString(10));
-        assertThat(validator.notLabeled(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED));
+        assertThat(validator.notLabeled(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED));
     }
 
     @Test
     public void testNotExternalNetworkFailsForExternalNetwork() throws Exception {
         when(network.isExternal()).thenReturn(true);
-        assertThat(validator.notExternalNetwork(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK));
+        assertThat(validator.notExternalNetwork(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK));
     }
 
     @Test
@@ -420,7 +420,7 @@ public class NetworkValidatorTest {
     public void testNotManagementNetworkPositive() {
         when(network.getId()).thenReturn(DEFAULT_GUID);
         when(managementNetworkUtil.isManagementNetwork(DEFAULT_GUID)).thenReturn(true);
-        assertThat(validator.notManagementNetwork(), failsWith(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK));
+        assertThat(validator.notManagementNetwork(), failsWith(EngineMessage.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK));
     }
 
     @Test

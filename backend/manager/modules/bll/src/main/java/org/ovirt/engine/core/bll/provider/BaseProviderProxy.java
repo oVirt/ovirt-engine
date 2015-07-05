@@ -19,8 +19,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.uutils.crypto.CertificateChain;
 import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
@@ -75,7 +75,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
     }
 
     protected static void handleException(Exception e) {
-        throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e.getMessage());
+        throw new EngineException(EngineError.PROVIDER_FAILURE, e.getMessage());
     }
 
     protected void afterReadResponse(HttpURLConnection connection, byte[] response) throws Exception {
@@ -84,7 +84,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
     protected void beforeReadResponse(HttpURLConnection connection) throws Exception {
         if (connection.getResponseCode() != HttpURLConnection.HTTP_OK
                 && connection.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE);
+            throw new EngineException(EngineError.PROVIDER_FAILURE);
         }
     }
 
@@ -107,7 +107,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
             handleCredentials(result);
         } catch (Exception ex) {
             log.error("Cannot communicate with provider", ex);
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE);
+            throw new EngineException(EngineError.PROVIDER_FAILURE);
         }
 
         return result;
@@ -133,10 +133,10 @@ public abstract class BaseProviderProxy implements ProviderProxy {
         } catch (Exception ex) {
             log.error("Exception is {} ", ex.getMessage());
             log.debug("Exception: ", ex);
-            if (ex instanceof VdcBLLException) {
-                throw (VdcBLLException) ex;
+            if (ex instanceof EngineException) {
+                throw (EngineException) ex;
             } else {
-                throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, ex.getMessage());
+                throw new EngineException(EngineError.PROVIDER_FAILURE, ex.getMessage());
             }
         }
         return response;
@@ -184,7 +184,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
             }
             result = getResponse(connection);
         } catch (SSLException e) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_SSL_FAILURE, e.getMessage());
+            throw new EngineException(EngineError.PROVIDER_SSL_FAILURE, e.getMessage());
         } catch (IOException e) {
             handleException(e);
         } finally {

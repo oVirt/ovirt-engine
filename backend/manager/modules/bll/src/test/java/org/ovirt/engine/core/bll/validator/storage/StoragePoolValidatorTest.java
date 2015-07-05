@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class StoragePoolValidatorTest {
 
@@ -36,7 +36,7 @@ public class StoragePoolValidatorTest {
         storagePool.setIsLocal(true);
         doReturn(true).when(validator).containsDefaultCluster();
         assertThat(validator.isNotLocalfsWithDefaultCluster(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS));
     }
 
     @Test
@@ -47,6 +47,6 @@ public class StoragePoolValidatorTest {
     @Test
     public void testIsUpdInvalid() {
         storagePool.setStatus(StoragePoolStatus.NonResponsive);
-        assertThat(validator.isUp(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND));
+        assertThat(validator.isUp(), failsWith(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND));
     }
 }

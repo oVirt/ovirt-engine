@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 import static org.mockito.Mockito.doReturn;
@@ -77,7 +77,7 @@ public abstract class StorageServerConnectionTestCommon {
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(getCommand(),
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
+                EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
     }
 
     @Test
@@ -87,7 +87,7 @@ public abstract class StorageServerConnectionTestCommon {
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(getCommand(),
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
+                EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
     }
 
     @Test
@@ -97,7 +97,7 @@ public abstract class StorageServerConnectionTestCommon {
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(getCommand(),
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
+                EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
     }
 
     @Test
@@ -107,7 +107,7 @@ public abstract class StorageServerConnectionTestCommon {
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(getCommand(),
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
+                EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
     }
 
     @Test
@@ -119,7 +119,7 @@ public abstract class StorageServerConnectionTestCommon {
                         "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(getCommand(),
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
+                EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
     }
 
     @Test
@@ -129,8 +129,8 @@ public abstract class StorageServerConnectionTestCommon {
                         StorageType.NFS, "nfs", "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        doReturn(new ValidationResult(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY)).when(getCommand()).validateMountOptions();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(getCommand(), VdcBllMessages.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY);
+        doReturn(new ValidationResult(EngineMessage.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY)).when(getCommand()).validateMountOptions();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(getCommand(), EngineMessage.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY);
     }
 
     @Test

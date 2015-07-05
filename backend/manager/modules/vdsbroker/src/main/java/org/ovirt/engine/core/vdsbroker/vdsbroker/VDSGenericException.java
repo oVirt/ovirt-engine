@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.io.Serializable;
+
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 
 public class VDSGenericException extends VDSExceptionBase implements Serializable {
 
@@ -21,11 +22,11 @@ public class VDSGenericException extends VDSExceptionBase implements Serializabl
 
     }
 
-    public VDSGenericException(VdcBllErrors errorCode) {
+    public VDSGenericException(EngineError errorCode) {
         super(errorCode);
     }
 
-    public VDSGenericException(VdcBllErrors errorCode, String errorStr) {
+    public VDSGenericException(EngineError errorCode, String errorStr) {
         super(errorStr);
         VDSError tempVar = new VDSError();
         tempVar.setCode(errorCode);

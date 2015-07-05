@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -64,7 +64,7 @@ public class VmValidatorTest extends DbDependentTestBase {
         disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
 
         assertThat(validator.canDisableVirtioScsi(Collections.singletonList(disk)),
-                failsWith(VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS));
+                failsWith(EngineMessage.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class VmValidatorTest extends DbDependentTestBase {
     public void vmNotHavingPassthroughVnicsNotValid() {
         vmNotHavingPassthroughVnicsCommon(vm.getId(), 2, 3);
         assertThat(validator.vmNotHavingPassthroughVnics(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED));
 
     }
 
@@ -103,7 +103,7 @@ public class VmValidatorTest extends DbDependentTestBase {
         vmNotHavingPassthroughVnicsCommon(vmList.get(1).getId(), 3, 8);
         vmNotHavingPassthroughVnicsCommon(vmList.get(2).getId(), 0, 4);
         assertThat(validator.vmNotHavingPassthroughVnics(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED));
     }
 
     private void vmNotHavingPassthroughVnicsCommon(Guid vmId, int numOfPassthroughVnic, int numOfRegularVnics) {
@@ -129,7 +129,7 @@ public class VmValidatorTest extends DbDependentTestBase {
 
     private void assertThatVmNotHavingPassthroughVnics(boolean valid) {
         assertThat(validator.vmNotHavingPassthroughVnics(), valid ? isValid()
-                : failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED));
+                : failsWith(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED));
     }
 
     private List<VM> initValidatorWithMultipleVms(int numOfVms) {

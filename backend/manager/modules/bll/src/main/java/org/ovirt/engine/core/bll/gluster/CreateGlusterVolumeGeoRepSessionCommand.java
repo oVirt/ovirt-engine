@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
@@ -47,32 +47,32 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
     protected boolean canDoAction() {
         if (!getGlusterUtil().isGlusterGeoReplicationSupported(getVdsGroup().getCompatibilityVersion(),
                 getVdsGroup().getId())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GEO_REP_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GEO_REP_NOT_SUPPORTED);
         }
         slaveHost = getSlaveHost();
         if (slaveHost == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
         if (slaveHost.getStatus() != VDSStatus.Up) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP,
                     String.format("$%1$s %2$s", "VdsName", slaveHost.getName()));
         }
         slaveVolume = getSlaveVolume();
         if (slaveVolume == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
         }
         if (slaveVolume.getStatus() != GlusterStatus.UP) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
         }
         if (!areAllRemoteServersUp()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ONE_OR_MORE_REMOTE_HOSTS_ARE_NOT_ACCESSIBLE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_REMOTE_HOSTS_ARE_NOT_ACCESSIBLE);
         }
         GlusterGeoRepSession geoRepSession =
                 getGeoRepDao().getGeoRepSession(getGlusterVolumeId(),
                         slaveHost.getId(),
                         getParameters().getSlaveVolumeName());
         if (geoRepSession != null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_GEOREP_SESSION_ALREADY_CREATED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_GEOREP_SESSION_ALREADY_CREATED);
         }
         return super.canDoAction();
     }
@@ -111,8 +111,8 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_GEOREP_SESSION);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
     }
 
     @Override

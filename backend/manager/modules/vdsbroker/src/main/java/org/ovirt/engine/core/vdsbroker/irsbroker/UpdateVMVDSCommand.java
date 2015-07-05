@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -52,7 +52,7 @@ public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends 
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case Done:
             return;

@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -32,7 +32,7 @@ public class RemoveNetworksByLabelParametersBuilder extends NetworkParametersBui
                 DbFacade.getInstance().getNetworkDao().getAllByLabelForCluster(label, clusterId);
         VdsNetworkInterface nicToConfigure = getNicToConfigure(parameters.getInterfaces(), nic.getId());
         if (nicToConfigure == null) {
-            throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
+            throw new EngineException(EngineError.LABELED_NETWORK_INTERFACE_NOT_FOUND);
         }
 
         Set<VdsNetworkInterface> nicsToRemove =
@@ -57,7 +57,7 @@ public class RemoveNetworksByLabelParametersBuilder extends NetworkParametersBui
         for (VdsNetworkInterface nic : nics) {
             VdsNetworkInterface nicToConfigure = getNicToConfigure(parameters.getInterfaces(), nic.getId());
             if (nicToConfigure == null) {
-                throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
+                throw new EngineException(EngineError.LABELED_NETWORK_INTERFACE_NOT_FOUND);
             }
 
             Set<VdsNetworkInterface> nicsToRemove =

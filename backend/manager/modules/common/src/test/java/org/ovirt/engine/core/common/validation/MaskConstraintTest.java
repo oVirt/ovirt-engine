@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
@@ -41,14 +41,14 @@ public class MaskConstraintTest {
 
     @Test
     public void checkMaskFormatValidation() {
-        runSetup(TEST_MASK, false, false, VdcBllMessages.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name());
-        runVerify(TEST_MASK, VdcBllMessages.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name());
+        runSetup(TEST_MASK, false, false, EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name());
+        runVerify(TEST_MASK, EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name());
     }
 
     @Test
     public void checkMaskNetworkAddressValidation() {
-        runSetup(TEST_MASK, true, false, VdcBllMessages.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name());
-        runVerify(TEST_MASK, VdcBllMessages.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name());
+        runSetup(TEST_MASK, true, false, EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name());
+        runVerify(TEST_MASK, EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name());
     }
 
     @Test

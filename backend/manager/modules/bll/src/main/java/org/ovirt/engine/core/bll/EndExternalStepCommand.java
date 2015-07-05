@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.EndExternalStepParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -35,21 +35,21 @@ public class EndExternalStepCommand <T extends EndExternalStepParameters> extend
         step = getStepDao().get(getParameters().getId());
         if (step == null) {
             retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_NO_STEP);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_NO_STEP);
         }
         else if (!step.isExternal()) {
             retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_NOT_EXTERNAL);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
         }
         else {
             job = getJobDao().get(step.getJobId());
             if (job == null) {
                 retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_NO_JOB);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_NO_JOB);
             }
             if (!retValue) {
-                addCanDoActionMessage(VdcBllMessages.VAR__ACTION__END);
-                addCanDoActionMessage(VdcBllMessages.VAR__TYPE__EXTERNAL_STEP);
+                addCanDoActionMessage(EngineMessage.VAR__ACTION__END);
+                addCanDoActionMessage(EngineMessage.VAR__TYPE__EXTERNAL_STEP);
             }
         }
         return retValue;

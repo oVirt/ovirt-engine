@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -201,14 +201,14 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     private static boolean failVmFree(List<String> messages, List<String> messagesToAdd) {
         messages.addAll(messagesToAdd);
-        messages.add(VdcBllMessages.VAR__TYPE__DESKTOP_POOL.toString());
-        messages.add(VdcBllMessages.VAR__ACTION__ATTACH_DESKTOP_TO.toString());
+        messages.add(EngineMessage.VAR__TYPE__DESKTOP_POOL.toString());
+        messages.add(EngineMessage.VAR__ACTION__ATTACH_DESKTOP_TO.toString());
         return false;
     }
 
     private static boolean vmAssignedToUser(Guid vmId, ArrayList<String> messages) {
         if (DbFacade.getInstance().getDbUserDao().getAllForVm(vmId).size() > 0) {
-            messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL.toString());
+            messages.add(EngineMessage.VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL.toString());
             return true;
         }
         return false;
@@ -217,7 +217,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     protected static boolean canRunPoolVm(Guid vmId, ArrayList<String> messages) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm == null) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
             return false;
         }
 

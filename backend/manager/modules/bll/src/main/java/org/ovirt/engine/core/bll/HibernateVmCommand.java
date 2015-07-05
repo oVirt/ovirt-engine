@@ -25,8 +25,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
@@ -178,12 +178,12 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!FeatureSupported.isSuspendSupportedByArchitecture(getVm().getClusterArch(),
                 getVm().getVdsGroupCompatibilityVersion())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SUSPEND_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SUSPEND_NOT_SUPPORTED);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -192,30 +192,30 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
         VMStatus vmStatus = getVm().getStatus();
         if (vmStatus == VMStatus.WaitForLaunch || vmStatus == VMStatus.NotResponding) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vmStatus));
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vmStatus));
         }
 
         if (vmStatus != VMStatus.Up) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_UP);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_UP);
         }
 
         if (CommandCoordinatorUtil.entityHasTasks(getVmId())) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS);
+            return failCanDoAction(EngineMessage.VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS);
         }
 
         if (getVm().getVmPoolId() != null) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_VM_FROM_POOL);
+            return failCanDoAction(EngineMessage.VM_CANNOT_SUSPEND_VM_FROM_POOL);
         }
 
         // check if vm has stateless images in db in case vm was run once as stateless
         // (then isStateless is false)
         if (getVm().isStateless() ||
                 DbFacade.getInstance().getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_STATELESS_VM);
+            return failCanDoAction(EngineMessage.VM_CANNOT_SUSPEND_STATELESS_VM);
         }
 
         if (getStorageDomainId() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
         }
 
         return true;
@@ -223,8 +223,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__HIBERNATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__HIBERNATE);
     }
 
     @Override
@@ -234,7 +234,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     }
 
     private String getVmIsHibernatingMessage() {
-        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_HIBERNATING.name());
+        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_IS_HIBERNATING.name());
         if (getVmName() != null) {
             builder.append(String.format("$VmName %1$s", getVmName()));
         }
@@ -256,7 +256,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                 try {
                     runVdsCommand(VDSCommandType.Hibernate,
                             new HibernateVDSCommandParameters(getVm().getRunOnVds(), getVmId(), hiberVol));
-                } catch (VdcBLLException e) {
+                } catch (EngineException e) {
                     isHibernateVdsProblematic = true;
                     throw e;
                 }

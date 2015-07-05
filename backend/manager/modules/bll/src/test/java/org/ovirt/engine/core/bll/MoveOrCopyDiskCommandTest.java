@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -71,7 +71,7 @@ public class MoveOrCopyDiskCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class MoveOrCopyDiskCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK.toString()));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK.toString()));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class MoveOrCopyDiskCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS.toString()));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS.toString()));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class MoveOrCopyDiskCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME.toString()));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME.toString()));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class MoveOrCopyDiskCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString()));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString()));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class MoveOrCopyDiskCommandTest {
         doReturn(vmDeviceDao).when(command).getVmDeviceDao();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED.toString()));
+                EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED.toString()));
     }
 
     @Test
@@ -164,7 +164,7 @@ public class MoveOrCopyDiskCommandTest {
         initVmDiskImage(false);
         command.getImage().setContentType(DiskContentType.OVF_STORE);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
+                EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
     }
 
     @Test
@@ -177,7 +177,7 @@ public class MoveOrCopyDiskCommandTest {
         command.defineVmTemplate();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED.toString()));
+                EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED.toString()));
     }
 
     @Test
@@ -188,7 +188,7 @@ public class MoveOrCopyDiskCommandTest {
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
         doReturn(mockStorageDomainValidatorWithoutSpace()).when(command).createStorageDomainValidator();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     @Test
@@ -223,8 +223,8 @@ public class MoveOrCopyDiskCommandTest {
         initVmDiskImage(false);
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
-        when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+        when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
     }
 
     protected void initVmForSpace() {
@@ -257,7 +257,7 @@ public class MoveOrCopyDiskCommandTest {
     private static StorageDomainValidator mockStorageDomainValidatorWithoutSpace() {
         StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
         when(storageDomainValidator.hasSpaceForClonedDisk(any(DiskImage.class))).thenReturn(
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         return storageDomainValidator;
     }
 

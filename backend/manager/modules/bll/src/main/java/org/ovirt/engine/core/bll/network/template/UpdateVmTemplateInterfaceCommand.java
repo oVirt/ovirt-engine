@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Version;
@@ -68,7 +68,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
         });
 
         if (oldIface == null) {
-            addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);
             return false;
         }
 
@@ -132,7 +132,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override

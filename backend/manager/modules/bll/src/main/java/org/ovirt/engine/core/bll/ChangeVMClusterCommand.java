@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -34,7 +34,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         }
 
         if (!isInternalExecution() && !ObjectIdentityChecker.CanUpdateField(getVm(), "vdsGroupId", getVm().getStatus())) {
-            addCanDoActionMessage(VdcBllMessages.VM_STATUS_NOT_VALID_FOR_UPDATE);
+            addCanDoActionMessage(EngineMessage.VM_STATUS_NOT_VALID_FOR_UPDATE);
             return false;
         }
 
@@ -44,8 +44,8 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM__CLUSTER);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM__CLUSTER);
     }
 
     @Override

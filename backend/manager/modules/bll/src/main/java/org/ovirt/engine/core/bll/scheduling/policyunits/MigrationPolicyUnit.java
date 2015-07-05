@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -75,13 +75,13 @@ public class MigrationPolicyUnit extends PolicyUnitImpl {
             for (VDS host : hosts) {
                 if (host.getId().equals(vm.getRunOnVds())) {
                     log.debug("Vm '{}' already runs on host '{}', filtering host", vm.getName(), host.getName());
-                    messages.addMessage(host.getId(), VdcBllMessages.VAR__DETAIL__SAME_HOST.toString());
+                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__SAME_HOST.toString());
                     continue;
                 }
 
                 if (!validateDestinationVdsAddress(srcVds, host)) {
                     log.debug("Host '{}' resolves to the same machine as host '{}', filtering out", srcVds.getName(), host.getName());
-                    messages.addMessage(host.getId(), VdcBllMessages.VAR__DETAIL__SAME_HOST.toString());
+                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__SAME_HOST.toString());
                     continue;
                 }
 

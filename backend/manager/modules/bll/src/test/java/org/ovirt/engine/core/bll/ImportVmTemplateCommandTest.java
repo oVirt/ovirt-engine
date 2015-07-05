@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -104,7 +104,7 @@ public class ImportVmTemplateCommandTest {
                 setupVolumeFormatAndTypeTest(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
         doReturn(true).when(command).isVmTemplateWithSameNameExist();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
+                EngineMessage.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
 
     }
 
@@ -120,7 +120,7 @@ public class ImportVmTemplateCommandTest {
             StorageType storageType) {
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
                 setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType),
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
+                EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
     }
 
     /**

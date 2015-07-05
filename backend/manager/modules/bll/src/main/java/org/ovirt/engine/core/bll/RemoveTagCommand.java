@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -30,7 +30,7 @@ public class RemoveTagCommand<T extends TagsActionParametersBase> extends TagsCo
     protected boolean canDoAction() {
         boolean returnValue = true;
         if (getTagId() == null || DbFacade.getInstance().getTagDao().get(getTagId()) == null) {
-            addCanDoActionMessage(VdcBllMessages.TAGS_CANNOT_REMOVE_TAG_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.TAGS_CANNOT_REMOVE_TAG_NOT_EXIST);
             returnValue = false;
         }
         return returnValue;

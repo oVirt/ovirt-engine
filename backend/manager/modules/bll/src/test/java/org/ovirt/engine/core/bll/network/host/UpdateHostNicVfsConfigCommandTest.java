@@ -18,7 +18,7 @@ import org.ovirt.engine.core.bll.validator.VfsConfigValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -62,31 +62,31 @@ public class UpdateHostNicVfsConfigCommandTest {
     @Test
     public void nicNotExist() {
         nicExists(false);
-        assertCanDoActionFailure(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST.toString());
+        assertCanDoActionFailure(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST.toString());
     }
 
     @Test
     public void sriovFeatureIsNotSupported() {
         sriovFeatureSupported(false);
-        assertCanDoActionFailure(VdcBllMessages.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED.toString());
+        assertCanDoActionFailure(EngineMessage.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED.toString());
     }
 
     @Test
     public void nicNotSriovEnabled() {
         nicSriovEnabled(false);
-        assertCanDoActionFailure(VdcBllMessages.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED.toString());
+        assertCanDoActionFailure(EngineMessage.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED.toString());
     }
 
     @Test
     public void notAllVfsAreFree() {
         allVfsAreFree(false);
-        assertCanDoActionFailure(VdcBllMessages.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED.toString());
+        assertCanDoActionFailure(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED.toString());
     }
 
     @Test
     public void numOfVfsIsNotInRange() {
         numOfVfsInValidRange(false);
-        assertCanDoActionFailure(VdcBllMessages.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE.toString());
+        assertCanDoActionFailure(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE.toString());
     }
 
     @Test
@@ -120,27 +120,27 @@ public class UpdateHostNicVfsConfigCommandTest {
 
     private void nicExists(boolean isValid) {
         when(validator.nicExists()).thenReturn(isValid ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST));
+                : new ValidationResult(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST));
     }
 
     private void sriovFeatureSupported(boolean isValid) {
         when(validator.sriovFeatureSupported()).thenReturn(isValid ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED));
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED));
     }
 
     private void nicSriovEnabled(boolean isValid) {
         when(validator.nicSriovEnabled()).thenReturn(isValid ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED));
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED));
     }
 
     private void allVfsAreFree(boolean isValid) {
         when(validator.allVfsAreFree(any(HostNicVfsConfigHelper.class))).thenReturn(isValid ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED));
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED));
     }
 
     private void numOfVfsInValidRange(boolean isValid) {
         when(validator.numOfVfsInValidRange(param.getNumOfVfs())).thenReturn(isValid ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE));
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE));
     }
 
     private void assertCanDoActionFailure(final String messageToVerify) {

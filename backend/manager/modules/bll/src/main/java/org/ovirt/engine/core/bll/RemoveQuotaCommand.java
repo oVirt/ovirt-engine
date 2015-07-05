@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveQuotaCommand extends QuotaCRUDCommand {
 
@@ -20,20 +20,20 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
     @Override
     protected boolean canDoAction() {
         if (getParameters() == null || (getParameters().getQuotaId() == null)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
 
         Quota quota = getQuota();
 
         if (quota == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
 
         // If the quota is in use by ether VM or image - return false
         if (!QuotaEnforcementTypeEnum.DISABLED.equals(quota.getQuotaEnforcementType()) && getQuotaDao().isQuotaInUse(quota)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IN_USE_BY_VM_OR_DISK);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IN_USE_BY_VM_OR_DISK);
             return false;
         }
 
@@ -56,8 +56,8 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__QUOTA);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__QUOTA);
     }
 
     @Override

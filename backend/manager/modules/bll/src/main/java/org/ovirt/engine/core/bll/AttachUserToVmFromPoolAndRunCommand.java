@@ -24,9 +24,9 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -67,7 +67,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             // no available VMs:
             if (Guid.Empty.equals(getVmToAttach(getParameters().getVmPoolId())))
             {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_AVAILABLE_POOL_VMS);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NO_AVAILABLE_POOL_VMS);
                 returnValue = false;
             }
         }
@@ -85,7 +85,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
             int limit = getVmPool().getMaxAssignedVmsPerUser();
             if (vmCount >= limit) {
-                addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_ATTACH_TO_MORE_VMS_FROM_POOL);
+                addCanDoActionMessage(EngineMessage.VM_POOL_CANNOT_ATTACH_TO_MORE_VMS_FROM_POOL);
                 returnValue = false;
             }
         }
@@ -97,8 +97,8 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ALLOCATE_AND_RUN);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_FROM_VM_POOL);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ALLOCATE_AND_RUN);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_FROM_VM_POOL);
     };
 
     private Guid getVmToAttach(Guid poolId) {
@@ -203,7 +203,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
                 }
             } else {
                 log.info("No free Vms in pool '{}'. Cannot allocate for user '{}'", getVmPoolId(), getAdUserId());
-                throw new VdcBLLException(VdcBllErrors.NO_FREE_VM_IN_POOL);
+                throw new EngineException(EngineError.NO_FREE_VM_IN_POOL);
             }
         }
 
@@ -321,7 +321,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getAdUserId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.USER_VM_POOL, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.USER_VM_POOL, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     @Override

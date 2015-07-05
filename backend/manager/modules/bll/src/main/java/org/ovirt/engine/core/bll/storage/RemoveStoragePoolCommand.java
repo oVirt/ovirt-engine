@@ -27,8 +27,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
@@ -215,7 +215,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 runVdsCommand(VDSCommandType.FormatStorageDomain,
                                 new FormatStorageDomainVDSCommandParameters(vdss.get(0).getId(),
                                         masterDomain.getId()));
-            } catch (VdcBLLException e) {
+            } catch (EngineException e) {
                 // Do nothing, exception already printed at logs
             }
             StorageHelperDirector.getInstance().getItem(masterDomain.getStorageType())
@@ -230,7 +230,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         try {
             runVdsCommand(VDSCommandType.DestroyStoragePool,
                             new IrsBaseVDSCommandParameters(getStoragePool().getId()));
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             try {
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                     @Override
@@ -301,7 +301,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         if (!super.canDoAction() ||
                 !checkStoragePool() ||
                 !checkStoragePoolStatusNotEqual(StoragePoolStatus.Up,
-                        VdcBllMessages.ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL)) {
+                        EngineMessage.ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL)) {
             return false;
         }
 
@@ -315,11 +315,11 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         final List<StorageDomain> activeOrLockedDomains = getActiveOrLockedDomainList(poolDomains);
 
         if (!activeOrLockedDomains.isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS);
+            return failCanDoAction(EngineMessage.ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS);
         }
         if (!getParameters().getForceDelete()) {
             if(poolDomains.size() > 1) {
-                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
+                return failCanDoAction(EngineMessage.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
             }
             if (!poolDomains.isEmpty() && !canDetachStorageDomainWithVmsAndDisks(poolDomains.get(0))) {
                 return false;
@@ -330,13 +330,13 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             sharedLocks = new HashMap<>();
             for (VDS host : poolHosts) {
                 sharedLocks.put(host.getId().toString(),
-                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             }
 
             if (!poolHosts.isEmpty() && acquireLockInternal()) {
                 for (VDS host : poolHosts) {
                     if (host.getStatus() != VDSStatus.Maintenance) {
-                        return failCanDoAction(VdcBllMessages.ERROR_CANNOT_FORCE_REMOVE_STORAGE_POOL_WITH_VDS_NOT_IN_MAINTENANCE);
+                        return failCanDoAction(EngineMessage.ERROR_CANNOT_FORCE_REMOVE_STORAGE_POOL_WITH_VDS_NOT_IN_MAINTENANCE);
                     }
                 }
             }
@@ -346,8 +346,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__POOL);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__POOL);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     protected List<StorageDomain> getActiveOrLockedDomainList(List<StorageDomain> domainsList) {

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -181,7 +181,7 @@ public class AutoStartVmsRunner implements BackendService{
     }
 
     protected String getLockMessage() {
-        return VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
+        return EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
     }
 
     protected VmDynamicDao getVmDynamicDao() {

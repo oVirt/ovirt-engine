@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 
 public class RemoveClusterPolicyCommand extends ClusterPolicyCRUDCommand {
@@ -22,7 +22,7 @@ public class RemoveClusterPolicyCommand extends ClusterPolicyCRUDCommand {
             return false;
         }
         if (SchedulingManager.getInstance().getClustersByClusterPolicyId(getParameters().getClusterPolicyId()).size() > 0) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_INUSE,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_INUSE,
                     String.format("$clusters %1$s", clustersListIntoTokenizedString()));
         }
         return true;
@@ -45,8 +45,8 @@ public class RemoveClusterPolicyCommand extends ClusterPolicyCRUDCommand {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__CLUSTER_POLICY);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__CLUSTER_POLICY);
     }
 
     @Override

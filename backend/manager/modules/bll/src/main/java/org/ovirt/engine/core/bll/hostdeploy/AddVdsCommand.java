@@ -45,9 +45,9 @@ import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -84,8 +84,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
         addCanDoActionMessageVariable("server", getParameters().getvds().getHostName());
     }
 
@@ -102,7 +102,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             if (!removeDeprecatedOvirtEntry(oVirtId)) {
                 log.error("Failed to remove duplicated oVirt entry with id '{}'. Abort adding oVirt Host type",
                         oVirtId);
-                throw new VdcBLLException(VdcBllErrors.HOST_ALREADY_EXISTS);
+                throw new EngineException(EngineError.HOST_ALREADY_EXISTS);
             }
         }
 
@@ -120,11 +120,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         if (getParameters().isProvisioned()) {
             if (getParameters().getComputeResource() == null) {
                 log.error("Failed to provision: Compute resource cannot be empty");
-                throw new VdcBLLException(VdcBllErrors.PROVIDER_PROVISION_MISSING_COMPUTERESOURCE);
+                throw new EngineException(EngineError.PROVIDER_PROVISION_MISSING_COMPUTERESOURCE);
             }
             if (getParameters().getHostGroup() == null) {
                 log.error("Failed to provision: Host group cannot be empty");
-                throw new VdcBLLException(VdcBllErrors.PROVIDER_PROVISION_MISSING_HOSTGROUP);
+                throw new EngineException(EngineError.PROVIDER_PROVISION_MISSING_HOSTGROUP);
             }
             HostProviderProxy proxy =
                     ((HostProviderProxy) ProviderProxyFactory.getInstance().create(getHostProvider()));
@@ -314,7 +314,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     protected boolean validateVdsGroup() {
         if (getVdsGroup() == null) {
-            return failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+            return failCanDoAction(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
         return true;
     }
@@ -360,7 +360,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             // allow addition of another host if it can be peer probed to cluster.
             VDS upServer = getClusterUtils().getUpServer(getVdsGroupId());
             if (upServer == null) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
             }
         }
 
@@ -450,7 +450,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
                 String hostUUID = getInstalledVdsIdIfExists(sshclient);
                 if (hostUUID != null && getVdsDao().getAllWithUniqueId(hostUUID).size() != 0) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_UUID_EXIST);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_UUID_EXIST);
                 }
 
                 return isValidGlusterPeer(sshclient, vds.getVdsGroupId());
@@ -460,7 +460,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         vds.getName(),
                         e.getMessage());
                 log.debug("Exception", e);
-                return failCanDoAction(VdcBllMessages.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
+                return failCanDoAction(EngineMessage.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
             } catch (SecurityException e) {
                 log.error(
                         "Failed to connect to host '{}', fingerprint '{}': {}",
@@ -468,9 +468,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         vds.getSshKeyFingerprint(),
                         e.getMessage());
                 log.debug("Exception", e);
-                addCanDoActionMessage(VdcBllMessages.VDS_SECURITY_CONNECTION_ERROR);
+                addCanDoActionMessage(EngineMessage.VDS_SECURITY_CONNECTION_ERROR);
                 addCanDoActionMessageVariable("ErrorMessage", e.getMessage());
-                return failCanDoAction(VdcBllMessages.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
+                return failCanDoAction(EngineMessage.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
             } catch (Exception e) {
                 log.error(
                         "Failed to establish session with host '{}': {}",
@@ -478,7 +478,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         e.getMessage());
                 log.debug("Exception", e);
 
-                return failCanDoAction(VdcBllMessages.VDS_CANNOT_CONNECT_TO_SERVER);
+                return failCanDoAction(EngineMessage.VDS_CANNOT_CONNECT_TO_SERVER);
             }
         }
         return true;
@@ -513,7 +513,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     }
 
                     // none of the peers present in the cluster. fail with appropriate error.
-                    return failCanDoAction(VdcBllMessages.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER);
+                    return failCanDoAction(EngineMessage.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER);
                 }
             } catch (Exception e) {
                 // This can happen if glusterd is not running on the server. Ignore it and let the server get added.
@@ -581,7 +581,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return super.isPowerManagementLegal(pmEnabled, fenceAgents, clusterCompatibilityVersion);
     }
 
-    protected void addCanDoActionMessage(VdcBllMessages message) {
+    protected void addCanDoActionMessage(EngineMessage message) {
         super.addCanDoActionMessage(message);
     }
 

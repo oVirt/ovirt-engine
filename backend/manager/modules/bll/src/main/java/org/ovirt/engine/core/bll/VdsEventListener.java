@@ -55,9 +55,9 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
@@ -127,7 +127,7 @@ public class VdsEventListener implements IVdsEventListener {
             // leaving the host with storage/pool connection when it's on maintenance.
             EngineLock lock = new EngineLock(Collections.singletonMap(vds.getId().toString(),
                     new Pair<>(LockingGroup.VDS_POOL_AND_STORAGE_CONNECTIONS.toString(),
-                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString())), null);
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString())), null);
             try {
                 LockManagerFactory.getLockManager().acquireLockWait(lock);
                 clearDomainCache(vds);
@@ -389,13 +389,13 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
-            VdcBllErrors error) {
+            EngineError error) {
         storagePoolStatusChange(storagePoolId, status, auditLogType, error, null);
     }
 
     @Override
     public void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
-            VdcBllErrors error, TransactionScopeOption transactionScopeOption) {
+            EngineError error, TransactionScopeOption transactionScopeOption) {
         SetStoragePoolStatusParameters tempVar =
                 new SetStoragePoolStatusParameters(storagePoolId, status, auditLogType);
         tempVar.setError(error);
@@ -549,7 +549,7 @@ public class VdsEventListener implements IVdsEventListener {
                                         cluster.isEnableKsm(),
                                         cluster.isKsmMergeAcrossNumaNodes())
                                 );
-                    } catch (VdcBLLException e) {
+                    } catch (EngineException e) {
                         log.error("Could not update MoM policy on host '{}'", vds.getName());
                     }
                     return null;

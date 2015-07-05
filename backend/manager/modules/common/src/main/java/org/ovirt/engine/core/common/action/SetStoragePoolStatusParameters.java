@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SetStoragePoolStatusParameters extends StoragePoolParametersBase {
@@ -27,13 +27,13 @@ public class SetStoragePoolStatusParameters extends StoragePoolParametersBase {
         privateAuditLogType = value;
     }
 
-    private VdcBllErrors privateError;
+    private EngineError privateError;
 
-    public VdcBllErrors getError() {
+    public EngineError getError() {
         return privateError;
     }
 
-    public void setError(VdcBllErrors value) {
+    public void setError(EngineError value) {
         privateError = value;
     }
 
@@ -41,12 +41,12 @@ public class SetStoragePoolStatusParameters extends StoragePoolParametersBase {
         super(storagePoolId);
         setStatus(status);
         setAuditLogType(auditLogType);
-        privateError = VdcBllErrors.Done;
+        privateError = EngineError.Done;
     }
 
     public SetStoragePoolStatusParameters() {
         privateStatus = StoragePoolStatus.Uninitialized;
         privateAuditLogType = AuditLogType.UNASSIGNED;
-        privateError = VdcBllErrors.Done;
+        privateError = EngineError.Done;
     }
 }

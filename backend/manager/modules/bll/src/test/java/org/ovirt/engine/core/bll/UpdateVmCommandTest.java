@@ -47,7 +47,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
@@ -188,7 +188,7 @@ public class UpdateVmCommandTest {
     public void testLongName() {
         vmStatic.setName("this_should_be_very_long_vm_name_so_it will_fail_can_do_action_validation");
         assertFalse("canDoAction should fail for too long vm name.", command.canDoAction());
-        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
+        assertCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
     }
 
     @Test
@@ -206,7 +206,7 @@ public class UpdateVmCommandTest {
         mockSameNameQuery(true);
 
         assertFalse("canDoAction should have failed with vm name already in use.", command.canDoAction());
-        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        assertCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
     }
 
     @Test
@@ -253,7 +253,7 @@ public class UpdateVmCommandTest {
         vmStatic.setNumOfMonitors(99);
 
         assertFalse("canDoAction should have failed with invalid number of monitors.", command.canDoAction());
-        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+        assertCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
     }
 
     private void mockGraphicsDevice() {
@@ -291,7 +291,7 @@ public class UpdateVmCommandTest {
         vmStatic.setVdsGroupId(Guid.newGuid());
 
         assertFalse("canDoAction should have failed with cant change cluster.", command.canDoAction());
-        assertCanDoActionMessage(VdcBllMessages.VM_CANNOT_UPDATE_CLUSTER);
+        assertCanDoActionMessage(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
     }
 
     @Test
@@ -307,7 +307,7 @@ public class UpdateVmCommandTest {
         mockVmValidator();
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
+                EngineMessage.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
     }
 
     @Test
@@ -338,7 +338,7 @@ public class UpdateVmCommandTest {
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
                 command,
-                VdcBllMessages.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
+                EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
     }
 
     public void testCannotUpdateOSNotSupportVirtioScsi() {
@@ -350,7 +350,7 @@ public class UpdateVmCommandTest {
                 new ArrayList<>(Arrays.asList("VirtIO")));
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
+                EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
     }
 
     @Test
@@ -402,7 +402,7 @@ public class UpdateVmCommandTest {
         mockGraphicsDevice();
     }
 
-    private void assertCanDoActionMessage(VdcBllMessages msg) {
+    private void assertCanDoActionMessage(EngineMessage msg) {
         assertTrue("canDoAction failed for the wrong reason",
                 command.getReturnValue()
                         .getCanDoActionMessages()

@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.VmsComparer;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
@@ -206,7 +206,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 && (vds.getStatus() != VDSStatus.PreparingForMaintenance) && (vds.getStatus() != VDSStatus.Down
                 && (vds.getStatus() != VDSStatus.InstallFailed))) {
             returnValue = false;
-            reasons.add(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL.toString());
+            reasons.add(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL.toString());
         }
 
         orderListOfRunningVmsOnVds(vdsId);
@@ -217,7 +217,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 continue;
             }
             if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
-                reasons.add(VdcBllMessages.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM.toString());
+                reasons.add(EngineMessage.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM.toString());
                 return false;
             }
         }

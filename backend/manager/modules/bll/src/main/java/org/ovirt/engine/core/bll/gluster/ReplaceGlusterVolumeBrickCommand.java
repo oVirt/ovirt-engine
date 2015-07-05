@@ -4,7 +4,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.ReplaceGlusterVolumeBrickActionVDSParameters;
@@ -23,12 +23,12 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
     protected void setActionMessageParameters() {
         switch (getParameters().getAction()) {
         case START:
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START);
+            addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
             break;
         default:
             break;
         }
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_BRICK);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
     }
 
     @Override
@@ -38,12 +38,12 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
         }
 
         if (!getGlusterVolume().isOnline()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
             return false;
         }
 
         if (getParameters().getExistingBrick() == null || getParameters().getNewBrick() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
             return false;
         }
 
@@ -56,7 +56,7 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
         }
 
         if (!isValidVolumeBrick(getParameters().getExistingBrick())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK);
             return false;
         }
 

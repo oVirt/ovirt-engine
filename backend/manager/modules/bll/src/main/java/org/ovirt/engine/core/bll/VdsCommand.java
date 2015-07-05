@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AddVdsVDSCommandParameters;
@@ -205,7 +205,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     protected boolean isFenceAgentValid(FenceAgent agent) {
         if (StringUtils.isEmpty(agent.getUser()) ||
                 StringUtils.isEmpty(agent.getPassword())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT_CREDENTIALS);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT_CREDENTIALS);
             return false;
         } else {
             return true;
@@ -217,7 +217,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
             String clusterCompatibilityVersion) {
         if (pmEnabled) {
             if (fenceAgents == null || fenceAgents.isEmpty()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
                 return false;
             }
             FenceValidator fenceValidator = new FenceValidator();

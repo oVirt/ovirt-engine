@@ -35,8 +35,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
@@ -327,7 +327,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
                 }
                 return true;
             }
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             log.warn("failed to update domain '{}' ovf store disk '{}'", storageDomainId, diskId);
         }
 
@@ -376,14 +376,14 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         if (!getParameters().isSkipDomainChecks()) {
             lockMap.put(getParameters().getStorageDomainId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
-                            VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_OVF_ON_UPDATE));
+                            EngineMessage.ACTION_TYPE_FAILED_DOMAIN_OVF_ON_UPDATE));
         }
 
         for (Pair<StorageDomainOvfInfo, DiskImage> pair : domainOvfStoresInfoForUpdate) {
             StorageDomainOvfInfo storageDomainOvfInfo = pair.getFirst();
             lockMap.put(storageDomainOvfInfo.getOvfDiskId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
-                            VdcBllMessages.ACTION_TYPE_FAILED_OVF_DISK_IS_BEING_USED));
+                            EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_IS_BEING_USED));
         }
 
         return lockMap;
@@ -403,7 +403,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     protected Map<String, Pair<String, String>> getSharedLocks() {
         return Collections.singletonMap(getParameters().getStoragePoolId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.OVF_UPDATE,
-                        VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_OVF_ON_UPDATE));
+                        EngineMessage.ACTION_TYPE_FAILED_DOMAIN_OVF_ON_UPDATE));
     }
 
     @Override

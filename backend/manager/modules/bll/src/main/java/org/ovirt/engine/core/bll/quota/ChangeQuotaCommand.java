@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParameters> implements QuotaStorageDependent {
@@ -21,16 +21,16 @@ public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParamete
     protected boolean canDoAction() {
         // check if SP exist
         if (getStoragePool() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
             return false;
         }
         // Check if quota exist:
         if (getQuotaId() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
             return false;
         }
         if (getDbFacade().getQuotaDao().getById(getQuotaId()) == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
         return true;
@@ -59,7 +59,7 @@ public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParamete
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ASSIGN);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__QUOTA);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ASSIGN);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__QUOTA);
     }
 }

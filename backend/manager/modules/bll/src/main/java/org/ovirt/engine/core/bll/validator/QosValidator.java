@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.qos.QosDao;
 
 public abstract class QosValidator<T extends QosBase> {
@@ -43,7 +43,7 @@ public abstract class QosValidator<T extends QosBase> {
      */
     public ValidationResult qosExists() {
         return (qos != null && getOldQos() == null)
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_QOS_NOT_FOUND)
+                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QOS_NOT_FOUND)
                 : ValidationResult.VALID;
     }
 
@@ -52,7 +52,7 @@ public abstract class QosValidator<T extends QosBase> {
      */
     public ValidationResult consistentDataCenter() {
         return (qos != null && (getOldQos() == null || !qos.getStoragePoolId().equals(getOldQos().getStoragePoolId())))
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_QOS_STORAGE_POOL_NOT_CONSISTENT)
+                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QOS_STORAGE_POOL_NOT_CONSISTENT)
                 : ValidationResult.VALID;
     }
 
@@ -64,7 +64,7 @@ public abstract class QosValidator<T extends QosBase> {
         if (allQosInDcByType != null) {
             for (T iterQos : allQosInDcByType) {
                 if (ObjectUtils.equals(iterQos.getName(), qos.getName())) {
-                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_QOS_NAME_EXIST);
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QOS_NAME_EXIST);
                 }
             }
         }

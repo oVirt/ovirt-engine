@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProv
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -65,7 +65,7 @@ public class CinderProviderValidator extends ProviderValidator {
     public ValidationResult isCinderSupportedInDC() {
         if (!getStoragePool().isLocal()
                 && !FeatureSupported.cinderProviderSupported(getStoragePool().getCompatibilityVersion())) {
-            return new ValidationResult(VdcBllMessages.DATA_CENTER_CINDER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+            return new ValidationResult(EngineMessage.DATA_CENTER_CINDER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
         }
         return ValidationResult.VALID;
     }

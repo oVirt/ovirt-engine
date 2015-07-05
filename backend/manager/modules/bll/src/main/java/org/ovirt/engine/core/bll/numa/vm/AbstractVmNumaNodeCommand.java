@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
@@ -73,28 +73,28 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
         if (!Config.<Boolean> getValue(ConfigValues.SupportNUMAMigration)) {// if unsupported NUMA migration
             // validate - pinning is mandatory, since migration is not allowed
             if (getMigrationSupport() != MigrationSupport.PINNED_TO_HOST || getDedicatedHostList().size() == 0) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
             }
             if (getDedicatedHostList().size() > 1) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
             }
             hostNumaNodes = getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(getDedicatedHostList().get(0));
             if (hostNumaNodes == null || hostNumaNodes.isEmpty()) {
-                return failCanDoAction(VdcBllMessages.VM_NUMA_PINNED_VDS_NODE_EMPTY);
+                return failCanDoAction(EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY);
             }
         }
         boolean memStrict = getNumaTuneMode() == NumaTuneMode.STRICT;
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
             for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
                 if (pair.getSecond() == null || pair.getSecond().getSecond() == null) {
-                    return failCanDoAction(VdcBllMessages.VM_NUMA_NODE_PINNED_INDEX_ERROR);
+                    return failCanDoAction(EngineMessage.VM_NUMA_NODE_PINNED_INDEX_ERROR);
                 }
 
                 Integer index = pair.getSecond().getSecond();
                 for (VdsNumaNode vdsNumaNode : hostNumaNodes) {
                     if (vdsNumaNode.getIndex() == index) {
                         if (memStrict && vmNumaNode.getMemTotal() > vdsNumaNode.getMemTotal()) {
-                            return failCanDoAction(VdcBllMessages.VM_NUMA_NODE_MEMRORY_ERROR);
+                            return failCanDoAction(EngineMessage.VM_NUMA_NODE_MEMRORY_ERROR);
                         }
                         break;
                     }

@@ -27,9 +27,9 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -82,7 +82,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         when(vdsDao.get(any(Guid.class))).thenReturn(getServer(SERVER_ID, "gfs1", CLUSTER_ID, status));
     }
 
-    private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
+    private void mockBackend(boolean succeeded, EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
 
@@ -124,7 +124,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
     public void executeCommandWhenFailed() {
         cmd = spy(new AddGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForAdd();
-        mockBackend(false, VdcBllErrors.GlusterHookAddFailed);
+        mockBackend(false, EngineError.GlusterHookAddFailed);
         cmd.executeCommand();
         verify(hooksDao, never()).updateGlusterHook(any(GlusterHookEntity.class));
         verify(hooksDao, never()).removeGlusterServerHook(any(Guid.class), any(Guid.class));
@@ -143,7 +143,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         cmd = spy(new AddGlusterHookCommand(new GlusterHookManageParameters(null)));
         setUpMocksForAdd();
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
     }
 
     @Test
@@ -151,7 +151,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         cmd = spy(new AddGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForAdd(false);
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
     }
 
     @Test
@@ -160,7 +160,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         GlusterHookEntity hook = getHookEntity();
         setUpMocksForAdd(true, hook);
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS.toString()));
     }
 
     @Test
@@ -168,7 +168,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         cmd = spy(new AddGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForAdd(VDSStatus.Down);
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString()));
     }
 
 }

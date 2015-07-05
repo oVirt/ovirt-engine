@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.utils.customprop;
 
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.StringFormat;
 
 /**
@@ -8,27 +8,27 @@ import org.ovirt.engine.core.compat.StringFormat;
  */
 public enum ValidationFailureReason {
     UNSUPPORTED_VERSION(
-            VdcBllMessages.ACTION_TYPE_FAILED_CUSTOM_PROPERTIES_NOT_SUPPORTED_IN_VERSION,
+            EngineMessage.ACTION_TYPE_FAILED_CUSTOM_PROPERTIES_NOT_SUPPORTED_IN_VERSION,
             "$NotSupportedInVersion %1$s"),
 
     INVALID_DEVICE_TYPE(
-            VdcBllMessages.ACTION_TYPE_FAILED_INVALID_DEVICE_TYPE_FOR_CUSTOM_PROPERTIES,
+            EngineMessage.ACTION_TYPE_FAILED_INVALID_DEVICE_TYPE_FOR_CUSTOM_PROPERTIES,
             "$InvalidDeviceType %1$s"),
 
-    KEY_DOES_NOT_EXIST(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_INVALID_KEYS, "$MissingKeys %1$s"),
+    KEY_DOES_NOT_EXIST(EngineMessage.ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_INVALID_KEYS, "$MissingKeys %1$s"),
 
-    INCORRECT_VALUE(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_INVALID_VALUES, "$WrongValueKeys %1$s"),
+    INCORRECT_VALUE(EngineMessage.ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_INVALID_VALUES, "$WrongValueKeys %1$s"),
 
-    SYNTAX_ERROR(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_INVALID_SYNTAX, ""),
+    SYNTAX_ERROR(EngineMessage.ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_INVALID_SYNTAX, ""),
 
-    DUPLICATE_KEY(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_DUPLICATE_KEYS, "$DuplicateKeys %1$s"),
+    DUPLICATE_KEY(EngineMessage.ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_DUPLICATE_KEYS, "$DuplicateKeys %1$s"),
 
     NO_ERROR(null, "");
 
     /**
      * Corresponding global error message
      */
-    private final VdcBllMessages errorMessage;
+    private final EngineMessage errorMessage;
 
     /**
      * Global message format string
@@ -38,7 +38,7 @@ public enum ValidationFailureReason {
     /**
      * Creates error with specified global error message and message format string
      */
-    private ValidationFailureReason(VdcBllMessages errorMessage, String messageFormat) {
+    private ValidationFailureReason(EngineMessage errorMessage, String messageFormat) {
         this.errorMessage = errorMessage;
         this.messageFormat = messageFormat;
     }
@@ -46,7 +46,7 @@ public enum ValidationFailureReason {
     /**
      * Returns corresponding global error message
      */
-    public VdcBllMessages getErrorMessage() {
+    public EngineMessage getErrorMessage() {
         return errorMessage;
     }
 

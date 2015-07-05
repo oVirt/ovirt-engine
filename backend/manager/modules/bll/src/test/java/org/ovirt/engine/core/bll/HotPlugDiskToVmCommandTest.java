@@ -45,7 +45,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -101,7 +101,7 @@ public class HotPlugDiskToVmCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString()));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString()));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class HotPlugDiskToVmCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
     }
 
     @Test
@@ -154,7 +154,7 @@ public class HotPlugDiskToVmCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED.toString()));
+                .contains(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED.toString()));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class HotPlugDiskToVmCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED.toString()));
+                .contains(EngineMessage.HOT_PLUG_DISK_IS_NOT_UNPLUGGED.toString()));
     }
 
     @Test
@@ -191,7 +191,7 @@ public class HotPlugDiskToVmCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED.toString()));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED.toString()));
     }
 
     @Test
@@ -209,12 +209,12 @@ public class HotPlugDiskToVmCommandTest {
         mockVmStatusUp();
         cretaeVirtIODisk();
         initStorageDomain();
-        when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED.toString()));
+                .contains(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED.toString()));
     }
 
     @Before

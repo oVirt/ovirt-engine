@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
@@ -49,18 +49,18 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
             setGlusterVolumeId(slaveVolume.getId());
             setVdsGroupId(slaveVolume.getClusterId());
         } else {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
         }
         if (slaveVolume.getStatus() != GlusterStatus.UP) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
         }
         return super.canDoAction();
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__SETUP);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GEOREP_MOUNT_BROKER);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__SETUP);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GEOREP_MOUNT_BROKER);
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmLogonVDSCommandParameters;
 
@@ -21,8 +21,8 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
 
     @Override
     protected void setActionMessageParameters () {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__LOGON);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__LOGON);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
         // Check that the virtual machine exists:
         final VM vm = getVm();
         if (vm == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 

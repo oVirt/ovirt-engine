@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.gluster.RemoveBrick;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -43,8 +43,8 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_BRICK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
         }
 
         if (getGlusterVolume().getVolumeType().isDispersedType()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REMOVE_BRICK_FROM_DISPERSE_VOLUME_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_REMOVE_BRICK_FROM_DISPERSE_VOLUME_NOT_SUPPORTED);
         }
 
         GlusterBrickValidator brickValidator = new GlusterBrickValidator();

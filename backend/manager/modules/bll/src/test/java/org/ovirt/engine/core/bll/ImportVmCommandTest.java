@@ -55,7 +55,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
@@ -102,9 +102,9 @@ public class ImportVmCommandTest {
         final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
         doReturn(true).when(command).validateImages(any(Map.class));
         when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+                EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     @Test
@@ -112,9 +112,9 @@ public class ImportVmCommandTest {
         final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
         doReturn(true).when(command).validateImages(any(Map.class));
         when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+                EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     void addBalloonToVm(VM vm) {
@@ -144,7 +144,7 @@ public class ImportVmCommandTest {
         assertFalse(c.canDoAction());
         assertTrue(c.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
+                .contains(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
     }
 
     @Test
@@ -168,9 +168,10 @@ public class ImportVmCommandTest {
     public void lowThresholdStorageSpace() {
         final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
         doReturn(true).when(command).validateImages(any(Map.class));
-        when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+        when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(new ValidationResult(
+                EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+                EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(ImportVmParameters parameters) {
@@ -441,7 +442,7 @@ public class ImportVmCommandTest {
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID.toString()));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID.toString()));
     }
 
     @Test
@@ -478,6 +479,6 @@ public class ImportVmCommandTest {
         cmd.getParameters().getVm().getDiskMap().values().iterator().next().setDiskInterface(DiskInterface.VirtIO_SCSI);
         cmd.getVdsGroup().setCompatibilityVersion(Version.v3_2);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
     }
 }

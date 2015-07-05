@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -35,13 +35,13 @@ public class VnicProfileValidator {
 
     public ValidationResult vnicProfileIsSet() {
         return vnicProfile == null
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS)
+                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS)
                 : ValidationResult.VALID;
     }
 
     public ValidationResult vnicProfileExists() {
         return getOldVnicProfile() == null
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS)
+                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS)
                 : ValidationResult.VALID;
     }
 
@@ -53,13 +53,13 @@ public class VnicProfileValidator {
         return vnicProfile.getNetworkQosId() == null
                 || getDbFacade().getNetworkQosDao().get(vnicProfile.getNetworkQosId()) != null
                 ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS);
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS);
     }
 
     public ValidationResult vnicProfileNameNotUsed() {
         for (VnicProfile profile : getVnicProfiles()) {
             if (profile.getName().equals(vnicProfile.getName()) && !profile.getId().equals(vnicProfile.getId())) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NAME_IN_USE);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NAME_IN_USE);
             }
         }
 
@@ -71,40 +71,40 @@ public class VnicProfileValidator {
             return ValidationResult.VALID;
         }
 
-        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_VNIC_PROFILE_NETWORK);
+        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_VNIC_PROFILE_NETWORK);
     }
 
     public ValidationResult vnicProfileNotUsedByVms() {
-        return vnicProfileNotUsed(getVmsUsingProfile(), VdcBllMessages.VAR__ENTITIES__VMS, VdcBllMessages.VAR__ENTITIES__VM);
+        return vnicProfileNotUsed(getVmsUsingProfile(), EngineMessage.VAR__ENTITIES__VMS, EngineMessage.VAR__ENTITIES__VM);
     }
 
     public ValidationResult vnicProfileNotUsedByTemplates() {
         return vnicProfileNotUsed(getDbFacade().getVmTemplateDao().getAllForVnicProfile(vnicProfile.getId()),
-                VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES, VdcBllMessages.VAR__ENTITIES__VM_TEMPLATE);
+                EngineMessage.VAR__ENTITIES__VM_TEMPLATES, EngineMessage.VAR__ENTITIES__VM_TEMPLATE);
     }
 
     public ValidationResult vnicProfileForVmNetworkOnly() {
         return getNetwork().isVmNetwork() ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK);
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK);
     }
 
-    protected ValidationResult vnicProfileNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacementPlural, VdcBllMessages entitiesReplacementSingular) {
+    protected ValidationResult vnicProfileNotUsed(List<? extends Nameable> entities, EngineMessage entitiesReplacementPlural, EngineMessage entitiesReplacementSingular) {
         if (entities.isEmpty()) {
             return ValidationResult.VALID;
         }
 
         Collection<String> replacements = ReplacementUtils.replaceWithNameable("ENTITIES_USING_VNIC_PROFILE", entities);
-        VdcBllMessages replacementMessageToUse = entities.size() == 1 ? entitiesReplacementSingular : entitiesReplacementPlural;
+        EngineMessage replacementMessageToUse = entities.size() == 1 ? entitiesReplacementSingular : entitiesReplacementPlural;
         replacements.add(replacementMessageToUse.name());
         return new ValidationResult(getVNicProfileInUseValidationMessage(entities.size()), replacements);
     }
 
-    private VdcBllMessages getVNicProfileInUseValidationMessage(int numberOfEntities) {
+    private EngineMessage getVNicProfileInUseValidationMessage(int numberOfEntities) {
         boolean singular = numberOfEntities == 1;
         if (singular) {
-            return VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_ONE_USE;
+            return EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_ONE_USE;
         } else {
-            return VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_MANY_USES;
+            return EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_MANY_USES;
         }
     }
 
@@ -125,7 +125,7 @@ public class VnicProfileValidator {
     }
 
     public ValidationResult passthroughProfileContainsSupportedProperties() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES)
                 .when(vnicProfile.isPassthrough() && (vnicProfile.isPortMirroring()
                         || vnicProfile.getNetworkQosId() != null));
     }
@@ -148,7 +148,7 @@ public class VnicProfileValidator {
     public ValidationResult portMirroringNotSetIfExternalNetwork() {
         return !vnicProfile.isPortMirroring() || !getNetwork().isExternal()
                 ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED);
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED);
     }
 
     protected Network getNetwork() {

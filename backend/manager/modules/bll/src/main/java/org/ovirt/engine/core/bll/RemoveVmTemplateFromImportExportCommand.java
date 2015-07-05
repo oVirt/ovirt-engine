@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -65,7 +65,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
                 getParameters().setImages(images);
             } else {
                 retVal = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             }
         }
 
@@ -74,7 +74,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
             retVal = validate(validator.isDomainExistAndActive());
         }
         if (retVal && getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             retVal = false;
         }
         if (retVal) {
@@ -85,7 +85,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
                 retVal = (tmpl.getStatus() != VmTemplateStatus.Locked);
                 if (!retVal) {
                     getReturnValue().getCanDoActionMessages()
-                            .add(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED.toString());
+                            .add(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED.toString());
                 }
             }
         }
@@ -94,8 +94,8 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     @Override

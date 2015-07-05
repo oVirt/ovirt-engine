@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -197,7 +197,7 @@ public class VnicProfileHelper {
         // empty network name is considered as an empty (unlinked) network
         if ("".equals(networkName)) {
             if (portMirroring) {
-                return new ValidationResult(VdcBllMessages.PORT_MIRRORING_REQUIRES_NETWORK);
+                return new ValidationResult(EngineMessage.PORT_MIRRORING_REQUIRES_NETWORK);
             } else {
                 nic.setVnicProfileId(null);
                 return ValidationResult.VALID;
@@ -205,13 +205,13 @@ public class VnicProfileHelper {
         }
 
         if (vm.getVdsGroupId() == null) {
-            return new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
+            return new ValidationResult(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER);
         }
 
         // if the network was provided with changed name, resolve a suitable profile for it
         Network network = getNetworkDao().getByNameAndCluster(networkName, vm.getVdsGroupId());
         if (network == null) {
-            return new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
+            return new ValidationResult(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER);
         }
 
         List<VnicProfile> vnicProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
@@ -222,7 +222,7 @@ public class VnicProfileHelper {
             }
         }
 
-        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_FIND_VNIC_PROFILE_FOR_NETWORK);
+        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_FIND_VNIC_PROFILE_FOR_NETWORK);
     }
 
     private Map<String, Network> getNetworksInCluster() {

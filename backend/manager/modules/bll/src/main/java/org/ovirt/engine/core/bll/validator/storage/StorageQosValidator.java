@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.validator.storage;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.qos.QosDao;
 
@@ -33,7 +33,7 @@ public class StorageQosValidator extends QosValidator<StorageQos> {
                 || missingCategoryValues(getQos().getMaxIops(),
                         getQos().getMaxReadIops(),
                         getQos().getMaxWriteIops())) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_QOS_ILLEGAL_VALUES);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_QOS_ILLEGAL_VALUES);
         }
         return ValidationResult.VALID;
     }

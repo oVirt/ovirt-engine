@@ -53,9 +53,9 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -179,7 +179,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         if (getParameters().isSaveMemory()) {
             memoryDisksList = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.META_DATA_SIZE_IN_BYTES);
             if (Guid.Empty.equals(getStorageDomainIdForVmMemory(memoryDisksList))) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
             }
             allDisks.addAll(memoryDisksList);
         }
@@ -305,11 +305,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     VdcReturnValueBase vdcReturnValueBase = future.get();
                     if (!vdcReturnValueBase.getSucceeded()) {
                         log.error("Error creating snapshot for Cinder disk '{}'", disk.getDiskAlias());
-                        throw new VdcBLLException(VdcBllErrors.CINDER_ERROR, "Failed to create snapshot!");
+                        throw new EngineException(EngineError.CINDER_ERROR, "Failed to create snapshot!");
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     log.error("Error creating snapshot for Cinder disk '{}': {}", disk.getDiskAlias(), e.getMessage());
-                    throw new VdcBLLException(VdcBllErrors.CINDER_ERROR, "Failed to create snapshot!");
+                    throw new EngineException(EngineError.CINDER_ERROR, "Failed to create snapshot!");
                 }
                 continue;
             }
@@ -321,7 +321,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             if (vdcReturnValue.getSucceeded()) {
                 getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
             } else {
-                throw new VdcBLLException(vdcReturnValue.getFault().getError(),
+                throw new EngineException(vdcReturnValue.getFault().getError(),
                         "Failed to create snapshot!");
             }
         }
@@ -474,7 +474,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     return null;
                 }
             });
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             handleVdsLiveSnapshotFailure(e);
             return false;
         }
@@ -510,7 +510,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 && FeatureSupported.isMemorySnapshotSupportedByArchitecture(getVm().getClusterArch(), getVm().getVdsGroupCompatibilityVersion());
     }
 
-    private void handleVdsLiveSnapshotFailure(VdcBLLException e) {
+    private void handleVdsLiveSnapshotFailure(EngineException e) {
         log.warn("Could not perform live snapshot due to error, VM will still be configured to the new created"
                         + " snapshot: {}",
                 e.getMessage());
@@ -555,7 +555,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     protected boolean canDoAction() {
 
         if (getVm() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 
@@ -623,8 +623,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__SNAPSHOT);
     }
 
     @Override
@@ -648,7 +648,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private String getSnapshotIsBeingTakenForVmMessage() {
         if (cachedSnapshotIsBeingTakenMessage == null) {
-            StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_SNAPSHOT_IS_BEING_TAKEN_FOR_VM.name());
+            StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_SNAPSHOT_IS_BEING_TAKEN_FOR_VM.name());
             if (getVmName() != null) {
                 builder.append(String.format("$VmName %1$s", getVmName()));
             }

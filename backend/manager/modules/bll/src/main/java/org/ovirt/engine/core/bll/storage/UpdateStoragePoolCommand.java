@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.vdscommands.UpgradeStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -131,7 +131,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 // the request.
                 runVdsCommand(VDSCommandType.UpgradeStoragePool,
                     new UpgradeStoragePoolVDSCommandParameters(spId, targetFormat));
-            } catch (VdcBLLException e) {
+            } catch (EngineException e) {
                 log.warn("Upgrade process of Storage Pool '{}' has encountered a problem due to following reason: {}",
                         spId, e.getMessage());
                 auditLogDirector.log(this, AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS);
@@ -166,7 +166,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override
@@ -178,7 +178,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         // Name related validations
         if (!StringUtils.equals(getOldStoragePool().getName(), getStoragePool().getName())
                 && !isStoragePoolUnique(getStoragePool().getName())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         }
         if (!checkStoragePoolNameLengthValid()) {
             return false;
@@ -186,7 +186,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
         List<StorageDomainStatic> poolDomains = getStorageDomainStaticDao().getAllForStoragePool(getStoragePool().getId());
         if ( getOldStoragePool().isLocal() != getStoragePool().isLocal() && !poolDomains.isEmpty() ) {
-            return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
+            return failCanDoAction(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
         }
         if ( !getOldStoragePool().getCompatibilityVersion().equals(getStoragePool()
                 .getCompatibilityVersion())) {
@@ -204,7 +204,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     validator.setDataCenter(getStoragePool());
                     if (!getManagementNetworkUtil().isManagementNetwork(network.getId())
                             || !validator.canNetworkCompatabilityBeDecreased()) {
-                        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+                        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
                     }
                 }
             } else if (!checkAllClustersLevel()) {  // Check all clusters has at least the same compatibility version.
@@ -240,14 +240,14 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     private boolean manageCompatibilityVersionChangeCheckResult(boolean failOnSupportedTypeMixing, List<String> formatProblematicDomains, List<String> typeProblematicDomains) {
         if (failOnSupportedTypeMixing) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
         }
         if (!formatProblematicDomains.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
             getReturnValue().getCanDoActionMessages().addAll(ReplacementUtils.replaceWith("formatDowngradedDomains", formatProblematicDomains, "," , formatProblematicDomains.size()));
         }
         if (!typeProblematicDomains.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
             getReturnValue().getCanDoActionMessages().addAll(ReplacementUtils.replaceWith("unsupportedVersionDomains", typeProblematicDomains , ",", typeProblematicDomains.size()));
         }
 
@@ -273,7 +273,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     StringUtils.join(lowLevelClusters, ",")));
             getReturnValue()
                     .getCanDoActionMessages()
-                    .add(VdcBllMessages.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS
+                    .add(EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS
                             .toString());
         }
         return returnValue;

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -59,12 +59,12 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
                     : event_subscriber.getmethod_address();
 
             if (!isEmailValid(mailAddress)) {
-                addCanDoActionMessage(VdcBllMessages.USER_DOES_NOT_HAVE_A_VALID_EMAIL);
+                addCanDoActionMessage(EngineMessage.USER_DOES_NOT_HAVE_A_VALID_EMAIL);
                 retValue = false;
             }
             break;
         default:
-            addCanDoActionMessage(VdcBllMessages.EN_UNKNOWN_NOTIFICATION_METHOD);
+            addCanDoActionMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
             retValue = false;
             break;
         }
@@ -103,10 +103,10 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
                 .getEventDao()
                 .getAllForSubscriber(event_subscriber.getsubscriber_id());
         if (list.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.EN_NOT_SUBSCRIBED);
+            addCanDoActionMessage(EngineMessage.EN_NOT_SUBSCRIBED);
         } else {
             if (!ValidateSubscription(list, event_subscriber)) {
-                addCanDoActionMessage(VdcBllMessages.EN_NOT_SUBSCRIBED);
+                addCanDoActionMessage(EngineMessage.EN_NOT_SUBSCRIBED);
             } else {
                 String tagName = event_subscriber.gettag_name();
                 // validate notification method
@@ -133,7 +133,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         Tags tag = DbFacade.getInstance().getTagDao().getByName(tagName);
         if (tag == null) {
 
-            addCanDoActionMessage(VdcBllMessages.EN_UNKNOWN_TAG_NAME);
+            addCanDoActionMessage(EngineMessage.EN_UNKNOWN_TAG_NAME);
             retValue = false;
         }
 

@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -72,13 +72,13 @@ public class UpdateHostValidatorTest {
     public void oldHostDoesNotExist() {
         validator = new UpdateHostValidator(dbFacade, oldHost, null, false);
 
-        assertThat(validator.hostExists(), failsWith(VdcBllMessages.VDS_INVALID_SERVER_ID));
+        assertThat(validator.hostExists(), failsWith(EngineMessage.VDS_INVALID_SERVER_ID));
     }
 
     @Test
     public void hostDoesNotExist() {
         validator = new UpdateHostValidator(dbFacade, null, host, false);
-        assertThat(validator.hostExists(), failsWith(VdcBllMessages.VDS_INVALID_SERVER_ID));
+        assertThat(validator.hostExists(), failsWith(EngineMessage.VDS_INVALID_SERVER_ID));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class UpdateHostValidatorTest {
         validator = spy(new UpdateHostValidator(dbFacade, oldHost, host, false));
         doReturn(false).when(validator).isUpdateValid();
 
-        assertThat(validator.hostStatusValid(), failsWith(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE));
+        assertThat(validator.hostStatusValid(), failsWith(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE));
     }
 
     @Test
@@ -114,7 +114,7 @@ public class UpdateHostValidatorTest {
         when(oldHost.getStatus()).thenReturn(VDSStatus.Maintenance);
 
         assertThat(validator.updateHostAddressAllowed(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_HOSTNAME_CANNOT_CHANGE));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_HOSTNAME_CANNOT_CHANGE));
     }
 
     @Test
@@ -145,7 +145,7 @@ public class UpdateHostValidatorTest {
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
         validator = new UpdateHostValidator(dbFacade, oldHost, host, false);
 
-        assertThat(validator.nameNotUsed(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
+        assertThat(validator.nameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class UpdateHostValidatorTest {
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
         validator = new UpdateHostValidator(dbFacade, oldHost, host, false);
 
-        assertThat(validator.hostNameNotUsed(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST));
+        assertThat(validator.hostNameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST));
     }
 
     @Test
@@ -200,7 +200,7 @@ public class UpdateHostValidatorTest {
         validator = createValidatorForHostInstallation();
 
         assertThat(validator.statusSupportedForHostInstallation(),
-                failsWith(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL));
+                failsWith(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL));
     }
 
     @Test
@@ -232,7 +232,7 @@ public class UpdateHostValidatorTest {
         validator = createValidatorForHostInstallation();
 
         assertThat(validator.passwordProvidedForHostInstallation(AuthenticationMethod.Password, null),
-                failsWith(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD));
+                failsWith(EngineMessage.VDS_CANNOT_INSTALL_EMPTY_PASSWORD));
     }
 
     @Test
@@ -258,7 +258,7 @@ public class UpdateHostValidatorTest {
         when(oldHost.getPort()).thenReturn(RandomUtils.instance().nextInt());
         when(host.getPort()).thenReturn(RandomUtils.instance().nextInt());
 
-        assertThat(validator.updatePortAllowed(), failsWith(VdcBllMessages.VDS_PORT_CHANGE_REQUIRE_INSTALL));
+        assertThat(validator.updatePortAllowed(), failsWith(EngineMessage.VDS_PORT_CHANGE_REQUIRE_INSTALL));
     }
 
     @Test
@@ -275,7 +275,7 @@ public class UpdateHostValidatorTest {
         when(oldHost.getVdsGroupId()).thenReturn(Guid.newGuid());
         when(host.getVdsGroupId()).thenReturn(Guid.newGuid());
 
-        assertThat(validator.clusterNotChanged(), failsWith(VdcBllMessages.VDS_CANNOT_UPDATE_CLUSTER));
+        assertThat(validator.clusterNotChanged(), failsWith(EngineMessage.VDS_CANNOT_UPDATE_CLUSTER));
     }
 
     @Test
@@ -302,7 +302,7 @@ public class UpdateHostValidatorTest {
         when(host.getProtocol()).thenReturn(VdsProtocol.STOMP);
         when(oldHost.getStatus()).thenReturn(VDSStatus.Up);
 
-        assertThat(validator.changeProtocolAllowed(), failsWith(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE));
+        assertThat(validator.changeProtocolAllowed(), failsWith(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE));
     }
 
     @SuppressWarnings("unchecked")
@@ -323,7 +323,7 @@ public class UpdateHostValidatorTest {
         when(dbFacade.getProviderDao()).thenReturn(providerDao);
         validator = new UpdateHostValidator(dbFacade, oldHost, host, false);
 
-        assertThat(validator.hostProviderExists(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST));
+        assertThat(validator.hostProviderExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST));
     }
 
     @Test
@@ -355,7 +355,7 @@ public class UpdateHostValidatorTest {
         validator = new UpdateHostValidator(dbFacade, oldHost, host, false);
 
         assertThat(validator.hostProviderTypeMatches(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH));
     }
 
     private String generateRandomName() {

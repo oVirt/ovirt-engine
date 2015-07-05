@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,7 +32,7 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
         clusterId = getParameters().getClusterId();
         volume = getGlusterVolumeDao().getById(getParameters().getVolumeId());
         if (volume == null) {
-            throw new RuntimeException(VdcBllMessages.GLUSTER_VOLUME_ID_INVALID.toString());
+            throw new RuntimeException(EngineMessage.GLUSTER_VOLUME_ID_INVALID.toString());
         }
 
         if (clusterId == null) {

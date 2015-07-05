@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.ExtendStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -61,7 +61,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXTEND);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__EXTEND);
     }
 
     @SuppressWarnings("unchecked")
@@ -78,7 +78,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         }
 
         if (!getStorageDomain().getStorageType().isBlockDomain()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             return false;
         }
 
@@ -88,7 +88,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
                         new ExtendSANStorageDomainParameters(getParameters().getStorageDomainId(), getParameters()
                                 .getLunIds()));
         if (!connectResult.getSucceeded()) {
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
+            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
             if (connectResult.getFailedVds() != null) {
                 getReturnValue().getCanDoActionMessages().add(String.format("$hostName %1s",
                         connectResult.getFailedVds().getName()));

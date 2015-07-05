@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -67,13 +67,13 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         // the condition allows to get only user and password which are both set (even with empty string) or both aren't
         // set (null), the action will fail if only one of those parameters is null.
         if (getParameters().getSysPrepUserName() == null ^ getParameters().getSysPrepPassword() == null) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_RUN_ONCE_WITH_ILLEGAL_SYSPREP_PARAM);
+            return failCanDoAction(EngineMessage.VM_CANNOT_RUN_ONCE_WITH_ILLEGAL_SYSPREP_PARAM);
         }
 
         if (getParameters().getVmInit() != null) {
             if (!OsRepositoryImpl.INSTANCE.isWindows(getVm().getOs()) &&
                     !FeatureSupported.cloudInit(getVm().getVdsGroupCompatibilityVersion())) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED);
             }
 
             if (getParameters().getVmInit().isPasswordAlreadyStored()) {

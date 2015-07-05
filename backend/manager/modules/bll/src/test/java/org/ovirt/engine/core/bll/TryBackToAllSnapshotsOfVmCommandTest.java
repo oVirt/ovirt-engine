@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -58,7 +58,7 @@ public class TryBackToAllSnapshotsOfVmCommandTest {
     @Test
     public void testCanDoActionVmNotDown() {
         vm.setStatus(VMStatus.Up);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
 
     @Test
@@ -68,6 +68,6 @@ public class TryBackToAllSnapshotsOfVmCommandTest {
         doNothing().when(cmd).updateVmDisksFromDb();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+                EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
     }
 }

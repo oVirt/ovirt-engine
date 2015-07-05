@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -81,8 +81,8 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         boolean isInstanceType = getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE;
 
         if (getVdsGroup() == null && !isInstanceType) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
 
@@ -107,7 +107,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
         // check not blank template
         if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(vmTemplateId)) {
-            return failCanDoAction(VdcBllMessages.VMT_CANNOT_REMOVE_BLANK_TEMPLATE);
+            return failCanDoAction(EngineMessage.VMT_CANNOT_REMOVE_BLANK_TEMPLATE);
         }
 
         // check storage pool valid
@@ -117,7 +117,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
         // check if delete protected
         if (template.isDeleteProtected()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
         }
 
         if (!isInstanceType) {
@@ -151,7 +151,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         if (!problematicVmNames.isEmpty()) {
-            return failCanDoAction(VdcBllMessages.VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM,
+            return failCanDoAction(EngineMessage.VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM,
                     String.format("$vmsList %1$s", StringUtils.join(problematicVmNames, ",")));
         }
 
@@ -164,7 +164,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                     templateVersionsNames.add(version.getName());
                 }
 
-                return failCanDoAction(VdcBllMessages.VMT_CANNOT_REMOVE_BASE_WITH_VERSIONS,
+                return failCanDoAction(EngineMessage.VMT_CANNOT_REMOVE_BASE_WITH_VERSIONS,
                         String.format("$versionsList %1$s", StringUtils.join(templateVersionsNames, ",")));
             }
         }
@@ -265,7 +265,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     }
 
     private String getTemplateExclusiveLockMessage() {
-        return new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_REMOVED.name())
+        return new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_REMOVED.name())
         .append(String.format("$TemplateName %1$s", getVmTemplate().getName()))
         .toString();
     }

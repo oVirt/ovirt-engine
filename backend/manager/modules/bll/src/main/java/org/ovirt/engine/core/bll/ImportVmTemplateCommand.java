@@ -44,9 +44,9 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainM
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -114,7 +114,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
         if (retVal && (getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport)
                 && !isImagesAlreadyOnTarget()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             retVal = false;
         }
 
@@ -142,7 +142,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 HashMap<Guid, DiskImage> imageMap = new HashMap<>();
                 for (DiskImage image : images) {
                     if (Guid.Empty.equals(image.getVmSnapshotId())) {
-                        retVal = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+                        retVal = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
                         break;
                     }
 
@@ -179,12 +179,12 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     .get(getParameters().getVmTemplate().getId());
             // check that the template does not exists in the target domain
             if (duplicateTemplate != null) {
-                addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_IMPORT_TEMPLATE_EXISTS);
+                addCanDoActionMessage(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_EXISTS);
                 getReturnValue().getCanDoActionMessages().add(
                         String.format("$TemplateName %1$s", duplicateTemplate.getName()));
                 retVal = false;
             } else if (getVmTemplate().isBaseTemplate() && isVmTemplateWithSameNameExist()) {
-                addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
+                addCanDoActionMessage(EngineMessage.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
                 retVal = false;
             }
         }
@@ -208,7 +208,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             VmTemplate baseTemplate = getVmTemplateDao().get(getVmTemplate().getBaseTemplateId());
             if (baseTemplate == null) {
                 retVal = false;
-                addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
+                addCanDoActionMessage(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
             }
         }
 
@@ -221,15 +221,15 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         if (!retVal) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
+            addCanDoActionMessage(EngineMessage.VAR__ACTION__IMPORT);
+            addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
         }
         return retVal;
     }
 
     protected boolean isVDSGroupCompatible () {
         if (getVdsGroup().getArchitecture() != getVmTemplate().getClusterArch()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER);
             return false;
         }
         return true;
@@ -237,7 +237,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     protected boolean validateTemplateArchitecture () {
         if (getVmTemplate().getClusterArch() == ArchitectureType.undefined) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_WITH_NOT_SUPPORTED_ARCHITECTURE);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_WITH_NOT_SUPPORTED_ARCHITECTURE);
             return false;
         }
         return true;
@@ -394,8 +394,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                             p);
 
                     if (!vdcRetValue.getSucceeded()) {
-                        throw ((vdcRetValue.getFault() != null) ? new VdcBLLException(vdcRetValue.getFault().getError())
-                                : new VdcBLLException(VdcBllErrors.ENGINE));
+                        throw ((vdcRetValue.getFault() != null) ? new EngineException(vdcRetValue.getFault().getError())
+                                : new EngineException(EngineError.ENGINE));
                     }
 
                     getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());

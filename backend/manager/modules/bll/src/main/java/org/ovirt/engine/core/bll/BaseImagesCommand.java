@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
@@ -353,7 +353,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                     getDestinationDiskImage().getImage().setVolumeType(newImageIRS.getVolumeType());
                     getDestinationDiskImage().getImage().setVolumeFormat(newImageIRS.getVolumeFormat());
                 }
-            } catch (VdcBLLException e) {
+            } catch (EngineException e) {
                 // Logging only
                 log.error("Unable to update the image info for image '{}' (image group: '{}') on domain '{}'",
                         newImageId, newImageGroupId, newStorageDomainID);
@@ -423,7 +423,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         snapshotsEngineLock = new EngineLock();
         Map<String, Pair<String, String>> snapshotsExlusiveLockMap =
                 Collections.singletonMap(vm.getId().toString(),
-                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_SNAPSHOTS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_SNAPSHOTS, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         snapshotsEngineLock.setExclusiveLocks(snapshotsExlusiveLockMap);
         getLockManager().acquireLockWait(snapshotsEngineLock);
     }

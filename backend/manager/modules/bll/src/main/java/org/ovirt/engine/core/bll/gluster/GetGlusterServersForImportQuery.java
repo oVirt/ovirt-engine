@@ -7,7 +7,7 @@ import java.util.Set;
 import javax.naming.AuthenticationException;
 
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -36,7 +36,7 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
         // Check whether the given server is already part of the cluster
         if (getVdsStaticDao().getByHostName(getParameters().getServerName()) != null
                 || getVdsStaticDao().getAllWithIpAddress(getParameters().getServerName()).size() > 0) {
-            throw new RuntimeException(VdcBllMessages.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
+            throw new RuntimeException(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
         }
 
         try {
@@ -57,7 +57,7 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
 
             // Check if any of the server in the map is already part of some other cluster.
             if (!validateServers(serverFingerPrintMap.keySet())) {
-                throw new RuntimeException(VdcBllMessages.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
+                throw new RuntimeException(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
             }
 
             // Add the given server with it's fingerprint
@@ -65,7 +65,7 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
 
             getQueryReturnValue().setReturnValue(serverFingerPrintMap);
         } catch (AuthenticationException ae) {
-            throw new RuntimeException(VdcBllMessages.SSH_AUTHENTICATION_FAILED.toString());
+            throw new RuntimeException(EngineMessage.SSH_AUTHENTICATION_FAILED.toString());
         } catch (RuntimeException re) {
             throw re;
         } catch (Exception e) {

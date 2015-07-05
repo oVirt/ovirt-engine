@@ -6,8 +6,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
-
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 /**
  * BLL command to refresh gluster volume details
@@ -26,8 +25,8 @@ public class RefreshGlusterVolumeDetailsCommand extends GlusterVolumeCommandBase
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REFRESH);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REFRESH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
     }
 
     @Override
@@ -38,7 +37,7 @@ public class RefreshGlusterVolumeDetailsCommand extends GlusterVolumeCommandBase
 
         GlusterVolumeEntity glusterVolume = getGlusterVolume();
         if (!glusterVolume.isOnline()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
         }
 
         return true;

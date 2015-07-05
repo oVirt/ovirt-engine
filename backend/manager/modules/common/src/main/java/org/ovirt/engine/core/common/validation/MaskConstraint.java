@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.validation;
 
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.ValidatorConstraint.ValidatorConstraintArgsFormatValue;
 import org.ovirt.engine.core.common.validation.annotation.Mask;
 
@@ -23,8 +23,8 @@ public class MaskConstraint implements ConstraintValidator<Mask, String> {
         ValidatorConstraintArgsFormatValue args =
                 new ValidatorConstraintArgsFormatValue(maskFormatValidation,
                         maskFormatValidation ? isMaskValid(mask) : false,
-                        VdcBllMessages.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name(),
-                        VdcBllMessages.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name());
+                        EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name(),
+                        EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name());
         return ValidatorConstraint.getInstance().isValid(args, context, "mask");//$NON-NLS-1$
     }
 

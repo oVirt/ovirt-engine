@@ -7,8 +7,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
@@ -74,7 +74,7 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
         } catch (TimeoutException e) {
             httpTask.cancel(true);
             VDSNetworkException ex = new VDSNetworkException("Timeout during xml-rpc call");
-            ex.setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, "Timeout during xml-rpc call"));
+            ex.setVdsError(new VDSError(EngineError.VDS_NETWORK_ERROR, "Timeout during xml-rpc call"));
             setVdsRuntimeError(ex);
             log.error("Timeout waiting for VDSM response: {}", e.getMessage());
             log.debug("Exception", e);

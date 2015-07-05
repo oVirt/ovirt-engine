@@ -43,8 +43,8 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Sta
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
@@ -175,7 +175,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private void refreshHostDeviceList() {
         try {
             runInternalAction(VdcActionType.RefreshHostDevices, new VdsActionParameters(getVdsId()));
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             log.error("Could not refresh host devices for host '{}'", getVds().getName());
         }
     }
@@ -270,12 +270,12 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             if (!vdsReturnValue.getSucceeded()) {
                 error = vdsReturnValue.getVdsError();
             }
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             error = e.getVdsError();
         }
 
         if (error != null) {
-            if (error.getCode() != VdcBllErrors.CannotConnectMultiplePools && masterDomainInactiveOrUnknown) {
+            if (error.getCode() != EngineError.CannotConnectMultiplePools && masterDomainInactiveOrUnknown) {
                 log.info("Could not connect host '{}' to pool '{}', as the master domain is in inactive/unknown"
                                 + " status - not failing the operation",
                         vds.getName(),
@@ -311,7 +311,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                                         cluster.isEnableKsm(),
                                         cluster.isKsmMergeAcrossNumaNodes())
                                                 );
-            } catch (VdcBLLException e) {
+            } catch (EngineException e) {
                 log.error("Could not update MoM policy on host '{}'", vds.getName());
                 returnValue.setSucceeded(false);
             }
@@ -342,7 +342,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                     }
                 }
             }
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             log.error("Could not get Host statistics for Host '{}': {}",
                     getVds().getName(),
                     e.getMessage());

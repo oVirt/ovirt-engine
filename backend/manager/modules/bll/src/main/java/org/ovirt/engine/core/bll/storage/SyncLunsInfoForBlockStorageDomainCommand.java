@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
@@ -143,6 +143,6 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.SYNC_LUNS,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 }

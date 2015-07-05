@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.UploadImageVDSCommandParameters;
@@ -72,7 +72,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     }
 
     private String getDiskIsBeingExportedMessage() {
-        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_BEING_EXPORTED.name());
+        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_BEING_EXPORTED.name());
         if (getDiskImage() != null) {
             builder.append(String.format("$DiskAlias %1$s", getDiskImage().getDiskAlias()));
         }
@@ -155,8 +155,8 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXPORT);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__EXPORT);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override
@@ -218,7 +218,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     @Override
     protected boolean canDoAction() {
         if (getDiskImage() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
         }
 
         if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
@@ -228,12 +228,12 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
         // At the moment it's not possible to export images that have a snapshot
         // or that are based on a a template.
         if (!getDiskImage().getParentId().equals(Guid.Empty)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
         }
 
         for (VM vm : getVmDao().getVmsListForDisk(getDiskImage().getId(), false)) {
             if (vm.getStatus() != VMStatus.Down) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
             }
         }
 

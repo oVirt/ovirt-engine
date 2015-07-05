@@ -2,8 +2,8 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
@@ -41,7 +41,7 @@ public class GetVolumesListVDSCommand<P extends StoragePoolDomainAndGroupIdBaseV
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case GetStorageDomainListError:
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));

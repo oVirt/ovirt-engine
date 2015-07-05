@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -367,6 +367,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      * @return String explaining what this command does
      */
     protected String getLockMessage() {
-        return VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
+        return EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
     }
 }

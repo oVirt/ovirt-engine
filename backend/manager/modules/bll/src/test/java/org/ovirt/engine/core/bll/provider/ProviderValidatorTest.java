@@ -15,7 +15,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,7 +42,7 @@ public class ProviderValidatorTest {
     @Test
     public void providerIsNotSet() throws Exception {
         validator = new ProviderValidator(null);
-        assertThat(validator.providerIsSet(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST));
+        assertThat(validator.providerIsSet(), failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ProviderValidatorTest {
     public void nameNotAvailable() throws Exception {
         Provider<AdditionalProperties> otherProvider = createProvider(provider.getName());
         when((Provider<AdditionalProperties>) providerDao.getByName(provider.getName())).thenReturn(otherProvider);
-        assertThat(validator.nameAvailable(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
+        assertThat(validator.nameAvailable(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
 
     @SuppressWarnings("unchecked")

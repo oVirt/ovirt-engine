@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -63,13 +63,13 @@ public class HostNetworkQosValidatorTest {
     @Test
     public void noValuesPresent() {
         mockQos(null, null, null);
-        requiredValuesTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES));
+        requiredValuesTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void allButLinksharePresent() {
         mockQos(null, generateValue(), generateValue());
-        requiredValuesTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES));
+        requiredValuesTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class HostNetworkQosValidatorTest {
     @Test
     public void upperlimitLowerThanRealTime() {
         mockQos(generateValue(), LOW_BANDWIDTH, HIGH_BANDWIDTH);
-        consistentValuesTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INCONSISTENT_VALUES));
+        consistentValuesTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INCONSISTENT_VALUES));
     }
 
     @Test

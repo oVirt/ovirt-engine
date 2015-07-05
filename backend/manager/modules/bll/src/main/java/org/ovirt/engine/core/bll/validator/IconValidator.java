@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -69,7 +69,7 @@ public class IconValidator {
         if (DbFacade.getInstance().getVmIconDao().exists(iconId)) {
             return ValidationResult.VALID;
         }
-        return new ValidationResult(VdcBllMessages.ICON_OF_PROVIDED_ID_DOES_NOT_EXIST,
+        return new ValidationResult(EngineMessage.ICON_OF_PROVIDED_ID_DOES_NOT_EXIST,
                 "$iconName " + nameForErrorMessage);
     }
 
@@ -82,7 +82,7 @@ public class IconValidator {
         final Matcher matcher = Pattern.compile(dataUrlRegex).matcher(dataUrl);
         final boolean matches = matcher.find();
         if (!matches) {
-            validationResult = new ValidationResult(VdcBllMessages.VM_ICON_DATAURL_MALFORMED);
+            validationResult = new ValidationResult(EngineMessage.VM_ICON_DATAURL_MALFORMED);
             return;
         }
         mimeType = matcher.group(1);
@@ -93,7 +93,7 @@ public class IconValidator {
         try {
             rawImageData = DatatypeConverter.parseBase64Binary(base64Data);
         } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
-            validationResult = new ValidationResult(VdcBllMessages.VM_ICON_BASE64_PART_MALFORMED);
+            validationResult = new ValidationResult(EngineMessage.VM_ICON_BASE64_PART_MALFORMED);
         }
     }
 
@@ -103,18 +103,18 @@ public class IconValidator {
             final ImageInputStream imageInputStream = ImageIO.createImageInputStream(inputStream);
             final Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(imageInputStream);
             if (!imageReaders.hasNext()) {
-                validationResult = new ValidationResult(VdcBllMessages.PROVIDED_VM_ICON_OF_UNKNOWN_TYPE);
+                validationResult = new ValidationResult(EngineMessage.PROVIDED_VM_ICON_OF_UNKNOWN_TYPE);
                 return;
             }
             final String formatName = imageReaders.next().getFormatName();
             imageType = FileType.getByFormatName(formatName);
             if (imageType == null) {
-                validationResult = new ValidationResult(VdcBllMessages.PROVIDED_VM_ICONS_OF_UNSUPPORTED_TYPE,
+                validationResult = new ValidationResult(EngineMessage.PROVIDED_VM_ICONS_OF_UNSUPPORTED_TYPE,
                         "$fileType " + formatName,
                         "$supportedFileTypes " + FileType.getSupportedTypes());
             }
         } catch (IOException e) {
-            validationResult = new ValidationResult(VdcBllMessages.PROVIDED_VM_ICON_CANT_BE_READ);
+            validationResult = new ValidationResult(EngineMessage.PROVIDED_VM_ICON_CANT_BE_READ);
         }
     }
 
@@ -122,13 +122,13 @@ public class IconValidator {
         try {
             image = ImageIO.read(new ByteArrayInputStream(rawImageData));
         } catch (RuntimeException | IOException e) {
-            validationResult = new ValidationResult(VdcBllMessages.PROVIDED_VM_ICON_CANT_BE_READ);
+            validationResult = new ValidationResult(EngineMessage.PROVIDED_VM_ICON_CANT_BE_READ);
         }
     }
 
     private void validateMimeType() {
         if (!imageType.getMimeType().equals(mimeType)) {
-            validationResult = new ValidationResult(VdcBllMessages.VM_ICON_MIME_TYPE_DOESNT_MATCH_IMAGE_DATA,
+            validationResult = new ValidationResult(EngineMessage.VM_ICON_MIME_TYPE_DOESNT_MATCH_IMAGE_DATA,
                     "$mimeType " + mimeType,
                     "$imageType " + imageType.getMimeType());
         }
@@ -140,7 +140,7 @@ public class IconValidator {
                 && image.getHeight() >= dimensionsType.getMinHeight()
                 && image.getHeight() <= dimensionsType.getMaxHeight();
         if (!dimensionsValid) {
-            validationResult = new ValidationResult(VdcBllMessages.PROVIDED_VM_ICON_HAS_INVALID_DIMENSIONS,
+            validationResult = new ValidationResult(EngineMessage.PROVIDED_VM_ICON_HAS_INVALID_DIMENSIONS,
                     "$allowedDimensions " + "from " + dimensionsType.getMinWidth() + "x" + dimensionsType.getMinHeight()
                         + " to " + dimensionsType.getMaxWidth() + "x" + dimensionsType.getMaxHeight(),
                     "$currentDimensions " + image.getWidth() + "x" + image.getHeight());
@@ -149,7 +149,7 @@ public class IconValidator {
 
     private void validateDataSize() {
         if (dataUrl.length() > MAX_DATAURL_SIZE) {
-            validationResult = new ValidationResult(VdcBllMessages.DATA_SIZE_OF_PROVIDED_VM_ICON_TOO_LARGE,
+            validationResult = new ValidationResult(EngineMessage.DATA_SIZE_OF_PROVIDED_VM_ICON_TOO_LARGE,
                     "$maxSize " + getSizeEstimateByDataUrlLength(MAX_DATAURL_SIZE),
                     "$currentSize " + getSizeEstimateByDataUrlLength(dataUrl.length()));
         }

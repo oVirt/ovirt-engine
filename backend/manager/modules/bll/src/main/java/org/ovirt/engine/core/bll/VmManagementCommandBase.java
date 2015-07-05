@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -93,7 +93,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
         if (!cpuPinningPattern.matcher(cpuPinning).matches()) {
             // ERROR bad syntax
-            addCanDoActionMessage(VdcBllMessages.VM_PINNING_FORMAT_INVALID);
+            addCanDoActionMessage(EngineMessage.VM_PINNING_FORMAT_INVALID);
             return false;
         }
 
@@ -106,7 +106,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
         // can not check if no dedicated vds was configured
         if (vmStatic.getDedicatedVmForVdsList().isEmpty()){
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
         }
         for (Guid dedicatedHostGuid : vmStatic.getDedicatedVmForVdsList()){
             dedicatedVds = getVds(dedicatedHostGuid);
@@ -127,21 +127,21 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                 int currVcpu = Integer.parseInt(splitRule[0]);
                 if (currVcpu >= maxvCPU) {
                     // ERROR maps to a non existent vcpu
-                    return failCanDoAction(VdcBllMessages.VM_PINNING_VCPU_DOES_NOT_EXIST);
+                    return failCanDoAction(EngineMessage.VM_PINNING_VCPU_DOES_NOT_EXIST);
                 }
                 if (!vcpus.add(currVcpu)) {
                     // ERROR contains more than one definition for the same vcpu
-                    return failCanDoAction(VdcBllMessages.VM_PINNING_DUPLICATE_DEFINITION);
+                    return failCanDoAction(EngineMessage.VM_PINNING_DUPLICATE_DEFINITION);
                 }
 
                 Collection<Integer> currPcpus = parsePCpuPinningNumbers(splitRule[1]);
                 if (currPcpus == null) {
-                    return failCanDoAction(VdcBllMessages.VM_PINNING_FORMAT_INVALID);
+                    return failCanDoAction(EngineMessage.VM_PINNING_FORMAT_INVALID);
                 }
 
                 if (currPcpus.size() == 0) {
                     // definition of pcpus is no cpu, e.g 0#1,^1
-                    return failCanDoAction(VdcBllMessages.VM_PINNING_PINNED_TO_NO_CPU);
+                    return failCanDoAction(EngineMessage.VM_PINNING_PINNED_TO_NO_CPU);
                 }
             }
         }
@@ -203,12 +203,12 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                 && (vmStaticData.getMigrationSupport() == MigrationSupport.MIGRATABLE
                 || vmStaticData.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE)
                 && StringUtils.isNotEmpty(cpuPinning)) {
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_AND_MIGRATABLE.toString());
+            reasons.add(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_AND_MIGRATABLE.toString());
             return false;
         }
 
         if (vmStaticData.isAutoStartup() && vmStaticData.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST.toString());
+            reasons.add(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST.toString());
             return false;
         }
         return true;

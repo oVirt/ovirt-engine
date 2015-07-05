@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
@@ -20,8 +20,8 @@ public class StartGlusterVolumeProfileCommand extends GlusterVolumeCommandBase<G
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START_PROFILE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__START_PROFILE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
     }
 
     @Override

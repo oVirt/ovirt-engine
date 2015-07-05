@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -45,7 +45,7 @@ public class CinderDisksValidator {
         try {
             return callable.call();
         } catch (OpenStackResponseException e) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CINDER,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CINDER,
                     String.format("$cinderException %1$s", e.getMessage()));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -67,7 +67,7 @@ public class CinderDisksValidator {
                         String storageName =
                                 getStorageDomainDao().get(relatedCinderDisksByStorage.getStorageDomainId())
                                         .getStorageName();
-                        return new ValidationResult(VdcBllMessages.CANNOT_ADD_CINDER_DISK_VOLUME_LIMIT_EXCEEDED,
+                        return new ValidationResult(EngineMessage.CANNOT_ADD_CINDER_DISK_VOLUME_LIMIT_EXCEEDED,
                                 String.format("$maxTotalVolumes %d", limits.getAbsolute().getMaxTotalVolumes()),
                                 String.format("$storageName %s", storageName));
                     }
@@ -92,7 +92,7 @@ public class CinderDisksValidator {
                         String storageName =
                                 getStorageDomainDao().get(relatedCinderDisksByStorage.getStorageDomainId())
                                         .getStorageName();
-                        return new ValidationResult(VdcBllMessages.CANNOT_ADD_CINDER_DISK_SNAPSHOT_LIMIT_EXCEEDED,
+                        return new ValidationResult(EngineMessage.CANNOT_ADD_CINDER_DISK_SNAPSHOT_LIMIT_EXCEEDED,
                                 String.format("$maxTotalSnapshots %d", limits.getAbsolute().getMaxTotalVolumes()),
                                 String.format("$storageName %s", storageName));
                     }
@@ -177,7 +177,7 @@ public class CinderDisksValidator {
                 for (CinderDisk disk : cinderDisks) {
                     Disk diskFromDB = getDiskDao().get(disk.getId());
                     if (diskFromDB != null) {
-                        return new ValidationResult(VdcBllMessages.CINDER_DISK_ALREADY_REGISTERED,
+                        return new ValidationResult(EngineMessage.CINDER_DISK_ALREADY_REGISTERED,
                                 String.format("$diskAlias %s", diskFromDB.getDiskAlias()));
                     }
                 }
@@ -205,7 +205,7 @@ public class CinderDisksValidator {
                 });
 
                 if (!volumeTypeExists) {
-                    return new ValidationResult(VdcBllMessages.CINDER_VOLUME_TYPE_NOT_EXISTS,
+                    return new ValidationResult(EngineMessage.CINDER_VOLUME_TYPE_NOT_EXISTS,
                             String.format("$cinderVolumeType %s", disk.getCinderVolumeType()));
                 }
                 return ValidationResult.VALID;

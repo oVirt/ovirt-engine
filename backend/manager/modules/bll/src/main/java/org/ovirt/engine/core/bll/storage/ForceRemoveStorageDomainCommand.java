@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
@@ -95,15 +95,15 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                 && getStoragePool() != null) {
             if (electNewMaster() == null) {
                 returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN);
+                addCanDoActionMessage(EngineMessage.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN);
             } else if (!initializeVds()) {
                 returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN_HOST_NOT_ACTIVE);
+                addCanDoActionMessage(EngineMessage.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN_HOST_NOT_ACTIVE);
             }
         }
 
         if (returnValue && getStorageDomain().getStorageType() == StorageType.GLANCE) {
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
+            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
             returnValue = false;
         }
 
@@ -113,12 +113,12 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DESTROY_DOMAIN);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__DESTROY_DOMAIN);
     }
 }

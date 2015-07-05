@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -78,7 +78,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                             runInternalActionWithTasksContext(VdcActionType.CopyImageGroup, p);
 
                     if (!vdcRetValue.getSucceeded()) {
-                        throw new VdcBLLException(vdcRetValue.getFault().getError(), vdcRetValue.getFault()
+                        throw new EngineException(vdcRetValue.getFault().getError(), vdcRetValue.getFault()
                                 .getMessage());
                     }
 
@@ -114,7 +114,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     private String getTemplateIsBeingExportedMessage() {
         if (cachedTemplateIsBeingExportedMessage == null) {
-            StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_EXPORTED.name());
+            StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_EXPORTED.name());
             if (getVmTemplate() != null) {
                 builder.append(String.format("$TemplateName %1$s", getVmTemplate().getName()));
             }
@@ -126,7 +126,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     @Override
     protected boolean canDoAction() {
         if (getVmTemplate() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
         StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
         boolean retVal = validate(storageDomainValidator.isDomainExistAndActive());
@@ -134,7 +134,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         if (retVal) {
             // export must be to export domain
             if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
                 retVal = false;
             }
         }
@@ -146,7 +146,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
             retVal = !ExportVmCommand.checkTemplateInStorageDomain(getVmTemplate().getStoragePoolId(),
                     getParameters().getStorageDomainId(), getVmTemplateId(), getContext().getEngineContext());
             if (!retVal) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
         }
 
@@ -155,8 +155,8 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXPORT);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__EXPORT);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     @Override

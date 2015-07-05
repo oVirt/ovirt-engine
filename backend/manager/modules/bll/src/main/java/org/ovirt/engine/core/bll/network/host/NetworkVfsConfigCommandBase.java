@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VfsConfigNetworkParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class NetworkVfsConfigCommandBase extends VfsConfigCommandBase<VfsConfigNetworkParameters> {
@@ -24,7 +24,7 @@ public abstract class NetworkVfsConfigCommandBase extends VfsConfigCommandBase<V
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST_NIC_VFS_CONFIG_NETWORK);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_NIC_VFS_CONFIG_NETWORK);
     }
 
     protected Guid getNetworkId() {

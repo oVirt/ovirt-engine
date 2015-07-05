@@ -4,9 +4,9 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -58,7 +58,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     protected IVdsServer initializeVdsBroker(Guid vdsId) {
         VdsManager vdsmanager = ResourceManager.getInstance().GetVdsManager(vdsId);
         if (vdsmanager == null) {
-            throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_VDS_NOT_FOUND,
+            throw new EngineException(EngineError.RESOURCE_MANAGER_VDS_NOT_FOUND,
                     String.format("Vds with id: %1$s was not found", vdsId));
         }
 
@@ -142,7 +142,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     private void updateNetworkException(VDSNetworkException ex, String message) {
         VDSError error = ex.getVdsError();
         if (error == null) {
-            error = new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, message);
+            error = new VDSError(EngineError.VDS_NETWORK_ERROR, message);
             ex.setVdsError(error);
         }
 

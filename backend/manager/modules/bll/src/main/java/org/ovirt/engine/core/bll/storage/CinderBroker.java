@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class CinderBroker extends AuditLogableBase {
         try {
             return callable.call();
         } catch (OpenStackResponseException e) {
-            executeFailedMessages.add(VdcBllErrors.CINDER_ERROR.name());
+            executeFailedMessages.add(EngineError.CINDER_ERROR.name());
             executeFailedMessages.add(String.format("$cinderException %1$s", e.getMessage()));
             throw e;
         } catch (Exception e) {

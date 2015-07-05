@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StopVmParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute(forceCompensation=true)
@@ -51,7 +51,7 @@ public class StopVmCommand<T extends StopVmParameters> extends StopVmCommandBase
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__STOP);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__STOP);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
     }
 }

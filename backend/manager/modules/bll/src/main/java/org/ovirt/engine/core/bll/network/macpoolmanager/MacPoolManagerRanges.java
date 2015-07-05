@@ -7,8 +7,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.lang.math.LongRange;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.MacAddressRangeUtils;
@@ -67,7 +67,7 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
         if (macsStorage.availableMacExist()) {
             return macsStorage;
         } else {
-            throw new VdcBLLException(VdcBllErrors.MAC_POOL_INITIALIZATION_FAILED);
+            throw new EngineException(EngineError.MAC_POOL_INITIALIZATION_FAILED);
         }
     }
 
@@ -164,7 +164,7 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
 
     private void checkIfInitialized() {
         if (!initialized) {
-            throw new VdcBLLException(VdcBllErrors.MAC_POOL_NOT_INITIALIZED);
+            throw new EngineException(EngineError.MAC_POOL_NOT_INITIALIZED);
         }
 
     }

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -44,11 +44,11 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
     @Override
     protected boolean canDoAction() {
         if (getProvider() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST);
         }
         ProviderProxy providerProxy = getProviderProxy();
         if (providerProxy == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NOT_SUPPORTED,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NOT_SUPPORTED,
                     String.format("$providerType %1$s", getProvider().getType()));
         }
         ProviderValidator validator = getProviderProxy().getProviderValidator();
@@ -78,8 +78,8 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__PROVIDER);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__PROVIDER);
     }
 
     @Override

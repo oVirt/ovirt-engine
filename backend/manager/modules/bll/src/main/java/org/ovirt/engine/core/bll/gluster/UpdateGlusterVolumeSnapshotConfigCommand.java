@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterVolumeSnapshotConfigParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -42,8 +42,8 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT_CONFIG);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__VOLUME_SNAPSHOT_CONFIG_UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT_CONFIG);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__VOLUME_SNAPSHOT_CONFIG_UPDATE);
     }
 
     @Override
@@ -53,23 +53,23 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
         }
 
         if (getParameters().getClusterId() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
             return false;
         }
 
         if (!getGlusterUtil().isGlusterSnapshotSupported(getVdsGroup().getCompatibilityVersion(), getVdsGroup().getId())) {
-            failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
+            failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
         }
 
         if (getParameters().getConfigParams() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAMS_IS_EMPTY);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAMS_IS_EMPTY);
             return false;
         }
 
         for (GlusterVolumeSnapshotConfig param : getParameters().getConfigParams()) {
             if (StringUtils.isEmpty(param.getParamValue())) {
                 addCustomValue("snapshotConfigParam", param.getParamName());
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAM_VALUE_IS_EMPTY);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAM_VALUE_IS_EMPTY);
                 return false;
             }
         }
@@ -169,7 +169,7 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
         if (!isInternalExecution()) {
             return Collections.singletonMap(clusterId.toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_SNAPSHOT,
-                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return null;
     }

@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.AuditLogDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,7 +55,7 @@ public class RemoveAuditLogByIdCommandTest {
                 spy(new RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters>(new RemoveAuditLogByIdParameters(EVENT_ID_1)));
         prepareMocks(command);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
+                EngineMessage.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
     }
 
     @Test

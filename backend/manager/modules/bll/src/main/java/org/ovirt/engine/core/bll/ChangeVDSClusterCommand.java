@@ -34,9 +34,9 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -85,30 +85,30 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     protected boolean canDoAction() {
         VDS vds = getVds();
         if (vds == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
+            addCanDoActionMessage(EngineMessage.VDS_INVALID_SERVER_ID);
             return false;
         }
         if (!ObjectIdentityChecker.CanUpdateField(vds, "vdsGroupId", vds.getStatus())) {
-            addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
+            addCanDoActionMessage(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE);
             return false;
         }
 
         if (getTargetCluster() == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+            addCanDoActionMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
 
         targetStoragePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(getTargetCluster().getId());
         if (targetStoragePool != null && targetStoragePool.isLocal()) {
             if (!DbFacade.getInstance().getVdsStaticDao().getAllForVdsGroup(getParameters().getClusterId()).isEmpty()) {
-                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
+                addCanDoActionMessage(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
                 return false;
             }
         }
 
         if (getVdsGroup().supportsGlusterService()) {
             if (getGlusterUtils().hasBricks(getVdsId())) {
-                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                addCanDoActionMessage(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 return false;
             }
 
@@ -128,24 +128,24 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         // CPU flags are null if oVirt node cluster is changed during approve process.
         if (getTargetCluster().supportsVirtService() && !StringUtils.isEmpty(vds.getCpuFlags())) {
             if (vds.getCpuName() == null) {
-                return failCanDoAction(VdcBllMessages.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION);
+                return failCanDoAction(EngineMessage.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION);
             }
 
             if (getTargetCluster().getArchitecture() != ArchitectureType.undefined &&
                     getTargetCluster().getArchitecture() != vds.getCpuName().getArchitecture()) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_CLUSTER_DIFFERENT_ARCHITECTURES);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_CLUSTER_DIFFERENT_ARCHITECTURES);
             }
         }
 
         if (!isDetachedSourceCluster() && !isSameManagementNetwork()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED);
         }
 
         if (FeatureSupported.hostNetworkQos(getSourceCluster().getCompatibilityVersion())
                 && !FeatureSupported.hostNetworkQos(getTargetCluster().getCompatibilityVersion())) {
             for (VdsNetworkInterface iface : getHostNics()) {
                 if (iface.getQos() != null) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
                             String.format("$ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST %s",
                                     iface.getNetworkName()));
                 }
@@ -156,7 +156,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                 && !FeatureSupported.networkCustomProperties(getTargetCluster().getCompatibilityVersion())) {
             for (VdsNetworkInterface iface : getHostNics()) {
                 if (iface.hasCustomProperties()) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
                             String.format("$ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST %s",
                                     iface.getNetworkName()));
                 }
@@ -164,7 +164,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         if (!targetClusterSupportsSetupNetworks() && hostHasLabeledNics()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_LABELS_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_LABELS_NOT_SUPPORTED);
         }
 
         return true;
@@ -211,7 +211,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private void addNoUpServerMessage(VDSGroup cluster) {
         addCanDoActionMessageVariable("clusterName", cluster.getName());
-        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
     }
 
     private boolean hasUpServerInTarget(VDSGroup cluster) {
@@ -300,7 +300,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
         try {
             params = builder.buildParameters(getVdsId(), getSourceCluster().getId(), getTargetCluster().getId());
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             auditLogDirector.log(new AuditLogableBase(getVdsId()),
                     AuditLogType.CONFIGURE_NETWORK_BY_LABELS_WHEN_CHANGING_CLUSTER_FAILED);
             return;
@@ -340,8 +340,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     private boolean glusterHostRemove(Guid sourceClusterId) {
@@ -521,7 +521,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             if (NetworkUtils.isVlan(net)) {
                 VdsNetworkInterface vlan = getVlanDevice(params.getInterfaces(), nic, net);
                 if (vlan == null) {
-                    throw new VdcBLLException(VdcBllErrors.NETWORK_LABEL_CONFLICT);
+                    throw new EngineException(EngineError.NETWORK_LABEL_CONFLICT);
                 } else {
                     params.getInterfaces().remove(vlan);
                 }
@@ -559,7 +559,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         Map<String, Pair<String, String>> locks = new HashMap<>();
         locks.put(getParameters().getVdsId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;
     }
 }

@@ -35,7 +35,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -137,14 +137,14 @@ public class AddVmTemplateCommandTest {
     public void testCanDoAction() {
         doReturn(true).when(cmd).validateVmNotDuringSnapshot();
         vm.setStatus(VMStatus.Up);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
     }
 
     @Test
     // When Template by the same name already exists in the datacenter - fail.
     public void testCanDoActionDuplicateTemplateName() {
         doReturn(true).when(cmd).isVmTemlateWithSameNameExist("templateName", spId);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
     }
 
     @Test
@@ -152,7 +152,7 @@ public class AddVmTemplateCommandTest {
     public void testCanDoActionInstanceNameDuplicate() {
         cmd.getParameters().setTemplateType(VmEntityType.INSTANCE_TYPE);
         doReturn(true).when(cmd).isInstanceWithSameNameExists("templateName");
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class AddVmTemplateCommandTest {
     @Test
     public void storageSpaceNotWithinThreshold() {
         setupForStorageTests();
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(multipleSdValidator).allDomainsWithinThresholds();
         assertFalse(cmd.imagesRelatedChecks());
     }
@@ -172,7 +172,7 @@ public class AddVmTemplateCommandTest {
     @Test
     public void insufficientStorageSpace() {
         setupForStorageTests();
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
         assertFalse(cmd.imagesRelatedChecks());
     }

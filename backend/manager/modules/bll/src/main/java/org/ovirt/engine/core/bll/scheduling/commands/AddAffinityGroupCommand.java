@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,7 +15,7 @@ public class AddAffinityGroupCommand extends AffinityGroupCRUDCommand {
     @Override
     protected boolean canDoAction() {
         if (getAffinityGroupDao().getByName(getParameters().getAffinityGroup().getName()) != null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
         }
         return validateParameters();
     }
@@ -41,6 +41,6 @@ public class AddAffinityGroupCommand extends AffinityGroupCRUDCommand {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
     }
 }

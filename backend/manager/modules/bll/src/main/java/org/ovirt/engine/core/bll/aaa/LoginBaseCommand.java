@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -47,7 +47,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     protected static final Logger log = LoggerFactory.getLogger(LoginBaseCommand.class);
 
     private static final Map<Integer, AuditLogType> auditLogMap = new HashMap<>();
-    private static final Map<Integer, VdcBllMessages> vdcBllMessagesMap = new HashMap<>();
+    private static final Map<Integer, EngineMessage> engineMessagesMap = new HashMap<>();
 
     static {
         auditLogMap.put(Authn.AuthResult.CREDENTIALS_EXPIRED, AuditLogType.USER_ACCOUNT_PASSWORD_EXPIRED);
@@ -59,17 +59,17 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         auditLogMap.put(Authn.AuthResult.TIMED_OUT, AuditLogType.USER_ACCOUNT_DISABLED_OR_LOCKED);
         auditLogMap.put(Authn.AuthResult.ACCOUNT_EXPIRED, AuditLogType.USER_ACCOUNT_EXPIRED);
 
-        vdcBllMessagesMap.put(Authn.AuthResult.GENERAL_ERROR, VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
-        vdcBllMessagesMap.put(Authn.AuthResult.CREDENTIALS_INVALID,
-                VdcBllMessages.USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
-        vdcBllMessagesMap.put(Authn.AuthResult.CREDENTIALS_INCORRECT,
-                VdcBllMessages.USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
-        vdcBllMessagesMap.put(Authn.AuthResult.ACCOUNT_LOCKED, VdcBllMessages.USER_ACCOUNT_DISABLED);
-        vdcBllMessagesMap.put(Authn.AuthResult.ACCOUNT_DISABLED, VdcBllMessages.USER_ACCOUNT_DISABLED);
-        vdcBllMessagesMap.put(Authn.AuthResult.ACCOUNT_EXPIRED, VdcBllMessages.USER_ACCOUNT_EXPIRED);
+        engineMessagesMap.put(Authn.AuthResult.GENERAL_ERROR, EngineMessage.USER_FAILED_TO_AUTHENTICATE);
+        engineMessagesMap.put(Authn.AuthResult.CREDENTIALS_INVALID,
+                EngineMessage.USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
+        engineMessagesMap.put(Authn.AuthResult.CREDENTIALS_INCORRECT,
+                EngineMessage.USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
+        engineMessagesMap.put(Authn.AuthResult.ACCOUNT_LOCKED, EngineMessage.USER_ACCOUNT_DISABLED);
+        engineMessagesMap.put(Authn.AuthResult.ACCOUNT_DISABLED, EngineMessage.USER_ACCOUNT_DISABLED);
+        engineMessagesMap.put(Authn.AuthResult.ACCOUNT_EXPIRED, EngineMessage.USER_ACCOUNT_EXPIRED);
 
-        vdcBllMessagesMap.put(Authn.AuthResult.TIMED_OUT, VdcBllMessages.USER_FAILED_TO_AUTHENTICATE_TIMED_OUT);
-        vdcBllMessagesMap.put(Authn.AuthResult.CREDENTIALS_EXPIRED, VdcBllMessages.USER_PASSWORD_EXPIRED);
+        engineMessagesMap.put(Authn.AuthResult.TIMED_OUT, EngineMessage.USER_FAILED_TO_AUTHENTICATE_TIMED_OUT);
+        engineMessagesMap.put(Authn.AuthResult.CREDENTIALS_EXPIRED, EngineMessage.USER_PASSWORD_EXPIRED);
     }
 
     private String engineSessionId;
@@ -171,7 +171,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         if (profile == null) {
             log.error("Can't login because authentication profile '{}' doesn't exist.",
                     getParameters().getProfileName());
-            addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
+            addCanDoActionMessage(EngineMessage.USER_FAILED_TO_AUTHENTICATE);
             return false;
         }
 
@@ -191,7 +191,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             loginName = getParameters().getLoginName();
             if (loginName == null) {
                 log.error("Can't login user because no login name has been provided.");
-                addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
+                addCanDoActionMessage(EngineMessage.USER_FAILED_TO_AUTHENTICATE);
                 return false;
             }
             String password = getParameters().getPassword();
@@ -205,7 +205,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                                 + " authentication.",
                         loginName,
                         profile.getName());
-                addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
+                addCanDoActionMessage(EngineMessage.USER_FAILED_TO_AUTHENTICATE);
                 return false;
             }
             DbUser curUser = null;
@@ -259,7 +259,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                             + " directory.",
                     authRecord.<String> get(Authn.AuthRecord.PRINCIPAL),
                     profile.getName());
-            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
+            addCanDoActionMessage(EngineMessage.USER_MUST_EXIST_IN_DIRECTORY);
             AcctUtils.reportRecords(
                     Acct.ReportReason.PRINCIPAL_NOT_FOUND,
                     profile.getAuthzName(),
@@ -297,7 +297,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                     "The user %1$s is not authorized to perform login",
                     dbUser.getLoginName()
                     );
-            addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            addCanDoActionMessage(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
             return false;
         }
 
@@ -415,25 +415,25 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 boolean addedUserPasswordExpiredCDA = false;
                 if (outputMap.<String> get(Authn.InvokeKeys.CREDENTIALS_CHANGE_URL) != null
                         && !outputMap.<String> get(Authn.InvokeKeys.CREDENTIALS_CHANGE_URL).trim().isEmpty()) {
-                    addCanDoActionMessage(VdcBllMessages.USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED);
+                    addCanDoActionMessage(EngineMessage.USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED);
                     addCanDoActionMessageVariable("URL",
                             outputMap.<String>get(Authn.InvokeKeys.CREDENTIALS_CHANGE_URL));
                     addedUserPasswordExpiredCDA = true;
                 }
                 if (outputMap.<String> get(Authn.InvokeKeys.USER_MESSAGE) != null
                         && !outputMap.<String> get(Authn.InvokeKeys.USER_MESSAGE).trim().isEmpty()) {
-                    addCanDoActionMessage(VdcBllMessages.USER_PASSWORD_EXPIRED_CHANGE_MSG_PROVIDED);
+                    addCanDoActionMessage(EngineMessage.USER_PASSWORD_EXPIRED_CHANGE_MSG_PROVIDED);
                     addCanDoActionMessageVariable("MSG",
                             outputMap.<String>get(Authn.InvokeKeys.USER_MESSAGE));
                     addedUserPasswordExpiredCDA = true;
                 }
                 if (!addedUserPasswordExpiredCDA) {
-                    addCanDoActionMessage(VdcBllMessages.USER_PASSWORD_EXPIRED);
+                    addCanDoActionMessage(EngineMessage.USER_PASSWORD_EXPIRED);
                 }
             } else {
-                VdcBllMessages msg = vdcBllMessagesMap.get(authResult);
+                EngineMessage msg = engineMessagesMap.get(authResult);
                 if (msg == null) {
-                    msg = VdcBllMessages.USER_FAILED_TO_AUTHENTICATE;
+                    msg = EngineMessage.USER_FAILED_TO_AUTHENTICATE;
                 }
                 addCanDoActionMessage(msg);
             }

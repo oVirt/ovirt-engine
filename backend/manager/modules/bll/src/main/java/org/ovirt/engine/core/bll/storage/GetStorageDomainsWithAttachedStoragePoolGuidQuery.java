@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -122,7 +122,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
     }
 
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
-            throws VdcBLLException {
+            throws EngineException {
         return getVdsBroker().RunVdsCommand(commandType, parameters);
     }
 

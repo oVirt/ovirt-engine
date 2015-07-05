@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -54,7 +54,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTest {
         mockOsRepository();
         initCommand();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         mockGetAllSnapshots();
@@ -68,7 +68,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTest {
     public void validateSpaceNotWithinThreshold() throws Exception {
         mockOsRepository();
         initCommand();
-        doReturn((new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN))).
+        doReturn((new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN))).
                 when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         assertFalse(command.validateSpaceRequirements());

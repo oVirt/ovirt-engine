@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -100,7 +100,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
         if (StringUtils.isEmpty(connection.getconnection())) {
             String fieldName = getFieldName(connection);
             addCanDoActionMessageVariable("fieldName", fieldName);
-            addCanDoActionMessage(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
+            addCanDoActionMessage(EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
             return true;
         }
         return false;

@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotVDSParameters;
@@ -195,7 +195,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         } catch (Exception e) {
             log.error("Exception ocuured while adding/updating snapshots from CLI - '{}'", e.getMessage());
             log.debug("Exception", e);
-            throw new VdcBLLException(VdcBllErrors.GlusterSnapshotInfoFailedException, e.getLocalizedMessage());
+            throw new EngineException(EngineError.GlusterSnapshotInfoFailedException, e.getLocalizedMessage());
         }
     }
 
@@ -211,7 +211,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             log.error("Exception ocuured while adding/updating snapshots configurations from CLI - '{}'",
                     e.getMessage());
             log.debug("Exception", e);
-            throw new VdcBLLException(VdcBllErrors.GlusterSnapshotInfoFailedException, e.getLocalizedMessage());
+            throw new EngineException(EngineError.GlusterSnapshotInfoFailedException, e.getLocalizedMessage());
         }
 
         Map<String, Map<String, String>> volumeConfigs = configInfo.getVolumeConfigOptions();
@@ -237,7 +237,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
                 log.error("Exception ocuured while adding/updating snapshots configurations from CLI - '{}'",
                         e.getMessage());
                 log.debug("Exception", e);
-                throw new VdcBLLException(VdcBllErrors.GlusterSnapshotInfoFailedException, e.getLocalizedMessage());
+                throw new EngineException(EngineError.GlusterSnapshotInfoFailedException, e.getLocalizedMessage());
             }
         }
     }

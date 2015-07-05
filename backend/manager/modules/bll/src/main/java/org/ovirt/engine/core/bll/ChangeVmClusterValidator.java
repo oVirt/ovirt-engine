@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -32,18 +32,18 @@ public class ChangeVmClusterValidator {
     protected boolean validate() {
         VM vm = parentCommand.getVm();
         if (vm == null) {
-            parentCommand.addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            parentCommand.addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         } else {
             targetCluster = DbFacade.getInstance().getVdsGroupDao().get(targetClusterId);
             if (targetCluster == null) {
-                parentCommand.addCanDoActionMessage(VdcBllMessages.VM_CLUSTER_IS_NOT_VALID);
+                parentCommand.addCanDoActionMessage(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
                 return false;
             }
 
             // Check that the target cluster is in the same data center.
             if (!targetCluster.getStoragePoolId().equals(vm.getStoragePoolId())) {
-                parentCommand.addCanDoActionMessage(VdcBllMessages.VM_CANNOT_MOVE_TO_CLUSTER_IN_OTHER_STORAGE_POOL);
+                parentCommand.addCanDoActionMessage(EngineMessage.VM_CANNOT_MOVE_TO_CLUSTER_IN_OTHER_STORAGE_POOL);
                 return false;
             }
 
@@ -82,7 +82,7 @@ public class ChangeVmClusterValidator {
             if (VmDeviceUtils.hasVirtioScsiController(vm.getId())) {
                 // Verify cluster compatibility
                 if (!FeatureSupported.virtIoScsi(targetCluster.getCompatibilityVersion())) {
-                    return parentCommand.failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                    return parentCommand.failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
                 }
 
                 // Verify OS compatibility
@@ -94,9 +94,9 @@ public class ChangeVmClusterValidator {
 
             // A existing VM cannot be changed into a cluster without a defined architecture
             if (targetCluster.getArchitecture() == ArchitectureType.undefined) {
-                return parentCommand.failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+                return parentCommand.failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
             } else if (targetCluster.getArchitecture() != vm.getClusterArch()) {
-                return parentCommand.failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CLUSTER_DIFFERENT_ARCHITECTURES);
+                return parentCommand.failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_CLUSTER_DIFFERENT_ARCHITECTURES);
             }
         }
         return true;
@@ -132,7 +132,7 @@ public class ChangeVmClusterValidator {
             }
         }
         if (missingNets.length() > 0) {
-            parentCommand.addCanDoActionMessage(VdcBllMessages.MOVE_VM_CLUSTER_MISSING_NETWORK);
+            parentCommand.addCanDoActionMessage(EngineMessage.MOVE_VM_CLUSTER_MISSING_NETWORK);
             parentCommand.addCanDoActionMessageVariable("networks", missingNets.toString());
             return false;
         }

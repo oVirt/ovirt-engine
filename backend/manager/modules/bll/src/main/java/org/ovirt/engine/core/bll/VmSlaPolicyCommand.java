@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmPolicyVDSParams;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -32,14 +32,14 @@ public class VmSlaPolicyCommand<T extends VmSlaPolicyParameters> extends VmManag
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
         if (getVm().getStatus() != VMStatus.Up) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
                     LocalizedVmStatus.from(getVm().getStatus()));
         }
         if (!FeatureSupported.vmSlaPolicy(getVm().getVdsGroupCompatibilityVersion())) {
-            return failCanDoAction(VdcBllMessages.VM_SLA_POLICY_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.VM_SLA_POLICY_NOT_SUPPORTED);
         }
 
         return true;
@@ -66,7 +66,7 @@ public class VmSlaPolicyCommand<T extends VmSlaPolicyParameters> extends VmManag
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE_SLA_POLICY);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE_SLA_POLICY);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
     }
 }

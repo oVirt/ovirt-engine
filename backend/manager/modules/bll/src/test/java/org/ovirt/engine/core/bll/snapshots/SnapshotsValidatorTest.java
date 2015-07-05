@@ -15,7 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
@@ -46,7 +46,7 @@ public class SnapshotsValidatorTest {
     public void vmNotDuringSnapshotReturnsInvalidResultWhenInSnapshot() throws Exception {
         when(snapshotDao.exists(vmId, SnapshotStatus.LOCKED)).thenReturn(true);
         validateInvalidResult(validator.vmNotDuringSnapshot(vmId),
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
+                EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class SnapshotsValidatorTest {
     public void vmNotInPreviewReturnsInvalidResultWhenInSnapshot() throws Exception {
         when(snapshotDao.exists(vmId, SnapshotStatus.IN_PREVIEW)).thenReturn(true);
         validateInvalidResult(validator.vmNotInPreview(vmId),
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+                EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class SnapshotsValidatorTest {
     public void snapshotExistsByGuidReturnsInvalidResultWhenNoSnapshot() throws Exception {
         when(snapshotDao.exists(vmId, snapshot.getId())).thenReturn(false);
         validateInvalidResult(validator.snapshotExists(vmId, snapshot.getId()),
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+                EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 
     @Test
@@ -90,13 +90,13 @@ public class SnapshotsValidatorTest {
     public void snapshotTypeNotSupported() throws Exception {
         validateInvalidResult(validator.snapshotTypeSupported(snapshot,
                 Collections.singletonList(Snapshot.SnapshotType.ACTIVE)),
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_ALLOWED);
+                EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_ALLOWED);
     }
 
     @Test
     public void snapshotExistsBySnapshotReturnsInvalidResultWhenNoSnapshot() throws Exception {
         validateInvalidResult(validator.snapshotExists(null),
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+                EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 
     @Test
@@ -122,7 +122,7 @@ public class SnapshotsValidatorTest {
      * @param message
      *            The error to expect.
      */
-    private static void validateInvalidResult(ValidationResult validationResult, VdcBllMessages message) {
+    private static void validateInvalidResult(ValidationResult validationResult, EngineMessage message) {
         validateResult(validationResult, false, message);
     }
 
@@ -136,7 +136,7 @@ public class SnapshotsValidatorTest {
      * @param message
      *            The error to expect.
      */
-    private static void validateResult(ValidationResult validationResult, boolean isValid, VdcBllMessages message) {
+    private static void validateResult(ValidationResult validationResult, boolean isValid, EngineMessage message) {
         assertEquals(isValid, validationResult.isValid());
         assertEquals(message, validationResult.getMessage());
     }

@@ -5,7 +5,7 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class EmulatedMachineFilterPolicyUnit extends PolicyUnitImpl {
                             supportedEmulatedMachines);
                     messages.addMessage(host.getId(), String.format("$vmEmulatedMachine %1$s", requiredEmulatedMachine));
                     messages.addMessage(host.getId(), String.format("$hostEmulatedMachines %1$s", supportedEmulatedMachines));
-                    messages.addMessage(host.getId(), VdcBllMessages.VAR__DETAIL__UNSUPPORTED_EMULATED_MACHINE.toString());
+                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__UNSUPPORTED_EMULATED_MACHINE.toString());
                 }
             }
         }

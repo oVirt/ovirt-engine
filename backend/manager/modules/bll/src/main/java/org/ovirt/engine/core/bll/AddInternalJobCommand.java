@@ -8,7 +8,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddInternalJobParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 /**
  *
@@ -32,7 +32,7 @@ public class AddInternalJobCommand<T extends AddInternalJobParameters> extends A
 
         boolean retValue = super.canDoAction();
         if (getParameters().getActionType() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_EMPTY_ACTION_TYPE);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_EMPTY_ACTION_TYPE);
             retValue = false;
         }
         return retValue;

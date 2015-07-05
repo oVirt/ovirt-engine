@@ -29,7 +29,7 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidat
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -71,7 +71,7 @@ public class MoveOrCopyTemplateCommandTest {
         assertFalse(cmd.checkIfDisksExist(createImageList()));
         // verify that call to VDSM is executed only once because the first disk is found on the target storage domain.
         verify(cmd, times(1)).runVdsCommand(any(VDSCommandType.class), any(GetImagesListVDSCommandParameters.class));
-        verify(cmd, times(1)).addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
+        verify(cmd, times(1)).addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class MoveOrCopyTemplateCommandTest {
         MoveOrCopyTemplateCommand cmd = createCommand(params, returnValue);
 
         assertFalse(cmd.checkIfDisksExist(createImageList()));
-        verify(cmd, times(1)).addCanDoActionMessage(VdcBllMessages.ERROR_GET_IMAGE_LIST);
+        verify(cmd, times(1)).addCanDoActionMessage(EngineMessage.ERROR_GET_IMAGE_LIST);
         verify(cmd, times(1)).addCanDoActionMessageVariable("sdName", "SD");
         verify(cmd, times(1)).runVdsCommand(any(VDSCommandType.class), any(GetImagesListVDSCommandParameters.class));
     }
@@ -128,7 +128,7 @@ public class MoveOrCopyTemplateCommandTest {
         MoveOrCopyParameters parameters = createParameters(false);
         parameters.setCopyCollapse(true);
         final MoveOrCopyTemplateCommand<MoveOrCopyParameters> command = setupSpaceTests(parameters);
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(multipleSdValidator).allDomainsWithinThresholds();
         assertFalse(command.validateSpaceRequirements(anyList()));
         verify(multipleSdValidator, never()).allDomainsHaveSpaceForClonedDisks(anyList());
@@ -141,7 +141,7 @@ public class MoveOrCopyTemplateCommandTest {
         MoveOrCopyParameters parameters = createParameters(false);
         parameters.setCopyCollapse(true);
         final MoveOrCopyTemplateCommand<MoveOrCopyParameters> command = setupSpaceTests(parameters);
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
         assertFalse(command.validateSpaceRequirements(anyList()));
         verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
@@ -154,7 +154,7 @@ public class MoveOrCopyTemplateCommandTest {
         MoveOrCopyParameters parameters = createParameters(false);
         final MoveOrCopyTemplateCommand<MoveOrCopyParameters> command = setupSpaceTests(parameters);
         parameters.setCopyCollapse(false);
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
         assertFalse(command.validateSpaceRequirements(anyList()));
         verify(multipleSdValidator, never()).allDomainsHaveSpaceForClonedDisks(anyList());

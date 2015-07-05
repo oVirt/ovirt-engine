@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
@@ -141,8 +141,8 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             retVal = runVdsCommand(VDSCommandType.EditNetwork, parameters);
             editNetworkDone = true;
         } catch (RuntimeException e) {
-            if (e instanceof VdcBLLException) {
-                getReturnValue().setFault(new VdcFault(e, ((VdcBLLException) e).getVdsError().getCode()));
+            if (e instanceof EngineException) {
+                getReturnValue().setFault(new VdcFault(e, ((EngineException) e).getVdsError().getCode()));
             }
         } catch (Exception e) {
         } finally {
@@ -176,7 +176,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                 }
             });
             if (iface == null) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
+                addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_NOT_EXISTS);
                 return false;
             }
             ifaceGateway = iface.getGateway();
@@ -184,7 +184,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         // check that the old network name is not null
         if (StringUtils.isEmpty(getParameters().getOldNetworkName())) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_OLD_NETWORK_NOT_SPECIFIED);
+            addCanDoActionMessage(EngineMessage.NETWORK_OLD_NETWORK_NOT_SPECIFIED);
             return false;
         }
 
@@ -201,7 +201,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                 }
             });
             if (iface != null) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_HOST_IS_BUSY);
+                addCanDoActionMessage(EngineMessage.NETWORK_HOST_IS_BUSY);
                 return false;
             }
         }
@@ -217,7 +217,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             }
         });
         if (ifacenet == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
+            addCanDoActionMessage(EngineMessage.NETWORK_NOT_EXISTS);
             return false;
         }
 
@@ -225,7 +225,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         if (!managementNetworkUtil.isManagementNetwork(getParameters().getNetwork().getName(), clusterId)) {
             if (managementNetworkUtil.isManagementNetwork(getParameters().getOldNetworkName(), clusterId)) {
                 getReturnValue().getCanDoActionMessages()
-                        .add(VdcBllMessages.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
+                        .add(EngineMessage.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
                 getReturnValue().getCanDoActionMessages()
                         .add(String.format("$NetworkName %1$s", getParameters().getOldNetworkName()));
                 return false;
@@ -233,7 +233,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
             if (StringUtils.isNotEmpty(getParameters().getGateway())) {
                 if (!getParameters().getGateway().equals(ifaceGateway)) {
-                    addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
+                    addCanDoActionMessage(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY);
                     return false;
                 }
                 // if the gateway didn't change we don't want the vdsm to set it.
@@ -244,7 +244,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
             // check connectivity
             if (getParameters().getCheckConnectivity()) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_CHECK_CONNECTIVITY);
+                addCanDoActionMessage(EngineMessage.NETWORK_CHECK_CONNECTIVITY);
                 return false;
             }
         }
@@ -252,14 +252,14 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         // check address exists in static ip
         if (getParameters().getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
             if (StringUtils.isEmpty(getParameters().getAddress())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
+                addCanDoActionMessage(EngineMessage.NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;
             }
         }
 
         Network network = getNetworkDao().getByNameAndCluster(getNetworkName(), vds.getVdsGroupId());
         if (network != null && network.isExternal()) {
-            return failCanDoAction(VdcBllMessages.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
+            return failCanDoAction(EngineMessage.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
         }
 
         return true;

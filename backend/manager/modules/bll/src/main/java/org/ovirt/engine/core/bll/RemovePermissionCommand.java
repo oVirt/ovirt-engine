@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemovePermissionCommand<T extends PermissionsOperationsParameters> extends PermissionsCommandBase<T> {
@@ -33,8 +33,8 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__PERMISSION);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__PERMISSION);
     }
 
     @Override
@@ -43,14 +43,14 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
         Permission p = getPermissionDao().get(getParameters().getPermission().getId());
         if (p.getAdElementId().equals(PredefinedUsers.ADMIN_USER.getId()) &&
                 (p.getRoleId().equals(PredefinedRoles.SUPER_USER.getId()))) {
-            addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_ADMIN_USER);
+            addCanDoActionMessage(EngineMessage.USER_CANNOT_REMOVE_ADMIN_USER);
             returnValue = false;
         } else if (MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getRoleId())) {
             getReturnValue().getCanDoActionMessages()
-                    .add(VdcBllMessages.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString());
+                    .add(EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString());
             returnValue = false;
         } else if (p.getRoleType().equals(RoleType.ADMIN) && !isSystemSuperUser()) {
-            addCanDoActionMessage(VdcBllMessages.PERMISSION_REMOVE_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_REMOVE_ADMIN_ROLES);
+            addCanDoActionMessage(EngineMessage.PERMISSION_REMOVE_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_REMOVE_ADMIN_ROLES);
             returnValue = false;
         }
         return returnValue;

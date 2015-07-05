@@ -18,9 +18,9 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
@@ -51,21 +51,21 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__INTERFACE);
     }
 
     protected boolean addMacToPool(String macAddress) {
         if (getMacPool().addMac(macAddress)) {
             return true;
         } else {
-            throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
+            throw new EngineException(EngineError.MAC_ADDRESS_IS_IN_USE);
         }
     }
 
     protected ValidationResult macAvailable() {
         Boolean allowDupMacs = Config.<Boolean> getValue(ConfigValues.AllowDuplicateMacAddresses);
         return getMacPool().isMacInUse(getMacAddress()) && !allowDupMacs
-                ? new ValidationResult(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE)
+                ? new ValidationResult(EngineMessage.NETWORK_MAC_ADDRESS_IN_USE)
                 : ValidationResult.VALID;
     }
 
@@ -89,7 +89,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
 
     protected ValidationResult vmTemplateEmpty() {
         return getInterface().getVmTemplateId() != null
-                ? new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_TEMPLATE_CANNOT_BE_SET)
+                ? new ValidationResult(EngineMessage.NETWORK_INTERFACE_TEMPLATE_CANNOT_BE_SET)
                 : ValidationResult.VALID;
     }
 
@@ -113,7 +113,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     protected ValidationResult vmStatusLegal(VMStatus status) {
         return status == VMStatus.Up || status == VMStatus.Down || status == VMStatus.ImageLocked
                 ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.NETWORK_CANNOT_ADD_INTERFACE_WHEN_VM_STATUS_NOT_UP_DOWN_LOCKED);
+                : new ValidationResult(EngineMessage.NETWORK_CANNOT_ADD_INTERFACE_WHEN_VM_STATUS_NOT_UP_DOWN_LOCKED);
     }
 
     protected String getMacAddress() {

@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
@@ -54,7 +54,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         }
 
         if (!FeatureSupported.refreshLunSupported(getStoragePool().getCompatibilityVersion())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION);
         }
 
         if (!(checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active))) {
@@ -62,11 +62,11 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         }
 
         if (!getStorageDomain().getStorageType().isBlockDomain()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
         if (!checkLunsInStorageDomain(getParameters().getLunIds(), getStorageDomain())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_LUNS_NOT_PART_OF_STORAGE_DOMAIN);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_LUNS_NOT_PART_OF_STORAGE_DOMAIN);
         }
 
         return true;
@@ -110,7 +110,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
                 failedVds.add("LUN : " + lunId + "VDS: " + vdsListString);
             }
 
-            throw new VdcBLLException(VdcBllErrors.REFRESH_LUN_ERROR,
+            throw new EngineException(EngineError.REFRESH_LUN_ERROR,
                     "Failed to refresh LUNs. Not all VDS are seeing the same size: " + failedVds);
         }
 
@@ -219,6 +219,6 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 }

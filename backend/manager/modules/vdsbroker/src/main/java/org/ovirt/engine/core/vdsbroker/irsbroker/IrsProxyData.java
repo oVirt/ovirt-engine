@@ -39,8 +39,8 @@ import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
@@ -179,7 +179,7 @@ public class IrsProxyData {
         return Injector.get(SchedulerUtilQuartzImpl.class);
     }
 
-    private void updateStoragePoolStatus(Guid poolId, StoragePoolStatus status, AuditLogType auditLogType, VdcBllErrors error) {
+    private void updateStoragePoolStatus(Guid poolId, StoragePoolStatus status, AuditLogType auditLogType, EngineError error) {
         ResourceManager
                 .getInstance()
                 .getEventListener()
@@ -211,7 +211,7 @@ public class IrsProxyData {
                             if (poolStatusDeterminedByHostsStatus && storagePool.getStatus() != StoragePoolStatus.NonResponsive) {
                                 updateStoragePoolStatus(storagePool.getId(), StoragePoolStatus.NonResponsive,
                                         AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NON_RESPONSIVE_NO_REPORTING_HOSTS,
-                                        VdcBllErrors.ENGINE);
+                                        EngineError.ENGINE);
                             }
                         }  else if (poolStatusDeterminedByHostsStatus && storagePool.getStatus() != StoragePoolStatus.Up) {
                                 updateStoragePoolStatus(storagePool.getId(), StoragePoolStatus.Up,
@@ -282,7 +282,7 @@ public class IrsProxyData {
                 } else {
                     updateStoragePoolStatus(_storagePoolId, StoragePoolStatus.NonResponsive,
                                     AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC,
-                                    VdcBllErrors.ENGINE);
+                                    EngineError.ENGINE);
                 }
             }
 
@@ -495,7 +495,7 @@ public class IrsProxyData {
                     }
                 }
 
-                Set<VdcBllErrors> alerts = data.getAlerts();
+                Set<EngineError> alerts = data.getAlerts();
                 if (alerts != null && !alerts.isEmpty()) {
 
                     AuditLogableBase logable = new AuditLogableBase();
@@ -503,7 +503,7 @@ public class IrsProxyData {
                     data.setStorageName(domainFromDb.getStorageName());
                     logable.setStoragePoolId(_storagePoolId);
 
-                    for (VdcBllErrors alert : alerts) {
+                    for (EngineError alert : alerts) {
                         switch (alert) {
                         case VG_METADATA_CRITICALLY_FULL:
                             new AuditLogDirector().log(logable, AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL);
@@ -701,7 +701,7 @@ public class IrsProxyData {
                         .getEventListener()
                         .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.NonResponsive,
                                 AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_SEARCHING_NEW_SPM,
-                                VdcBllErrors.ENGINE, TransactionScopeOption.RequiresNew);
+                                EngineError.ENGINE, TransactionScopeOption.RequiresNew);
             } catch (RuntimeException ex) {
                 throw new IRSStoragePoolStatusException(ex);
             }
@@ -891,7 +891,7 @@ public class IrsProxyData {
 
     private void movePoolToProblematicInDB(StoragePool storagePool) {
         updateStoragePoolStatus(storagePool.getId(), StoragePoolStatus.NonResponsive,
-                        AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC, VdcBllErrors.ENGINE);
+                        AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC, EngineError.ENGINE);
 
         storagePool.setSpmVdsId(null);
         DbFacade.getInstance().getStoragePoolDao().update(storagePool);
@@ -1058,7 +1058,7 @@ public class IrsProxyData {
                             .storagePoolStatusChange(storagePool.getId(),
                                     StoragePoolStatus.NonResponsive,
                                     AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC,
-                                    VdcBllErrors.ENGINE,
+                                    EngineError.ENGINE,
                                     TransactionScopeOption.RequiresNew);
                     if (spmStatus != null) {
                         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
@@ -1303,8 +1303,8 @@ public class IrsProxyData {
                         tempData.getCode());
             }
 
-            if (tempData.getCode() == VdcBllErrors.StorageDomainDoesNotExist.getValue()
-                    || tempData.getCode() == VdcBllErrors.StorageException.getValue()) {
+            if (tempData.getCode() == EngineError.StorageDomainDoesNotExist.getValue()
+                    || tempData.getCode() == EngineError.StorageException.getValue()) {
                 return DomainMonitoringResult.STORAGE_ACCCESS_ERROR;
             }
 
@@ -1510,7 +1510,7 @@ public class IrsProxyData {
                 vdsHandeledReportsOnUnseenDomains.put(vdsId, currentReportId);
                 Map<String, Pair<String, String>> lockMap = Collections.singletonMap(vdsId.toString(),
                         new Pair<>(LockingGroup.VDS_POOL_AND_STORAGE_CONNECTIONS.toString(),
-                                VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString()));
+                                EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString()));
                 EngineLock engineLock = new EngineLock(lockMap, null);
                 if (!LockManagerFactory.getLockManager()
                         .acquireLock(engineLock)

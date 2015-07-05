@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -67,7 +67,7 @@ public class DiskProfileHelper {
                         diskProfilesList,
                         permittedDiskProfilesIds,
                         user)) {
-                    return new ValidationResult(VdcBllMessages.USER_NOT_AUTHORIZED_TO_ATTACH_DISK_PROFILE);
+                    return new ValidationResult(EngineMessage.USER_NOT_AUTHORIZED_TO_ATTACH_DISK_PROFILE);
                 }
             } else {
                 DiskProfile diskProfile = getDiskProfileDao().get(diskImage.getDiskProfileId());
@@ -77,7 +77,7 @@ public class DiskProfileHelper {
                     return result;
                 }
                 if (!isDiskProfilePermitted(diskProfile, permittedDiskProfilesIds, user)) {
-                    return new ValidationResult(VdcBllMessages.USER_NOT_AUTHORIZED_TO_ATTACH_DISK_PROFILE);
+                    return new ValidationResult(EngineMessage.USER_NOT_AUTHORIZED_TO_ATTACH_DISK_PROFILE);
                 }
             }
         }

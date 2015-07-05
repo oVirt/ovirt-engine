@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -16,7 +16,7 @@ public class DetachTemplateFromTagCommand<T extends AttachEntityToTagParameters>
     @Override
     protected boolean canDoAction() {
         if (getTagId() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TAG_ID_REQUIRED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TAG_ID_REQUIRED);
         }
         return true;
     }

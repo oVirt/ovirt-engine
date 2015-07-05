@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
 
 public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParameters, CpuProfile, CpuProfileValidator> {
@@ -39,7 +39,7 @@ public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParame
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__CPU_PROFILE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__CPU_PROFILE);
     }
 
     @Override

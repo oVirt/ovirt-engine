@@ -12,7 +12,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 /**
  * Useful matchers to use when testing {@link ValidationResult}s, using the
@@ -28,20 +28,20 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
  *
  *
  * * To check that <i>validationMethod()</i> <b>fails</b> with an error message
- * <i>VdcBllMessages.EXPECTED_ERROR_MESSAGE</i> (no check for replacements will be done):
+ * <i>EngineMessage.EXPECTED_ERROR_MESSAGE</i> (no check for replacements will be done):
  *
  * <pre>
- * assertThat(<i>validationMethod()</i>, <b>failsWith</b>(<i>VdcBllMessages.EXPECTED_ERROR_MESSAGE</i>));
+ * assertThat(<i>validationMethod()</i>, <b>failsWith</b>(<i>EngineMessage.EXPECTED_ERROR_MESSAGE</i>));
  * </pre>
  *
  * * To check that <i>validationMethod()</i> <b>fails</b> with an error message
- * <i>VdcBllMessages.EXPECTED_ERROR_MESSAGE</i> and the <b>replacements</b> contain a string
+ * <i>EngineMessage.EXPECTED_ERROR_MESSAGE</i> and the <b>replacements</b> contain a string
  * <i>REPLACEMENT_CONSTANT</i>:
  *
  * <pre>
  * assertThat(<i>validationMethod()</i>,
  *         both(<b>replacements</b>(hasItem(containsString(<i>REPLACEMENT_CONSTANT</i>))))
- *                 .and(<b>failsWith</b>(<i>VdcBllMessages.EXPECTED_ERROR_MESSAGE</i>)));
+ *                 .and(<b>failsWith</b>(<i>EngineMessage.EXPECTED_ERROR_MESSAGE</i>)));
  * </pre>
  *
  * @see org.junit.Assert#assertThat(Object, Matcher)
@@ -65,15 +65,15 @@ public class ValidationResultMatchers {
      *            The error message expected in {@link ValidationResult#getMessage()}
      * @return A matcher matching any {@link ValidationResult} that is not valid and fails with the given error.
      */
-    public static Matcher<ValidationResult> failsWith(VdcBllMessages expectedError) {
+    public static Matcher<ValidationResult> failsWith(EngineMessage expectedError) {
         return new Fails(expectedError);
     }
 
-    public static Matcher<ValidationResult> failsWith(VdcBllMessages expectedError, String... variableReplacements) {
+    public static Matcher<ValidationResult> failsWith(EngineMessage expectedError, String... variableReplacements) {
         return new Fails(expectedError, variableReplacements);
     }
 
-    public static Matcher<ValidationResult> failsWith(VdcBllMessages expectedError,
+    public static Matcher<ValidationResult> failsWith(EngineMessage expectedError,
         Collection<String> variableReplacements) {
         return new Fails(expectedError, variableReplacements.toArray(new String[variableReplacements.size()]));
     }
@@ -106,9 +106,9 @@ public class ValidationResultMatchers {
 
     private static class WithMessage extends TypeSafeMatcher<ValidationResult> {
 
-        private VdcBllMessages expected;
+        private EngineMessage expected;
 
-        public WithMessage(VdcBllMessages expected) {
+        public WithMessage(EngineMessage expected) {
             this.expected = expected;
         }
 
@@ -166,11 +166,11 @@ public class ValidationResultMatchers {
 
         private Matcher<ValidationResult> matcher;
 
-        public Fails(VdcBllMessages expected) {
+        public Fails(EngineMessage expected) {
             matcher = both(not(isValid())).and(new WithMessage(expected));
         }
 
-        public Fails(VdcBllMessages expected, String... variableReplacements) {
+        public Fails(EngineMessage expected, String... variableReplacements) {
             matcher = allOf(
                     not(isValid()),
                     new WithMessage(expected),

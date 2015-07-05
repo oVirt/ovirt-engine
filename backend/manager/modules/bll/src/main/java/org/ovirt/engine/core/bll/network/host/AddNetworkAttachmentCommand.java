@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -45,11 +45,11 @@ public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> 
 
         NetworkAttachment networkAttachment = getParameters().getNetworkAttachment();
         if (networkAttachment == null) {
-            return failCanDoAction(VdcBllMessages.NETWORK_ATTACHMENT_NOT_SPECIFIED);
+            return failCanDoAction(EngineMessage.NETWORK_ATTACHMENT_NOT_SPECIFIED);
         }
 
         if (networkAttachment.getId() != null) {
-            return failCanDoAction(VdcBllMessages.NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID);
+            return failCanDoAction(EngineMessage.NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID);
         }
 
         return true;

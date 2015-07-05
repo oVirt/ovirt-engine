@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -32,7 +32,7 @@ public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
     @Override
     public void execute() {
         if (!enclosingCommand.getReturnValue().getSucceeded()) {
-            throw new VdcBLLException(VdcBllErrors.imageErr,
+            throw new EngineException(EngineError.imageErr,
                 "Auto-generated live snapshot for VM " + enclosingCommand.getParameters().getVmId() + " failed");
         }
         TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Void>() {

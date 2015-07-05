@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -36,7 +36,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         }
 
         if (retValue && getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.Down) {
-            retValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
+            retValue = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
         }
 
         if (retValue) {
@@ -48,7 +48,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
 
             if (vmDevice == null) {
                 retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED);
             }
 
             if (retValue && vmDevice.getSnapshotId() != null) {
@@ -68,7 +68,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             // therefore for attached disk snapshot it shouldn't be checked whether it has snapshots or not.
             if (vmDevice.getSnapshotId() == null
                     && getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId()).size() > 1) {
-                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
+                return failCanDoAction(EngineMessage.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
             }
         }
         return retValue;
@@ -76,8 +76,8 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DETACH_ACTION_TO);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__DETACH_ACTION_TO);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override

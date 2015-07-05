@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusDetail;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
@@ -107,7 +107,7 @@ public class GlusterTaskUtils {
     private EngineLock getEngineLock(Guid clusterId) {
         return new EngineLock(Collections.singletonMap(clusterId.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED)), null);
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED)), null);
     }
 
     public void releaseVolumeLock(Guid taskId) {

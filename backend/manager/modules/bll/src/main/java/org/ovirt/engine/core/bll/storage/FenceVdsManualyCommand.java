@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -83,12 +83,12 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                         && getStoragePool().getStatus() != StoragePoolStatus.NonResponsive
                         && getStoragePool().getStatus() != StoragePoolStatus.Maintenance) {
                     returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
                 }
             }
         } else {
             returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_NOT_MATCH_VALID_STATUS);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VDS_NOT_MATCH_VALID_STATUS);
         }
         return returnValue;
     }
@@ -196,8 +196,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MANUAL_FENCE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__MANUAL_FENCE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
      }
 
     @Override

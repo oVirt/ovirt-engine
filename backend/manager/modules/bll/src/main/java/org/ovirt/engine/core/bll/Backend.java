@@ -50,7 +50,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
@@ -188,7 +188,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     /**
      * Initializes internal data
-     * <exception>VdcBLL.VdcBLLException
+     * <exception>EngineException
      */
     @Override
     public void initialize() {
@@ -404,7 +404,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 (dbFacade.getVdcOptionDao().getByNameAndVersion(ConfigValues.EngineMode.name(),
                         ConfigCommon.defaultConfigurationVersion)).getoption_value();
         if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
-            return getErrorCommandReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
+            return getErrorCommandReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
         }
         else if (EngineWorkingMode.PREPARE.name().equalsIgnoreCase(mode)) {
             return notAllowedInPrepForMaintMode(actionType);
@@ -432,7 +432,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // If non-monitored command is invoked with JobId or ActionId as parameters, reject this command on can do action.
         if (!actionType.isActionMonitored() && !isActionExternal(actionType) && (parameters.getJobId() != null || parameters.getStepId() != null)) {
             result = new VdcReturnValueBase();
-            result.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_NON_MONITORED.toString());
+            result.getCanDoActionMessages().add(EngineMessage.ACTION_TYPE_NON_MONITORED.toString());
             result.setCanDoAction(false);
             result.setSucceeded(false);
         }
@@ -504,7 +504,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             String sessionId = parameters.getSessionId();
             if (StringUtils.isEmpty(sessionId)
                     || SessionDataContainer.getInstance().getUser(sessionId, parameters.getRefresh()) == null) {
-                return getErrorQueryReturnValue(VdcBllMessages.USER_IS_NOT_LOGGED_IN);
+                return getErrorQueryReturnValue(EngineMessage.USER_IS_NOT_LOGGED_IN);
             }
         }
         Class<CommandBase<? extends VdcActionParametersBase>> clazz =
@@ -513,7 +513,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             String mode = (dbFacade.getVdcOptionDao().getByNameAndVersion
                     (ConfigValues.EngineMode.name(), ConfigCommon.defaultConfigurationVersion)).getoption_value();
             if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
-                return getErrorQueryReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
+                return getErrorQueryReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
             }
         }
         QueriesCommandBase<?> command = createQueryCommand(actionType, parameters, engineContext);
@@ -602,7 +602,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             CommandBase<?> command = CommandsFactory.createCommand(parameters.getActionType(), parameters);
             return command.executeAction();
         default:
-            return getErrorCommandReturnValue(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            return getErrorCommandReturnValue(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
         }
     }
 
@@ -640,7 +640,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             break;
         }
 
-        return getErrorQueryReturnValue(VdcBllMessages.USER_CANNOT_RUN_QUERY_NOT_PUBLIC);
+        return getErrorQueryReturnValue(EngineMessage.USER_CANNOT_RUN_QUERY_NOT_PUBLIC);
     }
 
     @Override
@@ -651,7 +651,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return runActionImpl(actionType, parameters, true, context);
     }
 
-    private VdcReturnValueBase getErrorCommandReturnValue(VdcBllMessages message) {
+    private VdcReturnValueBase getErrorCommandReturnValue(EngineMessage message) {
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setCanDoAction(false);
         returnValue.getCanDoActionMessages().add(message.toString());
@@ -662,12 +662,12 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         Class<CommandBase<? extends VdcActionParametersBase>> clazz =
                 CommandsFactory.getCommandClass(action.name());
         if (clazz.isAnnotationPresent(DisableInPrepareMode.class)) {
-            return getErrorCommandReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_PREPARE_MODE);
+            return getErrorCommandReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_PREPARE_MODE);
         }
         return null;
     }
 
-    private VdcQueryReturnValue getErrorQueryReturnValue(VdcBllMessages errorMessage) {
+    private VdcQueryReturnValue getErrorQueryReturnValue(EngineMessage errorMessage) {
         VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
         returnValue.setSucceeded(false);
         returnValue.setExceptionString(errorMessage.toString());

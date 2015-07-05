@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.HSMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
@@ -23,7 +23,7 @@ public class HSMGetTaskStatusVDSCommand<P extends HSMTaskGuidBaseVDSCommandParam
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case UnknownTask:
             // ignore this, the parser can handle the empty result.

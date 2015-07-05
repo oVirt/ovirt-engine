@@ -11,7 +11,7 @@ public interface MacPoolManagerStrategy {
 
     /**
      * @return free MAC from pool.
-     * @throws org.ovirt.engine.core.common.errors.VdcBLLException if mac address cannot be allocated.
+     * @throws org.ovirt.engine.core.common.errors.EngineException if mac address cannot be allocated.
      */
     String allocateNewMac();
 
@@ -55,7 +55,7 @@ public interface MacPoolManagerStrategy {
     /**
      * @param numberOfAddresses The number of MAC addresses to allocate
      * @return The list of MAC addresses, sorted in ascending order
-     * @throws org.ovirt.engine.core.common.errors.VdcBLLException if mac address cannot be allocated.
+     * @throws org.ovirt.engine.core.common.errors.EngineException if mac address cannot be allocated.
      */
     List<String> allocateMacAddresses(int numberOfAddresses);
 }

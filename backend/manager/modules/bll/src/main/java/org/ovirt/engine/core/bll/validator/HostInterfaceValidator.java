@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -23,25 +23,25 @@ public class HostInterfaceValidator {
     }
 
     public ValidationResult interfaceExists() {
-        return ValidationResult.failWith(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST).when(iface == null);
+        return ValidationResult.failWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST).when(iface == null);
     }
 
     public ValidationResult interfaceByNameExists() {
-        return ValidationResult.failWith(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST)
+        return ValidationResult.failWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST)
                 .when(iface == null || iface.getName() == null);
     }
 
     public  ValidationResult interfaceAlreadyLabeledWith(String label) {
-        return ValidationResult.failWith(VdcBllMessages.INTERFACE_ALREADY_LABELED)
+        return ValidationResult.failWith(EngineMessage.INTERFACE_ALREADY_LABELED)
                 .when(NetworkUtils.isLabeled(iface) && iface.getLabels().contains(label));
     }
 
     public ValidationResult interfaceInHost(Guid hostId) {
-        return ValidationResult.failWith(VdcBllMessages.NIC_NOT_EXISTS_ON_HOST).when(!iface.getVdsId().equals(hostId));
+        return ValidationResult.failWith(EngineMessage.NIC_NOT_EXISTS_ON_HOST).when(!iface.getVdsId().equals(hostId));
     }
 
     public ValidationResult interfaceIsBondOrNull() {
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_INTERFACE_IS_NOT_BOND)
+        return ValidationResult.failWith(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND)
             .when(iface != null && !iface.isBond());
     }
 
@@ -55,7 +55,7 @@ public class HostInterfaceValidator {
             return ValidationResult.VALID;
         }
 
-        return ValidationResult.failWith(VdcBllMessages.IMPROPER_BOND_IS_LABELED).when(getSlaveCount(nics, 2) < 2);
+        return ValidationResult.failWith(EngineMessage.IMPROPER_BOND_IS_LABELED).when(getSlaveCount(nics, 2) < 2);
     }
 
     /**
@@ -74,7 +74,7 @@ public class HostInterfaceValidator {
         iface.getLabels().add(label);
         List<String> validationResult = ValidationUtils.validateInputs(commandValidationGroups, iface);
         return ValidationResult
-                .failWith(VdcBllMessages.IMPROPER_INTERFACE_IS_LABELED)
+                .failWith(EngineMessage.IMPROPER_INTERFACE_IS_LABELED)
                 .when(!validationResult.isEmpty());
     }
 
@@ -84,12 +84,12 @@ public class HostInterfaceValidator {
         }
 
         int slavesCount = getSlaveCount(nics);
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT,
+        return ValidationResult.failWith(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT,
                 "$NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST " + slavesCount).when(slavesCount < 2);
     }
 
     public ValidationResult interfaceIsValidSlave() {
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE)
+        return ValidationResult.failWith(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE)
             .when(NetworkUtils.isVlan(iface) || iface.isBond());
     }
 
@@ -101,7 +101,7 @@ public class HostInterfaceValidator {
             boolean notTheSameNic = !StringUtils.equals(nic.getName(), iface.getName());
 
             if (notTheSameNic) {
-                return ValidationResult.failWith(VdcBllMessages.OTHER_INTERFACE_ALREADY_LABELED,
+                return ValidationResult.failWith(EngineMessage.OTHER_INTERFACE_ALREADY_LABELED,
                         "$LabeledNic " + nic.getName())
                         .when(NetworkUtils.isLabeled(nic) && nic.getLabels().contains(label));
             }
@@ -120,7 +120,7 @@ public class HostInterfaceValidator {
         List<String> assignedNetworks = validateNetworksNotAssignedToIncorrectNics(hostInterfaces,
                 clusterNetworksWithLabel);
 
-        return ValidationResult.failWith(VdcBllMessages.LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE,
+        return ValidationResult.failWith(EngineMessage.LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE,
                 "$AssignedNetworks " + StringUtils.join(assignedNetworks, ", "))
                 .when(!assignedNetworks.isEmpty());
     }
@@ -168,7 +168,7 @@ public class HostInterfaceValidator {
     }
 
     public ValidationResult networkCanBeAttached() {
-        return ValidationResult.failWith(VdcBllMessages.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN)
+        return ValidationResult.failWith(EngineMessage.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN)
                 .when(NetworkUtils.isVlan(iface) || iface.isPartOfBond());
     }
 

@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
@@ -202,7 +202,7 @@ public class SchedulingManager {
     }
 
     private static class SchedulingResult {
-        Map<Guid, Pair<VdcBllMessages, String>> filteredOutReasons;
+        Map<Guid, Pair<EngineMessage, String>> filteredOutReasons;
         Map<Guid, String> hostNames;
         PerHostMessages details;
         String message;
@@ -222,30 +222,30 @@ public class SchedulingManager {
             this.vdsSelected = vdsSelected;
         }
 
-        public void addReason(Guid id, String hostName, VdcBllMessages filterType, String filterName) {
+        public void addReason(Guid id, String hostName, EngineMessage filterType, String filterName) {
             filteredOutReasons.put(id, new Pair<>(filterType, filterName));
             hostNames.put(id, hostName);
         }
 
-        public Set<Entry<Guid, Pair<VdcBllMessages, String>>> getReasons() {
+        public Set<Entry<Guid, Pair<EngineMessage, String>>> getReasons() {
             return filteredOutReasons.entrySet();
         }
 
         public Collection<String> getReasonMessages() {
             List<String> lines = new ArrayList<>();
 
-            for (Entry<Guid, Pair<VdcBllMessages, String>> line: filteredOutReasons.entrySet()) {
+            for (Entry<Guid, Pair<EngineMessage, String>> line: filteredOutReasons.entrySet()) {
                 lines.add(line.getValue().getFirst().name());
                 lines.add(String.format("$%1$s %2$s", "hostName", hostNames.get(line.getKey())));
                 lines.add(String.format("$%1$s %2$s", "filterName", line.getValue().getSecond()));
 
                 final List<String> detailMessages = details.getMessages(line.getKey());
                 if (detailMessages == null || detailMessages.isEmpty()) {
-                    lines.add(VdcBllMessages.SCHEDULING_HOST_FILTERED_REASON.name());
+                    lines.add(EngineMessage.SCHEDULING_HOST_FILTERED_REASON.name());
                 }
                 else {
                     lines.addAll(detailMessages);
-                    lines.add(VdcBllMessages.SCHEDULING_HOST_FILTERED_REASON_WITH_DETAIL.name());
+                    lines.add(EngineMessage.SCHEDULING_HOST_FILTERED_REASON_WITH_DETAIL.name());
                 }
             }
 
@@ -545,7 +545,7 @@ public class SchedulingManager {
 
         /* Short circuit filters if there are no hosts at all */
         if (hostList == null || hostList.isEmpty()) {
-            messages.add(VdcBllMessages.SCHEDULING_NO_HOSTS.name());
+            messages.add(EngineMessage.SCHEDULING_NO_HOSTS.name());
             messages.addAll(result.getReasonMessages());
             return hostList;
         }
@@ -563,7 +563,7 @@ public class SchedulingManager {
         }
 
         if (hostList == null || hostList.isEmpty()) {
-            messages.add(VdcBllMessages.SCHEDULING_ALL_HOSTS_FILTERED_OUT.name());
+            messages.add(EngineMessage.SCHEDULING_ALL_HOSTS_FILTERED_OUT.name());
             messages.addAll(result.getReasonMessages());
         }
         return hostList;
@@ -586,7 +586,7 @@ public class SchedulingManager {
                 hostList = filterPolicyUnit.filter(hostList, vm, parameters, result.getDetails());
                 logFilterActions(currentHostList,
                         toIdSet(hostList),
-                        VdcBllMessages.VAR__FILTERTYPE__INTERNAL,
+                        EngineMessage.VAR__FILTERTYPE__INTERNAL,
                         filterPolicyUnit.getPolicyUnit().getName(),
                         result,
                         correlationId);
@@ -607,7 +607,7 @@ public class SchedulingManager {
 
     private void logFilterActions(List<VDS> oldList,
                                   Set<Guid> newSet,
-                                  VdcBllMessages actionName,
+                                  EngineMessage actionName,
                                   String filterName,
                                   SchedulingResult result,
                                   String correlationId) {
@@ -646,7 +646,7 @@ public class SchedulingManager {
             if (filteredIDs != null) {
                 logFilterActions(hostList,
                         new HashSet<>(filteredIDs),
-                        VdcBllMessages.VAR__FILTERTYPE__EXTERNAL,
+                        EngineMessage.VAR__FILTERTYPE__EXTERNAL,
                         Arrays.toString(filterNames.toArray()),
                         result,
                         correlationId);

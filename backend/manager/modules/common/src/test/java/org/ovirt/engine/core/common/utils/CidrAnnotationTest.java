@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.annotation.Cidr;
 
 @RunWith(Parameterized.class)
@@ -43,11 +43,11 @@ public class CidrAnnotationTest {
         Set<ConstraintViolation<CidrContainer>> result = validator.validate(container);
         if (!validNetworkAddressExpectedResult && validCidrFormatExpectedResult) {
             assertEquals("Failed to validate CIDR's error format: " + container.getCidr(),
-                    VdcBllMessages.CIDR_NOT_NETWORK_ADDRESS.name(),
+                    EngineMessage.CIDR_NOT_NETWORK_ADDRESS.name(),
                     result.iterator().next().getMessage());
         } else if (!validCidrFormatExpectedResult) {
             assertEquals("Failed to validate CIDR's error format: " + container.getCidr(),
-                    VdcBllMessages.BAD_CIDR_FORMAT.name(),
+                    EngineMessage.BAD_CIDR_FORMAT.name(),
                     result.iterator().next().getMessage());
         } else {
             assertEquals("Failed to validate CIDR's format: " + container.getCidr(),
@@ -63,11 +63,11 @@ public class CidrAnnotationTest {
         Set<ConstraintViolation<CidrContainer>> result = validator.validate(container);
         if (!validCidrFormatExpectedResult) {
             assertEquals("Failed to validate CIDR's network address error: " + container.getCidr(),
-                    VdcBllMessages.BAD_CIDR_FORMAT.name(),
+                    EngineMessage.BAD_CIDR_FORMAT.name(),
                     result.iterator().next().getMessage());
         } else if (!validNetworkAddressExpectedResult) {
             assertEquals("Failed to validate CIDR's  network address error: " + container.getCidr(),
-                    VdcBllMessages.CIDR_NOT_NETWORK_ADDRESS.name(),
+                    EngineMessage.CIDR_NOT_NETWORK_ADDRESS.name(),
                     result.iterator().next().getMessage());
         } else {
             assertEquals("Failed to validate CIDR's network address: " + container.getCidr(),

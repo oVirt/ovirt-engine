@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -145,28 +145,28 @@ public class GetDiskAlignmentCommandTest {
     public void testCanDoActionImageDoesNotExist() {
         doReturn(null).when(cmd).getDisk();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+                EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
     public void testCanDoActionImageIsLocked() {
         disk.setImageStatus(ImageStatus.LOCKED);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
+                EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 
     @Test
     public void testCanDoActionFloatingDisk() {
         when(vmDao.getVmsListForDisk(diskId, Boolean.FALSE)).thenReturn(Collections.<VM>emptyList());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
+                EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
     }
 
     @Test
     public void testCanDoActionVmRunningFail() {
         vm.setStatus(VMStatus.Up);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING);
+                EngineMessage.ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING);
     }
 
     @Test
@@ -174,20 +174,20 @@ public class GetDiskAlignmentCommandTest {
         when(vdsDao.getAllForVdsGroupWithStatus(groupId, VDSStatus.Up))
                 .thenReturn(Collections.<VDS>emptyList());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
+                EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
     }
 
     @Test
     public void testCanDoActionStoragePoolDown() {
         storagePool.setStatus(StoragePoolStatus.Maintenance);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+                EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }
 
     @Test
     public void testCanDoActionStorageDomainIsFileStorage() {
         storageDomain.setStorageType(StorageType.NFS);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
+                EngineMessage.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
     }
 }

@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -33,7 +33,7 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
         super.setActionMessageParameters();
     }
 
@@ -73,7 +73,7 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
                 VDS slaveUpServer = ClusterUtils.getInstance().getRandomUpServer(slaveVolume.getClusterId());
                 if (slaveUpServer == null) {
                     handleVdsError(AuditLogType.GLUSTER_VOLUME_ALL_SNAPSHOTS_DELETE_FAILED,
-                            VdcBllErrors.NoUpServerFoundInRemoteCluster.name());
+                            EngineError.NoUpServerFoundInRemoteCluster.name());
                     setSucceeded(false);
                     return;
                 }
@@ -106,12 +106,12 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
 
         for (GlusterGeoRepSession session : georepSessions) {
             if (session.getSlaveVolumeId() == null || session.getSlaveNodeUuid() == null) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
             }
         }
 
         if (snapshots == null || snapshots.isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NO_SNAPSHOTS_EXIST,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NO_SNAPSHOTS_EXIST,
                     getGlusterVolumeName());
         }
 

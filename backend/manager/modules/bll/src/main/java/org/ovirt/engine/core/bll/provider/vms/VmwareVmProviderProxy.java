@@ -10,9 +10,9 @@ import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -34,7 +34,7 @@ public class VmwareVmProviderProxy implements ProviderProxy {
                 VdcQueryType.GetVmsFromExternalProvider,
                 buildGetVmsFromExternalProviderQueryParameters());
         if (!retVal.getSucceeded()) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, retVal.getExceptionString());
+            throw new EngineException(EngineError.PROVIDER_FAILURE, retVal.getExceptionString());
         }
     }
 
@@ -75,11 +75,11 @@ public class VmwareVmProviderProxy implements ProviderProxy {
                 if (proxyHostId != null) {
                     VDS proxyHost = getVdsDao().get(proxyHostId);
                     if (proxyHost == null) {
-                        return new ValidationResult(VdcBllMessages.VDS_DOES_NOT_EXIST);
+                        return new ValidationResult(EngineMessage.VDS_DOES_NOT_EXIST);
                     }
 
                     if (!proxyHost.getStoragePoolId().equals(properties.getStoragePoolId())) {
-                        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_NOT_IN_DEST_STORAGE_POOL);
+                        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_NOT_IN_DEST_STORAGE_POOL);
                     }
                 }
                 return ValidationResult.VALID;

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.common.action.AddStepParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -36,11 +36,11 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
         }
         if (job == null && parentStep == null) {
             retValue=false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_NO_PARENT);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_NO_PARENT);
         }
         if (StringUtils.isBlank(getParameters().getDescription())) {
             retValue=false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_EMPTY_DESCRIPTION);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_EMPTY_DESCRIPTION);
         }
 
         return retValue;

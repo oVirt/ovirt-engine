@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -130,7 +130,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             if (vdssByUniqueId.size() == 1) {
                 VDS vds = vdssByUniqueId.get(0);
                 if (!VdsHandler.isPendingOvirt(vds)) {
-                    returnValue.setExceptionString(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE.name());
+                    returnValue.setExceptionString(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE.name());
                     return false;
                 }
             }
@@ -449,7 +449,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         }
                     } else {
                         log.error(
-                                "VdcBLL::HandleOldVdssWithSameHostName - Could not change the IP for an existing VDS. All available hostnames are taken (ID = '{}', name = '{}', management IP = '{}' , host name = '{}')",
+                                "Engine::HandleOldVdssWithSameHostName - Could not change the IP for an existing VDS. All available hostnames are taken (ID = '{}', name = '{}', management IP = '{}' , host name = '{}')",
                                 vds_byHostName.getId(),
                                 vds_byHostName.getName(),
                                 vds_byHostName.getFenceAgents().isEmpty() ? "" : vds_byHostName.getFenceAgents()

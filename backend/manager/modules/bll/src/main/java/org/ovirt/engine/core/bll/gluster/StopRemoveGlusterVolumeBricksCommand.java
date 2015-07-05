@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksPara
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -28,8 +28,8 @@ public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBas
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE_BRICKS_STOP);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_BRICK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE_BRICKS_STOP);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
         super.setActionMessageParameters();
     }
 
@@ -48,7 +48,7 @@ public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBas
         if (!(getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK))
                 || !(getGlusterTaskUtils().isTaskStatus(volume, JobExecutionStatus.STARTED) || getGlusterTaskUtils().isTaskStatus(volume,
                         JobExecutionStatus.FINISHED))) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_STARTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_STARTED);
         }
 
         return true;

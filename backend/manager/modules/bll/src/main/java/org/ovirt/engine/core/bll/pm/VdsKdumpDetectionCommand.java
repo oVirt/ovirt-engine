@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsKdumpStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -160,13 +160,13 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
     @Override
     protected boolean canDoAction() {
         if (getVds().getKdumpStatus() != KdumpStatus.ENABLED) {
-            addCanDoActionMessage(VdcBllMessages.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS);
+            addCanDoActionMessage(EngineMessage.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS);
             return false;
         }
 
         boolean detectionEnabled = getVds().isPmKdumpDetection();
         if (!detectionEnabled) {
-            addCanDoActionMessage(VdcBllMessages.KDUMP_DETECTION_NOT_ENABLED_FOR_VDS);
+            addCanDoActionMessage(EngineMessage.KDUMP_DETECTION_NOT_ENABLED_FOR_VDS);
         }
         return detectionEnabled;
     }

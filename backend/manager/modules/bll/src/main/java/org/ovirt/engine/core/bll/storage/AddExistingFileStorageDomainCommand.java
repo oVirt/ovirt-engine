@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -54,14 +54,14 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
 
     protected boolean checkExistingStorageDomain() {
         if (getStorageDomainStaticDao().get(getStorageDomain().getId()) != null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
         }
 
         Pair<StorageDomainStatic, Guid> domainFromIrs = executeHSMGetStorageDomainInfo(
                 new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(), getStorageDomain().getId()));
 
         if (domainFromIrs == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
         StorageDomain storageDomainFromIrs = new StorageDomain();
@@ -92,7 +92,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
                     .getStorage()));
         }
         if (!returnValue) {
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL);
+            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL);
         }
         return returnValue;
     }

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.utils.pm.FenceConfigHelper;
 
@@ -20,7 +20,7 @@ public class FenceValidator {
     public boolean isProxyHostAvailable(VDS vds, List<String> messages) {
         FenceProxyLocator proxyHostLocator = getProxyLocator(vds);
         if (!proxyHostLocator.isProxyHostAvailable()) {
-            messages.add(VdcBllMessages.VDS_NO_VDS_PROXY_FOUND.name());
+            messages.add(EngineMessage.VDS_NO_VDS_PROXY_FOUND.name());
             return false;
         } else {
             return true;
@@ -35,7 +35,7 @@ public class FenceValidator {
                         .addSeconds((Integer) Config.getValue(ConfigValues.DisableFenceAtStartupInSec));
         Date now = new Date();
         if (!(waitTo.before(now) || waitTo.equals(now))) {
-            messages.add(VdcBllMessages.VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL.name());
+            messages.add(EngineMessage.VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL.name());
             return false;
         } else {
             return true;
@@ -44,7 +44,7 @@ public class FenceValidator {
 
     public boolean isPowerManagementEnabledAndLegal(VDS vds, VDSGroup vdsGroup, List<String> messages) {
         if (!(vds.isPmEnabled() && isPowerManagementLegal(vds.getFenceAgents(), vdsGroup, messages))) {
-            messages.add(VdcBllMessages.VDS_FENCE_DISABLED.name());
+            messages.add(EngineMessage.VDS_FENCE_DISABLED.name());
             return false;
         } else {
             return true;
@@ -53,7 +53,7 @@ public class FenceValidator {
 
     public boolean isHostExists(VDS vds, List<String> messages) {
         if (vds == null) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST.name());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST.name());
             return false;
         } else {
             return true;
@@ -62,7 +62,7 @@ public class FenceValidator {
 
     private boolean isPowerManagementLegal(List<FenceAgent> fenceAgents, VDSGroup vdsGroup, List<String> messages) {
         if (fenceAgents == null || fenceAgents.isEmpty()) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT.name());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT.name());
             return false;
         } else {
             return isCompatibleAgentExists(fenceAgents, vdsGroup, messages);
@@ -86,7 +86,7 @@ public class FenceValidator {
             List<String> messages) {
         if (!Regex.IsMatch(FenceConfigHelper.getFenceConfigurationValue(ConfigValues.VdsFenceType.name(),
                 clusterCompatibilityVersion), String.format("(,|^)%1$s(,|$)", agent.getType()))) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED.name());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED.name());
             return false;
         } else {
             return true;

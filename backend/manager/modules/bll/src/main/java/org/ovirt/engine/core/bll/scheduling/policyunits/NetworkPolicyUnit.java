@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
@@ -150,7 +150,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
             String nics = StringUtils.join(missingIfs, ", ");
             log.warn("host {} is missing networks required by VM nics {}",
                     vds.getName(), nics);
-            return new ValidationResult(VdcBllMessages.VAR__DETAIL__NETWORK_MISSING,
+            return new ValidationResult(EngineMessage.VAR__DETAIL__NETWORK_MISSING,
                     String.format("$networkNames %1$s", nics));
         }
 
@@ -202,7 +202,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
             log.warn("host {} is missing the cluster's display network {}",
                     host.getName(),
                     displayNetwork.getName());
-            return new ValidationResult(VdcBllMessages.VAR__DETAIL__DISPLAY_NETWORK_MISSING,
+            return new ValidationResult(EngineMessage.VAR__DETAIL__DISPLAY_NETWORK_MISSING,
                     String.format("$DisplayNetwork %1$s", displayNetwork.getName()));
         }
 
@@ -211,7 +211,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                     host.getName(),
                     displayNetwork.getName(),
                     displayNic.getName());
-            return new ValidationResult(VdcBllMessages.VAR__DETAIL__DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
+            return new ValidationResult(EngineMessage.VAR__DETAIL__DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
                     String.format("$DisplayNetwork %1$s", displayNetwork.getName()));
         }
 
@@ -228,7 +228,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
             String vnicsString = StringUtils.join(problematicVnics, ", ");
             log.warn("host {} doesn't contain suitable virtual functions for VM nics {}",
                     host.getName(), vnics);
-            return new ValidationResult(VdcBllMessages.VAR__DETAIL__NO_SUITABLE_VF,
+            return new ValidationResult(EngineMessage.VAR__DETAIL__NO_SUITABLE_VF,
                     String.format("$vnicNames %1$s", vnicsString));
         }
 

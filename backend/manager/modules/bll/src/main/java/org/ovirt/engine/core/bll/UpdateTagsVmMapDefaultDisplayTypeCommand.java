@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.TagsVmMapParameters;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class UpdateTagsVmMapDefaultDisplayTypeCommand<T extends TagsVmMapParameters> extends TagsCommandBase<T> {
@@ -17,7 +17,7 @@ public class UpdateTagsVmMapDefaultDisplayTypeCommand<T extends TagsVmMapParamet
         tagsVmMap = DbFacade.getInstance().getTagDao().getTagVmByTagIdAndByVmId(getParameters().getTagsVmMap().gettag_id(),
                 getParameters().getTagsVmMap().getvm_id());
         if (tagsVmMap == null) {
-            addCanDoActionMessage(VdcBllMessages.TAGS_SPECIFY_TAG_IS_NOT_EXISTS);
+            addCanDoActionMessage(EngineMessage.TAGS_SPECIFY_TAG_IS_NOT_EXISTS);
             return false;
         }
         return true;

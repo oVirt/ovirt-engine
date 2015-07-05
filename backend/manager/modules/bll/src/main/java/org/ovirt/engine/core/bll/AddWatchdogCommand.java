@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -45,17 +45,17 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
             return false;
         }
         if (getParameters().getAction() == null) {
-            return failCanDoAction(VdcBllMessages.WATCHDOG_ACTION_REQUIRED);
+            return failCanDoAction(EngineMessage.WATCHDOG_ACTION_REQUIRED);
         }
         if (getParameters().getModel() == null) {
-            return failCanDoAction(VdcBllMessages.WATCHDOG_MODEL_REQUIRED);
+            return failCanDoAction(EngineMessage.WATCHDOG_MODEL_REQUIRED);
         }
         VdcQueryReturnValue returnValue =
                 runInternalQuery(VdcQueryType.GetWatchdog,
                         new IdQueryParameters(getParameters().getId()));
         Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
         if (!watchdogs.isEmpty()) {
-            return failCanDoAction(VdcBllMessages.WATCHDOG_ALREADY_EXISTS);
+            return failCanDoAction(EngineMessage.WATCHDOG_ALREADY_EXISTS);
         }
 
         if (!getParameters().isClusterIndependent() && !validate(validateModelCompatibleWithOs())) {

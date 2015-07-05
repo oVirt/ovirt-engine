@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -79,14 +79,14 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         boolean isBlankTemplate = isBlankTemplate();
 
         if (getVdsGroup() == null && !(isInstanceType || isBlankTemplate)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
 
         boolean returnValue = false;
 
         if (mOldTemplate == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
         if (!isInstanceType && !isBlankTemplate) {
@@ -96,19 +96,19 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (!StringUtils.equals(mOldTemplate.getName(), getVmTemplate().getName())) {
             if (!getVmTemplate().isBaseTemplate()) {
                 // template version should always have the name of the base template
-                return failCanDoAction(VdcBllMessages.VMT_CANNOT_UPDATE_VERSION_NAME);
+                return failCanDoAction(EngineMessage.VMT_CANNOT_UPDATE_VERSION_NAME);
             } else {
                 // validate uniqueness of template name. If template is a regular template, uniqueness
                 // is considered in context of the datacenter. If template is an 'Instance-Type', name
                 // must be unique also across datacenters.
                 if (isInstanceType) {
                     if (isInstanceWithSameNameExists(getVmTemplateName())) {
-                        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                     }
                 } else {
                     if (isVmTemlateWithSameNameExist(getVmTemplateName(), isBlankTemplate ? null
                             : getVdsGroup().getStoragePoolId())) {
-                        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                     }
                 }
             }
@@ -118,7 +118,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 .getCanDoActionMessages()) && checkDomain()) {
             returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
             if (!returnValue) {
-                addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
+                addCanDoActionMessage(EngineMessage.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
             }
         }
 
@@ -154,7 +154,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     private boolean doClusterRelatedChecks() {
 
         if (mOldTemplate.getStatus() == VmTemplateStatus.Locked) {
-            return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IS_LOCKED);
+            return failCanDoAction(EngineMessage.VM_TEMPLATE_IS_LOCKED);
         }
 
         // Check that the USB policy is legal
@@ -218,7 +218,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         if (getParameters().getVmTemplateData().getMinAllocatedMem() > getParameters().getVmTemplateData().getMemSizeMb()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
         }
 
         if (!getVmPropertiesUtils().validateVmProperties(
@@ -340,14 +340,14 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getVmTemplateId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     @Override

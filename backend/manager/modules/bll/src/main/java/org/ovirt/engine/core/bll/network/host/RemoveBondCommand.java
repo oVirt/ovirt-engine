@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -85,19 +85,19 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             }
         });
         if (bond == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_NOT_EXISTS);
+            addCanDoActionMessage(EngineMessage.NETWORK_BOND_NOT_EXISTS);
             return false;
         }
 
         if (bond.getBonded() != null && bond.getBonded().equals(false)) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_NOT_EXISTS);
+            addCanDoActionMessage(EngineMessage.NETWORK_BOND_NOT_EXISTS);
             return false;
         }
 
         network = bond.getNetworkName();
 
         if (StringUtils.isEmpty(network)) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_HAVE_ATTACHED_VLANS);
+            addCanDoActionMessage(EngineMessage.NETWORK_BOND_HAVE_ATTACHED_VLANS);
             return false;
         }
 
@@ -122,7 +122,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                     return n.getName().equals(bond.getName());
                 }
             })) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_CLUSTER_NETWORK_IN_USE);
+                addCanDoActionMessage(EngineMessage.NETWORK_CLUSTER_NETWORK_IN_USE);
                 return false;
             }
         }
@@ -142,7 +142,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                     }
                 });
                 if (iface != null) {
-                    addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
+                    addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_IN_USE_BY_VM);
                     return false;
                 }
             }

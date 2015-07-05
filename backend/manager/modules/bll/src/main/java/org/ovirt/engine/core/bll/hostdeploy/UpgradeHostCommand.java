@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @NonTransactiveCommandAttribute
 public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsCommand<T> {
@@ -45,8 +45,8 @@ public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsComm
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPGRADE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPGRADE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     @Override

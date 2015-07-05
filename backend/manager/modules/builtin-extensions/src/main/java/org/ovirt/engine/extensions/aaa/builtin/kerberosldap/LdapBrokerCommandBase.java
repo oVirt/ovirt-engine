@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.ovirt.engine.api.extensions.aaa.Authn;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 
 public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
@@ -115,7 +115,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
                 _ldapReturnValue.setExceptionString(
                         directorySearcher != null ?
                                 directorySearcher.getException().getMessage() :
-                                VdcBllMessages.FAILED_TO_RUN_LDAP_QUERY.name()
+                                EngineMessage.FAILED_TO_RUN_LDAP_QUERY.name()
                 );
                 _ldapReturnValue.setSucceeded(false);
             }

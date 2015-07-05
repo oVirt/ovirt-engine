@@ -69,9 +69,9 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -256,7 +256,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (isVmInDb) {
             VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(getVmId());
             if (vmDynamic.getStatus() != VMStatus.Down) {
-                throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+                throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }
 
             VmHandler.lockVm(vmDynamic, getCompensationContext());
@@ -371,7 +371,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private boolean doClusterRelatedChecks() {
         // A Template cannot be added in a cluster without a defined architecture
         if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
         if (!VmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
@@ -407,7 +407,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
                 !FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
-            return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+            return failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
 
         // Check if the watchdog model is supported
@@ -421,7 +421,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // Disallow cross-DC template creation
         if (!getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_ON_DIFFERENT_STORAGE_POOL);
+            addCanDoActionMessage(EngineMessage.VDS_CLUSTER_ON_DIFFERENT_STORAGE_POOL);
             return false;
         }
 
@@ -441,7 +441,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected boolean canDoAction() {
         boolean isInstanceType = getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE;
         if (getVdsGroup() == null && !isInstanceType) {
-            return failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+            return failCanDoAction(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
 
         if (!isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(), getReturnValue()
@@ -450,7 +450,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         if (isVmInDb && getVm().getStatus() != VMStatus.Down) {
-            return failCanDoAction(VdcBllMessages.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
+            return failCanDoAction(EngineMessage.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
         }
         // validate uniqueness of template name. If template is a regular template, uniqueness
         // is considered in context of the datacenter. If template is an 'Instance' name must
@@ -458,11 +458,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (!isTemplateVersion()) {
             if (isInstanceType) {
                 if (isInstanceWithSameNameExists(getVmTemplateName())) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 }
             } else {
                 if (isVmTemlateWithSameNameExist(getVmTemplateName(), getVdsGroup().getStoragePoolId())) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 }
             }
         }
@@ -470,16 +470,16 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (isTemplateVersion()) {
             VmTemplate userSelectedBaseTemplate = getBaseTemplate();
             if (userSelectedBaseTemplate == null) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             } else if (!userSelectedBaseTemplate.isBaseTemplate()) {
                 // currently template version cannot be base template
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_VERSION_CANNOT_BE_BASE_TEMPLATE);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_VERSION_CANNOT_BE_BASE_TEMPLATE);
 
             }
         }
 
         if (isTemplateVersion() && getBaseTemplate().isBlank()) {
-            return failCanDoAction(VdcBllMessages.BLANK_TEMPLATE_CANT_HAVE_SUBTEMPLATES);
+            return failCanDoAction(EngineMessage.BLANK_TEMPLATE_CANT_HAVE_SUBTEMPLATES);
         }
 
         if (!setAndValidateDiskProfiles()) {
@@ -521,7 +521,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // Check that all the template's allocated disk's aliases are not an empty string.
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
             if (StringUtils.isEmpty(diskImage.getDiskAlias())) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_CANNOT_BE_CREATED_WITH_EMPTY_DISK_ALIAS);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_CANNOT_BE_CREATED_WITH_EMPTY_DISK_ALIAS);
             }
         }
         return true;
@@ -593,20 +593,20 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     // if storage is null then we need to check if it doesn't exist or
                     // domain is not in the same storage pool as the vm
                     if (DbFacade.getInstance().getStorageDomainStaticDao().get(destImageDomain) == null) {
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+                        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
                     } else {
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);
+                        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);
                     }
                     return false;
                 }
                 if (storage.getStatus() == null || storage.getStatus() != StorageDomainStatus.Active) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
                     return false;
                 }
 
                 if (storage.getStorageDomainType().isIsoOrImportExportDomain()) {
 
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                     return false;
                 }
                 storageDomains.put(destImageDomain, storage);
@@ -806,7 +806,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
 
         if (!retValue.getSucceeded()) {
-            throw new VdcBLLException(retValue.getFault().getError(), retValue.getFault().getMessage());
+            throw new EngineException(retValue.getFault().getError(), retValue.getFault().getMessage());
         }
 
         getReturnValue().getVdsmTaskIdList().addAll(retValue.getInternalVdsmTaskIdList());
@@ -1004,8 +1004,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     private Guid getQuotaIdForDisk(DiskImage diskImage) {
@@ -1047,7 +1047,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected Map<String, Pair<String, String>> getSharedLocks() {
         if (isTemplateVersion()) {
             return Collections.singletonMap(getParameters().getBaseTemplateId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return super.getSharedLocks();
     }

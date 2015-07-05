@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -93,7 +93,7 @@ public class VmNicValidatorTest {
 
     @Test
     public void unlinkedWhenUnlinkingNotSupported() throws Exception {
-        unlinkingTest(both(failsWith(VdcBllMessages.UNLINKING_IS_NOT_SUPPORTED))
+        unlinkingTest(both(failsWith(EngineMessage.UNLINKING_IS_NOT_SUPPORTED))
                 .and(replacements(hasItem(CLUSTER_VERSION_REPLACEMENT))),
                 false,
                 false);
@@ -116,7 +116,7 @@ public class VmNicValidatorTest {
 
     @Test
     public void nullVnicProfileWhenUnlinkingNotSupported() throws Exception {
-        vnicProfileLinkingTest(both(failsWith(VdcBllMessages.NULL_NETWORK_IS_NOT_SUPPORTED))
+        vnicProfileLinkingTest(both(failsWith(EngineMessage.NULL_NETWORK_IS_NOT_SUPPORTED))
                 .and(replacements(hasItem(CLUSTER_VERSION_REPLACEMENT))),
                 false,
                 null);
@@ -139,7 +139,7 @@ public class VmNicValidatorTest {
 
     @Test
     public void e1000VmInterfaceTypeWhenNotIsCompatibleWithOs() throws Exception {
-        isCompatibleWithOsTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS),
+        isCompatibleWithOsTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS),
                 VmInterfaceType.e1000.getValue());
     }
 
@@ -186,7 +186,7 @@ public class VmNicValidatorTest {
 
     @Test
     public void vnicProfileNotExist() throws Exception {
-        vnicProfileValidationTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS),
+        vnicProfileValidationTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS),
                 false,
                 false);
     }
@@ -198,7 +198,7 @@ public class VmNicValidatorTest {
 
     @Test
     public void networkNotInCluster() throws Exception {
-        vnicProfileValidationTest(failsWith(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER),
+        vnicProfileValidationTest(failsWith(EngineMessage.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER),
                 true,
                 false);
     }
@@ -237,21 +237,21 @@ public class VmNicValidatorTest {
     public void typeMatchesProfileOnlyTypePassthrough() {
         typeMatchesProfileCommon(true, false);
         assertThat(validator.typeMatchesProfile(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE));
     }
 
     @Test
     public void typeMatchesProfileOnlyProfilePassthrough() {
         typeMatchesProfileCommon(false, true);
         assertThat(validator.typeMatchesProfile(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE));
     }
 
     @Test
     public void typeMatchesProfileTypePassthroughProfileIsNull() {
         typeMatchesProfileCommon(true, null);
         assertThat(validator.typeMatchesProfile(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE));
     }
 
     @Test
@@ -291,7 +291,7 @@ public class VmNicValidatorTest {
     public void passthroughVnicUnlinked() {
         passthroughIsLinkedCommon(true,
                 false,
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_UNLINKING_OF_PASSTHROUGH_VNIC_IS_NOT_SUPPORTED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_UNLINKING_OF_PASSTHROUGH_VNIC_IS_NOT_SUPPORTED));
     }
 
     @Test

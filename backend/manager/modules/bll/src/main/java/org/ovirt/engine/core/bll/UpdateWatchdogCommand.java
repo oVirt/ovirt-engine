@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParameters> {
 
@@ -35,7 +35,7 @@ public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
         }
         List<VmDevice> watchdogs = getWatchdogs();
         if (watchdogs.isEmpty()) {
-            return failCanDoAction(VdcBllMessages.WATCHDOG_NOT_FOUND);
+            return failCanDoAction(EngineMessage.WATCHDOG_NOT_FOUND);
         }
 
         if (!getParameters().isClusterIndependent() && !validate(validateModelCompatibleWithOs())) {

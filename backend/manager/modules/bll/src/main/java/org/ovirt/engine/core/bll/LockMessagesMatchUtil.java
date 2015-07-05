@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 
@@ -14,7 +14,7 @@ public class LockMessagesMatchUtil {
      * @param message message to be shown when the lock cannot be acquired
      * @return {@link Pair} of the given locking group and error message as Strings
      */
-    public static Pair<String, String> makeLockingPair(LockingGroup group, VdcBllMessages message) {
+    public static Pair<String, String> makeLockingPair(LockingGroup group, EngineMessage message) {
         return makeLockingPair(group, message.name());
     }
 

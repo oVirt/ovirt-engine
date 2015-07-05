@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
@@ -462,8 +462,8 @@ public final class AsyncTaskManager {
                     poolsAsyncTaskMap.put(storagePoolID, map);
                 }
             } catch (RuntimeException e) {
-                if ((e instanceof VdcBLLException)
-                        && (((VdcBLLException) e).getErrorCode() == VdcBllErrors.VDS_NETWORK_ERROR)) {
+                if ((e instanceof EngineException)
+                        && (((EngineException) e).getErrorCode() == EngineError.VDS_NETWORK_ERROR)) {
                     log.debug("Get SPM task statuses: Calling Command {}VDSCommand, "
                                     + "with storagePoolId '{}') threw an exception.",
                             VDSCommandType.SPMGetAllTasksStatuses, storagePoolID);

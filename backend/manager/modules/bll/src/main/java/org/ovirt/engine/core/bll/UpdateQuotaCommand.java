@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -30,10 +30,10 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
                 getReturnValue().getCanDoActionMessages())) {
             return false;
         } else if (getParameters().getQuota().getId() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
             return false;
         } else if (getQuotaDao().getById(getParameters().getQuota().getId()) == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
         return true;
@@ -61,8 +61,8 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__QUOTA);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__QUOTA);
     }
 
     @Override

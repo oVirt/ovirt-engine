@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> extends CommandBase<T> {
@@ -26,7 +26,7 @@ public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> ex
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VNIC_PROFILE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VNIC_PROFILE);
     }
 
     @Override

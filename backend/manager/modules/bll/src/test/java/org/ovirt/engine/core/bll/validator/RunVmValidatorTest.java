@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
@@ -104,7 +104,7 @@ public class RunVmValidatorTest {
     public void testVmFailNoDisks() {
         validateResult(runVmValidator.validateBootSequence(new VM(), null, new ArrayList<Disk>(), null),
                        false,
-                       VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
+                       EngineMessage.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class RunVmValidatorTest {
     public void testNoIsoDomain() {
         validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<Disk>(), null),
                 false,
-                VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+                EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
     }
 
     @Test
@@ -137,7 +137,7 @@ public class RunVmValidatorTest {
         doReturn(dao).when(runVmValidator).getVmNicDao();
         validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.N, new ArrayList<Disk>(), null),
                 false,
-                VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
+                EngineMessage.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class RunVmValidatorTest {
         doReturn(false).when(runVmValidator).isVmDuringInitiating(any(VM.class));
         validateResult(runVmValidator.vmDuringInitialization(vm),
                 false,
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+                EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
     }
 
     @Test
@@ -156,7 +156,7 @@ public class RunVmValidatorTest {
         doReturn(true).when(runVmValidator).isVmDuringInitiating(any(VM.class));
         validateResult(runVmValidator.vmDuringInitialization(vm),
                 false,
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+                EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class RunVmValidatorTest {
         doReturn(false).when(runVmValidator).isVmDuringInitiating(any(VM.class));
         validateResult(runVmValidator.vmDuringInitialization(vm),
                 false,
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+                EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
     }
 
     @Test
@@ -194,19 +194,19 @@ public class RunVmValidatorTest {
                 true,
                 true,
                 false,
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+                EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
         canRunVmAsStateless(rand.nextBoolean(),
                 true,
                 true,
                 null,
                 false,
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+                EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
         canRunVmAsStateless(rand.nextBoolean(),
                 true,
                 false,
                 true,
                 false,
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+                EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
     }
 
     @Test
@@ -216,19 +216,19 @@ public class RunVmValidatorTest {
                 true,
                 true,
                 false,
-                VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA);
+                EngineMessage.VM_CANNOT_RUN_STATELESS_HA);
         canRunVmAsStateless(true,
                 false,
                 true,
                 null,
                 false,
-                VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA);
+                EngineMessage.VM_CANNOT_RUN_STATELESS_HA);
         canRunVmAsStateless(true,
                 false,
                 false,
                 true,
                 false,
-                VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA);
+                EngineMessage.VM_CANNOT_RUN_STATELESS_HA);
     }
 
     private void mockOsRepository() {
@@ -243,7 +243,7 @@ public class RunVmValidatorTest {
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
         vm.setVmMemSizeMb(MEMORY_LIMIT_32_BIT + 1);
         mockOsRepository();
-        validateResult(runVmValidator.validateMemorySize(vm), false, VdcBllMessages.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
+        validateResult(runVmValidator.validateMemorySize(vm), false, EngineMessage.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
     }
 
     @Test
@@ -253,7 +253,7 @@ public class RunVmValidatorTest {
         vm.setVmMemSizeMb(MEMORY_LIMIT_64_BIT + 1);
         vm.setVmOs(_64_BIT_OS);
         mockOsRepository();
-        validateResult(runVmValidator.validateMemorySize(vm), false, VdcBllMessages.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
+        validateResult(runVmValidator.validateMemorySize(vm), false, EngineMessage.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
     }
 
     private void canRunVmAsStateless(boolean autoStartUp,
@@ -261,7 +261,7 @@ public class RunVmValidatorTest {
             boolean isVmStateless,
             Boolean isStatelessParam,
             boolean shouldPass,
-            VdcBllMessages message) {
+            EngineMessage message) {
         runVmValidator = new RunVmValidator() {
             @Override
             protected SnapshotsValidator getSnapshotValidator() {
@@ -269,7 +269,7 @@ public class RunVmValidatorTest {
                     @Override
                     public ValidationResult vmNotInPreview(Guid vmId) {
                         if (vmInPreview) {
-                            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+                            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
                         }
                         return ValidationResult.VALID;
                     };
@@ -311,7 +311,7 @@ public class RunVmValidatorTest {
         return utils;
     }
 
-    private static void validateResult(ValidationResult validationResult, boolean isValid, VdcBllMessages message) {
+    private static void validateResult(ValidationResult validationResult, boolean isValid, EngineMessage message) {
         assertEquals(isValid, validationResult.isValid());
         assertEquals(message, validationResult.getMessage());
     }

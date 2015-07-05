@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderPro
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.MessagingConfiguration;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,7 +32,7 @@ public class NetworkProviderValidatorTest extends ProviderValidatorTest {
     @Test
     public void invalidProviderType() {
         when(provider.getType()).thenReturn(NON_NETWORK_PROVIDER_TYPE);
-        assertThat(validator.providerTypeValid(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH));
+        assertThat(validator.providerTypeValid(), failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class NetworkProviderValidatorTest extends ProviderValidatorTest {
     @Test
     public void missingNetworkMappings() throws Exception {
         assertThat(validator.networkMappingsProvided(null),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MISSING_NETWORK_MAPPINGS));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MISSING_NETWORK_MAPPINGS));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class NetworkProviderValidatorTest extends ProviderValidatorTest {
     public void missingAgentConfigurationForMessagingBrokerValidation() throws Exception {
         mockProviderAdditionalProperties();
         assertThat(validator.messagingBrokerProvided(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MISSING_MESSAGING_BROKER_PROPERTIES));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MISSING_MESSAGING_BROKER_PROPERTIES));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class NetworkProviderValidatorTest extends ProviderValidatorTest {
         mockMessagingConfiguration();
 
         assertThat(validator.messagingBrokerProvided(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MISSING_MESSAGING_BROKER_PROPERTIES));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MISSING_MESSAGING_BROKER_PROPERTIES));
     }
 
     private void mockProviderAdditionalProperties() {

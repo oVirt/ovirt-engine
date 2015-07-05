@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 
 public class VDSExceptionBase extends RuntimeException {
 
@@ -29,7 +29,7 @@ public class VDSExceptionBase extends RuntimeException {
         super(errMessage);
     }
 
-    public VDSExceptionBase(VdcBllErrors errCode) {
+    public VDSExceptionBase(EngineError errCode) {
         VDSError tempVar = new VDSError();
         tempVar.setCode(errCode);
         setVdsError(tempVar);

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -74,8 +74,8 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__PROVIDER);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__PROVIDER);
     }
 
     @Override
@@ -112,12 +112,12 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
                             ReplacementUtils.replaceWithNameable("NETWORK_NAMES", networksInUse));
         }
 
-        protected VdcBllMessages getProviderNetworkUsedValidationMessage(int numberOfNetworks) {
+        protected EngineMessage getProviderNetworkUsedValidationMessage(int numberOfNetworks) {
             boolean singular = numberOfNetworks == 1;
             if (singular) {
-                return VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_ONCE;
+                return EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_ONCE;
             } else {
-                return VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES;
+                return EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES;
             }
         }
 

@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -113,7 +113,7 @@ public abstract class NetworkParametersBuilder {
             nic.setNetworkName(network.getName());
             addBootProtocolForRoleNetwork(networkCluster, nic);
         } else {
-            throw new VdcBLLException(VdcBllErrors.NETWORK_LABEL_CONFLICT);
+            throw new EngineException(EngineError.NETWORK_LABEL_CONFLICT);
         }
     }
 

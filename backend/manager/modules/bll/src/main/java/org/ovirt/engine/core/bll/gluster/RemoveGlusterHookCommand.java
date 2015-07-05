@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -42,8 +42,8 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_HOOK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
     }
 
     private List<VDS> getServersInCluster() {
@@ -62,7 +62,7 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
        for (VDS vds: getServersInCluster()) {
            if (vds.getStatus() != VDSStatus.Up) {
                 setVdsName(vds.getName());
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
                 addCanDoActionMessage(String.format("$%1$s %2$s", "VdsName", vds.getName()));
                 return false;
             }

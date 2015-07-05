@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -146,7 +146,7 @@ public class AddVdsCommandTest {
 
         when(commandMock.createReturnValue()).thenCallRealMethod();
         when(commandMock.getReturnValue()).thenCallRealMethod();
-        doCallRealMethod().when(commandMock).addCanDoActionMessage(any(VdcBllMessages.class));
+        doCallRealMethod().when(commandMock).addCanDoActionMessage(any(EngineMessage.class));
 
         when(commandMock.getGlusterUtil()).thenReturn(glusterUtil);
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)
@@ -198,7 +198,7 @@ public class AddVdsCommandTest {
         assertFalse(commandMock.canDoAction());
         assertTrue(commandMock.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER.toString()));
+                .contains(EngineMessage.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER.toString()));
     }
 
     @Test
@@ -227,6 +227,6 @@ public class AddVdsCommandTest {
         assertFalse(commandMock.canDoAction());
         assertTrue(commandMock.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE.toString()));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE.toString()));
     }
 }

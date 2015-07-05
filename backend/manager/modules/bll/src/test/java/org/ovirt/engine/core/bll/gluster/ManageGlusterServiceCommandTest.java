@@ -35,8 +35,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatu
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -102,7 +102,7 @@ public class ManageGlusterServiceCommandTest {
         };
     }
 
-    private void mockBackend(boolean succeeded, VdcBllErrors errorCode, GlusterServiceStatus status) {
+    private void mockBackend(boolean succeeded, EngineError errorCode, GlusterServiceStatus status) {
         doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
 
@@ -378,7 +378,7 @@ public class ManageGlusterServiceCommandTest {
                         ServiceType.GLUSTER_SWIFT,
                         GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START)));
         setUpMockUpForStart();
-        mockBackend(false, VdcBllErrors.GlusterServicesActionFailed, GlusterServiceStatus.STOPPED);
+        mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.STOPPED);
         cmd.executeCommand();
         verify(serverServiceDao, never()).updateByServerIdAndServiceType(any(GlusterServerService.class));
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_SERVICE_START_FAILED);
@@ -392,7 +392,7 @@ public class ManageGlusterServiceCommandTest {
                         ServiceType.GLUSTER_SWIFT,
                         GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP)));
         setUpMockUpForStart();
-        mockBackend(false, VdcBllErrors.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
+        mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
         verify(serverServiceDao, never()).updateByServerIdAndServiceType(any(GlusterServerService.class));
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_SERVICE_STOP_FAILED);
@@ -406,7 +406,7 @@ public class ManageGlusterServiceCommandTest {
                         ServiceType.GLUSTER_SWIFT,
                         GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART)));
         setUpMockUpForStart();
-        mockBackend(false, VdcBllErrors.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
+        mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
         verify(serverServiceDao, never()).updateByServerIdAndServiceType(any(GlusterServerService.class));
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_SERVICE_RESTART_FAILED);
@@ -420,7 +420,7 @@ public class ManageGlusterServiceCommandTest {
                         ServiceType.GLUSTER_SWIFT,
                         GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START)));
         setUpMockUpForStart();
-        mockBackend(false, VdcBllErrors.GlusterServicesActionFailed, GlusterServiceStatus.STOPPED);
+        mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.STOPPED);
         cmd.executeCommand();
         verify(serverServiceDao, never()).updateByServerIdAndServiceType(any(GlusterServerService.class));
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_SERVICE_START_FAILED);
@@ -434,7 +434,7 @@ public class ManageGlusterServiceCommandTest {
                         ServiceType.GLUSTER_SWIFT,
                         GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP)));
         setUpMockUpForStart();
-        mockBackend(false, VdcBllErrors.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
+        mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
         verify(serverServiceDao, never()).updateByServerIdAndServiceType(any(GlusterServerService.class));
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_SERVICE_STOP_FAILED);
@@ -448,7 +448,7 @@ public class ManageGlusterServiceCommandTest {
                         ServiceType.GLUSTER_SWIFT,
                         GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART)));
         setUpMockUpForStart();
-        mockBackend(false, VdcBllErrors.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
+        mockBackend(false, EngineError.GlusterServicesActionFailed, GlusterServiceStatus.RUNNING);
         cmd.executeCommand();
         verify(serverServiceDao, never()).updateByServerIdAndServiceType(any(GlusterServerService.class));
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_SERVICE_RESTART_FAILED);

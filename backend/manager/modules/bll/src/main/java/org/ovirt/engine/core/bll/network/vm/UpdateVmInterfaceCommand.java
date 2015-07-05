@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -161,7 +161,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 
@@ -183,7 +183,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         });
 
         if (oldIface == null || oldVmDevice == null) {
-            addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);
             return false;
         }
 
@@ -251,7 +251,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override
@@ -339,7 +339,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 }
             }
 
-            return new ValidationResult(VdcBllMessages.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
+            return new ValidationResult(EngineMessage.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
         }
 
         /**
@@ -349,11 +349,11 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         public ValidationResult hotUpdatePossible() {
             if (getRequiredAction() == RequiredAction.UPDATE_VM_DEVICE) {
                 if (!FeatureSupported.networkLinking(version)) {
-                    return new ValidationResult(VdcBllMessages.HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED,
+                    return new ValidationResult(EngineMessage.HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED,
                             clusterVersion());
                 } else if (portMirroringEnabled(getInterface().getVnicProfileId())
                         || portMirroringEnabled(oldIface.getVnicProfileId())) {
-                    return new ValidationResult(VdcBllMessages.CANNOT_PERFORM_HOT_UPDATE_WITH_PORT_MIRRORING);
+                    return new ValidationResult(EngineMessage.CANNOT_PERFORM_HOT_UPDATE_WITH_PORT_MIRRORING);
                 }
             }
 
@@ -371,7 +371,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
          */
         public ValidationResult unplugPlugNotRequired() {
             return liveActionRequired() && propertiesRequiringUnplugPlugWereUpdated()
-                    ? new ValidationResult(VdcBllMessages.CANNOT_PERFORM_HOT_UPDATE) : ValidationResult.VALID;
+                    ? new ValidationResult(EngineMessage.CANNOT_PERFORM_HOT_UPDATE) : ValidationResult.VALID;
         }
 
         private boolean propertiesRequiringUnplugPlugWereUpdated() {
@@ -390,11 +390,11 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return (oldNetwork == null || !oldNetwork.isExternal())
                     && (newNetwork == null || !newNetwork.isExternal())
                     ? ValidationResult.VALID
-                            : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REWIRED);
+                            : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REWIRED);
         }
 
         public ValidationResult canVnicWithExternalNetworkBePlugged() {
-            return ValidationResult.failWith(VdcBllMessages.PLUGGED_UNLINKED_VM_INTERFACE_WITH_EXTERNAL_NETWORK_IS_NOT_SUPPORTED)
+            return ValidationResult.failWith(EngineMessage.PLUGGED_UNLINKED_VM_INTERFACE_WITH_EXTERNAL_NETWORK_IS_NOT_SUPPORTED)
                     .when(RequiredAction.PLUG == getRequiredAction()
                           && !nic.isLinked()
                           && isVnicAttachedToExternalNetwork());

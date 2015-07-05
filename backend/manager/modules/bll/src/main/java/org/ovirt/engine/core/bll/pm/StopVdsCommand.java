@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.pm;
 
-import static org.ovirt.engine.core.common.errors.VdcBllMessages.VAR__ACTION__STOP;
+import static org.ovirt.engine.core.common.errors.EngineMessage.VAR__ACTION__STOP;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -55,7 +55,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
         if (getParameters().getParentCommand() == VdcActionType.Unknown) {
             retValue = super.canDoAction();
             if (getVds() != null && getVds().getStatus() != VDSStatus.Maintenance) {
-                addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_STOP);
+                addCanDoActionMessage(EngineMessage.VDS_STATUS_NOT_VALID_FOR_STOP);
                 retValue = false;
             }
         }
@@ -87,9 +87,9 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
 
     @Override
     protected void handleError() {
-        addCanDoActionMessage(VdcBllMessages.VDS_FENCE_OPERATION_FAILED);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__STOP);
+        addCanDoActionMessage(EngineMessage.VDS_FENCE_OPERATION_FAILED);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__STOP);
         log.error("Failed to run StopVdsCommand on vds '{}'", getVdsName());
     }
 

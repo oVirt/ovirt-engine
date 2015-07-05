@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilder {
@@ -33,7 +33,7 @@ public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilde
         Set<Network> networkToAdd = getNetworksToConfigure(parameters.getInterfaces(), labeledNetworks);
         VdsNetworkInterface nicToConfigure = getNicToConfigure(parameters.getInterfaces(), nic.getId());
         if (nicToConfigure == null) {
-            throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
+            throw new EngineException(EngineError.LABELED_NETWORK_INTERFACE_NOT_FOUND);
         }
 
         // add label to nic to be passed to setup-networks
@@ -57,7 +57,7 @@ public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilde
             VdsNetworkInterface labeledNic = nicsByLabel.get(network.getLabel());
             VdsNetworkInterface nicToConfigure = getNicToConfigure(parameters.getInterfaces(), labeledNic.getId());
             if (nicToConfigure == null) {
-                throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
+                throw new EngineException(EngineError.LABELED_NETWORK_INTERFACE_NOT_FOUND);
             }
 
             // configure the network on the nic

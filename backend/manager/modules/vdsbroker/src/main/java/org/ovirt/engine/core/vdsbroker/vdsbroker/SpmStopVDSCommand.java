@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
@@ -30,7 +30,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
 
     private EngineLock retrieveVdsExecutionLock() {
         if (lock == null) {
-            Map<String, Pair<String, String>> exsluciveLock = Collections.singletonMap(getParameters().getVdsId().toString(), new Pair<>(LockingGroup.VDS_EXECUTION.toString(), VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString()));
+            Map<String, Pair<String, String>> exsluciveLock = Collections.singletonMap(getParameters().getVdsId().toString(), new Pair<>(LockingGroup.VDS_EXECUTION.toString(), EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString()));
             lock = new EngineLock(exsluciveLock, null);
         }
         return  lock;
@@ -43,7 +43,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
             if (canVdsBeReached()) {
                 lockAcquired = LockManagerFactory.getLockManager().acquireLock(retrieveVdsExecutionLock()).getFirst();
                 if (!lockAcquired) {
-                    getVDSReturnValue().setVdsError(new VDSError(VdcBllErrors.ENGINE,
+                    getVDSReturnValue().setVdsError(new VDSError(EngineError.ENGINE,
                             "Failed to acquire vds execution lock - related operation is under execution"));
                     getVDSReturnValue().setSucceeded(false);
                     return;
@@ -85,9 +85,9 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                                 getVds().getName(),
                                 getParameters().getStoragePoolId());
                         VDSError error = new VDSError();
-                        error.setCode(VdcBllErrors.TaskInProgress);
+                        error.setCode(EngineError.TaskInProgress);
                         getVDSReturnValue().setVdsError(error);
-                    } else if (getVDSReturnValue().getVdsError().getCode() == VdcBllErrors.VDS_NETWORK_ERROR) {
+                    } else if (getVDSReturnValue().getVdsError().getCode() == EngineError.VDS_NETWORK_ERROR) {
                         log.info(
                                 "SpmStopVDSCommand::Could not get tasks on vds '{}' - network exception, not stopping spm! pool id '{}'",
                                 getVds().getName(),
@@ -97,7 +97,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
             } else {
                 log.info("SpmStopVDSCommand:: vds '{}' is in '{}' status - not performing spm stop, pool id '{}'",
                         getVds().getName(), getVds().getStatus(), getParameters().getStoragePoolId());
-                getVDSReturnValue().setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR,
+                getVDSReturnValue().setVdsError(new VDSError(EngineError.VDS_NETWORK_ERROR,
                         "Vds is in incorrect status"));
                 getVDSReturnValue().setSucceeded(false);
             }
@@ -131,12 +131,12 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
 
     private boolean isNotSPM(VDSReturnValue returnValue) {
         return returnValue.getVdsError() != null &&
-                returnValue.getVdsError().getCode() == VdcBllErrors.SpmStatusError;
+                returnValue.getVdsError().getCode() == EngineError.SpmStatusError;
     }
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case StoragePoolUnknown:
         case SpmStatusError:

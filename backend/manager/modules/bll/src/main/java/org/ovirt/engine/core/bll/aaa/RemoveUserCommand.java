@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -66,20 +66,20 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
 
         // Check that we are not trying to remove the built-in admin user:
         if (PredefinedUsers.ADMIN_USER.getId().equals(id)) {
-            addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_ADMIN_USER);
+            addCanDoActionMessage(EngineMessage.USER_CANNOT_REMOVE_ADMIN_USER);
             return false;
         }
 
         // Check that the current user isn't trying to remove himself:
         if (getCurrentUser().getId().equals(id)) {
-            addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_HIMSELF);
+            addCanDoActionMessage(EngineMessage.USER_CANNOT_REMOVE_HIMSELF);
             return false;
         }
 
         // Check that the user exists in the database:
         DbUser dbUser = getDbUserDao().get(id);
         if (dbUser == null) {
-            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DB);
+            addCanDoActionMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
             return false;
         }
 
@@ -88,8 +88,8 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__USER);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__USER);
     }
 
     @Override

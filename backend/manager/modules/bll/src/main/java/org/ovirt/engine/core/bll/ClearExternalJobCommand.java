@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -27,20 +27,20 @@ public class ClearExternalJobCommand <T extends VdcActionParametersBase> extends
             job = getJobDao().get((Guid) getParameters().getJobId());
             if (job == null) {
                 retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_NO_JOB);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_NO_JOB);
             }
             else if (! job.isExternal()) {
                 retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_NOT_EXTERNAL);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
             }
         }
         else {
             retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_NO_JOB);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_NO_JOB);
         }
         if (!retValue) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CLEAR);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__EXTERNAL_JOB);
+            addCanDoActionMessage(EngineMessage.VAR__ACTION__CLEAR);
+            addCanDoActionMessage(EngineMessage.VAR__TYPE__EXTERNAL_JOB);
         }
         return retValue;
     }

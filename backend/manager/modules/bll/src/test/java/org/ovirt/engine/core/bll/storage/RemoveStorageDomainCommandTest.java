@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
@@ -101,7 +101,7 @@ public class RemoveStorageDomainCommandTest {
         doReturn(Collections.emptyList()).when(storageDomainDaoMock).getAllForStorageDomain(storageDomain.getId());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
                 "canDoAction shouldn't be possible for a non-existent storage domain",
-                command, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+                command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class RemoveStorageDomainCommandTest {
         doReturn(Boolean.TRUE).when(command).isStorageDomainAttached(storageDomain);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
                 "canDoAction shouldn't be possible for an attached storage domain",
-                command, VdcBllMessages.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
+                command, EngineMessage.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
     }
 
     @Test
@@ -133,8 +133,8 @@ public class RemoveStorageDomainCommandTest {
     @Test
     public void testSetActionMessageParameters() {
         CanDoActionTestUtils.runAndAssertSetActionMessageParameters(command,
-                VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN,
-                VdcBllMessages.VAR__ACTION__REMOVE);
+                EngineMessage.VAR__TYPE__STORAGE__DOMAIN,
+                EngineMessage.VAR__ACTION__REMOVE);
     }
 
     @Test

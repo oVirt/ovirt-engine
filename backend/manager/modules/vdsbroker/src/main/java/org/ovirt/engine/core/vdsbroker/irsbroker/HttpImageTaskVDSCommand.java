@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ImageHttpAccessVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -108,7 +108,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
             resultMap = new ObjectMapper().readValue(response, HashMap.class);
             status = new StatusOnlyReturnForXmlRpc(resultMap);
         } catch (Exception e) {
-            throwVdsErrorException("failed to parse response " + response, VdcBllErrors.GeneralException);
+            throwVdsErrorException("failed to parse response " + response, EngineError.GeneralException);
         }
 
         proceedProxyReturnValue();
@@ -120,12 +120,12 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
         Header header = method.getResponseHeader(headerName);
         if (header == null) {
             throwVdsErrorException("response was missing the following header: "
-                    + headerName, VdcBllErrors.GeneralException);
+                    + headerName, EngineError.GeneralException);
         }
 
         if (expectedValue != null && !expectedValue.equals(header.getValue())) {
             throwVdsErrorException("response header value unexpected for header: "
-                    + headerName, VdcBllErrors.GeneralException);
+                    + headerName, EngineError.GeneralException);
         }
 
         return header.getValue();
@@ -155,7 +155,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
         log.info("++ size={}", getParameters().getSize());
     }
 
-    protected void throwVdsErrorException(String message, VdcBllErrors error) {
+    protected void throwVdsErrorException(String message, EngineError error) {
         VDSErrorException outEx = new VDSErrorException(message);
         VDSError vdsError = new VDSError();
         vdsError.setCode(error);

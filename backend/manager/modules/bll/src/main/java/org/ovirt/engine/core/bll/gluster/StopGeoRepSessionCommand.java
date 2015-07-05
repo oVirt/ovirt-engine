@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
@@ -33,7 +33,7 @@ public class StopGeoRepSessionCommand extends GeoRepSessionCommandBase<GlusterVo
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__STOP);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__STOP);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class StopGeoRepSessionCommand extends GeoRepSessionCommandBase<GlusterVo
         }
 
         if (getGeoRepSession().getStatus().equals(GeoRepSessionStatus.STOPPED)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GEOREP_SESSION_STOPPED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_STOPPED);
         }
 
         return true;

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
@@ -29,8 +29,8 @@ public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<Gluster
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
     }
 
     @Override
@@ -41,13 +41,13 @@ public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<Gluster
 
         GlusterVolumeEntity volume = getGlusterVolume();
         if (volume.isOnline()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_UP);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_UP);
             addCanDoActionMessageVariable("volumeName", volume.getName());
             return false;
         }
 
         if (volume.getSnapshotsCount() > 0) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_HAS_SNAPSHOTS);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_HAS_SNAPSHOTS);
             addCanDoActionMessageVariable("volumeName", volume.getName());
             addCanDoActionMessageVariable("noOfSnapshots", volume.getSnapshotsCount());
             return false;

@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -112,7 +112,7 @@ public class AddExistingFileStorageDomainCommandTest {
         when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(parameters.getStorageDomain());
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class AddExistingFileStorageDomainCommandTest {
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class AddExistingFileStorageDomainCommandTest {
         doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
     }
 
     private static StorageDomainStatic getStorageDomain() {

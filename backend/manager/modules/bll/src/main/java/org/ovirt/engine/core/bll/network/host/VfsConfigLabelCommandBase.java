@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public abstract class VfsConfigLabelCommandBase extends VfsConfigCommandBase<VfsConfigLabelParameters> {
 
@@ -21,7 +21,7 @@ public abstract class VfsConfigLabelCommandBase extends VfsConfigCommandBase<Vfs
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST_NIC_VFS_CONFIG_LABEL);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_NIC_VFS_CONFIG_LABEL);
     }
 
     public String getLabel() {

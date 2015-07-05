@@ -5,8 +5,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterClusterParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
-
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 /**
  * BLL command to refresh gluster hooks in a cluster
@@ -26,14 +25,14 @@ public class RefreshGlusterHooksCommand<T extends GlusterClusterParameters> exte
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REFRESH);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_HOOK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REFRESH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
     }
 
     @Override
     protected boolean canDoAction() {
         if (getParameters().getClusterId() == null || getVdsGroup() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
             return false;
         }
 

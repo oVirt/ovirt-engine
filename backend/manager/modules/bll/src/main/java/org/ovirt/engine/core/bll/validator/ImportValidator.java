@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MacAddressValidationPatterns;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -59,11 +59,11 @@ public class ImportValidator {
 
     public ValidationResult validateUnregisteredEntity(IVdcQueryable entityFromConfiguration, OvfEntityData ovfEntityData, List<DiskImage> images) {
         if (ovfEntityData == null && !params.isImportAsNewEntity()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
         }
 
         if (entityFromConfiguration == null) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
         }
 
         for (DiskImage image : images) {
@@ -81,7 +81,7 @@ public class ImportValidator {
         }
 
         if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
                     String.format("$domainId %1$s", params.getStorageDomainId()),
                     String.format("$domainType %1$s", getStorageDomain().getStorageDomainType()));
         }
@@ -94,7 +94,7 @@ public class ImportValidator {
         for (VmNic iface : ifaces) {
             if (!StringUtils.isEmpty(iface.getMacAddress())) {
                 if(!VALIDATE_MAC_ADDRESS.matcher(iface.getMacAddress()).matches()) {
-                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID,
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID,
                             String.format("$IfaceName %1$s", iface.getName()),
                             String.format("$MacAddress %1$s", iface.getMacAddress()));
                 }
@@ -104,7 +104,7 @@ public class ImportValidator {
             }
         }
         if (freeMacs > 0 && !(getMacPool().getAvailableMacsCount() >= freeMacs)) {
-            return new ValidationResult(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+            return new ValidationResult(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
         }
 
         return ValidationResult.VALID;
@@ -126,13 +126,13 @@ public class ImportValidator {
                     imagesOnStorageDomain = (List<Guid>) returnValue.getReturnValue();
                     alreadyRetrieved.put(targetStorageDomainId, imagesOnStorageDomain);
                 } else {
-                    return new ValidationResult(VdcBllMessages.ERROR_GET_IMAGE_LIST,
+                    return new ValidationResult(EngineMessage.ERROR_GET_IMAGE_LIST,
                             String.format("$sdName %1$s", getStorageDomain(targetStorageDomainId).getName()));
                 }
             }
 
             if (imagesOnStorageDomain.contains(disk.getId())) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
             }
         }
 
@@ -172,7 +172,7 @@ public class ImportValidator {
     }
 
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
-            throws VdcBLLException {
+            throws EngineException {
         return Backend.getInstance().getResourceManager().RunVdsCommand(commandType, parameters);
     }
 

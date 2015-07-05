@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 
 /**
@@ -43,7 +43,7 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
     @Override
     protected boolean canDoAction() {
         if (getGlusterVolume() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
             return false;
         }
         // super class canDoAction expects cluster id (VdsGroupId).

@@ -63,8 +63,8 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationSco
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -169,7 +169,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             initImportClonedVm();
 
             if (getVm().getInterfaces().size() > getMacPool().getAvailableMacsCount()) {
-                return failCanDoAction(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+                return failCanDoAction(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             }
         }
 
@@ -182,8 +182,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__IMPORT);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     private void initImportClonedVm() {
@@ -204,7 +204,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         if (getStoragePool() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
         }
 
         Set<Guid> destGuids = new HashSet<>(imageToDestinationDomainMap.values());
@@ -219,21 +219,21 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         if (!isImagesAlreadyOnTarget() && getParameters().isImportAsNewEntity() && !getParameters().getCopyCollapse()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED);
         }
 
         if (isImagesAlreadyOnTarget() && getParameters().getCopyCollapse()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_UNREGISTERED_NOT_COLLAPSED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORT_UNREGISTERED_NOT_COLLAPSED);
         }
 
         if (!isImagesAlreadyOnTarget()) {
             setSourceDomainId(getParameters().getSourceDomainId());
             StorageDomainValidator validator = new StorageDomainValidator(getSourceDomain());
             if (validator.isDomainExistAndActive().isValid() && getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             }
             if (!validateAndSetVmFromExportDomain()) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
             }
         }
 
@@ -261,7 +261,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         // Iterate over all the VM images (active image and snapshots)
         for (DiskImage image : getImages()) {
             if (Guid.Empty.equals(image.getVmSnapshotId())) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
             }
 
             if (getParameters().getCopyCollapse()) {
@@ -373,7 +373,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         if (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getVmtGuid())
                 && getVmTemplate() != null
                 && getVmTemplate().getStatus() == VmTemplateStatus.Locked) {
-            return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
+            return failCanDoAction(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
         }
 
         if (getParameters().getCopyCollapse() && vmFromParams.getDiskMap() != null) {
@@ -396,7 +396,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         // if collapse true we check that we have the template on source
         // (backup) domain
         if (getParameters().getCopyCollapse() && !isTemplateExistsOnExportDomain()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING,
                     String.format("$DomainName %1$s",
                             getStorageDomainStaticDao().get(getParameters().getSourceDomainId()).getStorageName()));
         }
@@ -446,7 +446,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 //Checking space for memory volume of the active image (if there is one)
                 StorageDomain storageDomain = updateStorageDomainInMemoryVolumes(dummiesDisksList);
                 if (storageDomain == null) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
                 }
             }
         } else { //Check space for all the snapshot's memory volumes
@@ -479,7 +479,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
             StorageDomain storageDomain = updateStorageDomainInMemoryVolumes(disksList);
             if (storageDomain == null) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
             }
             String modifiedMemoryVolume = MemoryUtils.changeStorageDomainAndPoolInMemoryState(
                     memoryVolume, storageDomain.getId(), getParameters().getStoragePoolId());
@@ -513,7 +513,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         for (DiskImage diskImage : images) {
             if (diskImage.getDiskInterface() == DiskInterface.VirtIO_SCSI &&
                     !FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
-                return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                return failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
         }
 
@@ -565,7 +565,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             });
 
             if (Collections.disjoint(domainsId, imageToDestinationDomainMap.values())) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
         }
         return retValue;
@@ -573,7 +573,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private boolean templateExists() {
         if (getVmTemplate() == null && !getParameters().getCopyCollapse()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
         return true;
     }
@@ -596,7 +596,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                                     imageGUID));
 
             if (Boolean.FALSE.equals(retValue.getReturnValue())) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
             }
         }
         return true;
@@ -649,7 +649,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
                             containerId, guids.get(0), guids.get(2), guids.get(3)));
             if (!vdcRetValue.getSucceeded()) {
-                throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
+                throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
 
@@ -659,7 +659,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     buildMoveOrCopyImageGroupParametersForMemoryConfImage(
                             containerId, guids.get(0), guids.get(4), guids.get(5)));
             if (!vdcRetValue.getSucceeded()) {
-                throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
+                throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
         }
@@ -712,7 +712,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     VdcActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForDisk(disk, containerID));
             if (!vdcRetValue.getSucceeded()) {
-                throw new VdcBLLException(vdcRetValue.getFault().getError(),
+                throw new EngineException(vdcRetValue.getFault().getError(),
                         "ImportVmCommand::MoveOrCopyAllImageGroups: Failed to copy disk!");
             }
 

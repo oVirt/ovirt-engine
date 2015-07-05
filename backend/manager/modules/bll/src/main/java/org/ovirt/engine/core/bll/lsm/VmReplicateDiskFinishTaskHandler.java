@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -65,7 +65,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
                         getEnclosingCommand().getParameters().getImageGroupID(), ImageStatus.OK);
             }
             else {
-                throw new VdcBLLException(ret.getVdsError().getCode(), ret.getVdsError().getMessage());
+                throw new EngineException(ret.getVdsError().getCode(), ret.getVdsError().getMessage());
             }
         } catch (Exception e) {
             moveDiskInDB(getEnclosingCommand().getParameters().getTargetStorageDomainId(),

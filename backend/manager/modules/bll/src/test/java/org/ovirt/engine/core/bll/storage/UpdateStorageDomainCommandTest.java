@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -97,8 +97,8 @@ public class UpdateStorageDomainCommandTest {
     public void setActionMessageParameters() {
         cmd.setActionMessageParameters();
         List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
-        assertTrue("action name not in messages", messages.remove(VdcBllMessages.VAR__ACTION__UPDATE.name()));
-        assertTrue("type not in messages", messages.remove(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN.name()));
+        assertTrue("action name not in messages", messages.remove(EngineMessage.VAR__ACTION__UPDATE.name()));
+        assertTrue("type not in messages", messages.remove(EngineMessage.VAR__TYPE__STORAGE__DOMAIN.name()));
         assertTrue("redundant messages " + messages, messages.isEmpty());
     }
 
@@ -106,14 +106,14 @@ public class UpdateStorageDomainCommandTest {
     public void canDoActionNoDomain() {
         doReturn(null).when(cmd).getStorageDomain();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
     @Test
     public void canDoActionWrongStatus() {
         sd.setStatus(StorageDomainStatus.Locked);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     @Test
@@ -132,7 +132,7 @@ public class UpdateStorageDomainCommandTest {
     public void canDoChangeForbiddenField() {
         sd.setStorageType(StorageType.UNKNOWN);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
+                EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class UpdateStorageDomainCommandTest {
         String longName = StringUtils.leftPad("name", STORAGE_DOMAIN_NAME_LENGTH_LIMIT * 2, 'X');
         sd.setStorageName(longName);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
+                EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
     }
 
     @Test
@@ -156,7 +156,7 @@ public class UpdateStorageDomainCommandTest {
         sp.setStatus(StoragePoolStatus.Maintenance);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+                EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }
 
     @Test
@@ -166,6 +166,6 @@ public class UpdateStorageDomainCommandTest {
 
         doReturn(new StorageDomainStatic()).when(sdsDao).getByName(newName);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
     }
 }

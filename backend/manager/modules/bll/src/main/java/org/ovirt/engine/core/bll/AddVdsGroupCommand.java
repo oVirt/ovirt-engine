@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
@@ -114,7 +114,7 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
         managementNetwork =
                 defaultManagementNetworkFinder.findDefaultManagementNetwork(getVdsGroup().getStoragePoolId());
         if (managementNetwork == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
             return false;
         }
         return true;
@@ -159,7 +159,7 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
     private boolean validateInputManagementNetwork() {
         managementNetwork = getManagementNetworkById();
         if (managementNetwork == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
+            addCanDoActionMessage(EngineMessage.NETWORK_NOT_EXISTS);
             return false;
         }
         final NetworkClusterValidatorBase networkClusterValidator = createNetworkClusterValidator();

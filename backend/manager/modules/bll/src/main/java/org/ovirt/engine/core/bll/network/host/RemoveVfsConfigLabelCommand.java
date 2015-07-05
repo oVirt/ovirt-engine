@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveVfsConfigLabelCommand extends VfsConfigLabelCommandBase {
 
@@ -37,6 +37,6 @@ public class RemoveVfsConfigLabelCommand extends VfsConfigLabelCommandBase {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 }

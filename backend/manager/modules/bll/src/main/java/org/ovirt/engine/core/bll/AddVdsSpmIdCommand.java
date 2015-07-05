@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -90,7 +90,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
 
     private void buildFaultResult() {
         VdcFault fault = new VdcFault();
-        fault.setError(VdcBllErrors.ReachedMaxNumberOfHostsInDC);
+        fault.setError(EngineError.ReachedMaxNumberOfHostsInDC);
         fault.setMessage(Backend.getInstance()
                 .getVdsErrorsTranslator()
                 .TranslateErrorTextSingle(fault.getError().toString()));
@@ -100,6 +100,6 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getVds().getStoragePoolId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.REGISTER_VDS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.REGISTER_VDS, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 }

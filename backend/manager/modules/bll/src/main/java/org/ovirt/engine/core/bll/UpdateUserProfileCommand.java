@@ -4,8 +4,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
-
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class UpdateUserProfileCommand<T extends UserProfileParameters> extends UserProfilesOperationCommandBase<T> {
 
@@ -24,7 +23,7 @@ public class UpdateUserProfileCommand<T extends UserProfileParameters> extends U
         }
 
         if (userProfileDao.getByUserId(getUserId()) == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PROFILE_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROFILE_NOT_EXIST);
         }
 
         return true;
@@ -37,8 +36,8 @@ public class UpdateUserProfileCommand<T extends UserProfileParameters> extends U
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__USER_PROFILE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__USER_PROFILE);
     }
 
     @Override

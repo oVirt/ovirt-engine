@@ -16,7 +16,7 @@ import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -67,21 +67,21 @@ public class EditAffinityGroupCommandTest {
     public void canDoAction_noAffinityGroup_Test() {
         doReturn(null).when(command).getAffinityGroup();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID);
+                EngineMessage.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID);
     }
 
     @Test
     public void canDoAction_changeClusterIds_Test() {
         doReturn(Guid.newGuid()).when(command).getClusterId();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_CLUSTER_ID);
+                EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_CLUSTER_ID);
     }
 
     @Test
     public void canDoAction_testNameChange_Test() {
         doReturn(new AffinityGroup()).when(affinityGroupDao).getByName(affinityGroup.getName());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
+                EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
     }
 
     @Test

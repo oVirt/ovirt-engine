@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -99,7 +99,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     }
 
     @SuppressWarnings("unchecked")
-    private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
+    private void mockBackend(boolean succeeded, EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doNothing().when(cmd).endStepJobCommitted();
@@ -150,7 +150,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
                 spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
                         getBricks(volumeWithRemoveBricksTask))));
         prepareMocks(cmd);
-        mockBackend(false, VdcBllErrors.GlusterVolumeRemoveBricksCommitFailed);
+        mockBackend(false, EngineError.GlusterVolumeRemoveBricksCommitFailed);
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
@@ -180,7 +180,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL.toString()));
+                .contains(EngineMessage.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL.toString()));
     }
 
     @Test

@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -24,7 +24,7 @@ public class SnapshotsValidator {
      * @return Is the VM during a snapshot operation or not.
      */
     public ValidationResult vmNotDuringSnapshot(Guid vmId) {
-        return vmNotInStatus(vmId, SnapshotStatus.LOCKED, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
+        return vmNotInStatus(vmId, SnapshotStatus.LOCKED, EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
     }
 
     /**
@@ -35,7 +35,7 @@ public class SnapshotsValidator {
      * @return Is the VM is preview or not.
      */
     public ValidationResult vmNotInPreview(Guid vmId) {
-        return vmNotInStatus(vmId, SnapshotStatus.IN_PREVIEW, VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+        return vmNotInStatus(vmId, SnapshotStatus.IN_PREVIEW, EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
     }
 
     /**
@@ -50,7 +50,7 @@ public class SnapshotsValidator {
      *
      * @return <code>true</code> if the VM dons't habe a snapshot in the given status.
      */
-    private ValidationResult vmNotInStatus(Guid vmId, SnapshotStatus status, VdcBllMessages msg) {
+    private ValidationResult vmNotInStatus(Guid vmId, SnapshotStatus status, EngineMessage msg) {
         if (getSnapshotDao().exists(vmId, status)) {
             return new ValidationResult(msg);
         }
@@ -90,7 +90,7 @@ public class SnapshotsValidator {
      */
     public ValidationResult snapshotTypeSupported(Snapshot snapshot, Collection<Snapshot.SnapshotType> supportedtypes) {
         if (!supportedtypes.contains(snapshot.getType())) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_ALLOWED,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_ALLOWED,
                     String.format("$supportedSnapshotTypes %s", StringUtils.join(supportedtypes, ", ")),
                     String.format("$snapshotType %s", snapshot.getType()));
 
@@ -108,7 +108,7 @@ public class SnapshotsValidator {
     private static ValidationResult createSnapshotExistsResult(boolean snapshotExists) {
         return snapshotExists
                 ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 
     protected SnapshotDao getSnapshotDao() {

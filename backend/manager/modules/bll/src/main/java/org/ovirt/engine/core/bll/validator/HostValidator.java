@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -30,42 +30,42 @@ public class HostValidator {
     }
 
     public ValidationResult hostExists() {
-        return ValidationResult.failWith(VdcBllMessages.VDS_INVALID_SERVER_ID).when(getHost() == null);
+        return ValidationResult.failWith(EngineMessage.VDS_INVALID_SERVER_ID).when(getHost() == null);
     }
 
     public ValidationResult nameNotEmpty() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY)
                 .when(StringUtils.isEmpty(host.getName()));
     }
 
     public ValidationResult nameLengthIsLegal() {
         int maxHostNameLength = Config.<Integer> getValue(ConfigValues.MaxVdsNameLength);
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG)
                 .when(host.getName().length() > maxHostNameLength);
     }
 
     public ValidationResult hostNameIsValid() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME)
                 .unless(ValidationUtils.validHostname(host.getHostName()));
     }
 
     public ValidationResult nameNotUsed() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED)
                 .when(hostDao.getByName(host.getName()) != null);
     }
 
     public ValidationResult hostNameNotUsed() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST)
                 .unless(hostDao.getAllForHostname(host.getHostName()).isEmpty());
     }
 
     public ValidationResult portIsValid() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_PORT)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_PORT)
                 .unless(ValidationUtils.validatePort(host.getSshPort()));
     }
 
     public ValidationResult sshUserNameNotEmpty() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_USERNAME)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_USERNAME)
                 .when(StringUtils.isBlank(host.getSshUsername()));
     }
 
@@ -75,12 +75,12 @@ public class HostValidator {
             return ValidationResult.VALID;
         }
 
-        return ValidationResult.failWith(VdcBllMessages.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE)
+        return ValidationResult.failWith(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE)
                 .unless(hostStaticDao.getAllForVdsGroup(host.getVdsGroupId()).isEmpty());
     }
 
     public ValidationResult securityKeysExists() {
-        return ValidationResult.failWith(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND)
+        return ValidationResult.failWith(EngineMessage.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND)
                 .when(Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication) && !haveSecurityKey());
     }
 
@@ -93,7 +93,7 @@ public class HostValidator {
      *  Note that this may override local host SSH policy. See BZ#688718.
      */
     public ValidationResult passwordNotEmpty(boolean addPending, AuthenticationMethod authMethod, String password) {
-        return ValidationResult.failWith(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD)
+        return ValidationResult.failWith(EngineMessage.VDS_CANNOT_INSTALL_EMPTY_PASSWORD)
                 .when(!addPending && authMethod == AuthenticationMethod.Password && StringUtils.isEmpty(password));
     }
 

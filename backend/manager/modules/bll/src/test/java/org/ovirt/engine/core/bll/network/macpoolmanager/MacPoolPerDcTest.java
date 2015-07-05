@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MacRange;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AuditLogDao;
@@ -155,7 +155,7 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
         try {
             allocateMac(dataCenter);
             Assert.fail("this allocation should not succeed.");
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             //ok, this exception should occur.
         }
 

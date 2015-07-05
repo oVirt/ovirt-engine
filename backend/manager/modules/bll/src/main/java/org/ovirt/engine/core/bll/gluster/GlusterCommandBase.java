@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -60,7 +60,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!isInternalExecution()) {
             return Collections.singletonMap(getVdsGroupId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, EngineMessage.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS));
         }
         return super.getExclusiveLocks();
     }
@@ -112,7 +112,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         upServer = getUpServer();
         if (upServer == null) {
             addCanDoActionMessageVariable("clusterName", getVdsGroup().getName());
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
             return false;
         }
         return true;
@@ -121,7 +121,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     protected void handleVdsErrors(AuditLogType errType, List<String> errors) {
         propagateFailure(errType, errors);
         // Setting Error to null to make the FrontendErrorHandler to use the Message which is being set above instead of
-        // the VdcBllErrors.ENGINE(which will get translated to "Internal engine error")
+        // the EngineError.ENGINE(which will get translated to "Internal engine error")
         getReturnValue().getFault().setError(null);
     }
 
@@ -136,7 +136,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         getReturnValue().getExecuteFailedMessages().add(error);
         getReturnValue().getFault().setMessage(error);
         // Setting Error to null to make the FrontendErrorHandler to use the Message which is being set above instead of
-        // the VdcBllErrors.ENGINE(which will get translated to "Internal engine error")
+        // the EngineError.ENGINE(which will get translated to "Internal engine error")
         getReturnValue().getFault().setError(null);
     }
 
@@ -174,7 +174,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         VdsStatic server = getVdsStaticDao().get(brick.getServerId());
         if ((server == null || !server.getVdsGroupId().equals(getVdsGroupId()))) {
             if (addCanDoActionMessage) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID);
             }
             return false;
         }
@@ -228,7 +228,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         Set<String> bricks = new HashSet<>();
         for (GlusterBrickEntity brick : newBricks) {
             if (bricks.contains(brick.getQualifiedName())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
                 addCanDoActionMessageVariable("brick", brick.getQualifiedName());
                 return false;
             }
@@ -237,7 +237,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
             GlusterBrickEntity existingBrick =
                     getGlusterBrickDao().getBrickByServerIdAndDirectory(brick.getServerId(), brick.getBrickDirectory());
             if (existingBrick != null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME);
                 addCanDoActionMessageVariable("brick", brick.getQualifiedName());
                 addCanDoActionMessageVariable("volumeName",
                         getGlusterVolumeDao().getById(existingBrick.getVolumeId()).getName());

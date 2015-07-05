@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.PluralMessages;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -62,7 +62,7 @@ public class NetworkAttachmentValidator {
     }
 
     public ValidationResult networkAttachmentIsSet() {
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_ATTACHMENT_NOT_EXISTS).when(attachment == null);
+        return ValidationResult.failWith(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS).when(attachment == null);
     }
 
     private NetworkAttachment getExistingNetworkAttachment() {
@@ -86,12 +86,12 @@ public class NetworkAttachmentValidator {
             vmInterfaceManager.findActiveVmsUsingNetworks(host.getId(), Collections.singleton(networkName));
 
         return new PluralMessages().getNetworkInUse(vmNames,
-            VdcBllMessages.VAR__ENTITIES__VM,
-            VdcBllMessages.VAR__ENTITIES__VMS);
+            EngineMessage.VAR__ENTITIES__VM,
+            EngineMessage.VAR__ENTITIES__VMS);
     }
 
     public ValidationResult notExternalNetwork() {
-        return ValidationResult.failWith(VdcBllMessages.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED)
+        return ValidationResult.failWith(EngineMessage.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED)
             .when(getNetwork().isExternal());
     }
 
@@ -100,7 +100,7 @@ public class NetworkAttachmentValidator {
     }
 
     public ValidationResult networkAttachedToCluster() {
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER)
+        return ValidationResult.failWith(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER)
                 .when(getNetworkCluster() == null);
     }
 
@@ -111,7 +111,7 @@ public class NetworkAttachmentValidator {
             && ipConfiguration.getBootProtocol() == NetworkBootProtocol.STATIC_IP
             && unsetAddress(ipConfiguration);
 
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_ADDR_MANDATORY_IN_STATIC_IP).when(failWhen);
+        return ValidationResult.failWith(EngineMessage.NETWORK_ADDR_MANDATORY_IN_STATIC_IP).when(failWhen);
     }
 
     private boolean unsetAddress(IpConfiguration ipConfiguration) {
@@ -125,12 +125,12 @@ public class NetworkAttachmentValidator {
         boolean failWhen = (getNetworkCluster().isDisplay() &&
             (ipConfiguration == null || ipConfiguration.getBootProtocol() == NetworkBootProtocol.NONE));
 
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL)
             .when(failWhen);
     }
 
     public ValidationResult nicExists() {
-        return ValidationResult.failWith(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST)
+        return ValidationResult.failWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST)
                 .when(attachment.getNicName() == null);
     }
 
@@ -147,7 +147,7 @@ public class NetworkAttachmentValidator {
             VdsNetworkInterface existingIface = nics.get(attachment.getNicName());
             if (existingIface != null) {
                 String oldAddress = existingIface.getAddress();
-                return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED)
+                return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED)
                         .when(StringUtils.equals(oldAddress, host.getHostName())
                             && !StringUtils.equals(oldAddress, ipConfiguration.getPrimaryAddress().getAddress()));
             }
@@ -159,13 +159,13 @@ public class NetworkAttachmentValidator {
     public ValidationResult networkNotChanged(NetworkAttachment oldAttachment) {
         boolean when = oldAttachment != null &&
             !Objects.equals(oldAttachment.getNetworkId(), attachment.getNetworkId());
-        return ValidationResult.failWith(VdcBllMessages.CANNOT_CHANGE_ATTACHED_NETWORK)
+        return ValidationResult.failWith(EngineMessage.CANNOT_CHANGE_ATTACHED_NETWORK)
             .when(when);
     }
 
     public ValidationResult validateGateway() {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY).when(ipConfiguration != null
+        return ValidationResult.failWith(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY).when(ipConfiguration != null
             && ipConfiguration.hasPrimaryAddressSet()
             && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway())
             && !managementNetworkUtil.isManagementNetwork(getNetwork().getId())
@@ -173,7 +173,7 @@ public class NetworkAttachmentValidator {
     }
 
     public ValidationResult networkNotAttachedToHost() {
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_HOST).when(networkAttachedToHost());
+        return ValidationResult.failWith(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_HOST).when(networkAttachedToHost());
     }
 
     private boolean networkAttachedToHost() {

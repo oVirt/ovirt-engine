@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
@@ -138,7 +138,7 @@ public class DiskValidatorTest {
         List<Pair<VM, VmDevice>> vmsInfo = prepareForCheckingIfDiskPluggedToVmsThatAreNotDown();
         vmsInfo.get(0).getFirst().setStatus(VMStatus.Up);
         assertThat(validator.isDiskPluggedToVmsThatAreNotDown(false, vmsInfo),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
     }
 
     @Test
@@ -156,7 +156,7 @@ public class DiskValidatorTest {
         vmsInfo.get(1).getFirst().setStatus(VMStatus.Up);
         vmsInfo.get(1).getSecond().setSnapshotId(Guid.newGuid());
         assertThat(validator.isDiskPluggedToVmsThatAreNotDown(true, vmsInfo),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
     }
 
     @Test
@@ -171,7 +171,7 @@ public class DiskValidatorTest {
         VM vm = createVM();
         vm.setVmOs(2);
         initializeOsRepository(vm.getOs(), DiskInterface.VirtIO);
-        assertThat(validator.isDiskInterfaceSupported(vm), failsWith(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        assertThat(validator.isDiskInterfaceSupported(vm), failsWith(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
     }
 
     @Test
@@ -179,7 +179,7 @@ public class DiskValidatorTest {
         disk.setReadOnly(true);
         disk.setDiskInterface(DiskInterface.IDE);
         assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
                         and(replacements(hasItem(String.format("$interface %1$s", DiskInterface.IDE)))));
 
         setupForLun();
@@ -187,7 +187,7 @@ public class DiskValidatorTest {
         lunDisk.setDiskInterface(DiskInterface.VirtIO_SCSI);
         lunDisk.setSgio(ScsiGenericIO.FILTERED);
         assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(),
-                failsWith(VdcBllMessages.SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK));
+                failsWith(EngineMessage.SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK));
     }
 
     @Test
@@ -235,7 +235,7 @@ public class DiskValidatorTest {
         doReturn(luns).when(lunValidator).executeGetDeviceList(any(Guid.class), any(StorageType.class));
 
         assertThat(lunValidator.isLunDiskVisible(lunDisk.getLun(), vds),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_INVALID));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID));
     }
 
     @Test
@@ -255,7 +255,7 @@ public class DiskValidatorTest {
         LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.FILTERED, true);
 
         assertThat(lunValidator.isUsingScsiReservationValid(createVM(), lunDisk1),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_SGIO_IS_FILTERED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_SGIO_IS_FILTERED));
     }
 
     @Test
@@ -265,7 +265,7 @@ public class DiskValidatorTest {
         LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.UNFILTERED, true);
 
         assertThat(lunValidator.isUsingScsiReservationValid(null, lunDisk1),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK));
     }
 
     private LunDisk createLunDisk(ScsiGenericIO sgio, boolean isUsingScsiReservation) {

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsGroupDao;
@@ -84,19 +84,19 @@ public class AttachNetworkToClusterInternalCommandTest {
         simulateVdsGroupExists();
         when(mockNetworkDao.get(any(Guid.class))).thenReturn(getNetwork());
         when(mockNetworkClusterDao.get(param.getNetworkCluster().getId())).thenReturn(param.getNetworkCluster());
-        assertCanDoActionFailure(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_CLUSTER.toString());
+        assertCanDoActionFailure(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_CLUSTER.toString());
     }
 
     @Test
     public void networkDoesntExist() {
         simulateVdsGroupExists();
-        assertCanDoActionFailure(VdcBllMessages.NETWORK_NOT_EXISTS.toString());
+        assertCanDoActionFailure(EngineMessage.NETWORK_NOT_EXISTS.toString());
     }
 
     @Test
     public void noVdsGroup() {
         simulateVdsGroupDoesNotExist();
-        assertCanDoActionFailure(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID.toString());
+        assertCanDoActionFailure(EngineMessage.VDS_CLUSTER_IS_NOT_VALID.toString());
     }
 
     @Test

@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -62,10 +62,10 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     @Override
     protected boolean canDoAction() {
         if (Guid.isNullOrEmpty(getVdsId())) {
-            return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
+            return failCanDoAction(EngineMessage.VDS_INVALID_SERVER_ID);
         }
         if (getVds() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
         return true;
     }
@@ -252,7 +252,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 getParameters().getVdsId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(
                         LockingGroup.VDS,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED
                 )
         );
     }

@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -146,14 +146,14 @@ public class AddStorageDomainCommonTest {
     public void canDoActionFailsNameExists() {
         when(sdsDao.getByName(sd.getName())).thenReturn(new StorageDomainStatic());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
     }
 
     @Test
     public void canDoActionFailsLongName() {
         sd.setStorageName(RandomUtils.instance().nextString(11));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
     }
 
     @Test
@@ -168,7 +168,7 @@ public class AddStorageDomainCommonTest {
         params.setStoragePoolId(spId);
         when(spDao.get(spId)).thenReturn(null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
 
 
@@ -177,7 +177,7 @@ public class AddStorageDomainCommonTest {
         sd.setStorageDomainType(StorageDomainType.ISO);
         sd.setStorageType(StorageType.FCP);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
     }
 
     @Test
@@ -185,7 +185,7 @@ public class AddStorageDomainCommonTest {
         sd.setStorageDomainType(StorageDomainType.ImportExport);
         sd.setStorageType(StorageType.LOCALFS);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
     }
 
     @Test
@@ -193,55 +193,55 @@ public class AddStorageDomainCommonTest {
         sd.setStorageDomainType(StorageDomainType.ImportExport);
         sd.setStorageType(StorageType.ISCSI);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
     }
 
     @Test
     public void canDoActionFailsMaster() {
         sd.setStorageDomainType(StorageDomainType.Master);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
     }
 
     @Test
     public void canDoActionFailsUnsupportedFormat() {
         sp.setCompatibilityVersion(Version.v3_0);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
     }
 
     @Test
     public void canDoActionFailsUnsupportedBlockOnlyFormat() {
         sd.setStorageFormat(StorageFormatType.V2);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
     }
 
     @Test
     public void canDoActionFailsUnsupportedIsoFormat() {
         sd.setStorageDomainType(StorageDomainType.ISO);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
     }
 
     @Test
     public void canDoActionFailsUnsupportedExportFormat() {
         sd.setStorageDomainType(StorageDomainType.ImportExport);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
     }
 
     @Test
     public void canDoActionFailsNoConnection() {
         when(sscDao.get(connId.toString())).thenReturn(null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
 
     @Test
     public void canDoActionFailsConnectionAlreadyUsed() {
         when(sdDao.getAllByConnectionId(connId)).thenReturn(Collections.singletonList(new StorageDomain()));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 }

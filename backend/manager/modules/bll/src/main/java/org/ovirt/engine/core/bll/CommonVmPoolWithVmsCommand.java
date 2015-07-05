@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
@@ -266,25 +266,25 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__DESKTOP_POOL);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__DESKTOP_POOL);
     }
 
     @Override
     protected boolean canDoAction() {
         if (getVdsGroup() == null) {
-            return failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+            return failCanDoAction(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
 
         // A Pool cannot be added in a cluster without a defined architecture
         if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
         VmPool pool = getVmPoolDao().getByName(getParameters().getVmPool().getName());
         if (pool != null
                 && (getActionType() == VdcActionType.AddVmPoolWithVms || !pool.getVmPoolId().equals(
                         getParameters().getVmPoolId()))) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
         }
 
         setStoragePoolId(getVdsGroup().getStoragePoolId());
@@ -295,7 +295,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         // check if the selected template is compatible with Cluster architecture.
         if (!getVmTemplate().getId().equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID)
                 && getVdsGroup().getArchitecture() != getVmTemplate().getClusterArch()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE);
         }
 
         if (!verifyAddVM()) {
@@ -305,7 +305,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (getVmTemplate().getDiskTemplateMap().values().size() != diskInfoDestinationMap.size()) {
             log.error("Can not found any default active domain for one of the disks of template with id '{}'",
                     getVmTemplate().getId());
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
             return false;
         }
 
@@ -319,20 +319,20 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
 
         if (getActionType() == VdcActionType.AddVmPoolWithVms && getParameters().getVmsCount() < 1) {
-            return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_CREATE_WITH_NO_VMS);
+            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_CREATE_WITH_NO_VMS);
         }
 
         if (getParameters().getVmStaticData().isStateless()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
         }
 
         if (getParameters().getVmPool().getPrestartedVms() > getParameters().getVmPool().getAssignedVmsCount()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
         }
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
                 !FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
-            return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+            return failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
         if (!setAndValidateDiskProfiles()) {
             return false;
@@ -410,7 +410,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 int numOfDisksOnDomain = storageToDisksMap.get(domainId).size();
                 if (numOfDisksOnDomain > 0
                     && (domain.getStorageDomainType() == StorageDomainType.ImportExport)) {
-                        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                 }
             }
             validDomains.add(domainId);

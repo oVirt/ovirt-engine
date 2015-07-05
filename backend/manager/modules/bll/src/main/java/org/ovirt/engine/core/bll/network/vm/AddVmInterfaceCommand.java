@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -95,7 +95,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     protected boolean canDoAction() {
         VmStatic vm = getVm().getStaticData();
         if (vm == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 
@@ -146,7 +146,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
                 return false;
             }
         } else if (getMacPool().getAvailableMacsCount() <= 0) {
-            addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+            addCanDoActionMessage(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             return false;
         }
 
@@ -165,7 +165,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     @Override

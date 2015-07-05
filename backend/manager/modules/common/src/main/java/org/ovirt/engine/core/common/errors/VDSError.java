@@ -7,11 +7,11 @@ import java.util.ArrayList;
 public class VDSError {
 
     private String message;
-    private VdcBllErrors code;
+    private EngineError code;
     private ArrayList<Object> args;
     private Guid vdsId;
 
-    public VDSError(VdcBllErrors code, String message) {
+    public VDSError(EngineError code, String message) {
         this.code = code;
         this.message = message;
     }
@@ -25,11 +25,11 @@ public class VDSError {
     }
 
 
-    public VdcBllErrors getCode() {
+    public EngineError getCode() {
         return code;
     }
 
-    public void setCode(VdcBllErrors value) {
+    public void setCode(EngineError value) {
         code = value;
     }
 
@@ -42,7 +42,7 @@ public class VDSError {
     }
 
     public VDSError() {
-        code = VdcBllErrors.forValue(0);
+        code = EngineError.forValue(0);
     }
 
     public Guid getVdsId() {

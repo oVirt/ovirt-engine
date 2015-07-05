@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 
 @NonTransactiveCommandAttribute
@@ -23,11 +23,11 @@ public class UpdateNetworkAttachmentCommand<T extends NetworkAttachmentParameter
     protected boolean canDoAction() {
         NetworkAttachment networkAttachment = getParameters().getNetworkAttachment();
         if (networkAttachment == null) {
-            return failCanDoAction(VdcBllMessages.NETWORK_ATTACHMENT_NOT_SPECIFIED);
+            return failCanDoAction(EngineMessage.NETWORK_ATTACHMENT_NOT_SPECIFIED);
         }
 
         if (networkAttachment.getId() == null) {
-            return failCanDoAction(VdcBllMessages.NETWORK_ATTACHMENT_NOT_EXISTS);
+            return failCanDoAction(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS);
         }
 
         return true;

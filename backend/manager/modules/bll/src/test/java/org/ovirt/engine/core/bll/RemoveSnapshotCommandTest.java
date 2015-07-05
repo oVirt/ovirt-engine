@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -176,8 +176,8 @@ public class RemoveSnapshotCommandTest {
 
         List<DiskImage> imagesDisks = mockDisksList(4);
         when(storageDomainsValidator.allDomainsHaveSpaceForClonedDisks(imagesDisks)).thenReturn(
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     private void prepareForVmValidatorTests() {
@@ -205,10 +205,10 @@ public class RemoveSnapshotCommandTest {
     @Test
     public void testCanDoActionVmUpHostNotCapable() {
         prepareForVmValidatorTests();
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE))
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE))
                 .when(vmValidator).vmHostCanLiveMerge();
         cmd.getVm().setStatus(VMStatus.Up);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE);
     }
 
     @Test
@@ -223,16 +223,16 @@ public class RemoveSnapshotCommandTest {
         prepareForVmValidatorTests();
         cmd.getVm().setStatus(VMStatus.MigratingTo);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
+                EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
     }
 
     @Test
     public void vmHasPluggedDdeviceSnapshotsAttachedToOtherVms() {
         prepareForVmValidatorTests();
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM)).when(vmValidator)
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM)).when(vmValidator)
                 .vmNotHavingDeviceSnapshotsAttachedToOtherVms(false);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM);
+                EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM);
     }
 
     /** Mocks a call to {@link RemoveSnapshotCommand#getSourceImages()} and returns its image guid */

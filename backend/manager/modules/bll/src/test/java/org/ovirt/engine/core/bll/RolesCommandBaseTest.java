@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 /**
  * A test case for the {@link RolesCommandBase} class.
@@ -34,7 +34,7 @@ public class RolesCommandBaseTest extends AbstractRolesCommandTestBase {
         List<String> messages = new ArrayList<String>(1);
         assertTrue("Role should be read only", getCommand().checkIfRoleIsReadOnly(messages));
         assertEquals("Wrong canDoAction message",
-                VdcBllMessages.ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY.toString(),
+                EngineMessage.ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY.toString(),
                 messages.get(0));
     }
 

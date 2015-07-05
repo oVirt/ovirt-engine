@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetFileStatsParameters;
@@ -175,7 +175,7 @@ public class IsoDomainListSyncronizer {
 
     /**
      * Returns a RepoFilesMetaData list with Iso file names for storage domain Id and with file type extension.<BR>
-     * If user choose to refresh the cache, and a problem occurs, then throws VdcBLLException.
+     * If user choose to refresh the cache, and a problem occurs, then throws EngineException.
      *
      * @param storageDomainId
      *            - The storage domain Id, which we fetch the Iso list from.
@@ -183,14 +183,14 @@ public class IsoDomainListSyncronizer {
      *            - The imageType we want to fetch the files from the cache.
      * @param forceRefresh
      *            - Indicates if the domain should be refreshed from VDSM.
-     * @throws VdcBLLException - if a problem occurs when refreshing the image repo cache.
+     * @throws org.ovirt.engine.core.common.errors.EngineException - if a problem occurs when refreshing the image repo cache.
      * @return List of RepoFilesMetaData files.
      */
     public List<RepoImage> getUserRequestForStorageDomainRepoFileList(Guid storageDomainId,
             ImageFileType imageType,
             boolean forceRefresh) {
         if (!isStorageDomainValid(storageDomainId, imageType, forceRefresh)) {
-            throw new VdcBLLException(VdcBllErrors.GetIsoListError);
+            throw new EngineException(EngineError.GetIsoListError);
         }
         // At any case, if refreshed or not, get Iso list from the cache.
         return getCachedIsoListByDomainId(storageDomainId, imageType);

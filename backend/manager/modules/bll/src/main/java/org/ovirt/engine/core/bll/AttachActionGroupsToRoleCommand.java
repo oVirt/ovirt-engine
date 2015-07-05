@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParameter> extends RolesCommandBase<T> {
@@ -29,8 +29,8 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
     protected boolean canDoAction() {
         List<String> canDoMessages = getReturnValue().getCanDoActionMessages();
         if (checkIfRoleIsReadOnly(canDoMessages)) {
-            canDoMessages.add(VdcBllMessages.VAR__TYPE__ROLE.toString());
-            canDoMessages.add(VdcBllMessages.VAR__ACTION__ATTACH_ACTION_TO.toString());
+            canDoMessages.add(EngineMessage.VAR__TYPE__ROLE.toString());
+            canDoMessages.add(EngineMessage.VAR__ACTION__ATTACH_ACTION_TO.toString());
             return false;
         }
 
@@ -52,11 +52,11 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
             if (allGroups.contains(group)) {
                 // group already exist
                 canDoMessages.add(
-                        VdcBllMessages.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED.toString());
+                        EngineMessage.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED.toString());
                 return true;
             } else if (role.getType() != RoleType.ADMIN && group.getRoleType() == RoleType.ADMIN) {
                 canDoMessages.add(
-                        VdcBllMessages.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE.toString());
+                        EngineMessage.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE.toString());
                 return true;
             }
         }

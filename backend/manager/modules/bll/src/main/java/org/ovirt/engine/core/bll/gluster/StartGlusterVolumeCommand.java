@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeActionVDSParameters;
@@ -35,8 +35,8 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
 
         GlusterVolumeEntity volume = getGlusterVolume();
         if (volume.isOnline()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STARTED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STARTED);
             addCanDoActionMessageVariable("volumeName", volume.getName());
             return false;
         }

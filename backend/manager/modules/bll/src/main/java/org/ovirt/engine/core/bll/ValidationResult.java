@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 /**
@@ -23,7 +23,7 @@ public final class ValidationResult {
     /**
      * In case the validation succeeded it is <code>null</code>, otherwise it contains the validation failure message.
      */
-    private final VdcBllMessages message;
+    private final EngineMessage message;
 
     /**
      * If there are any replacements for variables in the message, they can be set here.
@@ -48,7 +48,7 @@ public final class ValidationResult {
      *            Replacements for variables that appear in the message, in syntax: "$var text" where $var is the
      *            variable to be replaced, and the text is the replacement.
      */
-    public ValidationResult(VdcBllMessages message, String... variableReplacements) {
+    public ValidationResult(EngineMessage message, String... variableReplacements) {
         if (message == null) {
             throw new IllegalArgumentException("message must not be null");
         }
@@ -68,7 +68,7 @@ public final class ValidationResult {
      *            Replacements for variables that appear in the message, in syntax: "$var text" where $var is the
      *            variable to be replaced, and the text is the replacement.
      */
-    public ValidationResult(VdcBllMessages message, Collection<String> variableReplacements) {
+    public ValidationResult(EngineMessage message, Collection<String> variableReplacements) {
         this(message, variableReplacements.toArray(new String[variableReplacements.size()]));
     }
 
@@ -82,7 +82,7 @@ public final class ValidationResult {
     /**
      * @return <code>null</code> in case the validation succeeded, otherwise the validation failure message
      */
-    public VdcBllMessages getMessage() {
+    public EngineMessage getMessage() {
         return message;
     }
 
@@ -137,7 +137,7 @@ public final class ValidationResult {
      *
      * <pre>
      * int num = 1;
-     * ValidationResult.error(VdcBllMessages.ERROR_CONST).when(num == 2);
+     * ValidationResult.error(EngineMessage.ERROR_CONST).when(num == 2);
      * </pre>
      *
      * <br>
@@ -148,7 +148,7 @@ public final class ValidationResult {
      *
      * <pre>
      * int num = 1;
-     * ValidationResult.error(VdcBllMessages.ERROR_CONST, &quot;$COMPARED_NUM 2&quot;).unless(num == 2);
+     * ValidationResult.error(EngineMessage.ERROR_CONST, &quot;$COMPARED_NUM 2&quot;).unless(num == 2);
      * </pre>
      *
      * <br>
@@ -162,7 +162,7 @@ public final class ValidationResult {
      *            The replacements to be associated with the validation result
      * @return A helper object that returns the correct validation result depending on the condition.
      */
-    public static ValidationResultBuilder failWith(VdcBllMessages expectedError, String... replacements) {
+    public static ValidationResultBuilder failWith(EngineMessage expectedError, String... replacements) {
         return new ValidationResultBuilder(expectedError, replacements);
     }
 
@@ -173,7 +173,7 @@ public final class ValidationResult {
 
         private ValidationResult expectedValidation;
 
-        private ValidationResultBuilder(VdcBllMessages expectedError, String... replacements) {
+        private ValidationResultBuilder(EngineMessage expectedError, String... replacements) {
             expectedValidation = new ValidationResult(expectedError, replacements);
         }
 
@@ -183,7 +183,7 @@ public final class ValidationResult {
          * For example, if we want to make sure that <b>num doesn't equal 2</b> then we would do:
          * <pre>
          *     int num = 1;
-         *     ValidationResult.error(VdcBllMessages.ERROR_CONST).when(num == 2);</pre>
+         *     ValidationResult.error(EngineMessage.ERROR_CONST).when(num == 2);</pre>
          * <br>
          * Which would return a valid result since 1 != 2.<br>
          * If we were to set <b>num = 2</b> in the example then the desired validation error would return.<br>
@@ -202,7 +202,7 @@ public final class ValidationResult {
          * For example, if we want to make sure that <b>num equals 2</b> then we would do:
          * <pre>
          *     int num = 1;
-         *     ValidationResult.error(VdcBllMessages.ERROR_CONST).unless(num == 2);</pre>
+         *     ValidationResult.error(EngineMessage.ERROR_CONST).unless(num == 2);</pre>
          * <br>
          * Which would return the desired validation error since 1 != 2.<br>
          * If we were to set <b>num = 2</b> in the example then the result would be valid.<br>

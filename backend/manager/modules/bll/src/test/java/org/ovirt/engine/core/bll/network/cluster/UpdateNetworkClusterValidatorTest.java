@@ -18,7 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
@@ -70,7 +70,7 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
 
     @Test
     public void managementNetworkUnsetInvalid() {
-        testManagementNetworkUnset(true, false, failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_UNSET));
+        testManagementNetworkUnset(true, false, failsWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_UNSET));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
                 false,
                 true,
                 false,
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED));
     }
 
     private void testUpdateManagementNetworkChange(boolean managementBefore,
@@ -138,7 +138,7 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
                 false,
                 true,
                 true,
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_NETWORK_INUSE));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_NETWORK_INUSE));
     }
 
     private void testGlusterNetworkInUseAndUnset(boolean glusterNetworkBefore,

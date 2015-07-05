@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -34,8 +34,8 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_BRICK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
         addCanDoActionMessageVariable("brickName", getParameters().getLvName());
     }
 
@@ -51,7 +51,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
         if (!cluster.supportsGlusterService()
                 || (!getGlusterUtil().isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion(),
                         getVdsGroup().getId()))) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
         }
 
         VdsValidator validator = new VdsValidator(getVds());
@@ -61,7 +61,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
 
         String deviceType;
         if (getParameters().getDisks() == null || getParameters().getDisks().isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DEVICE_REQUIRED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DEVICE_REQUIRED);
             return false;
         } else {
             deviceType = getParameters().getDisks().get(0).getDevType();
@@ -72,13 +72,13 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
             // allowed
             // for performance reasons.
             if (!ObjectUtils.objectsEqual(deviceType, device.getDevType())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DIFFERENT_STORAGE_DEVICE_TYPES_SELECTED);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DIFFERENT_STORAGE_DEVICE_TYPES_SELECTED);
                 return false;
             }
 
             // Ensure that device is not already used by some other brick or LVM.
             if (!device.getCanCreateBrick()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEVICE_IS_ALREADY_IN_USE);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DEVICE_IS_ALREADY_IN_USE);
                 addCanDoActionMessageVariable("storageDevice", device.getName());
                 return false;
             }
@@ -140,7 +140,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
         for (StorageDevice disk : getParameters().getDisks()) {
             locksMap.put(disk.getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.HOST_STORAGE_DEVICES,
-                            VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DEVICE_LOCKED));
+                            EngineMessage.ACTION_TYPE_FAILED_STORAGE_DEVICE_LOCKED));
         }
         return locksMap;
     }

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -454,7 +454,7 @@ public class SPMAsyncTask implements SPMTask {
      */
     private boolean isTaskStateError(VDSReturnValue vdsReturnValue) {
         if (vdsReturnValue != null && vdsReturnValue.getVdsError() != null
-                && vdsReturnValue.getVdsError().getCode() == VdcBllErrors.TaskStateError) {
+                && vdsReturnValue.getVdsError().getCode() == EngineError.TaskStateError) {
             log.info("SPMAsyncTask::ClearAsyncTask: At time of attempt to clear task '{}' the response code"
                             + " was '{}' and message was '{}'. Task will not be cleaned",
                     getVdsmTaskId(),

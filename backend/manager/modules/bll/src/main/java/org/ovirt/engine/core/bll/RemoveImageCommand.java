@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -82,15 +82,15 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                                 getParameters().getParentCommand(),
                                 VdcObjectType.Storage,
                                 getStorageDomainId()));
-            } catch (VdcBLLException e) {
-                if (e.getErrorCode() == VdcBllErrors.ImageDoesNotExistInDomainError) {
+            } catch (EngineException e) {
+                if (e.getErrorCode() == EngineError.ImageDoesNotExistInDomainError) {
                     log.info("Disk '{}' doesn't exist on storage domain '{}', rolling forward",
                             getDiskImage().getId(), getStorageDomainId());
                 }
                 // VDSM renames the image before deleting it, so technically the image doesn't exist after renaming,
                 // but the actual delete can still fail with ImageDeleteError.
                 // In this case, Engine has to check whether image still exists on the storage or not.
-                else if (e.getErrorCode() == VdcBllErrors.ImageDeleteError && isImageRemovedFromStorage()) {
+                else if (e.getErrorCode() == EngineError.ImageDeleteError && isImageRemovedFromStorage()) {
                     log.info("Disk '{}' was deleted from storage domain '{}'", getDiskImage().getId(),
                             getStorageDomainId());
                 } else {

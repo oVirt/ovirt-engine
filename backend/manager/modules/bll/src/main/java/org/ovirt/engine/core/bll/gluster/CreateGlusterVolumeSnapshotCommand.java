@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -56,7 +56,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
         addCustomValue(GlusterConstants.VOLUME_SNAPSHOT_NAME, getParameters().getSnapshot().getSnapshotName());
         super.setActionMessageParameters();
     }
@@ -199,7 +199,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
 
         GlusterVolumeEntity volume = getGlusterVolume();
         if (volume.getStatus() == GlusterStatus.DOWN) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
         }
 
         if (volume.getAsyncTask() != null
@@ -207,21 +207,21 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                 || volume.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK)
                 && volume.getAsyncTask().getStatus() == JobExecutionStatus.STARTED) {
             addCanDoActionMessageVariable("asyncTask", volume.getAsyncTask().getType().name().toLowerCase());
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS);
         }
 
         if (!GlusterUtil.getInstance().isVolumeThinlyProvisioned(volume)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_THINLY_PROVISIONED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_THINLY_PROVISIONED);
         }
 
         if (getDbFacade().getGlusterVolumeSnapshotDao().getByName(getGlusterVolumeId(), snapshot.getSnapshotName()) != null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SNAPSHOT_ALREADY_EXISTS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SNAPSHOT_ALREADY_EXISTS);
         }
 
         List<GlusterBrickEntity> bricks = volume.getBricks();
         for (GlusterBrickEntity brick : bricks) {
             if (!brick.isOnline()) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN);
             }
         }
 
@@ -229,7 +229,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             if (session.getSlaveNodeUuid() == null || session.getSlaveVolumeId() == null) {
                 // Slave cluster is not maintained by engine, so cannot pause geo-rep session and create snapshot for
                 // the volume
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
             }
         }
 
@@ -248,7 +248,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
     protected EngineLock acquireGeoRepSessionLock(Guid id) {
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_GEOREP,
-                        VdcBllMessages.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED)), null);
+                        EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED)), null);
         LockManagerFactory.getLockManager().acquireLockWait(lock);
         return lock;
     }

@@ -4,7 +4,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeSnapshotActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeActivateSnapshotVDSParameters;
@@ -17,7 +17,7 @@ public class ActivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotC
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ACTIVATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ACTIVATE);
         super.setActionMessageParameters();
     }
 
@@ -45,7 +45,7 @@ public class ActivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotC
         }
 
         if (getSnapshot().getStatus() == GlusterSnapshotStatus.ACTIVATED) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_ACTIVATED,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_ACTIVATED,
                     getSnapshot().getSnapshotName());
         }
 

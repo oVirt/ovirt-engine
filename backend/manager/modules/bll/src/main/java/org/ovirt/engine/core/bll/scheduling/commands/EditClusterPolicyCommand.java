@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.commands;
 
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 
 public class EditClusterPolicyCommand extends ClusterPolicyCRUDCommand {
@@ -24,8 +24,8 @@ public class EditClusterPolicyCommand extends ClusterPolicyCRUDCommand {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__CLUSTER_POLICY);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__CLUSTER_POLICY);
     }
 
     @Override

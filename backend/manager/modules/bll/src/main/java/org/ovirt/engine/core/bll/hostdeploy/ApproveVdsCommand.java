@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @NonTransactiveCommandAttribute
 public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVdsInternalCommand<T> {
@@ -31,12 +31,12 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
     protected boolean canDoAction() {
         boolean returnValue = true;
         if (getVds() == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_VDS_NOT_FOUND);
+            addCanDoActionMessage(EngineMessage.VDS_APPROVE_VDS_NOT_FOUND);
             returnValue = false;
         } else if (getVds().getStatus() != VDSStatus.PendingApproval
                 && getVds().getStatus() != VDSStatus.InstallFailed
                 && getVds().getStatus() != VDSStatus.InstallingOS) {
-            addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_VDS_IN_WRONG_STATUS);
+            addCanDoActionMessage(EngineMessage.VDS_APPROVE_VDS_IN_WRONG_STATUS);
             returnValue = false;
         }
         return returnValue ? super.canDoAction() : false;

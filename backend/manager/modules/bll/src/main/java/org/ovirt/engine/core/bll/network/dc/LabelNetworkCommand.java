@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.LabelNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -41,8 +41,8 @@ public class LabelNetworkCommand<T extends LabelNetworkParameters> extends Comma
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__LABEL);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__LABEL);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     @Override

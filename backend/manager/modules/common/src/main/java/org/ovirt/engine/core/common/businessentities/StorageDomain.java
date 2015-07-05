@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -23,19 +23,19 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
     //this member is in use only by the Frontend project
     private String vdcQueryableId;
 
-    private Set<VdcBllErrors> alerts;
+    private Set<EngineError> alerts;
 
     /**
      * @return the alerts
      */
-    public Set<VdcBllErrors> getAlerts() {
+    public Set<EngineError> getAlerts() {
         return alerts;
     }
 
     /**
      * @param alerts the alerts to set
      */
-    public void setAlerts(Set<VdcBllErrors> alerts) {
+    public void setAlerts(Set<EngineError> alerts) {
         this.alerts = alerts;
     }
 

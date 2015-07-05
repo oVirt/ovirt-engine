@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -64,7 +64,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -76,7 +76,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
                 && getDbFacade().getVmDeviceDao()
                         .get(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()))
                         .getIsPlugged()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE);
             return false;
         }
         return true;
@@ -90,7 +90,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__INTERFACE);
     }
 }

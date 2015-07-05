@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -59,7 +59,7 @@ public class VmInterfaceManager {
      * {@link MacPoolManagerStrategy}. If
      * HotPlug is not enabled tries to add the {@link VmNic}'s MAC address to the
      * {@link MacPoolManagerStrategy}, and throws a
-     * {@link VdcBllException} if it fails.
+     * {@link EngineException} if it fails.
      *
      * @param iface
      *            The interface to save.
@@ -84,7 +84,7 @@ public class VmInterfaceManager {
                 macPool.forceAddMac(iface.getMacAddress());
             } else if (!macPool.addMac(iface.getMacAddress())) {
                 auditLogMacInUse(iface);
-                throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
+                throw new EngineException(EngineError.MAC_ADDRESS_IS_IN_USE);
             }
         }
 

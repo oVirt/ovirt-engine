@@ -41,8 +41,8 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -91,7 +91,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
         setDescription(getVmName());
         setStoragePoolId(getVm().getStoragePoolId());
@@ -118,7 +118,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (getDbFacade().getStoragePoolIsoMapDao()
                 .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getVm().getStoragePoolId())) == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             return false;
         }
 
@@ -126,7 +126,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (getParameters().getTemplateMustExists()) {
             if (!checkTemplateInStorageDomain(getVm().getStoragePoolId(), getParameters().getStorageDomainId(),
                     getVm().getVmtGuid(), getContext().getEngineContext())) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN,
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN,
                         String.format("$TemplateName %1$s", getVm().getVmtName()));
             }
         }
@@ -145,7 +145,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     // check that no RAW format exists (we are in collapse mode)
                     if (((DiskImage) images.get(img.getId())).getVolumeFormat() == VolumeFormat.RAW
                             && img.getVolumeFormat() != VolumeFormat.RAW) {
-                        addCanDoActionMessage(VdcBllMessages.VM_CANNOT_EXPORT_RAW_FORMAT);
+                        addCanDoActionMessage(EngineMessage.VM_CANNOT_EXPORT_RAW_FORMAT);
                         return false;
                     }
                 }
@@ -154,7 +154,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         // check destination storage is Export domain
         if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN,
                     String.format("$storageDomainName %1$s", getStorageDomainName()));
         }
 
@@ -219,8 +219,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXPORT);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__EXPORT);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
@@ -326,7 +326,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
                             containerID, guids.get(0), guids.get(2), guids.get(3)));
             if (!vdcRetValue.getSucceeded()) {
-                throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
+                throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
 
@@ -336,7 +336,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     buildMoveOrCopyImageGroupParametersForMemoryConfImage(
                             containerID, guids.get(0), guids.get(4), guids.get(5)));
             if (!vdcRetValue.getSucceeded()) {
-                throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
+                throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
         }
@@ -389,7 +389,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     VdcActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForDisk(containerID, disk));
             if (!vdcRetValue.getSucceeded()) {
-                throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
+                throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
 
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
@@ -450,12 +450,12 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             for (VM vm : vms) {
                 if (vm.getId().equals(getVm().getId())) {
                     if (!getParameters().getForceOverride()) {
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST);
+                        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST);
                         retVal = false;
                         break;
                     }
                 } else if (vm.getName().equals(getVm().getName())) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                     retVal = false;
                     break;
                 }
@@ -551,7 +551,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     vm, getParameters()
                             .getStorageDomainId());
         }
-        catch (VdcBLLException e) {
+        catch (EngineException e) {
             log.error("Updating VM OVF in export domain failed.", e);
             auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED_UPDATING_OVF);
         }
@@ -565,7 +565,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     @Override

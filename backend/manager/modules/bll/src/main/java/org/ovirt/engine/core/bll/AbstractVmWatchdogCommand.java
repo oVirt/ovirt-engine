@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
@@ -58,8 +58,8 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
     @Override
     protected boolean canDoAction() {
         if (!entityExists()) {
-            return failCanDoAction(getParameters().isVm() ? VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND
-                    : VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failCanDoAction(getParameters().isVm() ? EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND
+                    : EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
         return true;
     }
@@ -99,7 +99,7 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
         if (validator != null) {
             return validator.isModelCompatibleWithOs();
         } else {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
     }
 

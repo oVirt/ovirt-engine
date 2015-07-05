@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.SpmStatus;
 import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.SpmStatusVDSCommandParameters;
 import org.ovirt.engine.core.utils.log.Logged;
@@ -33,7 +33,7 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case StoragePoolUnknown:
             // ignore this, the parser can handle the empty result.

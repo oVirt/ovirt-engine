@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 /**
@@ -97,7 +97,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
     protected boolean canDoAction() {
         boolean result = true;
         if (getVds() == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
+            addCanDoActionMessage(EngineMessage.VDS_INVALID_SERVER_ID);
             result = false;
         }
         return result;

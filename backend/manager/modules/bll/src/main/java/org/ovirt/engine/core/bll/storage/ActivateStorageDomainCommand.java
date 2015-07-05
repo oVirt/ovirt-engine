@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
@@ -69,7 +69,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     protected boolean canDoAction() {
         boolean returnValue = checkStoragePool()
                 && checkStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
                 && checkStorageDomain()
                 && storageDomainStatusIsValid()
                 && (getStorageDomain().getStorageDomainType() == StorageDomainType.Master || checkMasterDomainIsUp())
@@ -190,13 +190,13 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getStorageDomainId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ACTIVATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ACTIVATE);
     }
 
     private boolean storageDomainStatusIsValid() {

@@ -44,8 +44,8 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -152,13 +152,13 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         if (!hosts.isEmpty()) {
             return hosts.get(new Random().nextInt(hosts.size()));
         }
-        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
+        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
         return null;
     }
 
     protected boolean checkStoragePool() {
         if (getStoragePool() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
             return false;
         }
         return true;
@@ -204,17 +204,17 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
         boolean succeeded = true;
         if (!entitiesDeleteProtected.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DELETE_PROTECTED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DELETE_PROTECTED);
             addCanDoActionMessageVariable("vms", StringUtils.join(entitiesDeleteProtected, ","));
             succeeded = false;
         }
         if (!vmsInPool.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_VMS_IN_POOL);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_VMS_IN_POOL);
             addCanDoActionMessageVariable("vms", StringUtils.join(vmsInPool, ","));
             succeeded = false;
         }
         if (!vmsInPreview.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DELETE_VMS_IN_PREVIEW);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DELETE_VMS_IN_PREVIEW);
             addCanDoActionMessageVariable("vms", StringUtils.join(vmsInPreview, ","));
             succeeded = false;
         }
@@ -294,14 +294,14 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             returnValue = (storagePool.getStatus() == status);
             if (!returnValue
                     && !getReturnValue().getCanDoActionMessages().contains(
-                            VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL.toString())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+                            EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL.toString())) {
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
             }
         }
         return returnValue;
     }
 
-    protected boolean checkStoragePoolStatusNotEqual(StoragePoolStatus status, VdcBllMessages onFailMessage) {
+    protected boolean checkStoragePoolStatusNotEqual(StoragePoolStatus status, EngineMessage onFailMessage) {
         boolean returnValue = false;
         StoragePool storagePool = getStoragePool();
         if (storagePool != null) {
@@ -316,7 +316,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected boolean isStorageDomainNotNull(StorageDomain domain) {
         if (domain == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
             return false;
         }
 
@@ -566,7 +566,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         boolean result = true;
         if (getStoragePool().getName().length() > getStoragePoolNameSizeLimit()) {
             result = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
         }
         return result;
     }
@@ -668,7 +668,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     @Override
-    public VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) throws VdcBLLException {
+    public VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) throws
+            EngineException {
         return super.runVdsCommand(commandType, parameters);
     }
 

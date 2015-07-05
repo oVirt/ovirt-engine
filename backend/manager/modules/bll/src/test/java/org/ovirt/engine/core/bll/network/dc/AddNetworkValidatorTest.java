@@ -20,7 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.dc.AddNetworkCommand.AddNetworkValidator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -83,7 +83,7 @@ public class AddNetworkValidatorTest {
     public void externalNetworkIsNotNewInDataCenter() throws Exception {
         externalNetworkNewInDataCenterTestSetup(true);
         assertThat(validator.externalNetworkNewInDataCenter(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_ALREADY_EXISTS));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_ALREADY_EXISTS));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class AddNetworkValidatorTest {
     public void externalNetworkIsNotAVmNetwork() throws Exception {
         when(network.isVmNetwork()).thenReturn(false);
         assertThat(validator.externalNetworkIsVmNetwork(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_MUST_BE_VM_NETWORK));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_MUST_BE_VM_NETWORK));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class AddNetworkValidatorTest {
     public void externalNetworkVlanInvalid() {
         when(network.getVlanId()).thenReturn(RandomUtils.instance().nextInt());
         assertThat(validator.externalNetworkVlanValid(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_LABELED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_LABELED));
     }
 
     @Test

@@ -9,9 +9,9 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -130,7 +130,7 @@ public abstract class MemoryImageRemover {
             return guid;
         }
         else {
-            boolean imageDoesNotExist = vdsRetValue.getVdsError().getCode() == VdcBllErrors.ImageDoesNotExistInDomainError;
+            boolean imageDoesNotExist = vdsRetValue.getVdsError().getCode() == EngineError.ImageDoesNotExistInDomainError;
             if (!imageDoesNotExist) {
                 log.error("Could not remove memory image '{}'", parameters);
             }
@@ -147,8 +147,8 @@ public abstract class MemoryImageRemover {
                     VDSCommandType.DeleteImageGroup,
                     parameters);
         }
-        catch(VdcBLLException e) {
-            if (e.getErrorCode() == VdcBllErrors.ImageDoesNotExistInDomainError) {
+        catch(EngineException e) {
+            if (e.getErrorCode() == EngineError.ImageDoesNotExistInDomainError) {
                 return createImageDoesNotExistInDomainReturnValue();
             }
             throw e;
@@ -158,7 +158,7 @@ public abstract class MemoryImageRemover {
     protected VDSReturnValue createImageDoesNotExistInDomainReturnValue() {
         VDSReturnValue vdsRetValue = new VDSReturnValue();
         vdsRetValue.setSucceeded(false);
-        vdsRetValue.setVdsError(new VDSError(VdcBllErrors.ImageDoesNotExistInDomainError, ""));
+        vdsRetValue.setVdsError(new VDSError(EngineError.ImageDoesNotExistInDomainError, ""));
         return vdsRetValue;
     }
 

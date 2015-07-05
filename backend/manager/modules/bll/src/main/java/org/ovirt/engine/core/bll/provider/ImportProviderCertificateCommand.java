@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportProviderCertificateParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 /*
@@ -74,13 +74,13 @@ public class ImportProviderCertificateCommand<P extends ImportProviderCertificat
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__PROVIDER_CERTIFICATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__IMPORT);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__PROVIDER_CERTIFICATE);
     }
 
     private void handleException(Throwable e) {
         log.error(String.format("Failed to import certificate: %1$s", e.getMessage()));
         log.debug("Exception", e);
-        throw new VdcBLLException(VdcBllErrors.PROVIDER_IMPORT_CERTIFICATE_ERROR, e.getMessage());
+        throw new EngineException(EngineError.PROVIDER_IMPORT_CERTIFICATE_ERROR, e.getMessage());
     }
 }

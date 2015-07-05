@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.LunDao;
@@ -119,7 +119,7 @@ public class RefreshLunsSizeCommandTest {
     public void canDoActionWrongVersion() {
         sp.setCompatibilityVersion(Version.v3_0);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION);
+                EngineMessage.ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION);
         sp.setCompatibilityVersion(Version.v3_6);
     }
 
@@ -133,36 +133,36 @@ public class RefreshLunsSizeCommandTest {
         sd.setStoragePoolId(spId);
         doReturn(sd).when(cmd).getStorageDomain();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
     }
 
     @Test
     public void canDoActionWrongStatus() {
         sd.setStatus(StorageDomainStatus.Maintenance);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     @Test
     public void canDoActionStatusLocked() {
         sd.setStatus(StorageDomainStatus.Locked);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+                EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED);
     }
 
     @Test
     public void canDoActionNoDomain() {
         doReturn(null).when(cmd).getStorageDomain();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
     @Test
     public void setActionMessageParameters() {
         cmd.setActionMessageParameters();
         List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
-        assertTrue("action name not in messages", messages.remove(VdcBllMessages.VAR__ACTION__UPDATE.name()));
-        assertTrue("type not in messages", messages.remove(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN.name()));
+        assertTrue("action name not in messages", messages.remove(EngineMessage.VAR__ACTION__UPDATE.name()));
+        assertTrue("type not in messages", messages.remove(EngineMessage.VAR__TYPE__STORAGE__DOMAIN.name()));
         assertTrue("redundant messages " + messages, messages.isEmpty());
     }
 
@@ -180,7 +180,7 @@ public class RefreshLunsSizeCommandTest {
         when(lunsDao.getAllForVolumeGroup(STORAGE)).thenReturn(lunsFromDb);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_LUNS_NOT_PART_OF_STORAGE_DOMAIN);
+                EngineMessage.ACTION_TYPE_FAILED_LUNS_NOT_PART_OF_STORAGE_DOMAIN);
     }
 
     @Test

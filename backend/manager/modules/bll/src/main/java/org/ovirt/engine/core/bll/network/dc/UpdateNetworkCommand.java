@@ -38,9 +38,9 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -116,7 +116,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override
@@ -217,7 +217,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 }
 
                 if (NetworkUtils.isLabeled(labeledNic) && labeledNic.getLabels().contains(oldLabel)) {
-                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_LABEL_RENAMING_NOT_SUPPORTED);
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_LABEL_RENAMING_NOT_SUPPORTED);
                 }
             }
 
@@ -234,7 +234,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 }
             }
 
-            throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
+            throw new EngineException(EngineError.LABELED_NETWORK_INTERFACE_NOT_FOUND);
         }
 
         public ValidationResult notRenamingUsedNetwork(String networkName) {
@@ -283,7 +283,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 }
             }
 
-            return networkNotUsed(runningVms, VdcBllMessages.VAR__ENTITIES__VMS, VdcBllMessages.VAR__ENTITIES__VM);
+            return networkNotUsed(runningVms, EngineMessage.VAR__ENTITIES__VMS, EngineMessage.VAR__ENTITIES__VM);
         }
 
         public ValidationResult nonVmNetworkNotUsedByTemplates(Network updatedNetwork) {
@@ -309,12 +309,12 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                     && network.isVmNetwork() == newNetwork.isVmNetwork()
                     && ObjectUtils.equals(network.getProvidedBy(), newNetwork.getProvidedBy())
                     ? ValidationResult.VALID
-                    : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED);
+                    : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED);
         }
 
         public ValidationResult notChangingDataCenterId(Guid dataCenterId) {
             final Guid oldDataCenterId = network.getDataCenterId();
-            return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_DATA_CENTER_ID_CANNOT_BE_CHANGED)
+            return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DATA_CENTER_ID_CANNOT_BE_CHANGED)
                     .when(!oldDataCenterId.equals(dataCenterId));
         }
     }

@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -46,7 +46,7 @@ public class VmValidator {
     public ValidationResult vmNotDuringMigration() {
         for (VM vm : vms) {
             if (vm.getStatus() == VMStatus.MigratingFrom || vm.getStatus() == VMStatus.MigratingTo) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
             }
         }
 
@@ -57,7 +57,7 @@ public class VmValidator {
     public ValidationResult vmDown() {
         for (VM vm : vms) {
             if (!vm.isDown()) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
         }
 
@@ -68,7 +68,7 @@ public class VmValidator {
     public ValidationResult vmQualifiedForSnapshotMerge() {
         for (VM vm : vms) {
             if (!vm.isQualifiedForSnapshotMerge()) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP,
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP,
                         String.format("$VmName %s", vm.getName()));
             }
         }
@@ -85,7 +85,7 @@ public class VmValidator {
             if (!vm.isDown() &&
                     ((vm.getRunOnVds() == null ||
                     !DbFacade.getInstance().getVdsDao().get(vm.getRunOnVds()).getLiveMergeSupport()))) {
-                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE,
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE,
                             String.format("$VmName %s", vm.getName()));
             }
         }
@@ -96,7 +96,7 @@ public class VmValidator {
     public ValidationResult vmNotLocked() {
         for (VM vm : vms) {
             if (vm.getStatus() == VMStatus.ImageLocked) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED);
             }
         }
 
@@ -106,7 +106,7 @@ public class VmValidator {
     public ValidationResult vmNotSavingRestoring() {
         for (VM vm : vms) {
             if (vm.getStatus().isHibernating() || vm.getStatus() == VMStatus.RestoringState) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING);
             }
         }
 
@@ -117,7 +117,7 @@ public class VmValidator {
         for (VM vm : vms) {
             if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class,
                     actionType)) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
                         LocalizedVmStatus.from(vm.getStatus()));
             }
         }
@@ -128,7 +128,7 @@ public class VmValidator {
     public ValidationResult vmNotIlegal() {
         for (VM vm : vms) {
             if (vm.getStatus() == VMStatus.ImageIllegal) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL);
             }
         }
 
@@ -138,8 +138,8 @@ public class VmValidator {
     public ValidationResult vmNotRunningStateless() {
         for (VM vm : vms) {
             if (DbFacade.getInstance().getSnapshotDao().exists(vm.getId(), SnapshotType.STATELESS)) {
-                VdcBllMessages message = vm.isRunning() ? VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS :
-                        VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_STATELESS_SNAPSHOT_LEFTOVER;
+                EngineMessage message = vm.isRunning() ? EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS :
+                        EngineMessage.ACTION_TYPE_FAILED_VM_HAS_STATELESS_SNAPSHOT_LEFTOVER;
                 return new ValidationResult(message);
             }
         }
@@ -167,7 +167,7 @@ public class VmValidator {
     /**
      * @return ValidationResult indicating whether there are plugged disk snapshots
      */
-    public ValidationResult vmNotHavingPluggedDiskSnapshots(VdcBllMessages message) {
+    public ValidationResult vmNotHavingPluggedDiskSnapshots(EngineMessage message) {
         List<String> vmPluggedDiskSnapshotsInfo = null;
         for (VM vm : vms) {
             List<DiskImage> pluggedDiskSnapshots =
@@ -213,7 +213,7 @@ public class VmValidator {
         });
 
         if (isVirtioScsiDiskExist) {
-            return new ValidationResult(VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
+            return new ValidationResult(EngineMessage.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
         }
 
         return ValidationResult.VALID;
@@ -245,7 +245,7 @@ public class VmValidator {
             replacements.add(String.format("$vmName %s", vm.getName()));
 
             if (!passthroughVnics.isEmpty()) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED,
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED,
                         replacements);
             }
         }
@@ -261,7 +261,7 @@ public class VmValidator {
             List<VmDevice> devices = getDbFacade().getVmDeviceDao().getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.DISK);
             for (VmDevice device : devices) {
                 if (device.getIsPlugged() && device.isUsingScsiReservation()) {
-                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION,
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION,
                             String.format("$VmName %s", vm.getName()));
                 }
             }

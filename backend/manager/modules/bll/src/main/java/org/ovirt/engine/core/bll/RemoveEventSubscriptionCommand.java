@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametesBase> extends
@@ -24,13 +24,13 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
                             .getDbUserDao()
                             .get(getParameters().getEventSubscriber().getsubscriber_id());
             if (user == null) {
-                addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DB);
+                addCanDoActionMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
                 retValue = false;
             } else {
                 retValue = ValidateRemove(event_notification_method, getParameters().getEventSubscriber(), user);
             }
         } else {
-            addCanDoActionMessage(VdcBllMessages.EN_UNKNOWN_NOTIFICATION_METHOD);
+            addCanDoActionMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
             retValue = false;
         }
         return retValue;

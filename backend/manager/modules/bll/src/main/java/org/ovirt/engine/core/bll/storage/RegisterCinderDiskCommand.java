@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.GetCinderEntityByStorageDomainIdParameters;
 import org.ovirt.engine.core.common.action.RegisterCinderDiskParameters;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.slf4j.Logger;
@@ -66,8 +66,8 @@ public class RegisterCinderDiskCommand<T extends RegisterCinderDiskParameters> e
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REGISTER);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REGISTER);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     protected CinderDisk getCinderDisk() {

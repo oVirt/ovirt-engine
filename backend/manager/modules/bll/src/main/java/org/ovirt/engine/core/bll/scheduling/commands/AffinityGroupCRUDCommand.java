@@ -11,7 +11,7 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,7 +32,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
 
     protected boolean validateParameters() {
         if (getVdsGroup() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CLUSTER_FOR_AFFINITY_GROUP);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_CLUSTER_FOR_AFFINITY_GROUP);
         }
         if (getParameters().getAffinityGroup().getEntityIds() != null) {
             VmStatic vmStatic = null;
@@ -40,13 +40,13 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
             for (Guid vmId : getParameters().getAffinityGroup().getEntityIds()) {
                 vmStatic = getVmStaticDao().get(vmId);
                 if (vmStatic == null) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VM_FOR_AFFINITY_GROUP);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_FOR_AFFINITY_GROUP);
                 }
                 if (!Objects.equals(vmStatic.getVdsGroupId(), getVdsGroupId())) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_IN_AFFINITY_GROUP_CLUSTER);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_IN_AFFINITY_GROUP_CLUSTER);
                 }
                 if (vmSet.contains(vmStatic.getId())) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DUPLICTE_VM_IN_AFFINITY_GROUP);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DUPLICTE_VM_IN_AFFINITY_GROUP);
                 } else {
                     vmSet.add(vmStatic.getId());
                 }
@@ -118,7 +118,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
                 intersection.retainAll(positiveGroup);
 
                 if(intersection.size() > 1) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_AFFINITY_RULES_COLLISION,
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_RULES_COLLISION,
                             String.format("$UnifiedAffinityGroups %s", positiveGroup.toString()),
                             String.format("$negativeAR %s", ag.getEntityIds().toString()));
                 }
@@ -166,6 +166,6 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__AFFINITY_GROUP);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__AFFINITY_GROUP);
     }
 }

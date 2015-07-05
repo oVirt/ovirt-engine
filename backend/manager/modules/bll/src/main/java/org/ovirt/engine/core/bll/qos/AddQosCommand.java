@@ -5,7 +5,7 @@ import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AddQosCommand<T extends QosBase, M extends QosValidator<T>> extends QosCommandBase<T, M> {
@@ -35,7 +35,7 @@ public abstract class AddQosCommand<T extends QosBase, M extends QosValidator<T>
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
 }

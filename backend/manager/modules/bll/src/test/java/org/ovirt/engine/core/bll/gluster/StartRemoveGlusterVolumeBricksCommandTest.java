@@ -35,9 +35,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -144,7 +144,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest {
         return volumeEntity;
     }
 
-    private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
+    private void mockBackend(boolean succeeded, EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doNothing().when(cmd).startSubStep();
@@ -192,7 +192,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest {
     public void executeCommandWhenFailed() {
         cmd = spy(createTestCommand(volumeId2, 0));
         prepareMocks(cmd);
-        mockBackend(false, VdcBllErrors.GlusterVolumeRemoveBricksStartFailed);
+        mockBackend(false, EngineError.GlusterVolumeRemoveBricksStartFailed);
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
@@ -228,7 +228,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest {
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL.toString()));
+                .contains(EngineMessage.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL.toString()));
 
     }
 }

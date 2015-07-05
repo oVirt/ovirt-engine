@@ -34,9 +34,9 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.MigrateStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -51,7 +51,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     private VDS destinationVds;
 
     /** Used to log the migration error. */
-    private VdcBllErrors migrationErrorCode;
+    private EngineError migrationErrorCode;
 
     private Integer actualDowntime;
 
@@ -161,7 +161,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 return true;
             }
         }
-        catch (VdcBLLException e) {
+        catch (EngineException e) {
         }
 
         runningFailed();
@@ -210,7 +210,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 if (retVal != null) {
                     actualDowntime = (Integer) retVal.getReturnValue();
                 }
-            } catch (VdcBLLException e) {
+            } catch (EngineException e) {
                 migrationErrorCode = e.getErrorCode();
             }
         }
@@ -383,7 +383,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         final VM vm = getVm();
 
         if (vm == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -396,29 +396,29 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
 
         if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getCompatibilityVersion())) {
-            return failCanDoAction(VdcBllMessages.MIGRATION_IS_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.MIGRATION_IS_NOT_SUPPORTED);
         }
 
         // If VM is pinned to host, no migration can occur
         if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST);
         }
 
         if (vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE
                 && !getParameters().isForceMigrationForNonMigratableVm()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE_AND_IS_NOT_FORCED_BY_USER_TO_MIGRATE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE_AND_IS_NOT_FORCED_BY_USER_TO_MIGRATE);
         }
 
         switch (vm.getStatus()) {
         case MigratingFrom:
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
 
         case NotResponding:
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(VMStatus.NotResponding));
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(VMStatus.NotResponding));
 
         case Paused:
             if (vm.getVmPauseStatus() == VmPauseStatus.EIO) {
-                return failCanDoAction(VdcBllMessages.MIGRATE_PAUSED_EIO_VM_IS_NOT_SUPPORTED);
+                return failCanDoAction(EngineMessage.MIGRATE_PAUSED_EIO_VM_IS_NOT_SUPPORTED);
             }
             break;
 
@@ -426,10 +426,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
 
         if (!vm.isQualifyToMigrate()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);
         }
 
-        if (!validate(vmValidator.vmNotHavingPluggedDiskSnapshots(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_PLUGGED_DISK_SNAPSHOT))
+        if (!validate(vmValidator.vmNotHavingPluggedDiskSnapshots(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_PLUGGED_DISK_SNAPSHOT))
                 || !validate(vmValidator.vmNotHavingPassthroughVnics())) {
             return false;
         }
@@ -455,8 +455,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MIGRATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__MIGRATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
@@ -492,7 +492,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             try {
                 runVdsCommand(VDSCommandType.MigrateStatus,
                         new MigrateStatusVDSCommandParameters(getVdsId(), getVmId()));
-            } catch (VdcBLLException e) {
+            } catch (EngineException e) {
                 migrationErrorCode = e.getErrorCode();
             }
         }
@@ -521,7 +521,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected String getLockMessage() {
-        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_MIGRATED.name());
+        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_MIGRATED.name());
         builder.append(String.format("$VmName %1$s", getVmName()));
         return builder.toString();
     }

@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -69,7 +69,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                                 ""));
 
         if (!retVal.getSucceeded()) {
-            throw new VdcBLLException(VdcBllErrors.VolumeCreationError,
+            throw new EngineException(EngineError.VolumeCreationError,
                     "Failed to create image for vm configuration!");
         }
 
@@ -99,7 +99,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                                 ""));
 
         if (!retVal.getSucceeded()) {
-            throw new VdcBLLException(VdcBllErrors.VolumeCreationError,
+            throw new EngineException(EngineError.VolumeCreationError,
                     "Failed to create image for memory!");
         }
 

@@ -5,7 +5,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Version;
@@ -36,7 +36,7 @@ public class VmWatchdogValidator {
         Set<VmWatchdogType> vmWatchdogTypes = getOsRepository().getVmWatchdogTypes(osId, version);
 
         return (!vmWatchdogTypes.contains(vmWatchdog.getModel()))
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_WATCHDOG_MODEL_IS_NOT_SUPPORTED_BY_OS)
+                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_WATCHDOG_MODEL_IS_NOT_SUPPORTED_BY_OS)
                 : ValidationResult.VALID;
     }
 

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -55,7 +55,7 @@ public class ForceSelectSPMCommandTest {
     public void testCDANonExistingVds() {
         doReturn(null).when(vdsDaoMock).get(vdsId);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure("canDoAction did not fail for non existing VDS",
-                command, VdcBllMessages.VDS_NOT_EXIST);
+                command, EngineMessage.VDS_NOT_EXIST);
     }
 
     @Test
@@ -63,14 +63,14 @@ public class ForceSelectSPMCommandTest {
         vds.setStatus(VDSStatus.Down);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
                 ("canDoAction did not fail for a VDS with a status different from UP",
-                        command, VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_NOT_UP);
+                        command, EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_NOT_UP);
     }
 
     @Test
     public void testCDAStoragePoolValid() {
         vds.setId(Guid.newGuid());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure("canDoAction did not fail on mismatch Storage Pool",
-                command, VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL);
+                command, EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class ForceSelectSPMCommandTest {
         vds.setSpmStatus(VdsSpmStatus.SPM);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
                 ("canDoAction did not fail on a VDS that is already set as SPM",
-                        command, VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_ALREADY_SPM);
+                        command, EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_ALREADY_SPM);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ForceSelectSPMCommandTest {
         vds.setVdsSpmPriority(BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
                 ("canDoAction did not fail on a VDS that is set to never be elected as SPM",
-                        command, VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_MARKED_AS_NEVER_SPM);
+                        command, EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_MARKED_AS_NEVER_SPM);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class ForceSelectSPMCommandTest {
         storagePool.setStatus(StoragePoolStatus.Uninitialized);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
                 ("canDoAction did not fail on a Storage Pool which is not up", command,
-                        VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+                        EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class ForceSelectSPMCommandTest {
         doReturn(tasks).when(asyncTaskDaoMock).getAsyncTaskIdsByStoragePoolId(storagePoolId);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
                 ("canDoAction did not fail on a Storage Pool with running tasks", command,
-                        VdcBllMessages.CANNOT_FORCE_SELECT_SPM_STORAGE_POOL_HAS_RUNNING_TASKS);
+                        EngineMessage.CANNOT_FORCE_SELECT_SPM_STORAGE_POOL_HAS_RUNNING_TASKS);
     }
 
     private void createVDSandStoragePool() {

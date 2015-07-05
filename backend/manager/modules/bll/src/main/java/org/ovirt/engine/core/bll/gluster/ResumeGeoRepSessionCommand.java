@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
@@ -25,7 +25,7 @@ public class ResumeGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RESUME);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__RESUME);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ResumeGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
             return false;
         }
         if (getGeoRepSession().getStatus().equals(GeoRepSessionStatus.ACTIVE)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_RESUMED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_RESUMED);
             return false;
         }
         return true;

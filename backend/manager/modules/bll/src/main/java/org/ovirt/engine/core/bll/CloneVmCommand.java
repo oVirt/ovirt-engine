@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -98,7 +98,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         }
 
         locks.put(getSourceVmFromDb().getId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_CLONED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_CLONED));
 
         return locks;
     }
@@ -291,7 +291,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     @Override
     protected boolean canDoAction() {
         if (!(getSourceVmFromDb().getStatus() == VMStatus.Suspended || getSourceVmFromDb().isDown())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
         }
 
         return super.canDoAction();

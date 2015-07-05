@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -33,20 +33,20 @@ public abstract class NetworkClusterValidatorBase {
      *            network to be checked
      */
     public ValidationResult networkBelongsToClusterDataCenter(VDSGroup cluster, Network network) {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_FROM_DIFFERENT_DC,
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_FROM_DIFFERENT_DC,
                 String.format(NETWORK_NAME_REPLACEMENT, network.getName())).
                 unless(cluster.getStoragePoolId().equals(network.getDataCenterId()));
     }
 
     public ValidationResult managementNetworkNotExternal(Network network) {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_EXTERNAL,
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_EXTERNAL,
                 String.format(NETWORK_NAME_REPLACEMENT, network.getName())).when(
                         networkCluster.isManagement() &&
                         network.isExternal());
     }
 
     public ValidationResult managementNetworkRequired(Network network) {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED,
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED,
                 String.format(NETWORK_NAME_REPLACEMENT, network.getName())).when(
                         networkCluster.isManagement() &&
                         !networkCluster.isRequired());
@@ -58,7 +58,7 @@ public abstract class NetworkClusterValidatorBase {
      * @return Error if the management network change is not allowed.
      */
     public ValidationResult managementNetworkChange() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED).
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED).
                 when(isManagementNetworkChangeInvalid());
     }
 
@@ -88,7 +88,7 @@ public abstract class NetworkClusterValidatorBase {
      */
     public ValidationResult migrationPropertySupported() {
         return networkCluster.isMigration() && !FeatureSupported.migrationNetwork(version)
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED)
+                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED)
                 : ValidationResult.VALID;
     }
 
@@ -100,7 +100,7 @@ public abstract class NetworkClusterValidatorBase {
     public ValidationResult externalNetworkSupported() {
         return FeatureSupported.deviceCustomProperties(version)
                 ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_NOT_SUPPORTED);
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_NOT_SUPPORTED);
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class NetworkClusterValidatorBase {
      */
     public ValidationResult externalNetworkNotDisplay(String networkName) {
         return networkCluster.isDisplay() ?
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_DISPLAY,
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_DISPLAY,
                         String.format(NETWORK_NAME_REPLACEMENT, networkName))
                 : ValidationResult.VALID;
     }
@@ -126,7 +126,7 @@ public abstract class NetworkClusterValidatorBase {
      */
     public ValidationResult externalNetworkNotRequired(String networkName) {
         return networkCluster.isRequired() ?
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REQUIRED,
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REQUIRED,
                         String.format(NETWORK_NAME_REPLACEMENT, networkName))
                 : ValidationResult.VALID;
     }
@@ -140,7 +140,7 @@ public abstract class NetworkClusterValidatorBase {
     public ValidationResult glusterNetworkSupported() {
         return networkCluster.isGluster()
                 && !GlusterFeatureSupported.glusterNetworkRoleSupported(version)
-                ? new ValidationResult(VdcBllMessages.GLUSTER_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL)
+                ? new ValidationResult(EngineMessage.GLUSTER_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL)
                 : ValidationResult.VALID;
     }
 }

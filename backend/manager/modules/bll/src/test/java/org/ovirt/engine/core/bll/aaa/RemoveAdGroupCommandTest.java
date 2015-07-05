@@ -8,7 +8,7 @@ import static org.mockito.Mockito.spy;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.IdParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveAdGroupCommandTest {
@@ -37,7 +37,7 @@ public class RemoveAdGroupCommandTest {
         mockIsLastSuperUserGroup(true);
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString()));
+                EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString()));
     }
 
     @Test

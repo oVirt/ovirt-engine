@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
@@ -121,8 +121,8 @@ public class HostSetupNetworksValidator {
         vr = skipValidation(vr) ? vr : validateCustomProperties();
 
         // TODO: Cover qos change not supported and network sync. see SetupNetworkHelper.validateNetworkQos()
-        // Violation - VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED
-        // Violation - VdcBllMessages.NETWORKS_NOT_IN_SYNC
+        // Violation - EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED
+        // Violation - EngineMessage.NETWORKS_NOT_IN_SYNC
 
         return vr;
     }
@@ -142,7 +142,7 @@ public class HostSetupNetworksValidator {
         Set<Guid> networkIds = new HashSet<>(attachmentsToConfigure.size());
         for (NetworkAttachment attachment : attachmentsToConfigure) {
             if (networkIds.contains(attachment.getNetworkId())) {
-                return new ValidationResult(VdcBllMessages.NETWORKS_ALREADY_ATTACHED_TO_IFACES);
+                return new ValidationResult(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES);
             } else {
                 networkIds.add(attachment.getNetworkId());
             }
@@ -161,7 +161,7 @@ public class HostSetupNetworksValidator {
         if (vmNames.isEmpty()) {
             return ValidationResult.VALID;
         } else {
-            return new ValidationResult(VdcBllMessages.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
+            return new ValidationResult(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
                 commaSeparated(vmNames));
         }
     }
@@ -170,7 +170,7 @@ public class HostSetupNetworksValidator {
         List<Guid> invalidBondIds = Entities.idsNotReferencingExistingRecords(params.getRemovedBonds(),
             existingIfacesById);
         if (!invalidBondIds.isEmpty()) {
-            return new ValidationResult(VdcBllMessages.NETWORK_BOND_NOT_EXISTS, commaSeparated(invalidBondIds));
+            return new ValidationResult(EngineMessage.NETWORK_BOND_NOT_EXISTS, commaSeparated(invalidBondIds));
         }
 
         Set<String> requiredNicsNames = getRemovedBondsUsedByNetworks();
@@ -184,7 +184,7 @@ public class HostSetupNetworksValidator {
             }
 
             if (requiredNicsNames.contains(bondName)) {
-                return new ValidationResult(VdcBllMessages.BOND_USED_BY_NETWORK_ATTACHMENTS, bondName);
+                return new ValidationResult(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS, bondName);
             }
         }
 
@@ -253,7 +253,7 @@ public class HostSetupNetworksValidator {
 
             //count of bond slaves must be at least two.
             if (modifiedOrNewBond.getSlaves().size() < 2) {
-                return new ValidationResult(VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT, bondName);
+                return new ValidationResult(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT, bondName);
             }
 
             for (String slaveName : modifiedOrNewBond.getSlaves()) {
@@ -283,11 +283,11 @@ public class HostSetupNetworksValidator {
 
                         //… or slave was removed from its former bond
                         && !bondIsUpdatedAndDoesNotContainCertainSlave(slaveName, currentSlavesBondName))) {
-                    return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_ALREADY_IN_BOND, slaveName);
+                    return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND, slaveName);
                 }
 
                 if (slaveUsedMultipleTimesInDifferentBonds(slaveName)) {
-                    return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES,
+                    return new ValidationResult(EngineMessage.NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES,
                         ReplacementUtils.createSetVariableString(
                             "NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES_ENTITY",
                             slaveName));
@@ -297,7 +297,7 @@ public class HostSetupNetworksValidator {
                 so this check, that nic is part of newly crated bond, and any previously attached network has
                 to be unattached. */
                 if (potentialSlave.getNetworkName() != null && !isNetworkAttachmentRemoved(potentialSlave)) {
-                    return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
+                    return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
                         potentialSlave.getName());
                 }
             }
@@ -398,13 +398,13 @@ public class HostSetupNetworksValidator {
         return validateCoherentNicIdentification(attachment.getId(),
             attachment.getNicId(),
             attachment.getNicName(),
-            VdcBllMessages.NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY);
+            EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY);
     }
 
     private ValidationResult validateCoherentNicIdentification(Bond bond) {
         Guid nicId = bond.getId();
         String nicName = bond.getName();
-        VdcBllMessages message = VdcBllMessages.BOND_REFERENCES_NICS_INCOHERENTLY;
+        EngineMessage message = EngineMessage.BOND_REFERENCES_NICS_INCOHERENTLY;
         return validateCoherentNicIdentification(bond.getId(), nicId, nicName, message);
 
     }
@@ -412,7 +412,7 @@ public class HostSetupNetworksValidator {
     private ValidationResult validateCoherentNicIdentification(Guid violatingEntityId,
         Guid nicId,
         String nicName,
-        VdcBllMessages message) {
+        EngineMessage message) {
 
         boolean bothIdentificationSet = nicId != null && nicName != null;
         String[] replacements = createIncoherentNicIdentificationErrorReplacements(violatingEntityId, nicId, nicName);
@@ -450,14 +450,14 @@ public class HostSetupNetworksValidator {
             }
         }
 
-        return new ValidationResult(VdcBllMessages.NETWORK_ATTACHMENT_NOT_EXISTS);
+        return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS);
     }
 
     private ValidationResult validRemovedNetworkAttachments() {
         List<Guid> invalidIds = Entities.idsNotReferencingExistingRecords(params.getRemovedNetworkAttachments(),
             existingAttachments);
         if (!invalidIds.isEmpty()) {
-            return new ValidationResult(VdcBllMessages.NETWORK_ATTACHMENT_NOT_EXISTS, commaSeparated(invalidIds));
+            return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS, commaSeparated(invalidIds));
         }
 
         ValidationResult vr = ValidationResult.VALID;
@@ -498,7 +498,7 @@ public class HostSetupNetworksValidator {
         VdsNetworkInterface nic = existingNics.get(attachment.getNicName());
         if (nic != null && !removedBondVdsNetworkInterfaceMap.containsKey(nic.getName())) {
             if (NetworkUtils.isLabeled(nic) && nic.getLabels().contains(removedNetwork.getLabel())) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
                     removedNetwork.getName());
             }
         }
@@ -567,7 +567,7 @@ public class HostSetupNetworksValidator {
                 net.getMtu() == 0 ? "default" : String.valueOf(net.getMtu())));
         }
         String replacements = String.format("[%s]", commaSeparated(mtuDiffNetworks));
-        return new ValidationResult(VdcBllMessages.NETWORK_MTU_DIFFERENCES, replacements);
+        return new ValidationResult(EngineMessage.NETWORK_MTU_DIFFERENCES, replacements);
     }
 
     private ValidationResult validateCustomProperties() {
@@ -583,7 +583,7 @@ public class HostSetupNetworksValidator {
             Network network = existingNetworkRelatedToAttachment(attachment);
             if (attachment.hasProperties()) {
                 if (!networkCustomPropertiesSupported) {
-                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
                         network.getName());
                 }
 
@@ -592,7 +592,7 @@ public class HostSetupNetworksValidator {
                         attachment.getProperties());
                 if (!errors.isEmpty()) {
                     handleCustomPropertiesError(util, errors);
-                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT,
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT,
                         network.getName());
                 }
             }

@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -124,14 +124,14 @@ public class UpdateVdsGroupCommandTest {
     public void nameInUse() {
         createSimpleCommand();
         createCommandWithDifferentName();
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
     }
 
     @Test
     public void invalidVdsGroup() {
         createSimpleCommand();
         when(vdsGroupDao.get(any(Guid.class))).thenReturn(null);
-        canDoActionFailedWithReason(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+        canDoActionFailedWithReason(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class UpdateVdsGroupCommandTest {
         clusterHasVMs();
         cpuExists();
         architectureIsNotUpdatable();
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_ARCHITECTURE_ILLEGAL);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CANNOT_UPDATE_CPU_ARCHITECTURE_ILLEGAL);
     }
 
     @Test
@@ -160,7 +160,7 @@ public class UpdateVdsGroupCommandTest {
         clusterHasVMs();
         clusterHasVds();
         architectureIsUpdatable();
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CPU_IS_NOT_UPDATABLE);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CPU_IS_NOT_UPDATABLE);
     }
 
     @Test
@@ -178,7 +178,7 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void invalidCpuSelection() {
         createCommandWithDefaultVdsGroup();
-        canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
+        canDoActionFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
     }
 
     @Test
@@ -187,14 +187,14 @@ public class UpdateVdsGroupCommandTest {
         cpuExists();
         cpuManufacturersDontMatch();
         clusterHasVds();
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_ILLEGAL);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CANNOT_UPDATE_CPU_ILLEGAL);
     }
 
     @Test
     public void invalidVersion() {
         createCommandWithInvalidVersion();
         setupCpu();
-        canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED);
+        canDoActionFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED);
     }
 
     @Test
@@ -202,7 +202,7 @@ public class UpdateVdsGroupCommandTest {
         createCommandWithOlderVersion();
         setupCpu();
         VdsExist();
-        canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        canDoActionFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -222,7 +222,7 @@ public class UpdateVdsGroupCommandTest {
         when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFSOldVersion());
         doReturn(storagePoolDao2).when(cmd).getStoragePoolDao();
         setupCpu();
-        canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
+        canDoActionFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
     }
 
     @Test
@@ -231,7 +231,7 @@ public class UpdateVdsGroupCommandTest {
         setupCpu();
         VdsExistWithHigherVersion();
         architectureIsUpdatable();
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
     }
 
     @Test
@@ -241,7 +241,7 @@ public class UpdateVdsGroupCommandTest {
         clusterHasVds();
         cpuFlagsMissing();
         architectureIsUpdatable();
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
     }
 
     @Test
@@ -250,7 +250,7 @@ public class UpdateVdsGroupCommandTest {
         setupCpu();
         clusterHasVds();
         cpuFlagsNotMissing();
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL);
     }
 
     @Test
@@ -264,7 +264,7 @@ public class UpdateVdsGroupCommandTest {
         allQueriesForVms();
         storagePoolAlreadyHasCluster();
         architectureIsUpdatable();
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
     }
 
     @Test
@@ -274,7 +274,7 @@ public class UpdateVdsGroupCommandTest {
         createCommandWithDefaultVdsGroup();
         oldGroupIsDetachedDefault();
         setupCpu();
-        canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
+        canDoActionFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
     }
 
     @Test
@@ -285,7 +285,7 @@ public class UpdateVdsGroupCommandTest {
         oldGroupIsDetachedDefault();
         setupCpu();
 
-        canDoActionFailedWithReason(VdcBllMessages.NETWORK_NOT_EXISTS);
+        canDoActionFailedWithReason(EngineMessage.NETWORK_NOT_EXISTS);
     }
 
     @Test
@@ -310,7 +310,7 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void invalidDefaultManagementNetworkAttachement() {
         newDefaultManagementNetworkFound();
-        final VdcBllMessages expected = VdcBllMessages.Unassigned;
+        final EngineMessage expected = EngineMessage.Unassigned;
         when(networkClusterValidator.managementNetworkChange()).thenReturn(new ValidationResult(expected));
 
         createCommandWithDefaultVdsGroup();
@@ -335,7 +335,7 @@ public class UpdateVdsGroupCommandTest {
         setupCpu();
         allQueriesForVms();
         architectureIsUpdatable();
-        canDoActionFailedWithReason(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
+        canDoActionFailedWithReason(EngineMessage.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
     }
 
     private void prepareManagementNetworkMocks() {
@@ -372,7 +372,7 @@ public class UpdateVdsGroupCommandTest {
         when(vdsGroupDao.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         cpuExists();
         allQueriesForVms();
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
     }
 
     @Test
@@ -384,7 +384,7 @@ public class UpdateVdsGroupCommandTest {
         mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.TRUE);
         cpuExists();
         allQueriesForVms();
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
     }
 
     @Test
@@ -396,7 +396,7 @@ public class UpdateVdsGroupCommandTest {
         mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.FALSE);
         cpuExists();
         allQueriesForVms();
-        canDoActionFailedWithReason(VdcBllMessages.GLUSTER_NOT_SUPPORTED);
+        canDoActionFailedWithReason(EngineMessage.GLUSTER_NOT_SUPPORTED);
     }
 
     @Test
@@ -410,7 +410,7 @@ public class UpdateVdsGroupCommandTest {
         clusterHasVds();
         clusterHasVMs();
 
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_VIRT_WHEN_CLUSTER_CONTAINS_VMS);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CANNOT_DISABLE_VIRT_WHEN_CLUSTER_CONTAINS_VMS);
     }
 
     @Test
@@ -423,7 +423,7 @@ public class UpdateVdsGroupCommandTest {
         allQueriesForVms();
         clusterHasGlusterVolumes();
 
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
     }
 
     @Test
@@ -437,7 +437,7 @@ public class UpdateVdsGroupCommandTest {
         clusterHasVds();
         when(clusterFeatureDao.getSupportedFeaturesByClusterId(any(Guid.class))).thenReturn(Collections.EMPTY_SET);
         when(hostFeatureDao.getSupportedHostFeaturesByHostId(any(Guid.class))).thenReturn(Collections.EMPTY_SET);
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS);
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS);
     }
 
     @Test
@@ -742,7 +742,7 @@ public class UpdateVdsGroupCommandTest {
         mcr.mockConfigValue(ConfigValues.SupportedClusterLevels, versions);
     }
 
-    private void canDoActionFailedWithReason(final VdcBllMessages message) {
+    private void canDoActionFailedWithReason(final EngineMessage message) {
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(message.toString()));
     }

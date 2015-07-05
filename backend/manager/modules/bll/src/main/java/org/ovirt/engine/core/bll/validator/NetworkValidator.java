@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.PluralMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.di.Injector;
@@ -63,7 +63,7 @@ public class NetworkValidator {
      * @return An error iff network is defined as non-VM when that feature is not supported.
      */
     public ValidationResult vmNetworkSetCorrectly() {
-        return ValidationResult.failWith(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL)
+        return ValidationResult.failWith(EngineMessage.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL)
                 .unless(network.isVmNetwork()
                         || FeatureSupported.nonVmNetwork(getDataCenter().getCompatibilityVersion()));
     }
@@ -72,7 +72,7 @@ public class NetworkValidator {
      * @return An error iff STP is specified for a non-VM network.
      */
     public ValidationResult stpForVmNetworkOnly() {
-        return ValidationResult.failWith(VdcBllMessages.NON_VM_NETWORK_CANNOT_SUPPORT_STP)
+        return ValidationResult.failWith(EngineMessage.NON_VM_NETWORK_CANNOT_SUPPORT_STP)
                 .unless(network.isVmNetwork() || !network.getStp());
     }
 
@@ -80,7 +80,7 @@ public class NetworkValidator {
      * @return An error iff nonzero MTU was specified when the MTU feature is not supported.
      */
     public ValidationResult mtuValid() {
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_MTU_OVERRIDE_NOT_SUPPORTED)
+        return ValidationResult.failWith(EngineMessage.NETWORK_MTU_OVERRIDE_NOT_SUPPORTED)
                 .unless(network.getMtu() == 0
                         || FeatureSupported.mtuSpecification(getDataCenter().getCompatibilityVersion()));
     }
@@ -94,7 +94,7 @@ public class NetworkValidator {
                 if (NetworkUtils.isVlan(otherNetwork)
                         && otherNetwork.getVlanId().equals(network.getVlanId())
                         && !otherNetwork.getId().equals(network.getId())) {
-                    return new ValidationResult(VdcBllMessages.NETWORK_VLAN_IN_USE,
+                    return new ValidationResult(EngineMessage.NETWORK_VLAN_IN_USE,
                             String.format("$vlanId %d", network.getVlanId()));
                 }
             }
@@ -106,7 +106,7 @@ public class NetworkValidator {
      * @return An error iff network is named as if it were a bond.
      */
     public ValidationResult networkPrefixValid() {
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_CANNOT_CONTAIN_BOND_NAME)
+        return ValidationResult.failWith(EngineMessage.NETWORK_CANNOT_CONTAIN_BOND_NAME)
                 .when(network.getName().toLowerCase().startsWith("bond"));
     }
 
@@ -114,7 +114,7 @@ public class NetworkValidator {
      * @return An error iff the data center to which the network belongs doesn't exist.
      */
     public ValidationResult dataCenterExists() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST)
                 .when(getDataCenter() == null);
     }
 
@@ -122,7 +122,7 @@ public class NetworkValidator {
      * @return An error iff the network isn't set.
      */
     public ValidationResult networkIsSet() {
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_NOT_EXISTS)
+        return ValidationResult.failWith(EngineMessage.NETWORK_NOT_EXISTS)
                 .when(network == null);
     }
 
@@ -133,7 +133,7 @@ public class NetworkValidator {
         for (Network otherNetwork : getNetworks()) {
             if (otherNetwork.getName().equals(network.getName()) &&
                     !otherNetwork.getId().equals(network.getId())) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE,
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE,
                         getNetworkNameReplacement());
             }
         }
@@ -151,7 +151,7 @@ public class NetworkValidator {
 
     private ValidationResult getManagementNetworkValidationResult(final boolean isManagementNetwork) {
         return isManagementNetwork
-                                  ? new ValidationResult(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
+                                  ? new ValidationResult(EngineMessage.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
                                           getNetworkNameReplacement())
                                   : ValidationResult.VALID;
     }
@@ -162,7 +162,7 @@ public class NetworkValidator {
 
     public ValidationResult notRemovingManagementNetwork() {
         return isManagementNetwork()
-                ? new ValidationResult(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
+                ? new ValidationResult(EngineMessage.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
                         getNetworkNameReplacement())
                 : ValidationResult.VALID;
     }
@@ -172,7 +172,7 @@ public class NetworkValidator {
         if (!iscsiBonds.isEmpty()) {
             Collection<String> replaceNameables = ReplacementUtils.replaceWithNameable("IscsiBonds", iscsiBonds);
             replaceNameables.add(getNetworkNameReplacement());
-            return new ValidationResult(VdcBllMessages.NETWORK_CANNOT_REMOVE_ISCSI_BOND_NETWORK,
+            return new ValidationResult(EngineMessage.NETWORK_CANNOT_REMOVE_ISCSI_BOND_NETWORK,
                     replaceNameables);
         }
         return ValidationResult.VALID;
@@ -182,7 +182,7 @@ public class NetworkValidator {
         return String.format("$NetworkName %s", network.getName());
     }
 
-    protected ValidationResult networkNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacementPlural, VdcBllMessages entitiesReplacementSingular) {
+    protected ValidationResult networkNotUsed(List<? extends Nameable> entities, EngineMessage entitiesReplacementPlural, EngineMessage entitiesReplacementSingular) {
         return new PluralMessages().getNetworkInUse(getEntitiesNames(entities),
             entitiesReplacementSingular,
             entitiesReplacementPlural);
@@ -202,7 +202,7 @@ public class NetworkValidator {
      * @return An error iff the network is in use by any VMs.
      */
     public ValidationResult networkNotUsedByVms() {
-        return networkNotUsed(getVms(), VdcBllMessages.VAR__ENTITIES__VMS, VdcBllMessages.VAR__ENTITIES__VM);
+        return networkNotUsed(getVms(), EngineMessage.VAR__ENTITIES__VMS, EngineMessage.VAR__ENTITIES__VM);
     }
 
     /**
@@ -210,14 +210,14 @@ public class NetworkValidator {
      */
     public ValidationResult networkNotUsedByHosts() {
         return networkNotUsed(getDbFacade().getVdsDao().getAllForNetwork(network.getId()),
-                VdcBllMessages.VAR__ENTITIES__HOSTS, VdcBllMessages.VAR__ENTITIES__HOST);
+                EngineMessage.VAR__ENTITIES__HOSTS, EngineMessage.VAR__ENTITIES__HOST);
     }
 
     /**
      * @return An error iff the network is in use by any templates.
      */
     public ValidationResult networkNotUsedByTemplates() {
-        return networkNotUsed(getTemplates(), VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES, VdcBllMessages.VAR__ENTITIES__VM_TEMPLATE);
+        return networkNotUsed(getTemplates(), EngineMessage.VAR__ENTITIES__VM_TEMPLATES, EngineMessage.VAR__ENTITIES__VM_TEMPLATE);
     }
 
     /**
@@ -232,12 +232,12 @@ public class NetworkValidator {
     }
 
     public ValidationResult notLabeled() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED)
                 .when(NetworkUtils.isLabeled(network));
     }
 
     public ValidationResult notExternalNetwork() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK)
                 .when(network.isExternal());
     }
 

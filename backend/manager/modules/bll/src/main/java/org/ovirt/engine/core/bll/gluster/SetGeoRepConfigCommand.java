@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionCon
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepConfigVdsParameters;
@@ -65,8 +65,8 @@ public class SetGeoRepConfigCommand extends GeoRepSessionCommandBase<GlusterVolu
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__SET);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_GEOREP_CONFIG);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__SET);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_CONFIG);
         addCanDoActionMessageVariable("configName", getParameters().getConfigKey());
         addCanDoActionMessageVariable("geoRepSessionKey", getGeoRepSession().getSessionKey());
         addCanDoActionMessageVariable("configValue", getParameters().getConfigValue());

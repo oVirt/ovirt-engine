@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.LabelNicParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
@@ -42,18 +42,18 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__LABEL);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__LABEL);
     }
 
     @Override
     protected boolean canDoAction() {
         if (getNic() == null) {
-            return failCanDoAction(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST);
+            return failCanDoAction(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST);
         }
 
         if (!NetworkUtils.isLabeled(getNic()) || !getNic().getLabels().contains(getLabel())) {
-            return failCanDoAction(VdcBllMessages.INTERFACE_NOT_LABELED);
+            return failCanDoAction(EngineMessage.INTERFACE_NOT_LABELED);
         }
 
         return true;

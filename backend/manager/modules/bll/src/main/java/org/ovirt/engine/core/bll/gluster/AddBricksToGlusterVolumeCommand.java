@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeBricksActionVDSParameters;
@@ -49,8 +49,8 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_BRICK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         }
 
         if (getParameters().getBricks() == null || getParameters().getBricks().size() == 0) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
             return false;
         }
 
@@ -71,20 +71,20 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
         if (getGlusterVolume().getVolumeType().isReplicatedType()) {
             if (getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount() + 1) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE);
             } else if (getParameters().getReplicaCount() < getGlusterVolume().getReplicaCount()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT);
             }
         }
         if (getGlusterVolume().getVolumeType().isStripedType()) {
             if (getParameters().getStripeCount() > getGlusterVolume().getStripeCount() + 1) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_STRIPE_COUNT_MORE_THAN_ONE);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_STRIPE_COUNT_MORE_THAN_ONE);
             } else if (getParameters().getStripeCount() < getGlusterVolume().getStripeCount()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT);
             }
         }
         if (getGlusterVolume().getVolumeType().isDispersedType()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ADD_BRICK_TO_DISPERSE_VOLUME_NOT_SUPPORTED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_ADD_BRICK_TO_DISPERSE_VOLUME_NOT_SUPPORTED);
             return false;
         }
 

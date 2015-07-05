@@ -11,7 +11,7 @@ import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -82,9 +82,9 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
                     executeQueryCommand();
                 } catch (RuntimeException ex) {
                     returnValue.setSucceeded(false);
-                    Throwable th = ex instanceof VdcBLLException ? ex : ex.getCause();
-                    if (th instanceof VdcBLLException) {
-                        VdcBLLException vdcExc = (VdcBLLException) th;
+                    Throwable th = ex instanceof EngineException ? ex : ex.getCause();
+                    if (th instanceof EngineException) {
+                        EngineException vdcExc = (EngineException) th;
                         if (vdcExc.getErrorCode() != null) {
                             returnValue.setExceptionString(vdcExc.getErrorCode().toString());
                         } else {

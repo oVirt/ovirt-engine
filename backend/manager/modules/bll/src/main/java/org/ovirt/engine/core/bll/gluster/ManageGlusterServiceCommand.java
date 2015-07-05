@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -46,17 +46,17 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
 
     static {
         manageActionDetailsMap.put(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START,
-                new ManageActionDetail(VdcBllMessages.VAR__ACTION__START,
+                new ManageActionDetail(EngineMessage.VAR__ACTION__START,
                         GlusterServiceStatus.RUNNING,
                         AuditLogType.GLUSTER_SERVICE_STARTED,
                         AuditLogType.GLUSTER_SERVICE_START_FAILED));
         manageActionDetailsMap.put(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP,
-                new ManageActionDetail(VdcBllMessages.VAR__ACTION__STOP,
+                new ManageActionDetail(EngineMessage.VAR__ACTION__STOP,
                         GlusterServiceStatus.STOPPED,
                         AuditLogType.GLUSTER_SERVICE_STOPPED,
                         AuditLogType.GLUSTER_SERVICE_STOP_FAILED));
         manageActionDetailsMap.put(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART,
-                new ManageActionDetail(VdcBllMessages.VAR__ACTION__RESTART,
+                new ManageActionDetail(EngineMessage.VAR__ACTION__RESTART,
                         GlusterServiceStatus.RUNNING,
                         AuditLogType.GLUSTER_SERVICE_RESTARTED,
                         AuditLogType.GLUSTER_SERVICE_RESTART_FAILED));
@@ -84,7 +84,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(manageActionDetailsMap.get(getParameters().getActionType()).getCanDoActionMsg());
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_SERVICE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_SERVICE);
     }
 
     @Override
@@ -100,15 +100,15 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
         actionType = getParameters().getActionType();
 
         if (!manageActionDetailsMap.keySet().contains(actionType)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_ACTION_TYPE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_ACTION_TYPE);
         }
 
         if (Guid.isNullOrEmpty(clusterId) && Guid.isNullOrEmpty(serverId)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTERID_AND_SERVERID_BOTH_NULL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTERID_AND_SERVERID_BOTH_NULL);
         }
 
         if (!(Guid.isNullOrEmpty(clusterId)) && getClusterUtils().getAllUpServers(clusterId).size() == 0) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SERVERS_FOR_CLUSTER);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SERVERS_FOR_CLUSTER);
         }
 
         return true;
@@ -239,11 +239,11 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
         if (!(Guid.isNullOrEmpty(getParameters().getServerId()))) {
             return Collections.singletonMap(getParameters().getServerId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
-                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         } else if (!(Guid.isNullOrEmpty(getParameters().getClusterId()))) {
             return Collections.singletonMap(getParameters().getClusterId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
-                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
         return null;
@@ -253,12 +253,12 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
      * An instance of this class holds various details about the managed actions
      */
     static class ManageActionDetail {
-        private VdcBllMessages canDoActionMsg;
+        private EngineMessage canDoActionMsg;
         private GlusterServiceStatus status;
         private AuditLogType actionPerformedActionLog;
         private AuditLogType actionFailedActionLog;
 
-        public ManageActionDetail(VdcBllMessages canDoActionMsg,
+        public ManageActionDetail(EngineMessage canDoActionMsg,
                 GlusterServiceStatus status,
                 AuditLogType actionPerformedActionLog,
                 AuditLogType actionFailedActionLog) {
@@ -268,11 +268,11 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
             this.actionFailedActionLog = actionFailedActionLog;
         }
 
-        public VdcBllMessages getCanDoActionMsg() {
+        public EngineMessage getCanDoActionMsg() {
             return canDoActionMsg;
         }
 
-        public void setCanDoActionMsg(VdcBllMessages canDoActionMsg) {
+        public void setCanDoActionMsg(EngineMessage canDoActionMsg) {
             this.canDoActionMsg = canDoActionMsg;
         }
 

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,7 +29,7 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT);
         addCanDoActionMessageVariable("volumeName", getGlusterVolumeName());
         addCanDoActionMessageVariable("vdsGroup", getVdsGroupName());
     }
@@ -41,7 +41,7 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
         }
 
         if (!getGlusterUtil().isGlusterSnapshotSupported(getVdsGroup().getCompatibilityVersion(), getVdsGroup().getId())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
         }
 
         return true;
@@ -52,7 +52,7 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
         if (!isInternalExecution()) {
             return Collections.singletonMap(getGlusterVolumeId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_SNAPSHOT,
-                            VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED));
+                            EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED));
         }
         return null;
     }
@@ -64,7 +64,7 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
     protected EngineLock acquireEngineLock(Guid id, LockingGroup group) {
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(group,
-                        VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS)), null);
+                        EngineMessage.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS)), null);
         LockManagerFactory.getLockManager().acquireLockWait(lock);
         return lock;
     }

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -45,25 +45,25 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
     @Override
     protected boolean canDoAction() {
         if (getParameters().getActionGroups().isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_LIST_CANNOT_BE_EMPTY);
+            addCanDoActionMessage(EngineMessage.ACTION_LIST_CANNOT_BE_EMPTY);
             return false;
         }
         if (getRoleDao().getByName(getRoleName()) != null) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__ROLE);
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+            addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+            addCanDoActionMessage(EngineMessage.VAR__TYPE__ROLE);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             return false;
         }
         RoleType roleType = getRole().getType();
         if (roleType == null) {
-            addCanDoActionMessage(VdcBllMessages.ROLE_TYPE_CANNOT_BE_EMPTY);
+            addCanDoActionMessage(EngineMessage.ROLE_TYPE_CANNOT_BE_EMPTY);
             return false;
         }
         if (roleType != RoleType.ADMIN) {
             List<ActionGroup> actionGroups = getParameters().getActionGroups();
             for (ActionGroup group : actionGroups) {
                 if (group.getRoleType() == RoleType.ADMIN) {
-                    addCanDoActionMessage(VdcBllMessages.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE);
+                    addCanDoActionMessage(EngineMessage.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE);
                     return false;
                 }
             }

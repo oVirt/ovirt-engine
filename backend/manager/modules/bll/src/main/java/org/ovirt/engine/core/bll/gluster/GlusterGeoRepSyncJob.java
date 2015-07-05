@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
@@ -83,7 +83,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
      */
     public void refreshGeoRepDataForVolume(final GlusterVolumeEntity volume) {
         if (volume == null) {
-            throw new VdcBLLException(VdcBllErrors.GlusterVolumeGeoRepSyncFailed, "No volume information");
+            throw new EngineException(EngineError.GlusterVolumeGeoRepSyncFailed, "No volume information");
         }
         VDSGroup cluster = getClusterDao().get(volume.getClusterId());
         discoverGeoRepDataInCluster(cluster, volume);

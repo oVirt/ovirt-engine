@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -26,7 +26,7 @@ public class IscsiBondValidator {
 
         for (IscsiBond bond : iscsiBonds) {
             if (bond.getName().equals(iscsiBond.getName()) && !bond.getId().equals(iscsiBond.getId())) {
-                return new ValidationResult(VdcBllMessages.ISCSI_BOND_WITH_SAME_NAME_EXIST_IN_DATA_CENTER);
+                return new ValidationResult(EngineMessage.ISCSI_BOND_WITH_SAME_NAME_EXIST_IN_DATA_CENTER);
             }
         }
 
@@ -35,7 +35,7 @@ public class IscsiBondValidator {
 
     public ValidationResult isIscsiBondExist(IscsiBond iscsiBond) {
         return (iscsiBond == null) ?
-                new ValidationResult(VdcBllMessages.ISCSI_BOND_NOT_EXIST) : ValidationResult.VALID;
+                new ValidationResult(EngineMessage.ISCSI_BOND_NOT_EXIST) : ValidationResult.VALID;
     }
 
     public ValidationResult validateAddedLogicalNetworks(IscsiBond iscsiBond) {
@@ -63,14 +63,14 @@ public class IscsiBondValidator {
             Collection<Guid> missingNetworks = CollectionUtils.subtract(addedLogicalNetworks, existingNetworks);
 
             if (!missingNetworks.isEmpty()) {
-                return new ValidationResult(VdcBllMessages.NETWORKS_DONT_EXIST_IN_DATA_CENTER,
+                return new ValidationResult(EngineMessage.NETWORKS_DONT_EXIST_IN_DATA_CENTER,
                         String.format("$networkIds %s", StringUtils.join(missingNetworks, ",")),
                         String.format("$dataCenterId %s", dataCenterId));
             }
 
             Collection<Guid> requiredNetworks = getRequiredNetworks(addedLogicalNetworks);
             if (!requiredNetworks.isEmpty()) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_ISCSI_BOND_NETWORK_CANNOT_BE_REQUIRED);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ISCSI_BOND_NETWORK_CANNOT_BE_REQUIRED);
             }
         }
 
@@ -134,7 +134,7 @@ public class IscsiBondValidator {
         if (!addedStorageConnections.isEmpty()) {
             List<String> connectionsNotInDataCenter = getStorageConnectionsMissingInDataCenter(addedStorageConnections, dataCenterId);
             if (!connectionsNotInDataCenter.isEmpty()) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTIONS_CANNOT_BE_ADDED_TO_ISCSI_BOND,
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTIONS_CANNOT_BE_ADDED_TO_ISCSI_BOND,
                         String.format("$connectionIds %s", StringUtils.join(connectionsNotInDataCenter, ",")));
             }
         }

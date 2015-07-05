@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -112,7 +112,7 @@ public class HostDeviceManager implements BackendService {
                 vdsId.toString(),
                 LockMessagesMatchUtil.makeLockingPair(
                         LockingGroup.HOST_DEVICES,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     private static boolean supportsHostDevicePassthrough(VM vm) {

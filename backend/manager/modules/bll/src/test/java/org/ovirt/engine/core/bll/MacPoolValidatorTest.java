@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.MacPoolDao;
@@ -58,7 +58,7 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
     public void testDefaultPoolFlagIsNotSetInvalidUsage() throws Exception {
         macPool.setDefaultPool(true);
         assertThat(macPoolValidator.defaultPoolFlagIsNotSet(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_SETTING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_SETTING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
         final String macPoolName = "macPool1";
 
         assertThat(callHasUniqueName(Guid.newGuid(), Guid.newGuid(), macPoolName, macPoolName),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
         final String macPoolName = "macPool1";
 
         assertThat(callHasUniqueName(Guid.newGuid(), null, macPoolName, macPoolName),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
 
     private ValidationResult callHasUniqueName(Guid macPool1Id,
@@ -125,7 +125,7 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
     public void testNotRemovingDefaultPool() throws Exception {
         macPool.setDefaultPool(true);
         assertThat(macPoolValidator.notRemovingDefaultPool(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_DEFAULT_MAC_POOL));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_DEFAULT_MAC_POOL));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
                 .thenReturn(Collections.singletonList(storagePool));
 
         assertThat(macPoolValidator.notRemovingUsedPool(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
     @Test
     public void testMacPoolExistsEntityNotExist() throws Exception {
         assertThat(createMacPoolValidator(null).macPoolExists(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MAC_POOL_DOES_NOT_EXIST));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MAC_POOL_DOES_NOT_EXIST));
     }
 
     @Test

@@ -4,7 +4,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.ImageHttpAccessVDSCommandParameters;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
@@ -34,7 +34,7 @@ public class RetrieveImageDataVDSCommand<P extends ImageHttpAccessVDSCommandPara
         if (data.length != getParameters().getSize()) {
             throwVdsErrorException(String.format("received downloaded data size is wrong (requested %d, received %d)",
                     getParameters().getSize(), data.length),
-                    VdcBllErrors.GeneralException);
+                    EngineError.GeneralException);
         }
 
         getVDSReturnValue().setReturnValue(data);

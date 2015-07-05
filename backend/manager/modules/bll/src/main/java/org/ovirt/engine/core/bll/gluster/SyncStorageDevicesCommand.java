@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
@@ -27,7 +27,7 @@ public class SyncStorageDevicesCommand<T extends VdsActionParameters> extends Vd
         if (!cluster.supportsGlusterService()
                 || (!getGlusterUtil().isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion(),
                         getVdsGroup().getId()))) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
         }
 
         VdsValidator validator = new VdsValidator(getVds());
@@ -37,8 +37,8 @@ public class SyncStorageDevicesCommand<T extends VdsActionParameters> extends Vd
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__SYNC);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE_DEVICE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__SYNC);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE_DEVICE);
         addCanDoActionMessageVariable("VdsName", getVds().getName());
     }
 

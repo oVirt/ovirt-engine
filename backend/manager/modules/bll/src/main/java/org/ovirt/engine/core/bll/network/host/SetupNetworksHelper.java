@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -48,7 +48,7 @@ public class SetupNetworksHelper {
     private static final Logger log = LoggerFactory.getLogger(SetupNetworksHelper.class);
     private SetupNetworksParameters params;
     private VDS vds;
-    private Map<VdcBllMessages, List<String>> violations = new HashMap<>();
+    private Map<EngineMessage, List<String>> violations = new HashMap<>();
     private Map<String, VdsNetworkInterface> existingIfaces;
     private Map<String, Network> existingClusterNetworks;
 
@@ -175,7 +175,7 @@ public class SetupNetworksHelper {
                     getDbFacade().getGlusterBrickDao().getAllByClusterAndNetworkId(vds.getVdsGroupId(),
                             removedNetwork.getId());
             if (!bricks.isEmpty()) {
-                addViolation(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK, network);
+                addViolation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK, network);
             }
         }
     }
@@ -184,7 +184,7 @@ public class SetupNetworksHelper {
         Network removedNetwork = getExistingClusterNetworks().get(network);
         if (NetworkUtils.isLabeled(nic) && removedNetwork != null
                 && nic.getLabels().contains(removedNetwork.getLabel())) {
-            addViolation(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC, network);
+            addViolation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC, network);
         }
     }
 
@@ -221,7 +221,7 @@ public class SetupNetworksHelper {
             String nameWithoutVlanId = NetworkUtils.stripVlan(iface);
 
             if (!getExistingIfaces().containsKey(nameWithoutVlanId) && !bonds.containsKey(nameWithoutVlanId)) {
-                addViolation(VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST, nameWithoutVlanId);
+                addViolation(EngineMessage.NETWORK_INTERFACES_DONT_EXIST, nameWithoutVlanId);
             }
         }
     }
@@ -275,7 +275,7 @@ public class SetupNetworksHelper {
                     net.getName(),
                     net.getMtu() == 0 ? "default" : String.valueOf(net.getMtu())));
         }
-        addViolation(VdcBllMessages.NETWORK_MTU_DIFFERENCES,
+        addViolation(EngineMessage.NETWORK_MTU_DIFFERENCES,
                 String.format("[%s]", StringUtils.join(mtuDiffNetworks, ", ")));
     }
 
@@ -301,18 +301,18 @@ public class SetupNetworksHelper {
             }
 
             if (!hostNetworkQosSupported) {
-                addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, networkName);
+                addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, networkName);
             }
 
             // next checks are only relevant if non-empty QoS was supplied
             if (iface.getQos() != null && !iface.getQos().isEmpty()) {
                 HostNetworkQosValidator qosValidator = new HostNetworkQosValidator(iface.getQos());
                 if (qosValidator.requiredValuesPresent() != ValidationResult.VALID) {
-                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES,
+                    addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES,
                             networkName);
                 }
                 if (qosValidator.valuesConsistent() != ValidationResult.VALID) {
-                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES,
+                    addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES,
                             networkName);
                 }
             }
@@ -340,7 +340,7 @@ public class SetupNetworksHelper {
         // if any base interface has some sub-interfaces with QoS and some without - this is a partial configuration
         for (String ifaceName : someSubInterfacesHaveQos) {
             if (notAllSubInterfacesHaveQos.contains(ifaceName)) {
-                addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS, ifaceName);
+                addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS, ifaceName);
             }
         }
     }
@@ -381,14 +381,14 @@ public class SetupNetworksHelper {
         // if any base interface speed couldn't be figured out be protective - add a violation
         for (Entry<String, Integer> entry : ifaceSpeeds.entrySet()) {
             if (entry.getValue() == null) {
-                addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED, entry.getKey());
+                addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED, entry.getKey());
             }
         }
 
         // if any base interface is over-committed - add a violation
         for (Entry<String, Float> entry : relativeCommitmentByBaseInterface.entrySet()) {
             if (entry.getValue() > QOS_OVERCOMMITMENT_THRESHOLD) {
-                addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, entry.getKey());
+                addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, entry.getKey());
             }
         }
     }
@@ -460,7 +460,7 @@ public class SetupNetworksHelper {
             String networkName = iface.getNetworkName();
             if (iface.hasCustomProperties() && StringUtils.isNotEmpty(networkName)) {
                 if (!networkCustomPropertiesSupported) {
-                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED, networkName);
+                    addViolation(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED, networkName);
                 }
 
                 Network network = existingClusterNetworks.get(networkName);
@@ -468,7 +468,7 @@ public class SetupNetworksHelper {
                         util.validateProperties(network == null || network.isVmNetwork() ? validProperties
                                 : validPropertiesNonVm, iface.getCustomProperties());
                 if (!errors.isEmpty()) {
-                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT, networkName);
+                    addViolation(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT, networkName);
                     List<String> messages = new ArrayList<>();
                     util.handleCustomPropertiesError(errors, messages);
                     log.error(StringUtils.join(translateErrorMessages(messages), ','));
@@ -497,7 +497,7 @@ public class SetupNetworksHelper {
         return networks;
     }
 
-    private void addViolation(VdcBllMessages violation, String violatingEntity) {
+    private void addViolation(EngineMessage violation, String violatingEntity) {
         List<String> violatingEntities = violations.get(violation);
         if (violatingEntities == null) {
             violatingEntities = new ArrayList<>();
@@ -509,13 +509,13 @@ public class SetupNetworksHelper {
 
     private List<String> translateViolations() {
         List<String> violationMessages = new ArrayList<>(violations.size() * 2);
-        for (Map.Entry<VdcBllMessages, List<String>> v : violations.entrySet()) {
+        for (Map.Entry<EngineMessage, List<String>> v : violations.entrySet()) {
             String violationName = v.getKey().name();
             violationMessages.add(violationName);
             violationMessages.add(MessageFormat.format(VIOLATING_ENTITIES_LIST_FORMAT,
                     violationName,
                     StringUtils.join(v.getValue(), ", ")));
-            if (v.getKey() == VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT) {
+            if (v.getKey() == EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT) {
                 violationMessages.add("$commitmentThreshold " + (int) (100 * QOS_OVERCOMMITMENT_THRESHOLD));
             }
         }
@@ -532,7 +532,7 @@ public class SetupNetworksHelper {
      */
     private boolean addInterfaceToProcessedList(VdsNetworkInterface iface) {
         if (ifaceByNames.containsKey(iface.getName())) {
-            addViolation(VdcBllMessages.NETWORK_INTERFACES_ALREADY_SPECIFIED, iface.getName());
+            addViolation(EngineMessage.NETWORK_INTERFACES_ALREADY_SPECIFIED, iface.getName());
             return false;
         }
 
@@ -620,7 +620,7 @@ public class SetupNetworksHelper {
 
         // prevent attaching 2 interfaces to 1 network
         if (attachedNetworksNames.contains(networkName)) {
-            addViolation(VdcBllMessages.NETWORKS_ALREADY_ATTACHED_TO_IFACES, networkName);
+            addViolation(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES, networkName);
         } else {
             attachedNetworksNames.add(networkName);
 
@@ -643,17 +643,17 @@ public class SetupNetworksHelper {
                     if (networkShouldBeSynced(networkName)) {
                         modifiedNetworks.add(network);
                         if (network.getQosId() != null && !hostNetworkQosSupported) {
-                            addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, networkName);
+                            addViolation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, networkName);
                         }
                     } else if (networkWasModified(iface)) {
-                        addViolation(VdcBllMessages.NETWORKS_NOT_IN_SYNC, networkName);
+                        addViolation(EngineMessage.NETWORKS_NOT_IN_SYNC, networkName);
                     }
                 } else if (networkWasModified(iface)) {
                     if (networkIpAddressWasSameAsHostnameAndChanged(iface)) {
-                        addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED, networkName);
+                        addViolation(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED, networkName);
                     }
                     if (networkIpAddressUsedByBrickChanged(iface, network)) {
-                        addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ADDRESS_BRICK_IN_USE, networkName);
+                        addViolation(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_BRICK_IN_USE, networkName);
                     }
                     modifiedNetworks.add(network);
                 }
@@ -665,7 +665,7 @@ public class SetupNetworksHelper {
                         determineNetworkType(existingIface.getVlanId(), existingIface.isBridged()));
 
                 if (unmanagedNetworkChanged(iface)) {
-                    addViolation(VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER, networkName);
+                    addViolation(EngineMessage.NETWORKS_DONT_EXIST_IN_CLUSTER, networkName);
                 }
             }
         }
@@ -749,7 +749,7 @@ public class SetupNetworksHelper {
 
         if ((networkType == NetworkType.VLAN && networksOnIface.contains(NetworkType.VM))
                 || (networkType == NetworkType.VM && !networksOnIface.isEmpty())) {
-            addViolation(VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK, ifaceName);
+            addViolation(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK, ifaceName);
         }
 
         networksOnIface.add(networkType);
@@ -765,7 +765,7 @@ public class SetupNetworksHelper {
      */
     private void validateNetworkInternal(Network network) {
         if (network.getProvidedBy() != null) {
-            addViolation(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED, network.getName());
+            addViolation(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED, network.getName());
         }
     }
 
@@ -923,7 +923,7 @@ public class SetupNetworksHelper {
         for (Map.Entry<String, List<VdsNetworkInterface>> bondEntry : bonds.entrySet()) {
             if (bondEntry.getValue().size() < 2) {
                 returnValue = false;
-                addViolation(VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT, bondEntry.getKey());
+                addViolation(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT, bondEntry.getKey());
             }
         }
 
@@ -946,7 +946,7 @@ public class SetupNetworksHelper {
                 getVmInterfaceManager().findActiveVmsUsingNetworks(params.getVdsId(), removedNetworks);
 
         for (String vmName : vmNames) {
-            addViolation(VdcBllMessages.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS, vmName);
+            addViolation(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS, vmName);
         }
     }
 
@@ -958,7 +958,7 @@ public class SetupNetworksHelper {
                 && !managementNetworkUtil.isManagementNetwork(iface.getNetworkName(), vds.getVdsGroupId())
                 && !FeatureSupported.multipleGatewaysSupported(vds.getVdsGroupCompatibilityVersion())) {
 
-            addViolation(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY, iface.getNetworkName());
+            addViolation(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY, iface.getNetworkName());
         }
     }
 

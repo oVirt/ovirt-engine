@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -65,13 +65,13 @@ public class HostValidatorTest {
 
     @Test
     public void nameIsNull() {
-        assertThat(validator.nameNotEmpty(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY));
+        assertThat(validator.nameNotEmpty(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY));
     }
 
     @Test
     public void nameIsEmpty() {
         when(host.getName()).thenReturn("");
-        assertThat(validator.nameNotEmpty(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY));
+        assertThat(validator.nameNotEmpty(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class HostValidatorTest {
     @Test
     public void NameLengthIsTooLong() {
         when(host.getName()).thenReturn(RandomUtils.instance().nextString(HOST_NAME_SIZE * 2));
-        assertThat(validator.nameLengthIsLegal(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG));
+        assertThat(validator.nameLengthIsLegal(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class HostValidatorTest {
 
     @Test
     public void hostNameIsInvalid() {
-        assertThat(validator.hostNameIsValid(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME));
+        assertThat(validator.hostNameIsValid(), failsWith(EngineMessage.ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class HostValidatorTest {
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
         validator = new HostValidator(dbFacade, host);
 
-        assertThat(validator.nameNotUsed(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
+        assertThat(validator.nameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class HostValidatorTest {
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
         validator = new HostValidator(dbFacade, host);
 
-        assertThat(validator.hostNameNotUsed(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST));
+        assertThat(validator.hostNameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST));
     }
 
     @Test
@@ -141,7 +141,7 @@ public class HostValidatorTest {
 
     @Test
     public void portIsInvalid() {
-        assertThat(validator.portIsValid(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_PORT));
+        assertThat(validator.portIsValid(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_PORT));
     }
 
     @Test
@@ -153,7 +153,7 @@ public class HostValidatorTest {
     @Test
     public void sshUserNameIsEmpty() {
         assertThat(validator.sshUserNameNotEmpty(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_USERNAME));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_USERNAME));
     }
 
     @Test
@@ -190,7 +190,7 @@ public class HostValidatorTest {
         validator = new HostValidator(dbFacade, host);
 
         assertThat(validator.validateSingleHostAttachedToLocalStorage(),
-                failsWith(VdcBllMessages.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE));
+                failsWith(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE));
     }
 
     @Test
@@ -207,21 +207,21 @@ public class HostValidatorTest {
         doReturn(false).when(validator).haveSecurityKey();
 
         assertThat(validator.securityKeysExists(),
-                failsWith(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND));
+                failsWith(EngineMessage.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND));
     }
 
     @Test
     public void passwordNotEmpty() {
         assertThat(validator.passwordNotEmpty(false,
-                AuthenticationMethod.Password,
-                RandomUtils.instance().nextString(10)),
+                        AuthenticationMethod.Password,
+                        RandomUtils.instance().nextString(10)),
                 isValid());
     }
 
     @Test
     public void passwordIsEmpty() {
         assertThat(validator.passwordNotEmpty(false, AuthenticationMethod.Password, null),
-                failsWith(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD));
+                failsWith(EngineMessage.VDS_CANNOT_INSTALL_EMPTY_PASSWORD));
     }
 
     @Test

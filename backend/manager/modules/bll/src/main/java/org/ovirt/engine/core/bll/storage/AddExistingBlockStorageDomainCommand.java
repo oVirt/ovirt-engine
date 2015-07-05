@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
@@ -55,7 +55,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
     @Override
     protected boolean canAddDomain() {
         if (getStorageDomainStaticDao().get(getStorageDomain().getId()) != null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
         }
 
         StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
@@ -65,12 +65,12 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
 
         List<LUNs> lunsOnStorage = getLUNsFromVgInfo(getStorageDomain().getStorage());
         if (lunsOnStorage.isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO);
         }
         if (CollectionUtils.containsAny(Entities.getIds(lunsOnStorage), Entities.getIds(getAllLuns()))) {
             log.info("There are existing luns in the system which are part of VG id '{}'",
                     getStorageDomain().getStorage());
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_STORAGE_DOMAIN_EXTERNAL_LUN_DISK_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORT_STORAGE_DOMAIN_EXTERNAL_LUN_DISK_EXIST);
         }
 
         return true;
@@ -89,7 +89,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (getParameters().getStorageDomainId() != null) {
             return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return null;
     }

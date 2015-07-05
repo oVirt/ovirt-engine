@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -54,11 +54,11 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
 
         oldPool = getVmPoolDao().get(getVmPool().getVmPoolId());
         if (oldPool == null) {
-            return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
+            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
         }
 
         if (getParameters().getVmsCount() < 0) {
-            return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_DECREASE_VMS_FROM_POOL);
+            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_DECREASE_VMS_FROM_POOL);
         }
 
         return true;
@@ -67,7 +67,7 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override

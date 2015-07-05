@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
@@ -32,23 +32,23 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
     @Override
     protected boolean canDoAction() {
         if (getVds() == null) {
-            return failCanDoAction(VdcBllMessages.VDS_NOT_EXIST);
+            return failCanDoAction(EngineMessage.VDS_NOT_EXIST);
         }
 
         if (getVds().getStatus() != VDSStatus.Up) {
-            return failCanDoAction(VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_NOT_UP);
+            return failCanDoAction(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_NOT_UP);
         }
 
         if (getStoragePoolForVds() == null) {
-            return failCanDoAction(VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL);
+            return failCanDoAction(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL);
         }
 
         if (getVds().getSpmStatus() != VdsSpmStatus.None) {
-            return failCanDoAction(VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_ALREADY_SPM);
+            return failCanDoAction(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_ALREADY_SPM);
         }
 
         if (getVds().getVdsSpmPriority() == BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY) {
-            return failCanDoAction(VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_MARKED_AS_NEVER_SPM);
+            return failCanDoAction(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_MARKED_AS_NEVER_SPM);
         }
 
         if (!validate(new StoragePoolValidator(getStoragePoolForVds()).isUp())) {
@@ -56,7 +56,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
         }
 
         if (isAsyncTasksRunningOnPool(getStoragePoolForVds().getId())) {
-            return failCanDoAction(VdcBllMessages.CANNOT_FORCE_SELECT_SPM_STORAGE_POOL_HAS_RUNNING_TASKS);
+            return failCanDoAction(EngineMessage.CANNOT_FORCE_SELECT_SPM_STORAGE_POOL_HAS_RUNNING_TASKS);
         }
 
         return true;
@@ -79,8 +79,8 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__FORCE_SELECT);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SPM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__FORCE_SELECT);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__SPM);
         addCanDoActionMessageVariable("VdsName", getVds().getName());
     }
 

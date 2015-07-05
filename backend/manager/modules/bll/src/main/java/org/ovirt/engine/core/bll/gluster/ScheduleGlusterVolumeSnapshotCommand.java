@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeSnapshotCommandBase<ScheduleGlusterVolumeSnapshotParameters> {
     public ScheduleGlusterVolumeSnapshotCommand(ScheduleGlusterVolumeSnapshotParameters params) {
@@ -72,14 +72,14 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
         GlusterVolumeSnapshotSchedule fetchedSchedule =
                 getGlusterVolumeSnapshotScheduleDao().getByVolumeId(getGlusterVolumeId());
         if (fetchedSchedule != null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_SCHEDULED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_SCHEDULED);
         }
 
         if (!getParameters().getForce()) {
             if (getGlusterVolumeDao().getByName(getVdsGroupId(),
                     Config.<String> getValue(ConfigValues.GlusterMetaVolumeName)) != null
                     && getVdsGroup().isGlusterCliBasedSchedulingOn()) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_CLI_SCHEDULING_ENABLED);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_CLI_SCHEDULING_ENABLED);
             }
         }
 

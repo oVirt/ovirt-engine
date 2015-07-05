@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveBookmarkCommand<T extends BookmarksParametersBase> extends BookmarkCommandBase<T> {
@@ -13,7 +13,7 @@ public class RemoveBookmarkCommand<T extends BookmarksParametersBase> extends Bo
     @Override
     protected boolean canDoAction() {
         if (getBookmark() == null) {
-            addInvalidIdErrorMessages(VdcBllMessages.VAR__ACTION__UPDATE);
+            addInvalidIdErrorMessages(EngineMessage.VAR__ACTION__UPDATE);
             return false;
         }
 

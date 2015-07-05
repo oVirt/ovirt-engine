@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 
@@ -68,7 +68,7 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
     // Don't throw exception on errors except StoragePoolMasterNotFound for
     // master domain failure treatment
     protected void proceedConnectProxyReturnValue() {
-        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case Done:
         case StoragePoolMasterNotFound:

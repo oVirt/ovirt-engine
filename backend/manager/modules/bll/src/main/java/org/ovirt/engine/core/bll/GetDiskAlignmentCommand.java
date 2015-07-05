@@ -28,9 +28,9 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetDiskAlignmentVDSCommandParameters;
@@ -78,15 +78,15 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
     }
 
     private String getDiskIsUsedByGetAlignment() {
-        return new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_USED_BY_GET_ALIGNMENT.name())
+        return new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_USED_BY_GET_ALIGNMENT.name())
                 .append(String.format("$DiskAlias %1$s", getDiskAlias()))
                 .toString();
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__SCAN_ALIGNMENT);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__SCAN_ALIGNMENT);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override
@@ -101,12 +101,12 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
     @Override
     protected boolean canDoAction() {
         if (getDisk() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
         }
 
         if (getVm() == null) {
             addCanDoActionMessageVariable("diskAliases", getDiskAlias());
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
         }
 
         if (getDiskStorageType() == DiskStorageType.IMAGE) {
@@ -119,16 +119,16 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             StorageDomainStatic sds = getStorageDomainStaticDao().get(((DiskImage) getDisk()).getStorageIds().get(0));
             if (!sds.getStorageType().isBlockDomain()) {
                 addCanDoActionMessageVariable("diskAlias", getDiskAlias());
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
             }
         }
 
         if (isImageExclusiveLockNeeded() && getVm().isRunningOrPaused()) {
-            return failCanDoAction(VdcBllMessages.ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING);
+            return failCanDoAction(EngineMessage.ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING);
         }
 
         if (getVdsIdInGroup() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
         }
 
         StoragePool sp = getStoragePoolDao().get(getStoragePoolId());
@@ -172,7 +172,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
 
             parameters = lunParameters;
         } else {
-            throw new VdcBLLException(VdcBllErrors.ENGINE, "Unknown DiskStorageType: " +
+            throw new EngineException(EngineError.ENGINE, "Unknown DiskStorageType: " +
                 getDiskStorageType().toString() + " Disk id: " + getDisk().getId().toString());
         }
 

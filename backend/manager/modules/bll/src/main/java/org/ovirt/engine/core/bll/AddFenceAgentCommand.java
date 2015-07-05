@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -34,7 +34,7 @@ public class AddFenceAgentCommand<T extends FenceAgentCommandParameterBase> exte
                 || getParameters().getAgent().getPassword() == null
                 || getParameters().getAgent().getType() == null
                 || getParameters().getAgent().getUser() == null) {
-            return failCanDoAction(VdcBllMessages.VDS_ADD_FENCE_AGENT_MANDATORY_PARAMETERS_MISSING);
+            return failCanDoAction(EngineMessage.VDS_ADD_FENCE_AGENT_MANDATORY_PARAMETERS_MISSING);
         }
         return super.canDoAction();
     }

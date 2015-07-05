@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.UnlabelNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class UnlabelNetworkCommand<T extends UnlabelNetworkParameters> extends CommandBase<T> {
@@ -39,8 +39,8 @@ public class UnlabelNetworkCommand<T extends UnlabelNetworkParameters> extends C
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__LABEL);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__LABEL);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     @Override

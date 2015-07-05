@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -113,7 +113,7 @@ public class VfsConfigValidatorTest {
 
     @Test
     public void sriovFeatureNotSupported() {
-        sriovFeatureSupportTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED), false);
+        sriovFeatureSupportTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED), false);
     }
 
     private void sriovFeatureSupportTest(Matcher<ValidationResult> matcher,
@@ -140,7 +140,7 @@ public class VfsConfigValidatorTest {
         simulateNicExists();
         validator.setOldVfsConfig(null);
         assertThat(validator.nicSriovEnabled(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED,
                         String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName())));
     }
 
@@ -187,7 +187,7 @@ public class VfsConfigValidatorTest {
 
     private void assertNumOfVfsInValidRange(int numOfVfs) {
         assertThat(validator.numOfVfsInValidRange(numOfVfs),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE,
                         String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName()),
                         String.format(VfsConfigValidator.NUM_OF_VFS_REPLACEMENT, numOfVfs),
                         String.format(VfsConfigValidator.MAX_NUM_OF_VFS_REPLACEMENT, oldVfsConfig.getMaxNumOfVfs())));
@@ -197,7 +197,7 @@ public class VfsConfigValidatorTest {
     public void notAllVfsAreFree() {
         allVfsAreFreeTest(false);
         assertThat(validator.allVfsAreFree(hostNicVfsConfigHelper),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED,
                         String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName())));
     }
 
@@ -217,7 +217,7 @@ public class VfsConfigValidatorTest {
     public void settingSpecificNetworksAllowed() {
         settingSpecificNetworksAllowedTest(true);
         assertThat(validator.settingSpecificNetworksAllowed(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_SET_SPECIFIC_NETWORKS,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_SET_SPECIFIC_NETWORKS,
                         String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName())));
     }
 
@@ -243,7 +243,7 @@ public class VfsConfigValidatorTest {
     public void networNotExist() {
         simulateNicExists();
         assertThat(validator.networkExists(NETWORK_ID),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_EXIST,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_NOT_EXIST,
                         String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName()),
                         String.format(VfsConfigValidator.NETWORK_ID_REPLACEMENT, NETWORK_ID)));
     }
@@ -264,7 +264,7 @@ public class VfsConfigValidatorTest {
     public void networkNotInVfsConfigNotValid() {
         networkInVfsConfigCommonTest(true);
         assertThat(validator.networkNotInVfsConfig(NETWORK_ID),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_IN_VFS_CONFIG,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ALREADY_IN_VFS_CONFIG,
                         String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName()),
                         String.format(VfsConfigValidator.NETWORK_NAME_REPLACEMENT, network.getName())));
     }
@@ -279,7 +279,7 @@ public class VfsConfigValidatorTest {
     public void networkInVfsConfigNotValid() {
         networkInVfsConfigCommonTest(false);
         assertThat(validator.networkInVfsConfig(NETWORK_ID),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_IN_VFS_CONFIG,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_NOT_IN_VFS_CONFIG,
                         String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName()),
                         String.format(VfsConfigValidator.NETWORK_NAME_REPLACEMENT, network.getName())));
     }
@@ -306,7 +306,7 @@ public class VfsConfigValidatorTest {
     public void labelNotInVfsConfigNotValid() {
         labelInVfsConfigCommonTest(true);
         assertThat(validator.labelNotInVfsConfig(LABEL),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_LABEL_ALREADY_IN_VFS_CONFIG,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_LABEL_ALREADY_IN_VFS_CONFIG,
                         String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName()),
                         String.format(VfsConfigValidator.LABEL_REPLACEMENT, LABEL)));
     }
@@ -315,7 +315,7 @@ public class VfsConfigValidatorTest {
     public void labelInVfsConfigNotValid() {
         labelInVfsConfigCommonTest(false);
         assertThat(validator.labelInVfsConfig(LABEL),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_LABEL_NOT_IN_VFS_CONFIG,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_LABEL_NOT_IN_VFS_CONFIG,
                         String.format(VfsConfigValidator.NIC_NAME_REPLACEMENT, nic.getName()),
                         String.format(VfsConfigValidator.LABEL_REPLACEMENT, LABEL)));
     }

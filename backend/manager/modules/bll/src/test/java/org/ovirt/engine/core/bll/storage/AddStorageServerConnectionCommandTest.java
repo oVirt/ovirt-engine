@@ -22,7 +22,7 @@ import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -86,7 +86,7 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
+                EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
         parameters.setVdsId(Guid.Empty);
         doReturn(true).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
     }
 
     @Test
@@ -170,7 +170,7 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
         parameters.setVdsId(Guid.Empty);
         doReturn(true).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
     }
 
 
@@ -186,7 +186,7 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
+                EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
     }
 
     @Test

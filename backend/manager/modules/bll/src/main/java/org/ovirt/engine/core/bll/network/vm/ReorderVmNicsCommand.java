@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
@@ -27,7 +27,7 @@ public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends Vm
     protected boolean canDoAction() {
         VM vm = getVm();
         if (vm == null || vm.getStaticData() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 

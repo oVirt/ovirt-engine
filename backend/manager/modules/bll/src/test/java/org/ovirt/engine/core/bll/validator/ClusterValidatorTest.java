@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice.Source;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -76,7 +76,7 @@ public class ClusterValidatorTest {
         when(dbFacade.getVdsGroupDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster);
 
-        assertThat(validator.nameNotUsed(), failsWith(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE));
+        assertThat(validator.nameNotUsed(), failsWith(EngineMessage.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class ClusterValidatorTest {
         validator = spy(new ClusterValidator(dbFacade, cluster));
         doReturn(false).when(validator).cpuExists();
 
-        assertThat(validator.cpuTypeSupportsVirtService(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND));
+        assertThat(validator.cpuTypeSupportsVirtService(), failsWith(EngineMessage.ACTION_TYPE_FAILED_CPU_NOT_FOUND));
     }
 
     @Test
@@ -145,7 +145,7 @@ public class ClusterValidatorTest {
         validator = new ClusterValidator(dbFacade, cluster);
 
         assertThat(validator.dataCenterVersionMismatch(),
-                failsWith(VdcBllMessages.VDS_GROUP_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL));
+                failsWith(EngineMessage.VDS_GROUP_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL));
     }
 
     @Test
@@ -169,7 +169,7 @@ public class ClusterValidatorTest {
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         validator = new ClusterValidator(dbFacade, cluster);
 
-        assertThat(validator.dataCenterExists(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST));
+        assertThat(validator.dataCenterExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST));
     }
 
     @Test
@@ -213,7 +213,7 @@ public class ClusterValidatorTest {
         validator = new ClusterValidator(dbFacade, cluster);
 
         assertThat(validator.localStoragePoolAttachedToSingleCluster(),
-                failsWith(VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE));
+                failsWith(EngineMessage.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE));
     }
 
     @Test
@@ -236,7 +236,7 @@ public class ClusterValidatorTest {
         when(cluster.isEnableBallooning()).thenReturn(true);
         validator = new ClusterValidator(dbFacade, cluster);
 
-        assertThat(validator.qosBaloonSupported(), failsWith(VdcBllMessages.QOS_BALLOON_NOT_SUPPORTED));
+        assertThat(validator.qosBaloonSupported(), failsWith(EngineMessage.QOS_BALLOON_NOT_SUPPORTED));
     }
 
     @Test
@@ -266,7 +266,7 @@ public class ClusterValidatorTest {
         doReturn(false).when(validator).glusterFeatureEnabled();
 
         assertThat(validator.glusterServiceSupported(),
-                failsWith(VdcBllMessages.GLUSTER_NOT_SUPPORTED, "compatibilityVersion", null));
+                failsWith(EngineMessage.GLUSTER_NOT_SUPPORTED, "compatibilityVersion", null));
     }
 
     @Test
@@ -280,7 +280,7 @@ public class ClusterValidatorTest {
     @Test
     public void noClusterServiceDefined() {
         assertThat(validator.clusterServiceDefined(),
-                failsWith(VdcBllMessages.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED));
+                failsWith(EngineMessage.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED));
     }
 
     @Test
@@ -311,7 +311,7 @@ public class ClusterValidatorTest {
         validator = new ClusterValidator(dbFacade, cluster);
 
         assertThat(validator.mixedClusterServicesSupported(),
-                failsWith(VdcBllMessages.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED));
+                failsWith(EngineMessage.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED));
     }
 
     @Test
@@ -335,7 +335,7 @@ public class ClusterValidatorTest {
         validator = new ClusterValidator(dbFacade, cluster);
 
         assertThat(validator.attestationServerConfigured(),
-                failsWith(VdcBllMessages.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED));
+                failsWith(EngineMessage.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED));
     }
 
     @Test
@@ -354,7 +354,7 @@ public class ClusterValidatorTest {
         doReturn(false).when(validator).migrationSupportedForArch(any(ArchitectureType.class));
 
         assertThat(validator.migrationSupported(RandomUtils.instance().nextEnum(ArchitectureType.class)),
-                failsWith(VdcBllMessages.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED));
+                failsWith(EngineMessage.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED));
     }
 
     @Test
@@ -380,6 +380,6 @@ public class ClusterValidatorTest {
         doReturn(false).when(validator).virtIoRngSupportedInCluster();
 
         assertThat(validator.virtIoRngSupported(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED));
     }
 }

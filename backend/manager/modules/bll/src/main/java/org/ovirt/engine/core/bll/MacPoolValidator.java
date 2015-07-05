@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -21,7 +21,7 @@ public class MacPoolValidator {
     }
 
     public ValidationResult notRemovingDefaultPool() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_DEFAULT_MAC_POOL).
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_DEFAULT_MAC_POOL).
                 when(macPool.isDefaultPool());
     }
 
@@ -30,8 +30,8 @@ public class MacPoolValidator {
         final List<StoragePool> dataCenters = storagePoolDao.getAllDataCentersByMacPoolId(macPool.getId());
 
         final Collection<String> replacements = ReplacementUtils.replaceWithNameable("DATACENTERS_USING_MAC_POOL", dataCenters);
-        replacements.add(VdcBllMessages.VAR__ENTITIES__DATA_CENTERS.name());
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL,
+        replacements.add(EngineMessage.VAR__ENTITIES__DATA_CENTERS.name());
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL,
                 replacements.toArray(new String[0])).when(dataCenters.size() != 0);
     }
 
@@ -40,17 +40,17 @@ public class MacPoolValidator {
     }
 
     public ValidationResult macPoolExists() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_MAC_POOL_DOES_NOT_EXIST).
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MAC_POOL_DOES_NOT_EXIST).
                 when(macPool == null);
     }
 
     public ValidationResult defaultPoolFlagIsNotSet() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_SETTING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED).
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_SETTING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED).
                 when(macPool.isDefaultPool());
     }
 
     public ValidationResult hasUniqueName() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED).
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED).
                         when(!macPoolNameUnique());
     }
 

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
@@ -26,7 +26,7 @@ public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSess
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_GEOREP_SESSION);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
         addCanDoActionMessageVariable("volumeName", getGlusterVolumeName());
         addCanDoActionMessageVariable("vdsGroup", getVdsGroupName());
     }
@@ -38,13 +38,13 @@ public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSess
         }
 
         if (getGeoRepSession() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GEOREP_SESSION_INVALID);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_INVALID);
             return false;
         }
 
         GlusterVolumeEntity volume = getGlusterVolume();
         if (!volume.isOnline()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
             addCanDoActionMessageVariable("volumeName", volume.getName());
             return false;
         }
@@ -71,7 +71,7 @@ public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSess
         if (!isInternalExecution()) {
             return Collections.singletonMap(getGeoRepSession().getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_GEOREP,
-                            VdcBllMessages.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED));
+                            EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED));
         }
         return null;
     }

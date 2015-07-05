@@ -41,7 +41,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -229,13 +229,13 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
 
         oldGroup = getVdsGroupDao().get(getVdsGroup().getId());
         if (oldGroup == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+            addCanDoActionMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
             result = false;
         }
         // if the name was changed then make sure the new name is unique
         if (result && !StringUtils.equals(oldGroup.getName(), getVdsGroup().getName())) {
             if (!isVdsGroupUnique(getVdsGroup().getName())) {
-                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
+                addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
                 result = false;
             }
         }
@@ -252,7 +252,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         if (result && getVdsGroup().getCompatibilityVersion().compareTo(oldGroup.getCompatibilityVersion()) < 0) {
             if (!allForVdsGroup.isEmpty()) {
                 result = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
             }
 
             if (oldGroup.getStoragePoolId() != null) {
@@ -260,14 +260,14 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 if (storagePool != null && getVdsGroup().getCompatibilityVersion()
                     .compareTo(storagePool.getCompatibilityVersion()) < 0) {
                     result = false;
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
+                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
                 }
             }
 
         }
         if (result && oldGroup.getStoragePoolId() != null
                 && !oldGroup.getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
-            addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL);
+            addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL);
             result = false;
         }
         // If both original Cpu and new Cpu are null, don't check Cpu validity
@@ -279,8 +279,8 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 && (oldGroup.getCpuName() != null || getVdsGroup().getCpuName() != null)) {
             // Check that cpu exist
             if (!checkIfCpusExist()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
-                addCanDoActionMessage(VdcBllMessages.VAR__TYPE__CLUSTER);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
+                addCanDoActionMessage(EngineMessage.VAR__TYPE__CLUSTER);
                 result = false;
             } else {
                 // if cpu changed from intel to amd (or backwards) and there are
@@ -288,7 +288,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 if (!StringUtils.isEmpty(oldGroup.getCpuName())
                         && !checkIfCpusSameManufacture(oldGroup)
                         && !allVdssInMaintenance) {
-                    addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_ILLEGAL);
+                    addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_UPDATE_CPU_ILLEGAL);
                     result = false;
                 }
             }
@@ -303,7 +303,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         if (result  && getVdsGroup().supportsVirtService()
                 && !isArchitectureUpdatable()
                 && hasVmOrHost) {
-            addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_ARCHITECTURE_ILLEGAL);
+            addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_UPDATE_CPU_ARCHITECTURE_ILLEGAL);
             result = false;
         }
 
@@ -315,7 +315,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             boolean isOldCPUEmpty = StringUtils.isEmpty(oldGroup.getCpuName());
 
             if (!isOldCPUEmpty && !sameCpuNames && !isCpuUpdatable(oldGroup) && hasVmOrHost) {
-                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CPU_IS_NOT_UPDATABLE);
+                addCanDoActionMessage(EngineMessage.VDS_GROUP_CPU_IS_NOT_UPDATABLE);
                 result = false;
             }
         }
@@ -332,7 +332,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             for (VDS vds : allForVdsGroup) {
                 if (vds.getStatus() == VDSStatus.Up) {
                     if (isAddedToStoragePool) {
-                        addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_VDS_UP);
+                        addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_UPDATE_VDS_UP);
                         return false;
                     } else {
                         vdss.add(vds);
@@ -343,10 +343,10 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 if (!VersionSupport.checkClusterVersionSupported(
                         getVdsGroup().getCompatibilityVersion(), vds)) {
                     result = false;
-                    addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
+                    addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
                     break;
                 } else if (getVdsGroup().supportsVirtService() && missingServerCpuFlags(vds) != null) {
-                    addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
+                    addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
                     result = false;
                     break;
                 }
@@ -358,7 +358,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 // New Features cannot be enabled if all up hosts are not supporting the selected feature
                 if (CollectionUtils.isNotEmpty(additionalClusterFeaturesAdded)
                         && !checkClusterFeaturesSupported(vdss, additionalClusterFeaturesAdded)) {
-                    addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS);
+                    addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS);
                     result = false;
                 }
             }
@@ -379,7 +379,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                         }
                     }
                     if (suspendedVms) {
-                        addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS);
+                        addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS);
                         result = false;
                     } else if (notDownVms) {
                         int compareResult = compareCpuLevels(oldGroup);
@@ -403,12 +403,12 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 if (!getVdsGroupDao().getAllForStoragePool(getVdsGroup().getStoragePoolId()).isEmpty()) {
                     getReturnValue()
                             .getCanDoActionMessages()
-                            .add(VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE
+                            .add(EngineMessage.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE
                                     .toString());
                     result = false;
                 }
                 else if (Config.getValue(ConfigValues.AutoRegistrationDefaultVdsGroupID).equals(getVdsGroup().getId())) {
-                    addCanDoActionMessage(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
+                    addCanDoActionMessage(EngineMessage.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
                     result = false;
                 }
             }
@@ -418,48 +418,48 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 && Version.v3_3.compareTo(getVdsGroup().getCompatibilityVersion()) > 0
                 && getVdsGroup().isEnableBallooning()) {
             // Members of pre-3.3 clusters don't support ballooning; here we act like a 3.2 engine
-            addCanDoActionMessage(VdcBllMessages.QOS_BALLOON_NOT_SUPPORTED);
+            addCanDoActionMessage(EngineMessage.QOS_BALLOON_NOT_SUPPORTED);
             result = false;
         }
 
         if (getVdsGroup().supportsGlusterService()
                 && !GlusterFeatureSupported.gluster(getVdsGroup().getCompatibilityVersion())) {
-            addCanDoActionMessage(VdcBllMessages.GLUSTER_NOT_SUPPORTED);
+            addCanDoActionMessage(EngineMessage.GLUSTER_NOT_SUPPORTED);
             addCanDoActionMessageVariable("compatibilityVersion", getVdsGroup().getCompatibilityVersion().getValue());
             result = false;
         }
 
         if (result) {
             if (!(getVdsGroup().supportsGlusterService() || getVdsGroup().supportsVirtService())) {
-                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
+                addCanDoActionMessage(EngineMessage.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
                 result = false;
             }
             else if (getVdsGroup().supportsGlusterService() && getVdsGroup().supportsVirtService()
                     && !isAllowClusterWithVirtGluster()) {
-                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
+                addCanDoActionMessage(EngineMessage.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
                 result = false;
             }
         }
         if (result && hasVms && !getVdsGroup().supportsVirtService()) {
-            addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_VIRT_WHEN_CLUSTER_CONTAINS_VMS);
+            addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_DISABLE_VIRT_WHEN_CLUSTER_CONTAINS_VMS);
             result = false;
         }
         if (result && !getVdsGroup().supportsGlusterService()) {
             List<GlusterVolumeEntity> volumes = getGlusterVolumeDao().getByClusterId(getVdsGroup().getId());
             if (volumes != null && volumes.size() > 0) {
-                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
+                addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
                 result = false;
             }
         }
         if (result && getVdsGroup().supportsTrustedService() && Config.<String> getValue(ConfigValues.AttestationServer).equals("")) {
-            addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED);
+            addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED);
             result = false;
         }
 
         if (result
                 && !FeatureSupported.isMigrationSupported(getArchitecture(), getVdsGroup().getCompatibilityVersion())
                 && getVdsGroup().getMigrateOnError() != MigrateOnErrorOptions.NO) {
-            return failCanDoAction(VdcBllMessages.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED);
         }
 
         if (result) {
@@ -468,13 +468,13 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         // non-empty required sources list and rng-unsupported cluster version
         if (result && !getVdsGroup().getRequiredRngSources().isEmpty()
                 && !FeatureSupported.virtIoRngSupported(getVdsGroup().getCompatibilityVersion())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
             result = false;
         }
         if (result && getParameters().isForceResetEmulatedMachine()) {
             for (VDS vds : allForVdsGroup) {
                 if (vds.getStatus() == VDSStatus.Up) {
-                    addCanDoActionMessage(VdcBllMessages.VDS_GROUP_HOSTS_MUST_BE_DOWN);
+                    addCanDoActionMessage(EngineMessage.VDS_GROUP_HOSTS_MUST_BE_DOWN);
                     result = false;
                     break;
                 }
@@ -515,13 +515,13 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             managementNetwork =
                     getDefaultManagementNetworkFinder().findDefaultManagementNetwork(getVdsGroup().getStoragePoolId());
             if (managementNetwork == null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
                 return false;
             }
         } else {
             managementNetwork = getNetworkDao().get(managementNetworkId);
             if (managementNetwork == null) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
+                addCanDoActionMessage(EngineMessage.NETWORK_NOT_EXISTS);
                 return false;
             }
         }
@@ -534,7 +534,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     protected boolean isArchitectureUpdatable() {

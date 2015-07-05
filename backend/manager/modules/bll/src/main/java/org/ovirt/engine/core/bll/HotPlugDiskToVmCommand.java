@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -46,8 +46,8 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__HOT_PLUG);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__HOT_PLUG);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override
@@ -115,11 +115,11 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         }
 
         if (getPlugAction() == VDSCommandType.HotPlugDisk && oldVmDevice.getIsPlugged()) {
-            return failCanDoAction(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
+            return failCanDoAction(EngineMessage.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
         }
 
         if (getPlugAction() == VDSCommandType.HotUnPlugDisk && !oldVmDevice.getIsPlugged()) {
-            return failCanDoAction(VdcBllMessages.HOT_UNPLUG_DISK_IS_NOT_PLUGGED);
+            return failCanDoAction(EngineMessage.HOT_UNPLUG_DISK_IS_NOT_PLUGGED);
         }
 
         return true;
@@ -170,7 +170,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED));
     }
 
     @Override
@@ -182,13 +182,13 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
             exclusiveLock.put(getDisk().getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
-                            VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED.name() +
+                            EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED.name() +
                                     String.format("$diskAliases %1$s", getDiskAlias())));
 
             if (getDisk().isBoot()) {
                 exclusiveLock.put(getVmId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT,
-                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
 
             }
         }

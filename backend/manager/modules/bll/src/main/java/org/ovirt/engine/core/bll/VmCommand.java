@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -194,7 +194,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         if (pciInUse > maxPciSlots) {
             result = false;
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS.name());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS.name());
         }
         else if (MAX_IDE_SLOTS < LinqUtils.filter(disks, new Predicate<T>() {
             @Override
@@ -203,7 +203,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
         }).size()) {
             result = false;
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS.name());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS.name());
         }
         else if (MAX_VIRTIO_SCSI_DISKS < LinqUtils.filter(disks, new Predicate<T>() {
             @Override
@@ -212,7 +212,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
         }).size()) {
             result = false;
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_VIRTIO_SCSI_DISKS.name());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_VIRTIO_SCSI_DISKS.name());
         }
         else if (MAX_SPAPR_SCSI_DISKS < LinqUtils.filter(disks, new Predicate<T>() {
             @Override
@@ -221,7 +221,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
         }).size()) {
             result = false;
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_SPAPR_VSCSI_DISKS.name());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_SPAPR_VSCSI_DISKS.name());
         }
         return result;
     }
@@ -468,7 +468,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             return true;
         }
 
-        return failCanDoAction(VdcBllMessages.HOT_PLUG_IS_NOT_SUPPORTED);
+        return failCanDoAction(EngineMessage.HOT_PLUG_IS_NOT_SUPPORTED);
     }
 
     /**
@@ -480,7 +480,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             return true;
         }
 
-        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
     }
 
     /**
@@ -492,14 +492,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         if (disk.getDiskInterface() == DiskInterface.IDE) {
             addCanDoActionMessageVariable("diskAlias", disk.getDiskAlias());
             addCanDoActionMessageVariable("vmName", getVm().getName());
-            return failCanDoAction(VdcBllMessages.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
         }
         Set<String> diskHotpluggableInterfaces = osRepository.getDiskHotpluggableInterfaces(getVm().getOs(),
                 getVm().getVdsGroupCompatibilityVersion());
 
         if (CollectionUtils.isEmpty(diskHotpluggableInterfaces)
                 || !diskHotpluggableInterfaces.contains(disk.getDiskInterface().name())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
         }
 
         return true;
@@ -534,14 +534,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected boolean checkPayload(VmPayload payload, String isoPath) {
         boolean returnValue = true;
         if (payload.getDeviceType() != VmDeviceType.CDROM && payload.getDeviceType() != VmDeviceType.FLOPPY) {
-            addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_INVALID_PAYLOAD_TYPE);
+            addCanDoActionMessage(EngineMessage.VMPAYLOAD_INVALID_PAYLOAD_TYPE);
             returnValue = false;
         } else {
             for (String content : payload.getFiles().values()) {
                 // Check each file individually, no constraint on total size
                 if (!VmPayload.isPayloadSizeLegal(content)) {
                     Integer lengthInKb = 2 * Config.<Integer> getValue(ConfigValues.PayloadSize) / Kb;
-                    addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_SIZE_EXCEEDED);
+                    addCanDoActionMessage(EngineMessage.VMPAYLOAD_SIZE_EXCEEDED);
                     addCanDoActionMessageVariable("size", lengthInKb.toString());
                     returnValue = false;
                     break;

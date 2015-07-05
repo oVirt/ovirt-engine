@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
@@ -49,10 +49,10 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
     protected boolean canDoAction() {
         boolean result = true;
         if (getVds() == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
+            addCanDoActionMessage(EngineMessage.VDS_INVALID_SERVER_ID);
             result = false;
         } else if (getVds().getStatus() == VDSStatus.Connecting || getVds().getStatus() == VDSStatus.NonResponsive) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_CHECK_VERSION_HOST_NON_RESPONSIVE);
+            addCanDoActionMessage(EngineMessage.VDS_CANNOT_CHECK_VERSION_HOST_NON_RESPONSIVE);
             result = false;
         }
         return result;

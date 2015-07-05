@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkQosValidatorTest {
@@ -72,7 +72,7 @@ public class NetworkQosValidatorTest {
     public void qosDoesNotExist() {
         qos.setId(DEFAULT_GUID);
         doReturn(null).when(validator).getOldQos();
-        qosExistsTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_QOS_NOT_FOUND), validator);
+        qosExistsTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_QOS_NOT_FOUND), validator);
     }
 
     private void consistentDataCenterTest(Matcher<ValidationResult> matcher) {
@@ -90,7 +90,7 @@ public class NetworkQosValidatorTest {
     public void differentDataCenter() {
         qos.setStoragePoolId(DEFAULT_GUID);
         oldQos.setStoragePoolId(OTHER_GUID);
-        consistentDataCenterTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_QOS_STORAGE_POOL_NOT_CONSISTENT));
+        consistentDataCenterTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_QOS_STORAGE_POOL_NOT_CONSISTENT));
     }
 
     private void nameNotChangedOrNotTakenTest(Matcher<ValidationResult> matcher) {
@@ -118,7 +118,7 @@ public class NetworkQosValidatorTest {
     @Test
     public void NameTaken() {
         qos.setName("foo");
-        nameNotChangedOrNotTakenTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_QOS_NAME_EXIST));
+        nameNotChangedOrNotTakenTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_QOS_NAME_EXIST));
     }
 
     private void valuesPresentTest(Matcher<ValidationResult> matcher) {
@@ -165,79 +165,79 @@ public class NetworkQosValidatorTest {
     @Test
     public void onlyInboundAveragePresent() {
         qos.setInboundAverage(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void onlyInboundPeakPresent() {
         qos.setInboundPeak(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void onlyInboundBurstPresent() {
         qos.setInboundBurst(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void onlyOutboundAveragePresent() {
         qos.setOutboundAverage(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void onlyOutboundPeakPresent() {
         qos.setOutboundPeak(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void onlyOutboundBurstPresent() {
         qos.setOutboundBurst(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void inboundBurstMissing() {
         qos.setInboundAverage(BANDWIDTH_MEDIUM);
         qos.setInboundPeak(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void inboundPeakMissing() {
         qos.setInboundBurst(BANDWIDTH_MEDIUM);
         qos.setInboundAverage(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void inboundAverageMissing() {
         qos.setInboundPeak(BANDWIDTH_MEDIUM);
         qos.setInboundBurst(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void outboundBurstMissing() {
         qos.setOutboundAverage(BANDWIDTH_MEDIUM);
         qos.setOutboundPeak(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void outboundPeakMissing() {
         qos.setOutboundBurst(BANDWIDTH_MEDIUM);
         qos.setOutboundAverage(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     @Test
     public void outboundAverageMissing() {
         qos.setOutboundPeak(BANDWIDTH_MEDIUM);
         qos.setOutboundBurst(BANDWIDTH_MEDIUM);
-        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+        valuesPresentTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
     }
 
     private void peakConsistentWithAverageTest(Matcher<ValidationResult> matcher) {
@@ -269,13 +269,13 @@ public class NetworkQosValidatorTest {
     public void inboundPeakLowerThanAverage() {
         qos.setInboundPeak(BANDWIDTH_LOW);
         qos.setOutboundPeak(BANDWIDTH_HIGH);
-        peakConsistentWithAverageTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE));
+        peakConsistentWithAverageTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE));
     }
 
     @Test
     public void outboundPeakLowerThanAverage() {
         qos.setInboundPeak(BANDWIDTH_HIGH);
         qos.setOutboundPeak(BANDWIDTH_LOW);
-        peakConsistentWithAverageTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE));
+        peakConsistentWithAverageTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE));
     }
 }

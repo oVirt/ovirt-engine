@@ -13,7 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -38,7 +38,7 @@ public class UpgradeHostValidatorTest {
     public void hostDoesNotExist() {
         validator = new UpgradeHostValidator(null);
 
-        assertThat(validator.hostExists(), failsWith(VdcBllMessages.VDS_INVALID_SERVER_ID));
+        assertThat(validator.hostExists(), failsWith(EngineMessage.VDS_INVALID_SERVER_ID));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class UpgradeHostValidatorTest {
         host.setStatus(VDSStatus.Unassigned);
 
         assertThat(new UpgradeHostValidator(host).statusSupportedForHostUpgrade(),
-                failsWith(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL));
+                failsWith(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class UpgradeHostValidatorTest {
         when(host.getStatus()).thenReturn(VDSStatus.Unassigned);
 
         assertThat(validator.statusSupportedForHostUpgradeInternal(),
-                failsWith(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL));
+                failsWith(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class UpgradeHostValidatorTest {
 
     @Test
     public void updatesUnavailable() {
-        assertThat(validator.updatesAvailable(), failsWith(VdcBllMessages.NO_AVAILABLE_UPDATES_FOR_HOST));
+        assertThat(validator.updatesAvailable(), failsWith(EngineMessage.NO_AVAILABLE_UPDATES_FOR_HOST));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class UpgradeHostValidatorTest {
         mockOvirtNode();
 
         assertThat(validator.imageProvidedForOvirtNode(null),
-                failsWith(VdcBllMessages.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE));
+                failsWith(EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE));
     }
 
     @Test
@@ -120,6 +120,6 @@ public class UpgradeHostValidatorTest {
 
     @Test
     public void hostWasNotInstalled() {
-        assertThat(validator.hostWasInstalled(), failsWith(VdcBllMessages.CANNOT_UPGRADE_HOST_WITHOUT_OS));
+        assertThat(validator.hostWasInstalled(), failsWith(EngineMessage.CANNOT_UPGRADE_HOST_WITHOUT_OS));
     }
 }

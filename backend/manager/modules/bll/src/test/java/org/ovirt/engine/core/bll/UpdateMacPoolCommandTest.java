@@ -6,7 +6,7 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.MacPool;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class UpdateMacPoolCommandTest {
 
@@ -28,7 +28,7 @@ public class UpdateMacPoolCommandTest {
         macPool2.setDefaultPool(!macPool1.isDefaultPool());
 
         assertThat(UpdateMacPoolCommand.validateDefaultFlagIsNotChanged(macPool1, macPool2),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CHANGING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_CHANGING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED));
     }
 
     @Test

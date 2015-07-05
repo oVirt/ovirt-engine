@@ -18,7 +18,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StorageDomainSpaceRequirementsFilterTest extends StorageDomainFilterAbstractTest {
@@ -45,14 +45,14 @@ public class StorageDomainSpaceRequirementsFilterTest extends StorageDomainFilte
     @Test
     public void testStorageDomainForMemoryIsNotValidWhenItHasLowSpace() {
         when(storageDomainValidator.isDomainWithinThresholds())
-                .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+                .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         assertFalse(filter.getPredicate(memoryDisks).eval(storageDomain));
     }
 
     @Test
     public void testStorageDomainForMemoryIsNotValidWhenItHasNoSpaceForClonedDisks() {
         when(storageDomainValidator.hasSpaceForClonedDisks(memoryDisks))
-                .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+                .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         assertFalse(filter.getPredicate(memoryDisks).eval(storageDomain));
     }
 

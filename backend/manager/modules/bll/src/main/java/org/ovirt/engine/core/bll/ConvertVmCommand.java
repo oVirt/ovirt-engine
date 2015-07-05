@@ -22,8 +22,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConvertVmVDSParameters;
@@ -99,7 +99,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     }
 
     protected String getVmIsBeingImportedMessage() {
-        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED.name());
+        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED.name());
         if (getVmName() != null) {
             builder.append(String.format("$VmName %1$s", getVmName()));
         }
@@ -130,11 +130,11 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     @Override
     protected boolean canDoAction() {
         if (getVds() != null && getVds().getStatus() != VDSStatus.Up) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
         }
 
         if (getVds() == null && !selectProxyHost()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
         }
 
         return true;
@@ -166,7 +166,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
                 log.error("Failed to convert VM");
                 setCommandStatus(CommandStatus.FAILED);
             }
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             log.error("Failed to convert VM", e);
             setCommandStatus(CommandStatus.FAILED);
         }
@@ -195,7 +195,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         try {
             addImportedDevices(readVmFromOvf(getOvfOfConvertedVm()));
             setSucceeded(true);
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             log.info("failed to add devices to converted vm");
             removeVm();
         } finally {
@@ -217,7 +217,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         } catch (OvfReaderException e) {
             log.debug("failed to parse a given ovf configuration: \n " + ovf, e);
             auditLog(this, AuditLogType.IMPORTEXPORT_INVALID_OVF);
-            throw new VdcBLLException();
+            throw new EngineException();
         }
     }
 
@@ -227,7 +227,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
                 new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
         if (!retValue.getSucceeded()) {
             auditLog(this, AuditLogType.IMPORTEXPORT_CANNOT_GET_OVF);
-            throw new VdcBLLException();
+            throw new EngineException();
         }
         return (String) retValue.getReturnValue();
     }

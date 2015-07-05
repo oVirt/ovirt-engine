@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import org.ovirt.engine.core.bll.FenceAgentCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -12,7 +12,7 @@ public class RemoveFenceAgentsByVdsIdCommand<T extends FenceAgentCommandParamete
     @Override
     protected boolean canDoAction() {
         if (getParameters() == null || getParameters().getVdsId() == null) {
-            return failCanDoAction(VdcBllMessages.VDS_REMOVE_FENCE_AGENTS_VDS_ID_REQUIRED);
+            return failCanDoAction(EngineMessage.VDS_REMOVE_FENCE_AGENTS_VDS_ID_REQUIRED);
         }
         return super.canDoAction();
     }

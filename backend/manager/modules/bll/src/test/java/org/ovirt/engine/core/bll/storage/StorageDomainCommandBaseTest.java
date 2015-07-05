@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 
@@ -110,7 +110,7 @@ public class StorageDomainCommandBaseTest {
         assertFalse(cmd.checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
         List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
         assertEquals(messages.size(), 2);
-        assertEquals(messages.get(0), VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
+        assertEquals(messages.get(0), EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
         assertEquals(messages.get(1), String.format("$status %1$s", StorageDomainStatus.Active));
     }
 
@@ -136,7 +136,7 @@ public class StorageDomainCommandBaseTest {
         assertTrue(cmd.isLunsAlreadyInUse(specifiedLunIds));
         List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
         assertEquals(messages.size(), 2);
-        assertEquals(messages.get(0), VdcBllMessages.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS.toString());
+        assertEquals(messages.get(0), EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS.toString());
         assertEquals(messages.get(1), String.format("$lunIds %1$s", cmd.getFormattedLunId(lun1, lun1.getStorageDomainName())));
     }
 
@@ -162,7 +162,7 @@ public class StorageDomainCommandBaseTest {
 
     private boolean commandHasInvalidStatusMessage() {
         return cmd.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
     }
 
     private void setStorageDomainStatus(StorageDomainStatus status) {

@@ -40,9 +40,9 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -103,15 +103,15 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             if (FeatureSupported.liveMerge(getVm().getVdsGroupCompatibilityVersion())) {
                 if (!getVm().isQualifiedForSnapshotMerge()) {
                     log.error("Cannot remove VM snapshot. Vm is not Down, Up or Paused");
-                    throw new VdcBLLException(VdcBllErrors.VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE);
+                    throw new EngineException(EngineError.VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE);
                 } else if (getVm().getRunOnVds() == null ||
                         !getVdsDao().get(getVm().getRunOnVds()).getLiveMergeSupport()) {
                     log.error("Cannot remove VM snapshot. The host on which VM is running does not support Live Merge");
-                    throw new VdcBLLException(VdcBllErrors.VM_HOST_CANNOT_LIVE_MERGE);
+                    throw new EngineException(EngineError.VM_HOST_CANNOT_LIVE_MERGE);
                 }
             } else {
                 log.error("Cannot remove VM snapshot. Vm is not Down and cluster version does not support Live Merge");
-                throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+                throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }
         }
 
@@ -336,7 +336,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         initializeObjectState();
 
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -365,7 +365,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
             // check that we are not deleting the template
             if (!validateImageNotInTemplate()) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
             }
 
             if (!validateStorageDomains()) {
@@ -408,8 +408,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__SNAPSHOT);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     protected boolean validateVmNotDuringSnapshot() {
@@ -490,7 +490,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     @Override

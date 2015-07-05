@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 /**
  * Contains methods used to validate VDS status to execute some operation on it
@@ -57,7 +57,7 @@ public class VdsValidator {
 
     public ValidationResult exists() {
         if (vds == null) {
-            return new ValidationResult(VdcBllMessages.VDS_DOES_NOT_EXIST);
+            return new ValidationResult(EngineMessage.VDS_DOES_NOT_EXIST);
         }
         return ValidationResult.VALID;
     }
@@ -68,28 +68,28 @@ public class VdsValidator {
             return existsValidation;
         }
         if (VDSStatus.Up == vds.getStatus()) {
-            return new ValidationResult(VdcBllMessages.VDS_ALREADY_UP);
+            return new ValidationResult(EngineMessage.VDS_ALREADY_UP);
         }
         if (VDSStatus.NonResponsive == vds.getStatus()) {
-            return new ValidationResult(VdcBllMessages.VDS_NON_RESPONSIVE);
+            return new ValidationResult(EngineMessage.VDS_NON_RESPONSIVE);
         }
         return ValidationResult.VALID;
     }
 
     public ValidationResult validateUniqueId() {
         if (StringUtils.isBlank(vds.getUniqueId()) && Config.<Boolean> getValue(ConfigValues.InstallVds)) {
-            return new ValidationResult(VdcBllMessages.VDS_NO_UUID);
+            return new ValidationResult(EngineMessage.VDS_NO_UUID);
         }
         return ValidationResult.VALID;
     }
 
-    public ValidationResult validateStatus(VDSStatus vdsStatus, VdcBllMessages hostStatus) {
+    public ValidationResult validateStatus(VDSStatus vdsStatus, EngineMessage hostStatus) {
         return vdsStatus == vds.getStatus()
                 ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL, hostStatus.toString());
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL, hostStatus.toString());
     }
 
     public ValidationResult isUp() {
-        return validateStatus(VDSStatus.Up, VdcBllMessages.VAR__HOST_STATUS__UP);
+        return validateStatus(VDSStatus.Up, EngineMessage.VAR__HOST_STATUS__UP);
     }
 }

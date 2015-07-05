@@ -61,7 +61,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -173,7 +173,7 @@ public class AddVmCommandTest {
         assertTrue("canDoAction failed for the wrong reason",
                 cmd.getReturnValue()
                         .getCanDoActionMessages()
-                        .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
+                        .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
     }
 
     private void mockGraphicsDevices(Guid vmId) {
@@ -225,7 +225,7 @@ public class AddVmCommandTest {
         assertFalse("Clone vm should have failed due to non existing snapshot id", cmd.canDoAction());
         ArrayList<String> reasons = cmd.getReturnValue().getCanDoActionMessages();
         assertTrue("Clone vm should have failed due to non existing snapshot id",
-                reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST.toString()));
+                reasons.contains(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST.toString()));
     }
 
     @Test
@@ -244,7 +244,7 @@ public class AddVmCommandTest {
         assertFalse("Clone vm should have failed due to non existing vm configuration", cmd.canDoAction());
         ArrayList<String>  reasons = cmd.getReturnValue().getCanDoActionMessages();
         assertTrue("Clone vm should have failed due to no configuration id",
-                reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION.toString()));
+                reasons.contains(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION.toString()));
 
     }
 
@@ -274,7 +274,7 @@ public class AddVmCommandTest {
                 new ArrayList<>(Arrays.asList("VirtIO")));
         mockGetAllSnapshots(cmd);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
+                EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
     }
 
     @Test
@@ -301,7 +301,7 @@ public class AddVmCommandTest {
     public void validateSpaceNotEnough() throws Exception {
         AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0, 0);
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForNewDisks(anyList());
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         assertFalse(command.validateSpaceRequirements());
@@ -312,7 +312,7 @@ public class AddVmCommandTest {
     @Test
     public void validateSpaceNotWithinThreshold() throws Exception {
         AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0, 0);
-        doReturn((new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN))).
+        doReturn((new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN))).
                when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         assertFalse(command.validateSpaceRequirements());
@@ -351,7 +351,7 @@ public class AddVmCommandTest {
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
                 cmd,
-                VdcBllMessages.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
+                EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
     }
 
 
@@ -743,7 +743,7 @@ public class AddVmCommandTest {
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
+                .contains(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
     }
 
     @Test
@@ -757,6 +757,6 @@ public class AddVmCommandTest {
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString()));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString()));
     }
 }

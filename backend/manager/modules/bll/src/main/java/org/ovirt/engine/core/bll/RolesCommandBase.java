@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class RolesCommandBase<T extends RolesParameterBase> extends CommandBase<T> {
@@ -48,7 +48,7 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
         boolean result = false;
         if (getRole().isReadonly()) {
             result = true;
-            CanDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY.toString());
+            CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY.toString());
         }
         return result;
     }

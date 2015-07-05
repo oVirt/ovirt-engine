@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -60,7 +60,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     }
 
     private String getVmIsBeingRemovedFromExportDomainMessage() {
-        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_REMOVED_FROM_EXPORT_DOMAIN.name());
+        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_REMOVED_FROM_EXPORT_DOMAIN.name());
         if (getVmName() != null) {
             builder.append(String.format("$VmName %1$s", getVmName()));
         }
@@ -72,27 +72,27 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
         StorageDomain storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                 getParameters().getStorageDomainId(), getParameters().getStoragePoolId());
         if (storage == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
         if (storage.getStatus() == null || storage.getStatus() != StorageDomainStatus.Active) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
         }
 
         if (storage.getStorageDomainType() != StorageDomainType.ImportExport) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
         // getVm() is the vm from the export domain
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
         }
 
         // not using getVm() since its overridden to get vm from export domain
         VM vm = getVmDao().get(getVmId());
         if (vm != null && vm.getStatus() == VMStatus.ImageLocked) {
             if (CommandCoordinatorUtil.hasTasksForEntityIdAndAction(vm.getId(), VdcActionType.ExportVm)) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_DURING_EXPORT);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_DURING_EXPORT);
             }
         }
 

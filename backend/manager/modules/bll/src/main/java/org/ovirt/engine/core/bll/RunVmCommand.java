@@ -65,9 +65,9 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -250,7 +250,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                     markHostDevicesAsUsed();
                 }
-            } catch(VdcBLLException e) {
+            } catch(EngineException e) {
                 // if the returned exception is such that shoudn't trigger the re-run process,
                 // re-throw it. otherwise, continue (the vm will be down and a re-run will be triggered)
                 switch (e.getErrorCode()) {
@@ -478,7 +478,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
             } else {
                 if (areDisksLocked(vdcReturnValue)) {
-                    throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+                    throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
                 }
                 getReturnValue().setFault(vdcReturnValue.getFault());
                 log.error("Failed to create stateless snapshot for VM '{}' ({})",
@@ -519,7 +519,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private boolean areDisksLocked(VdcReturnValueBase vdcReturnValue) {
         return vdcReturnValue.getCanDoActionMessages().contains(
-                VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED.name());
+                EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED.name());
     }
 
 
@@ -852,7 +852,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         if (getVds() == null) {
-            VdcBLLException outEx = new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_VDS_NOT_FOUND);
+            EngineException outEx = new EngineException(EngineError.RESOURCE_MANAGER_VDS_NOT_FOUND);
             log.error("VmHandler::{}: {}", getClass().getName(), outEx.getMessage());
             return false;
         }
@@ -939,7 +939,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         VM vm = getVm();
 
         if (vm == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!validateObject(vm.getStaticData())) {
@@ -972,14 +972,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (checkPayload(getParameters().getVmPayload(), getParameters().getDiskPath()) &&
                     !StringUtils.isEmpty(getParameters().getFloppyPath()) &&
                     getParameters().getVmPayload().getDeviceType() == VmDeviceType.FLOPPY) {
-                return failCanDoAction(VdcBllMessages.VMPAYLOAD_FLOPPY_EXCEEDED);
+                return failCanDoAction(EngineMessage.VMPAYLOAD_FLOPPY_EXCEEDED);
             }
 
             getVm().setVmPayload(getParameters().getVmPayload());
         }
 
         if (!checkRngDeviceClusterCompatibility()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
         }
 
         // Note: that we are setting the payload from database in the ctor.
@@ -989,16 +989,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getParameters().getInitializationType() != null) {
            if (getParameters().getInitializationType() == InitializationType.Sysprep && getParameters().getVmPayload() != null &&
                    getParameters().getVmPayload().getDeviceType() == VmDeviceType.FLOPPY) {
-               return failCanDoAction(VdcBllMessages.VMPAYLOAD_FLOPPY_WITH_SYSPREP);
+               return failCanDoAction(EngineMessage.VMPAYLOAD_FLOPPY_WITH_SYSPREP);
            } else if (getParameters().getInitializationType() == InitializationType.CloudInit && getParameters().getVmPayload() != null &&
                    getParameters().getVmPayload().getDeviceType() == VmDeviceType.CDROM) {
-               return failCanDoAction(VdcBllMessages.VMPAYLOAD_CDROM_WITH_CLOUD_INIT);
+               return failCanDoAction(EngineMessage.VMPAYLOAD_CDROM_WITH_CLOUD_INIT);
            }
         }
         if (needsHostDevices &&
                 // Only single dedicated host allowed for host devices, verified on canDoActions
                 !hostDeviceManager.checkVmHostDeviceAvailability(getVm(), getVm().getDedicatedVmForVdsList().get(0))) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE);
         }
 
         return true;
@@ -1046,8 +1046,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RUN);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__RUN);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override

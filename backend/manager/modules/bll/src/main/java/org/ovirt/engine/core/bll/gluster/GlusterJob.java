@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -173,13 +173,13 @@ public abstract class GlusterJob {
      */
     private EngineLock getEngineLock(Guid clusterId) {
         return new EngineLock(Collections.singletonMap(clusterId.toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS)), null);
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, EngineMessage.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS)), null);
     }
 
     protected EngineLock acquireGeoRepSessionLock(Guid id) {
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_GEOREP,
-                        VdcBllMessages.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED)), null);
+                        EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED)), null);
         LockManagerFactory.getLockManager().acquireLockWait(lock);
         return lock;
     }
@@ -187,7 +187,7 @@ public abstract class GlusterJob {
     protected EngineLock acquireVolumeSnapshotLock(Guid id) {
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_SNAPSHOT,
-                        VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED)), null);
+                        EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED)), null);
         LockManagerFactory.getLockManager().acquireLockWait(lock);
         return lock;
     }

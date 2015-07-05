@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -70,7 +70,7 @@ public class DiskSnapshotsValidatorTest {
     @Test
     public void diskSnapshotsDontExist() {
         assertThat(validator.diskSnapshotsNotExist(Arrays.asList(Guid.newGuid())),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_NOT_EXIST));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_NOT_EXIST));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class DiskSnapshotsValidatorTest {
         disk2.setId(Guid.newGuid());
 
         assertThat(validator.diskImagesBelongToSameImageGroup(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_SNAPSHOTS_DONT_BELONG_TO_SAME_DISK));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_SNAPSHOTS_DONT_BELONG_TO_SAME_DISK));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class DiskSnapshotsValidatorTest {
         disk2.setActive(false);
 
         assertThat(validator.imagesAreSnapshots(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_ACTIVE));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_ACTIVE));
     }
 
     @Test
@@ -128,7 +128,7 @@ public class DiskSnapshotsValidatorTest {
         when(diskImageDao.get(disk2.getImageId())).thenReturn(disk2);
 
         assertThat(validator.canDiskSnapshotsBePreviewed(activeSnapshot.getId()),
-                failsWith(VdcBllMessages.CANNOT_PREVIEW_ACTIVE_SNAPSHOT));
+                failsWith(EngineMessage.CANNOT_PREVIEW_ACTIVE_SNAPSHOT));
     }
 
     private Snapshot getActiveSnapshot() {

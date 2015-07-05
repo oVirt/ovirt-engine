@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LibvirtSecretDao;
 
@@ -39,7 +39,7 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__AUTHENTICATION_KEY);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__AUTHENTICATION_KEY);
     }
 
     @Override

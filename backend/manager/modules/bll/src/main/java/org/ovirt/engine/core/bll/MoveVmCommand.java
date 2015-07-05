@@ -19,9 +19,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -55,8 +55,8 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__MOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
@@ -94,11 +94,11 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                         .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                                 getVm().getStoragePoolId())) == null) {
             retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
 
         if (retValue && getVm().getDiskMap().size() == 0) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
             retValue = false;
         }
 
@@ -125,7 +125,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                             .getStorageIds()
                             .contains(getParameters().getStorageDomainId())) {
                         retValue = false;
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+                        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
                         break;
                     }
                 }
@@ -138,7 +138,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     protected void executeCommand() {
         VM vm = getVm();
         if (vm.getStatus() != VMStatus.Down) {
-            throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+            throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
         }
         // Check if vm is initializing to run or already running - if it is in
         // such state,

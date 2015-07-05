@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -44,11 +44,11 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
 
         if (!GlusterFeatureSupported.glusterAsyncTasks(getVdsGroup().getCompatibilityVersion())) {
             addCanDoActionMessageVariable("compatibilityVersion", getVdsGroup().getCompatibilityVersion().getValue());
-            return failCanDoAction(VdcBllMessages.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL);
+            return failCanDoAction(EngineMessage.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL);
         }
 
         if (!glusterVolume.isOnline()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
         }
 
         return true;
@@ -116,7 +116,7 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getGlusterVolumeId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
-                        VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS));
+                        EngineMessage.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS));
     }
 
     protected void releaseVolumeLock() {

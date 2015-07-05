@@ -33,9 +33,9 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -92,7 +92,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                             getVm().getRunOnVds(),
                             lun,
                             getVm().getStoragePoolId())) {
-                        throw new VdcBLLException(VdcBllErrors.StorageServerConnectionError);
+                        throw new EngineException(EngineError.StorageServerConnectionError);
                     }
                 }
             }
@@ -171,7 +171,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         if (!diskInfo.isDiskSnapshot() && diskInfo.isBoot()) {
             for (Disk disk : vm.getDiskMap().values()) {
                 if (disk.isBoot() && !disk.isDiskSnapshot()) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
+                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
                     getReturnValue().getCanDoActionMessages().add(
                             String.format("$DiskName %1$s", disk.getDiskAlias()));
                     getReturnValue().getCanDoActionMessages().add(
@@ -222,14 +222,14 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     protected boolean isVmInUpPausedDownStatus() {
         if (getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.Down
                 && getVm().getStatus() != VMStatus.Paused) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
         }
         return true;
     }
 
     protected boolean isVmExist() {
         if (getVm() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
         return true;
@@ -237,7 +237,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected boolean isDiskExist(Disk disk) {
         if (disk == null || !isDiskExistInVm(disk)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
             return false;
         }
         return true;
@@ -272,7 +272,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected boolean isHotPlugDiskSnapshotSupported() {
         if (!FeatureSupported.hotPlugDiskSnapshot(getVds().getVdsGroupCompatibilityVersion())) {
-            return failCanDoAction(VdcBllMessages.HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED);
         }
 
         return true;
@@ -415,7 +415,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         EngineLock vmDiskHotPlugEngineLock = new EngineLock();
         vmDiskHotPlugEngineLock.setExclusiveLocks(Collections.singletonMap(getVmId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_HOT_PLUG,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED)));
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED)));
         getLockManager().acquireLockWait(vmDiskHotPlugEngineLock);
         return vmDiskHotPlugEngineLock;
     }

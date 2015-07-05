@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.common.action.AddJobParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -27,7 +27,7 @@ public abstract class AddJobCommand<T extends AddJobParameters> extends CommandB
     protected boolean canDoAction() {
         boolean retValue = true;
         if (StringUtils.isBlank(getParameters().getDescription())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_EMPTY_DESCRIPTION);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_EMPTY_DESCRIPTION);
             retValue = false;
         }
         return retValue;

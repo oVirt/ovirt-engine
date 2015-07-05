@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.annotation.Cidr;
 
 public class CidrConstraint implements ConstraintValidator<Cidr, String> {
@@ -15,11 +15,11 @@ public class CidrConstraint implements ConstraintValidator<Cidr, String> {
     @Override
     public boolean isValid(String cidr, ConstraintValidatorContext context) {
         if (!isCidrFormatValid(cidr)) {
-            return failWith(context, VdcBllMessages.BAD_CIDR_FORMAT.name());
+            return failWith(context, EngineMessage.BAD_CIDR_FORMAT.name());
         }
 
         if (!isCidrNetworkAddressValid(cidr)) {
-            return failWith(context, VdcBllMessages.CIDR_NOT_NETWORK_ADDRESS.name());
+            return failWith(context, EngineMessage.CIDR_NOT_NETWORK_ADDRESS.name());
         }
 
         return true;

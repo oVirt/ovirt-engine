@@ -17,9 +17,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -87,7 +87,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
         List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(
                 getParameters().getVmStaticData().getVmtGuid());
         if (disks.isEmpty() && !getParameters().getVmStaticData().getVmtGuid().equals(Guid.Empty)) {
-            throw new VdcBLLException(VdcBllErrors.VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB);
+            throw new EngineException(EngineError.VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB);
         }
 
         Disk defBootDisk = null;
@@ -144,7 +144,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     @Override
     protected boolean canDoAction() {
         if (getVdsGroup() == null && Guid.Empty.equals(super.getStorageDomainId())) {
-            return failCanDoAction(VdcBllMessages.VM_CLUSTER_IS_NOT_VALID);
+            return failCanDoAction(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
         }
 
         if (!ImagesHandler.checkImagesConfiguration(getStorageDomainId(),

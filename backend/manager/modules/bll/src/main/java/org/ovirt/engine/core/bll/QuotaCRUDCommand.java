@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
 
@@ -32,7 +32,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
     protected boolean checkQuotaValidationCommon(Quota quota, List<String> messages) {
         if (quota == null) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
             return false;
         }
 
@@ -53,7 +53,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
         // Check if there is no quota with the same name that already exists.
         if ((quotaByName != null) && (!quotaByName.getId().equals(quota.getId()))) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED.toString());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED.toString());
             return false;
         }
         return true;
@@ -70,7 +70,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
         boolean isValid = true;
         List<QuotaStorage> quotaStorageList = quota.getQuotaStorages();
         if (quota.isGlobalStorageQuota() && (quotaStorageList != null && !quotaStorageList.isEmpty())) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
             isValid = false;
         }
         return isValid;
@@ -99,7 +99,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
             // if the global vds group limit was not specified, then specific limitation must be specified.
             if (quota.isGlobalVdsGroupQuota() && (isSpecificVirtualRam || isSpecificVirtualCpu)) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
+                messages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
                 isValid = false;
             }
         }

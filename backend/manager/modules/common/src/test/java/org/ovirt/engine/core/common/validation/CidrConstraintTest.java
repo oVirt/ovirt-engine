@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CidrConstraintTest {
@@ -41,14 +41,14 @@ public class CidrConstraintTest {
 
     @Test
     public void checkCidrFormatValidation() {
-        runSetup(TEST_CIDR, false, false, VdcBllMessages.BAD_CIDR_FORMAT.name());
-        runVerify(TEST_CIDR, VdcBllMessages.BAD_CIDR_FORMAT.name());
+        runSetup(TEST_CIDR, false, false, EngineMessage.BAD_CIDR_FORMAT.name());
+        runVerify(TEST_CIDR, EngineMessage.BAD_CIDR_FORMAT.name());
     }
 
     @Test
     public void checkCidrNetworkAddressValidation() {
-        runSetup(TEST_CIDR, true, false, VdcBllMessages.CIDR_NOT_NETWORK_ADDRESS.name());
-        runVerify(TEST_CIDR, VdcBllMessages.CIDR_NOT_NETWORK_ADDRESS.name());
+        runSetup(TEST_CIDR, true, false, EngineMessage.CIDR_NOT_NETWORK_ADDRESS.name());
+        runVerify(TEST_CIDR, EngineMessage.CIDR_NOT_NETWORK_ADDRESS.name());
     }
 
     @Test

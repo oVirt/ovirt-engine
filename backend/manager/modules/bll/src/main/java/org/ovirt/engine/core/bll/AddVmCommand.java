@@ -82,9 +82,9 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
@@ -219,14 +219,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private String getTemplateSharedLockMessage() {
-        return new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM.name())
+        return new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM.name())
                 .append(String.format("$VmName %1$s", getVmName()))
                 .toString();
     }
 
     protected String getDiskSharedLockMessage() {
         if (cachedDiskSharedLockMessage == null) {
-            cachedDiskSharedLockMessage = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_USED_FOR_CREATE_VM.name())
+            cachedDiskSharedLockMessage = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_USED_FOR_CREATE_VM.name())
             .append(String.format("$VmName %1$s", getVmName()))
             .toString();
         }
@@ -305,7 +305,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         // check that template image and vm are on the same storage pool
         if (shouldCheckSpaceInStorageDomains()) {
             if (!getStoragePoolId().equals(getStoragePoolIdFromSourceImageContainer())) {
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH.toString());
+                reasons.add(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH.toString());
                 return false;
             }
             for (StorageDomain domain : destStorages) {
@@ -419,7 +419,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
         for (Guid candidateHostGuid : dedicatedHostsList) {
             if (DbFacade.getInstance().getVdsDao().get(candidateHostGuid) == null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
                 return false;
             }
         }
@@ -432,25 +432,25 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (retValue
                 && (num_of_sockets * cpu_per_socket) > Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus,
                         compatibility_version)) {
-            CanDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_MAX_NUM_CPU.toString());
+            CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_CPU.toString());
             retValue = false;
         }
         if (retValue
                 && num_of_sockets > Config.<Integer> getValue(ConfigValues.MaxNumOfVmSockets, compatibility_version)) {
-            CanDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS.toString());
+            CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS.toString());
             retValue = false;
         }
         if (retValue
                 && cpu_per_socket > Config.<Integer> getValue(ConfigValues.MaxNumOfCpuPerSocket, compatibility_version)) {
-            CanDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET.toString());
+            CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET.toString());
             retValue = false;
         }
         if (retValue && cpu_per_socket < 1) {
-            CanDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_MIN_CPU_PER_SOCKET.toString());
+            CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_MIN_CPU_PER_SOCKET.toString());
             retValue = false;
         }
         if (retValue && num_of_sockets < 1) {
-            CanDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_MIN_NUM_SOCKETS.toString());
+            CanDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_MIN_NUM_SOCKETS.toString());
             retValue = false;
         }
         return retValue;
@@ -464,39 +464,39 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
     protected boolean canDoAction() {
         if (getVdsGroup() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
 
         if (getVmTemplate() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
         if (getVmTemplate().isDisabled()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_DISABLED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_DISABLED);
         }
 
         if (getStoragePool() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
         }
 
         if (getStoragePool().getStatus() != StoragePoolStatus.Up) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
         }
 
         if (!isTemplateInValidDc()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_EXISTS_IN_CURRENT_DC);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_EXISTS_IN_CURRENT_DC);
         }
 
         // A VM cannot be added in a cluster without a defined architecture
         if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
         if (verifySourceDomains() && buildAndCheckDestStorageDomains()) {
@@ -508,7 +508,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
                 getVdsGroup().getCompatibilityVersion())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
-            return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+            return failCanDoAction(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
         // otherwise..
@@ -525,16 +525,16 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         // check if the selected template is compatible with Cluster architecture.
         if (!getVmTemplate().getId().equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID)
                 && getVdsGroup().getArchitecture() != getVmTemplate().getClusterArch()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE);
         }
 
         if (StringUtils.isEmpty(vmFromParams.getName())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
         }
 
         // check that VM name is not too long
         if (!isVmNameValidLength(vmFromParams)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
         }
 
         // check for Vm Payload
@@ -590,7 +590,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getCompatibilityVersion())
                 && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-            return failCanDoAction(VdcBllMessages.VM_MIGRATION_IS_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.VM_MIGRATION_IS_NOT_SUPPORTED);
         }
 
         // check cpuPinning if the check haven't failed yet
@@ -600,17 +600,17 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (vmFromParams.isUseHostCpuFlags()
                 && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-            return failCanDoAction(VdcBllMessages.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
+            return failCanDoAction(EngineMessage.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
         }
 
         if (getInstanceTypeId() != null && getInstanceType() == null) {
             // invalid instance type
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INSTANCE_TYPE_DOES_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INSTANCE_TYPE_DOES_NOT_EXIST);
         }
 
         if (imageTypeId != null && getImageType() == null) {
             // invalid image type
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_TYPE_DOES_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMAGE_TYPE_DOES_NOT_EXIST);
         }
 
         if (!checkCpuSockets()){
@@ -618,13 +618,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (!isCpuSharesValid(vmFromParams)) {
-            return failCanDoAction(VdcBllMessages.QOS_CPU_SHARES_OUT_OF_RANGE);
+            return failCanDoAction(EngineMessage.QOS_CPU_SHARES_OUT_OF_RANGE);
         }
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled())) {
             // Verify cluster compatibility
             if (!FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
-                return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                return failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
 
             // Verify OS compatibility
@@ -635,7 +635,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (vmFromParams.getMinAllocatedMem() > vmFromParams.getMemSizeMb()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
         }
 
         if (!setAndValidateDiskProfiles()) {
@@ -653,7 +653,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (getVmId() != null && getVmStaticDao().get(getVmId()) != null) {
-            return failCanDoAction(VdcBllMessages.VM_ID_EXISTS);
+            return failCanDoAction(EngineMessage.VM_ID_EXISTS);
         }
 
         List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(diskInfoDestinationMap.values());
@@ -747,7 +747,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (retValue && getImagesToCheckDestinationStorageDomains().size() != diskInfoDestinationMap.size()) {
             log.error("Can not find any default active domain for one of the disks of template with id '{}'",
                     vmDisksSource.getId());
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
             retValue = false;
         }
 
@@ -815,7 +815,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected boolean validateIsImagesOnDomains() {
         for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
             if (!image.getStorageIds().containsAll(diskInfoDestinationMap.get(image.getId()).getStorageIds())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
                 return false;
             }
         }
@@ -840,7 +840,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             int vmPriority) {
         // Checking if a desktop with same name already exists
         if (isVmWithSameNameExists(name, storagePoolId)) {
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED.name());
+            reasons.add(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED.name());
             return false;
         }
 
@@ -1001,7 +1001,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(clusterId);
         boolean legalClusterId = (vdsGroup != null);
         if (!legalClusterId) {
-            reasons.add(VdcBllErrors.VM_INVALID_SERVER_CLUSTER_ID.toString());
+            reasons.add(EngineError.VM_INVALID_SERVER_CLUSTER_ID.toString());
         }
         return legalClusterId;
     }
@@ -1116,7 +1116,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (!vmDisksSource.getDiskTemplateMap().isEmpty()) {
             if (getVm().getStatus() != VMStatus.Down) {
                 log.error("Cannot add images. VM is not Down");
-                throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+                throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }
             VmHandler.lockVm(getVmId());
             Collection<DiskImage> templateDisks = getImagesToCheckDestinationStorageDomains();
@@ -1130,7 +1130,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                  * if couldn't create snapshot then stop the transaction and the command
                  */
                 if (!result.getSucceeded()) {
-                    throw new VdcBLLException(result.getFault().getError());
+                    throw new EngineException(result.getFault().getError());
                 } else {
                     getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
                     DiskImage newImage = (DiskImage) result.getActionReturnValue();
@@ -1389,7 +1389,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!StringUtils.isBlank(getParameters().getVm().getName())) {
             return Collections.singletonMap(getParameters().getVm().getName(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return null;
     }

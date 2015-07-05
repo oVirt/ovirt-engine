@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.ExtendStorageDomainVDSCommandParameters;
 
 public class ExtendStorageDomainVDSCommand<P extends ExtendStorageDomainVDSCommandParameters>
@@ -28,7 +28,7 @@ public class ExtendStorageDomainVDSCommand<P extends ExtendStorageDomainVDSComma
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case DeviceNotFound:
             getVDSReturnValue().setSucceeded(false);

@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RegisterDiskCommand <T extends RegisterDiskParameters> extends BaseImagesCommand<T> implements QuotaStorageDependent {
@@ -49,14 +49,14 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
                 getParameters().getDiskImage().getDiskStorageType() != DiskStorageType.CINDER) {
             addCanDoActionMessageVariable("diskId", getParameters().getDiskImage().getId());
             addCanDoActionMessageVariable("storageType", getParameters().getDiskImage().getDiskStorageType());
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_DISK_STORAGE_TYPE);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_DISK_STORAGE_TYPE);
             return false;
         }
 
         if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExist())) {
             addCanDoActionMessageVariable("diskId", getParameters().getDiskImage().getId());
             addCanDoActionMessageVariable("domainId", getStorageDomainId());
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_UNAVAILABLE);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_UNAVAILABLE);
             return false;
         }
 
@@ -64,7 +64,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
                 !(getStorageDomain().getStorageDomainType() == StorageDomainType.Volume)) {
             addCanDoActionMessageVariable("domainId", getParameters().getStorageDomainId());
             addCanDoActionMessageVariable("domainType", getStorageDomain().getStorageDomainType());
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
             return false;
         }
 
@@ -101,8 +101,8 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__IMPORT);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     protected boolean setAndValidateDiskProfiles() {

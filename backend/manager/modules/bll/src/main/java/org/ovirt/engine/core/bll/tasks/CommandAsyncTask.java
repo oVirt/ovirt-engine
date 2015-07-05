@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -166,7 +166,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                     context = ExecutionHandler.createFinalizingContext(stepId);
                 }
                 vdcReturnValue = coco.endAction(this, context);
-            } catch (VdcBLLException ex) {
+            } catch (EngineException ex) {
                 log.error("{}: {}", getErrorMessage(), ex.getMessage());
                 log.debug("Exception", ex);
             } catch (RuntimeException ex) {

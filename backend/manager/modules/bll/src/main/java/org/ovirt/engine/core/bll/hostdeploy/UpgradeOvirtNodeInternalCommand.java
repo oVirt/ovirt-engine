@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -56,8 +56,8 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__INSTALL);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__INSTALL);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     private boolean isISOCompatible(
@@ -106,31 +106,31 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
     @Override
     protected boolean canDoAction() {
         if (getVdsId() == null || getVdsId().equals(Guid.Empty)) {
-            return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
+            return failCanDoAction(EngineMessage.VDS_INVALID_SERVER_ID);
         }
         if (getVds() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
         if (isOvirtReInstallOrUpgrade()) {
             // Block re-install on non-operational Host
             if  (getVds().getStatus() == VDSStatus.NonOperational) {
-                return failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
+                return failCanDoAction(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
             }
 
             File iso = resolveISO(getParameters().getoVirtIsoFile());
             if (iso == null) {
-                return failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
+                return failCanDoAction(EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
             }
 
             RpmVersion ovirtHostOsVersion = VdsHandler.getOvirtHostOsVersion(getVds());
             if (!isISOCompatible(iso, ovirtHostOsVersion)) {
-                    addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
+                    addCanDoActionMessage(EngineMessage.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
                     addCanDoActionMessageVariable("IsoVersion", ovirtHostOsVersion.getMajor());
                     return false;
             }
             _iso = iso;
         } else {
-            return failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
+            return failCanDoAction(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
         }
         return true;
     }
@@ -212,7 +212,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
                 getParameters().getVdsId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(
                         LockingGroup.VDS,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED
                 )
         );
     }

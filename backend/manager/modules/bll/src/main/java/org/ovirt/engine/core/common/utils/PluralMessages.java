@@ -4,25 +4,25 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class PluralMessages {
-    public VdcBllMessages getNetworkInUse(int numberOfEntities) {
-        return singularOrPlural(numberOfEntities, VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE,
-            VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_MANY_USES);
+    public EngineMessage getNetworkInUse(int numberOfEntities) {
+        return singularOrPlural(numberOfEntities, EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE,
+            EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_MANY_USES);
     }
 
     public ValidationResult getNetworkInUse(Collection<String> vmNames) {
-        return getNetworkInUse(vmNames, VdcBllMessages.VAR__ENTITIES__VM, VdcBllMessages.VAR__ENTITIES__VMS);
+        return getNetworkInUse(vmNames, EngineMessage.VAR__ENTITIES__VM, EngineMessage.VAR__ENTITIES__VMS);
     }
 
     /**
      * @param names names of entities using the network
      */
     public ValidationResult getNetworkInUse(Collection<String> names,
-        VdcBllMessages singularEntitiesReplacement,
-        VdcBllMessages pluralEntitiesReplacement) {
+        EngineMessage singularEntitiesReplacement,
+        EngineMessage pluralEntitiesReplacement) {
         int numberOfEntities = names.size();
 
         if (names.isEmpty()) {
@@ -47,7 +47,7 @@ public class PluralMessages {
         return new ValidationResult(getNetworkInUse(numberOfEntities), replacements);
     }
 
-    public VdcBllMessages singularOrPlural(int numberOfEntities, VdcBllMessages singular, VdcBllMessages plural) {
+    public EngineMessage singularOrPlural(int numberOfEntities, EngineMessage singular, EngineMessage plural) {
         return userSingular(numberOfEntities) ? singular : plural;
     }
 

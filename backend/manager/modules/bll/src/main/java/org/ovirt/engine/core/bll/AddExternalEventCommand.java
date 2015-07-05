@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddExternalEventParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -32,12 +32,12 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
     protected boolean canDoAction() {
         boolean result=true;
         if (getParameters().getEvent() == null || getParameters().getEvent().getOrigin().equalsIgnoreCase(OVIRT)){
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
             result = false;
         }
         if (!result) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__EXTERNAL_EVENT);
+            addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+            addCanDoActionMessage(EngineMessage.VAR__TYPE__EXTERNAL_EVENT);
         }
         return result;
     }

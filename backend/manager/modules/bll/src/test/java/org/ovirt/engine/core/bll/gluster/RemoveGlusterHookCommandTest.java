@@ -26,9 +26,9 @@ import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -70,7 +70,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
         return servers;
     }
 
-    private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
+    private void mockBackend(boolean succeeded, EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
 
@@ -110,7 +110,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
     public void executeCommandWhenFailed() {
         cmd = spy(new RemoveGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForRemove();
-        mockBackend(false, VdcBllErrors.GlusterHookRemoveFailed);
+        mockBackend(false, EngineError.GlusterHookRemoveFailed);
         cmd.executeCommand();
         verify(hooksDao, never()).remove(any(Guid.class));
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_REMOVE_FAILED);
@@ -128,7 +128,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
         cmd = spy(new RemoveGlusterHookCommand(new GlusterHookManageParameters(null)));
         setUpMocksForRemove();
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
         cmd = spy(new RemoveGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForRemove(false);
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
         cmd = spy(new RemoveGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForRemove(true, getHookEntity(), VDSStatus.Down);
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString()));
     }
 
 }

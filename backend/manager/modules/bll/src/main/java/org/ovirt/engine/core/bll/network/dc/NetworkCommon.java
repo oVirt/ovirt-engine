@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class NetworkCommon<T extends VdcActionParametersBase> extends CommandBase<T> {
@@ -43,7 +43,7 @@ public abstract class NetworkCommon<T extends VdcActionParametersBase> extends C
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORK);
     }
 
     @Override

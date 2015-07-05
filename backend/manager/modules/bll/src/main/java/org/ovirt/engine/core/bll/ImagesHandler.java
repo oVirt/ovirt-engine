@@ -43,9 +43,9 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
@@ -225,7 +225,7 @@ public final class ImagesHandler {
         } catch (RuntimeException ex) {
             log.error("Failed adding new disk image and related entities to db: {}", ex.getMessage());
             log.debug("Exception", ex);
-            throw new VdcBLLException(VdcBllErrors.DB, ex);
+            throw new EngineException(EngineError.DB, ex);
         }
     }
 
@@ -283,7 +283,7 @@ public final class ImagesHandler {
         } catch (RuntimeException ex) {
             log.error("Failed adding new disk image and related entities to db: {}", ex.getMessage());
             log.debug("Exception", ex);
-            throw new VdcBLLException(VdcBllErrors.DB, ex);
+            throw new EngineException(EngineError.DB, ex);
         }
     }
 
@@ -448,7 +448,7 @@ public final class ImagesHandler {
             DiskImageBase diskInfo, List<String> messages) {
         if (!checkImageConfiguration(storageDomain, diskInfo.getVolumeType(), diskInfo.getVolumeFormat())) {
             // not supported
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED.toString());
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED.toString());
             messages.add(String.format("$%1$s %2$s", "volumeFormat", diskInfo.getVolumeFormat()));
             messages.add(String.format("$%1$s %2$s", "volumeType", diskInfo.getVolumeType()));
             return false;
@@ -601,7 +601,7 @@ public final class ImagesHandler {
         } catch (RuntimeException ex) {
             log.error("Failed adding new disk image and related entities to db: {}", ex.getMessage());
             log.debug("Exception", ex);
-            throw new VdcBLLException(VdcBllErrors.DB, ex);
+            throw new EngineException(EngineError.DB, ex);
         }
     }
 

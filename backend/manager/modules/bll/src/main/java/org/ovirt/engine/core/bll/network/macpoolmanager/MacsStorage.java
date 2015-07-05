@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 
 class MacsStorage {
     private final boolean allowDuplicates;
@@ -59,7 +59,7 @@ class MacsStorage {
 
     public List<Long> allocateAvailableMacs(int numberOfMacs) {
         if (getAvailableMacsCount() < numberOfMacs) {
-            throw new VdcBLLException(VdcBllErrors.MAC_POOL_NO_MACS_LEFT);
+            throw new EngineException(EngineError.MAC_POOL_NO_MACS_LEFT);
         }
 
         final List<Long> result = new ArrayList<>(numberOfMacs);

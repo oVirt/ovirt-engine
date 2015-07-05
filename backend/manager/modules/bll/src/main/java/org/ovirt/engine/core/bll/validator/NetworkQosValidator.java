@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.qos.QosDao;
 
@@ -20,7 +20,7 @@ public class NetworkQosValidator extends QosValidator<NetworkQoS> {
         return (getQos() != null)
                 && (missingValue(getQos().getInboundAverage(), getQos().getInboundPeak(), getQos().getInboundBurst())
                 || missingValue(getQos().getOutboundAverage(), getQos().getOutboundPeak(), getQos().getOutboundBurst()))
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES)
+                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES)
                 : ValidationResult.VALID;
     }
 
@@ -34,7 +34,7 @@ public class NetworkQosValidator extends QosValidator<NetworkQoS> {
     public ValidationResult peakConsistentWithAverage() {
         return (getQos() != null) && (peakLowerThanAverage(getQos().getInboundAverage(), getQos().getInboundPeak())
                 || peakLowerThanAverage(getQos().getOutboundAverage(), getQos().getOutboundPeak()))
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE)
+                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE)
                 : ValidationResult.VALID;
     }
 

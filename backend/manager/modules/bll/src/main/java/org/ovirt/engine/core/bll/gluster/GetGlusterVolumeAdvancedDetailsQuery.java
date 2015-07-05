@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -46,7 +46,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
         if (volumeId != null) {
             GlusterVolumeEntity volume = getGlusterVolumeDao().getById(volumeId);
             if (volume == null) {
-                throw new RuntimeException(VdcBllMessages.GLUSTER_VOLUME_ID_INVALID.toString());
+                throw new RuntimeException(EngineMessage.GLUSTER_VOLUME_ID_INVALID.toString());
             }
 
             brick = getBrick(getParameters().getBrickId());

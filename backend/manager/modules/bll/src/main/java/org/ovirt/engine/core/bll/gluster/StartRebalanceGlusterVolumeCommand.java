@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -34,8 +34,8 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REBALANCE_START);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REBALANCE_START);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
         super.setActionMessageParameters();
     }
 
@@ -48,9 +48,9 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<
 
         boolean isVolumeDistributed = glusterVolume.getVolumeType().isDistributedType();
         if (!isVolumeDistributed) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NOT_DISTRIBUTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NOT_DISTRIBUTED);
         } else if (glusterVolume.getBricks().size() == 1) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_DISTRIBUTED_AND_HAS_SINGLE_BRICK);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_DISTRIBUTED_AND_HAS_SINGLE_BRICK);
         }
 
         GlusterBrickValidator brickValidator = new GlusterBrickValidator();

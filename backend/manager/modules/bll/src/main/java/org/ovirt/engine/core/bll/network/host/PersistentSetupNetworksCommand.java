@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @NonTransactiveCommandAttribute
 public class PersistentSetupNetworksCommand<T extends PersistentSetupNetworksParameters> extends VdsCommand<T> {
@@ -38,8 +38,8 @@ public class PersistentSetupNetworksCommand<T extends PersistentSetupNetworksPar
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__SETUP);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORKS);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__SETUP);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORKS);
     }
 
     @Override

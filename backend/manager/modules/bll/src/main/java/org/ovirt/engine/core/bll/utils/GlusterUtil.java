@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.ServerParameters;
@@ -248,7 +248,7 @@ public class GlusterUtil {
         Map<String, Pair<String, String>> exclusiveLocks = new HashMap<>();
         exclusiveLocks.put(clusterId.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
-                        VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS));
+                        EngineMessage.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS));
         EngineLock lock = new EngineLock(exclusiveLocks, null);
         LockManagerFactory.getLockManager().acquireLockWait(lock);
         return lock;

@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsGroupDao;
@@ -157,7 +157,7 @@ public class AddBricksToGlusterVolumeCommandTest {
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
         doReturn(getVDsGroup()).when(command).getVdsGroup();
         doReturn(ValidationResult.VALID).when(validator).isForceCreateVolumeAllowed(Version.v3_1, false);
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED)).when(validator)
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED)).when(validator)
                 .isForceCreateVolumeAllowed(Version.v3_1, true);
     }
 
@@ -250,7 +250,7 @@ public class AddBricksToGlusterVolumeCommandTest {
         cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, true));
         prepareMocks(cmd);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED);
+                EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED);
     }
 
     @Test

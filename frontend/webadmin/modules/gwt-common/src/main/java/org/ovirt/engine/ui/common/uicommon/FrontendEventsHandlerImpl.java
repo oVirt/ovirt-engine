@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -34,7 +34,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     @Override
     public Boolean isRaiseErrorModalPanel(VdcActionType actionType, VdcFault fault) {
         return (actionType != VdcActionType.LoginUser) &&
-                !(actionType == VdcActionType.VmLogon && fault.getError() == VdcBllErrors.nonresp);
+                !(actionType == VdcActionType.VmLogon && fault.getError() == EngineError.nonresp);
     }
 
     @Override

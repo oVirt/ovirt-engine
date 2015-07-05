@@ -4,7 +4,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
@@ -30,7 +30,7 @@ public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParam
         }
 
         if (!getRngDevices().isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_RNG_ALREADY_EXISTS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_RNG_ALREADY_EXISTS);
         }
 
         return true;

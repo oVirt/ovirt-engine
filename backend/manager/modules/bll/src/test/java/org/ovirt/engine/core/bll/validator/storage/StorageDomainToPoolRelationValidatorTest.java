@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -141,7 +141,7 @@ public class StorageDomainToPoolRelationValidatorTest {
             assertFailingMessage(
                     "Attaching an ISCSI domain to a pool with NFS domain with no mixed type failed with the wrong message",
                     attachDomainResult,
-                    VdcBllMessages.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
+                    EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
         }
     }
 
@@ -157,7 +157,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         storagePool.setCompatibilityVersion(UNSUPPORTED_VERSION);
         storagePool.setIsLocal(false);
         assertThat(validator.isPosixSupportedInDC(),
-                failsWith(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
+                failsWith(EngineMessage.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
     }
 
     @Test
@@ -172,7 +172,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         storagePool.setCompatibilityVersion(UNSUPPORTED_VERSION);
         storagePool.setIsLocal(false);
         assertThat(validator.isGlusterSupportedInDC(),
-                failsWith(VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
+                failsWith(EngineMessage.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
     }
 
     @Test
@@ -201,7 +201,7 @@ public class StorageDomainToPoolRelationValidatorTest {
                 attachPosixToLowVersionResult.isValid());
         assertFailingMessage("Attaching a POSIX domain failed with the wrong message",
                 attachPosixToLowVersionResult,
-                VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+                EngineMessage.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
     }
 
     @Test
@@ -221,7 +221,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         assertFalse("Attaching a GLUSTER domain succeeded while it should have failed", attachGlusterToLowVersionResult.isValid());
         assertFailingMessage("Attaching a GLUSTER domain failed failed with the wrong message",
                 attachGlusterToLowVersionResult,
-                VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+                EngineMessage.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
     }
 
     @Test
@@ -231,7 +231,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         assertFalse("Attaching domain with an incorrect type succeeded while it should have failed", attachIncorrectTypeResult.isValid());
         assertFailingMessage("Attaching domain with an incorrect type failed with the wrong message",
                 attachIncorrectTypeResult,
-                VdcBllMessages.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_TYPE_NOT_MATCH);
+                EngineMessage.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_TYPE_NOT_MATCH);
     }
 
     @Test
@@ -245,7 +245,7 @@ public class StorageDomainToPoolRelationValidatorTest {
                 attachedDomainInsertionResult.isValid());
         assertFailingMessage("Attaching domain that is already in a pool failed with the wrong message",
                 attachedDomainInsertionResult,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
     }
 
     @Test
@@ -257,7 +257,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         assertFalse("Attaching domain with unsupported version succeeded while it should have failed", invalidFormatAttachingResult.isValid());
         assertFailingMessage("Attaching domain with unsupported version failed with the wrong message",
                 invalidFormatAttachingResult,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
     }
 
     /**
@@ -293,12 +293,12 @@ public class StorageDomainToPoolRelationValidatorTest {
 
             assertFailingMessage("Attaching domain of type " + type + " succeeded though another domain of the same type already exists in the pool",
                     attachMultipleISOOrExportResult,
-                    (type  == StorageDomainType.ISO ? VdcBllMessages.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_ISO_DOMAIN :
-                            VdcBllMessages.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_EXPORT_DOMAIN));
+                    (type  == StorageDomainType.ISO ? EngineMessage.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_ISO_DOMAIN :
+                            EngineMessage.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_EXPORT_DOMAIN));
         }
     }
 
-    private void assertFailingMessage(String failMessage, ValidationResult validationResult, VdcBllMessages vdcBllMessage) {
-        assertTrue(failMessage, validationResult.getMessage().equals(vdcBllMessage));
+    private void assertFailingMessage(String failMessage, ValidationResult validationResult, EngineMessage engineMessage) {
+        assertTrue(failMessage, validationResult.getMessage().equals(engineMessage));
     }
 }

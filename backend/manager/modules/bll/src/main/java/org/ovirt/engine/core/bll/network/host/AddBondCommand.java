@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -76,11 +76,11 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
     protected boolean canDoAction() {
         // check minimum 2 nics in bond
         if (getParameters().getNics().length < 2) {
-            return failCanDoAction(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
+            return failCanDoAction(EngineMessage.NETWORK_BOND_PARAMETERS_INVALID);
         }
 
         if (getParameters().getNetwork() == null) {
-            return failCanDoAction(VdcBllMessages.NETWORK_NOT_EXISTS);
+            return failCanDoAction(EngineMessage.NETWORK_NOT_EXISTS);
         }
 
         List<VdsNetworkInterface> interfaces = getDbFacade().getInterfaceDao().getAllInterfacesForVds(
@@ -95,7 +95,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         });
 
         if (bond == null) {
-            return failCanDoAction(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
+            return failCanDoAction(EngineMessage.NETWORK_BOND_NAME_EXISTS);
         }
 
         // check that each nic is valid
@@ -108,14 +108,14 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
             });
 
             if (iface == null) {
-                return failCanDoAction(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
+                return failCanDoAction(EngineMessage.NETWORK_BOND_NAME_EXISTS);
             } else if (StringUtils.isNotEmpty(iface.getBondName())) {
-                return failCanDoAction(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
+                return failCanDoAction(EngineMessage.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
             } else if (StringUtils.isNotEmpty(iface.getNetworkName())) {
-                return failCanDoAction(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
+                return failCanDoAction(EngineMessage.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
             } else if (NetworkUtils.interfaceHasVlan(iface, interfaces)) {
                 // check that one of the nics is not connected to vlan
-                return failCanDoAction(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VLAN);
+                return failCanDoAction(EngineMessage.NETWORK_INTERFACE_IN_USE_BY_VLAN);
             }
 
         }
@@ -132,24 +132,24 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         });
 
         if (I != null) {
-            return failCanDoAction(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
+            return failCanDoAction(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
         }
 
         // check that the network exists in current cluster
         Network network =
                 getNetworkDao().getByNameAndCluster(getParameters().getNetwork().getName(), getVds().getVdsGroupId());
         if (network == null) {
-            return failCanDoAction(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
+            return failCanDoAction(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER);
         }
 
         if (StringUtils.isNotEmpty(getParameters().getGateway()) &&
             !managementNetworkUtil.isManagementNetwork(getParameters().getNetwork().getId(), getVdsGroupId())) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
+            addCanDoActionMessage(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;
         }
 
         if (network.isExternal()) {
-            return failCanDoAction(VdcBllMessages.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
+            return failCanDoAction(EngineMessage.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
         }
 
         return true;

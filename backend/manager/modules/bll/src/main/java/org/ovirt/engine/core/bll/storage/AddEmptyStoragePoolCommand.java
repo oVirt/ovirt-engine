@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -84,7 +84,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         }
         if (result && !(isStoragePoolUnique(getStoragePool().getName()))) {
             result = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         } else if (!checkStoragePoolNameLengthValid()) {
             result = false;
         } else if (!VersionSupport.checkVersionSupported(getStoragePool().getCompatibilityVersion())) {

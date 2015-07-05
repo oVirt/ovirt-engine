@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInterfaceParameters>
@@ -26,7 +26,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__INTERFACE);
     }
 
     public String getInterfaceName() {
@@ -45,7 +45,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
 
     protected ValidationResult linkedToTemplate() {
         return getParameters().getInterface().getVmId() == null ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_VM_CANNOT_BE_SET);
+                : new ValidationResult(EngineMessage.NETWORK_INTERFACE_VM_CANNOT_BE_SET);
     }
 
     protected boolean updateVnicForBackwardCompatibility(VmNic oldNic) {
@@ -72,7 +72,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
         }
 
         if (getVdsGroup() == null && getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
 

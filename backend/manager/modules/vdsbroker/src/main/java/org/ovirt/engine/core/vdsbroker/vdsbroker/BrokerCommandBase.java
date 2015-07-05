@@ -3,8 +3,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.vdsbroker.VDSCommandBase;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSNoMasterDomainException;
@@ -25,7 +25,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         return status.mStatus;
     }
 
-    protected void initializeVdsError(VdcBllErrors returnStatus) {
+    protected void initializeVdsError(EngineError returnStatus) {
         VDSError tempVar = new VDSError();
         tempVar.setCode(returnStatus);
         tempVar.setMessage(getReturnStatus().mMessage);
@@ -33,7 +33,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
     }
 
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         VDSExceptionBase outEx;
         switch (returnStatus) {
         case Done:
@@ -213,16 +213,16 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
 
     protected abstract VDSExceptionBase createDefaultConcreteException(String errorMessage);
 
-    protected VdcBllErrors getReturnValueFromStatus(StatusForXmlRpc xmlRpcStatus) {
+    protected EngineError getReturnValueFromStatus(StatusForXmlRpc xmlRpcStatus) {
         try {
-            VdcBllErrors bllErrors = VdcBllErrors.forValue(xmlRpcStatus.mCode);
+            EngineError bllErrors = EngineError.forValue(xmlRpcStatus.mCode);
             if (bllErrors == null) {
                 log.warn("Unexpected return value: {}", xmlRpcStatus);
-                bllErrors = VdcBllErrors.unexpected;
+                bllErrors = EngineError.unexpected;
             }
             return bllErrors;
         } catch (Exception e) {
-            return VdcBllErrors.unexpected;
+            return EngineError.unexpected;
         }
     }
 

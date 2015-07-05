@@ -65,9 +65,9 @@ import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -801,10 +801,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
         } catch (DataAccessException dataAccessEx) {
             log.error("Data access error during CanDoActionFailure.", dataAccessEx);
-            addCanDoActionMessage(VdcBllMessages.CAN_DO_ACTION_DATABASE_CONNECTION_FAILURE);
+            addCanDoActionMessage(EngineMessage.CAN_DO_ACTION_DATABASE_CONNECTION_FAILURE);
         } catch (RuntimeException ex) {
             log.error("Error during CanDoActionFailure.", ex);
-            addCanDoActionMessage(VdcBllMessages.CAN_DO_ACTION_GENERAL_FAILURE);
+            addCanDoActionMessage(EngineMessage.CAN_DO_ACTION_GENERAL_FAILURE);
         } finally {
             if (!returnValue) {
                 freeLock();
@@ -908,7 +908,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         .getCompatibilityVersion().compareTo(
                                 new Version(actionVersionMap.getstorage_pool_minimal_version())) < 0))) {
             result = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+            addCanDoActionMessage(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
         return result;
     }
@@ -1036,7 +1036,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         // Deny the permissions if there is no logged in user:
         if (getCurrentUser() == null) {
-            addCanDoActionMessage(VdcBllMessages.USER_IS_NOT_LOGGED_IN);
+            addCanDoActionMessage(EngineMessage.USER_IS_NOT_LOGGED_IN);
             return false;
         }
 
@@ -1048,7 +1048,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             if (log.isDebugEnabled()) {
                 log.debug("The set of objects to check is null or empty for action '{}'.", getActionType());
             }
-            addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            addCanDoActionMessage(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
 
             return false;
         }
@@ -1097,7 +1097,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             if (log.isDebugEnabled()) {
                 log.debug("The object to check is null for action '{}'.", getActionType());
             }
-            messages.add(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION.name());
+            messages.add(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION.name());
             return false;
         }
         // Check that an action group is defined for this action;
@@ -1131,7 +1131,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         quotaPermissionList.add(new PermissionSubject(parameter.getQuotaGuid(),
                                 VdcObjectType.Quota,
                                 ActionGroup.CONSUME_QUOTA,
-                                VdcBllMessages.USER_NOT_AUTHORIZED_TO_CONSUME_QUOTA));
+                                EngineMessage.USER_NOT_AUTHORIZED_TO_CONSUME_QUOTA));
                     }
                 }
             }
@@ -1213,7 +1213,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
             functionReturnValue = getSucceeded();
             exceptionOccurred = false;
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             log.error("Command '{}' failed: {}",
                     getClass().getName(),
                     e.getMessage());
@@ -1222,12 +1222,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         } catch (OpenStackResponseException e) {
             // Adding a message to executeFailedMessages is needed only when the list is empty
             if (_returnValue.getExecuteFailedMessages().isEmpty()) {
-                processExceptionToClient(new VdcFault(e, VdcBllErrors.ENGINE));
+                processExceptionToClient(new VdcFault(e, EngineError.ENGINE));
             }
             log.error("Command '{}' failed: {}", getClass().getName(), e.getMessage());
             log.error("Exception", e);
         } catch (RuntimeException e) {
-            processExceptionToClient(new VdcFault(e, VdcBllErrors.ENGINE));
+            processExceptionToClient(new VdcFault(e, EngineError.ENGINE));
             log.error("Command '{}' failed: {}", getClass().getName(), e.getMessage());
             log.error("Exception", e);
         } finally {
@@ -2017,7 +2017,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param message
      *            The message to add.
      */
-    protected void addCanDoActionMessage(VdcBllMessages message) {
+    protected void addCanDoActionMessage(EngineMessage message) {
         getReturnValue().getCanDoActionMessages().add(message.name());
     }
 
@@ -2029,8 +2029,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            The messages to add.
      */
 
-    protected final void addCanDoActionMessages(VdcBllMessages... messages) {
-        for (VdcBllMessages msg : messages) {
+    protected final void addCanDoActionMessages(EngineMessage... messages) {
+        for (EngineMessage msg : messages) {
             addCanDoActionMessage(msg);
         }
     }
@@ -2043,7 +2043,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return  false always
      * @see {@link #addCanDoActionMessage(String)}
      */
-    protected final boolean failCanDoAction(VdcBllMessages message, String ... variableReplacements) {
+    protected final boolean failCanDoAction(EngineMessage message, String ... variableReplacements) {
         addCanDoActionMessage(message);
         for (String variableReplacement : variableReplacements) {
             addCanDoActionMessage(variableReplacement);
@@ -2082,12 +2082,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            The corresponding parameters for the command.
      * @return The return from the VDS, containing success/failure, async task ids (in case of success), or error data
      *         (in case of failure).
-     * @throws VdcBLLException
+     * @throws org.ovirt.engine.core.common.errors.EngineException
      *             In case of an unhandled exception (Usually more severe than failure of the command, because we don't
      *             know why).
      */
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
-            throws VdcBLLException {
+            throws EngineException {
         return getBackend().getResourceManager().RunVdsCommand(commandType, parameters);
     }
 

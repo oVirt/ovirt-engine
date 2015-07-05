@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -109,8 +109,8 @@ public class VdsHandler extends BaseHandler {
      */
     public static VDSReturnValue handleVdsResult(VDSReturnValue result) {
         if (StringUtils.isNotEmpty(result.getExceptionString())) {
-            throw new VdcBLLException(
-                    result.getVdsError() != null ? result.getVdsError().getCode() : VdcBllErrors.ENGINE,
+            throw new EngineException(
+                    result.getVdsError() != null ? result.getVdsError().getCode() : EngineError.ENGINE,
                     result.getExceptionString());
         }
         return result;

@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -108,7 +108,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getStoragePoolId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.OVF_UPDATE,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     private void logInfoIfNeeded(StoragePool pool, String message, Object... args) {

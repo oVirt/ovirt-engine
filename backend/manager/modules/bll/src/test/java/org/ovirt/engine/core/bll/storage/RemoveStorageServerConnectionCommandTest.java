@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -128,7 +128,7 @@ public class RemoveStorageServerConnectionCommandTest {
         newNFSConnection.setid("");
         parameters.setStorageServerConnection(newNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
     }
 
     @Test
@@ -136,7 +136,7 @@ public class RemoveStorageServerConnectionCommandTest {
         parameters.setStorageServerConnection(NFSConnection);
         when(storageServerConnectionDao.get(NFSConnection.getid())).thenReturn(null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
 
     @Test
@@ -156,7 +156,7 @@ public class RemoveStorageServerConnectionCommandTest {
         domains.add(domain2);
         doReturn(domains).when(command).getStorageDomainsByConnId(NFSConnection.getid());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 
     @Test
@@ -180,7 +180,7 @@ public class RemoveStorageServerConnectionCommandTest {
         luns.add(lun1);
         when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 
     @Test
@@ -201,7 +201,7 @@ public class RemoveStorageServerConnectionCommandTest {
         luns.add(lun2);
         when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS_AND_DISKS);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS_AND_DISKS);
     }
 
     @Test
@@ -223,7 +223,7 @@ public class RemoveStorageServerConnectionCommandTest {
         luns.add(lun2);
         when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS);
     }
 
     @Test

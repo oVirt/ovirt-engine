@@ -19,9 +19,9 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -107,8 +107,8 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RECONSTRUCT_MASTER);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__RECONSTRUCT_MASTER);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
     }
 
     protected boolean reconstructMaster() {
@@ -260,8 +260,8 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                     VDSCommandType.ConnectStoragePool,
                                     new ConnectStoragePoolVDSCommandParameters(vds, getStoragePool(),
                                             getNewMasterStorageDomainId(), storagePoolIsoMap, true));
-                        } catch (VdcBLLException ex) {
-                            if (VdcBllErrors.StoragePoolUnknown == ex.getVdsError().getCode()) {
+                        } catch (EngineException ex) {
+                            if (EngineError.StoragePoolUnknown == ex.getVdsError().getCode()) {
                                 VDSReturnValue returnVal = runVdsCommand(
                                         VDSCommandType.ConnectStoragePool,
                                         new ConnectStoragePoolVDSCommandParameters(vds, getStoragePool(),

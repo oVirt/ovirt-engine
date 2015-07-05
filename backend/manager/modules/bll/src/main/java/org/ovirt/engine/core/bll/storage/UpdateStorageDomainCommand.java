@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetStorageDomainDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -59,7 +59,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         if (!props.isEmpty()) {
             log.warn("There was an attempt to update the following fields although they are not allowed to be updated: {}",
                     StringUtils.join(props, ","));
-            return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
+            return failCanDoAction(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
         }
         return true;
     }
@@ -86,7 +86,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
 
     private boolean validateNotTheSameName() {
         if (isStorageWithSameNameExists()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
         }
         return true;
     }
@@ -94,7 +94,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override

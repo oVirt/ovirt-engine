@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 
@@ -16,7 +16,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case GlusterGeneralException:
         case GlusterPermissionDeniedException:

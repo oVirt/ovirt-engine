@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
@@ -74,12 +74,12 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
     @Override
     protected boolean canDoAction() {
         if (getParameters().getRngDevice().getVmId() == null || cachedEntity == null) {
-            return failCanDoAction(getParameters().isVm() ? VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND
-                    : VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failCanDoAction(getParameters().isVm() ? EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND
+                    : EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
         if (getParameters().isVm() && getVm() != null && getVm().isRunningOrPaused()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
 
         return true;

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -32,7 +32,7 @@ public class CpuProfileHelper {
                 vmBase.setCpuProfileId(cpuProfiles.get(0).getId());
                 return ValidationResult.VALID;
             } else {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_CPU_PROFILE_EMPTY);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_CPU_PROFILE_EMPTY);
             }
         } else {
             return new CpuProfileValidator(vmBase.getCpuProfileId()).isParentEntityValid(vmBase.getVdsGroupId());

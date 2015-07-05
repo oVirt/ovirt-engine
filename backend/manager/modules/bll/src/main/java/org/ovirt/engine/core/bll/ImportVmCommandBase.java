@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -76,7 +76,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     @Override
     protected boolean canDoAction() {
         if (getVdsGroup() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
 
         return true;
@@ -91,7 +91,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     protected boolean validateUniqueVmName() {
         return VmHandler.isVmWithSameNameExistStatic(getVm().getName(), getStoragePoolId()) ?
-                failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_NAME_EXISTS)
+                failCanDoAction(EngineMessage.VM_CANNOT_IMPORT_VM_NAME_EXISTS)
                 : true;
     }
 
@@ -102,7 +102,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected boolean validateNoDuplicateVm() {
         VmStatic duplicateVm = getVmStaticDao().get(getVm().getId());
         return duplicateVm == null ? true :
-            failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS, String.format("$VmName %1$s", duplicateVm.getName()));
+            failCanDoAction(EngineMessage.VM_CANNOT_IMPORT_VM_EXISTS, String.format("$VmName %1$s", duplicateVm.getName()));
     }
 
     /**
@@ -111,7 +111,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
      */
     protected boolean validateVmArchitecture () {
         return getVm().getClusterArch() == ArchitectureType.undefined ?
-            failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_WITH_NOT_SUPPORTED_ARCHITECTURE)
+            failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_WITH_NOT_SUPPORTED_ARCHITECTURE)
             : true;
     }
 
@@ -122,9 +122,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected boolean validateVdsCluster() {
         VDSGroup vdsGroup = getVdsGroupDao().get(getVdsGroupId());
         return vdsGroup == null ?
-                failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID)
+                failCanDoAction(EngineMessage.VDS_CLUSTER_IS_NOT_VALID)
                 : vdsGroup.getArchitecture() != getVm().getClusterArch() ?
-                        failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER)
+                        failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER)
                         : true;
     }
 
@@ -188,7 +188,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (!osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
                 getVdsGroup().getCompatibilityVersion())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
-            return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+            return failCanDoAction(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
         return true;
@@ -207,7 +207,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
                 {
                     put(getParameters().getVm().getName(),
                             LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME,
-                                    VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
+                                    EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
 
                     put(getParameters().getVm().getId().toString(),
                             LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM,
@@ -219,7 +219,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     protected String getVmIsBeingImportedMessage() {
-        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED.name());
+        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED.name());
         if (getVmName() != null) {
             builder.append(String.format("$VmName %1$s", getVmName()));
         }

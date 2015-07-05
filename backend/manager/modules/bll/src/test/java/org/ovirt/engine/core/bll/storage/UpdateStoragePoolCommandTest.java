@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -128,13 +128,13 @@ public class UpdateStoragePoolCommandTest {
     @Test
     public void nameExists() {
         newPoolNameIsAlreadyTaken();
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
+        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
     }
 
     @Test
     public void hasDomains() {
         domainListNotEmpty();
-        canDoActionFailed(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
+        canDoActionFailed(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
     }
 
     @Test
@@ -163,7 +163,7 @@ public class UpdateStoragePoolCommandTest {
         storagePoolWithLowerVersion();
         addNonDefaultClusterToPool();
         addNonManagementNetworkToPool();
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -173,7 +173,7 @@ public class UpdateStoragePoolCommandTest {
         addManagementNetworkToPool();
         addNonManagementNetworksToPool(2);
         setupNetworkValidator(true);
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -182,7 +182,7 @@ public class UpdateStoragePoolCommandTest {
         addNonDefaultClusterToPool();
         addHostsToCluster();
         addNonManagementNetworkToPool();
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -201,13 +201,13 @@ public class UpdateStoragePoolCommandTest {
         addNonDefaultClusterToPool();
         addManagementNetworksToPool(2);
         setupNetworkValidator(false);
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
     public void versionHigherThanCluster() {
         storagePoolWithVersionHigherThanCluster();
-        canDoActionFailed(VdcBllMessages.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS);
+        canDoActionFailed(EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS);
     }
 
     @Test
@@ -230,7 +230,7 @@ public class UpdateStoragePoolCommandTest {
         when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusterList);
         assertFalse(cmd.checkAllClustersLevel());
         List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
-        assertTrue(messages.contains(VdcBllMessages.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS.toString()));
+        assertTrue(messages.contains(EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS.toString()));
         assertTrue(messages.get(0).contains("firstCluster"));
         assertFalse(messages.get(0).contains("secondCluster"));
         assertTrue(messages.get(0).contains("thirdCluster"));
@@ -241,7 +241,7 @@ public class UpdateStoragePoolCommandTest {
         mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
         addDefaultClusterToPool();
         storagePoolWithLocalFS();
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
+        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
     }
 
     @Test
@@ -255,7 +255,7 @@ public class UpdateStoragePoolCommandTest {
         StorageDomain sd = createStorageDomain(StorageFormatType.V3, StorageType.UNKNOWN);
         setAttachedDomains(sd);
 
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
+        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
     }
 
     @Test
@@ -276,7 +276,7 @@ public class UpdateStoragePoolCommandTest {
         StorageDomain sd = createStorageDomain(StorageFormatType.V3, storageType);
         setAttachedDomains(sd);
 
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
+        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
     }
 
     @Test
@@ -294,7 +294,7 @@ public class UpdateStoragePoolCommandTest {
         storageTypes.add(sdNFS.getStorageType());
 
         doReturn(storageTypes).when(spDao).getStorageTypesInPool(any(Guid.class));
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
+        canDoActionFailed(EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
     }
 
     private StorageDomain createStorageDomain(StorageFormatType formatType, StorageType storageType) {
@@ -478,7 +478,7 @@ public class UpdateStoragePoolCommandTest {
         when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(allDcNetworks);
     }
 
-    private void canDoActionFailed(final VdcBllMessages reason) {
+    private void canDoActionFailed(final EngineMessage reason) {
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(reason.toString()));
     }

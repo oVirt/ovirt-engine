@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.ErrataCounts;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 public class GetErrataCountsForHostQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
@@ -21,13 +21,13 @@ public class GetErrataCountsForHostQuery<P extends IdQueryParameters> extends Qu
     protected void executeQueryCommand() {
         VdsStatic host = getDbFacade().getVdsStaticDao().get(getParameters().getId());
         if (host == null) {
-            failWith(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            failWith(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
             return;
         }
 
         Provider<?> provider = getHostProvider(host);
         if (provider == null) {
-            failWith(VdcBllMessages.NO_HOST_PROVIDER_FOR_SYSTEM);
+            failWith(EngineMessage.NO_HOST_PROVIDER_FOR_SYSTEM);
             return;
         }
 
@@ -41,7 +41,7 @@ public class GetErrataCountsForHostQuery<P extends IdQueryParameters> extends Qu
         setReturnValue(stats);
     }
 
-    private void failWith(VdcBllMessages failure) {
+    private void failWith(EngineMessage failure) {
         getQueryReturnValue().setExceptionString(failure.name());
         getQueryReturnValue().setSucceeded(false);
     }

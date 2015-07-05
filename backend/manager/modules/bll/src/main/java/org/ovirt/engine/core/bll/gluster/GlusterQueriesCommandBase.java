@@ -5,7 +5,7 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -103,10 +103,10 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
     }
 
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
-            throws VdcBLLException {
+            throws EngineException {
         VDSReturnValue returnValue = getBackendResourceManager().RunVdsCommand(commandType, parameters);
         if (!returnValue.getSucceeded()) {
-            throw new VdcBLLException(returnValue.getVdsError().getCode(), returnValue.getVdsError()
+            throw new EngineException(returnValue.getVdsError().getCode(), returnValue.getVdsError()
                     .getMessage());
         }
         return returnValue;

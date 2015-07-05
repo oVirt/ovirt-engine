@@ -8,14 +8,14 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class ValidationResultTest {
 
     /**
      * Some message to use with the tests, we don't care what it actually is.
      */
-    private static final VdcBllMessages ERROR = VdcBllMessages.values()[0];
+    private static final EngineMessage ERROR = EngineMessage.values()[0];
     private static final String REPLACEMENT = "replacement";
     private static final String OTHER_REPLACEMENT = "other_replacement";
     private final String[] variableReplacements = new String[] { "a", "b" };

@@ -14,9 +14,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
@@ -62,7 +62,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
 
         if (returnValue) {
             if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
                 return false;
             } else if (getStorageDomain() != null && getStorageDomain().getStatus() != null
                     && getStorageDomain().getStatus() == StorageDomainStatus.Active) {
@@ -70,12 +70,12 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
                 returnValue = false;
             } else if (electNewMaster() != null) {
                 getReturnValue().getCanDoActionMessages().add(
-                        VdcBllMessages.STORAGE_POOL_REINITIALIZE_WITH_MORE_THAN_ONE_DATA_DOMAIN.toString());
+                        EngineMessage.STORAGE_POOL_REINITIALIZE_WITH_MORE_THAN_ONE_DATA_DOMAIN.toString());
                 returnValue = false;
             } else {
                 StorageDomain domain = loadTargetedMasterDomain();
                 if (domain.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
                     returnValue = false;
                 }
             }
@@ -90,8 +90,8 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RECOVER_POOL);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__RECOVER_POOL);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
     }
 
     @Override
@@ -141,9 +141,9 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
                         }
                     });
         } else {
-            getReturnValue().setFault(new VdcFault(new VdcBLLException(VdcBllErrors.StorageServerConnectionError,
+            getReturnValue().setFault(new VdcFault(new EngineException(EngineError.StorageServerConnectionError,
                     "Failed to connect storage"),
-                    VdcBllErrors.StorageServerConnectionError));
+                    EngineError.StorageServerConnectionError));
         }
     }
 }

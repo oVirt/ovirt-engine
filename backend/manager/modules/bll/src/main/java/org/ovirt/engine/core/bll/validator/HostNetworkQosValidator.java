@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.qos.QosDao;
 
@@ -15,7 +15,7 @@ public class HostNetworkQosValidator extends QosValidator<HostNetworkQos> {
     @Override
     public ValidationResult requiredValuesPresent() {
         return (getQos() != null && getQos().getOutAverageLinkshare() == null)
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES)
+                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES)
                 : ValidationResult.VALID;
     }
 
@@ -31,7 +31,7 @@ public class HostNetworkQosValidator extends QosValidator<HostNetworkQos> {
         Integer outUpperlimit = qos.getOutAverageUpperlimit();
         Integer outRealtime = qos.getOutAverageRealtime();
         return (outUpperlimit != null && outRealtime != null && outUpperlimit < outRealtime)
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INCONSISTENT_VALUES)
+                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INCONSISTENT_VALUES)
                 : ValidationResult.VALID;
     }
 

@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
@@ -97,7 +97,7 @@ public class VnicProfileValidatorTest {
     @Test
     public void vnicProfileNull() throws Exception {
         validator = new VnicProfileValidator(null);
-        assertThat(validator.vnicProfileIsSet(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
+        assertThat(validator.vnicProfileIsSet(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class VnicProfileValidatorTest {
     @Test
     public void vnicProfileDoesNotExist() throws Exception {
         when(vnicProfileDao.get(any(Guid.class))).thenReturn(null);
-        assertThat(validator.vnicProfileExists(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
+        assertThat(validator.vnicProfileExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class VnicProfileValidatorTest {
     @Test
     public void networkDoesntExist() throws Exception {
         when(networkDao.get(any(Guid.class))).thenReturn(null);
-        assertThat(validator.networkExists(), failsWith(VdcBllMessages.NETWORK_NOT_EXISTS));
+        assertThat(validator.networkExists(), failsWith(EngineMessage.NETWORK_NOT_EXISTS));
     }
 
     @Test
@@ -140,7 +140,7 @@ public class VnicProfileValidatorTest {
     public void networkQosDoesntExist() throws Exception {
         when(vnicProfile.getNetworkQosId()).thenReturn(DEFAULT_GUID);
         when(networkQosDao.get(any(Guid.class))).thenReturn(null);
-        assertThat(validator.networkQosExistsOrNull(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS));
+        assertThat(validator.networkQosExistsOrNull(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS));
     }
 
     private void vnicProfileAvailableTest(Matcher<ValidationResult> matcher, List<VnicProfile> vnicProfiles) {
@@ -170,7 +170,7 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void vnicProfileNameTakenByDifferentVnicProfile() throws Exception {
-        vnicProfileAvailableTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NAME_IN_USE),
+        vnicProfileAvailableTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NAME_IN_USE),
                 getSingletonNamedVnicProfileList(DEFAULT_VNIC_PROFILE_NAME, OTHER_GUID));
     }
 
@@ -187,7 +187,7 @@ public class VnicProfileValidatorTest {
     }
 
     private Matcher<ValidationResult> failsWithVnicProfileInUse() {
-        return failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_ONE_USE);
+        return failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_ONE_USE);
     }
 
     @Test
@@ -200,7 +200,7 @@ public class VnicProfileValidatorTest {
     public void changingNetworkNotAllowed() throws Exception {
         mockVnicProfileNetworkChange(DEFAULT_GUID, OTHER_GUID);
         assertThat(validator.networkNotChanged(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_VNIC_PROFILE_NETWORK));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_VNIC_PROFILE_NETWORK));
     }
 
     @Test
@@ -285,7 +285,7 @@ public class VnicProfileValidatorTest {
     @Test
     public void vnicProfileForNonVmNetwork() {
         vnicProfileForVmNetworkTest(false,
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK));
     }
 
     private void vnicProfileForVmNetworkTest(boolean vmNetwork, Matcher<ValidationResult> matcher) {
@@ -298,7 +298,7 @@ public class VnicProfileValidatorTest {
     public void externalNetworkPortMirroring() throws Exception {
         externalNetworkPortMirroringTest(true,
                 true,
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED));
     }
 
     @Test
@@ -365,14 +365,14 @@ public class VnicProfileValidatorTest {
     public void passthroughProfileContainsPortMirroring() {
         passthroughProfileContainsSupportedPropertiesTest(true, true, null);
         assertThat(validator.passthroughProfileContainsSupportedProperties(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES));
     }
 
     @Test
     public void passthroughProfileContainsQos() {
         passthroughProfileContainsSupportedPropertiesTest(true, false, DEFAULT_GUID);
         assertThat(validator.passthroughProfileContainsSupportedProperties(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES));
     }
 
     @Test

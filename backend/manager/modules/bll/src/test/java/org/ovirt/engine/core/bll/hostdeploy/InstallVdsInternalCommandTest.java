@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -73,7 +73,7 @@ public class InstallVdsInternalCommandTest {
     }
 
     private static void assertFailsWithCanDoActionMessage
-            (InstallVdsInternalCommand<InstallVdsParameters> command, VdcBllMessages message) {
+            (InstallVdsInternalCommand<InstallVdsParameters> command, EngineMessage message) {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains(message.name()));
     }
@@ -91,7 +91,7 @@ public class InstallVdsInternalCommandTest {
         when(vdsDao.get(any(Guid.class))).thenReturn(null);
         InstallVdsParameters param = createParameters();
         InstallVdsInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertFailsWithCanDoActionMessage(command, VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+        assertFailsWithCanDoActionMessage(command, EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
     }
 
 }

@@ -8,8 +8,8 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -40,7 +40,7 @@ public class GlusterTasksService {
             return tasksMap;
         } else {
             log.error("Error: {}", returnValue.getVdsError());
-            throw new VdcBLLException(VdcBllErrors.GlusterVolumeStatusAllFailedException, returnValue.getVdsError().getMessage());
+            throw new EngineException(EngineError.GlusterVolumeStatusAllFailedException, returnValue.getVdsError().getMessage());
         }
     }
 

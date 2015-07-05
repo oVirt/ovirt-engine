@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -64,7 +64,7 @@ public class StorageDomainToPoolRelationValidator {
     public ValidationResult isPosixSupportedInDC() {
         if (!storagePool.isLocal() &&
                 !Config.<Boolean> getValue(ConfigValues.PosixStorageEnabled, storagePool.getCompatibilityVersion().toString())) {
-            return new ValidationResult(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+            return new ValidationResult(EngineMessage.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
         }
         return ValidationResult.VALID;
     }
@@ -79,7 +79,7 @@ public class StorageDomainToPoolRelationValidator {
         if (!storagePool.isLocal() &&
                 !Config.<Boolean> getValue(ConfigValues.GlusterFsStorageEnabled,
                         storagePool.getCompatibilityVersion().toString())) {
-            return new ValidationResult(VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+            return new ValidationResult(EngineMessage.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
         }
         return ValidationResult.VALID;
     }
@@ -116,9 +116,9 @@ public class StorageDomainToPoolRelationValidator {
         // If we are here then we already have at least one storage type of the given type
         // so when have to prepare a friendly message for the user (see #713160) and fail:
         if (type == StorageDomainType.ISO) {
-            return new ValidationResult(VdcBllMessages.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_ISO_DOMAIN);
+            return new ValidationResult(EngineMessage.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_ISO_DOMAIN);
         } else {
-            return new ValidationResult(VdcBllMessages.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_EXPORT_DOMAIN);
+            return new ValidationResult(EngineMessage.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_EXPORT_DOMAIN);
         }
     }
 
@@ -133,7 +133,7 @@ public class StorageDomainToPoolRelationValidator {
         if (storagePool != null) {
             if (VersionStorageFormatUtil.getPreferredForVersion(storagePool.getCompatibilityVersion(),
                     storageDomainStatic.getStorageType()).compareTo(storageDomainStatic.getStorageFormat()) < 0) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL, String.format("$storageFormat %1$s", storageDomainStatic
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL, String.format("$storageFormat %1$s", storageDomainStatic
                         .getStorageFormat().toString()));
             }
         }
@@ -142,7 +142,7 @@ public class StorageDomainToPoolRelationValidator {
 
     public ValidationResult isStorageDomainLocalityFitsDC() {
         if (!isStorageDomainOfTypeIsoOrExport() && storageDomainStatic.getStorageType().isLocal() != storagePool.isLocal()) {
-            return new ValidationResult(VdcBllMessages.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_TYPE_NOT_MATCH);
+            return new ValidationResult(EngineMessage.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_TYPE_NOT_MATCH);
         }
         return ValidationResult.VALID;
     }
@@ -155,7 +155,7 @@ public class StorageDomainToPoolRelationValidator {
                     getStoragePoolDao().getStorageTypesInPool(storagePool.getId());
             for (StorageType storageType : storageTypesOnPool) {
                 if (storageType.isBlockDomain() != isBlockDomain) {
-                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
                 }
             }
         }
@@ -174,7 +174,7 @@ public class StorageDomainToPoolRelationValidator {
         if (storageDomainStatic != null) {
             // check if there is no pool-domain map
             if (!getStoragePoolIsoMapDao().getAllForStorage(storageDomainStatic.getId()).isEmpty()) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
             }
         }
         return ValidationResult.VALID;

@@ -5,7 +5,7 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.di.Injector;
@@ -43,7 +43,7 @@ public class HostDeviceFilterPolicyUnit extends PolicyUnitImpl {
             if (host.isHostDevicePassthroughEnabled()) {
                 list.add(host);
             } else {
-                messages.addMessage(host.getId(), VdcBllMessages.VAR__DETAIL__HOSTDEV_DISABLED.toString());
+                messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__HOSTDEV_DISABLED.toString());
                 log.debug("Host '{}' does not support host device passthrough", host.getName());
             }
         }

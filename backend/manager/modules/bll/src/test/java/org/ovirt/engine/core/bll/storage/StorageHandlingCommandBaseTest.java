@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -134,7 +134,7 @@ public class StorageHandlingCommandBaseTest {
     private void checkStoragePoolFails() {
         when(facade.getStoragePoolDao().get(storagePool.getId())).thenReturn(null);
         assertFalse(cmd.checkStoragePool());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage
                 .ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString()));
     }
 

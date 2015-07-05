@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
@@ -59,18 +59,18 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
                     (int) (size / SizeConverter.BYTES_IN_GB) - domain.getAvailableDiskSize());
             if (xmlRpcStruct.containsKey("alerts")) {
                 Object[] rawAlerts = (Object[]) xmlRpcStruct.get("alerts");
-                Set<VdcBllErrors> alerts = new HashSet<VdcBllErrors>(rawAlerts.length);
+                Set<EngineError> alerts = new HashSet<EngineError>(rawAlerts.length);
 
                 for (Object rawAlert : rawAlerts) {
                     Map<String, Object> alert = (Map<String, Object>) rawAlert;
                     Integer alertCode = (Integer) alert.get("code");
-                    if (alertCode == null || VdcBllErrors.forValue(alertCode) == null) {
+                    if (alertCode == null || EngineError.forValue(alertCode) == null) {
                         log.warn("Unrecognized alert code: {}.", alertCode);
                         StringBuilder alertStringBuilder = new StringBuilder();
                         XmlRpcObjectDescriptor.toStringBuilder(alert, alertStringBuilder);
                         log.info("The received alert is: {}", alertStringBuilder);
                     } else {
-                        alerts.add(VdcBllErrors.forValue(alertCode));
+                        alerts.add(EngineError.forValue(alertCode));
                     }
                 }
 

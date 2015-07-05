@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddExternalStepParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class AddExternalStepCommand <T extends AddExternalStepParameters> extends AddStepCommand<T>{
 
@@ -23,13 +23,13 @@ public class AddExternalStepCommand <T extends AddExternalStepParameters> extend
         if (job != null) {
             if (!job.isExternal()) {
                 retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_NOT_EXTERNAL);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
             }
         }
 
         if (!retValue) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__EXTERNAL_JOB);
+            addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+            addCanDoActionMessage(EngineMessage.VAR__TYPE__EXTERNAL_JOB);
         }
         return retValue;
     }

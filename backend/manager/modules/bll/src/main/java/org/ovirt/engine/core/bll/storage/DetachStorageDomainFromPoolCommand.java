@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
@@ -46,7 +46,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     /**
@@ -130,7 +130,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DETACH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__DETACH);
     }
 }

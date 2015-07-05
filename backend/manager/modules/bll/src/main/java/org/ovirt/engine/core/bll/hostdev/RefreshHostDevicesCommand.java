@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
@@ -213,7 +213,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REFRESH);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST_DEVICES);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REFRESH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_DEVICES);
     }
 }

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -30,10 +30,10 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         List<event_subscriber> subscriptions = DbFacade.getInstance()
                 .getEventDao().getAllForSubscriber(subscriberId);
         if (IsAlreadySubscribed(subscriptions, subscriberId, eventName, eventNotificationMethod)) {
-            addCanDoActionMessage(VdcBllMessages.EN_ALREADY_SUBSCRIBED);
+            addCanDoActionMessage(EngineMessage.EN_ALREADY_SUBSCRIBED);
             retValue = false;
         } else if (!eventExists(eventName)) {
-            addCanDoActionMessage(VdcBllMessages.EN_UNSUPPORTED_NOTIFICATION_EVENT);
+            addCanDoActionMessage(EngineMessage.EN_UNSUPPORTED_NOTIFICATION_EVENT);
             retValue = false;
         } else {
             // get notification method
@@ -41,13 +41,13 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
                 // Validate user
                 DbUser user = DbFacade.getInstance().getDbUserDao().get(subscriberId);
                 if (user == null) {
-                    addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DB);
+                    addCanDoActionMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
                     retValue = false;
                 } else {
                     retValue = ValidateAdd(eventNotificationMethod, getParameters().getEventSubscriber(), user);
                 }
             } else {
-                addCanDoActionMessage(VdcBllMessages.EN_UNKNOWN_NOTIFICATION_METHOD);
+                addCanDoActionMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
                 retValue = false;
             }
         }

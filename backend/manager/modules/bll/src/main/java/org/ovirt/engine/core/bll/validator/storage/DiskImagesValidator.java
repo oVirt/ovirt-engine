@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -42,7 +42,7 @@ public class DiskImagesValidator {
      * @return A {@link ValidationResult} with the validation information.
      */
     public ValidationResult diskImagesNotIllegal() {
-        return diskImagesNotInStatus(ImageStatus.ILLEGAL, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ILLEGAL);
+        return diskImagesNotInStatus(ImageStatus.ILLEGAL, EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL);
     }
 
     /**
@@ -51,7 +51,7 @@ public class DiskImagesValidator {
      * @return A {@link ValidationResult} with the validation information.
      */
     public ValidationResult diskImagesNotLocked() {
-        return diskImagesNotInStatus(ImageStatus.LOCKED, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
+        return diskImagesNotInStatus(ImageStatus.LOCKED, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 
     protected DiskImage getExistingDisk(Guid id) {
@@ -78,7 +78,7 @@ public class DiskImagesValidator {
         }
 
         if (!existingDisksAliases.isEmpty()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST,
                     String.format("$diskAliases %s", StringUtils.join(existingDisksAliases, ", ")));
         }
 
@@ -99,7 +99,7 @@ public class DiskImagesValidator {
         }
 
         if (!disksNotExistInDbIds.isEmpty()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_NOT_EXIST,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST,
                     String.format("$diskIds %s", StringUtils.join(disksNotExistInDbIds, ", ")));
         }
 
@@ -117,7 +117,7 @@ public class DiskImagesValidator {
      *         {@link ValidationResult#VALID} is returned. If one or more disks are in that status, a
      *         {@link ValidationResult} with {@link #failMessage} and the names of the disks in that status is returned.
      */
-    private ValidationResult diskImagesNotInStatus(ImageStatus status, VdcBllMessages failMessage) {
+    private ValidationResult diskImagesNotInStatus(ImageStatus status, EngineMessage failMessage) {
         List<String> disksInStatus = new ArrayList<>();
         for (DiskImage diskImage : diskImages) {
             if (diskImage.getImageStatus() == status) {
@@ -148,9 +148,9 @@ public class DiskImagesValidator {
         }
 
         if (!pluggedDiskSnapshotInfo.isEmpty()) {
-            VdcBllMessages message =
-                    onlyPlugged ? VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_PLUGGED_TO_ANOTHER_VM
-                            : VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM;
+            EngineMessage message =
+                    onlyPlugged ? EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_PLUGGED_TO_ANOTHER_VM
+                            : EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM;
             return new ValidationResult(message,
                     String.format("$disksInfo %s", String.format(StringUtils.join(pluggedDiskSnapshotInfo, "%n"))));
         }
@@ -177,7 +177,7 @@ public class DiskImagesValidator {
         }
 
         if (!disksInfo.isEmpty()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_DERIVED_DISKS,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DETECTED_DERIVED_DISKS,
                     String.format("$disksInfo %s",
                             String.format(StringUtils.join(disksInfo, "%n"))));
         }
@@ -195,7 +195,7 @@ public class DiskImagesValidator {
      */
     public ValidationResult diskImagesOnAnyApplicableDomains(Map<Guid, Set<Guid>> validDomainsForDisk,
             Map<Guid, StorageDomain> storageDomains,
-            VdcBllMessages message,
+            EngineMessage message,
             Set<StorageDomainStatus> applicableStatuses) {
 
         StringBuilder disksInfo = new StringBuilder();
@@ -229,7 +229,7 @@ public class DiskImagesValidator {
         return result;
     }
 
-    public ValidationResult disksInStatus(ImageStatus applicableStatus, VdcBllMessages message) {
+    public ValidationResult disksInStatus(ImageStatus applicableStatus, EngineMessage message) {
         for (DiskImage diskImage : diskImages) {
             if (diskImage.getImageStatus() != applicableStatus) {
                 return new ValidationResult(message,

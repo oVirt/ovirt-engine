@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsGroupDao;
@@ -108,7 +108,7 @@ public class CreateGlusterVolumeCommandTest {
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
         doReturn(getVdsGroup(true)).when(vdsGroupDao).get(Mockito.any(Guid.class));
         doReturn(ValidationResult.VALID).when(validator).isForceCreateVolumeAllowed(Version.v3_1, false);
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED)).when(validator)
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED)).when(validator)
                 .isForceCreateVolumeAllowed(Version.v3_1, true);
     }
 
@@ -155,7 +155,7 @@ public class CreateGlusterVolumeCommandTest {
         doReturn(getVdsGroup(false)).when(vdsGroupDao).get(Mockito.any(Guid.class));
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);
+                EngineMessage.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);
     }
 
     @Test
@@ -165,7 +165,7 @@ public class CreateGlusterVolumeCommandTest {
         doReturn(getVolume(2, false)).when(volumeDao).getByName(clusterId, "vol1");
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
+                EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
     }
 
     @Test
@@ -174,7 +174,7 @@ public class CreateGlusterVolumeCommandTest {
         prepareMocks(cmd);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+                EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
     }
 
     @Test
@@ -185,7 +185,7 @@ public class CreateGlusterVolumeCommandTest {
         prepareMocks(cmd);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED);
+                EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED);
     }
 
     @Test
@@ -194,6 +194,6 @@ public class CreateGlusterVolumeCommandTest {
         prepareMocks(cmd);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
+                EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
     }
 }

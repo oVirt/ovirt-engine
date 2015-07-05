@@ -6,14 +6,14 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.ErrorType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class ErrorMessageHelper {
 
     public static Status getErrorStatus(String error) {
         try {
-            ErrorType errorType = VdcBllMessages.getErrorType(error);
+            ErrorType errorType = EngineMessage.getErrorType(error);
             return getStatus(errorType);
         } catch (Exception e) {
             return null;

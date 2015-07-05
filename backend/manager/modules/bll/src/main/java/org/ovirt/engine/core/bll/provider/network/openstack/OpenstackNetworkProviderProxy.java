@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.collections.CollectionUtils;
@@ -25,8 +27,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 import com.woorea.openstack.base.client.HttpMethod;
@@ -109,7 +109,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
                     getClient().networks().create(networkForCreate).execute();
             return createdNetwork.getId();
         } catch (RuntimeException e) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }
     }
 
@@ -118,7 +118,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
         try {
             getClient().networks().delete(id).execute();
         } catch (RuntimeException e) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }
     }
 
@@ -128,7 +128,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
             Networks networks = getClient().networks().list().execute();
             return map(networks.getList());
         } catch (RuntimeException e) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }
     }
 
@@ -176,7 +176,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
         try {
             getClient().subnets().create(subnetForCreate).execute();
         } catch (RuntimeException e) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }
     }
 
@@ -185,7 +185,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
         try {
             getClient().subnets().delete(id).execute();
         } catch (RuntimeException e) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }
     }
 
@@ -196,9 +196,9 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
         }  catch (OpenStackResponseException e) {
             log.error("{} (OpenStack response error code: {})", e.getMessage(), e.getStatus());
             log.debug("Exception", e);
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }catch (RuntimeException e) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }
     }
 
@@ -287,7 +287,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
 
             return runtimeProperties;
         } catch (RuntimeException e) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }
     }
 
@@ -332,7 +332,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
                 getClient().ports().delete(port.getId()).execute();
             }
         } catch (RuntimeException e) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }
     }
 

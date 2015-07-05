@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -39,22 +39,22 @@ public abstract class ImageSpmCommand<T extends ImagesContainterParametersBase> 
     @Override
     protected boolean canDoAction() {
         if (getPoolSpmId() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SPM);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SPM);
         }
 
         setStoragePool(null);
         if (getStoragePool() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
         }
 
         if (!getPoolSpmId().equals(getStoragePool().getSpmVdsId())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SPM_CHANGED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SPM_CHANGED);
         }
 
         VdsDynamic vdsDynamic = getVdsDynamicDao().get(getPoolSpmId());
         if (vdsDynamic == null || vdsDynamic.getStatus() != VDSStatus.Up) {
-            addCanDoActionMessage(VdcBllMessages.VAR__HOST_STATUS__UP);
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+            addCanDoActionMessage(EngineMessage.VAR__HOST_STATUS__UP);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
         }
 
         setVdsId(vdsDynamic.getId());
@@ -104,7 +104,7 @@ public abstract class ImageSpmCommand<T extends ImagesContainterParametersBase> 
         if (getStoragePool() != null && getPoolSpmId() != null) {
             return Collections.singletonMap(getPoolSpmId().toString(),
                     new Pair<>(LockingGroup.VDS_EXECUTION.toString(),
-                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString()));
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString()));
         }
         return null;
     }

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -50,7 +50,7 @@ public class VmNicValidator {
      */
     public ValidationResult linkedOnlyIfSupported() {
         return !FeatureSupported.networkLinking(version) && !nic.isLinked()
-                ? new ValidationResult(VdcBllMessages.UNLINKING_IS_NOT_SUPPORTED, clusterVersion())
+                ? new ValidationResult(EngineMessage.UNLINKING_IS_NOT_SUPPORTED, clusterVersion())
                 : ValidationResult.VALID;
     }
 
@@ -58,7 +58,7 @@ public class VmNicValidator {
      * @return An error if the interface is passthrough and unlinked, otherwise it's OK.
      */
     public ValidationResult passthroughIsLinked() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_UNLINKING_OF_PASSTHROUGH_VNIC_IS_NOT_SUPPORTED)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_UNLINKING_OF_PASSTHROUGH_VNIC_IS_NOT_SUPPORTED)
                 .when(nic.isPassthrough() && !nic.isLinked());
     }
 
@@ -67,14 +67,14 @@ public class VmNicValidator {
      */
     public ValidationResult emptyNetworkValid() {
         return !FeatureSupported.networkLinking(version) && nic.getVnicProfileId() == null
-                ? new ValidationResult(VdcBllMessages.NULL_NETWORK_IS_NOT_SUPPORTED, clusterVersion())
+                ? new ValidationResult(EngineMessage.NULL_NETWORK_IS_NOT_SUPPORTED, clusterVersion())
                 : ValidationResult.VALID;
     }
 
     /**
      * @return <ul>
-     *         <li>{@code VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS} if the profile doesn't exist.</li>
-     *         <li>{@code VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER} if the network is not in the current
+     *         <li>{@code EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS} if the profile doesn't exist.</li>
+     *         <li>{@code EngineMessage.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER} if the network is not in the current
      *         cluster.</li>
      *         <li>{@code ValidationResult.VALID} otherwise.</li>
      *         </ul>
@@ -84,13 +84,13 @@ public class VmNicValidator {
             // Check that the profile exists
             VnicProfile vnicProfile = getVnicProfile();
             if (vnicProfile == null) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS);
             }
 
             // Check that the network exists in current cluster
             Network network = getNetworkByVnicProfile(vnicProfile);
             if (network == null || !isNetworkInCluster(network, clusterId)) {
-                return new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+                return new ValidationResult(EngineMessage.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
             }
         }
 
@@ -114,7 +114,7 @@ public class VmNicValidator {
         }
 
         return (!interfaceTypes.contains(VmInterfaceType.forValue(nic.getType())))
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS)
+                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS)
                 : ValidationResult.VALID;
 
     }
@@ -126,7 +126,7 @@ public class VmNicValidator {
     public ValidationResult typeMatchesProfile() {
         boolean profilePassthrough = getVnicProfile() != null && getVnicProfile().isPassthrough();
         boolean typePassthrough = VmInterfaceType.pciPassthrough == VmInterfaceType.forValue(nic.getType());
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_NOT_MATCH_PROFILE)
                 .when(profilePassthrough ^ typePassthrough);
     }
 

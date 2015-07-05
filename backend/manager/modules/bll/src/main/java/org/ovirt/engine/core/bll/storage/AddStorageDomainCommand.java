@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
@@ -134,7 +134,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         Pair<Boolean, Integer> connectReturnValue = connectStorage();
         if (!connectReturnValue.getFirst()) {
             VdcFault fault = new VdcFault();
-            fault.setError(VdcBllErrors.forValue(connectReturnValue.getSecond()));
+            fault.setError(EngineError.forValue(connectReturnValue.getSecond()));
             getReturnValue().setFault(fault);
             setSucceeded(false);
         }
@@ -171,28 +171,28 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             return false;
         }
         if (isStorageWithSameNameExists()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
         }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO
                 && !getStorageDomain().getStorageType().isFileDomain()) {
             addCanDoActionMessageVariable("domainType", StorageConstants.ISO);
             addCanDoActionMessageVariable("storageTypes", StorageConstants.FILE);
 
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
         }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.ImportExport
                 && (getStorageDomain().getStorageType() == StorageType.LOCALFS || getStorageDomain().getStorageType().isBlockDomain())) {
             addCanDoActionMessageVariable("domainType", StorageConstants.EXPORT);
             addCanDoActionMessageVariable("storageTypes", StorageConstants.SHARED + " " + StorageConstants.FILE);
 
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
         }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
         if (!Guid.isNullOrEmpty(getParameters().getStoragePoolId()) && getTargetStoragePool() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
         }
 
         ensureStorageFormatInitialized();
@@ -250,7 +250,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     public StorageDomainToPoolRelationValidator getAttachDomainValidator() {

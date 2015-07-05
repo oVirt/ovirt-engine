@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
@@ -32,25 +32,25 @@ public class GlusterBrickValidator {
             replicaCount = volumeEntity.getReplicaCount();
         }
         if (bricks.isEmpty()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
         }
         if (volumeEntity.getBricks().size() == 1 ||
                 volumeEntity.getBricks().size() <= bricks.size()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME);
         }
         if (volumeEntity.getVolumeType().isReplicatedType()) {
             if (replicaCount == volumeEntity.getReplicaCount() - 1 && !forceRemove) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_WITH_DATA_MIGRATION);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_WITH_DATA_MIGRATION);
             } else if (replicaCount < volumeEntity.getReplicaCount() - 1) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE);
             } else if (replicaCount > volumeEntity.getReplicaCount()) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT);
             }
         }
 
         for (GlusterBrickEntity brick : bricks) {
             if (brick.getId(false) == null && brick.getQualifiedName() == null) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
             }
 
             GlusterBrickEntity brickFromVolume = volumeEntity.getBrickWithId(brick.getId());
@@ -59,7 +59,7 @@ public class GlusterBrickValidator {
             }
 
             if (brickFromVolume == null) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_BRICK_INVALID);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_BRICK_INVALID);
             } else {
                 // Fill required details from volume data
                 brick.setId(brickFromVolume.getId());
@@ -92,7 +92,7 @@ public class GlusterBrickValidator {
                 }
             }
             if (replicaIndex == replicaCount) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN);
             }
 
         }
@@ -104,11 +104,11 @@ public class GlusterBrickValidator {
             List<GlusterBrickEntity> paramBricks) {
         GlusterAsyncTask asyncTask = volumeEntity.getAsyncTask();
         if (asyncTask == null || asyncTask.getType() != GlusterTaskType.REMOVE_BRICK) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID_TASK_TYPE);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID_TASK_TYPE);
         }
 
         if (paramBricks.isEmpty()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
         }
 
         List<GlusterBrickEntity> bricksForTask =
@@ -116,7 +116,7 @@ public class GlusterBrickValidator {
 
 
         if (paramBricks.size() != bricksForTask.size() || !areBricksInTheList(volumeEntity, paramBricks, bricksForTask)) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_PARAMS_INVALID,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_PARAMS_INVALID,
                     String.format("$validBricks [%s]", getValidBrickNames(bricksForTask)));
         }
 

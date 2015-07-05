@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -50,8 +50,8 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__HOT_SET_MEMORY);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__HOT_SET_MEMORY);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
         addCanDoActionMessageVariable("clusterVersion", getVm().getVdsGroupCompatibilityVersion());
         addCanDoActionMessageVariable("architecture", getVm().getClusterArch());
     }
@@ -59,31 +59,31 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (getVm().getStatus() != VMStatus.Up) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
                     LocalizedVmStatus.from(getVm().getStatus()));
         }
 
         if (getParameters().getPlugAction() == PlugAction.PLUG) {
             if (!FeatureSupported.hotPlugMemory(getVm().getVdsGroupCompatibilityVersion(), getVm().getClusterArch())) {
-                return failCanDoAction(VdcBllMessages.HOT_PLUG_MEMORY_IS_NOT_SUPPORTED);
+                return failCanDoAction(EngineMessage.HOT_PLUG_MEMORY_IS_NOT_SUPPORTED);
             }
             // check max slots
             List<VmDevice> memDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.MEMORY);
             if (memDevices.size() == Config.<Integer>getValue(ConfigValues.MaxMemorySlots)) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_MORE_MEMORY_SLOTS,
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_MORE_MEMORY_SLOTS,
                         "$maxMemSlots " + Config.getValue(ConfigValues.MaxMemorySlots).toString());
             }
             // plugged memory should be multiply of 256mb
             if (memoryToConsume > 0 && memoryToConsume % Config.<Integer>getValue(ConfigValues.HotPlugMemoryMultiplicationSizeMb) != 0) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MEMORY_MUST_BE_MULTIPLICATION,
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MEMORY_MUST_BE_MULTIPLICATION,
                         "$multiplicationSize " + Config.getValue(ConfigValues.HotPlugMemoryMultiplicationSizeMb).toString());
             }
         } else if (!FeatureSupported.hotUnplugMemory(getVm().getVdsGroupCompatibilityVersion(), getVm().getClusterArch())) {
-            return failCanDoAction(VdcBllMessages.HOT_UNPLUG_MEMORY_IS_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.HOT_UNPLUG_MEMORY_IS_NOT_SUPPORTED);
         }
 
         return true;

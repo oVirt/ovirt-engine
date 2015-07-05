@@ -19,7 +19,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
@@ -109,21 +109,21 @@ public class NetworkAttachmentsValidatorTest {
     @Test
     public void testValidateNetworkExclusiveOnNicsTwoVmNetworksAttachedToInterface() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-                failsWith(VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK),
+                failsWith(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK),
                 vmNetwork1, vmNetwork2);
     }
 
     @Test
     public void testValidateNetworkExclusiveOnNicsVmAndNonVmAttachedToInterface() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-                failsWith(VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK),
+                failsWith(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK),
                 vmNetwork1, nonVmNetwork1);
     }
 
     @Test
     public void testValidateNetworkExclusiveOnNicsVmAndVlanAttachedToInterface() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-                failsWith(VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK),
+                failsWith(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK),
                 vmNetwork1, vlanNetwork);
     }
 
@@ -135,7 +135,7 @@ public class NetworkAttachmentsValidatorTest {
     @Test
     public void testValidateNetworkExclusiveOnNicAtMostOneNonVmNetworkViolated() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-                failsWith(VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK)
+                failsWith(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK)
                 , nonVmNetwork1, nonVmNetwork2);
     }
 
@@ -183,7 +183,7 @@ public class NetworkAttachmentsValidatorTest {
             duplicatelyReferencedNetwork.getName()));
 
         assertThat(validator.verifyUserAttachmentsDoesNotReferenceSameNetworkDuplicately(),
-            failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY,
+            failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY,
                 replacements));
     }
 }

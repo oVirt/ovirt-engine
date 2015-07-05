@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 
@@ -34,7 +34,7 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
             return ValidationResult.VALID;
         }
 
-        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_PROFILE);
+        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_PROFILE);
     }
 
     protected StorageDomain getStorageDomain() {
@@ -54,21 +54,21 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
     @Override
     public ValidationResult isParentEntityValid(Guid storageDomainId) {
         if (storageDomainId == null) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_PROFILE_STORAGE_DOMAIN_NOT_PROVIDED);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_PROFILE_STORAGE_DOMAIN_NOT_PROVIDED);
         }
         Guid id = getProfile().getId();
         if (id == null) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_PROFILE_EMPTY);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_PROFILE_EMPTY);
         }
         DiskProfile fetchedDiskProfile = getProfileDao().get(id);
         if (fetchedDiskProfile == null) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_PROFILE_NOT_FOUND);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_PROFILE_NOT_FOUND);
         }
         if (!storageDomainId.equals(fetchedDiskProfile.getStorageDomainId())) {
             String diskProfileName = fetchedDiskProfile.getName();
             StorageDomain targetStorageDomain = getStorageDomain(storageDomainId);
             String targetStorageDomainName = targetStorageDomain != null ? getStorageDomain(storageDomainId).getName() : "Unknown";
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_PROFILE_NOT_MATCH_STORAGE_DOMAIN,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_PROFILE_NOT_MATCH_STORAGE_DOMAIN,
                     String.format("$diskProfile %s", diskProfileName),
                     String.format("$diskProfileId %s", fetchedDiskProfile.getId().toString()),
                     String.format("$storageDomain %s", targetStorageDomainName));
@@ -79,7 +79,7 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
     @Override
     public ValidationResult isLastProfileInParentEntity() {
         if (getProfileDao().getAllForStorageDomain(getProfile().getStorageDomainId()).size() == 1) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_CANNOT_REMOVE_LAST_DISK_PROFILE_IN_STORAGE_DOMAIN);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_REMOVE_LAST_DISK_PROFILE_IN_STORAGE_DOMAIN);
         }
         return ValidationResult.VALID;
     }

@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -115,7 +115,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             log.error("Failed creating snapshot from image id '{}'", getImage().getImageId());
             CommandCoordinatorUtil.logAndFailTaskOfCommandWithEmptyVdsmId(getAsyncTaskId(),
                     "Create snapshot failed at VDSM. DB task ID is " + getAsyncTaskId());
-            throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
+            throw new EngineException(EngineError.VolumeCreationError);
         }
 
         return vdsReturnValue;

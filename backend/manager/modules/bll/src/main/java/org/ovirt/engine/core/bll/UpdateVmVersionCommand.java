@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -74,23 +74,23 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (getVm().getStatus() != VMStatus.Down) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
         }
 
         if (!getVm().isUseLatestVersion() && getParameters().getNewTemplateVersion() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_SET_FOR_LATEST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_SET_FOR_LATEST);
         }
 
         if (getVmTemplate() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
         if (getVmTemplateId().equals(getVm().getVmtGuid())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_IN_LATEST_VERSION);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_ALREADY_IN_LATEST_VERSION);
         }
 
         getVm().setVmtGuid(getVmTemplate().getId());
@@ -100,8 +100,8 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE_VM_VERSION);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE_VM_VERSION);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
@@ -249,7 +249,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (getVmId() != null) {
             return Collections.singletonMap(getVmId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
         return null;
@@ -260,7 +260,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         // take shared lock on required template, since we will add vm from it
         if (getVmTemplateId() != null) {
             return Collections.singletonMap(getVmTemplateId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
         return null;

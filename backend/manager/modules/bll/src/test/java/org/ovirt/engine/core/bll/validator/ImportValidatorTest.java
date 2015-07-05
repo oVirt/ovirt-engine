@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -45,9 +45,9 @@ public class ImportValidatorTest {
     @Test
     public void insufficientDiskSpaceWithCollapse() {
         ImportValidator validator = setupDiskSpaceTest(createParameters());
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN))
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN))
             .when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
-        assertEquals(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
+        assertEquals(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 validator.validateSpaceRequirements(Collections.<DiskImage>emptyList()).getMessage());
         verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
         verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
@@ -59,9 +59,9 @@ public class ImportValidatorTest {
         ImportVmParameters parameters = createParameters();
         ImportValidator validator = setupDiskSpaceTest(parameters);
         parameters.setCopyCollapse(false);
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
-        assertEquals(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
+        assertEquals(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 validator.validateSpaceRequirements(Collections.<DiskImage>emptyList()).getMessage());
         verify(multipleSdValidator, never()).allDomainsHaveSpaceForClonedDisks(anyList());
         verify(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
@@ -72,9 +72,9 @@ public class ImportValidatorTest {
     public void lowThresholdStorageSpace() {
         ImportVmParameters parameters = createParameters();
         ImportValidator validator = setupDiskSpaceTest(parameters);
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(multipleSdValidator).allDomainsWithinThresholds();
-        assertEquals(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
+        assertEquals(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 validator.validateSpaceRequirements(Collections.<DiskImage>emptyList()).getMessage());
     }
 

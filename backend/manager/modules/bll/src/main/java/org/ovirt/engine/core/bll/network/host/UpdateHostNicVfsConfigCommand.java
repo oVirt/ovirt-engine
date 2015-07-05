@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.HostDevChangeNumVfsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -65,8 +65,8 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
                 returnValue = runVdsCommand(VDSCommandType.HostDevChangeNumVfs,
                         new HostDevChangeNumVfsVDSParameters(getVdsId(), deviceName, getNumOfVfs()));
                 result = returnValue.getSucceeded();
-            } catch (VdcBLLException e) {
-                throw new VdcBLLException(VdcBllErrors.UPDATE_NUM_VFS_FAILURE);
+            } catch (EngineException e) {
+                throw new EngineException(EngineError.UPDATE_NUM_VFS_FAILURE);
             }
         }
 
@@ -125,8 +125,8 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST_NIC_VFS_CONFIG);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_NIC_VFS_CONFIG);
     }
 
     private int getNumOfVfs() {

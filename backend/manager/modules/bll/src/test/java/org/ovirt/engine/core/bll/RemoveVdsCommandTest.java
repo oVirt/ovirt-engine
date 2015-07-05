@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -165,7 +165,7 @@ public class RemoveVdsCommandTest {
         mockHasVolumeOnServer(true);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
     }
 
     @Test
@@ -178,7 +178,7 @@ public class RemoveVdsCommandTest {
         mockHasVolumeOnServer(true);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
     }
 
     @Test
@@ -208,7 +208,7 @@ public class RemoveVdsCommandTest {
         mockVmsPinnedToHost(Arrays.asList(vmName));
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS);
+                EngineMessage.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS);
 
         boolean foundMessage = false;
         for (String message : command.getReturnValue().getCanDoActionMessages()) {

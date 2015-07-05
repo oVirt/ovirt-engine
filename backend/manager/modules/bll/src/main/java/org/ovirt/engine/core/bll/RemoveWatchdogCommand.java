@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParameters> {
 
@@ -30,7 +30,7 @@ public class RemoveWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
             return false;
         }
         if (getWatchdogs().isEmpty()) {
-            return failCanDoAction(VdcBllMessages.WATCHDOG_NOT_FOUND);
+            return failCanDoAction(EngineMessage.WATCHDOG_NOT_FOUND);
         }
         return true;
     }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
@@ -53,7 +53,7 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
                 prevCommand.reportCompleted();
             }
         } else {
-            throw new VdcBLLException(result.getVdsError().getCode(), result.getExceptionString());
+            throw new EngineException(result.getVdsError().getCode(), result.getExceptionString());
         }
 
         return result;

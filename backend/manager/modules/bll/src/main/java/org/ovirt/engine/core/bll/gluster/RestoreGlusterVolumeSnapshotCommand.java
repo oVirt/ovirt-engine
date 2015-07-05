@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -42,7 +42,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RESTORE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__RESTORE);
         super.setActionMessageParameters();
     }
 
@@ -131,7 +131,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
             VDS slaveUpServer = ClusterUtils.getInstance().getRandomUpServer(slaveVolume.getClusterId());
             if (slaveUpServer == null) {
                 handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESTORE_FAILED,
-                        VdcBllErrors.NoUpServerFoundInRemoteCluster.name());
+                        EngineError.NoUpServerFoundInRemoteCluster.name());
                 setSucceeded(false);
                 return false;
             }
@@ -255,7 +255,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
         if (!stopVolume(getGlusterVolume())) {
             if (!georepSessions.isEmpty()) {
                 handleVdsError(AuditLogType.GLUSTER_MASTER_VOLUME_STOP_FAILED_DURING_SNAPSHOT_RESTORE,
-                        VdcBllErrors.FailedToStopMasterVolumeDuringVolumeSnapshotRestore.name());
+                        EngineError.FailedToStopMasterVolumeDuringVolumeSnapshotRestore.name());
             }
             return;
         }
@@ -264,7 +264,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
         if (!restoreVolumeToSnapshot(upServer.getId(), getGlusterVolume(), getParameters().getSnapshotName())) {
             if (!georepSessions.isEmpty()) {
                 handleVdsError(AuditLogType.GLUSTER_MASTER_VOLUME_SNAPSHOT_RESTORE_FAILED,
-                        VdcBllErrors.FailedToRestoreMasterVolumeDuringVolumeSnapshotRestore.name());
+                        EngineError.FailedToRestoreMasterVolumeDuringVolumeSnapshotRestore.name());
             }
             return;
         }
@@ -306,12 +306,12 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
                 || volume.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK)
                 && volume.getAsyncTask().getStatus() == JobExecutionStatus.STARTED) {
             addCanDoActionMessageVariable("asyncTask", volume.getAsyncTask().getType().name().toLowerCase());
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS);
         }
 
         for (GlusterGeoRepSession session : georepSessions) {
             if (session.getSlaveVolumeId() == null || session.getSlaveNodeUuid() == null) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
             }
         }
 

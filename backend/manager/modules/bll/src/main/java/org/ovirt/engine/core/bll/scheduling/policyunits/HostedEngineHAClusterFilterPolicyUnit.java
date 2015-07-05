@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class HostedEngineHAClusterFilterPolicyUnit extends PolicyUnitImpl {
                 } else {
                     log.debug("Host '{}' was filtered out as it doesn't have a positive score (the score is {})",
                             host.getName(), haScore);
-                    messages.addMessage(host.getId(), VdcBllMessages.VAR__DETAIL__NOT_HE_HOST.name());
+                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__NOT_HE_HOST.name());
                 }
             }
 

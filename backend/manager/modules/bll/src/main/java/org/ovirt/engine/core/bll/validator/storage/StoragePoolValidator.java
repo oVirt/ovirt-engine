@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
@@ -35,7 +35,7 @@ public class StoragePoolValidator {
 
     public ValidationResult isNotLocalfsWithDefaultCluster() {
         if (storagePool.isLocal() && containsDefaultCluster()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
         }
         return ValidationResult.VALID;
     }
@@ -54,7 +54,7 @@ public class StoragePoolValidator {
 
     public ValidationResult isUp() {
         if (storagePool == null || storagePool.getStatus() != StoragePoolStatus.Up) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
         }
 
         return ValidationResult.VALID;
@@ -65,7 +65,7 @@ public class StoragePoolValidator {
 
         for (StoragePoolIsoMap domainIsoMap : poolIsoMaps) {
             if (domainIsoMap.getStatus() != null && domainIsoMap.getStatus().isStorageDomainInProcess()) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
                         String.format("$status %1$s", domainIsoMap.getStatus()));
             }
         }
@@ -76,7 +76,7 @@ public class StoragePoolValidator {
     public ValidationResult checkStoragePoolNotInStatus(StoragePoolStatus... statuses) {
         List<StoragePoolStatus> statusList = Arrays.asList(statuses);
         if (!statusList.contains(storagePool.getStatus())) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
         }
         return ValidationResult.VALID;
     }

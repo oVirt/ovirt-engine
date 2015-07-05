@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -43,13 +43,13 @@ public class RefreshHostCapabilitiesCommand<T extends VdsActionParameters> exten
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getVdsId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REFRESH);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST_CAPABILITIES);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REFRESH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_CAPABILITIES);
     }
 
     @Override

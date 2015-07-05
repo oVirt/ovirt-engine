@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -81,7 +81,7 @@ public class GlusterHookSyncJob extends GlusterJob {
         List<Pair<VDS, VDSReturnValue>> pairResults = ThreadPoolUtil.invokeAll(taskList);
         try {
             addOrUpdateHooks(cluster.getId(), pairResults);
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             if (throwError) {
                 //propogate error to calling application.
                 throw e;
@@ -217,7 +217,7 @@ public class GlusterHookSyncJob extends GlusterJob {
             }
         } catch (Exception e) {
             log.error("Exception in sync", e);
-            throw new VdcBLLException(VdcBllErrors.GlusterHookListException, e.getLocalizedMessage());
+            throw new EngineException(EngineError.GlusterHookListException, e.getLocalizedMessage());
         }
 
     }

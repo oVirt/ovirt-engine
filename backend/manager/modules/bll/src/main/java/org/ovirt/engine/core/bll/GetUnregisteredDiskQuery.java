@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.GetCinderEntityByStorageDomainIdParam
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -38,7 +38,7 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         Guid diskId = getParameters().getDiskId();
         StorageDomain storageDomain = getDbFacade().getStorageDomainDao().get(storageDomainId);
         if (storageDomain == null) {
-            getQueryReturnValue().setExceptionString(VdcBllMessages.STORAGE_DOMAIN_DOES_NOT_EXIST.toString());
+            getQueryReturnValue().setExceptionString(EngineMessage.STORAGE_DOMAIN_DOES_NOT_EXIST.toString());
             getQueryReturnValue().setSucceeded(false);
             return;
         }

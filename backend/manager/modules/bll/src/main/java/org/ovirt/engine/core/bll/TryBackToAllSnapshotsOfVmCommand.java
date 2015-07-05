@@ -38,9 +38,9 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -199,16 +199,16 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                             getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                         } else if (vdcReturnValue.getFault() != null) {
                             // if we have a fault, forward it to the user
-                            throw new VdcBLLException(vdcReturnValue.getFault().getError(),
+                            throw new EngineException(vdcReturnValue.getFault().getError(),
                                     vdcReturnValue.getFault().getMessage());
                         } else {
                             log.error("Cannot create snapshot");
-                            throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+                            throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
                         }
                     }
                     if (!cinderDisks.isEmpty() &&
                             !tryBackAllCinderDisks(cinderDisks, newActiveSnapshotId)) {
-                        throw new VdcBLLException(VdcBllErrors.CINDER_ERROR, "Failed to preview a snapshot!");
+                        throw new EngineException(EngineError.CINDER_ERROR, "Failed to preview a snapshot!");
                     }
                     return null;
                 }
@@ -305,7 +305,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     @Override
     protected boolean canDoAction() {
         if (Guid.Empty.equals(getParameters().getDstSnapshotId())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
         }
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         VmValidator vmValidator = new VmValidator(getVm());
@@ -378,8 +378,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__PREVIEW);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__PREVIEW);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__SNAPSHOT);
     }
 
     protected void updateVmDisksFromDb() {
@@ -394,7 +394,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     @Override

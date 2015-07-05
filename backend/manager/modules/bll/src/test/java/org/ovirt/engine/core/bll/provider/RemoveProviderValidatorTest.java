@@ -27,7 +27,7 @@ import org.ovirt.engine.core.bll.provider.RemoveProviderCommand.RemoveProviderVa
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
@@ -82,7 +82,7 @@ public class RemoveProviderValidatorTest {
     }
 
     private ValidationResult createValidationResult(boolean valid) {
-        return valid ? ValidationResult.VALID : new ValidationResult(VdcBllMessages.Unassigned);
+        return valid ? ValidationResult.VALID : new ValidationResult(EngineMessage.Unassigned);
     }
 
     @Test
@@ -98,7 +98,7 @@ public class RemoveProviderValidatorTest {
         networksUsedTest(
                 false,
                 true,
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_ONCE))
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_ONCE))
                 .and(replacements(hasItem(containsString(net.getName())))));
     }
 
@@ -110,7 +110,7 @@ public class RemoveProviderValidatorTest {
         networksUsedTest(
                 false,
                 true,
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES))
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES))
                 .and(replacements(hasItem(containsString(net.getName()))))
                 .and(replacements(hasItem(containsString(net2.getName())))));
     }
@@ -122,7 +122,7 @@ public class RemoveProviderValidatorTest {
         networksUsedTest(
                 false,
                 true,
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_ONCE))
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_ONCE))
                 .and(replacements(hasItem(containsString(net.getName())))));
     }
 
@@ -134,7 +134,7 @@ public class RemoveProviderValidatorTest {
         networksUsedTest(
                 false,
                 true,
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES))
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES))
                 .and(replacements(hasItem(containsString(net.getName()))))
                         .and(replacements(hasItem(containsString(net2.getName())))));
     }

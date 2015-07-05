@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.provider.storage;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class UpdateLibvirtSecretCommand extends LibvirtSecretCommandBase {
 
@@ -35,6 +35,6 @@ public class UpdateLibvirtSecretCommand extends LibvirtSecretCommandBase {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 }

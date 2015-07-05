@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
@@ -155,7 +155,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         parameters.setStorageServerConnection(dummyFCPConn);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
     }
 
     @Test
@@ -165,7 +165,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getid())).thenReturn(oldNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
     }
 
     @Test
@@ -179,7 +179,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(null);
         parameters.setStorageServerConnection(newNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
 
     @Test
@@ -192,7 +192,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 0);
         parameters.setStorageServerConnection(newNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
+                EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID);
     }
 
     @Test
@@ -217,7 +217,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
         doReturn(true).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
     }
 
     @Test
@@ -246,7 +246,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         List<String> messages =
                 CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                        VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
+                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
         assertTrue(messages.contains("$domainNames domain1,domain2"));
     }
 
@@ -270,7 +270,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
 
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
+                EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
     }
 
     @Test
@@ -333,7 +333,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 thenReturn(Collections.singletonList
                         (new StoragePoolIsoMap(storageDomainId, Guid.newGuid(), StorageDomainStatus.Active)));
         List<String> messages = CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_STATUS);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_STATUS);
         assertTrue(messages.contains("$vmNames vm1"));
         assertTrue(messages.contains("$domainNames storagedomain4"));
     }
@@ -378,7 +378,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         when(storageConnDao.get(iscsiConnection.getid())).thenReturn(iscsiConnection);
         doReturn(luns).when(command).getLuns();
         List<String> messages = CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS);
         assertTrue(messages.contains("$vmNames vm1,vm2"));
     }
 
@@ -410,7 +410,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                         (new StoragePoolIsoMap(storageDomainId, Guid.newGuid(), StorageDomainStatus.Active)));
         List<String> messages =
                 CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                        VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
+                        EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
         assertTrue(messages.contains("$domainNames storagedomain4"));
     }
 
@@ -732,7 +732,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
 
         initDomainListForConnection(NFSConnection.getid(), domain);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
+                EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
     }
 
     private void initDomainListForConnection(String connId, StorageDomain... domains) {

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.aaa;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @NonTransactiveCommandAttribute
 public class LoginAdminUserCommand<T extends LoginUserParameters> extends LoginUserCommand<T> {
@@ -18,7 +18,7 @@ public class LoginAdminUserCommand<T extends LoginUserParameters> extends LoginU
         if (autheticated) {
             autheticated = getCurrentUser().isAdmin();
             if (!autheticated) {
-                addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                addCanDoActionMessage(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
                 logAutheticationFailure();
             }
         }

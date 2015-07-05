@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.annotation.Mask;
 
 @RunWith(Parameterized.class)
@@ -43,11 +43,11 @@ public class MaskAnnotationTest {
         Set<ConstraintViolation<MaskContainer>> result = validator.validate(container);
         if (!isValidMaskValue && isValidMaskFormat) {
             assertEquals("Failed to validate mask's error format: " + container.getMask(),
-                    VdcBllMessages.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name(),
+                    EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name(),
                     result.iterator().next().getMessage());
         } else if (!isValidMaskFormat) {
             assertEquals("Failed to validate mask's error format: " + container.getMask(),
-                    VdcBllMessages.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name(),
+                    EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name(),
                     result.iterator().next().getMessage());
         } else {
             assertEquals("Failed to validate mask's format: " + container.getMask(),
@@ -63,11 +63,11 @@ public class MaskAnnotationTest {
         Set<ConstraintViolation<MaskContainer>> result = validator.validate(container);
         if (!isValidMaskFormat) {
             assertEquals("Failed to validate mask's network address error: " + container.getMask(),
-                    VdcBllMessages.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name(),
+                    EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name(),
                     result.iterator().next().getMessage());
         } else if (!isValidMaskValue) {
             assertEquals("Failed to validate mask's  network address error: " + container.getMask(),
-                    VdcBllMessages.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name(),
+                    EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name(),
                     result.iterator().next().getMessage());
         } else {
             assertEquals("Failed to validate mask's network address: " + container.getMask(),

@@ -25,10 +25,10 @@ import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -72,7 +72,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         when(vdsDao.get(any(Guid.class))).thenReturn(getServer(SERVER_ID, "gfs1", CLUSTER_ID, status));
     }
 
-    private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
+    private void mockBackend(boolean succeeded, EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
 
@@ -84,7 +84,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.UpdateGlusterHook), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
      }
 
-    private void mockForReadContent(boolean succeeded, VdcBllErrors errorCode) {
+    private void mockForReadContent(boolean succeeded, EngineError errorCode) {
         when(hooksDao.getGlusterServerHook(HOOK_ID, SERVER_ID)).thenReturn(getGlusterServerHook(0, GlusterHookStatus.ENABLED));
         mockBackend(succeeded, errorCode);
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
@@ -134,7 +134,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
     public void executeCommandWhenFailed() {
         cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForUpdate();
-        mockBackend(false, VdcBllErrors.GlusterHookUpdateFailed);
+        mockBackend(false, EngineError.GlusterHookUpdateFailed);
         cmd.executeCommand();
         verify(hooksDao, never()).updateGlusterHook(any(GlusterHookEntity.class));
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_UPDATE_FAILED);
@@ -144,11 +144,11 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
     public void executeCommandFailedWhenServerIdPresent() {
         cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID, SERVER_ID)));
         setUpMocksForUpdate();
-        mockForReadContent(false, VdcBllErrors.GlusterHookNotFound);
+        mockForReadContent(false, EngineError.GlusterHookNotFound);
         try {
             cmd.executeCommand();
-        }catch (VdcBLLException e) {
-            assertEquals(e.getErrorCode(), VdcBllErrors.GlusterHookNotFound);
+        }catch (EngineException e) {
+            assertEquals(e.getErrorCode(), EngineError.GlusterHookNotFound);
         }
         verify(hooksDao, never()).updateGlusterHook(any(GlusterHookEntity.class));
     }
@@ -165,7 +165,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(null)));
         setUpMocksForUpdate();
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
     }
 
     @Test
@@ -173,7 +173,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForUpdate(false);
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
     }
 
     @Test
@@ -183,7 +183,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         hook.setServerHooks(Collections.singletonList(getGlusterServerHook(0, GlusterHookStatus.MISSING)));
         setUpMocksForUpdate(true, hook);
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS.toString()));
     }
 
     @Test
@@ -191,7 +191,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForUpdate(VDSStatus.Down);
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString()));
     }
 
 

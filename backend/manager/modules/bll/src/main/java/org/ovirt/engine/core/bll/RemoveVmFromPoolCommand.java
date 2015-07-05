@@ -4,7 +4,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> extends VmPoolCommandBase<T> {
 
@@ -23,15 +23,15 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (getVmPoolId() == null) {
-            return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_DETACH_VM_NOT_ATTACHED_TO_POOL);
+            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_DETACH_VM_NOT_ATTACHED_TO_POOL);
         }
 
         if (getVm().isRunningOrPaused() || getVm().getStatus() == VMStatus.Unknown) {
-            return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_REMOVE_RUNNING_VM_FROM_POOL);
+            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_REMOVE_RUNNING_VM_FROM_POOL);
         }
 
         return true;

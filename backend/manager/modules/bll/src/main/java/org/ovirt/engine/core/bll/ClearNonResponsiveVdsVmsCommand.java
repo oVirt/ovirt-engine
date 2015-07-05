@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.VmsComparer;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -81,7 +81,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
     @Override
     protected boolean canDoAction() {
         if (getVds() == null) {
-            return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
+            return failCanDoAction(EngineMessage.VDS_INVALID_SERVER_ID);
 
         }
 
@@ -89,7 +89,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
                 && getVds().getStatus() != VDSStatus.NonResponsive
                 && getVds().getStatus() != VDSStatus.Reboot
                 && getVds().getStatus() != VDSStatus.Kdumping) {
-            return failCanDoAction(VdcBllMessages.VDS_CANNOT_CLEAR_VMS_WRONG_STATUS);
+            return failCanDoAction(EngineMessage.VDS_CANNOT_CLEAR_VMS_WRONG_STATUS);
         }
 
         return true;

@@ -7,7 +7,7 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 /**
  * Utilities for testing the {@link CommandBase#canDoAction()} command's behavior.
@@ -25,7 +25,7 @@ public class CanDoActionTestUtils {
      *
      * @return The failure messages, so that they can be further examined if needed.
      */
-    public static List<String> runAndAssertCanDoActionFailure(CommandBase<?> command, VdcBllMessages message) {
+    public static List<String> runAndAssertCanDoActionFailure(CommandBase<?> command, EngineMessage message) {
         return runAndAssertCanDoActionFailure("", command, message);
     }
 
@@ -43,7 +43,7 @@ public class CanDoActionTestUtils {
      * @return The failure messages, so that they can be further examined if needed.
      */
     public static List<String> runAndAssertCanDoActionFailure
-            (String assertionMessage, CommandBase<?> command, VdcBllMessages message) {
+            (String assertionMessage, CommandBase<?> command, EngineMessage message) {
         assertFalse("Command's canDoAction expected to fail, but succeeded", command.canDoAction());
 
         return assertCanDoActionMessages(assertionMessage, command, message);
@@ -76,7 +76,7 @@ public class CanDoActionTestUtils {
      * @return The action messages, so that they can be further examined if needed.
      */
     public static List<String> runAndAssertSetActionMessageParameters
-            (CommandBase<?> command, VdcBllMessages... messages) {
+            (CommandBase<?> command, EngineMessage... messages) {
         return runAndAssertSetActionMessageParameters("", command, messages);
     }
 
@@ -94,9 +94,9 @@ public class CanDoActionTestUtils {
      * @return The action messages, so that they can be further examined if needed.
      */
     public static List<String> runAndAssertSetActionMessageParameters
-            (String assertionMessage, CommandBase<?> command, VdcBllMessages... messages) {
+            (String assertionMessage, CommandBase<?> command, EngineMessage... messages) {
         command.setActionMessageParameters();
-        for (VdcBllMessages message : messages) {
+        for (EngineMessage message : messages) {
             assertCanDoActionMessages(assertionMessage, command, message);
         }
         return command.getReturnValue().getCanDoActionMessages();
@@ -104,7 +104,7 @@ public class CanDoActionTestUtils {
 
     public static List<String> assertCanDoActionMessages(String assertionMessage,
             CommandBase<?> command,
-            VdcBllMessages message) {
+            EngineMessage message) {
         List<String> canDoActionMessages = command.getReturnValue().getCanDoActionMessages();
         assertTrue(MessageFormat.format("{0}canDoAction messages doesn''t contain expected message: {1}, messages are: {2}",
                 optionalMessage(assertionMessage),

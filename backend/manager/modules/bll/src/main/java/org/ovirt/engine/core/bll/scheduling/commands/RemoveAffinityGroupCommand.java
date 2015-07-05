@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 
 
@@ -14,7 +14,7 @@ public class RemoveAffinityGroupCommand extends AffinityGroupCRUDCommand {
     @Override
     protected boolean canDoAction() {
         if (getAffinityGroup() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID);
         }
         return true;
     }
@@ -34,6 +34,6 @@ public class RemoveAffinityGroupCommand extends AffinityGroupCRUDCommand {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 }

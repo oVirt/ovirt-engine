@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
@@ -29,7 +29,7 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
                     new MomPolicyVDSParameters(getVds(), getVdsGroup().isEnableBallooning(),
                             getVdsGroup().isEnableKsm(), getVdsGroup().isKsmMergeAcrossNumaNodes())
                                               ).getSucceeded();
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             log.error("Could not update MoM policy on host '{}': {}",
                     getVdsName(),
                     e.getMessage());
@@ -50,7 +50,7 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
     private ValidationResult validateMinimumVersionSupport() {
         return FeatureSupported.momPolicyOnHost(getVdsGroup().getCompatibilityVersion())
                 ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MOM_UPDATE_VDS_VERSION);
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MOM_UPDATE_VDS_VERSION);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 }

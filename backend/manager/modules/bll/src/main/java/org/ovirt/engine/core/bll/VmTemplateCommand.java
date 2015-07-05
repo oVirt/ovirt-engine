@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -104,7 +104,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             }
             if (vmtImages.size() > 0
                     && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getStoragePoolId())) {
-                reasons.add(VdcBllMessages.TEMPLATE_IMAGE_NOT_EXIST.toString());
+                reasons.add(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST.toString());
                 returnValue = false;
             }
         }
@@ -122,12 +122,12 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                 }
             }
             if (!returnValue) {
-                reasons.add(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED.toString());
+                reasons.add(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED.toString());
             }
         }
         if (returnValue && checkIllegal && (vmTemplate.getStatus() == VmTemplateStatus.Illegal)) {
             returnValue = false;
-            reasons.add(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_ILLEGAL.toString());
+            reasons.add(EngineMessage.VM_TEMPLATE_IMAGE_IS_ILLEGAL.toString());
         }
         return returnValue;
     }
@@ -149,7 +149,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             for (char c : illegalChars) {
                 if (domainName.contains((Character.toString(c)))) {
                     result = false;
-                    reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_DOMAIN_NAME.toString());
+                    reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_DOMAIN_NAME.toString());
                     reasons.add(String.format("$Domain %1$s", domainName));
                     reasons.add(String.format("$Char %1$s", c));
                     break;
@@ -175,14 +175,14 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         if (value >= 0 && value <= Config.<Integer> getValue(ConfigValues.VmPriorityMaxValue)) {
             res = true;
         } else {
-            reasons.add(VdcBllMessages.VM_OR_TEMPLATE_ILLEGAL_PRIORITY_VALUE.toString());
+            reasons.add(EngineMessage.VM_OR_TEMPLATE_ILLEGAL_PRIORITY_VALUE.toString());
             reasons.add(String.format("$MaxValue %1$s", Config.<Integer> getValue(ConfigValues.VmPriorityMaxValue)));
         }
         return res;
     }
 
     protected ValidationResult templateExists() {
-        return getVmTemplate() == null ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST)
+        return getVmTemplate() == null ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST)
                 : ValidationResult.VALID;
     }
 

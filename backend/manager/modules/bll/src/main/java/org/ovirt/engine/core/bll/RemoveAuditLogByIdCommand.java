@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -27,7 +27,7 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
         AuditLog event = getAuditLogDao().get(getParameters().getAuditLogId());
 
         if (event == null) {
-            return failCanDoAction(VdcBllMessages.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
+            return failCanDoAction(EngineMessage.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
         }
 
         return true;

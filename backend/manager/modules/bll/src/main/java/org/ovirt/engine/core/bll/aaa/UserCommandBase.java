@@ -9,8 +9,8 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDao;
@@ -62,7 +62,7 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
         if (dbUser == null) {
             ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(directoryName);
             if (authz == null) {
-                throw new VdcBLLException(VdcBllErrors.USER_FAILED_POPULATE_DATA);
+                throw new EngineException(EngineError.USER_FAILED_POPULATE_DATA);
             }
             boolean foundUser = false;
             for (String namespace : authz.getContext().<List<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
@@ -76,7 +76,7 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
                 }
             }
             if (!foundUser) {
-                throw new VdcBLLException(VdcBllErrors.USER_FAILED_POPULATE_DATA);
+                throw new EngineException(EngineError.USER_FAILED_POPULATE_DATA);
             }
         }
         return dbUser;

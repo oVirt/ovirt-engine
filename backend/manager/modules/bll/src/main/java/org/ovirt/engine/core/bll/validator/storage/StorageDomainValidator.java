@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class StorageDomainValidator {
 
@@ -34,7 +34,7 @@ public class StorageDomainValidator {
 
     public ValidationResult isDomainExist() {
         if (storageDomain == null) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
         return ValidationResult.VALID;
     }
@@ -45,7 +45,7 @@ public class StorageDomainValidator {
             return domainExistValidation;
         }
         if (storageDomain.getStatus() != StorageDomainStatus.Active) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
                     String.format("$%1$s %2$s", "status", storageDomain.getStatus().name()));
         }
         return ValidationResult.VALID;
@@ -53,7 +53,7 @@ public class StorageDomainValidator {
 
     public ValidationResult domainIsValidDestination() {
         if (storageDomain.getStorageDomainType().isIsoOrImportExportDomain()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
         return ValidationResult.VALID;
     }
@@ -68,7 +68,7 @@ public class StorageDomainValidator {
                 && dynamicData.getAvailableDiskSize() != null
                 && staticData.getCriticalSpaceActionBlocker() != null
                 && dynamicData.getAvailableDiskSize() < staticData.getCriticalSpaceActionBlocker()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                     storageName());
         }
         return ValidationResult.VALID;
@@ -235,7 +235,7 @@ public class StorageDomainValidator {
             return ValidationResult.VALID;
         }
 
-        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
+        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 storageName());
     }
 
@@ -265,7 +265,7 @@ public class StorageDomainValidator {
         StoragePoolIsoMap domainIsoMap = storageDomain.getStoragePoolIsoMapData();
 
         if (domainIsoMap.getStatus() != null && domainIsoMap.getStatus().isStorageDomainInProcess()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
                     String.format("$status %1$s", domainIsoMap.getStatus()));
         }
         return ValidationResult.VALID;
@@ -291,14 +291,14 @@ public class StorageDomainValidator {
             }
         }
 
-        return validationSucceeded? ValidationResult.VALID : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST,
+        return validationSucceeded? ValidationResult.VALID : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST,
                     String.format("$storageFormat %1$s", storageDomain.getStorageFormat()));
     }
 
     public ValidationResult checkStorageDomainSharedStatusNotLocked() {
         if (storageDomain != null) {
             if (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Locked) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
             }
         }
         return ValidationResult.VALID;
@@ -306,7 +306,7 @@ public class StorageDomainValidator {
 
     public ValidationResult isHostedEngineStorage() {
         if (Config.getValue(ConfigValues.HostedEngineStorageDomainName).equals(storageDomain.getName())) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
         }
         return ValidationResult.VALID;
     }

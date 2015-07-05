@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeSnapshotActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -34,7 +34,7 @@ public abstract class GlusterVolumeSnapshotCommandBase<T extends GlusterVolumeSn
         }
 
         if (getSnapshot() == null) {
-            failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_DOES_NOT_EXIST,
+            failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_DOES_NOT_EXIST,
                     getParameters().getSnapshotName());
         }
 
@@ -48,7 +48,7 @@ public abstract class GlusterVolumeSnapshotCommandBase<T extends GlusterVolumeSn
     protected EngineLock acquireGeoRepSessionLock(Guid id) {
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_GEOREP,
-                        VdcBllMessages.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED)), null);
+                        EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED)), null);
         LockManagerFactory.getLockManager().acquireLockWait(lock);
         return lock;
     }
@@ -56,7 +56,7 @@ public abstract class GlusterVolumeSnapshotCommandBase<T extends GlusterVolumeSn
     protected EngineLock acquireVolumeSnapshotLock(Guid id) {
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_SNAPSHOT,
-                        VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED)), null);
+                        EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED)), null);
         LockManagerFactory.getLockManager().acquireLockWait(lock);
         return lock;
     }

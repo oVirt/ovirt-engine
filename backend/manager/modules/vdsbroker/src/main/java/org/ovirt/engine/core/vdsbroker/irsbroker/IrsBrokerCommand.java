@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
@@ -171,7 +171,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     if (getVDSReturnValue().getVdsError() == null) {
                         getVDSReturnValue().setExceptionString("Cannot allocate IRS server");
                         VDSError tempVar = new VDSError();
-                        tempVar.setCode(VdcBllErrors.IRS_REPOSITORY_NOT_FOUND);
+                        tempVar.setCode(EngineError.IRS_REPOSITORY_NOT_FOUND);
                         tempVar.setMessage("Cannot allocate IRS server");
                         getVDSReturnValue().setVdsError(tempVar);
                     }
@@ -180,7 +180,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             } catch (UndeclaredThrowableException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
                 getVDSReturnValue().setExceptionObject(ex);
-                getVDSReturnValue().setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, ex.getMessage()));
+                getVDSReturnValue().setVdsError(new VDSError(EngineError.VDS_NETWORK_ERROR, ex.getMessage()));
                 if (ExceptionUtils.getRootCause(ex) != null) {
                     logException(ExceptionUtils.getRootCause(ex));
                 } else {
@@ -205,7 +205,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 log.error("IrsBroker::Failed::{}: {}", getCommandName(), ex.getMessage());
                 log.debug("Exception", ex);
 
-                if ((ex.getVdsError() == null || ex.getVdsError().getCode() != VdcBllErrors.StoragePoolWrongMaster)
+                if ((ex.getVdsError() == null || ex.getVdsError().getCode() != EngineError.StoragePoolWrongMaster)
                         && getCurrentIrsProxyData().getHasVdssForSpmSelection()) {
                     failover();
                 } else {
@@ -220,7 +220,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 getVDSReturnValue().setExceptionObject(ex);
                 getVDSReturnValue().setVdsError(ex.getVdsError());
                 logException(ex);
-                if (ex.getVdsError() != null && VdcBllErrors.SpmStatusError == ex.getVdsError().getCode()) {
+                if (ex.getVdsError() != null && EngineError.SpmStatusError == ex.getVdsError().getCode()) {
                     getCurrentIrsProxyData().setCurrentVdsId(Guid.Empty);
                 }
                 failover();
@@ -280,7 +280,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                             masterDomainId, getParameters().getStoragePoolId(), true,
                                             getVDSReturnValue().getVdsError() != null
                                                     && getVDSReturnValue().getVdsError().getCode()
-                                                    == VdcBllErrors.StoragePoolWrongMaster);
+                                                    == EngineError.StoragePoolWrongMaster);
                         }
                     });
         } else {

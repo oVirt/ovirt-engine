@@ -4,9 +4,9 @@ import static org.ovirt.engine.core.common.AuditLogType.SYSTEM_FAILED_VDS_RESTAR
 import static org.ovirt.engine.core.common.AuditLogType.SYSTEM_VDS_RESTART;
 import static org.ovirt.engine.core.common.AuditLogType.USER_FAILED_VDS_RESTART;
 import static org.ovirt.engine.core.common.AuditLogType.USER_VDS_RESTART;
-import static org.ovirt.engine.core.common.errors.VdcBllMessages.VAR__ACTION__RESTART;
-import static org.ovirt.engine.core.common.errors.VdcBllMessages.VAR__TYPE__HOST;
-import static org.ovirt.engine.core.common.errors.VdcBllMessages.VDS_FENCE_OPERATION_FAILED;
+import static org.ovirt.engine.core.common.errors.EngineMessage.VAR__ACTION__RESTART;
+import static org.ovirt.engine.core.common.errors.EngineMessage.VAR__TYPE__HOST;
+import static org.ovirt.engine.core.common.errors.EngineMessage.VDS_FENCE_OPERATION_FAILED;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -94,7 +94,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
                         .getAuditLogDao()
                         .getTimeToWaitForNextPmOp(getVds().getName(), AuditLogType.USER_VDS_RESTART.name());
         if (secondsLeftToNextPmOp > 0) {
-            addCanDoActionMessage(VdcBllMessages.VDS_FENCE_DISABLED_AT_QUIET_TIME);
+            addCanDoActionMessage(EngineMessage.VDS_FENCE_DISABLED_AT_QUIET_TIME);
             addCanDoActionMessageVariable("seconds", secondsLeftToNextPmOp);
             return false;
         } else {
@@ -175,7 +175,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RESTART);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__RESTART);
     }
 
     protected void handleError() {
@@ -215,7 +215,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
     public static Map<String, Pair<String, String>> createFenceExclusiveLocksMap(Guid vdsId) {
         return Collections.singletonMap(vdsId.toString(), LockMessagesMatchUtil.makeLockingPair(
                 LockingGroup.VDS_FENCE,
-                VdcBllMessages.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
+                EngineMessage.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
     }
 
 }

@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
@@ -76,8 +76,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DEACTIVATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__DEACTIVATE);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             });
 
             if (!activeDomains.isEmpty() && dataDomains.isEmpty()) {
-                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_NON_DATA_DOMAINS);
+                return failCanDoAction(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_NON_DATA_DOMAINS);
             }
 
             List<StorageDomain> busyDomains = LinqUtils.filter(domains, new Predicate<StorageDomain>() {
@@ -122,7 +122,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             });
 
             if (!busyDomains.isEmpty()) {
-                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_LOCKED_DOMAINS);
+                return failCanDoAction(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_LOCKED_DOMAINS);
             }
         }
         if (!isRunningVmsWithIsoAttached()) {
@@ -132,18 +132,18 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 && !getVmDao()
                         .getAllActiveForStorageDomain(getStorageDomain().getId())
                         .isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS);
         }
         if (getStoragePool().getSpmVdsId() != null) {
             // In case there are running tasks in the pool, it is impossible to deactivate the master storage domain
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master &&
                     getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId()).size() > 0) {
-                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
+                return failCanDoAction(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
             } else if (getStorageDomain().getStorageDomainType() != StorageDomainType.ISO &&
                     !getParameters().getIsInternal()
                     && (getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0 ||
                     getCommandEntityDao().getCommandIdsByEntity(getParameters().getStorageDomainId()).size() > 0)) {
-                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
+                return failCanDoAction(EngineMessage.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
             }
         }
         return true;
@@ -153,7 +153,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (!getParameters().getIsInternal() && getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
             List<String> vmNames = getVmsWithAttachedISO();
             if (!vmNames.isEmpty()) {
-                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED,
+                return failCanDoAction(EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED,
                         String.format("$VmNames %1$s", StringUtils.join(vmNames, ",")));
             }
         }
@@ -414,10 +414,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (storageDomain != null) {
             Map<String, Pair<String, String>> locks = new HashMap<>();
             locks.put(storageDomain.getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             if (storageDomain.getStorageDomainType() == StorageDomainType.Master) {
                 locks.put(storageDomain.getStoragePoolId().toString(),
-                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             }
             return locks;
         }
@@ -431,7 +431,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 && storageDomain.getStorageDomainType() != StorageDomainType.Master
                 && storageDomain.getStoragePoolId() != null) {
             return Collections.singletonMap(storageDomain.getStoragePoolId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return null;
     }

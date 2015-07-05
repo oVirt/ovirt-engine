@@ -3,10 +3,10 @@ package org.ovirt.engine.core.common.errors;
 import java.util.HashMap;
 
 /**
- * The purpose of this enumaration is to contain all the errors exposed by the VdcBLL. The error codes are not
+ * The purpose of this enumaration is to contain all the errors exposed by the Engine. The error codes are not
  * sequential in order to be able to add error codes as development evolves.
  */
-public enum VdcBllErrors {
+public enum EngineError {
     Done(0),
     noVM(1),
     nfsErr(3),
@@ -516,15 +516,15 @@ public enum VdcBllErrors {
     SESSION_ERROR(9999);
 
     private int intValue;
-    private static final HashMap<Integer, VdcBllErrors> mappings = new HashMap<Integer, VdcBllErrors>();
+    private static final HashMap<Integer, EngineError> mappings = new HashMap<Integer, EngineError>();
 
     static {
-        for (VdcBllErrors error : values()) {
+        for (EngineError error : values()) {
             mappings.put(error.getValue(), error);
         }
     }
 
-    private VdcBllErrors(int value) {
+    private EngineError(int value) {
         intValue = value;
     }
 
@@ -532,7 +532,7 @@ public enum VdcBllErrors {
         return intValue;
     }
 
-    public static VdcBllErrors forValue(int value) {
+    public static EngineError forValue(int value) {
         return mappings.get(value);
     }
 }

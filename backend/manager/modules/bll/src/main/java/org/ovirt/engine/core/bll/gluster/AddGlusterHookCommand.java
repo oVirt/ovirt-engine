@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -44,8 +44,8 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_HOOK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
     }
 
     private List<GlusterServerHook> getMissingServerHooks() {
@@ -68,7 +68,7 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
         }
 
         if (getMissingServerHooks().isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS);
             return false;
         }
 
@@ -77,7 +77,7 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
             if (vds == null || vds.getStatus() != VDSStatus.Up) {
                 String vdsName = vds != null ? vds.getName() : GlusterConstants.NO_SERVER;
                 setVdsName(vdsName);
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
                 addCanDoActionMessage(String.format("$%1$s %2$s", "VdsName", vdsName));
                 return false;
             }

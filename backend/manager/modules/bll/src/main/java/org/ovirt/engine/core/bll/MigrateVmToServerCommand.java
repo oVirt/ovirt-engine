@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
@@ -33,12 +33,12 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
     @Override
     protected boolean canDoAction() {
         if (getDestinationVds() == null) {
-            return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
+            return failCanDoAction(EngineMessage.VDS_INVALID_SERVER_ID);
         }
 
         if (getDestinationVds().getStatus() != VDSStatus.Up) {
-            addCanDoActionMessage(VdcBllMessages.VAR__HOST_STATUS__UP);
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+            addCanDoActionMessage(EngineMessage.VAR__HOST_STATUS__UP);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
         }
 
         if (!super.canDoAction()) {
@@ -46,15 +46,15 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
         }
 
         if (getParameters().getTargetVdsGroupId() != null && !getParameters().getTargetVdsGroupId().equals(getDestinationVds().getVdsGroupId())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DESTINATION_HOST_NOT_IN_DESTINATION_CLUSTER);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DESTINATION_HOST_NOT_IN_DESTINATION_CLUSTER);
         }
 
         if (getVm().getRunOnVds() != null && getVm().getRunOnVds().equals(getDestinationVdsId())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
         }
 
         if (!getVm().getVdsGroupId().equals(getDestinationVds().getVdsGroupId()) && getParameters().getTargetVdsGroupId() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
         }
 
         return true;

@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterBrickValidatorTest {
@@ -145,7 +145,7 @@ public class GlusterBrickValidatorTest {
                         3,
                         false);
         assertFalse(validationResult.isValid());
-        assertTrue(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED == validationResult.getMessage());
+        assertTrue(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED == validationResult.getMessage());
     }
 
     @Test
@@ -154,7 +154,7 @@ public class GlusterBrickValidatorTest {
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(volumeEntity.getBricks(), volumeEntity, 1, false);
         assertFalse(validationResult.isValid());
-        assertTrue(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME == validationResult.getMessage());
+        assertTrue(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME == validationResult.getMessage());
     }
 
     @Test
@@ -180,7 +180,7 @@ public class GlusterBrickValidatorTest {
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 1, false);
         assertFalse(validationResult.isValid());
-        assertTrue(VdcBllMessages.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN == validationResult.getMessage());
+        assertTrue(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN == validationResult.getMessage());
 
     }
 
@@ -195,7 +195,7 @@ public class GlusterBrickValidatorTest {
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 3, false);
         assertFalse(validationResult.isValid());
-        assertTrue(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_WITH_DATA_MIGRATION == validationResult.getMessage());
+        assertTrue(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_WITH_DATA_MIGRATION == validationResult.getMessage());
 
     }
 
@@ -213,7 +213,7 @@ public class GlusterBrickValidatorTest {
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 2, false);
         assertFalse(validationResult.isValid());
-        assertTrue(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE == validationResult.getMessage());
+        assertTrue(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE == validationResult.getMessage());
     }
 
     @Test
@@ -225,7 +225,7 @@ public class GlusterBrickValidatorTest {
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 5, false);
         assertFalse(validationResult.isValid());
-        assertTrue(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT == validationResult.getMessage());
+        assertTrue(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT == validationResult.getMessage());
     }
 
     @Test
@@ -237,7 +237,7 @@ public class GlusterBrickValidatorTest {
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 1, false);
         assertFalse(validationResult.isValid());
-        assertTrue(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_BRICK_INVALID == validationResult.getMessage());
+        assertTrue(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_BRICK_INVALID == validationResult.getMessage());
     }
 
     @Test

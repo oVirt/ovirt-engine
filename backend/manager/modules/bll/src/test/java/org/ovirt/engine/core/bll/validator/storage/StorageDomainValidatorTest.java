@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 /**
  * A test case for the {@link org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator} class.
@@ -33,7 +33,7 @@ public class StorageDomainValidatorTest {
     public void testIsDomainExistAndActiveDomainNotExists() {
         validator = new StorageDomainValidator(null);
         assertEquals("Wrong failure for null domain",
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST,
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST,
                 validator.isDomainExistAndActive().getMessage());
     }
 
@@ -41,7 +41,7 @@ public class StorageDomainValidatorTest {
     public void testIsDomainExistAndActiveDomainNotUp() {
         domain.setStatus(StorageDomainStatus.Inactive);
         assertEquals("Wrong failure for inactive domain",
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
                 validator.isDomainExistAndActive().getMessage());
     }
 
@@ -55,7 +55,7 @@ public class StorageDomainValidatorTest {
     public void testDomainWithNotEnoughSpace() {
         validator = new StorageDomainValidator(mockStorageDomain(3, 756, StorageType.NFS));
         assertEquals("Wrong failure for not enough space",
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
+                EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 validator.isDomainWithinThresholds().getMessage());
     }
 
@@ -73,7 +73,7 @@ public class StorageDomainValidatorTest {
                 shareLockedDomainInsertionResult.isValid());
         assertTrue("Attaching domain with in locked status failed with the wrong message",
                 shareLockedDomainInsertionResult.getMessage()
-                        .equals(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL));
+                        .equals(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL));
     }
 
     private static StorageDomain mockStorageDomain(int availableSize, int usedSize, StorageType storageType) {

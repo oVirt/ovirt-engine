@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 
 
@@ -14,14 +14,14 @@ public class EditAffinityGroupCommand extends AffinityGroupCRUDCommand {
     @Override
     protected boolean canDoAction() {
         if (getAffinityGroup() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID);
         }
         if (!getParameters().getAffinityGroup().getClusterId().equals(getClusterId())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_CLUSTER_ID);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_CLUSTER_ID);
         }
         if (!getAffinityGroup().getName().equals(getParameters().getAffinityGroup().getName()) &&
                 getAffinityGroupDao().getByName(getParameters().getAffinityGroup().getName()) != null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
         }
         return validateParameters();
     }
@@ -41,6 +41,6 @@ public class EditAffinityGroupCommand extends AffinityGroupCRUDCommand {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 }

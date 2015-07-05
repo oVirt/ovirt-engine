@@ -5,7 +5,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Version;
 
 public class VirtIoRngValidator {
@@ -17,7 +17,7 @@ public class VirtIoRngValidator {
                 cluster.getRequiredRngSources().contains(source);
 
         if (!supported) {
-            return new ValidationResult(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+            return new ValidationResult(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
 
         return ValidationResult.VALID;

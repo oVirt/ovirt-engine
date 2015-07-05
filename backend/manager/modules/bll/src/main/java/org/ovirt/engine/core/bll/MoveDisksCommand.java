@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -68,7 +68,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
     @Override
     protected boolean canDoAction() {
         if (getParameters().getParametersList().isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED);
         }
 
         return true;
@@ -76,21 +76,21 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__MOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     private void addDisksDeactivatedMessage(List<MoveDiskParameters> moveDiskParamsList) {
         setActionMessageParameters();
         addCanDoActionMessageVariable("diskAliases", StringUtils.join(getDisksAliases(moveDiskParamsList), ", "));
-        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MOVE_DISKS_MIXED_PLUGGED_STATUS);
+        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_MOVE_DISKS_MIXED_PLUGGED_STATUS);
         getReturnValue().setCanDoAction(false);
     }
 
     private void addInvalidVmStateMessage(VM vm){
         setActionMessageParameters();
         addCanDoActionMessageVariable("VmName", vm.getName());
-        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
+        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
         getReturnValue().setCanDoAction(false);
     }
 

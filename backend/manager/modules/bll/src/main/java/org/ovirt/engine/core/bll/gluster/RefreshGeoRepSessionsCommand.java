@@ -3,8 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
-
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 /**
  * BLL command to discover and refresh geo-replication sessions in a volume
@@ -19,14 +18,14 @@ public class RefreshGeoRepSessionsCommand<T extends GlusterVolumeParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REFRESH);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_GEOREP_SESSION);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REFRESH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
     }
 
     @Override
     protected boolean canDoAction() {
         if (getParameters().getVolumeId() == null || getGlusterVolume() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
             return false;
         }
 

@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTestBase {
@@ -56,7 +56,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         List<String> messages = new ArrayList<String>(1);
         assertTrue("canDoAction should fail", getCommand().checkIfGroupsCanBeAttached(messages));
         assertEquals("wrong messages",
-                VdcBllMessages.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED.toString(),
+                EngineMessage.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED.toString(),
                 messages.get(0));
     }
 
@@ -69,7 +69,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         List<String> messages = new ArrayList<String>(1);
         assertTrue("canDoAction should fail", getCommand().checkIfGroupsCanBeAttached(messages));
         assertEquals("wrong messages",
-                VdcBllMessages.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE.toString(),
+                EngineMessage.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE.toString(),
                 messages.get(0));
     }
 

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParameter> extends RolesCommandBase<T> {
@@ -18,14 +18,14 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
     @Override
     protected boolean canDoAction() {
         if (getRole() == null) {
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED);
+            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED);
             return false;
         }
 
         List<String> canDoMessages = getReturnValue().getCanDoActionMessages();
         if (checkIfRoleIsReadOnly(canDoMessages)) {
-            canDoMessages.add(VdcBllMessages.VAR__TYPE__ROLE.toString());
-            canDoMessages.add(VdcBllMessages.VAR__ACTION__DETACH_ACTION_TO.toString());
+            canDoMessages.add(EngineMessage.VAR__TYPE__ROLE.toString());
+            canDoMessages.add(EngineMessage.VAR__ACTION__DETACH_ACTION_TO.toString());
             return false;
         }
 
@@ -37,7 +37,7 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
         for (ActionGroup group : groupsToDetach) {
             if (!allGroups.contains(group)) {
                 canDoMessages.add(
-                        VdcBllMessages.ERROR_CANNOT_DETACH_ACTION_GROUP_TO_ROLE_NOT_ATTACHED.toString());
+                        EngineMessage.ERROR_CANNOT_DETACH_ACTION_GROUP_TO_ROLE_NOT_ATTACHED.toString());
                 return false;
             }
         }

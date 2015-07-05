@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatu
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServicesListVDSParameters;
@@ -442,7 +442,7 @@ public class GlusterServiceSyncJobTest {
     private VDSReturnValue createVDSReturnValueForFailure() {
         VDSReturnValue ret = new VDSReturnValue();
         ret.setSucceeded(false);
-        ret.setVdsError(new VDSError(VdcBllErrors.GlusterServicesActionFailed, "VDSM Error"));
+        ret.setVdsError(new VDSError(EngineError.GlusterServicesActionFailed, "VDSM Error"));
         return ret;
     }
 }

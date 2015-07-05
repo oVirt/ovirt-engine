@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -48,10 +48,10 @@ public interface IVdsEventListener {
 
 
     void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
-            VdcBllErrors error);
+            EngineError error);
 
     void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
-            VdcBllErrors error, TransactionScopeOption transactionScopeOption);
+            EngineError error, TransactionScopeOption transactionScopeOption);
 
     void storagePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status);
 

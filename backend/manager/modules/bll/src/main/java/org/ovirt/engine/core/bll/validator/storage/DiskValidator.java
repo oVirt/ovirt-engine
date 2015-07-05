@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -54,17 +54,17 @@ public class DiskValidator {
 
         if (disk.getSgio() != null) {
             if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
-                return new ValidationResult(VdcBllMessages.SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK);
+                return new ValidationResult(EngineMessage.SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK);
             }
         }
 
         if (vm != null) {
             if (!FeatureSupported.virtIoScsi(vm.getVdsGroupCompatibilityVersion())) {
-                return new ValidationResult(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                return new ValidationResult(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
 
             if (!isVirtioScsiControllerAttached(vm.getId())) {
-                return new ValidationResult(VdcBllMessages.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
+                return new ValidationResult(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
             }
 
             return isOsSupportedForVirtIoScsi(vm);
@@ -78,7 +78,7 @@ public class DiskValidator {
      */
     public ValidationResult isOsSupportedForVirtIoScsi(VM vm) {
         if (!VmValidationUtils.isDiskInterfaceSupportedByOs(vm.getOs(), vm.getVdsGroupCompatibilityVersion(), DiskInterface.VirtIO_SCSI)) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
         }
 
         return ValidationResult.VALID;
@@ -103,7 +103,7 @@ public class DiskValidator {
             VM currVm = pair.getFirst();
             if (VMStatus.Down != currVm.getStatus()) {
                 if (vmDevice.getIsPlugged()) {
-                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
                 }
             }
         }
@@ -117,12 +117,12 @@ public class DiskValidator {
             DiskInterface diskInterface = disk.getDiskInterface();
 
             if (diskInterface == DiskInterface.IDE) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR,
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR,
                         String.format("$interface %1$s", diskInterface));
             }
 
             if (disk.isScsiPassthrough()) {
-                return new ValidationResult(VdcBllMessages.SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK);
+                return new ValidationResult(EngineMessage.SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK);
             }
         }
         return ValidationResult.VALID;
@@ -130,7 +130,7 @@ public class DiskValidator {
 
     public ValidationResult isDiskUsedAsOvfStore() {
         if (disk.isOvfStore()) {
-            return new ValidationResult((VdcBllMessages.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED));
+            return new ValidationResult((EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED));
         }
         return ValidationResult.VALID;
     }
@@ -142,7 +142,7 @@ public class DiskValidator {
     public ValidationResult isDiskInterfaceSupported(VM vm) {
         if (vm != null) {
             if (!VmValidationUtils.isDiskInterfaceSupportedByOs(vm.getOs(), vm.getVdsGroupCompatibilityVersion(), disk.getDiskInterface())) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED,
+                return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED,
                         String.format("$osName %s", getOsRepository().getOsName(vm.getOs())));
             }
         }
@@ -170,7 +170,7 @@ public class DiskValidator {
         });
 
         return lunExists ? ValidationResult.VALID :
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
     }
 
     @SuppressWarnings("unchecked")
@@ -191,18 +191,18 @@ public class DiskValidator {
     public ValidationResult validateNotHostedEngineDisk() {
         boolean isHostedEngineDisk = disk.getDiskStorageType() == DiskStorageType.LUN &&
                 StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS.equals(disk.getDiskAlias());
-        return isHostedEngineDisk ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK) :
+        return isHostedEngineDisk ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK) :
                 ValidationResult.VALID;
     }
 
     public ValidationResult isUsingScsiReservationValid(VM vm, LunDisk lunDisk) {
         // this operation is valid only when attaching disk to VMs
         if (vm == null && Boolean.TRUE.equals(lunDisk.isUsingScsiReservation())) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK);
         }
         // scsi reservation can be enabled only when sgio is unfiltered
         if (Boolean.TRUE.equals(lunDisk.isUsingScsiReservation()) && lunDisk.getSgio() == ScsiGenericIO.FILTERED) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_SGIO_IS_FILTERED);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_SGIO_IS_FILTERED);
         }
 
         return  ValidationResult.VALID;

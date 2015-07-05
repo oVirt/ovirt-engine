@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -44,7 +44,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         for (VDS vds : hosts) {
             if (!isVMSwapValueLegal(vds)) {
                 log.debug("Host '{}' swap value is illegal", vds.getName());
-                messages.addMessage(vds.getId(), VdcBllMessages.VAR__DETAIL__SWAP_VALUE_ILLEGAL.toString());
+                messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__SWAP_VALUE_ILLEGAL.toString());
                 continue;
             }
             if (!memoryChecker.evaluate(vds, vm)) {
@@ -53,7 +53,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
                         vds.getName(),
                         hostAavailableMem);
                 messages.addMessage(vds.getId(), String.format("$availableMem %1$d", hostAavailableMem));
-                messages.addMessage(vds.getId(), VdcBllMessages.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
+                messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
                 continue;
             }
             // In case one of VM's virtual NUMA nodes (vNode) is pinned to physical NUMA nodes (pNode),
@@ -66,7 +66,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
                     && (!vds.isNumaSupport() || !canVmNumaPinnedToVds(vm, vmNumaNodes, vds))) {
                 log.debug("Host '{}' cannot accommodate memory of VM's pinned virtual NUMA nodes within host's physical NUMA nodes",
                         vds.getName());
-                messages.addMessage(vds.getId(), VdcBllMessages.VAR__DETAIL__NOT_MEMORY_PINNED_NUMA.toString());
+                messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_MEMORY_PINNED_NUMA.toString());
                 continue;
             }
             list.add(vds);

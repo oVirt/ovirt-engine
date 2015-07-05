@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -171,7 +171,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
      */
     private String getTranslatedStorageError(String errorCode) {
         String translatedError = errorCode;
-        VdcBllErrors error = VdcBllErrors.forValue(Integer.parseInt(errorCode));
+        EngineError error = EngineError.forValue(Integer.parseInt(errorCode));
         if (error != null) {
             translatedError =
                     Backend.getInstance()

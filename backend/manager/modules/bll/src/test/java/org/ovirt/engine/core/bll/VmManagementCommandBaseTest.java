@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -31,7 +31,7 @@ public class VmManagementCommandBaseTest {
         Assert.assertFalse(test.isCpuPinningValid("0#0", vmStatic));
         Assert.assertFalse(test.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST));
+                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST));
     }
 
     @Test
@@ -106,19 +106,19 @@ public class VmManagementCommandBaseTest {
         Assert.assertFalse(test.isCpuPinningValid("10#1,2,3_10#1-4,^3", vmStatic));
         Assert.assertTrue(canDoActionMessages.size() > 0);
         if (canDoActionMessages.size() > 0) {
-            Assert.assertEquals(VdcBllMessages.VM_PINNING_DUPLICATE_DEFINITION.toString(), canDoActionMessages.get(0));
+            Assert.assertEquals(EngineMessage.VM_PINNING_DUPLICATE_DEFINITION.toString(), canDoActionMessages.get(0));
         }
         canDoActionMessages.clear();
         Assert.assertFalse(test.isCpuPinningValid("10#1,2,^1,^2", vmStatic));
         Assert.assertTrue(canDoActionMessages.size() > 0);
         if (canDoActionMessages.size() > 0) {
-            Assert.assertEquals(VdcBllMessages.VM_PINNING_PINNED_TO_NO_CPU.toString(), canDoActionMessages.get(0));
+            Assert.assertEquals(EngineMessage.VM_PINNING_PINNED_TO_NO_CPU.toString(), canDoActionMessages.get(0));
         }
         canDoActionMessages.clear();
         Assert.assertFalse(test.isCpuPinningValid("10#1,2,3_20#1-4,^3", vmStatic));
         Assert.assertTrue(canDoActionMessages.size() > 0);
         if (canDoActionMessages.size() > 0) {
-            Assert.assertEquals(VdcBllMessages.VM_PINNING_VCPU_DOES_NOT_EXIST.toString(), canDoActionMessages.get(0));
+            Assert.assertEquals(EngineMessage.VM_PINNING_VCPU_DOES_NOT_EXIST.toString(), canDoActionMessages.get(0));
         }
         // making sure cluster < 3.2 does not get validated on pCPU as we cant tell the number for sure
         dedicatedVds.setVdsGroupCompatibilityVersion(Version.v3_1);

@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -49,7 +49,7 @@ public class ActivateStorageDomainCommandTest {
         testExecution(StorageDomainStatus.Locked);
         canDoActionFails();
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name()));
+                EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.name()));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class ActivateStorageDomainCommandTest {
         testNonActiveVdsExecution(StorageDomainStatus.Maintenance);
         canDoActionFails();
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL.name()));
+                EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL.name()));
     }
 
     private void testActionAllowed() {
@@ -196,12 +196,12 @@ public class ActivateStorageDomainCommandTest {
 
     private void noIllegalStatusMessage() {
         assertFalse(cmd.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString()));
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString()));
     }
 
     private void hasIllegalStatusMessage() {
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString()));
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString()));
     }
 
     private void setIsInternal() {

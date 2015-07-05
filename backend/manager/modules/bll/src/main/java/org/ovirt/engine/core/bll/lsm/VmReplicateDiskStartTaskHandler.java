@@ -5,8 +5,8 @@ import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.SyncImageGroupDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -24,7 +24,7 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
     @Override
     protected void beforeTask() {
         if (Guid.Empty.equals(getEnclosingCommand().getParameters().getVdsId())) {
-            throw new VdcBLLException(VdcBllErrors.down,
+            throw new EngineException(EngineError.down,
                     "VM " + getEnclosingCommand().getParameters().getVmId() + " is not running on any VDS");
         }
 
@@ -45,7 +45,7 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
             log.error("Failed VmReplicateDiskStart (Disk '{}' , VM '{}')",
                     getEnclosingCommand().getParameters().getImageGroupID(),
                     getEnclosingCommand().getParameters().getVmId());
-            throw new VdcBLLException(ret.getVdsError().getCode(), ret.getVdsError().getMessage());
+            throw new EngineException(ret.getVdsError().getCode(), ret.getVdsError().getMessage());
         }
     }
 

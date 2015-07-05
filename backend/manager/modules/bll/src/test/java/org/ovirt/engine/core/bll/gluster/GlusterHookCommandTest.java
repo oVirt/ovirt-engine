@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -86,10 +86,10 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
     }
 
     protected void mockBackendStatusChange(T cmd, boolean succeeded) {
-        mockBackendStatusChange(cmd, succeeded, VdcBllErrors.GlusterHookEnableFailed);
+        mockBackendStatusChange(cmd, succeeded, EngineError.GlusterHookEnableFailed);
     }
 
-    protected void mockBackendStatusChange(T cmd, boolean succeeded, VdcBllErrors errorCode) {
+    protected void mockBackendStatusChange(T cmd, boolean succeeded, EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();

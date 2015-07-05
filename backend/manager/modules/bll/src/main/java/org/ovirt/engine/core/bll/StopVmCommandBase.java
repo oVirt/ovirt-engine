@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -61,7 +61,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         }
 
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -72,8 +72,8 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
                 && getVm().getStatus() != VMStatus.NotResponding && getVm().getStatus() != VMStatus.Suspended) {
             return failCanDoAction(
                     (getVm().getStatus().isHibernating() || getVm().getStatus() == VMStatus.RestoringState) ?
-                            VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING
-                            : VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);
+                            EngineMessage.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING
+                            : EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);
         }
 
         return true;

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
@@ -33,12 +33,12 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
     protected boolean checkAddEditValidations() {
         List<ClusterPolicy> clusterPolicies = SchedulingManager.getInstance().getClusterPolicies();
         if (getClusterPolicy() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID);
         }
         for (ClusterPolicy clusterPolicy : clusterPolicies) {
             if (!clusterPolicy.getId().equals(getClusterPolicy().getId()) &&
                     clusterPolicy.getName().equals(getClusterPolicy().getName())) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_NAME_INUSE);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_NAME_INUSE);
             }
         }
         Map<Guid, PolicyUnitImpl> map = SchedulingManager.getInstance().getPolicyUnitsMap();
@@ -47,14 +47,14 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
         if (getClusterPolicy().getFilters() != null) {
             for (Guid filterId : getClusterPolicy().getFilters()) {
                 if(isPolicyUnitExists(filterId, existingPolicyUnits)) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_DUPLICATE_POLICY_UNIT);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_DUPLICATE_POLICY_UNIT);
                 }
                 PolicyUnitImpl policyUnitImpl = map.get(filterId);
                 if (policyUnitImpl == null) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
                 }
                 if (policyUnitImpl.getPolicyUnit().getPolicyUnitType() != PolicyUnitType.FILTER) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_FILTER_NOT_IMPLEMENTED);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_FILTER_NOT_IMPLEMENTED);
                 }
             }
         }
@@ -67,13 +67,13 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
                     if (!hasFirst) {
                         hasFirst = true;
                     } else {
-                        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_ONLY_ONE_FILTER_CAN_BE_FIRST);
+                        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_ONLY_ONE_FILTER_CAN_BE_FIRST);
                     }
                 } else if (position == 1) {
                     if (!hasLast) {
                         hasLast = true;
                     } else {
-                        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_ONLY_ONE_FILTER_CAN_BE_LAST);
+                        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_ONLY_ONE_FILTER_CAN_BE_LAST);
                     }
                 }
             }
@@ -82,17 +82,17 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
         if (getClusterPolicy().getFunctions() != null) {
             for (Pair<Guid, Integer> functionPair : getClusterPolicy().getFunctions()) {
                 if (isPolicyUnitExists(functionPair.getFirst(), existingPolicyUnits)) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_DUPLICATE_POLICY_UNIT);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_DUPLICATE_POLICY_UNIT);
                 }
                 PolicyUnitImpl policyUnitImpl = map.get(functionPair.getFirst());
                 if (policyUnitImpl == null) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
                 }
                 if (policyUnitImpl.getPolicyUnit().getPolicyUnitType() != PolicyUnitType.WEIGHT) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_FUNCTION_NOT_IMPLEMENTED);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_FUNCTION_NOT_IMPLEMENTED);
                 }
                 if (functionPair.getSecond() < 0) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_FUNCTION_FACTOR_NEGATIVE);
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_FUNCTION_FACTOR_NEGATIVE);
                 }
             }
         }
@@ -100,10 +100,10 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
         if (getClusterPolicy().getBalance() != null) {
             PolicyUnitImpl policyUnitImpl = map.get(getClusterPolicy().getBalance());
             if (policyUnitImpl == null) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
             }
             if (policyUnitImpl.getPolicyUnit().getPolicyUnitType() != PolicyUnitType.LOAD_BALANCING) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_BALANCE_NOT_IMPLEMENTED);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_BALANCE_NOT_IMPLEMENTED);
             }
         }
 
@@ -126,14 +126,14 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
     protected boolean checkRemoveEditValidations() {
         Guid clusterPolicyId = getParameters().getClusterPolicyId();
         if (clusterPolicyId == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID);
         }
         ClusterPolicy clusterPolicy = SchedulingManager.getInstance().getClusterPolicy(clusterPolicyId);
         if (clusterPolicy == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID);
         }
         if (clusterPolicy.isLocked()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID);
         }
 
         return true;

@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -48,30 +48,30 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> ex
     protected boolean canDoAction() {
         boolean canDo = true;
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
         if (getVm().getStatus() != VMStatus.Up) {
-            canDo = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
+            canDo = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
                     LocalizedVmStatus.from(getVm().getStatus()));
         }
         if (getParameters().getVm().getCpuPerSocket() >
                 Config.<Integer>getValue(
                         ConfigValues.MaxNumOfCpuPerSocket,
                         getVm().getVdsGroupCompatibilityVersion().getValue())) {
-            canDo = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET);
+            canDo = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET);
         }
         if (getParameters().getVm().getNumOfSockets() >
                 Config.<Integer>getValue(
                         ConfigValues.MaxNumOfVmSockets,
                         getVm().getVdsGroupCompatibilityVersion().getValue())) {
-            canDo = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS);
+            canDo = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS);
         }
         if (getParameters().getPlugAction() == PlugAction.PLUG) {
             if (!FeatureSupported.hotPlugCpu(getVm().getVdsGroupCompatibilityVersion(), getVm().getClusterArch())) {
-                canDo = failCanDoAction(VdcBllMessages.HOT_PLUG_CPU_IS_NOT_SUPPORTED);
+                canDo = failCanDoAction(EngineMessage.HOT_PLUG_CPU_IS_NOT_SUPPORTED);
             }
         } else if (!FeatureSupported.hotUnplugCpu(getVm().getVdsGroupCompatibilityVersion(), getVm().getClusterArch())) {
-            canDo = failCanDoAction(VdcBllMessages.HOT_UNPLUG_CPU_IS_NOT_SUPPORTED);
+            canDo = failCanDoAction(EngineMessage.HOT_UNPLUG_CPU_IS_NOT_SUPPORTED);
         }
 
         return canDo;
@@ -117,8 +117,8 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> ex
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__HOT_SET_CPUS);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__HOT_SET_CPUS);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
         addCanDoActionMessageVariable("clusterVersion", getVm().getVdsGroupCompatibilityVersion());
         addCanDoActionMessageVariable("architecture", getVm().getClusterArch());
     }

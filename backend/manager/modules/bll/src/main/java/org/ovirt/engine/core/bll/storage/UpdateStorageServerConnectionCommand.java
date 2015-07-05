@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
@@ -55,7 +55,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         StorageServerConnections newConnectionDetails = getConnection();
         StorageType storageType = newConnectionDetails.getstorage_type();
         if (!storageType.isFileDomain() && !storageType.equals(StorageType.ISCSI)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
         }
 
         if (!isValidConnection(newConnectionDetails)) {
@@ -68,23 +68,23 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         StorageServerConnections oldConnection = getStorageConnDao().get(connectionId);
 
         if (oldConnection == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
 
         if (!newConnectionDetails.getstorage_type().equals(oldConnection.getstorage_type())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
         }
 
         Guid storagePoolId = getStoragePoolIdByFileConnectionId(oldConnection.getid());
         if (isConnWithSameDetailsExists(newConnectionDetails, storagePoolId)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 
         if (doDomainsUseConnection(newConnectionDetails) || doLunsUseConnection()) {
             if (storageType.isFileDomain() && domains.size() > 1) {
                 String domainNames = createDomainNamesList(domains);
                 addCanDoActionMessageVariable("domainNames", domainNames);
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
             }
             // Check that the storage domain is in proper state to be edited
             if (!isConnectionEditable(newConnectionDetails)) {
@@ -118,7 +118,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             boolean isConnectionEditable = isFileDomainInEditState(domains.get(0));
             if (!isConnectionEditable) {
                 addCanDoActionMessageVariable("domainNames", domains.get(0).getStorageName());
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
             }
             return isConnectionEditable;
         }
@@ -160,18 +160,18 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             if (!problematicVMNames.isEmpty()) {
                 if (problematicDomainNames.isEmpty()) {
                     addCanDoActionMessageVariable("vmNames", prepareEntityNamesForMessage(problematicVMNames));
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS);
+                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS);
                 } else {
                     addCanDoActionMessageVariable("vmNames", prepareEntityNamesForMessage(problematicVMNames));
                     addCanDoActionMessageVariable("domainNames", prepareEntityNamesForMessage(problematicDomainNames));
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_STATUS);
+                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_STATUS);
                 }
                 return false;
             }
 
             if (!problematicDomainNames.isEmpty()) {
                 addCanDoActionMessageVariable("domainNames", prepareEntityNamesForMessage(problematicDomainNames));
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
                 return false;
             }
         }
@@ -334,7 +334,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             for (StorageDomain domain : domains) {
                 locks.put(domain.getId().toString(),
                         LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
-                                VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                                EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             }
         }
         if (getConnection().getstorage_type().isFileDomain()) {
@@ -342,13 +342,13 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
            // add new storage connection to same path or edit another storage server connection to point to same path
            locks.put(getConnection().getconnection(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
-                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         else {
           // for block domains, locking the target details
           locks.put(getConnection().getconnection() + ";" + getConnection().getiqn() + ";" + getConnection().getport() + ";" + getConnection().getuser_name(),
           LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
-                    VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
 
           //lock lun disks and domains, not VMs , no need to load from db.
           if(getLuns()!=null) {
@@ -357,11 +357,11 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 Guid storageDomainId = lun.getStorageDomainId();
                 if(diskId != null) {
                        locks.put(diskId.toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
-                       VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                       EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
                 }
                 if(storageDomainId != null) {
                        locks.put(storageDomainId.toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
-                       VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                       EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
                 }
 
               }
@@ -373,13 +373,13 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         // by another user
         locks.put(getConnection().getid(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__CONNECTION);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
     }
 }

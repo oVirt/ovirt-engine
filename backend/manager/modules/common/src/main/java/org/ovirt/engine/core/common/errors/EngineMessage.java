@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.errors;
 
-// This enum was moved from VdcBLL
-public enum VdcBllMessages {
+public enum EngineMessage {
     Unassigned,
     VAR__TYPE__HOST,
     VAR__ENTITIES__HOSTS,
@@ -1097,8 +1096,8 @@ public enum VdcBllMessages {
     ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED(ErrorType.BAD_PARAMETERS),
     ACTION_TYPE_FAILED_IMPORT_UNREGISTERED_NOT_COLLAPSED(ErrorType.BAD_PARAMETERS),
 
-    /* VDSM Error that propagates up to the client. See VdcBLLErrors */
-    ERROR_GET_STORAGE_DOMAIN_LIST(ErrorType.INTERNAL_ERROR), // VdcBllErrors.GetStorageDomainListError
+    /* VDSM Error that propagates up to the client. See EngineError */
+    ERROR_GET_STORAGE_DOMAIN_LIST(ErrorType.INTERNAL_ERROR), // EngineError.GetStorageDomainListError
 
     ERROR_GET_IMAGE_LIST(ErrorType.INTERNAL_ERROR),
 
@@ -1294,11 +1293,11 @@ public enum VdcBllMessages {
 
     private ErrorType messageType;
 
-    VdcBllMessages() {
+    EngineMessage() {
         this.messageType = null;
     }
 
-    VdcBllMessages(ErrorType messageType) {
+    EngineMessage(ErrorType messageType) {
         this.messageType = messageType;
     }
 
@@ -1318,7 +1317,7 @@ public enum VdcBllMessages {
         return this.ordinal();
     }
 
-    public static VdcBllMessages forValue(int value) {
+    public static EngineMessage forValue(int value) {
         return values()[value];
     }
 }

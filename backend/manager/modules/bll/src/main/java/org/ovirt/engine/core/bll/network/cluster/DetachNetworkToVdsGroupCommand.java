@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
@@ -63,8 +63,8 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DETACH);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__DETACH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORK);
     }
 
     @Override

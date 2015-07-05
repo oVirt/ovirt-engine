@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -63,9 +63,9 @@ public class StoragePoolDomainHelper {
                     new ConnectStoragePoolVDSCommandParameters(vds,
                             storagePool,
                             masterDomainId, storagePoolIsoMaps, true));
-        } catch (VdcBLLException ex) {
+        } catch (EngineException ex) {
             VDSError error = ex.getVdsError();
-            if (error.getCode() != VdcBllErrors.StoragePoolUnknown) {
+            if (error.getCode() != EngineError.StoragePoolUnknown) {
                 log.info("Failed to refresh host '{}' pool '{}' metadata with error '{}': {}",
                         vds.getName(),
                         storagePool.getId(), error.getCode(), error.getMessage());
@@ -84,7 +84,7 @@ public class StoragePoolDomainHelper {
                 if (!vdsReturnValue.getSucceeded()) {
                     error = vdsReturnValue.getVdsError();
                 }
-            } catch (VdcBLLException e) {
+            } catch (EngineException e) {
                 error = e.getVdsError();
             }
 

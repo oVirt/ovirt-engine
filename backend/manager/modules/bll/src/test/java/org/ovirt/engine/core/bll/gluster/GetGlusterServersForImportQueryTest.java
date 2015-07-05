@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -95,7 +95,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
             getQuery().executeQueryCommand();
             fail("Query didn't fail when the server already exists!");
         } catch (RuntimeException e) {
-            assertEquals(VdcBllMessages.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString(), e.getMessage());
+            assertEquals(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString(), e.getMessage());
         }
     }
 
@@ -108,7 +108,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
             getQuery().executeQueryCommand();
             fail("Query didn't fail when one or more peers already exist(s)!");
         } catch (RuntimeException e) {
-            assertEquals(VdcBllMessages.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString(), e.getMessage());
+            assertEquals(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString(), e.getMessage());
         }
     }
 
@@ -120,7 +120,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
             getQuery().executeQueryCommand();
             fail("Query didn't fail when wrong password was passed!");
         } catch (RuntimeException e) {
-            assertEquals(VdcBllMessages.SSH_AUTHENTICATION_FAILED.toString(), e.getMessage());
+            assertEquals(EngineMessage.SSH_AUTHENTICATION_FAILED.toString(), e.getMessage());
         }
     }
 }

@@ -4,7 +4,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @InternalCommandAttribute
 public class UpdateRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
@@ -31,7 +31,7 @@ public class UpdateRngDeviceCommand extends AbstractRngDeviceCommand<RngDevicePa
         }
 
         if (getRngDevices().isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_RNG_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_RNG_NOT_FOUND);
         }
 
         return true;

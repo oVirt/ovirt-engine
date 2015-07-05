@@ -15,7 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.dc.UpdateNetworkCommand.UpdateNetworkValidator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateNetworkValidatorTest {
@@ -61,7 +61,7 @@ public class UpdateNetworkValidatorTest {
 
     private void assertThatExternalNetworkDetailsUnchangedFails(Network externalNetwork) {
         assertThat(validator.externalNetworkDetailsUnchanged(externalNetwork),
-                failsWith((VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED)));
+                failsWith((EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED)));
     }
 
     @Test

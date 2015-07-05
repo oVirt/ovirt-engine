@@ -19,9 +19,9 @@ import org.ovirt.engine.core.common.action.gluster.GlusterClusterParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 
@@ -76,12 +76,12 @@ public class RefreshGlusterHooksCommandTest {
     public void executeCommandWhenFailed() {
         cmd = spy(new RefreshGlusterHooksCommand<GlusterClusterParameters>(new GlusterClusterParameters(CLUSTER_ID)));
         setupMocks();
-        doThrow(new VdcBLLException(VdcBllErrors.GlusterHookListException)).when(hookSyncJob).refreshHooksInCluster(getVdsGroup(), true);
+        doThrow(new EngineException(EngineError.GlusterHookListException)).when(hookSyncJob).refreshHooksInCluster(getVdsGroup(), true);
         try {
             cmd.executeCommand();
-            fail("Expected VdcBLLException");
-        } catch (VdcBLLException e) {
-            assertEquals(e.getErrorCode(), VdcBllErrors.GlusterHookListException);
+            fail("Expected EngineException");
+        } catch (EngineException e) {
+            assertEquals(e.getErrorCode(), EngineError.GlusterHookListException);
             assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_REFRESH_FAILED);
         }
     }
@@ -98,7 +98,7 @@ public class RefreshGlusterHooksCommandTest {
     public void canDoActionFailsOnNullCluster() {
         cmd = spy(new RefreshGlusterHooksCommand<GlusterClusterParameters>(new GlusterClusterParameters(null)));
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID.toString()));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID.toString()));
     }
 
 }

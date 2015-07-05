@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 /**
  * Send a Start action to a power control device.
@@ -45,10 +45,10 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
             VDSStatus vdsStatus = vds.getStatus();
             if (vdsStatus == VDSStatus.Connecting) {
                 retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_INTERMITENT_CONNECTIVITY);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VDS_INTERMITENT_CONNECTIVITY);
 
             } else if (!legalStatusForStartingVds(vdsStatus)) {
-                addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_START);
+                addCanDoActionMessage(EngineMessage.VDS_STATUS_NOT_VALID_FOR_START);
                 retValue = false;
                 log.error("VDS status for vds '{}' '{}' is '{}'", vds.getId(), vds.getName(), vdsStatus);
             }
@@ -74,22 +74,22 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
     }
 
     @Override
     protected void handleError() {
-        addCanDoActionMessage(VdcBllMessages.VDS_FENCE_OPERATION_FAILED);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START);
+        addCanDoActionMessage(EngineMessage.VDS_FENCE_OPERATION_FAILED);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
         log.error("Failed to run StartVdsCommand on host '{}'", getVdsName());
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        addCanDoActionMessage(VdcBllMessages.VDS_FENCE_OPERATION_FAILED);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START);
+        addCanDoActionMessage(EngineMessage.VDS_FENCE_OPERATION_FAILED);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
 
         return getSucceeded() ? AuditLogType.USER_VDS_START : AuditLogType.USER_FAILED_VDS_START;
     }

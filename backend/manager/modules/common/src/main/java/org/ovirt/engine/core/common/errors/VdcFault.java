@@ -26,13 +26,13 @@ public class VdcFault implements IVdcQueryable {
         privateDetails = value;
     }
 
-    private VdcBllErrors _Error;
+    private EngineError _Error;
 
-    public VdcBllErrors getError() {
+    public EngineError getError() {
         return _Error;
     }
 
-    public void setError(VdcBllErrors value) {
+    public void setError(EngineError value) {
         _Error = value;
     }
 
@@ -41,17 +41,17 @@ public class VdcFault implements IVdcQueryable {
     }
 
     public void setError(int value) {
-        _Error = VdcBllErrors.forValue(value);
+        _Error = EngineError.forValue(value);
     }
 
-    public VdcFault(RuntimeException ex, VdcBllErrors error) {
+    public VdcFault(RuntimeException ex, EngineError error) {
         this(ex);
         setMessage(error.toString());
         setError(error);
     }
 
     public VdcFault(RuntimeException ex) {
-        _Error = VdcBllErrors.unexpected;
+        _Error = EngineError.unexpected;
         setMessage(ex.getMessage());
 
         // Pass over the inner exceptions and accumulate them within an array.
@@ -59,7 +59,7 @@ public class VdcFault implements IVdcQueryable {
     }
 
     public VdcFault() {
-        _Error = VdcBllErrors.unexpected;
+        _Error = EngineError.unexpected;
     }
 
     private String privateMessage;

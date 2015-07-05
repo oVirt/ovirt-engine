@@ -4,7 +4,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -24,7 +24,7 @@ public class AddUserProfileCommand<T extends UserProfileParameters> extends User
         }
 
         if (userProfileDao.getByUserId(getUserId()) != null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PROFILE_ALREADY_EXISTS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROFILE_ALREADY_EXISTS);
         }
 
         return true;
@@ -37,8 +37,8 @@ public class AddUserProfileCommand<T extends UserProfileParameters> extends User
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__USER_PROFILE);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__USER_PROFILE);
     }
 
     @Override

@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -63,7 +63,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         Map<String, Pair<String, String>> locks = Collections.singletonMap(
                 getNetworkName(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.NETWORK,
-                        VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IS_USED));
+                        EngineMessage.ACTION_TYPE_FAILED_NETWORK_IS_USED));
 
         return locks;
     }
@@ -131,7 +131,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         }
 
         public ValidationResult externalNetworkVlanValid() {
-            return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_LABELED)
+            return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_LABELED)
                     .when(network.getVlanId() != null && network.getLabel() == null);
         }
 
@@ -147,7 +147,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         public ValidationResult externalNetworkNewInDataCenter() {
             for (Network otherNetwork : getNetworks()) {
                 if (network.getProvidedBy().equals(otherNetwork.getProvidedBy())) {
-                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_ALREADY_EXISTS);
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_ALREADY_EXISTS);
                 }
             }
 
@@ -160,7 +160,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
          */
         public ValidationResult externalNetworkIsVmNetwork() {
             return network.isVmNetwork() ? ValidationResult.VALID
-                    : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_MUST_BE_VM_NETWORK);
+                    : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_MUST_BE_VM_NETWORK);
         }
     }
 }

@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.FencingPolicyHelper;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -96,7 +96,7 @@ public class FenceAgentExecutor {
                     result = executeFenceAction(action, agent, proxyHost);
                 }
             }
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             log.debug("Exception", e);
             result = new FenceOperationResult(
                     FenceOperationResult.Status.ERROR,

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
@@ -19,7 +19,7 @@ public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
         Bookmark updated = getBookmark();
 
         if (updated == null) {
-            addInvalidIdErrorMessages(VdcBllMessages.VAR__ACTION__UPDATE);
+            addInvalidIdErrorMessages(EngineMessage.VAR__ACTION__UPDATE);
         } else {
             Bookmark current = DbFacade.getInstance().getBookmarkDao()
                     .getByName(updated.getbookmark_name());
@@ -27,8 +27,8 @@ public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
             if (!(current == null || current.getbookmark_id().equals(
                     updated.getbookmark_id()))) {
                 addErrorMessages(
-                        VdcBllMessages.VAR__ACTION__UPDATE,
-                        VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                        EngineMessage.VAR__ACTION__UPDATE,
+                        EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             } else {
                 result = true;
             }

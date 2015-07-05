@@ -29,9 +29,9 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -60,7 +60,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     @Override
     protected boolean canDoAction() {
         if (disk == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
         DiskValidator oldDiskValidator = new DiskValidator(disk);
@@ -90,11 +90,11 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             Disk activeDisk = loadActiveDisk(disk.getId());
 
             if (((DiskImage) activeDisk).getImageStatus() == ImageStatus.ILLEGAL) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
             }
 
             if (((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
                 addCanDoActionMessageVariable("diskAliases", disk.getDiskAlias());
                 return false;
             }
@@ -114,23 +114,23 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         }
 
         if (getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId()))) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
         }
 
         if (disk.isShareable()
                 && !isVersionSupportedForShareable(disk, getStoragePoolDao().get(getVm().getStoragePoolId())
                         .getCompatibilityVersion()
                         .getValue())) {
-            return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+            return failCanDoAction(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
 
         if (!isOperationPerformedOnDiskSnapshot() && !disk.isShareable() && disk.getNumberOfVms() > 0) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED);
         }
 
         if (isImageDisk && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                 ((DiskImage) disk).getStorageIds().get(0), getVm().getStoragePoolId())) == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
         if (isImageDisk) {
             StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(
@@ -227,15 +227,15 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             getImageDao().updateImageVmSnapshotId(diskImage.getImageId(),
                     snapshotId);
         } else {
-            throw new VdcBLLException(VdcBllErrors.StorageException,
+            throw new EngineException(EngineError.StorageException,
                     "update of snapshot id was initiated for unsupported disk type");
         }
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH_ACTION_TO);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ATTACH_ACTION_TO);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override
@@ -257,12 +257,12 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         Map<String, Pair<String, String>> locks = new HashMap<>();
         if (!disk.isShareable()) {
             locks.put(disk.getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
         if (disk.isBoot()) {
             locks.put(getParameters().getVmId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
         return locks;

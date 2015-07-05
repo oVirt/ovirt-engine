@@ -12,7 +12,7 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -135,7 +135,7 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
             if (!acceptableHosts.contains(host.getId())) {
                 messages.addMessage(host.getId(),
                         String.format("$affinityRules %1$s", "")); // TODO compute the affinity rule names
-                messages.addMessage(host.getId(), VdcBllMessages.VAR__DETAIL__AFFINITY_FAILED_POSITIVE.toString());
+                messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__AFFINITY_FAILED_POSITIVE.toString());
             }
         }
 
@@ -148,7 +148,7 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
                 messages.addMessage(runVm.getRunOnVds(),
                         String.format("$affinityRules %1$s", "")); // TODO compute the affinity rule names
                 messages.addMessage(runVm.getRunOnVds(),
-                        VdcBllMessages.VAR__DETAIL__AFFINITY_FAILED_NEGATIVE.toString());
+                        EngineMessage.VAR__DETAIL__AFFINITY_FAILED_NEGATIVE.toString());
             }
         }
 

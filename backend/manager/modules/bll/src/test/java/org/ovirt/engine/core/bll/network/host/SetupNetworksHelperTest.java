@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -128,7 +128,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER, nic.getNetworkName());
+        validateAndExpectViolation(helper, EngineMessage.NETWORKS_DONT_EXIST_IN_CLUSTER, nic.getNetworkName());
     }
 
     @Test
@@ -250,7 +250,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
         when(vds.getVdsGroupCompatibilityVersion()).thenReturn(Version.v3_2);
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY, nic.getNetworkName());
+        validateAndExpectViolation(helper, EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY, nic.getNetworkName());
     }
 
     @Test
@@ -307,7 +307,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED);
+                EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED);
     }
 
     @Test
@@ -381,7 +381,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED);
+                EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED);
     }
 
     @Test
@@ -396,7 +396,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface));
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
+                EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
                 MANAGEMENT_NETWORK_NAME);
     }
 
@@ -508,7 +508,7 @@ public class SetupNetworksHelperTest {
     public void qosNotConfiguredOnAllNetworks() {
         SetupNetworksHelper helper = setupCompositeQosConfiguration(false);
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS,
+                EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS,
                 BOND_NAME);
     }
 
@@ -538,14 +538,14 @@ public class SetupNetworksHelperTest {
     @Test
     public void qosOverCommitmentReportedNicSpeed() {
         SetupNetworksHelper helper = qosCommitmentNicSetup(DEFAULT_SPEED, DEFAULT_SPEED);
-        validateAndExpectViolation(helper, VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
+        validateAndExpectViolation(helper, EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
     }
 
     @Test
     public void qosCommitmentMissingNicSpeed() {
         SetupNetworksHelper helper = qosCommitmentNicSetup(DEFAULT_SPEED / 2, null);
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
+                EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
                 BOND_NAME);
     }
 
@@ -569,7 +569,7 @@ public class SetupNetworksHelperTest {
     @Test
     public void qosOverCommitmentReportedBondSpeed() {
         SetupNetworksHelper helper = qosCommitmentReportedBondSpeed(DEFAULT_SPEED);
-        validateAndExpectViolation(helper, VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
+        validateAndExpectViolation(helper, EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
     }
 
     private SetupNetworksHelper qosCommitmendMissingBondSpeed(String bondOptions) {
@@ -609,13 +609,13 @@ public class SetupNetworksHelperTest {
     @Test
     public void qosCommitmentMissingBondSpeedMode1() {
         SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_1);
-        validateAndExpectViolation(helper, VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
+        validateAndExpectViolation(helper, EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
     }
 
     @Test
     public void qosCommitmentMissingBondSpeedMode3() {
         SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_3);
-        validateAndExpectViolation(helper, VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
+        validateAndExpectViolation(helper, EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
     }
 
     private SetupNetworksHelper qosBondSpeedSetup(Integer slaveSpeed, Integer bondSpeed) {
@@ -644,7 +644,7 @@ public class SetupNetworksHelperTest {
     public void qosBondAndSlaveSpeedsMissing() {
         SetupNetworksHelper helper = qosBondSpeedSetup(null, null);
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
+                EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
                 BOND_NAME);
     }
 
@@ -652,7 +652,7 @@ public class SetupNetworksHelperTest {
     public void qosBondAndSlaveSpeedsZero() {
         SetupNetworksHelper helper = qosBondSpeedSetup(0, 0);
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
+                EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
                 BOND_NAME);
     }
 
@@ -664,7 +664,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = qosValuesTest(qos);
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES,
+                EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES,
                 MANAGEMENT_NETWORK_NAME);
     }
 
@@ -677,7 +677,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = qosValuesTest(qos);
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES,
+                EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES,
                 MANAGEMENT_NETWORK_NAME);
     }
 
@@ -692,7 +692,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface));
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
+                EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
                 network.getName());
     }
 
@@ -734,7 +734,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT,
+                EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT,
                 network.getName());
     }
 
@@ -768,7 +768,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT,
+                EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT,
                 MANAGEMENT_NETWORK_NAME);
     }
 
@@ -786,7 +786,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED);
+                EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED);
     }
 
     /* --- Tests for sync network functionality --- */
@@ -846,7 +846,7 @@ public class SetupNetworksHelperTest {
         nic.setBootProtocol(NetworkBootProtocol.DHCP);
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_NOT_IN_SYNC, net.getName());
+        validateAndExpectViolation(helper, EngineMessage.NETWORKS_NOT_IN_SYNC, net.getName());
     }
 
     @Test
@@ -877,7 +877,7 @@ public class SetupNetworksHelperTest {
         nic1.setNetworkName(null);
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic1, nic2));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_NOT_IN_SYNC, net.getName());
+        validateAndExpectViolation(helper, EngineMessage.NETWORKS_NOT_IN_SYNC, net.getName());
     }
 
     @Test
@@ -894,7 +894,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForSync(iface));
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
+                EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
                 MANAGEMENT_NETWORK_NAME);
     }
 
@@ -1009,7 +1009,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, vlanNic));
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
+                EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
                 nic.getName());
     }
 
@@ -1029,7 +1029,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(vlanNic, nic));
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
+                EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
                 nic.getName());
     }
 
@@ -1048,7 +1048,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, vlanNic));
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
+                EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
                 nic.getName());
     }
 
@@ -1067,7 +1067,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, fakeVlanNic));
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
+                EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
                 nic.getName());
     }
 
@@ -1116,7 +1116,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(bond));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT, bond.getName());
+        validateAndExpectViolation(helper, EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT, bond.getName());
     }
 
     @Test
@@ -1128,7 +1128,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForBond(bond, slaves));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT, bond.getName());
+        validateAndExpectViolation(helper, EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT, bond.getName());
     }
 
     @Test
@@ -1138,7 +1138,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfaces(bond);
         SetupNetworksHelper helper = createHelper(createParametersForNics(bond, bond));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACES_ALREADY_SPECIFIED, bond.getName());
+        validateAndExpectViolation(helper, EngineMessage.NETWORK_INTERFACES_ALREADY_SPECIFIED, bond.getName());
     }
 
     @Test
@@ -1384,7 +1384,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(parameters);
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST, ifaceName);
+        validateAndExpectViolation(helper, EngineMessage.NETWORK_INTERFACES_DONT_EXIST, ifaceName);
     }
 
     @Test
@@ -1396,7 +1396,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(
                 createParametersForNics(nic, createVlan(nic.getName(), 100, networkName)));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER, networkName);
+        validateAndExpectViolation(helper, EngineMessage.NETWORKS_DONT_EXIST_IN_CLUSTER, networkName);
     }
 
     /**
@@ -1677,7 +1677,7 @@ public class SetupNetworksHelperTest {
     }
 
     private void validateAndExpectMtuValidation(SetupNetworksHelper helper, Network net1, Network net2) {
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_MTU_DIFFERENCES,
+        validateAndExpectViolation(helper, EngineMessage.NETWORK_MTU_DIFFERENCES,
                 String.format("[%s(%s), %s(%d)]",
                         net1.getName(),
                         net1.getMtu() == 0 ? "default" : net1.getMtu(),
@@ -1696,7 +1696,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic1, nic1, nic2, nic2));
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.NETWORK_INTERFACES_ALREADY_SPECIFIED,
+                EngineMessage.NETWORK_INTERFACES_ALREADY_SPECIFIED,
                 nic1.getName(),
                 nic2.getName());
     }
@@ -1705,7 +1705,7 @@ public class SetupNetworksHelperTest {
     public void nicDoesntExist() {
         VdsNetworkInterface nic = createNic("eth0", null);
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST, nic.getName());
+        validateAndExpectViolation(helper, EngineMessage.NETWORK_INTERFACES_DONT_EXIST, nic.getName());
     }
 
     @Test
@@ -1757,7 +1757,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
         validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
+                EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
                 networkName);
     }
 
@@ -1769,7 +1769,7 @@ public class SetupNetworksHelperTest {
     }
 
     private void validateAndExpectViolation(SetupNetworksHelper helper,
-            VdcBllMessages violation,
+            EngineMessage violation,
             String... violatingEntities) {
         List<String> violations = helper.validate();
         assertTrue(MessageFormat.format("Expected violation {0} but only got {1}.", violation, violations),
@@ -1782,7 +1782,7 @@ public class SetupNetworksHelperTest {
                 violations.contains(violatingEntityMessage));
     }
 
-    private void validateAndExpectViolation(SetupNetworksHelper helper, VdcBllMessages violation) {
+    private void validateAndExpectViolation(SetupNetworksHelper helper, EngineMessage violation) {
         List<String> violations = helper.validate();
         assertTrue(MessageFormat.format("Expected violation {0} but only got {1}.", violation, violations),
                 violations.contains(violation.name()));

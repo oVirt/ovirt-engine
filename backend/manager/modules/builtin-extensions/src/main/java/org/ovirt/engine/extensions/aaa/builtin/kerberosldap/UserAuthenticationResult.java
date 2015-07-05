@@ -4,27 +4,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class UserAuthenticationResult {
-    private List<VdcBllMessages> errorMessages = new ArrayList<VdcBllMessages>();
+    private List<EngineMessage> errorMessages = new ArrayList<EngineMessage>();
     private LdapUser user;
 
     public LdapUser getUser() {
         return user;
     }
 
-    public UserAuthenticationResult(VdcBllMessages... messages) {
+    public UserAuthenticationResult(EngineMessage... messages) {
         errorMessages.addAll(Arrays.asList(messages));
     }
 
-    public UserAuthenticationResult(LdapUser user, VdcBllMessages... messages) {
+    public UserAuthenticationResult(LdapUser user, EngineMessage... messages) {
         this(messages);
         this.user = user;
     }
 
 
-    public List<VdcBllMessages> getErrorMessages() {
+    public List<EngineMessage> getErrorMessages() {
         return errorMessages;
     }
 

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -56,7 +56,7 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
     }
 
     private ValidationResult providerTypeNotChanged(Provider<?> oldProvider, Provider<?> newProvider) {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_PROVIDER_TYPE)
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_PROVIDER_TYPE)
                 .when(oldProvider.getType() != newProvider.getType());
     }
 
@@ -85,8 +85,8 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__PROVIDER);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__PROVIDER);
     }
 
     @Override

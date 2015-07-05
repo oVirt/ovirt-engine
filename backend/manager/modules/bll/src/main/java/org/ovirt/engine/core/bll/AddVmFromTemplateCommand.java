@@ -27,9 +27,9 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -103,7 +103,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         if (getVmTemplate().getDiskTemplateMap().size() > 0) {
             if (getVm().getStatus() != VMStatus.Down) {
                 log.error("Cannot add images. VM is not Down");
-                throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+                throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }
             VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
             Collection<DiskImage> templateDisks = getVmTemplate().getDiskTemplateMap().values();
@@ -116,7 +116,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
 
                 // if couldn't create snapshot then stop the transaction and the command
                 if (!result.getSucceeded()) {
-                    throw new VdcBLLException(result.getFault().getError());
+                    throw new EngineException(result.getFault().getError());
                 }
                 getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
                 DiskImage newImage = (DiskImage) result.getActionReturnValue();
@@ -202,7 +202,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
                         validDomainStatuses);
         return validate(new DiskImagesValidator(templateDiskImages).diskImagesOnAnyApplicableDomains(
                 validDisksDomains, poolDomainsMap,
-                VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS, validDomainStatuses));
+                EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS, validDomainStatuses));
 
     }
 

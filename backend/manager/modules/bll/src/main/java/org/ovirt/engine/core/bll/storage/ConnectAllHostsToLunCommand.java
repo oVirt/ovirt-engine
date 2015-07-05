@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDevicesVisibilityVDSCommandParameters;
@@ -154,7 +154,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             return StorageHelperDirector.getInstance()
                     .getItem(getStorageDomain().getStorageType())
                     .connectStorageToLunByVdsId(getStorageDomain(), vds.getId(), lun, Guid.Empty);
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             handleFailure(vds, lun);
             throw e;
         }
@@ -167,7 +167,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                     VDSCommandType.GetDeviceList,
                     new GetDeviceListVDSCommandParameters(vds.getId(),
                             getStorageDomain().getStorageType())).getReturnValue();
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             getResult().setFailedVds(vds);
             throw e;
         }
@@ -182,7 +182,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
      *            - luns ids which we wants to check
      * @return - true if all luns are connected to the host, false otherwise
      *
-     * @throws VdcBLLException
+     * @throws org.ovirt.engine.core.common.errors.EngineException
      */
     private boolean validateConnectedLuns(VDS vds, List<String> processedLunIds) {
         Map<String, Boolean> res;
@@ -191,7 +191,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             res = (Map<String, Boolean>) runVdsCommand(VDSCommandType.GetDevicesVisibility,
                     new GetDevicesVisibilityVDSCommandParameters(vds.getId(),
                             processedLunIds.toArray(new String[processedLunIds.size()]))).getReturnValue();
-        } catch(VdcBLLException e) {
+        } catch(EngineException e) {
             handleFailure(vds, null);
             throw e;
         }

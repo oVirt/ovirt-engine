@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -59,8 +59,8 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
-        if (returnStatus != VdcBllErrors.Done) {
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
+        if (returnStatus != EngineError.Done) {
             log.error(
                     "IrsBroker::getImageInfo::Failed getting image info imageId='{}' does not exist on domainName='{}', domainId='{}', error code: '{}', message: {}",
                     getParameters().getImageId(),

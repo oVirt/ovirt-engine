@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @InternalCommandAttribute
 @CanDoActionSupportsTransaction
@@ -45,8 +45,8 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVd
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DETACH);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__DETACH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORK);
     }
 
     private Network getNetwork() {
@@ -65,8 +65,8 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVd
         public ValidationResult clusterNetworkNotUsedByVms() {
             return networkNotUsed(getVmStaticDao().getAllByGroupAndNetworkName(networkCluster.getClusterId(),
                     network.getName()),
-                    VdcBllMessages.VAR__ENTITIES__VMS,
-                    VdcBllMessages.VAR__ENTITIES__VM);
+                    EngineMessage.VAR__ENTITIES__VMS,
+                    EngineMessage.VAR__ENTITIES__VM);
         }
 
         public ValidationResult clusterNetworkNotUsedByTemplates() {
@@ -79,15 +79,15 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVd
                 }
             }
             return networkNotUsed(templatesUsingNetwork,
-                    VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES,
-                    VdcBllMessages.VAR__ENTITIES__VM_TEMPLATE);
+                    EngineMessage.VAR__ENTITIES__VM_TEMPLATES,
+                    EngineMessage.VAR__ENTITIES__VM_TEMPLATE);
         }
 
         public ValidationResult clusterNetworkNotUsedByBricks() {
             return networkNotUsed(getGlusterBrickDao().getAllByClusterAndNetworkId(networkCluster.getClusterId(),
                     network.getId()),
-                    VdcBllMessages.VAR__ENTITIES__GLUSTER_BRICKS,
-                    VdcBllMessages.VAR__ENTITIES__GLUSTER_BRICK);
+                    EngineMessage.VAR__ENTITIES__GLUSTER_BRICKS,
+                    EngineMessage.VAR__ENTITIES__GLUSTER_BRICK);
         }
     }
 }

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.parameters.RemoveExternalPolicyUnitParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -21,12 +21,12 @@ public class RemoveExternalPolicyUnitCommand extends CommandBase<RemoveExternalP
     @Override
     protected boolean canDoAction() {
         if(!SchedulingManager.getInstance().getPolicyUnitsMap().containsKey(getPolicyUnitId())){
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
         }
         List<String> clusterPoliciesNames =
                 SchedulingManager.getInstance().getClusterPoliciesNamesByPolicyUnitId(getPolicyUnitId());
         if (clusterPoliciesNames != null && clusterPoliciesNames.size() > 0) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_POLICY_UNIT_ATTACHED_TO_CLUSTER_POLICY,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_POLICY_UNIT_ATTACHED_TO_CLUSTER_POLICY,
                     String.format("$cpNames %1$s", StringUtils.join(clusterPoliciesNames, ',')));
         }
         return true;
@@ -40,8 +40,8 @@ public class RemoveExternalPolicyUnitCommand extends CommandBase<RemoveExternalP
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__POLICY_UNIT);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__POLICY_UNIT);
     }
 
     @Override

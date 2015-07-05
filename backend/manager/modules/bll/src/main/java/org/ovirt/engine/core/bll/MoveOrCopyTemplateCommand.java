@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MacAddressValidationPatterns;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -114,7 +114,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         boolean retValue = true;
         if (getVmTemplate() == null) {
             retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         } else if (getTemplateDisks() != null && !getTemplateDisks().isEmpty()) {
             ensureDomainMap(getTemplateDisks(), getParameters().getStorageDomainId());
             // check that images are ok
@@ -124,7 +124,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             if (getVmTemplate().getDiskTemplateMap().values().size() != imageFromSourceDomainMap.size()) {
                 log.error("Can not found any default active domain for one of the disks of template with id '{}'",
                         getVmTemplate().getId());
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
                 retValue = false;
             }
             retValue = retValue
@@ -144,7 +144,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                             .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                                     getVmTemplate().getStoragePoolId())) == null) {
                 retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             }
         }
         return retValue;
@@ -156,11 +156,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected boolean validateUnregisteredEntity(IVdcQueryable entityFromConfiguration, OvfEntityData ovfEntityData) {
         if (ovfEntityData == null && !getParameters().isImportAsNewEntity()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
             return false;
         }
         if (entityFromConfiguration == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
         }
 
         for (DiskImage image : getImages()) {
@@ -171,7 +171,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             }
         }
         if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
                     String.format("$domainId %1$s", getParameters().getStorageDomainId()),
                     String.format("$domainType %1$s", getStorageDomain().getStorageDomainType()));
         }
@@ -189,11 +189,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     @Override
     protected void setActionMessageParameters() {
         if (getMoveOrCopyImageOperation() == ImageOperation.Move) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MOVE);
+            addCanDoActionMessage(EngineMessage.VAR__ACTION__MOVE);
         } else {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__COPY);
+            addCanDoActionMessage(EngineMessage.VAR__ACTION__COPY);
         }
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     private boolean validateFreeSpaceOnDestinationDomain(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
@@ -276,13 +276,13 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     alreadyRetrieved.put(targetStorageDomainId, imagesOnStorageDomain);
                 } else {
                     addCanDoActionMessageVariable("sdName", getStorageDomain(targetStorageDomainId).getName());
-                    addCanDoActionMessage(VdcBllMessages.ERROR_GET_IMAGE_LIST);
+                    addCanDoActionMessage(EngineMessage.ERROR_GET_IMAGE_LIST);
                     return false;
                 }
             }
 
             if (imagesOnStorageDomain.contains(disk.getId())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
                 return false;
             }
         }
@@ -416,7 +416,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                 if(!VALIDATE_MAC_ADDRESS.matcher(iface.getMacAddress()).matches()) {
                     addCanDoActionMessageVariable("IfaceName ", iface.getName());
                     addCanDoActionMessageVariable("MacAddress ", iface.getMacAddress());
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID);
+                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID);
                     return false;
                 }
             }
@@ -425,7 +425,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             }
         }
         if (freeMacs > 0 && !(getMacPool().getAvailableMacsCount() >= freeMacs)) {
-            addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+            addCanDoActionMessage(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             return false;
         }
         return true;

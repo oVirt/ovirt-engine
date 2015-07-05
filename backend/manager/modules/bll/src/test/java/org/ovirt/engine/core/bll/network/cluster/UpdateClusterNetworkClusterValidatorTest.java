@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -32,7 +32,7 @@ public class UpdateClusterNetworkClusterValidatorTest extends
     @Test
     public void managementNetworkChangeInvalid() {
         testUpdateManagementNetworkChange(false,
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED));
     }
 
     private void testUpdateManagementNetworkChange(boolean emptyCluster,

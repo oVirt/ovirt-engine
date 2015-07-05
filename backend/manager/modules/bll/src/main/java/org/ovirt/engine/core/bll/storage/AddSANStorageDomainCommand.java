@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.CreateVGVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -87,7 +87,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
     protected boolean canAddDomain() {
         if (((getParameters().getLunIds() == null || getParameters().getLunIds().isEmpty()) && StringUtils
                 .isEmpty(getStorageDomain().getStorage()))) {
-            return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV);
+            return failCanDoAction(EngineMessage.ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV);
         }
         if (isLunsAlreadyInUse(getParameters().getLunIds())) {
             return false;

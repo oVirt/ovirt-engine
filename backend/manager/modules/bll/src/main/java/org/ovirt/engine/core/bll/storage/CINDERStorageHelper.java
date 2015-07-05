@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RegisterLibvirtSecretsVDSParameters;
@@ -181,7 +181,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     public static ValidationResult isCinderHasNoImages(Guid storageDomainId) {
         List<DiskImage> cinderDisks = getDbFacade().getDiskImageDao().getAllForStorageDomain(storageDomainId);
         if (!cinderDisks.isEmpty()) {
-            return new ValidationResult(VdcBllMessages.ERROR_CANNOT_DETACH_CINDER_PROVIDER_WITH_IMAGES);
+            return new ValidationResult(EngineMessage.ERROR_CANNOT_DETACH_CINDER_PROVIDER_WITH_IMAGES);
         }
         return ValidationResult.VALID;
     }
@@ -195,7 +195,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         try {
             proxy.testConnection();
             updateCinderDomainStatus(storageDomainId, storagePoolId, StorageDomainStatus.Active);
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             AuditLogableBase loggable = new AuditLogableBase();
             loggable.addCustomValue("CinderException", e.getCause().getCause() != null ?
                     e.getCause().getCause().getMessage() : e.getCause().getMessage());

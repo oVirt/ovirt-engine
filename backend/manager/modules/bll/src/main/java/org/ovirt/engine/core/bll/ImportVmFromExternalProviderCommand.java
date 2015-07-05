@@ -34,8 +34,8 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -70,19 +70,19 @@ implements QuotaStorageDependent {
         }
 
         if (getStorageDomain() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
         if (!getStorageDomain().getStoragePoolId().equals(getStoragePoolId())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_AND_CLUSTER_IN_DIFFERENT_POOL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_AND_CLUSTER_IN_DIFFERENT_POOL);
         }
 
         if (getStoragePool().getStatus() != StoragePoolStatus.Up) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
         }
 
         if (getStorageDomain().getStatus() != StorageDomainStatus.Active) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
         }
 
         if (getVdsId() != null && !validate(validateRequestedProxyHost())) {
@@ -140,15 +140,15 @@ implements QuotaStorageDependent {
 
     private ValidationResult validateRequestedProxyHost() {
         if (getVds() == null) {
-            return new ValidationResult(VdcBllMessages.VDS_DOES_NOT_EXIST);
+            return new ValidationResult(EngineMessage.VDS_DOES_NOT_EXIST);
         }
 
         if (!getStoragePoolId().equals(getVds().getStoragePoolId())) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_NOT_IN_DEST_STORAGE_POOL);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_NOT_IN_DEST_STORAGE_POOL);
         }
 
         if (getVds().getStatus() != VDSStatus.Up) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
         }
 
         return ValidationResult.VALID;
@@ -227,7 +227,7 @@ implements QuotaStorageDependent {
                 runInternalActionWithTasksContext(VdcActionType.AddDisk, diskParameters);
 
         if (!vdcReturnValueBase.getSucceeded()) {
-            throw new VdcBLLException(vdcReturnValueBase.getFault().getError(),
+            throw new EngineException(vdcReturnValueBase.getFault().getError(),
                     "Failed to create disk!");
         }
 

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -45,7 +45,7 @@ public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> ext
         }
 
         if (getVm().getMigrationSupport() != MigrationSupport.MIGRATABLE) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE);
         }
 
         return true;

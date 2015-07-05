@@ -28,9 +28,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -113,7 +113,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 }
                 retVal = addStoragePoolInIrs();
                 if (!retVal.getSucceeded()
-                        && retVal.getVdsError().getCode() == VdcBllErrors.StorageDomainAccessError) {
+                        && retVal.getVdsError().getCode() == EngineError.StorageDomainAccessError) {
                     log.warn("Error creating storage pool on vds '{}' - continuing",
                             vds.getName());
                     continue;
@@ -128,11 +128,11 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             setSucceeded(result);
             if (!result) {
                 if (retVal != null && retVal.getVdsError().getCode() != null) {
-                    throw new VdcBLLException(retVal.getVdsError().getCode(), retVal.getVdsError().getMessage());
+                    throw new EngineException(retVal.getVdsError().getCode(), retVal.getVdsError().getMessage());
                 } else {
                     // throw exception to cause rollback and stop the
                     // command
-                    throw new VdcBLLException(VdcBllErrors.ENGINE_ERROR_CREATING_STORAGE_POOL);
+                    throw new EngineException(EngineError.ENGINE_ERROR_CREATING_STORAGE_POOL);
                 }
             } else {
                 registerOvfStoreDisks();
@@ -289,8 +289,8 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH_ACTION_TO);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ATTACH_ACTION_TO);
     }
 
     private boolean checkStorageDomainsInPool() {
@@ -308,7 +308,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                         if (storageFormat == null) {
                             storageFormat = domain.getStorageFormat();
                         } else if (storageFormat != domain.getStorageFormat()) {
-                            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_STORAGE_POOL_WITH_DIFFERENT_STORAGE_FORMAT);
+                            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITH_DIFFERENT_STORAGE_FORMAT);
                             return false;
                         }
                     }
@@ -317,7 +317,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 }
             }
             if (!_hasData) {
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_AND_ISO_DOMAINS);
+                addCanDoActionMessage(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_AND_ISO_DOMAINS);
                 return false;
             }
         }
@@ -341,7 +341,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getStoragePoolId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     private boolean isDomainAttachedToDifferentStoragePool() {
@@ -349,7 +349,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             for (Guid storageDomainId : getParameters().getStorages()) {
                 StorageDomain domain = getStorageDomainDao().get(storageDomainId);
                 if (domain.getStorageDomainType().isDataDomain() && isStorageDomainAttachedToStoragePool(domain)) {
-                    return failCanDoAction(VdcBllMessages.ERROR_CANNOT_ADD_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
+                    return failCanDoAction(EngineMessage.ERROR_CANNOT_ADD_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
                 }
             }
         }

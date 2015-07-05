@@ -1,25 +1,25 @@
 package org.ovirt.engine.core.common.errors;
 
-public class VdcBLLException extends RuntimeException {
+public class EngineException extends RuntimeException {
 
     private static final long serialVersionUID = 9070362191178977106L;
 
-    public VdcBLLException(VdcBllErrors errCode, RuntimeException baseException) {
-        super("VdcBLLException:", baseException);
+    public EngineException(EngineError errCode, RuntimeException baseException) {
+        super("EngineException:", baseException);
         VDSError tempVar = new VDSError();
         tempVar.setCode(errCode);
         setVdsError(tempVar);
     }
 
-    public VdcBLLException(VdcBllErrors errCode, String errorStr) {
-        super("VdcBLLException: " + errorStr);
+    public EngineException(EngineError errCode, String errorStr) {
+        super("EngineException: " + errorStr);
         VDSError tempVar = new VDSError();
         tempVar.setCode(errCode);
         setVdsError(tempVar);
     }
 
-    public VdcBLLException(VdcBllErrors errCode) {
-        super("VdcBLLException: " + errCode.toString());
+    public EngineException(EngineError errCode) {
+        super("EngineException: " + errCode.toString());
         VDSError tempVar = new VDSError();
         tempVar.setCode(errCode);
         setVdsError(tempVar);
@@ -35,11 +35,11 @@ public class VdcBLLException extends RuntimeException {
         privateVdsError = value;
     }
 
-    public VdcBllErrors getErrorCode() {
+    public EngineError getErrorCode() {
         return getVdsError().getCode();
     }
 
-    public VdcBLLException() {
+    public EngineException() {
     }
 
     @Override

@@ -58,9 +58,9 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -202,7 +202,7 @@ public class VmHandler {
         boolean returnValue = true;
         if (macPool.getAvailableMacsCount() < nicsCount) {
             if (reasons != null) {
-                reasons.add(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES.toString());
+                reasons.add(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES.toString());
             }
             returnValue = false;
         } else if (!VmTemplateCommand.isVmPriorityValueLegal(vmPriority, reasons)) {
@@ -251,7 +251,7 @@ public class VmHandler {
     private static void checkStatusBeforeLock(VMStatus status) {
         if (status == VMStatus.ImageLocked) {
             log.error("VM status cannot change to image locked, since it is already locked");
-            throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+            throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
         }
     }
 
@@ -533,7 +533,7 @@ public class VmHandler {
                                             List<String> reasons) {
         boolean result = VmValidationUtils.isOsTypeSupported(osId, architectureType);
         if (!result) {
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_IS_NOT_SUPPORTED_BY_ARCHITECTURE_TYPE
+            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_IS_NOT_SUPPORTED_BY_ARCHITECTURE_TYPE
                     .toString());
         }
         return result;
@@ -561,7 +561,7 @@ public class VmHandler {
                                                         Version clusterVersion) {
         boolean result = VmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType);
         if (!result) {
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS.name());
+            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS.name());
         }
         return result;
     }
@@ -582,7 +582,7 @@ public class VmHandler {
                                             List<String> reasons) {
         boolean result = VmValidationUtils.isDiskInterfaceSupportedByOs(osId, clusterVersion, DiskInterface.VirtIO_SCSI);
         if (!result) {
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI.name());
+            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI.name());
         }
         return result;
     }
@@ -612,7 +612,7 @@ public class VmHandler {
         });
 
         if (iface != null) {
-            messages.add(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE.name());
+            messages.add(EngineMessage.NETWORK_INTERFACE_NAME_ALREADY_IN_USE.name());
             return false;
         }
         return true;
@@ -639,7 +639,7 @@ public class VmHandler {
         }
 
         if (!legal) {
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS.toString());
+            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS.toString());
         }
 
         return legal;
@@ -648,15 +648,15 @@ public class VmHandler {
     public static boolean isSingleQxlDeviceLegal(DisplayType displayType, int osId, List<String> reasons,
             Version compatibilityVersion) {
         if (!FeatureSupported.singleQxlPci(compatibilityVersion)) {
-             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_INCOMPATIBLE_VERSION.toString());
+             reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_INCOMPATIBLE_VERSION.toString());
              return false;
          }
         if (displayType != DisplayType.qxl) {
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_DISPLAY_TYPE.toString());
+            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_DISPLAY_TYPE.toString());
             return false;
         }
         if (!osRepository.isSingleQxlDeviceEnabled(osId)) {
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_OS_TYPE.toString());
+            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_OS_TYPE.toString());
             return false;
         }
         return true;
@@ -715,12 +715,12 @@ public class VmHandler {
         if (UsbPolicy.ENABLED_NATIVE.equals(usbPolicy)) {
             if (!Config.<Boolean> getValue(ConfigValues.NativeUSBEnabled, vdsGroup.getCompatibilityVersion()
                     .getValue())) {
-                messages.add(VdcBllMessages.USB_NATIVE_SUPPORT_ONLY_AVAILABLE_ON_CLUSTER_LEVEL.toString());
+                messages.add(EngineMessage.USB_NATIVE_SUPPORT_ONLY_AVAILABLE_ON_CLUSTER_LEVEL.toString());
                 retVal = false;
             }
         } else if (UsbPolicy.ENABLED_LEGACY.equals(usbPolicy)) {
             if (osRepository.isLinux(osId)) {
-                messages.add(VdcBllMessages.USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS.toString());
+                messages.add(EngineMessage.USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS.toString());
                 retVal = false;
             }
         }
@@ -739,7 +739,7 @@ public class VmHandler {
 
         if ((vm.isHostedEngine() && !COMMANDS_ALLOWED_ON_HOSTED_ENGINE.contains(actionType)) ||
             (vm.isExternalVm() && !COMMANDS_ALLOWED_ON_EXTERNAL_VMS.contains(actionType))) {
-            validationResult = new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RUN_ACTION_ON_NON_MANAGED_VM);
+            validationResult = new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RUN_ACTION_ON_NON_MANAGED_VM);
         }
 
         return validationResult;
@@ -894,7 +894,7 @@ public class VmHandler {
             return true;
         }
         String unsupportedCpus = osRepository.getUnsupportedCpus(osId, version).toString();
-        canDoActionMessages.add(VdcBllMessages.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS.name());
+        canDoActionMessages.add(EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS.name());
         canDoActionMessages.add("$unsupportedCpus " + StringUtils.strip(unsupportedCpus.toString(), "[]"));
         return false;
     }
@@ -935,7 +935,7 @@ public class VmHandler {
 
         int cpuCount = paramsVm.getNumOfCpus(); // REST-api assigns cpuCount to parameters.
         if (cpuCount < NUMAnodesCount) {
-            return new ValidationResult(VdcBllMessages.VM_NUMA_NODE_MORE_NODES_THAN_CPUS,
+            return new ValidationResult(EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS,
                     String.format("$numaNodes %d", NUMAnodesCount),
                     String.format("$cpus %d", cpuCount));
         }
@@ -971,7 +971,7 @@ public class VmHandler {
             }
         }
 
-        return new ValidationResult(VdcBllMessages.VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE);
+        return new ValidationResult(EngineMessage.VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE);
     }
 
     public static List<PermissionSubject> getPermissionsNeededToChangeCluster(Guid vmId, Guid clusterId) {
@@ -1029,12 +1029,12 @@ public class VmHandler {
             VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
             if (vds == null) {
                 if (canDoActionMessages != null) {
-                    canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_DOES_NOT_EXIST.toString());
+                    canDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_DOES_NOT_EXIST.toString());
                 }
                 result = false;
             } else if (!Objects.equals(vm.getVdsGroupId(), vds.getVdsGroupId())) {
                 if (canDoActionMessages != null) {
-                    canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER.toString());
+                    canDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER.toString());
                 }
                 result = false;
             }

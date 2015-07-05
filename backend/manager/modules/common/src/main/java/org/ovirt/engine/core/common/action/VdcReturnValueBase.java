@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -48,8 +48,8 @@ public class VdcReturnValueBase implements Serializable {
     public VdcFault getFault() {
         if (fault == null) {
             fault = new VdcFault();
-            fault.setError(VdcBllErrors.ENGINE);
-            fault.setMessage(VdcBllErrors.ENGINE.name());
+            fault.setError(EngineError.ENGINE);
+            fault.setMessage(EngineError.ENGINE.name());
         }
         return fault;
     }

@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -77,7 +77,7 @@ public class AddExistingBlockStorageDomainCommandTest {
         assertTrue("Import block Storage Domain should have failed due to empty Lun list returned from VGInfo ",
                 command.getReturnValue()
                         .getCanDoActionMessages()
-                        .contains(VdcBllMessages.ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO.toString()));
+                        .contains(EngineMessage.ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO.toString()));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class AddExistingBlockStorageDomainCommandTest {
         assertTrue("Import block Storage Domain should have failed due to already existing Storage Domain",
                 command.getReturnValue()
                         .getCanDoActionMessages()
-                        .contains(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST.toString()));
+                        .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST.toString()));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class AddExistingBlockStorageDomainCommandTest {
         parameters.getStorageDomain().setStorageName(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME);
         assertFalse(command.canAddDomain());
         CanDoActionTestUtils.assertCanDoActionMessages("Add self hosted engine storage domain succeeded where it should have failed",
-                command, VdcBllMessages.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
+                command, EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
     }
 
     private static StorageDomainStatic getStorageDomain() {

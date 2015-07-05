@@ -5,7 +5,7 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -39,7 +39,7 @@ public class DiskSnapshotsValidator {
         }
 
         if (!disksNotExistInDb.isEmpty()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_NOT_EXIST,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_NOT_EXIST,
                     String.format("$diskSnapshotIds %s", StringUtils.join(disksNotExistInDb, ", ")));
         }
 
@@ -57,7 +57,7 @@ public class DiskSnapshotsValidator {
         }
 
         if (!activeSnapshots.isEmpty()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_ACTIVE,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_ACTIVE,
                     String.format("$diskSnapshotIds %s", StringUtils.join(activeSnapshots, ", ")));
         }
 
@@ -77,7 +77,7 @@ public class DiskSnapshotsValidator {
                 continue;
             }
 
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_SNAPSHOTS_DONT_BELONG_TO_SAME_DISK);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_SNAPSHOTS_DONT_BELONG_TO_SAME_DISK);
         }
 
         return ValidationResult.VALID;
@@ -101,7 +101,7 @@ public class DiskSnapshotsValidator {
                 }
             }
 
-            return new ValidationResult(VdcBllMessages.CANNOT_PREVIEW_ACTIVE_SNAPSHOT);
+            return new ValidationResult(EngineMessage.CANNOT_PREVIEW_ACTIVE_SNAPSHOT);
         }
 
         return ValidationResult.VALID;

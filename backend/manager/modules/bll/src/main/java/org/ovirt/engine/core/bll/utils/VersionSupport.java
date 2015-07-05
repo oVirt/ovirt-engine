@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +32,8 @@ public class VersionSupport implements Serializable {
         return result;
     }
 
-    public static VdcBllMessages getUnsupportedVersionMessage() {
-        return VdcBllMessages.ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED;
+    public static EngineMessage getUnsupportedVersionMessage() {
+        return EngineMessage.ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED;
     }
 
     /**

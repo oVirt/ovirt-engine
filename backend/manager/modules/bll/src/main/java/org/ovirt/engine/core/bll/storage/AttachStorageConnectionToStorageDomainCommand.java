@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
@@ -33,7 +33,7 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
             return false;
         }
         if (storageConnectionValidator.isConnectionForISCSIDomainAttached(getStorageDomain())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_ALREADY_EXISTS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_ALREADY_EXISTS);
         }
         return true;
     }
@@ -92,15 +92,15 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
         // by another user
         locks.put(getParameters().getStorageConnectionId(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;
     }
 
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__CONNECTION);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ATTACH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
     }
 
     protected StorageServerConnectionLunMapDao getStorageServerConnectionLunMapDao() {

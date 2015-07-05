@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ExtendImageSizeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ExtendVmDiskSizeVDSCommandParameters;
@@ -84,7 +84,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
                 if (!ret.getSucceeded()) {
                     updateAuditLogFailedToUpdateVM(vm.getName());
                 }
-            } catch (VdcBLLException e) {
+            } catch (EngineException e) {
                 log.warn("Failed to update VM '{}' with the new volume size due to error, "
                                 + "VM should be restarted to detect the new size: {}",
                         vm.getName(),
@@ -124,7 +124,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
 
         try {
             diskImage = (DiskImage) runVdsCommand(VDSCommandType.GetImageInfo, params).getReturnValue();
-        } catch (VdcBLLException e) {
+        } catch (EngineException e) {
             log.error("Failed to retrieve image '{}' info: {}",
                     params.getImageId(),
                     e.getMessage());
@@ -170,8 +170,8 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXTEND_IMAGE_SIZE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__EXTEND_IMAGE_SIZE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override

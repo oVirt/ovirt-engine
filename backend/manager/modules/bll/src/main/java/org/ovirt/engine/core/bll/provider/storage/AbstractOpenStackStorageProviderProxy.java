@@ -7,6 +7,7 @@ import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.base.client.OpenStackTokenProvider;
 import com.woorea.openstack.keystone.model.Access;
 import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
@@ -19,8 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -50,9 +50,9 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
         } catch (OpenStackResponseException e) {
             log.error("{} (OpenStack response error code: {})", e.getMessage(), e.getStatus());
             log.debug("Exception", e);
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         } catch (RuntimeException e) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }
     }
 

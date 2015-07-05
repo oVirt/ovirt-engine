@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -89,7 +89,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
             }
         });
         if (iface == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
+            addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_NOT_EXISTS);
             return false;
         }
         if (StringUtils.isEmpty(getParameters().getInterface().getNetworkName())) {
@@ -109,14 +109,14 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         }
         if (StringUtils.isEmpty(iface.getNetworkName())) {
             if (iface.getBonded() != null && iface.getBonded() == true) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_NOT_ATTACH_TO_NETWORK);
+                addCanDoActionMessage(EngineMessage.NETWORK_BOND_NOT_ATTACH_TO_NETWORK);
             } else {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK);
+                addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK);
             }
             return false;
         } else if (!StringUtils.equals(getParameters().getInterface().getNetworkName(), getParameters().getNetwork()
                 .getName())) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK);
+            addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK);
             return false;
         }
 
@@ -133,7 +133,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
                     return network.getName().equals(getParameters().getNetwork().getName());
                 }
             })) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_HOST_IS_BUSY);
+                addCanDoActionMessage(EngineMessage.NETWORK_HOST_IS_BUSY);
                 return false;
             }
         }
@@ -143,9 +143,9 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
                         Collections.singletonList(getParameters().getNetwork().getName()));
 
         if (!vmNames.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS);
+            addCanDoActionMessage(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS);
             addCanDoActionMessageVariable(String.format("$%s_LIST",
-                    VdcBllMessages.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS.name()),
+                    EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS.name()),
                     StringUtils.join(vmNames, ","));
             return false;
         }
@@ -161,7 +161,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DETACH);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__DETACH);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORK);
     }
 }

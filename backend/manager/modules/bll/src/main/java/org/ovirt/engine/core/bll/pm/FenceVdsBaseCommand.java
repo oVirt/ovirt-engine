@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -79,7 +79,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                                 .getAuditLogDao()
                                 .getTimeToWaitForNextPmOp(getVds().getName(), getRequestedAuditEvent());
         if (secondsLeftToNextPmOp > 0) {
-            addCanDoActionMessage(VdcBllMessages.VDS_FENCE_DISABLED_AT_QUIET_TIME);
+            addCanDoActionMessage(EngineMessage.VDS_FENCE_DISABLED_AT_QUIET_TIME);
             addCanDoActionMessageVariable("seconds", secondsLeftToNextPmOp);
             return false;
         } else {
@@ -114,7 +114,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     // show alert only if command was not skipped due to fencing policy
                     alertIfPowerManagementOperationFailed();
                 }
-                throw new VdcBLLException(VdcBllErrors.VDS_FENCE_OPERATION_FAILED);
+                throw new EngineException(EngineError.VDS_FENCE_OPERATION_FAILED);
             }
             else {
                 teardown();
@@ -175,7 +175,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     public static Map<String, Pair<String, String>> createFenceExclusiveLocksMap(Guid vdsId) {
         return Collections.singletonMap(vdsId.toString(), LockMessagesMatchUtil.makeLockingPair(
                 LockingGroup.VDS_FENCE,
-                VdcBllMessages.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
+                EngineMessage.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
     }
 
     protected List<VM> getVmList() {

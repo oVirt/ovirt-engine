@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -97,7 +97,7 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     @Test
     public void managementNetworkNotExternalValidInvalidExternal() {
         testmanagementNetworkNotExternal(true, true,
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_EXTERNAL))
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_EXTERNAL))
                         .and(replacements(hasItem(NETWORK_NAME_REPLACEMENT))));
     }
 
@@ -137,13 +137,13 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     @Test
     public void managementNetworkRequiredInvalid() {
         testmanagementNetworkRequired(true, false,
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED))
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED))
                         .and(replacements(hasItem(NETWORK_NAME_REPLACEMENT))));
     }
 
     @Test
     public void migrationNetworkWhenMigrationNetworkNotSupported() throws Exception {
-        migrationNetworkSupportTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED),
+        migrationNetworkSupportTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED),
                 false,
                 true);
     }
@@ -180,7 +180,7 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
 
     @Test
     public void externalNetworkNotSupported() throws Exception {
-        externalNetworkSupportTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_NOT_SUPPORTED),
+        externalNetworkSupportTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_NOT_SUPPORTED),
                 false);
     }
 
@@ -211,7 +211,7 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
         when(network.getDataCenterId()).thenReturn(TEST_DC_ID2);
 
         assertThat(validator.networkBelongsToClusterDataCenter(cluster, network),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_FROM_DIFFERENT_DC)).
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_FROM_DIFFERENT_DC)).
                         and(replacements(hasItem(NETWORK_NAME_REPLACEMENT))));
     }
 }

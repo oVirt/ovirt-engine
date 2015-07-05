@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
@@ -120,7 +120,7 @@ public class RegisterServlet extends HttpServlet {
             if (r == null) {
                 throw new RuntimeException("runInternalQuery failed (null)");
             }
-            if (!r.equals(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE.name())) {
+            if (!r.equals(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE.name())) {
                 throw new RuntimeException(String.format("runInternalQuery failed '%s'", r));
             }
         }

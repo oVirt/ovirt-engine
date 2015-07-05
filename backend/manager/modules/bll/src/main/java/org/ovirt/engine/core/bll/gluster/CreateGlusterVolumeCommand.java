@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOption
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -69,8 +69,8 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
     }
 
     @Override
@@ -94,22 +94,22 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
         VDSGroup cluster = getVdsGroup();
         if (cluster == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
             return false;
         }
 
         if (!cluster.supportsGlusterService()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);
             return false;
         }
 
         if (volume.getVolumeType().isDispersedType()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CREATION_OF_DISPERSE_VOLUME_NOT_SUPPORTED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CREATION_OF_DISPERSE_VOLUME_NOT_SUPPORTED);
             return false;
         }
 
         if (volumeNameExists(volume.getName())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
             addCanDoActionMessageVariable("volumeName", volume.getName());
             return false;
         }
@@ -265,7 +265,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     private boolean validateBricks(GlusterVolumeEntity volume) {
         List<GlusterBrickEntity> bricks = volume.getBricks();
         if (bricks.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
             return false;
         }
 
@@ -274,48 +274,48 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         int stripeCount = volume.getStripeCount();
 
         if (volume.getVolumeType().isReplicatedType() && replicaCount < 2) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_2);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_2);
             return false;
         }
         if (volume.getVolumeType().isStripedType() && stripeCount < 4) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STRIPE_COUNT_MIN_4);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STRIPE_COUNT_MIN_4);
             return false;
         }
 
         switch (volume.getVolumeType()) {
         case REPLICATE:
             if (brickCount != replicaCount) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_REPLICATE);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_REPLICATE);
                 return false;
             }
             break;
         case DISTRIBUTED_REPLICATE:
             if (brickCount < replicaCount || Math.IEEEremainder(brickCount, replicaCount) != 0) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_REPLICATE);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_REPLICATE);
                 return false;
             }
             break;
         case STRIPE:
             if (brickCount != stripeCount) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPE);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPE);
                 return false;
             }
             break;
         case DISTRIBUTED_STRIPE:
             if (brickCount <= stripeCount || Math.IEEEremainder(brickCount, stripeCount) != 0) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPE);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPE);
                 return false;
             }
             break;
         case STRIPED_REPLICATE:
             if ( Math.IEEEremainder(brickCount, stripeCount * replicaCount) != 0) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPED_REPLICATE);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPED_REPLICATE);
                 return false;
             }
             break;
         case DISTRIBUTED_STRIPED_REPLICATE:
             if ( brickCount <= stripeCount * replicaCount || Math.IEEEremainder(brickCount, stripeCount * replicaCount) != 0) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPED_REPLICATE);
+                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPED_REPLICATE);
                 return false;
             }
             break;

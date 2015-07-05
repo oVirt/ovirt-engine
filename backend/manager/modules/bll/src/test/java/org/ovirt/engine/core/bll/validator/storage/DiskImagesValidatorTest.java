@@ -40,7 +40,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -116,14 +116,14 @@ public class DiskImagesValidatorTest {
     public void diskImagesNotIllegalFirstIllegal() {
         disk1.setImageStatus(ImageStatus.ILLEGAL);
         assertThat(validator.diskImagesNotIllegal(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).and(replacements(hasItem(createAliasReplacements(disk1)))));
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).and(replacements(hasItem(createAliasReplacements(disk1)))));
     }
 
     @Test
     public void diskImagesNotIllegalSecondtIllegal() {
         disk2.setImageStatus(ImageStatus.ILLEGAL);
         assertThat(validator.diskImagesNotIllegal(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).and(replacements(hasItem(createAliasReplacements(disk2)))));
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).and(replacements(hasItem(createAliasReplacements(disk2)))));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class DiskImagesValidatorTest {
         disk1.setImageStatus(ImageStatus.ILLEGAL);
         disk2.setImageStatus(ImageStatus.ILLEGAL);
         assertThat(validator.diskImagesNotIllegal(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).and(replacements
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).and(replacements
                         (hasItem(createAliasReplacements(disk1, disk2)))));
     }
 
@@ -139,7 +139,7 @@ public class DiskImagesValidatorTest {
     public void diskImagesAlreadyExistBothExist() {
         doReturn(new DiskImage()).when(validator).getExistingDisk(any(Guid.class));
         assertThat(validator.diskImagesAlreadyExist(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
                         (hasItem(createAliasReplacements(disk1, disk2)))));
     }
 
@@ -159,7 +159,7 @@ public class DiskImagesValidatorTest {
         doReturn(existingImage1).when(validator).getExistingDisk(disk1.getId());
         doReturn(existingImage2).when(validator).getExistingDisk(disk2.getId());
         assertThat(validator.diskImagesAlreadyExist(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
                         (hasItem(createAliasReplacements(existingImage1, existingImage2)))));
     }
 
@@ -169,7 +169,7 @@ public class DiskImagesValidatorTest {
         doReturn(new DiskImage()).when(validator).getExistingDisk(disk1.getId());
         doReturn(null).when(validator).getExistingDisk(disk2.getId());
         assertThat(validator.diskImagesAlreadyExist(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
                         (hasItem(createAliasReplacements(disk1)))));
     }
 
@@ -183,7 +183,7 @@ public class DiskImagesValidatorTest {
     public void diskImagesDontExist() {
         doReturn(false).when(validator).isDiskExists(disk1.getId());
         doReturn(false).when(validator).isDiskExists(disk2.getId());
-        assertThat(validator.diskImagesNotExist(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_NOT_EXIST));
+        assertThat(validator.diskImagesNotExist(), failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST));
     }
 
     @Test
@@ -202,14 +202,14 @@ public class DiskImagesValidatorTest {
     public void diskImagesNotLockedFirstLocked() {
         disk1.setImageStatus(ImageStatus.LOCKED);
         assertThat(validator.diskImagesNotLocked(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED)).and(replacements(hasItem(createAliasReplacements(disk1)))));
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED)).and(replacements(hasItem(createAliasReplacements(disk1)))));
     }
 
     @Test
     public void diskImagesNotLockedSecondtLocked() {
         disk2.setImageStatus(ImageStatus.LOCKED);
         assertThat(validator.diskImagesNotLocked(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED)).and(replacements(hasItem(createAliasReplacements(disk2)))));
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED)).and(replacements(hasItem(createAliasReplacements(disk2)))));
     }
 
     @Test
@@ -217,7 +217,7 @@ public class DiskImagesValidatorTest {
         disk1.setImageStatus(ImageStatus.LOCKED);
         disk2.setImageStatus(ImageStatus.LOCKED);
         assertThat(validator.diskImagesNotLocked(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED)).and(replacements
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED)).and(replacements
                         (hasItem(createAliasReplacements(disk1, disk2)))));
     }
 
@@ -244,7 +244,7 @@ public class DiskImagesValidatorTest {
         disk1.setVmEntityType(VmEntityType.TEMPLATE);
         when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Arrays.asList(disk2));
         assertThat(validator.diskImagesHaveNoDerivedDisks(null),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_DERIVED_DISKS));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DETECTED_DERIVED_DISKS));
     }
 
     @Test
@@ -256,7 +256,7 @@ public class DiskImagesValidatorTest {
         disk2.setStorageIds(storageDomainIds);
         when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Arrays.asList(disk2));
         assertThat(validator.diskImagesHaveNoDerivedDisks(storageDomainId),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_DERIVED_DISKS));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DETECTED_DERIVED_DISKS));
     }
 
     @Test
@@ -274,7 +274,7 @@ public class DiskImagesValidatorTest {
         List<VmDevice> createdDevices = prepareForCheckingIfDisksSnapshotsAttachedToOtherVms();
         createdDevices.get(1).setSnapshotId(Guid.newGuid());
         assertThat(validator.diskImagesSnapshotsNotAttachedToOtherVms(false),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM));
         verify(snapshotDao, times(1)).get(createdDevices.get(1).getSnapshotId());
         verify(snapshotDao, never()).get(createdDevices.get(0).getSnapshotId());
     }
@@ -315,7 +315,7 @@ public class DiskImagesValidatorTest {
         Map<Guid, StorageDomain> storageDomainMap = createStorageDomainsMap(disk1, disk2);
         assertThat(validator.diskImagesOnAnyApplicableDomains(validDomainsForDisk,
                 storageDomainMap,
-                VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
+                EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
                 EnumSet.of(StorageDomainStatus.Active)), isValid());
     }
 
@@ -327,8 +327,8 @@ public class DiskImagesValidatorTest {
         Map<Guid, StorageDomain> storageDomainMap = createStorageDomainsMap(disk1, disk2);
         assertThat(validator.diskImagesOnAnyApplicableDomains(validDomainsForDisk,
                 storageDomainMap,
-                VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
-                EnumSet.of(StorageDomainStatus.Active)), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS));
+                EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
+                EnumSet.of(StorageDomainStatus.Active)), failsWith(EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS));
     }
 
     @Test
@@ -338,8 +338,8 @@ public class DiskImagesValidatorTest {
         Map<Guid, StorageDomain> storageDomainMap = createStorageDomainsMap(disk1, disk2);
         assertThat(validator.diskImagesOnAnyApplicableDomains(validDomainsForDisk,
                 storageDomainMap,
-                VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
-                EnumSet.of(StorageDomainStatus.Active)), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS));
+                EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
+                EnumSet.of(StorageDomainStatus.Active)), failsWith(EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS));
     }
 
     private VmDevice createVmDeviceForDisk(DiskImage disk) {

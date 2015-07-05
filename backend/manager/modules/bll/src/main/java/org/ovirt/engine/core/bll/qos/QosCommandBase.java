@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.qos.QosDao;
 
@@ -69,7 +69,7 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
 
     protected boolean validateParameters() {
         if (getQos() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_QOS_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_QOS_NOT_FOUND);
         }
         return true;
     }
@@ -84,7 +84,7 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__QOS);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__QOS);
     }
 
     protected abstract M getQosValidator(T qosBase);

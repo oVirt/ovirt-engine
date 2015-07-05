@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,15 +41,15 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
 
     @Override
     protected void setActionMessageParameters () {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__SET);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TICKET);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__SET);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TICKET);
     }
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects () {
         final List<PermissionSubject> permissions = super.getPermissionCheckSubjects();
         if (needPermissionForConnectingToConsole()) {
-            permissions.add(new PermissionSubject(getVmId(), VdcObjectType.VM, ActionGroup.RECONNECT_TO_VM, VdcBllMessages.USER_CANNOT_FORCE_RECONNECT_TO_VM));
+            permissions.add(new PermissionSubject(getVmId(), VdcObjectType.VM, ActionGroup.RECONNECT_TO_VM, EngineMessage.USER_CANNOT_FORCE_RECONNECT_TO_VM));
             neededPermissions = true;
         }
         return permissions;
@@ -104,7 +104,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // Check that the virtual machine exists:
         final VM vm = getVm();
         if (vm == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
 
             return false;
         }
@@ -117,7 +117,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // to the console:
         final VMStatus status = vm.getStatus();
         if (status != VMStatus.Up && status != VMStatus.Paused && status != VMStatus.PoweringUp && status != VMStatus.PoweringDown && status != VMStatus.RebootInProgress) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
         }
 
         // Nothing else, all checks have been performed using permission
@@ -182,7 +182,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
                 vm.getId(), user.getId());
 
         // Set the result messages indicating that the operation failed:
-        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_USE_BY_OTHER_USER);
+        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IN_USE_BY_OTHER_USER);
 
         // The command failed:
         setSucceeded(false);

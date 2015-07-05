@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesCommandBase<T> {
 
@@ -16,16 +16,16 @@ public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesComman
         boolean returnValue = true;
         if (getRole() == null) {
             returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_ROLE_INVALID_ROLE_ID);
+            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_REMOVE_ROLE_INVALID_ROLE_ID);
         } else {
             if (checkIfRoleIsReadOnly(getReturnValue().getCanDoActionMessages())) {
                 returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.VAR__TYPE__ROLE);
-                addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+                addCanDoActionMessage(EngineMessage.VAR__TYPE__ROLE);
+                addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
             } else {
                 if (getPermissionDao().getAllForRole(getParameters().getRoleId()).size() != 0) {
                     returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_ROLE_ATTACHED_TO_PERMISSION);
+                    addCanDoActionMessage(EngineMessage.ERROR_CANNOT_REMOVE_ROLE_ATTACHED_TO_PERMISSION);
 
                 }
             }

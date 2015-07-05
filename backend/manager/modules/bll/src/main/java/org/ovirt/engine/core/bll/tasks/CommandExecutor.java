@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -220,7 +220,7 @@ public class CommandExecutor {
             retValue = new VdcReturnValueBase();
             retValue.setSucceeded(false);
             VdcFault fault = new VdcFault();
-            fault.setError(VdcBllErrors.ResourceException);
+            fault.setError(EngineError.ResourceException);
             fault.setMessage(Backend.getInstance()
                     .getVdsErrorsTranslator()
                     .TranslateErrorTextSingle(fault.getError().toString()));

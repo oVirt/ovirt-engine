@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VfsConfigNetworkParameters;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class AddVfsConfigNetworkCommand extends NetworkVfsConfigCommandBase {
 
@@ -37,6 +37,6 @@ public class AddVfsConfigNetworkCommand extends NetworkVfsConfigCommandBase {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
     }
 }

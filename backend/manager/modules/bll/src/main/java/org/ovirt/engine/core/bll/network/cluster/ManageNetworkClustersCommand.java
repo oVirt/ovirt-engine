@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -246,7 +246,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
             if (networkClusterIds.contains(networkCluster.getId())) {
                 final String networkClusterReplacement = String.format("${NetworkCluster} %s", networkCluster.getId());
                 return new ValidationResult(
-                        VdcBllMessages.ACTION_TYPE_FAILED_DUPLICATE_NETWORK_CLUSTER_INPUT, networkClusterReplacement);
+                        EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_NETWORK_CLUSTER_INPUT, networkClusterReplacement);
             } else {
                 networkClusterIds.add(networkCluster.getId());
             }

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
@@ -46,28 +46,28 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
     @Override
     protected boolean canDoAction() {
         if (getParameters().getDeviceNames() == null || getParameters().getDeviceNames().isEmpty()) {
-            failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DEVICE_MUST_BE_SPECIFIED);
+            failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DEVICE_MUST_BE_SPECIFIED);
         }
 
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         // hot(un)plug not supported (yet)
         if (getVm().getStatus() != VMStatus.Down) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
         }
 
         if (getVm().getDedicatedVmForVdsList().isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
         }
 
         if (getVm().getDedicatedVmForVdsList().size() > 1) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
         }
 
         if (getHostDevices() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_FOUND);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_FOUND);
         }
 
         return true;

@@ -44,8 +44,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskSt
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -161,7 +161,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
     private void mockBackend(boolean succeeded,
             JobExecutionStatus rebalanceStopStatus,
             boolean isRebalancegTaskCompleted,
-            VdcBllErrors errorCode) {
+            EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doReturn("TestVDS").when(cmd).getVdsGroupName();
@@ -265,7 +265,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
     public void executeCommandWhenFailed() {
         cmd = spy(createTestCommand(volumeWithRebalanceTask));
         prepareMocks(cmd);
-        mockBackend(false, JobExecutionStatus.FAILED, false, VdcBllErrors.GlusterVolumeRebalanceStopFailed);
+        mockBackend(false, JobExecutionStatus.FAILED, false, EngineError.GlusterVolumeRebalanceStopFailed);
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 

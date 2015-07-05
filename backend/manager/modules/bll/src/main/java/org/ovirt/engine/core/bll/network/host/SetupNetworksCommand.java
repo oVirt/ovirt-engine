@@ -25,9 +25,9 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
@@ -76,8 +76,8 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__SETUP);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORKS);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__SETUP);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORKS);
     }
 
     @Override
@@ -85,13 +85,13 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         VDS vds = getVds();
 
         if (vds == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
             return false;
         }
 
         if (!(SUPPORTED_HOST_STATUSES.contains(vds.getStatus()) || (vds.getStatus() == VDSStatus.Installing && isInternalExecution()))) {
-            addCanDoActionMessage(VdcBllMessages.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL);
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+            addCanDoActionMessage(EngineMessage.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL);
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
             return false;
         }
 
@@ -153,7 +153,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
             if (retVal != null) {
                 if (!retVal.getSucceeded() && retVal.getVdsError() == null && getParameters().isCheckConnectivity()) {
-                    throw new VdcBLLException(VdcBllErrors.SETUP_NETWORKS_ROLLBACK, retVal.getExceptionString());
+                    throw new EngineException(EngineError.SETUP_NETWORKS_ROLLBACK, retVal.getExceptionString());
                 }
 
                 VdsHandler.handleVdsResult(retVal);

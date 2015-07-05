@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -84,7 +84,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         return volume;
     }
 
-    private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
+    private void mockBackend(boolean succeeded, EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doNothing().when(cmd).endStepJobAborted(any(String.class));
@@ -136,7 +136,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
                         getBricks(volumeWithRemoveBricksTask))));
         prepareMocks(cmd);
-        mockBackend(false, VdcBllErrors.GlusterVolumeRemoveBricksStopFailed);
+        mockBackend(false, EngineError.GlusterVolumeRemoveBricksStopFailed);
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 

@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -38,11 +38,11 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
         String connectionId = getConnection().getid();
         List<StorageDomain> domains = null;
         if (StringUtils.isEmpty(connectionId) ) {
-           return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
+           return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
         }
         StorageServerConnections connection = getStorageServerConnectionDao().get(connectionId);
         if(connection == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
         // if user passed only the connection id for removal, vdsm still needs few more details in order to disconnect, so
         // bringing them from db and repopulating them in the connection object received in input parameters
@@ -148,18 +148,18 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected boolean prepareFailureMessageForDomains(String domainNames) {
         addCanDoActionMessageVariable("domainNames", domainNames);
-        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
+        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 
     protected boolean prepareFailureMessageForDisks(String diskNames) {
         addCanDoActionMessageVariable("diskNames", diskNames);
-        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS);
+        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS);
     }
 
     protected boolean prepareFailureMessageForDomainsAndDisks(String domainNames, String diskNames) {
         addCanDoActionMessageVariable("domainNames", domainNames);
         addCanDoActionMessageVariable("diskNames", diskNames);
-        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS_AND_DISKS);
+        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS_AND_DISKS);
     }
 
     protected String createDomainNamesListFromStorageDomains(List<StorageDomain> domains) {
@@ -179,18 +179,18 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
         Map<String, Pair<String, String>> locks = new HashMap<>();
         locks.put(getConnection().getconnection(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         // lock connection's id to avoid editing or removing this connection at the same time
         // by another user
         locks.put(getConnection().getid(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__CONNECTION);
+        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
     }
 }

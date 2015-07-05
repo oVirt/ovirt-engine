@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -72,7 +72,7 @@ public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> ex
                                     iscsiMap.toString());
                             encounterConnectionProblems = true;
                         }
-                    } catch (VdcBLLException e) {
+                    } catch (EngineException e) {
                         log.error("Could not connect Host '{}' - '{}' to Iscsi Storage Server: {}",
                                 host.getName(),
                                 host.getId(),
