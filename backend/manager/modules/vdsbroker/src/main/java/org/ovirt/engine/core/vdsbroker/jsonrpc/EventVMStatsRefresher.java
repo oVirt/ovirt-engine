@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -90,23 +89,29 @@ public class EventVMStatsRefresher extends VMStatsRefresher {
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     Guid vmid = new Guid((String) entry.getKey());
                     VM dbVm = dbFacade.getVmDao().get(vmid);
+                    VmInternalData vdsmVm;
                     if (dbVm == null) {
-                        log.error("failed to fetch VM '{}' from db. Status remain unchanged", vmid);
-                        return;
+                        vdsmVm = createVmInternalData(vmid, (Map<String, Object>) map.get(vmid.toString()), notifyTime);
+                    } else {
+                        vdsmVm = createVmInternalData(dbVm, (Map<String, Object>) map.get(vmid.toString()), notifyTime);
+
+                        // if dbVm runs on different host, monitoring expect it to be null
+                        if (!manager.getVdsId().equals(dbVm.getRunOnVds())) {
+                            dbVm = null;
+                        }
                     }
-                    VmInternalData vdsmVm = createVmInternalData(dbVm, (Map<String, Object>) map.get(vmid.toString()), notifyTime);
-                    // make sure to ignore events from other hosts during migration
-                    // and process once the migration is done
-                    if (dbVm.getRunOnVds() == null || dbVm.getRunOnVds().equals(manager.getVdsId())
-                            || (!dbVm.getRunOnVds().equals(manager.getVdsId()) && vdsmVm.getVmDynamic().getStatus() == VMStatus.Up)) {
-                        if (vdsmVm != null) {
-                            changedVms.add(new Pair<>(dbVm, vdsmVm));
-                        }
-                        if (isDevicesChanged(dbVm, vdsmVm)) {
-                            devicesChangedVms.add(new Pair<>(dbVm, vdsmVm));
-                        }
+
+                    changedVms.add(new Pair<>(dbVm, vdsmVm));
+                    if (isDevicesChanged(dbVm, vdsmVm)) {
+                        devicesChangedVms.add(new Pair<>(dbVm, vdsmVm));
                     }
                 }
+            }
+
+            private VmInternalData createVmInternalData(Guid vmId, Map<String, Object> xmlRpcStruct, Double notifyTime) {
+                VM fakeVm = new VM();
+                fakeVm.setId(vmId);
+                return createVmInternalData(fakeVm, xmlRpcStruct, notifyTime);
             }
 
             private VmInternalData createVmInternalData(VM dbVm, Map<String, Object> xmlRpcStruct, Double notifyTime) {
