@@ -12,7 +12,6 @@
       <module name="org.ovirt.engine.core.utils" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.core.dal" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.core.aaa" export="true" meta-inf="import"/>
-      <module name="org.ovirt.engine.extensions.builtin" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.core.branding" export="true" meta-inf="import"/>
     </dependencies>
   </deployment>
