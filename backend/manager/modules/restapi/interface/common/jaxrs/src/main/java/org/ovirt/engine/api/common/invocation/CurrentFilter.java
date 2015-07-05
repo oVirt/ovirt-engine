@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
-import org.ovirt.engine.core.common.queries.GetValueBySessionQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -80,8 +80,7 @@ public class CurrentFilter implements Filter {
     }
 
     private DbUser findPrincipal(String sessionId) {
-        GetValueBySessionQueryParameters parameters = new GetValueBySessionQueryParameters(sessionId, "user");
-        VdcQueryReturnValue result = backend.runPublicQuery(VdcQueryType.GetValueBySession, parameters);
+        VdcQueryReturnValue result = backend.runPublicQuery(VdcQueryType.GetDbUserBySession, new VdcQueryParametersBase(sessionId));
         return result.getReturnValue();
     }
 }

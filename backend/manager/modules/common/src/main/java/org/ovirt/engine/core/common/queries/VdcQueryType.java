@@ -260,7 +260,7 @@ public enum VdcQueryType implements Serializable {
     RegisterVds(VdcQueryAuthType.User),
     CheckDBConnection(VdcQueryAuthType.User),
     ValidateSession(VdcQueryAuthType.User),
-    GetValueBySession,
+    GetDbUserBySession,
 
     // Auxiliary queries used by architecture compatibility
     IsClusterEmpty(VdcQueryAuthType.User),

@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.aaa;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.queries.GetValueBySessionQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
-public class GetValueBySessionQuery<P extends GetValueBySessionQueryParameters> extends QueriesCommandBase<P> {
-    public GetValueBySessionQuery(P parameters) {
+public class GetDbUserBySessionQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+    public GetDbUserBySessionQuery(P parameters) {
         super(parameters);
     }
 
@@ -12,7 +12,7 @@ public class GetValueBySessionQuery<P extends GetValueBySessionQueryParameters> 
     protected void executeQueryCommand() {
         boolean succeeded = true;
         if (SessionDataContainer.getInstance().isSessionExists(getParameters().getSessionId())) {
-            setReturnValue(SessionDataContainer.getInstance().getData(getParameters().getSessionId(), getParameters().getKey(), false));
+            setReturnValue(SessionDataContainer.getInstance().getUser(getParameters().getSessionId(), false));
         } else {
             succeeded = false;
         }

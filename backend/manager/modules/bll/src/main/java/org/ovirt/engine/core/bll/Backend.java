@@ -618,7 +618,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         case GetAAAProfileList:
         case RegisterVds:
         case CheckDBConnection:
-        case GetValueBySession:
+        case GetDbUserBySession:
         case ValidateSession:
             return runQueryImpl(actionType, parameters, false);
         case GetConfigurationValue:

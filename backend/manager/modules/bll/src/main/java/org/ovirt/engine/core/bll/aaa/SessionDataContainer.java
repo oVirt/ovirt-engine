@@ -63,7 +63,7 @@ public class SessionDataContainer {
      *            - if perform refresh of session
      * @return
      */
-    public final Object getData(String sessionId, String key, boolean refresh) {
+    protected final Object getData(String sessionId, String key, boolean refresh) {
         if (sessionId == null) {
             return null;
         }
@@ -79,7 +79,7 @@ public class SessionDataContainer {
         return value;
     }
 
-    public final void setData(String sessionId, String key, Object value) {
+    protected final void setData(String sessionId, String key, Object value) {
         SessionInfo sessionInfo = getSessionInfo(sessionId);
         if (sessionInfo == null) {
             sessionInfo = new SessionInfo();
@@ -169,10 +169,6 @@ public class SessionDataContainer {
         setData(sessionId, HARD_LIMIT_PARAMETER_NAME, hardLimit);
     }
 
-    public final void setSoftLimit(String sessionId, Date softLimit) {
-        setData(sessionId, SOFT_LIMIT_PARAMETER_NAME, softLimit);
-    }
-
     /**
      * @param sessionId The session to get the user for
      * @param refresh Whether refreshing the session is needed
@@ -200,8 +196,6 @@ public class SessionDataContainer {
     public String getPassword(String sessionId) {
         return (String) getData(sessionId, PASSWORD_PARAMETER_NAME, false);
     }
-
-
 
     public void refresh(String sessionId) {
         refresh(getSessionInfo(sessionId));
@@ -279,6 +273,9 @@ public class SessionDataContainer {
         getDbFacade().getEngineSessionDao().remove(getEngineSessionSeqId(sessionId));
         sessionInfoMap.remove(sessionId);
     }
+
+
+    // these are public for *TEST* only due to limitation of java.
 
     public void setDbFacade(DbFacade dbFacade) {
         this.dbFacade = dbFacade;
