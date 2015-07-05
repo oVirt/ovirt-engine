@@ -30,10 +30,10 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NameAndOptionalDomainValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -325,9 +325,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 new NotEmptyValidation() });
         getUsername().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
-                new AsciiNameValidation() });
+                new NameAndOptionalDomainValidation() });
         getPassword().validateEntity(new IValidation[] {
-                new NotEmptyValidation()} );
+                new NotEmptyValidation() });
 
         return getvCenter().getIsValid()
                 && getEsx().getIsValid()
@@ -351,6 +351,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public static String getVmwareUrl(String username, String vcenter,
             String dataCenter, String esx, boolean verify) {
+        if (username != null) {
+            username = username.replace("@", "%40"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+
         return "vpx://" + //$NON-NLS-1$
                 (StringUtils.isEmpty(username) ? "" : username + "@") + //$NON-NLS-1$ //$NON-NLS-2$
                 vcenter +
