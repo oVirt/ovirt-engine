@@ -48,8 +48,8 @@
 		<d:content>
 			<g:VerticalPanel width="100%">
 				<g:FlowPanel addStyleNames="{style.generalSectionStyle}">
-					<e:ListModelListBoxEditor ui:field="dataCentersEditor" />
-					<e:ListModelListBoxEditor ui:field="importSourcesEditor" />
+					<e:ListModelListBoxEditor ui:field="dataCentersEditor" addStyleNames="{style.sourcePropertyStyle}" />
+					<e:ListModelListBoxEditor ui:field="importSourcesEditor" addStyleNames="{style.sourcePropertyStyle}" />
 				</g:FlowPanel>
 
 				<g:FlowPanel ui:field="exportPanel" visible="false" addStyleNames="{style.exportSectionStyle}">
