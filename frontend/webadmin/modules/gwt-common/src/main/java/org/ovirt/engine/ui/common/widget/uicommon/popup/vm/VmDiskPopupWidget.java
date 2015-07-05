@@ -461,7 +461,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             sanStorageModel = fcpStorageModel;
         }
 
-        storageModel.setSelectedItem(sanStorageModel);
+        storageModel.setCurrentStorageItem(sanStorageModel);
         diskModel.setSanStorageModel(sanStorageModel);
 
         // Execute 'UpdateCommand' to call 'GetDeviceList'

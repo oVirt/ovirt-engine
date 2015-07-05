@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -60,6 +62,16 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
     public void setStorage(StorageDomain value) {
         privateStorage = value;
+    }
+
+    private IStorageModel currentStorageItem;
+
+    public IStorageModel getCurrentStorageItem() {
+        return currentStorageItem;
+    }
+
+    public void setCurrentStorageItem(IStorageModel storageModel) {
+        currentStorageItem = storageModel;
     }
 
     public ArrayList<IStorageModel> updatedStorageModels = new ArrayList<IStorageModel>();
@@ -141,16 +153,6 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
     private void setFormat(ListModel<StorageFormatType> value) {
         privateFormat = value;
-    }
-
-    private ListModel<IStorageModel> privateAvailableStorageItems;
-
-    public ListModel<IStorageModel> getAvailableStorageItems() {
-        return privateAvailableStorageItems;
-    }
-
-    private void setAvailableStorageItems(ListModel<IStorageModel> value) {
-        privateAvailableStorageItems = value;
     }
 
     private ListModel<StorageType> availableStorageTypeItems;
@@ -236,10 +238,11 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         setHost(new ListModel<VDS>());
         getHost().getSelectedItemChangedEvent().addListener(this);
         setFormat(new ListModel<StorageFormatType>());
-        setAvailableStorageItems(new ListModel<IStorageModel>());
         setAvailableStorageTypeItems(new ListModel<StorageType>());
         getAvailableStorageTypeItems().getSelectedItemChangedEvent().addListener(this);
+        getAvailableStorageTypeItems().getItemsChangedEvent().addListener(this);
         setAvailableStorageDomainTypeItems(new ListModel<StorageDomainType>());
+        getAvailableStorageDomainTypeItems().getSelectedItemChangedEvent().addListener(this);
         setWarningLowSpaceIndicator(new EntityModel<Integer>());
         getWarningLowSpaceIndicator().setEntity(getWarningLowSpaceIndicatorValue());
         setWarningLowSpaceSize(new EntityModel<String>());
@@ -274,10 +277,14 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                 host_SelectedItemChanged();
             }
             else if (sender == getAvailableStorageTypeItems()) {
-                setSelectedItem(null);
-                setSelectedItem(getAvailableStorageItems().getSelectedItem());
-                updateWipeAfterDelete();
+                storageType_SelectedItemChanged();
             }
+            else if (sender == getAvailableStorageDomainTypeItems()) {
+                updateCurrentStorageItem();
+            }
+        }
+        else if (ev.matchesDefinition(itemsChangedEventDefinition)) {
+            storageItemsChanged();
         }
         else if (ev.matchesDefinition(NfsStorageModel.pathChangedEventDefinition)) {
             nfsStorageModel_PathChanged(sender, args);
@@ -295,20 +302,16 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         }
     }
 
-    @Override
-    protected void onSelectedItemChanged() {
-        super.onSelectedItemChanged();
-
-        if (getSelectedItem() != null) {
+    protected void storageType_SelectedItemChanged() {
+        updateCurrentStorageItem();
+        if (getCurrentStorageItem() != null) {
             updateFormat();
             updateHost();
         }
+        updateWipeAfterDelete();
     }
 
-    @Override
-    protected void itemsChanged() {
-        super.itemsChanged();
-
+    protected void storageItemsChanged() {
         if (getItems() != null) {
             for (Object item : getItems()) {
                 IStorageModel model = (IStorageModel) item;
@@ -329,18 +332,17 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
     private void host_SelectedItemChanged() {
         VDS host = getHost().getSelectedItem();
-        if (getSelectedItem() != null) {
+        if (getCurrentStorageItem() != null) {
             // When changing host clear items for san storage model.
-            if (getSelectedItem() instanceof SanStorageModelBase) {
-                SanStorageModelBase sanStorageModel = (SanStorageModelBase) getSelectedItem();
-
+            if (getCurrentStorageItem() instanceof SanStorageModelBase) {
+                SanStorageModelBase sanStorageModel = (SanStorageModelBase) getCurrentStorageItem();
                 if (getStorage() == null) {
                     sanStorageModel.setItems(null);
                 }
             }
 
             if (host != null) {
-                getSelectedItem().getUpdateCommand().execute();
+                getCurrentStorageItem().getUpdateCommand().execute();
 
                 String prefix = host.isOvirtNode() ? localFSPath : ""; //$NON-NLS-1$
                 if (!StringHelper.isNullOrEmpty(prefix)) {
@@ -468,13 +470,13 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
             return;
         }
 
-        if (getSelectedItem() == null) {
+        if (getCurrentStorageItem() == null) {
             return;
         }
 
         StoragePool dataCenter = getDataCenter().getSelectedItem();
 
-        boolean localFsOnly = getSelectedItem() instanceof LocalStorageModel;
+        boolean localFsOnly = getCurrentStorageItem() instanceof LocalStorageModel;
         Guid dataCenterId = dataCenter == null ? null : dataCenter.getId();
 
         AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery(this, new INewAsyncCallback() {
@@ -493,7 +495,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
         // Allow only hosts with version above 2.2 for export storage.
         ArrayList<VDS> list = new ArrayList<VDS>();
-        if (getSelectedItem() != null && getSelectedItem().getRole() == StorageDomainType.ImportExport) {
+        if (getCurrentStorageItem() != null && getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
             for (VDS host : hosts) {
                 if (host.getVdsGroupCompatibilityVersion().compareTo(new Version("2.2")) >= 0) { //$NON-NLS-1$
                     list.add(host);
@@ -543,13 +545,13 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
         ArrayList<StorageFormatType> formats = new ArrayList<StorageFormatType>();
 
-        if (dataCenter != null && getSelectedItem() != null) {
+        if (dataCenter != null && getCurrentStorageItem() != null) {
             if (!dataCenter.getId().equals(UnassignedDataCenterId)) {
                 getFormat().setIsChangeable(false);
 
                 // If data center has format defined and the selected-item role is Data, choose it.
                 if (dataCenter.getStoragePoolFormatType() != null
-                        && getSelectedItem().getRole().isDataDomain()) {
+                        && getCurrentStorageItem().getRole().isDataDomain()) {
                     formats.add(dataCenter.getStoragePoolFormatType());
                     selectItem = dataCenter.getStoragePoolFormatType();
                 }
@@ -558,20 +560,20 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                 // the next "else if..." condition; however, just in case we will support non-NFS ISO/Export in the
                 // future
                 // and in order to make the code more explicit, it is here. ***)
-                else if ((getSelectedItem().getRole() == StorageDomainType.ISO
-                        || getSelectedItem().getRole() == StorageDomainType.ImportExport)) {
+                else if ((getCurrentStorageItem().getRole() == StorageDomainType.ISO
+                        || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport)) {
                     formats.add(StorageFormatType.V1);
                 }
-                else if ((getSelectedItem().getType() == StorageType.NFS
-                        || getSelectedItem().getType() == StorageType.LOCALFS)
+                else if ((getCurrentStorageItem().getType() == StorageType.NFS
+                        || getCurrentStorageItem().getType() == StorageType.LOCALFS)
                         && (dataCenter.getCompatibilityVersion().compareTo(Version.v3_1) < 0)) {
                     formats.add(StorageFormatType.V1);
                 }
-                else if (getSelectedItem().getType().isBlockDomain()
+                else if (getCurrentStorageItem().getType().isBlockDomain()
                         && dataCenter.getCompatibilityVersion().compareTo(Version.v3_0) < 0) {
                     formats.add(StorageFormatType.V1);
                 }
-                else if (getSelectedItem().getType().isBlockDomain()
+                else if (getCurrentStorageItem().getType().isBlockDomain()
                         && dataCenter.getCompatibilityVersion().compareTo(Version.v3_0) == 0) {
                     formats.add(StorageFormatType.V2);
                     selectItem = StorageFormatType.V2;
@@ -582,20 +584,20 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                 }
             }
             else { // Unassigned DC:
-                if ((getSelectedItem().getRole() == StorageDomainType.ISO
-                        || getSelectedItem().getRole() == StorageDomainType.ImportExport)) {
+                if ((getCurrentStorageItem().getRole() == StorageDomainType.ISO
+                        || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport)) {
                     // ISO/Export domains should not be available for '(none)' DC
                     return;
                 }
 
                 getFormat().setIsChangeable(true);
 
-                if (getSelectedItem().getType() != StorageType.POSIXFS && getSelectedItem().getType() != StorageType.GLUSTERFS) {
+                if (getCurrentStorageItem().getType() != StorageType.POSIXFS && getCurrentStorageItem().getType() != StorageType.GLUSTERFS) {
                     formats.add(StorageFormatType.V1);
                 }
 
-                if ((getSelectedItem().getType() == StorageType.FCP || getSelectedItem().getType() == StorageType.ISCSI)
-                        && getSelectedItem().getRole() == StorageDomainType.Data) {
+                if ((getCurrentStorageItem().getType() == StorageType.FCP || getCurrentStorageItem().getType() == StorageType.ISCSI)
+                        && getCurrentStorageItem().getRole() == StorageDomainType.Data) {
                     formats.add(StorageFormatType.V2);
                 }
 
@@ -633,17 +635,10 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     }
 
     public boolean validate() {
-        ValidationResult result = new NotEmptyValidation().validate(getHost().getSelectedItem());
-        if (!result.getSuccess()) {
-            getHost().setIsValid(false);
-            for (String reason : result.getReasons()) {
-                getHost().getInvalidityReasons().add(reason);
-            }
-        }
-        else {
-            getHost().setIsValid(true);
-        }
-        validateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
+        validateListItems(getHost());
+        validateListItems(getAvailableStorageDomainTypeItems());
+        validateListItems(getAvailableStorageTypeItems());
+
         getDescription().validateEntity(new IValidation[] {
                 new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE),
                 new SpecialAsciiI18NOrNoneValidation() });
@@ -655,17 +650,23 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         });
 
         getCriticalSpaceActionBlocker().validateEntity(new IValidation[] {
-                new NotEmptyValidation(), new IntegerValidation(0,  Integer.MAX_VALUE)
+                new NotEmptyValidation(), new IntegerValidation(0, Integer.MAX_VALUE)
         });
 
         return getName().getIsValid()
                 && getHost().getIsValid()
                 && getIsValid()
-                && getSelectedItem().validate()
+                && getCurrentStorageItem().validate()
                 && getDescription().getIsValid()
                 && getComment().getIsValid()
                 && getWarningLowSpaceIndicator().getIsValid()
                 && getCriticalSpaceActionBlocker().getIsValid();
+    }
+
+    private void validateListItems(ListModel<?> listModel) {
+        ValidationResult result = new NotEmptyValidation().validate(listModel.getSelectedItem());
+        listModel.setIsValid(result.getSuccess());
+        listModel.getInvalidityReasons().addAll(result.getReasons());
     }
 
     private SystemTreeItemModel privateSystemTreeSelectedItem;
@@ -711,4 +712,27 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         }
         return getStorage().getCriticalSpaceActionBlocker();
     }
+
+    public void updateCurrentStorageItem() {
+        StorageDomainType storageDomainType = getAvailableStorageDomainTypeItems().getSelectedItem();
+        StorageType storageType = getAvailableStorageTypeItems().getSelectedItem();
+        for (IStorageModel model : getItems()) {
+            if (model.getType() == storageType && model.getRole() == storageDomainType) {
+                setCurrentStorageItem(model);
+                break;
+            }
+        }
+    }
+
+    public void updateStorageTypesByDomainType() {
+        StorageDomainType storageDomainType = getAvailableStorageDomainTypeItems().getSelectedItem();
+        Set<StorageType> filteredStorageTypes = new LinkedHashSet<>();
+        for (IStorageModel currModel : getItems()) {
+            if (currModel.getRole() == storageDomainType) {
+                filteredStorageTypes.add(currModel.getType());
+            }
+        }
+        getAvailableStorageTypeItems().setItems(filteredStorageTypes);
+    }
+
 }

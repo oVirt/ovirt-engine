@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -327,8 +324,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                 break;
         }
 
-        updateStorageSelectedItem(object, storageType, storageDomainType);
-        IStorageModel model = object.getSelectedItem();
+        updateStorageItem(object);
+        IStorageModel model = object.getCurrentStorageItem();
 
         // Re-apply element IDs on 'storageView' change
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -347,24 +344,12 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         }
     }
 
-    private void updateStorageSelectedItem(StorageModel storageModel, StorageType storageType, StorageDomainType domainType) {
-        for (IStorageModel model : storageModel.getItems()) {
-            if (model.getType() == storageType && model.getRole() == domainType) {
-                storageModel.setSelectedItem(model);
-                break;
-            }
-        }
+    private void updateStorageItem(StorageModel storageModel) {
+        storageModel.updateCurrentStorageItem();
     }
 
     private void updateStorageTypesByDomainType(StorageModel storageModel) {
-        StorageDomainType storageDomainType = domainFunctionListEditor.asEditor().getActualEditor().getValue();
-        Set<StorageType> filteredStorageTypes = new LinkedHashSet<>();
-        for (IStorageModel currModel : storageModel.getItems()) {
-            if (currModel.getRole() == storageDomainType) {
-                filteredStorageTypes.add(currModel.getType());
-            }
-        }
-        storageModel.getAvailableStorageTypeItems().setItems(filteredStorageTypes);
+        storageModel.updateStorageTypesByDomainType();
     }
 
     @Override

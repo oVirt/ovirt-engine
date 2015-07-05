@@ -31,24 +31,30 @@ public abstract class StorageModelBehavior extends Model {
 
     public abstract void updateItemsAvailability();
 
-    public void filterUnSelectableModels() {
-        // Filter UnSelectable models from AvailableStorageItems list
-        ArrayList<IStorageModel> items = Linq.<IStorageModel> cast(getModel().getItems());
+    public void setStorageItems() {
+        ArrayList<IStorageModel> filterredItems = getSelectableModels();
         Set<StorageDomainType> storageDomainTypeItems = new LinkedHashSet<StorageDomainType>();
         Set<StorageType> storageTypeItems = new LinkedHashSet<StorageType>();
 
-        // This is needed as long the AvailableStorageItems List is in use. Other code parts rely on this information. See ImportStorageModelBehavior.
+        for (IStorageModel model : filterredItems) {
+            storageDomainTypeItems.add(model.getRole());
+            storageTypeItems.add(model.getType());
+        }
+        getModel().getAvailableStorageDomainTypeItems().setItems(storageDomainTypeItems);
+        getModel().getAvailableStorageTypeItems().setItems(storageTypeItems);
+        getModel().storageItemsChanged();
+    }
+
+    public ArrayList<IStorageModel> getSelectableModels() {
+        // Filter un-selectable models
+        ArrayList<IStorageModel> items = Linq.<IStorageModel> cast(getModel().getItems());
         ArrayList<IStorageModel> filterredItems = new ArrayList<IStorageModel>();
         for (IStorageModel model : items) {
             if (((Model) model).getIsSelectable()) {
                 filterredItems.add(model);
-                storageDomainTypeItems.add(model.getRole());
-                storageTypeItems.add(model.getType());
             }
         }
-        getModel().getAvailableStorageItems().setItems(filterredItems);
-        getModel().getAvailableStorageDomainTypeItems().setItems(storageDomainTypeItems);
-        getModel().getAvailableStorageTypeItems().setItems(storageTypeItems);
+        return filterredItems;
     }
 
     public void onStorageModelUpdated(IStorageModel model) {
@@ -62,9 +68,9 @@ public abstract class StorageModelBehavior extends Model {
             getModel().getHost().setItems(new ArrayList<VDS>());
             getModel().getHost().setSelectedItem(null);
 
-            filterUnSelectableModels();
+            setStorageItems();
 
-            if (getModel().getSelectedItem() != null) {
+            if (getModel().getCurrentStorageItem() != null) {
                 getModel().updateFormat();
             }
         }

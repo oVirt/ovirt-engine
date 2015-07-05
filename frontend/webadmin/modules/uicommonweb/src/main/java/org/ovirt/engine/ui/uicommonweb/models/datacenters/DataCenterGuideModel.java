@@ -552,7 +552,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         ArrayList<IStorageModel> list = new ArrayList<IStorageModel>();
         list.add(localStorageModel);
         model.setItems(list);
-        model.setSelectedItem(list.get(0));
+        model.setCurrentStorageItem(list.get(0));
 
         AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
@@ -667,10 +667,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         }
 
         // Save changes.
-        if (model.getSelectedItem() instanceof NfsStorageModel) {
+        if (model.getCurrentStorageItem() instanceof NfsStorageModel) {
             saveNfsStorage();
         }
-        else if (model.getSelectedItem() instanceof LocalStorageModel) {
+        else if (model.getCurrentStorageItem() instanceof LocalStorageModel) {
             saveLocalStorage();
         }
         else {
@@ -693,7 +693,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         StorageModel model = (StorageModel) getWindow();
         VDS host = model.getHost().getSelectedItem();
         boolean isNew = model.getStorage() == null;
-        storageModel = model.getSelectedItem();
+        storageModel = model.getCurrentStorageItem();
         LocalStorageModel localModel = (LocalStorageModel) storageModel;
         path = (String) localModel.getPath().getEntity();
 
@@ -731,7 +731,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
     public void saveNewLocalStorage() {
         StorageModel model = (StorageModel) getWindow();
-        LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
+        LocalStorageModel localModel = (LocalStorageModel) model.getCurrentStorageItem();
         VDS host = model.getHost().getSelectedItem();
         hostId = host.getId();
 
@@ -829,7 +829,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
-        storageModel = model.getSelectedItem();
+        storageModel = model.getCurrentStorageItem();
         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
         path = nfsModel.getPath().getEntity();
 
@@ -868,7 +868,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
     public void saveNewNfsStorage() {
         StorageModel model = (StorageModel) getWindow();
-        NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
+        NfsStorageModel nfsModel = (NfsStorageModel) model.getCurrentStorageItem();
         VDS host = model.getHost().getSelectedItem();
         hostId = host.getId();
 
@@ -960,7 +960,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
     private void saveSanStorage(TaskContext context) {
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
-        SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
+        SanStorageModel sanModel = (SanStorageModel) model.getCurrentStorageItem();
 
         storageDomain = new StorageDomainStatic();
         storageDomain.setStorageType(sanModel.getType());
@@ -998,7 +998,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
     public void saveNewSanStorage() {
         StorageModel model = (StorageModel) getWindow();
-        SanStorageModel sanStorageModel = (SanStorageModel) model.getSelectedItem();
+        SanStorageModel sanStorageModel = (SanStorageModel) model.getCurrentStorageItem();
 
         ArrayList<String> usedLunsMessages = sanStorageModel.getUsedLunsMessages();
 
@@ -1021,7 +1021,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         getWindow().startProgress(null);
 
         StorageModel model = (StorageModel) getWindow();
-        SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
+        SanStorageModel sanModel = (SanStorageModel) model.getCurrentStorageItem();
         VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
@@ -1057,7 +1057,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
     private void forceCreationWarning(ArrayList<String> usedLunsMessages) {
         StorageModel storageModel = (StorageModel) getWindow();
-        SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
+        SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
         sanStorageModel.setForce(true);
 
         ConfirmationModel model = new ConfirmationModel();

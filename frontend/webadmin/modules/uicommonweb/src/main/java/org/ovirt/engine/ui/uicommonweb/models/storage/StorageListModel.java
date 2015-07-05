@@ -322,7 +322,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.getComment().setIsChangeable(isStoragePropertiesEditable);
         model.getWipeAfterDelete().setIsChangeable(isStoragePropertiesEditable);
         //set the field domain type to non editable
-        model.getAvailableStorageItems().setIsChangeable(false);
         model.getAvailableStorageTypeItems().setIsChangeable(false);
         model.getAvailableStorageDomainTypeItems().setIsChangeable(false);
         model.setIsChangeable(isStorageNameEditable || isStoragePropertiesEditable);
@@ -339,7 +338,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         IStorageModel item = prepareStorageForEdit(storage, model);
 
         model.setItems(new ArrayList<IStorageModel>(Arrays.asList(new IStorageModel[] {item})));
-        model.setSelectedItem(item);
+        model.setCurrentStorageItem(item);
 
         model.initialize();
 
@@ -443,31 +442,31 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         VDS host = model.getHost().getSelectedItem();
 
         // Save changes.
-        if (model.getSelectedItem() instanceof NfsStorageModel) {
-            NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
+        if (model.getCurrentStorageItem() instanceof NfsStorageModel) {
+            NfsStorageModel nfsModel = (NfsStorageModel) model.getCurrentStorageItem();
             nfsModel.setMessage(null);
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
                             host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole(), StorageType.NFS,
                             model.getActivateDomain().getEntity() }))).run();
-        } else if (model.getSelectedItem() instanceof LocalStorageModel) {
-            LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
+        } else if (model.getCurrentStorageItem() instanceof LocalStorageModel) {
+            LocalStorageModel localModel = (LocalStorageModel) model.getCurrentStorageItem();
             localModel.setMessage(null);
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
                             host.getId(), localModel.getPath().getEntity(), localModel.getRole(), StorageType.LOCALFS,
                             model.getActivateDomain().getEntity() }))).run();
-        } else if (model.getSelectedItem() instanceof PosixStorageModel) {
-            PosixStorageModel posixModel = (PosixStorageModel) model.getSelectedItem();
+        } else if (model.getCurrentStorageItem() instanceof PosixStorageModel) {
+            PosixStorageModel posixModel = (PosixStorageModel) model.getCurrentStorageItem();
             posixModel.setMessage(null);
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
                             host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), posixModel.getType(),
                             model.getActivateDomain().getEntity() }))).run();
-        } else if (model.getSelectedItem() instanceof ImportSanStorageModel) {
+        } else if (model.getCurrentStorageItem() instanceof ImportSanStorageModel) {
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportSan", //$NON-NLS-1$
                             host.getId(), model.getActivateDomain().getEntity() }))).run();
@@ -668,13 +667,13 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             return;
         }
 
-        if (model.getSelectedItem() instanceof NfsStorageModel) {
+        if (model.getCurrentStorageItem() instanceof NfsStorageModel) {
             saveNfsStorage();
         }
-        else if (model.getSelectedItem() instanceof LocalStorageModel) {
+        else if (model.getCurrentStorageItem() instanceof LocalStorageModel) {
             saveLocalStorage();
         }
-        else if (model.getSelectedItem() instanceof PosixStorageModel) {
+        else if (model.getCurrentStorageItem() instanceof PosixStorageModel) {
             savePosixStorage();
         }
         else {
@@ -715,7 +714,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     private void saveSanStorage() {
         StorageModel storageModel = (StorageModel) getWindow();
-        SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
+        SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
         ArrayList<String> usedLunsMessages = sanStorageModel.getUsedLunsMessages();
 
         if (usedLunsMessages.isEmpty()) {
@@ -741,7 +740,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     private void forceCreationWarning(ArrayList<String> usedLunsMessages) {
         StorageModel storageModel = (StorageModel) getWindow();
-        SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
+        SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
         sanStorageModel.setForce(true);
 
         ConfirmationModel model = new ConfirmationModel();
@@ -993,7 +992,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         StorageDomain selectedItem = getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
-        storageModel = model.getSelectedItem();
+        storageModel = model.getCurrentStorageItem();
         PosixStorageModel posixModel = (PosixStorageModel) storageModel;
         path = posixModel.getPath().getEntity();
 
@@ -1038,7 +1037,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     public void saveNewPosixStorage() {
 
         StorageModel model = (StorageModel) getWindow();
-        PosixStorageModel posixModel = (PosixStorageModel) model.getSelectedItem();
+        PosixStorageModel posixModel = (PosixStorageModel) model.getCurrentStorageItem();
         VDS host = model.getHost().getSelectedItem();
         hostId = host.getId();
 
@@ -1118,7 +1117,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         StorageDomain selectedItem = getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
-        storageModel = model.getSelectedItem();
+        storageModel = model.getCurrentStorageItem();
         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
         path = nfsModel.getPath().getEntity();
 
@@ -1162,7 +1161,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         if (host != null) {
             hostId = host.getId();
         }
-        IStorageModel storageModel = model.getSelectedItem();
+        IStorageModel storageModel = model.getCurrentStorageItem();
         connection = new StorageServerConnections();
         connection.setid(storageDomain.getStorage());
         connection.setconnection(path);
@@ -1210,7 +1209,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     public void saveNewNfsStorage() {
         StorageModel model = (StorageModel) getWindow();
-        NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
+        NfsStorageModel nfsModel = (NfsStorageModel) model.getCurrentStorageItem();
         VDS host = model.getHost().getSelectedItem();
         hostId = host.getId();
 
@@ -1299,7 +1298,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     public void saveNewSanStorage() {
         StorageModel model = (StorageModel) getWindow();
-        SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
+        SanStorageModel sanModel = (SanStorageModel) model.getCurrentStorageItem();
         VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
@@ -1318,7 +1317,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 public void executed(FrontendActionAsyncResult result) {
                         StorageListModel storageListModel = (StorageListModel) result.getState();
                         StorageModel storageModel = (StorageModel) storageListModel.getWindow();
-                        storageListModel.storageModel = storageModel.getSelectedItem();
+                        storageListModel.storageModel = storageModel.getCurrentStorageItem();
                         if (!result.getReturnValue().getSucceeded()) {
                             storageListModel.onFinish(storageListModel.context, false, storageListModel.storageModel);
                             return;
@@ -1343,7 +1342,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         StorageModel model = (StorageModel) getWindow();
         VDS host = model.getHost().getSelectedItem();
         boolean isNew = model.getStorage() == null;
-        storageModel = model.getSelectedItem();
+        storageModel = model.getCurrentStorageItem();
         LocalStorageModel localModel = (LocalStorageModel) storageModel;
         path = localModel.getPath().getEntity();
 
@@ -1389,7 +1388,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     public void saveNewLocalStorage() {
         StorageModel model = (StorageModel) getWindow();
-        LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
+        LocalStorageModel localModel = (LocalStorageModel) model.getCurrentStorageItem();
         VDS host = model.getHost().getSelectedItem();
         hostId = host.getId();
 
@@ -1471,7 +1470,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         this.context = context;
 
         StorageModel model = (StorageModel) getWindow();
-        SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
+        SanStorageModel sanModel = (SanStorageModel) model.getCurrentStorageItem();
         StorageDomain storage = getSelectedItem();
 
         boolean isNew = model.getStorage() == null;
@@ -1502,7 +1501,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
                     StorageListModel storageListModel = (StorageListModel) result.getState();
                     StorageModel storageModel = (StorageModel) getWindow();
-                    SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
+                    SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
                     boolean force = sanStorageModel.isForce();
                     StorageDomain storageDomain1 = storageListModel.getSelectedItem();
                     ArrayList<String> lunIds = new ArrayList<String>();
@@ -1548,7 +1547,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         ArrayList<Object> data = (ArrayList<Object>) context.getState();
         StorageModel model = (StorageModel) getWindow();
 
-        storageModel = model.getSelectedItem();
+        storageModel = model.getCurrentStorageItem();
         hostId = (Guid) data.get(1);
         path = (String) data.get(2);
         domainType = (StorageDomainType) data.get(3);
@@ -1560,7 +1559,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     private void importSanStorage(final TaskContext context) {
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
-        storageModel = model.getSelectedItem();
+        storageModel = model.getCurrentStorageItem();
         ImportSanStorageModel importSanStorageModel = (ImportSanStorageModel) storageModel;
         checkSanDomainAttachedToDc("OnImportSan", importSanStorageModel.getStorageDomains().getSelectedItems()); //$NON-NLS-1$
     }
@@ -1972,7 +1971,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     private boolean isConnectionOverriden() {
         StorageModel model = (StorageModel) getWindow();
-        NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
+        NfsStorageModel nfsModel = (NfsStorageModel) model.getCurrentStorageItem();
         return (nfsModel.getVersion().getSelectedItem().getEntity() != null
                 || nfsModel.getRetransmissions().asConvertible().nullableShort() != null
                 || nfsModel.getTimeout().asConvertible().nullableShort() != null
