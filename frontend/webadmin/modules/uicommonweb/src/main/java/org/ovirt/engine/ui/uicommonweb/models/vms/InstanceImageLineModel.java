@@ -288,6 +288,7 @@ public class InstanceImageLineModel extends EntityModel {
         vm.setStoragePoolId(parentModel.getUnitVmModel().getSelectedDataCenter().getId());
         vm.setVdsGroupCompatibilityVersion(parentModel.getUnitVmModel().getSelectedCluster().getCompatibilityVersion());
         model.setVm(vm);
+        model.getSizeExtend().setIsAvailable(false);
 
         setupModelAsDialog(model,
                 ConstantsManager.getInstance().getConstants().newVirtualDiskTitle(),
