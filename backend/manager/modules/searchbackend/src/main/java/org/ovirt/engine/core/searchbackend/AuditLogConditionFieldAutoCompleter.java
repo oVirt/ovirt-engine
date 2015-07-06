@@ -22,6 +22,14 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
     public static final String EVENT_DATACENTER = "EVENT_DATACENTER";
     public static final String EVENT_VOLUME = "EVENT_VOLUME";
     public static final String DELETED = "DELETED";
+    public static final String EVENT_VM_ID = "_EVENT_VM_ID";
+    public static final String EVENT_TEMPLATE_ID = "_EVENT_TEMPLATE_ID";
+    public static final String EVENT_STORAGE_ID = "_EVENT_STORAGE_ID";
+    public static final String EVENT_HOST_ID = "_EVENT_HOST_ID";
+    public static final String EVENT_DATACENTER_ID = "_EVENT_DATACENTER_ID";
+    public static final String EVENT_QUOTA_ID = "_EVENT_QUOTA_ID";
+    public static final String USRID = "USRID";
+    public static final String EVENT_VOLUME_ID = "_EVENT_VOLUME_ID";
 
     public AuditLogConditionFieldAutoCompleter() {
         super();
@@ -44,13 +52,13 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         buildCompletions();
         // These search options remain hidden from the autocompletion
         // but still available for the user interface
-        mVerbs.add("_EVENT_VM_ID");
-        mVerbs.add("_EVENT_TEMPLATE_ID");
-        mVerbs.add("_EVENT_STORAGE_ID");
-        mVerbs.add("_EVENT_HOST_ID");
-        mVerbs.add("_EVENT_DATACENTER_ID");
-        mVerbs.add("_EVENT_QUOTA_ID");
-        mVerbs.add("USRID");
+        mVerbs.add(EVENT_VM_ID);
+        mVerbs.add(EVENT_TEMPLATE_ID);
+        mVerbs.add(EVENT_STORAGE_ID);
+        mVerbs.add(EVENT_HOST_ID);
+        mVerbs.add(EVENT_DATACENTER_ID);
+        mVerbs.add(EVENT_QUOTA_ID);
+        mVerbs.add(USRID);
         // Building the autoCompletion Dict
         // Building the types dict
         getTypeDictionary().put(TYPE, Integer.class);
@@ -63,15 +71,15 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         getTypeDictionary().put(EVENT_TEMPLATE, String.class);
         getTypeDictionary().put(EVENT_STORAGE, String.class);
         getTypeDictionary().put(EVENT_DATACENTER, String.class);
-        getTypeDictionary().put("USRID", String.class);
-        getTypeDictionary().put("_EVENT_HOST_ID", String.class);
-        getTypeDictionary().put("_EVENT_VM_ID", String.class);
-        getTypeDictionary().put("_EVENT_TEMPLATE_ID", String.class);
-        getTypeDictionary().put("_EVENT_STORAGE_ID", String.class);
-        getTypeDictionary().put("_EVENT_DATACENTER_ID", String.class);
-        getTypeDictionary().put("_EVENT_QUOTA_ID", String.class);
+        getTypeDictionary().put(USRID, String.class);
+        getTypeDictionary().put(EVENT_HOST_ID, String.class);
+        getTypeDictionary().put(EVENT_VM_ID, String.class);
+        getTypeDictionary().put(EVENT_TEMPLATE_ID, String.class);
+        getTypeDictionary().put(EVENT_STORAGE_ID, String.class);
+        getTypeDictionary().put(EVENT_DATACENTER_ID, String.class);
+        getTypeDictionary().put(EVENT_QUOTA_ID, String.class);
         getTypeDictionary().put(EVENT_VOLUME, String.class);
-        getTypeDictionary().put("_EVENT_VOLUME_ID", String.class);
+        getTypeDictionary().put(EVENT_VOLUME_ID, String.class);
         getTypeDictionary().put(CORRELATION_ID, String.class);
         getTypeDictionary().put(ORIGIN, String.class);
         getTypeDictionary().put(CUSTOM_EVENT_ID, Integer.class);
@@ -82,20 +90,20 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         columnNameDict.put(MESSAGE, "message");
         columnNameDict.put(TIME, "log_time");
         columnNameDict.put(USER_NAME, "user_name");
-        columnNameDict.put("USRID", "user_id::varchar");
+        columnNameDict.put(USRID, "user_id::varchar");
         columnNameDict.put(EVENT_HOST, "vds_name");
-        columnNameDict.put("_EVENT_HOST_ID", "vds_id::varchar");
+        columnNameDict.put(EVENT_HOST_ID, "vds_id::varchar");
         columnNameDict.put(EVENT_VM, "vm_name");
-        columnNameDict.put("_EVENT_VM_ID", "vm_id::varchar");
+        columnNameDict.put(EVENT_VM_ID, "vm_id::varchar");
         columnNameDict.put(EVENT_TEMPLATE, "vm_template_name");
-        columnNameDict.put("_EVENT_TEMPLATE_ID", "vm_template_id::varchar");
+        columnNameDict.put(EVENT_TEMPLATE_ID, "vm_template_id::varchar");
         columnNameDict.put(EVENT_STORAGE, "storage_domain_name");
-        columnNameDict.put("_EVENT_STORAGE_ID", "storage_domain_id::varchar");
+        columnNameDict.put(EVENT_STORAGE_ID, "storage_domain_id::varchar");
         columnNameDict.put(EVENT_DATACENTER, "storage_pool_name");
-        columnNameDict.put("_EVENT_DATACENTER_ID", "storage_pool_id::varchar");
-        columnNameDict.put("_EVENT_QUOTA_ID", "quota_id::varchar");
+        columnNameDict.put(EVENT_DATACENTER_ID, "storage_pool_id::varchar");
+        columnNameDict.put(EVENT_QUOTA_ID, "quota_id::varchar");
         columnNameDict.put(EVENT_VOLUME, "gluster_volume_name");
-        columnNameDict.put("_EVENT_VOLUME_ID", "gluster_volume_id::varchar");
+        columnNameDict.put(EVENT_VOLUME_ID, "gluster_volume_id::varchar");
         columnNameDict.put(CORRELATION_ID, "correlation_id::varchar");
         columnNameDict.put(ORIGIN, "origin::varchar");
         columnNameDict.put(CUSTOM_EVENT_ID, "custom_event_id::int");
@@ -115,13 +123,13 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         }
         else if (TYPE.equals(fieldName) || MESSAGE.equals(fieldName)
                 || USER_NAME.equals(fieldName) || EVENT_HOST.equals(fieldName)
-                || "_EVENT_HOST_ID".equals(fieldName)
-                || EVENT_VM.equals(fieldName) || "_EVENT_VM_ID".equals(fieldName)
-                || EVENT_TEMPLATE.equals(fieldName) || "_EVENT_TEMPLATE_ID".equals(fieldName)
+                || EVENT_HOST_ID.equals(fieldName)
+                || EVENT_VM.equals(fieldName) || EVENT_VM_ID.equals(fieldName)
+                || EVENT_TEMPLATE.equals(fieldName) || EVENT_TEMPLATE_ID.equals(fieldName)
                 || EVENT_STORAGE.equals(fieldName) || EVENT_DATACENTER.equals(fieldName)
-                || "_EVENT_DATACENTER_ID".equals(fieldName)
-                || "_EVENT_QUOTA_ID".equals(fieldName)
-                || EVENT_VOLUME.equals(fieldName) || "_EVENT_VOLUME_ID".equals(fieldName) ||
+                || EVENT_DATACENTER_ID.equals(fieldName)
+                || EVENT_QUOTA_ID.equals(fieldName)
+                || EVENT_VOLUME.equals(fieldName) || EVENT_VOLUME_ID.equals(fieldName) ||
                 CORRELATION_ID.equals(fieldName) || ORIGIN.equals(fieldName) ||
                 CUSTOM_EVENT_ID.equals(fieldName) || DELETED.equals(fieldName)) {
             return StringConditionRelationAutoCompleter.INSTANCE;

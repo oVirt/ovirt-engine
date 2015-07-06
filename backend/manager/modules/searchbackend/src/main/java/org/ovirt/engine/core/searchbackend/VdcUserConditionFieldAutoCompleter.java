@@ -6,6 +6,11 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     public static final String LAST_NAME = "LASTNAME";
     public static final String USER_NAME = "USRNAME";
     public static final String DIRECTORY = "DIRECTORY";
+    public static final String LOGIN = "LOGIN";
+    public static final String DEPARTMENT = "DEPARTMENT";
+    public static final String TAG = "TAG";
+    public static final String POOL = "POOL";
+    public static final String TYPE = "TYPE";
 
     public enum UserOrGroup {
         User,
@@ -18,12 +23,12 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mVerbs.add(FIRST_NAME);
         mVerbs.add(LAST_NAME);
         mVerbs.add(USER_NAME);
-        mVerbs.add("LOGIN");
+        mVerbs.add(LOGIN);
         mVerbs.add(DIRECTORY);
-        mVerbs.add("DEPARTMENT");
-        mVerbs.add("TAG");
-        mVerbs.add("POOL");
-        mVerbs.add("TYPE");
+        mVerbs.add(DEPARTMENT);
+        mVerbs.add(TAG);
+        mVerbs.add(POOL);
+        mVerbs.add(TYPE);
 
         // Building the auto completion dictionary.
         buildCompletions();
@@ -31,23 +36,23 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put(FIRST_NAME, String.class);
         getTypeDictionary().put(LAST_NAME, String.class);
         getTypeDictionary().put(USER_NAME, String.class);
-        getTypeDictionary().put("LOGIN", String.class);
+        getTypeDictionary().put(LOGIN, String.class);
         getTypeDictionary().put(DIRECTORY, String.class);
-        getTypeDictionary().put("DEPARTMENT", String.class);
-        getTypeDictionary().put("TAG", String.class);
-        getTypeDictionary().put("POOL", String.class);
-        getTypeDictionary().put("TYPE", UserOrGroup.class);
+        getTypeDictionary().put(DEPARTMENT, String.class);
+        getTypeDictionary().put(TAG, String.class);
+        getTypeDictionary().put(POOL, String.class);
+        getTypeDictionary().put(TYPE, UserOrGroup.class);
 
         // building the ColumnName Dict
         columnNameDict.put(FIRST_NAME, "name");
         columnNameDict.put(LAST_NAME, "surname");
         columnNameDict.put(USER_NAME, "username");
-        columnNameDict.put("LOGIN", "username");
-        columnNameDict.put("DIRECTORY", "domain");
-        columnNameDict.put("DEPARTMENT", "department");
-        columnNameDict.put("TAG", "tag_name");
-        columnNameDict.put("POOL", "vm_pool_name");
-        columnNameDict.put("TYPE", "user_group");
+        columnNameDict.put(LOGIN, "username");
+        columnNameDict.put(DIRECTORY, "domain");
+        columnNameDict.put(DEPARTMENT, "department");
+        columnNameDict.put(TAG, "tag_name");
+        columnNameDict.put(POOL, "vm_pool_name");
+        columnNameDict.put(TYPE, "user_group");
         // Building the validation dict
         buildBasicValidationTable();
     }
@@ -72,14 +77,14 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
             String loginValue = customizedValue.substring(0, index) + "'";
             String directoryValue = "'" + customizedValue.substring(index + 1);
             String loginSql = buildConditionSql(
-                "LOGIN",
+                    LOGIN,
                 loginValue,
                 customizedRelation,
                 tableName,
                 caseSensitive
             );
             String directorySql = buildConditionSql(
-                "DIRECTORY",
+                    DIRECTORY,
                 directoryValue,
                 customizedRelation,
                 tableName,

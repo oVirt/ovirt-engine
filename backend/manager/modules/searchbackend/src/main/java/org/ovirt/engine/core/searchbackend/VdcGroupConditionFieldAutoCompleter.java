@@ -2,23 +2,26 @@ package org.ovirt.engine.core.searchbackend;
 
 public class VdcGroupConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
 
+    public static final String GRPNAME = "GRPNAME";
+    public static final String NAME = "NAME";
+
     public VdcGroupConditionFieldAutoCompleter() {
         super();
 
         // Building the basic verbs dictionary:
-        mVerbs.add("GRPNAME");
-        mVerbs.add("NAME");
+        mVerbs.add(GRPNAME);
+        mVerbs.add(NAME);
 
         // Building the auto completion dictionary:
         buildCompletions();
 
         // Building the types dictionary:
-        getTypeDictionary().put("GRPNAME", String.class);
-        getTypeDictionary().put("NAME", String.class);
+        getTypeDictionary().put(GRPNAME, String.class);
+        getTypeDictionary().put(NAME, String.class);
 
         // building the column name dictionary:
-        columnNameDict.put("GRPNAME", "name");
-        columnNameDict.put("NAME", "name");
+        columnNameDict.put(GRPNAME, "name");
+        columnNameDict.put(NAME, "name");
 
         // Building the validation dictionary:
         buildBasicValidationTable();

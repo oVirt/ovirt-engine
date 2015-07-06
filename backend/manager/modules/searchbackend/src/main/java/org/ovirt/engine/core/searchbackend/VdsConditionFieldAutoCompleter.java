@@ -20,11 +20,23 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
     public static final String CPU_USAGE = "CPU_USAGE";
     public static final String NETWORK_USAGE = "NETWORK_USAGE";
     public static final String UPDATE_AVAILABLE = "UPDATE_AVAILABLE";
+    public static final String COMMENT = "COMMENT";
+    public static final String LOAD = "LOAD";
+    public static final String VERSION = "VERSION";
+    public static final String CPUS = "CPUS";
+    public static final String MEMORY = "MEMORY";
+    public static final String CPU_SPEED = "CPU_SPEED";
+    public static final String CPU_MODEL = "CPU_MODEL";
+    public static final String MIGRATING_VMS = "MIGRATING_VMS";
+    public static final String COMMITTED_MEM = "COMMITTED_MEM";
+    public static final String TAG = "TAG";
+    public static final String TYPE = "TYPE";
+    public static final String ARCHITECTURE = "ARCHITECTURE";
 
     public VdsConditionFieldAutoCompleter() {
         super();
         mVerbs.add(NAME);
-        mVerbs.add("COMMENT");
+        mVerbs.add(COMMENT);
         mVerbs.add(STATUS);
         mVerbs.add(EXTERNAL_STATUS);
         mVerbs.add(CLUSTER);
@@ -32,26 +44,26 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         mVerbs.add(CPU_USAGE);
         mVerbs.add(MEM_USAGE);
         mVerbs.add(NETWORK_USAGE);
-        mVerbs.add("LOAD");
-        mVerbs.add("VERSION");
-        mVerbs.add("CPUS");
-        mVerbs.add("MEMORY");
-        mVerbs.add("CPU_SPEED");
-        mVerbs.add("CPU_MODEL");
+        mVerbs.add(LOAD);
+        mVerbs.add(VERSION);
+        mVerbs.add(CPUS);
+        mVerbs.add(MEMORY);
+        mVerbs.add(CPU_SPEED);
+        mVerbs.add(CPU_MODEL);
         mVerbs.add(ACTIVE_VMS);
-        mVerbs.add("MIGRATING_VMS");
-        mVerbs.add("COMMITTED_MEM");
-        mVerbs.add("TAG");
-        mVerbs.add("TYPE");
+        mVerbs.add(MIGRATING_VMS);
+        mVerbs.add(COMMITTED_MEM);
+        mVerbs.add(TAG);
+        mVerbs.add(TYPE);
         mVerbs.add(DATACENTER);
-        mVerbs.add("ARCHITECTURE");
+        mVerbs.add(ARCHITECTURE);
         mVerbs.add(UPDATE_AVAILABLE);
         // mVerbs.Add("NOTE", "NOTE");
         buildCompletions();
         mVerbs.add("ID");
         // Building the types dict
         getTypeDictionary().put(NAME, String.class);
-        getTypeDictionary().put("COMMENT", String.class);
+        getTypeDictionary().put(COMMENT, String.class);
         getTypeDictionary().put(STATUS, VDSStatus.class);
         getTypeDictionary().put(EXTERNAL_STATUS, ExternalStatus.class);
         getTypeDictionary().put(CLUSTER, String.class);
@@ -59,25 +71,25 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         getTypeDictionary().put(CPU_USAGE, Integer.class);
         getTypeDictionary().put(MEM_USAGE, Integer.class);
         getTypeDictionary().put(NETWORK_USAGE, Integer.class);
-        getTypeDictionary().put("LOAD", BigDecimal.class);
-        getTypeDictionary().put("VERSION", String.class);
-        getTypeDictionary().put("CPUS", Integer.class);
-        getTypeDictionary().put("MEMORY", Integer.class);
-        getTypeDictionary().put("CPU_SPEED", BigDecimal.class);
-        getTypeDictionary().put("CPU_MODEL", String.class);
+        getTypeDictionary().put(LOAD, BigDecimal.class);
+        getTypeDictionary().put(VERSION, String.class);
+        getTypeDictionary().put(CPUS, Integer.class);
+        getTypeDictionary().put(MEMORY, Integer.class);
+        getTypeDictionary().put(CPU_SPEED, BigDecimal.class);
+        getTypeDictionary().put(CPU_MODEL, String.class);
         getTypeDictionary().put(ACTIVE_VMS, Integer.class);
-        getTypeDictionary().put("MIGRATING_VMS", Integer.class);
-        getTypeDictionary().put("COMMITTED_MEM", Integer.class);
-        getTypeDictionary().put("TAG", String.class);
-        getTypeDictionary().put("TYPE", VDSNiceType.class);
+        getTypeDictionary().put(MIGRATING_VMS, Integer.class);
+        getTypeDictionary().put(COMMITTED_MEM, Integer.class);
+        getTypeDictionary().put(TAG, String.class);
+        getTypeDictionary().put(TYPE, VDSNiceType.class);
         getTypeDictionary().put(DATACENTER, String.class);
         getTypeDictionary().put("ID", UUID.class);
-        getTypeDictionary().put("ARCHITECTURE", ArchitectureType.class);
+        getTypeDictionary().put(ARCHITECTURE, ArchitectureType.class);
         getTypeDictionary().put(UPDATE_AVAILABLE, Boolean.class);
         // mTypeDict.Add("NOTE", typeof(string));
         // building the ColumnName Dict
         columnNameDict.put(NAME, "vds_name");
-        columnNameDict.put("COMMENT", "free_text_comment");
+        columnNameDict.put(COMMENT, "free_text_comment");
         columnNameDict.put(STATUS, "status");
         columnNameDict.put(EXTERNAL_STATUS, "external_status");
         columnNameDict.put(CLUSTER, "vds_group_name");
@@ -85,20 +97,20 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         columnNameDict.put(CPU_USAGE, "usage_cpu_percent");
         columnNameDict.put(MEM_USAGE, "usage_mem_percent");
         columnNameDict.put(NETWORK_USAGE, "usage_network_percent");
-        columnNameDict.put("LOAD", "cpu_load");
-        columnNameDict.put("VERSION", "software_version");
-        columnNameDict.put("CPUS", "cpu_cores");
-        columnNameDict.put("MEMORY", "physical_mem_mb");
-        columnNameDict.put("CPU_SPEED", "cpu_speed_mh");
-        columnNameDict.put("CPU_MODEL", "cpu_model");
+        columnNameDict.put(LOAD, "cpu_load");
+        columnNameDict.put(VERSION, "software_version");
+        columnNameDict.put(CPUS, "cpu_cores");
+        columnNameDict.put(MEMORY, "physical_mem_mb");
+        columnNameDict.put(CPU_SPEED, "cpu_speed_mh");
+        columnNameDict.put(CPU_MODEL, "cpu_model");
         columnNameDict.put(ACTIVE_VMS, "vm_active");
-        columnNameDict.put("MIGRATING_VMS", "vm_migrating");
-        columnNameDict.put("COMMITTED_MEM", "mem_commited");
-        columnNameDict.put("TAG", "tag_name");
-        columnNameDict.put("TYPE", "vds_type");
+        columnNameDict.put(MIGRATING_VMS, "vm_migrating");
+        columnNameDict.put(COMMITTED_MEM, "mem_commited");
+        columnNameDict.put(TAG, "tag_name");
+        columnNameDict.put(TYPE, "vds_type");
         columnNameDict.put(DATACENTER, "storage_pool_name");
         columnNameDict.put("ID", "vds_id");
-        columnNameDict.put("ARCHITECTURE", "architecture");
+        columnNameDict.put(ARCHITECTURE, "architecture");
         columnNameDict.put(UPDATE_AVAILABLE, "is_update_available");
         // mColumnNameDict.Add("NOTE", "note");
         // Building the validation dict
@@ -107,11 +119,11 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        if ("MEMORY".equals(fieldName) || "CPUS".equals(fieldName)
+        if (MEMORY.equals(fieldName) || CPUS.equals(fieldName)
                 || CPU_USAGE.equals(fieldName) || MEM_USAGE.equals(fieldName)
-                || "LOAD".equals(fieldName) || "CPU_SPEED".equals(fieldName)
+                || LOAD.equals(fieldName) || CPU_SPEED.equals(fieldName)
                 || ACTIVE_VMS.equals(fieldName) || NETWORK_USAGE.equals(fieldName)
-                || "COMMITTED_MEM".equals(fieldName)) {
+                || COMMITTED_MEM.equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
         }
         else {
@@ -128,9 +140,9 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         else if (EXTERNAL_STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(ExternalStatus.class);
         }
-        else if ("TYPE".equals(fieldName)) {
+        else if (TYPE.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(VDSNiceType.class);
-        } else if ("ARCHITECTURE".equals(fieldName)) {
+        } else if (ARCHITECTURE.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(ArchitectureType.class);
         }
         else if (UPDATE_AVAILABLE.equals(fieldName)) {
