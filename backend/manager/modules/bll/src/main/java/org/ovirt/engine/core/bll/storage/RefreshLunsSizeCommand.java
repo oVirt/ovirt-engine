@@ -186,12 +186,19 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
 
     private void updateStorageDomainData() {
         VDSReturnValue returnValueUpdatedStorageDomain = getStatsForDomain();
-        StorageDomain updatedStorageDomain = (StorageDomain) returnValueUpdatedStorageDomain.getReturnValue();
-        updateStorageDomain(updatedStorageDomain);
+        if (returnValueUpdatedStorageDomain != null) {
+            StorageDomain updatedStorageDomain = (StorageDomain) returnValueUpdatedStorageDomain.getReturnValue();
+            updateStorageDomain(updatedStorageDomain);
+        } else {
+            log.error("Failed to update Storage Domain Data.");
+        }
     }
 
     protected VDSReturnValue getStatsForDomain() {
         VDS vds = LinqUtils.first(getAllRunningVdssInPool());
+        if (vds == null) {
+            return null;
+        }
         return runVdsCommand(VDSCommandType.GetStorageDomainStats,
                 new GetStorageDomainStatsVDSCommandParameters(vds.getId(), getParameters().getStorageDomainId()));
     }
