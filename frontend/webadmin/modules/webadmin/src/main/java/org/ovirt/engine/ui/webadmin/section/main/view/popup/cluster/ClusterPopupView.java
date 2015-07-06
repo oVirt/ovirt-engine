@@ -321,7 +321,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     ListModelListBoxEditor<ClusterPolicy> clusterPolicyEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Ignore
     protected KeyValueWidget<KeyValueModel> customPropertiesSheetEditor;
 
@@ -630,6 +630,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         migrateCompressedEditor = new ListModelListBoxEditor<Boolean>(
                 new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromGlobal()));
+
+        customPropertiesSheetEditor = new KeyValueWidget<KeyValueModel>("auto", "auto"); //$NON-NLS-1$ $NON-NLS-2$
     }
 
     private void initCheckBoxEditors() {
