@@ -10,18 +10,17 @@
 
         .label {
             color: #333333;
-            margin: 0px 5px;
+            margin: 0 5px;
             font-family: Verdana, sans-serif;
         }
 
         .pathEditorContent {
             width: 540px;
             margin-left: 87px;
-            line-height: 26px !important;
         }
 
         .pathExampleLabel {
-            margin: 0px 0px 0px 125px;
+            margin: 0 0 0 125px;
             font-size: 8pt;
             width: 450px;
         }
@@ -35,26 +34,24 @@
         .vfsTypeTextBoxEditor {
             width: 270px;
             margin-left: 57px;
-            line-height: 26px !important;
         }
 
         .mountOptionsTextBoxEditor {
             width: 270px;
             margin-left: 29px;
-            line-height: 26px !important;
         }
 
 	</ui:style>
 
     <g:VerticalPanel addStyleNames="{style.content}">
-        <ge:StringEntityModelTextBoxEditor ui:field="pathEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+        <ge:StringEntityModelTextBoxEditor ui:field="pathEditor"/>
         <g:Label ui:field="pathExampleLabel" addStyleNames="{style.pathExampleLabel}, generalDialogComment"/>
         <g:HorizontalPanel>
-            <ge:StringEntityModelTextBoxEditor ui:field="vfsTypeEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+            <ge:StringEntityModelTextBoxEditor ui:field="vfsTypeEditor"/>
             <g:Image ui:field="nfsPosixAlertIcon" resource='{resources.alertImage}' visible="false"/>
         </g:HorizontalPanel>
         <g:HorizontalPanel>
-            <ge:StringEntityModelTextBoxEditor ui:field="mountOptionsEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+            <ge:StringEntityModelTextBoxEditor ui:field="mountOptionsEditor"/>
         </g:HorizontalPanel>
     </g:VerticalPanel>
 

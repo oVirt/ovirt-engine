@@ -6,18 +6,17 @@
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.GlusterStorageView.WidgetStyle">
         .label {
             color: #333333;
-            margin: 0px 5px;
+            margin: 0 5px;
             font-family: Verdana, sans-serif;
         }
 
         .pathEditorContent {
             width: 540px;
             margin-left: 87px;
-            line-height: 26px !important;
         }
 
         .pathExampleLabel {
-            margin: 0px 0px 0px 125px;
+            margin: 0 0 0 125px;
             font-size: 8pt;
             width: 450px;
         }
@@ -31,24 +30,22 @@
         .vfsTypeTextBoxEditor {
             width: 270px;
             margin-left: 57px;
-            line-height: 26px !important;
         }
 
         .mountOptionsTextBoxEditor {
             width: 270px;
             margin-left: 29px;
-            line-height: 26px !important;
         }
 
     </ui:style>
 
     <g:VerticalPanel>
         <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
-        <ge:StringEntityModelTextBoxEditor ui:field="pathEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+        <ge:StringEntityModelTextBoxEditor ui:field="pathEditor"/>
         <g:Label ui:field="pathExampleLabel" addStyleNames="{style.pathExampleLabel}, generalDialogComment"/>
         <g:VerticalPanel>
-            <ge:StringEntityModelTextBoxEditor ui:field="vfsTypeEditor" addStyleNames="table_contentWidget_pfly_fix"/>
-            <ge:StringEntityModelTextBoxEditor ui:field="mountOptionsEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+            <ge:StringEntityModelTextBoxEditor ui:field="vfsTypeEditor"/>
+            <ge:StringEntityModelTextBoxEditor ui:field="mountOptionsEditor"/>
         </g:VerticalPanel>
     </g:VerticalPanel>
 

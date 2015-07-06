@@ -12,18 +12,17 @@
 
     .label {
         color: #333333;
-        margin: 0px 5px;
+        margin: 0 5px;
         font-family: Verdana, sans-serif;
     }
 
     .pathEditorContent {
         width: 540px;
         margin-left: 45px;
-        line-height: 26px !important;
     }
 
     .pathExampleLabel {
-        margin: 0px 0px 0px 125px;
+        margin: 0 0 0 125px;
         font-size: 8pt;
         width: 450px;
     }
@@ -48,15 +47,14 @@
     .versionListEditor,
     .mountTextBoxEditor {
         width: 474px;
-        line-height: 26px !important;
-        margin-bottom: 5px;
+        line-height: 30px;
     }
 
 </ui:style>
 
     <g:VerticalPanel addStyleNames="{style.content}">
         <g:VerticalPanel>
-            <ge:StringEntityModelTextBoxEditor ui:field="pathEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+            <ge:StringEntityModelTextBoxEditor ui:field="pathEditor"/>
             <g:Label ui:field="pathExampleLabel" addStyleNames="{style.pathExampleLabel}, generalDialogComment"/>
         </g:VerticalPanel>
         <d:AdvancedParametersExpander ui:field="expander"/>

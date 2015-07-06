@@ -9,7 +9,7 @@
         .generalTabTopDecorator {
             background-color: #D3D3D3;
             margin-bottom: 8px;
-            margin-top: 0px;
+            margin-top: 0;
             margin-right: 3px;
             padding-top: 6px;
             padding-bottom: 6px;
@@ -21,7 +21,7 @@
 		}
 
 		.activateDomainEditor {
-            padding-left: 0px;
+            padding-left: 0;
         }
 
         @external obrand_storageTypePanel;
@@ -42,13 +42,11 @@
 
         .warningTextBoxEditor {
             width: 23%;
-            line-height: 26px !important;
         }
 
         .blockerTextBoxEditor {
             width: 60px;
             margin-left: 6px;
-            line-height: 26px !important;
         }
 
 		.datacenterListEditor,
@@ -61,7 +59,6 @@
         .formatListEditor {
             width: 60px;
             margin-left: 6px;
-            line-height: 26px !important;
         }
 
 		.descriptionEditor,
@@ -90,10 +87,6 @@
             width: 320px;
         }
 
-        .warningLowSpaceSizeLabel {
-            line-height: 26px;
-        }
-
 	</ui:style>
 
     <d:SimpleDialogPanel width="760px" height="665px">
@@ -119,8 +112,8 @@
                 <d:AdvancedParametersExpander ui:field="advancedParametersExpander"/>
                 <g:VerticalPanel ui:field="advancedParametersExpanderContent">
                     <g:HorizontalPanel>
-                        <ge:IntegerEntityModelTextBoxEditor ui:field="warningLowSpaceIndicatorEditor" addStyleNames="table_contentWidget_pfly_fix {style.warningLowSpaceIndicatorEditor}"/>
-                        <g:Label ui:field="warningLowSpaceSizeLabel" addStyleNames="{style.warningLowSpaceSizeLabel}"/>
+                        <ge:IntegerEntityModelTextBoxEditor ui:field="warningLowSpaceIndicatorEditor" addStyleNames="{style.warningLowSpaceIndicatorEditor}"/>
+                        <g:Label ui:field="warningLowSpaceSizeLabel"/>
                     </g:HorizontalPanel>
                     <ge:IntegerEntityModelTextBoxEditor ui:field="criticalSpaceActionBlockerEditor"/>
                     <e:ListModelListBoxEditor ui:field="formatListEditor" />
