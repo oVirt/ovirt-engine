@@ -1364,7 +1364,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected boolean parentHasCallback() {
-        if (getParameters().getParentCommand() != VdcActionType.Unknown) {
+        if (getParameters().getParentCommand() != VdcActionType.Unknown
+                && getParameters().getParentParameters() != null) {
             CommandEntity commandEntity =
                     CommandCoordinatorUtil.getCommandEntity(getParameters().getParentParameters().getCommandId());
             return commandEntity != null && commandEntity.isCallbackEnabled();
