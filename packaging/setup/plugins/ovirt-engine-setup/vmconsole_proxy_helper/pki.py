@@ -371,8 +371,11 @@ class Plugin(plugin.PluginBase):
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 CopyFileInDirTransaction(
                     src_name=cert_file.path,
-                    dst_dir=ovmpcons.FileLocations.
-                    OVIRT_VMCONSOLE_PROXY_PKIDIR,
+                    dst_dir=(
+                        ovmpcons.FileLocations.
+                        OVIRT_VMCONSOLE_PROXY_PKIDIR
+                    ),
+                    dst_name=cert_file.destination,
                     mode=cert_file.mode,
                     owner=cert_file.owner,
                     group=cert_file.group,
