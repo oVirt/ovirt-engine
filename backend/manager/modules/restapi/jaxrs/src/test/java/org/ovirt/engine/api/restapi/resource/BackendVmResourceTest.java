@@ -243,11 +243,11 @@ public class BackendVmResourceTest
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
         setUpGetSoundcardExpectations(new int[] {0});
-        setUpGetRngDeviceExpectations(new int[]{0});
+        setUpGetRngDeviceExpectations(new int[] { 0 });
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                 VmManagementParametersBase.class,
-                new String[]{},
-                new Object[]{},
+                new String[] {},
+                new Object[] {},
                 true,
                 true));
 
@@ -259,8 +259,8 @@ public class BackendVmResourceTest
         setUpGetEntityExpectations(3);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
-                new String[]{"Id"},
-                new Object[]{GUIDS[2]},
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
 
         setUpGetPayloadExpectations(0, 1);
@@ -299,15 +299,15 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(2);
-        setUpGetConsoleExpectations(new int[]{0});
-        setUpGetVmOvfExpectations(new int[]{0});
-        setUpGetVirtioScsiExpectations(new int[] {0});
-        setUpGetSoundcardExpectations(new int[] {0});
-        setUpGetRngDeviceExpectations(new int[]{0});
+        setUpGetConsoleExpectations(new int[] { 0 });
+        setUpGetVmOvfExpectations(new int[] { 0 });
+        setUpGetVirtioScsiExpectations(new int[] { 0 });
+        setUpGetSoundcardExpectations(new int[] { 0 });
+        setUpGetRngDeviceExpectations(new int[] { 0 });
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                 VmManagementParametersBase.class,
-                new String[]{},
-                new Object[]{},
+                new String[] {},
+                new Object[] {},
                 true,
                 true));
         final VM model = getModel(0);
@@ -471,10 +471,10 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{0});
-        setUpGetVmOvfExpectations(new int[]{0});
-        setUpGetVirtioScsiExpectations(new int[] {0});
+        setUpGetVmOvfExpectations(new int[] { 0 });
+        setUpGetVirtioScsiExpectations(new int[] { 0 });
         setUpGetSoundcardExpectations(new int[] {0});
-        setUpGetRngDeviceExpectations(new int[]{0});
+        setUpGetRngDeviceExpectations(new int[] { 0 });
         setUpGetGraphicsExpectations(1);
     }
 
@@ -546,11 +546,11 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
-                                           VmManagementParametersBase.class,
-                                           new String[] {},
-                                           new Object[] {},
-                                           canDo,
-                                           success));
+                VmManagementParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                canDo,
+                success));
 
         try {
             resource.update(getModel(0));
@@ -585,8 +585,8 @@ public class BackendVmResourceTest
     public void testStart() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.RunVm,
                 RunVmParams.class,
-                new String[]{"VmId"},
-                new Object[]{GUIDS[0]}));
+                new String[] { "VmId" },
+                new Object[] { GUIDS[0] }));
 
         Response response = resource.start(new Action());
         verifyActionResponse(response);
@@ -745,9 +745,9 @@ public class BackendVmResourceTest
     @Test
     public void testSuspend() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.HibernateVm,
-                                           VmOperationParameterBase.class,
-                                           new String[] { "VmId" },
-                                           new Object[] { GUIDS[0] }));
+                VmOperationParameterBase.class,
+                new String[] { "VmId" },
+                new Object[] { GUIDS[0] }));
 
         verifyActionResponse(resource.suspend(new Action()));
     }
@@ -786,9 +786,9 @@ public class BackendVmResourceTest
     @Test
     public void testShutdown() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.ShutdownVm,
-                                           ShutdownVmParameters.class,
-                                           new String[] { "VmId" },
-                                           new Object[] { GUIDS[0] }));
+                ShutdownVmParameters.class,
+                new String[] { "VmId" },
+                new Object[] { GUIDS[0] }));
 
         verifyActionResponse(resource.shutdown(new Action()));
     }
@@ -801,6 +801,23 @@ public class BackendVmResourceTest
                                            new Object[] { GUIDS[0] }));
 
         verifyActionResponse(resource.reboot(new Action()));
+    }
+
+    @Test
+    public void testReorderMacAddresses() throws Exception {
+
+        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                control.createMock(org.ovirt.engine.core.common.businessentities.VM.class));
+
+        setUriInfo(setUpActionExpectations(VdcActionType.ReorderVmNics,
+                                           VmOperationParameterBase.class,
+                                           new String[] { "VmId" },
+                                           new Object[] { GUIDS[0] }));
+
+        verifyActionResponse(resource.reorderMacAddresses(new Action()));
     }
 
     @Test

@@ -34,7 +34,8 @@ import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreatedResource, MeasurableResource {
 
-    @Path("{action: (start|stop|shutdown|reboot|suspend|detach|migrate|export|move|ticket|cancelmigration|preview_snapshot|commit_snapshot|undo_snapshot|clone|maintenance)}/{oid}")
+    @Path("{action: (start|stop|shutdown|reboot|suspend|detach|migrate|export|move|ticket|cancelmigration|"
+            + "preview_snapshot|commit_snapshot|undo_snapshot|clone|maintenance|reordermacaddresses)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
 
     @DELETE
@@ -146,6 +147,12 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     @Actionable
     @Path("logon")
     public Response logon(Action action);
+
+    @POST
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("reordermacaddresses")
+    public Response reorderMacAddresses(Action action);
 
     @Path("applications")
     public VmApplicationsResource getApplicationsResource();

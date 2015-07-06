@@ -456,6 +456,8 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.vm.name: 'xs:string'}
+- name: /vms/{vm:id}/reordermacaddresses|rel=reordermacaddresses
+  description: re-assigns vNic MAC addressses in the ascending order (for NICs that have no PCI address assigned to them)
 - name: /vms/{vm:id}/detach|rel=detach
   description: detach a virtual machine in the system identified by the given id from the storage domain
   request:

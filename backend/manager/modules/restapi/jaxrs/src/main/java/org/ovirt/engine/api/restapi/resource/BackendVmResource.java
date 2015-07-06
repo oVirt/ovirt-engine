@@ -31,11 +31,11 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
-import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
+import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
 import org.ovirt.engine.api.resource.VmHostDevicesResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmNumaNodesResource;
@@ -343,6 +343,23 @@ public class BackendVmResource extends
         cloneVmParameters.setMakeCreatorExplicitOwner(isFiltered());
         Response response = doAction(VdcActionType.CloneVm,
                 cloneVmParameters,
+                action);
+
+        return response;
+    }
+
+    @Override
+    public Response reorderMacAddresses(Action action) {
+        getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
+                VdcQueryType.GetVmByVmId,
+                new IdQueryParameters(guid),
+                "VM: id=" + guid,
+                true);
+
+        final VmOperationParameterBase params = new VmOperationParameterBase(guid);
+        final Response response = doAction(
+                VdcActionType.ReorderVmNics,
+                params,
                 action);
 
         return response;
