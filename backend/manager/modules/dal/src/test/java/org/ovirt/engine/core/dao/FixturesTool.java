@@ -760,4 +760,7 @@ public class FixturesTool {
     public static final Guid HOST_NIC_VFS_CONFIG = new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c1");
     public static final Guid HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_1 = new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c2");
     public static final Guid HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_2 = new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c3");
+
+    public static final Guid COMMAND_ID = new Guid("340fd52b-3400-4cdd-8d3f-c9d03704b0a1");
+    public static final Guid ROOT_COMMAND_ID = new Guid("440fd52b-3400-4cdd-8d3f-c9d03704b0aa");
 }
