@@ -4,11 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.otopi.constants.Confirms;
 import org.ovirt.otopi.dialog.Event;
 import org.ovirt.ovirt_host_mgmt.constants.Const;
@@ -48,8 +54,7 @@ public class VdsMgmtPackages extends VdsDeployBase {
                 PackagesEnv.PACKAGES_INFO
             );
             if (_packagesInfo.length > 0) {
-                _messages.post(
-                    InstallerMessages.Severity.INFO,
+                log.info(
                     String.format("Available packages for update: %s", StringUtils.join(_packagesInfo, ","))
                 );
             }
@@ -64,7 +69,7 @@ public class VdsMgmtPackages extends VdsDeployBase {
             Event.Confirm event = (Event.Confirm)bevent;
 
             if (Confirms.GPG_KEY.equals(event.what)) {
-                _messages.post(InstallerMessages.Severity.WARNING, event.description);
+                log.warn(event.description);
                 event.reply = true;
                 unknown = false;
             }
@@ -93,4 +98,26 @@ public class VdsMgmtPackages extends VdsDeployBase {
         return Arrays.asList(_packagesInfo);
     }
 
+    private static final Map<Level, AuditLogType> _levelToType = new HashMap<Level, AuditLogType>() {{
+        put(Level.INFO, AuditLogType.VDS_PACKAGES_IN_PROGRESS);
+        put(Level.WARNING, AuditLogType.VDS_PACKAGES_IN_PROGRESS_WARNING);
+        put(Level.SEVERE, AuditLogType.VDS_PACKAGES_IN_PROGRESS_ERROR);
+    }};
+
+    @Override
+    protected void userVisibleLog(Level level, String message) {
+        if (_checkOnly) {
+            super.userVisibleLog(level, message);
+        } else {
+            AuditLogType type = _levelToType.get(level);
+            if (type == null) {
+                log.debug(message);
+            } else {
+                AuditLogableBase logable = new AuditLogableBase(_vds.getId());
+                logable.setCorrelationId(_correlationId);
+                logable.addCustomValue("Message", message);
+                new AuditLogDirector().log(logable, _levelToType.get(level));
+            }
+        }
+    }
 }

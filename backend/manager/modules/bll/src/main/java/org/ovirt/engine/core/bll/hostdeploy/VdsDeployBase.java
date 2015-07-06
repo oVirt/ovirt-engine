@@ -18,11 +18,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 
 import javax.naming.TimeLimitExceededException;
 
@@ -50,6 +53,14 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
 
     private static final Logger log = LoggerFactory.getLogger(VdsDeployBase.class);
     private static volatile CachedTar s_deployPackage;
+
+    private static final Map<Event.Log.Severity, Level> _severityToLevel = new HashMap<Event.Log.Severity, Level>() {{
+        put(Event.Log.Severity.INFO, Level.INFO);
+        put(Event.Log.Severity.WARNING, Level.WARNING);
+        put(Event.Log.Severity.ERROR, Level.SEVERE);
+        put(Event.Log.Severity.CRITICAL, Level.SEVERE);
+        put(Event.Log.Severity.FATAL, Level.SEVERE);
+    }};
 
     /**
      * Customization vector.
@@ -99,8 +110,8 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
                     _correlationId
                 )
             );
-            _messages.post(
-                InstallerMessages.Severity.INFO,
+            userVisibleLog(
+                Level.INFO,
                 String.format(
                     "Retrieving installation logs to: '%1$s'",
                     logFile
@@ -139,7 +150,6 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
     private final String _entryPoint;
 
     protected MachineDialogParser _parser;
-    protected final InstallerMessages _messages;
     protected VDS _vds;
     protected String _correlationId = null;
     protected Exception _failException = null;
@@ -279,19 +289,11 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
                 }
                 else if (bevent instanceof Event.Log) {
                     Event.Log event = (Event.Log)bevent;
-                    InstallerMessages.Severity severity;
-                    switch (event.severity) {
-                    case INFO:
-                        severity = InstallerMessages.Severity.INFO;
-                        break;
-                    case WARNING:
-                        severity = InstallerMessages.Severity.WARNING;
-                        break;
-                    default:
-                        severity = InstallerMessages.Severity.ERROR;
-                        break;
+                    Level level = _severityToLevel.get(event.severity);
+                    if (level == null) {
+                        level = Level.SEVERE;
                     }
-                    _messages.post(severity, event.record);
+                    userVisibleLog(level, event.record);
                     unknown = false;
                 }
                 else if (bevent instanceof Event.QueryString) {
@@ -310,8 +312,8 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
                     Event.QueryValue event = (Event.QueryValue)bevent;
 
                     if (Queries.TIME.equals(event.name)) {
-                        _messages.post(
-                            InstallerMessages.Severity.INFO,
+                        userVisibleLog(
+                            Level.INFO,
                             "Setting time"
                         );
                         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssZ");
@@ -382,7 +384,6 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
         _entryPoint = entryPoint;
         _vds = vds;
 
-        _messages = new InstallerMessages(_vds);
         _dialog = new EngineSSHDialog();
         _parser = new MachineDialogParser();
         _thread = new Thread(
@@ -432,7 +433,6 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
 
     public void setCorrelationId(String correlationId) {
         _correlationId = correlationId;
-        _messages.setCorrelationId(_correlationId);
     }
 
     /**
@@ -474,8 +474,8 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
         try {
             _dialog.setVds(_vds);
             _dialog.connect();
-            _messages.post(
-                InstallerMessages.Severity.INFO,
+            userVisibleLog(
+                Level.INFO,
                 String.format(
                     "Connected to host %1$s with SSH key fingerprint: %2$s",
                     _vds.getHostName(),
@@ -528,8 +528,8 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
                 _vds.getHostName(),
                 e
             );
-            _messages.post(
-                InstallerMessages.Severity.ERROR,
+            userVisibleLog(
+                Level.SEVERE,
                 "Processing stopped due to timeout"
             );
             throw e;
@@ -544,8 +544,8 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
                 throw e;
             }
             else {
-                _messages.post(
-                    InstallerMessages.Severity.ERROR,
+                userVisibleLog(
+                    Level.SEVERE,
                     e.getMessage()
                 );
 
@@ -557,6 +557,18 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
                 log.debug("Exception", _failException);
                 throw _failException;
             }
+        }
+    }
+
+    protected void userVisibleLog(Level level, String message) {
+        if (Level.SEVERE.equals(level)) {
+            log.error(message);
+        } else if (Level.WARNING.equals(level)) {
+            log.warn(message);
+        } else if (Level.INFO.equals(level)) {
+            log.info(message);
+        } else {
+            log.debug(message);
         }
     }
 

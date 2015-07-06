@@ -2,13 +2,17 @@ package org.ovirt.engine.core.bll.hostdeploy;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.MessagingConfiguration;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -17,6 +21,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -36,9 +42,9 @@ import org.ovirt.otopi.dialog.SoftError;
 import org.ovirt.ovirt_host_deploy.constants.Const;
 import org.ovirt.ovirt_host_deploy.constants.Displays;
 import org.ovirt.ovirt_host_deploy.constants.GlusterEnv;
-import org.ovirt.ovirt_host_deploy.constants.TuneEnv;
 import org.ovirt.ovirt_host_deploy.constants.KdumpEnv;
 import org.ovirt.ovirt_host_deploy.constants.OpenStackEnv;
+import org.ovirt.ovirt_host_deploy.constants.TuneEnv;
 import org.ovirt.ovirt_host_deploy.constants.VMConsoleEnv;
 import org.ovirt.ovirt_host_deploy.constants.VdsmEnv;
 import org.ovirt.ovirt_host_deploy.constants.VirtEnv;
@@ -224,8 +230,8 @@ public class VdsDeploy extends VdsDeployBase {
                     VdsmEnv.OVIRT_NODE
                 )
             ) {
-                _messages.post(
-                    InstallerMessages.Severity.INFO,
+                userVisibleLog(
+                    Level.INFO,
                     "Host is hypervisor"
                 );
                 _setNode();
@@ -244,8 +250,8 @@ public class VdsDeploy extends VdsDeployBase {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            _messages.post(
-                InstallerMessages.Severity.INFO,
+            userVisibleLog(
+                Level.INFO,
                 String.format(
                     "Logs at host located at: '%1$s'",
                     _parser.cliEnvironmentGet(
@@ -427,8 +433,8 @@ public class VdsDeploy extends VdsDeployBase {
              */
             boolean reboot = _reboot && !_isNode;
             if (reboot) {
-                _messages.post(
-                    InstallerMessages.Severity.INFO,
+                userVisibleLog(
+                    Level.INFO,
                     "Enforcing host reboot"
                 );
             }
@@ -536,9 +542,9 @@ public class VdsDeploy extends VdsDeployBase {
                     _vds.isPmKdumpDetection() &&
                     fenceKdumpSupported;
             if (!enabled) {
-                _messages.post(
-                        InstallerMessages.Severity.INFO,
-                        "Disabling Kdump integration"
+                userVisibleLog(
+                    Level.INFO,
+                    "Disabling Kdump integration"
                 );
             }
 
@@ -643,13 +649,13 @@ public class VdsDeploy extends VdsDeployBase {
                 String[] msgs = (String[])_parser.cliEnvironmentGet(
                     org.ovirt.ovirt_host_deploy.constants.CoreEnv.INSTALL_INCOMPLETE_REASONS
                 );
-                _messages.post(
-                    InstallerMessages.Severity.WARNING,
+                userVisibleLog(
+                    Level.WARNING,
                     "Installation is incomplete, manual intervention is required"
                 );
                 for (String m : msgs) {
-                    _messages.post(
-                        InstallerMessages.Severity.WARNING,
+                    userVisibleLog(
+                        Level.WARNING,
                         m
                     );
                 }
@@ -661,8 +667,8 @@ public class VdsDeploy extends VdsDeployBase {
                 SysEnv.REBOOT
             );
             if (_goingToReboot) {
-                _messages.post(
-                    InstallerMessages.Severity.INFO,
+                userVisibleLog(
+                    Level.INFO,
                     "Reboot scheduled"
                 );
             }
@@ -677,7 +683,10 @@ public class VdsDeploy extends VdsDeployBase {
             Event.Confirm event = (Event.Confirm)bevent;
 
             if (Confirms.GPG_KEY.equals(event.what)) {
-                _messages.post(InstallerMessages.Severity.WARNING, event.description);
+                userVisibleLog(
+                    Level.WARNING,
+                    event.description
+                );
                 event.reply = true;
                 unknown = false;
             }
@@ -709,8 +718,8 @@ public class VdsDeploy extends VdsDeployBase {
             Event.DisplayMultiString event = (Event.DisplayMultiString)bevent;
 
             if (Displays.CERTIFICATE_REQUEST.equals(event.name)) {
-                _messages.post(
-                    InstallerMessages.Severity.INFO,
+                userVisibleLog(
+                    Level.INFO,
                     "Enrolling certificate"
                 );
                 _certificate = OpenSslCAWrapper.signCertificateRequest(
@@ -721,8 +730,8 @@ public class VdsDeploy extends VdsDeployBase {
                 unknown = false;
             }
             else if (Displays.VMCONSOLE_CERTIFICATE_REQUEST.equals(event.name)) {
-                _messages.post(
-                    InstallerMessages.Severity.INFO,
+                userVisibleLog(
+                    Level.INFO,
                     "Enrolling serial console certificate"
                 );
                 String name = String.format("%s-ssh", _vds.getHostName());
@@ -825,4 +834,24 @@ public class VdsDeploy extends VdsDeployBase {
             }
         }
     }
+
+    private static final Map<Level, AuditLogType> _levelToType = new HashMap<Level, AuditLogType>() {{
+        put(Level.INFO, AuditLogType.VDS_INSTALL_IN_PROGRESS);
+        put(Level.WARNING, AuditLogType.VDS_INSTALL_IN_PROGRESS_WARNING);
+        put(Level.SEVERE, AuditLogType.VDS_INSTALL_IN_PROGRESS_ERROR);
+    }};
+
+    @Override
+    protected void userVisibleLog(Level level, String message) {
+        AuditLogType type = _levelToType.get(level);
+        if (type == null) {
+            log.debug(message);
+        } else {
+            AuditLogableBase logable = new AuditLogableBase(_vds.getId());
+            logable.setCorrelationId(_correlationId);
+            logable.addCustomValue("Message", message);
+            new AuditLogDirector().log(logable, _levelToType.get(level));
+        }
+    }
+
 }
