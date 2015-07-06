@@ -456,17 +456,9 @@ public class VdsDaoImpl extends BaseDaoDbFacade implements VdsDao {
     }
 
     private static class HostSpmPriorityComparator implements Comparator<VDS>, Serializable {
-
         @Override
         public int compare(VDS host1, VDS host2) {
-            if (host1.getVdsSpmPriority() > host2.getVdsSpmPriority()) {
-                return -1;
-            }
-            else if (host1.getVdsSpmPriority() < host2.getVdsSpmPriority()) {
-                return 1;
-            }
-            return 0;
+            return Integer.compare(host2.getVdsSpmPriority(), host1.getVdsSpmPriority());
         }
-
     }
 }
