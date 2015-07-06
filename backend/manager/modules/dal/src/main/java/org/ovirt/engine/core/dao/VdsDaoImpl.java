@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -454,7 +455,7 @@ public class VdsDaoImpl extends BaseDaoDbFacade implements VdsDao {
 
     }
 
-    static class HostSpmPriorityComparator implements Comparator<VDS> {
+    private static class HostSpmPriorityComparator implements Comparator<VDS>, Serializable {
 
         @Override
         public int compare(VDS host1, VDS host2) {
