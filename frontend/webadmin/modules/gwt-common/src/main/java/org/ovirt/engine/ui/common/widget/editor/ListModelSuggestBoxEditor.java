@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
-
 import com.google.gwt.editor.client.IsEditor;
 
 /**

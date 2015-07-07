@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import org.ovirt.engine.ui.common.widget.editor.AbstractValueBoxWithLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EnterIgnoringFocusHandler;
-
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
 

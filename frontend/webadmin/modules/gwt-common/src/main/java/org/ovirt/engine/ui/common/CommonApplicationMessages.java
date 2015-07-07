@@ -1,9 +1,7 @@
 package org.ovirt.engine.ui.common;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
-
 import com.google.gwt.i18n.client.Messages;
-import com.google.gwt.i18n.client.Messages.DefaultMessage;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface CommonApplicationMessages extends Messages {

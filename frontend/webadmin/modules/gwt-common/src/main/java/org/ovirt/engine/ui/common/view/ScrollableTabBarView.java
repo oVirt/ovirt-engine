@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.view;
 import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractCompositeTab;
 import org.ovirt.engine.ui.common.widget.tab.RepeatingPushButton;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Unit;

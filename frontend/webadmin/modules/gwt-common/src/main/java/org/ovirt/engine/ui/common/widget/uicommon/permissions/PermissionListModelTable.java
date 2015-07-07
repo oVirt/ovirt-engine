@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-
 import com.google.gwt.event.shared.EventBus;
 
 public class PermissionListModelTable<P extends PermissionListModel<?>> extends AbstractModelBoundTableWidget<Permission, P> {

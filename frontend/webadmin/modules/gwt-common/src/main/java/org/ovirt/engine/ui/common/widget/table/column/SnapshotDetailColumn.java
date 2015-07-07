@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotDetailModel;
-
 import com.google.gwt.resources.client.ImageResource;
 
 

@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.presenter;
 import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
 import org.ovirt.engine.ui.common.widget.tab.TabAccessibleChangeEvent;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
-
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;

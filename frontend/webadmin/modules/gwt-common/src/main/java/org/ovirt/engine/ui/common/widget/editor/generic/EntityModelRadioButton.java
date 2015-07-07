@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
+import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
+import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
@@ -10,8 +12,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RadioButton;
-import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
-import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
 
 /**
  * This class extends Composite instead of RadioButton because RadioButton is a Boolean type editor.

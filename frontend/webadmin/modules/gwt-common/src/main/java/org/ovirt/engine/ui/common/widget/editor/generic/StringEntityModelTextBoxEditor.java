@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
+import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
-import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 
 /**
  * Composite Editor that uses {@link org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBox}.

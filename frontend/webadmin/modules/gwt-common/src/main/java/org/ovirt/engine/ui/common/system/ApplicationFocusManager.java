@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.system;
 
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;

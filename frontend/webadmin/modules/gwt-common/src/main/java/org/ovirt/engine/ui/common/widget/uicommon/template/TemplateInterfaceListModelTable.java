@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
-
 import com.google.gwt.event.shared.EventBus;
 
 public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidget<VmNetworkInterface, TemplateInterfaceListModel> {

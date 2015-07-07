@@ -1,15 +1,15 @@
 package org.ovirt.engine.ui.common.widget.uicommon.instanceimages;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.InstanceImageLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.InstanceImagesModel;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.Widget;
 
 
 public class InstanceImagesEditor extends AddRemoveRowWidget<InstanceImagesModel, InstanceImageLineModel, InstanceImageLineEditor> implements HasElementId {

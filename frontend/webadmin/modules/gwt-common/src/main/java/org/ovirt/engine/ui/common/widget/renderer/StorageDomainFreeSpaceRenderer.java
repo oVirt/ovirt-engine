@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-
 import com.google.gwt.text.shared.AbstractRenderer;
 
 public class StorageDomainFreeSpaceRenderer<T extends StorageDomain> extends AbstractRenderer<T> {

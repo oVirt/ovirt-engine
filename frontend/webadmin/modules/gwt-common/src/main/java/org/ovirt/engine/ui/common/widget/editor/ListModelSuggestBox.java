@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget.editor;
 import java.util.Collection;
 
 import org.ovirt.engine.ui.uicommonweb.Linq;
-
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;

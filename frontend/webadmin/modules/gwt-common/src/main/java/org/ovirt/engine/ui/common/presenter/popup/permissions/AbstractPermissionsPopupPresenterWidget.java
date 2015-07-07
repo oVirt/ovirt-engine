@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -25,7 +25,6 @@ import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.HasValue;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public abstract class AbstractPermissionsPopupPresenterWidget<V extends AbstractPermissionsPopupPresenterWidget.ViewDef<M>, M extends AdElementListModel>
         extends AbstractModelBoundPopupPresenterWidget<M, V> {

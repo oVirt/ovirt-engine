@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.widget;
 
-import com.google.gwt.user.client.ui.HasEnabled;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelDetachableWidget;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabel;
+import com.google.gwt.user.client.ui.HasEnabled;
 
 public class EntityModelDetachableWidgetWithInfo<T> extends EntityModelWidgetWithInfo implements HasDetachable, HasEnabled {
 

@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.resize.HasResizableColumns;
-
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;

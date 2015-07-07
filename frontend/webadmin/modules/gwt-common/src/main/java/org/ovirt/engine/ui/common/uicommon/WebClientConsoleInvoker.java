@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
-
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 

@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
-
 import com.google.gwt.event.shared.EventBus;
 
 public class VmAppListModelTable extends AbstractModelBoundTableWidget<String, VmAppListModel<VM>> {

@@ -6,7 +6,6 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
-
 import com.google.gwt.text.shared.AbstractRenderer;
 
 public class VolumeTransportTypeRenderer extends AbstractRenderer<Set<TransportType>> {

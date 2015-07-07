@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 
 import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 

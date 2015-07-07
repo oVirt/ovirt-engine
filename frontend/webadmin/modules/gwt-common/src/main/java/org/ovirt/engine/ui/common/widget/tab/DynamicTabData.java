@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.tab;
 
 import org.ovirt.engine.ui.common.widget.Align;
-
 import com.gwtplatform.mvp.client.TabDataBasic;
 
 /**

@@ -1,5 +1,19 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.editor.UiCommonEditor;
+import org.ovirt.engine.ui.common.widget.AbstractValidatedWidget;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IconWithOsDefault;
+import org.ovirt.engine.ui.uicommonweb.validation.IconValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.editor.client.LeafValueEditor;
@@ -29,19 +43,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
-import org.ovirt.engine.ui.common.editor.UiCommonEditor;
-import org.ovirt.engine.ui.common.widget.AbstractValidatedWidget;
-import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
-import org.ovirt.engine.ui.uicommonweb.models.vms.IconWithOsDefault;
-import org.ovirt.engine.ui.uicommonweb.validation.IconValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
-
-import javax.inject.Inject;
-import java.util.List;
 
 /**
  * Icon editor. It allows to set custom icon to VM-like entities.

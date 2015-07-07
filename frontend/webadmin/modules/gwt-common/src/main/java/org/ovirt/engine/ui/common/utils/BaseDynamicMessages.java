@@ -1,10 +1,5 @@
 package org.ovirt.engine.ui.common.utils;
 
-import com.google.gwt.i18n.client.Dictionary;
-import com.google.gwt.i18n.client.LocaleInfo;
-import com.google.gwt.regexp.shared.MatchResult;
-import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.safehtml.shared.UriUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +11,11 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
+import com.google.gwt.i18n.client.Dictionary;
+import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.UriUtils;
 
 /**
  * Contains dynamic messages available to the application.

@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;

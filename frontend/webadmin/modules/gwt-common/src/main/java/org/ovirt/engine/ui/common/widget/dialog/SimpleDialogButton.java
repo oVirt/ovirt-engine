@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget.dialog;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public class SimpleDialogButton extends AbstractDialogButton {

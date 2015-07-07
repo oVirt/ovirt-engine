@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.SortedMap;
 
 import org.gwtbootstrap3.client.ui.constants.Styles;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.OptGroupElement;

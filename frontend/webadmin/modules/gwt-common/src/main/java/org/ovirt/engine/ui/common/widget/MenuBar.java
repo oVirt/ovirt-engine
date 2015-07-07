@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.common.utils.PopupUtils;
-
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;

@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.system;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Cursor;

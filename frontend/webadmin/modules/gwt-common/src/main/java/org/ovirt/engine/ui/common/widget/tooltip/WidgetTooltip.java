@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.tooltip;
 
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
-
 import com.google.gwt.user.client.ui.Widget;
 
 /**

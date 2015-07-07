@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget.label;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.client.ui.ValueLabel;
 

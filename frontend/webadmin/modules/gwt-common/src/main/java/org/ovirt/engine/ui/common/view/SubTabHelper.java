@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
-
 import com.google.gwt.user.client.ui.IsWidget;
 
 public class SubTabHelper {

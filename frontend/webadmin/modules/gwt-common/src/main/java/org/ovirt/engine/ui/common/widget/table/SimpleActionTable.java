@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
 import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager.ManualRefreshCallback;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;

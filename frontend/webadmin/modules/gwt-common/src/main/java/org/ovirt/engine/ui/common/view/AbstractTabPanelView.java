@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
-
 import com.google.gwt.user.client.ui.IsWidget;
 import com.gwtplatform.mvp.client.Tab;
 import com.gwtplatform.mvp.client.TabData;

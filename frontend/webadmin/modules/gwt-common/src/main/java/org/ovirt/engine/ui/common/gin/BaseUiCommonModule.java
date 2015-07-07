@@ -14,9 +14,6 @@ import org.ovirt.engine.ui.common.uicommon.VncNativeImpl;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
-
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Singleton;
 import org.ovirt.engine.ui.uicommonweb.models.vms.INoVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
@@ -24,6 +21,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVncNative;
+import com.google.gwt.inject.client.AbstractGinModule;
+import com.google.inject.Singleton;
 
 /**
  * GIN module containing common UiCommon integration bindings.

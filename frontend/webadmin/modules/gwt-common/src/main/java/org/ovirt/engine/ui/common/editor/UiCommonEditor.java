@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.editor;
 import org.ovirt.engine.ui.common.widget.HasAccess;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.HasValidation;
-
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;

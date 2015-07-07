@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.binding;
 import java.io.PrintWriter;
 
 import org.ovirt.engine.ui.common.idhandler.BaseElementIdHandler;
-
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;

@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import java.util.Comparator;
 
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
-
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;

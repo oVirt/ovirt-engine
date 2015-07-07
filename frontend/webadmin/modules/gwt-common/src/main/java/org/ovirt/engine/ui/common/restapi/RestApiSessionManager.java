@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.frontend.communication.EngineSessionRefreshedEvent;
 import org.ovirt.engine.ui.frontend.communication.EngineSessionRefreshedEvent.EngineSessionRefreshedHandler;
 import org.ovirt.engine.ui.frontend.communication.StorageCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.event.shared.EventBus;

@@ -6,7 +6,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelCheckBoxWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-
 import com.google.gwt.event.shared.EventBus;
 
 public class AbstractVmRemoveConfimationPopup extends RemoveConfirmationPopupView {

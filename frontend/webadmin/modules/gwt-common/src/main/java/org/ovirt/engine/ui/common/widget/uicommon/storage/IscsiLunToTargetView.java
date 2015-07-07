@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;

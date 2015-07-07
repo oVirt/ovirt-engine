@@ -8,7 +8,6 @@ import java.util.Set;
 import org.ovirt.engine.ui.common.editor.UiCommonEditor;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.KeyDownEvent;

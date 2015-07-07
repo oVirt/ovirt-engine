@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.editor.client.Editor.Path;

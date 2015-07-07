@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table;
 
 import org.ovirt.engine.ui.common.widget.action.ActionPanel;
-
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 
 /**

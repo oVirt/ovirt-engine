@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.presenter.CollapsiblePanelPresenterWidget;
-
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;

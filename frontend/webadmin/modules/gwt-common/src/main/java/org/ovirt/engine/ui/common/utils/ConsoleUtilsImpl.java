@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.utils;
 
-import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -9,6 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
+import com.google.inject.Inject;
 
 public class ConsoleUtilsImpl implements ConsoleUtils {
 

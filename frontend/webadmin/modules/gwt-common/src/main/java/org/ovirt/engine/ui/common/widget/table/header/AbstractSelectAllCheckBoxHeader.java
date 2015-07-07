@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.view.client.SelectionModel;

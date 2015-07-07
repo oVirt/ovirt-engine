@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
 import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
 import org.ovirt.engine.ui.common.widget.table.resize.ColumnResizeCellTable;
-
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;

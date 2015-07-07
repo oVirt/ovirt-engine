@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.console.ConsoleOptions;
-import com.google.inject.Inject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
+import com.google.inject.Inject;
 
 public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
 

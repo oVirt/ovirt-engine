@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.tab;
 
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasAccess;
-
 import com.gwtplatform.mvp.client.Tab;
 
 /**

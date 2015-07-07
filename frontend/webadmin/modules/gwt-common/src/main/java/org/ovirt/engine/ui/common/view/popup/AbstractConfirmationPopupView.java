@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.view.popup;
 
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiField;

@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
-
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.user.client.ui.Widget;
 

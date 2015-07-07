@@ -8,7 +8,6 @@ import java.util.logging.LogRecord;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.utils.AddOnlyRingBuffer;
 import org.ovirt.engine.ui.common.utils.AddOnlyRingBuffer.LinearBuffer;
-
 import com.google.gwt.logging.client.TextLogFormatter;
 import com.google.inject.Inject;
 

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.system;
 
 import org.ovirt.engine.ui.common.presenter.popup.ErrorPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;

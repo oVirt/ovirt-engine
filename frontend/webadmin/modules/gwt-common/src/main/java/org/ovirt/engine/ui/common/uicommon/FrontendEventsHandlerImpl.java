@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.frontend.Message;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-
 import com.google.inject.Inject;
 
 public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {

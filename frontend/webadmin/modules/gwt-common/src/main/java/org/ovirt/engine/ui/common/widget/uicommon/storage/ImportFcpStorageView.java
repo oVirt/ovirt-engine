@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.List;
 
-import com.google.gwt.cell.client.FieldUpdater;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -17,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.ImportFcpStorageModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;

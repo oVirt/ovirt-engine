@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.utils.ValidationTabSwitchHelper;
 import org.ovirt.engine.ui.common.view.TabbedView;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-
 import com.google.gwt.event.shared.EventBus;
 
 public abstract class AbstractTabbedModelBoundPopupPresenterWidget<T extends Model & HasValidatedTabs,

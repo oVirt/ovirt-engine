@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.cell.client.TextInputCell;

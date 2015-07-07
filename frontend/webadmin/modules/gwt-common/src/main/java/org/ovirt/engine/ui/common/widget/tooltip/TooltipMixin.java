@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.ui.common.utils.JqueryUtils;
-
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;

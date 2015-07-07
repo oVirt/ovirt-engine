@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.utils;
 import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.TreeNodeInfo;
-
 import com.google.gwt.cell.client.Cell.Context;
 
 public class ElementIdUtils {

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.table.header;
 
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
-
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;

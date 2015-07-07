@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-import com.google.gwt.user.client.ui.Widget;
+import java.util.Set;
+
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-
-import java.util.Set;
+import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AbstractModeSwitchingPopupWidget<T extends Model> extends AbstractModelBoundPopupWidget<T> {
 

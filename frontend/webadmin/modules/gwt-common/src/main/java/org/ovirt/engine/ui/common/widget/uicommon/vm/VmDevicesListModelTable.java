@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
-import com.google.gwt.event.shared.EventBus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -12,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.VmDeviceGeneralTypeColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
+import com.google.gwt.event.shared.EventBus;
 
 public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDevice, VmDevicesListModel<VM>> {
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();

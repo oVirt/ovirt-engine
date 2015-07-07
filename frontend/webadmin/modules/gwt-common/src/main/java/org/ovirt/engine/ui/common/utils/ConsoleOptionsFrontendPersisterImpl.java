@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.utils;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
@@ -13,12 +16,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
-
-import com.google.inject.Inject;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.google.inject.Inject;
 
 public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFrontendPersister {
 

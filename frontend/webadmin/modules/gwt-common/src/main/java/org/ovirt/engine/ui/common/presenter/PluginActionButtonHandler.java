@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 

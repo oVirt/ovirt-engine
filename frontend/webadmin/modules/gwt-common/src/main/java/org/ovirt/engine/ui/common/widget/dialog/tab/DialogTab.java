@@ -1,10 +1,13 @@
 package org.ovirt.engine.ui.common.widget.dialog.tab;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidget;
 import org.ovirt.engine.ui.common.widget.HasLabel;
-
+import org.ovirt.engine.ui.common.widget.HasValidation;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -21,10 +24,6 @@ import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.IndexedPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
-import org.ovirt.engine.ui.common.widget.HasValidation;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DialogTab extends AbstractValidatedWidget implements HasClickHandlers, HasLabel, HasElementId, HasKeyUpHandlers, FocusableComponentsContainer {
 

@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.action;
 
 import org.gwtbootstrap3.client.ui.constants.Placement;
-
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HasEnabled;

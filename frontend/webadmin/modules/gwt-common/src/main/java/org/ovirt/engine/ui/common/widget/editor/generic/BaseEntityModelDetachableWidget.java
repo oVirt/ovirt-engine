@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasDetachable;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
-
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiField;

@@ -8,7 +8,6 @@ import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;

@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.tree;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
-
 import com.google.gwt.user.cellview.client.CellTree;
 
 /**

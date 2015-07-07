@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;

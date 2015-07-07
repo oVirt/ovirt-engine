@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.renderer;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-
 import com.google.gwt.text.shared.AbstractRenderer;
 
 public class ObjectNameRenderer extends AbstractRenderer<Object[]> {

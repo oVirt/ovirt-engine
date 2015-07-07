@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;

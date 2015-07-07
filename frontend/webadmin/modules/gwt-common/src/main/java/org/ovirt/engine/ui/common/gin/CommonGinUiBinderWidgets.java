@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.gin;
 
-import com.google.gwt.inject.client.Ginjector;
 import org.ovirt.engine.ui.common.widget.editor.IconEditorWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
+import com.google.gwt.inject.client.Ginjector;
 
 /**
  * Ginjector extension containing views that make use of the GWTP GinUiBinder.

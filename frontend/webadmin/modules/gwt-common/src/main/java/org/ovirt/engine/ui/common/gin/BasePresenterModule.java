@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.common.view.popup.RemoveConfirmationPopupView;
 import org.ovirt.engine.ui.common.view.popup.RolePermissionsRemoveConfirmationPopupView;
 import org.ovirt.engine.ui.common.view.popup.numa.NumaSupportPopupView;
 import org.ovirt.engine.ui.common.view.popup.numa.UnassignedVNumaNodesPanelView;
-
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 
 /**

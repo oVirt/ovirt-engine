@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.presenter.popup.numa;
 
 import org.ovirt.engine.core.compat.Guid;
-
 import com.gwtplatform.dispatch.annotation.GenEvent;
 
 @GenEvent

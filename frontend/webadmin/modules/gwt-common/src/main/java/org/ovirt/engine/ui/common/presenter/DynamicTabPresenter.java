@@ -2,14 +2,13 @@ package org.ovirt.engine.ui.common.presenter;
 
 import org.ovirt.engine.ui.common.presenter.SetDynamicTabAccessibleEvent.SetDynamicTabAccessibleHandler;
 import org.ovirt.engine.ui.common.widget.tab.AbstractCompositeTab;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 /**
  * Base class for dynamic tab presenters.

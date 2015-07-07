@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 

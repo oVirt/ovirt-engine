@@ -1,9 +1,8 @@
 package org.ovirt.engine.ui.common.widget.label;
 
-import com.google.gwt.user.client.ui.ValueLabel;
-
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
+import com.google.gwt.user.client.ui.ValueLabel;
 
 public class StorageSizeLabel<T extends Number> extends ValueLabel<T> {
 

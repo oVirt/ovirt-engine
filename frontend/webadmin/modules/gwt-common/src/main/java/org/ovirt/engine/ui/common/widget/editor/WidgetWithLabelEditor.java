@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.editor.UiCommonEditor;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
-
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.editor.client.adapters.OptionalFieldEditor;
 import com.google.gwt.event.dom.client.KeyDownHandler;

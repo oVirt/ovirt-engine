@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.common.widget.parser;
 
 import java.text.ParseException;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.text.shared.Parser;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class MemorySizeParser implements Parser<Integer> {
 

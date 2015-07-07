@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
-
 import com.google.gwt.event.shared.EventBus;
 
 public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends AbstractModelBoundTableWidget<DiskImage, T> {

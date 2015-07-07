@@ -1,13 +1,12 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-import com.google.gwt.user.client.ui.HasEnabled;
-import com.google.gwt.user.client.ui.IndexedPanel;
-import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.IndexedPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Base class for widgets that represent the content of popup views bound to a UiCommon Window model.

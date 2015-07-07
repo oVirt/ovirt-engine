@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.tab;
 
 import org.ovirt.engine.ui.common.widget.Align;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiField;

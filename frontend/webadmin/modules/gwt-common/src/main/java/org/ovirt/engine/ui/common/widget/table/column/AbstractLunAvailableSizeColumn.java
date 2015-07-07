@@ -1,12 +1,11 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractToggleButtonCell;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
-
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 
 public abstract class AbstractLunAvailableSizeColumn extends Column<LunModel, LunModel> {

@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.renderer.MillisecondRenderer;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
-
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;

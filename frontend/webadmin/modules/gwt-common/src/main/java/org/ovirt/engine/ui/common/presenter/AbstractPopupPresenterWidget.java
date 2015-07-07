@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.presenter;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
-
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

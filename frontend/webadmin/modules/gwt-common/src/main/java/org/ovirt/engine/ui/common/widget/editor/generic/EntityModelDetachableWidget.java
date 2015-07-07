@@ -1,5 +1,12 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
+import static com.google.gwt.dom.client.Style.Unit;
+
+import java.util.List;
+
+import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.HasValidation;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -9,13 +16,6 @@ import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
-import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.HasValidation;
-
-import java.util.List;
-
-import static com.google.gwt.dom.client.Style.Unit;
 
 /**
  * Takes a AbstractValidatedWidgetWithLabel, decorates it with the detachable icon but does not render it's label

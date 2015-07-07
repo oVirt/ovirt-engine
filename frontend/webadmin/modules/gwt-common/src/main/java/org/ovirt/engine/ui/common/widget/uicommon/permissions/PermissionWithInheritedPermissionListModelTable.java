@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-
 import com.google.gwt.event.shared.EventBus;
 
 public class PermissionWithInheritedPermissionListModelTable<P extends PermissionListModel<?>> extends PermissionListModelTable<P> {

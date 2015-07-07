@@ -2,9 +2,8 @@ package org.ovirt.engine.ui.common.widget.tab;
 
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.Align;
-
-import com.gwtplatform.mvp.client.TabDataBasic;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+import com.gwtplatform.mvp.client.TabDataBasic;
 
 /**
  * Implementation of {@link com.gwtplatform.mvp.client.TabData TabData} interface for use with UiCommon models bound to

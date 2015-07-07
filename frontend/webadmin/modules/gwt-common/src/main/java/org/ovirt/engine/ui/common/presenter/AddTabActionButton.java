@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.presenter;
 
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-
 import com.gwtplatform.dispatch.annotation.GenEvent;
 
 /**

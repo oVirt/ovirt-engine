@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;

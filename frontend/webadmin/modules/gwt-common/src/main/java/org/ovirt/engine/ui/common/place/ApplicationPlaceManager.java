@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandl
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent.MainModelSelectionChangeHandler;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Node;

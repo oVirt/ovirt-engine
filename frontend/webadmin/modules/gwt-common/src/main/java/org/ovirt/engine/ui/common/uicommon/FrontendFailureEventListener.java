@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.frontend.FrontendFailureEventArgs;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-
 import com.google.inject.Inject;
 
 public class FrontendFailureEventListener implements IEventListener<FrontendFailureEventArgs> {

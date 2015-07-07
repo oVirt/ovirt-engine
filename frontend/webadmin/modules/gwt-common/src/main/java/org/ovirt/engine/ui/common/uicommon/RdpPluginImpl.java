@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 

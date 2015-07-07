@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.form;
 
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
-
 import com.google.gwt.user.client.ui.Widget;
 
 /**

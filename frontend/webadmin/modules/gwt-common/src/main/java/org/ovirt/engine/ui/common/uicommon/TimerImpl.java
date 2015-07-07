@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.uicommonweb.ITimer;
 import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-
 import com.google.gwt.user.client.Timer;
 
 public class TimerImpl implements ITimer {

@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
+import java.util.Collection;
+
+import org.ovirt.engine.ui.common.widget.editor.BaseListModelSuggestBox;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -12,8 +15,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import java.util.Collection;
-import org.ovirt.engine.ui.common.widget.editor.BaseListModelSuggestBox;
 
 /**
  * SuggestBox widget that adapts to UiCommon list model items. Expects all of it's items to be non null Strings

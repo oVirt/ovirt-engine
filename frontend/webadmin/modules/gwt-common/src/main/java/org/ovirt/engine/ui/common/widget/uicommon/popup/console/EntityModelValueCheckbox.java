@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.console;
 
 import org.ovirt.engine.ui.common.widget.editor.BaseEntityModelCheckbox;
-
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget;
-import org.ovirt.engine.ui.common.utils.PopupUtils;
 
+import org.ovirt.engine.ui.common.utils.PopupUtils;
 import com.google.gwt.user.client.ui.UIObject;
 
 public class PopupPanel extends com.google.gwt.user.client.ui.PopupPanel {

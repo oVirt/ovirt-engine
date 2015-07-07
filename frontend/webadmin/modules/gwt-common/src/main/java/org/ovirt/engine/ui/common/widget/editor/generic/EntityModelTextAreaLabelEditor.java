@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
+import org.ovirt.engine.ui.common.widget.editor.AbstractValueBoxWithLabelEditor;
+import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
-import org.ovirt.engine.ui.common.widget.editor.AbstractValueBoxWithLabelEditor;
-import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
 
 
 public class EntityModelTextAreaLabelEditor<T> extends AbstractValueBoxWithLabelEditor<T, EntityModelTextAreaLabel<T>> {

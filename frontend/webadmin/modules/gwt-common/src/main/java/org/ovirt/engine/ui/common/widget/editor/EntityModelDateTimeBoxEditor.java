@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
-
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.editor.client.IsEditor;
 

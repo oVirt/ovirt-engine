@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.editor.AbstractUiCommonModelEditorDriver;
 import org.ovirt.engine.ui.common.editor.UiCommonEventMap;
 import org.ovirt.engine.ui.common.editor.UiCommonListenerMap;
 import org.ovirt.engine.ui.common.editor.UiCommonModelEditorDelegate;
-
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.TreeLogger.Type;

@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
-import com.google.gwt.editor.client.IsEditor;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
+import com.google.gwt.editor.client.IsEditor;
 
 /**
  * Composite Editor that uses {@link ListModelSuggestBox}.

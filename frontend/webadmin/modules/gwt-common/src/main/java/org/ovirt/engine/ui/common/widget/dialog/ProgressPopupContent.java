@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.dialog;
 
 import org.ovirt.engine.ui.common.widget.IsProgressContentWidget;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.uibinder.client.UiBinder;
