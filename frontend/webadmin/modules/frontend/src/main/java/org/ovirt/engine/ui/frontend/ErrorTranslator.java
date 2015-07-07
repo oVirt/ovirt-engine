@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.MissingResourceException;
 
 import org.ovirt.engine.core.compat.StringHelper;
-
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;

@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 

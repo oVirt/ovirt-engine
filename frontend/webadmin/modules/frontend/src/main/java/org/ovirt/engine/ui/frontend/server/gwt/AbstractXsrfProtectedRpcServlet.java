@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.ui.frontend.communication.XsrfRpcRequestBuilder;
-
 import com.google.gwt.rpc.server.RpcServlet;
 import com.google.gwt.user.client.rpc.RpcToken;
 import com.google.gwt.user.client.rpc.XsrfToken;

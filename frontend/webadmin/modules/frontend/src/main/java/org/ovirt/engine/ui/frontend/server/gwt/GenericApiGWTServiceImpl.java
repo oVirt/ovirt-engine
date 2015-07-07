@@ -7,8 +7,6 @@ import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.google.gwt.user.client.rpc.SerializationException;
-
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -24,6 +22,7 @@ import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 import org.ovirt.engine.ui.frontend.server.gwt.hibernate.HibernateCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.google.gwt.user.client.rpc.SerializationException;
 
 public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements GenericApiGWTService {
 
