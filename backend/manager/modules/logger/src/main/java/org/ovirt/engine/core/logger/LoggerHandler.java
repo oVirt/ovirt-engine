@@ -1,17 +1,16 @@
 package org.ovirt.engine.core.logger;
 
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.logger.Logger;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
-
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 public class LoggerHandler extends Handler implements Observer {
 
