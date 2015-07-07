@@ -432,4 +432,6 @@ public interface VdsServerConnector {
     public Map<String, Object> unregisterSecrets(String[] libvirtSecretsUuids);
 
     public Map<String, Object> freeze(String vmId);
+
+    public Map<String, Object> thaw(String vmId);
 }

@@ -456,4 +456,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc unregisterSecrets(String[] libvirtSecretsUuids);
 
     StatusOnlyReturnForXmlRpc freeze(String vmId);
+
+    StatusOnlyReturnForXmlRpc thaw(String vmId);
 }

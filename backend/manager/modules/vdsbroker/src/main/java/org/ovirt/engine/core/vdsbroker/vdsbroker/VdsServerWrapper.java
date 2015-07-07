@@ -1952,4 +1952,14 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc thaw(String vmId) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.thaw(vmId);
+            return new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

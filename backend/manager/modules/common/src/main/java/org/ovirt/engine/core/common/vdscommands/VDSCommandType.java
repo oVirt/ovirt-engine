@@ -203,6 +203,7 @@ public enum VDSCommandType {
     RegisterLibvirtSecrets("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     UnregisterLibvirtSecrets("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     Freeze("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    Thaw("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     /**
      * Get Host capabilities
      */
