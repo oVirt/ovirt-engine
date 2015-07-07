@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.uutils.cli.parser;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,6 +16,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This class parses properties file where user declare structure of command line arguments.

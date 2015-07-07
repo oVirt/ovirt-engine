@@ -9,6 +9,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+
 import javax.naming.TimeLimitExceededException;
 
 import org.apache.sshd.ClientSession;

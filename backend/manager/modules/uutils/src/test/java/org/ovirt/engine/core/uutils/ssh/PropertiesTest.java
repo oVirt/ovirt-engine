@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.uutils.ssh;
 
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 
 import org.junit.Test;
 

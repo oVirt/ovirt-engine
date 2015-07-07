@@ -22,16 +22,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.naming.AuthenticationException;
 import javax.naming.TimeLimitExceededException;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import org.apache.commons.lang.SystemUtils;
 
 /*
  * Test properties
