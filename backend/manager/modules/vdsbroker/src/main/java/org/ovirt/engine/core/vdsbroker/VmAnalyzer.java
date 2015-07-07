@@ -952,6 +952,7 @@ public class VmAnalyzer {
             int guestAgentNicHash) {
         vmDynamic.setGuestAgentNicsHash(guestAgentNicHash);
         vmDynamic.setVmIp(extractVmIpsFromGuestAgentInterfaces(vmGuestAgentInterfaces));
+        vmsMonitoring.addVmGuestAgentNics(dbVm.getId(), vmGuestAgentInterfaces);
     }
 
     private String extractVmIpsFromGuestAgentInterfaces(List<VmGuestAgentInterface> nics) {

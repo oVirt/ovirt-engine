@@ -754,4 +754,8 @@ public class VmsMonitoring {
     public VdsManager getVdsManager() {
         return vdsManager;
     }
+
+    public void addVmGuestAgentNics(Guid id, List<VmGuestAgentInterface> vmGuestAgentInterfaces) {
+        vmGuestAgentNics.put(id, vmGuestAgentInterfaces);
+    }
 }
