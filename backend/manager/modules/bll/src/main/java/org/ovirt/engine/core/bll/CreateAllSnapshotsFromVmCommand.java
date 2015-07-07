@@ -61,6 +61,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.SnapshotVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -232,6 +234,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         setActionReturnValue(createdSnapshotId);
 
         MemoryImageBuilder memoryImageBuilder = getMemoryImageBuilder();
+        freezeVm();
         createSnapshotsForDisks();
         addSnapshotToDB(createdSnapshotId, memoryImageBuilder);
         fastForwardDisksToActiveSnapshot();
@@ -330,7 +333,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private ImagesContainterParametersBase buildChildCommandParameters(DiskImage cinderDisk) {
         ImagesContainterParametersBase createParams = new ImagesContainterParametersBase(cinderDisk.getId());
         createParams.setVmSnapshotId(newActiveSnapshotId);
-        createParams.setParentHasTasks(!cachedImagesDisks.isEmpty());
+        createParams.setParentHasTasks(!cachedImagesDisks.isEmpty() || getMemoryImageBuilder().isCreateTasks());
         return withRootCommandInfo(createParams, getActionType());
     }
 
@@ -413,7 +416,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
 
         incrementVmGeneration();
-
+        thawVm();
         endActionOnDisks();
         setSucceeded(taskGroupSucceeded && (!liveSnapshotRequired || liveSnapshotSucceeded));
         getReturnValue().setEndActionTryAgain(false);
@@ -510,15 +513,82 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 && FeatureSupported.isMemorySnapshotSupportedByArchitecture(getVm().getClusterArch(), getVm().getVdsGroupCompatibilityVersion());
     }
 
-    private void handleVdsLiveSnapshotFailure(EngineException e) {
-        log.warn("Could not perform live snapshot due to error, VM will still be configured to the new created"
-                        + " snapshot: {}",
-                e.getMessage());
+    /**
+     * Freezing the VM is needed for live snapshot with Cinder disks.
+     */
+    private void freezeVm() {
+        if (!shouldFreezeOrThawVm()) {
+            return;
+        }
+
+        VDSReturnValue returnValue;
+        try {
+            auditLogDirector.log(this, AuditLogType.FREEZE_VM_INITIATED);
+            returnValue = runVdsCommand(VDSCommandType.Freeze, new VdsAndVmIDVDSParametersBase(
+                    getVds().getId(), getVmId()));
+        } catch (EngineException e) {
+            handleFreezeVmFailure(e);
+            return;
+        }
+        if (returnValue.getSucceeded()) {
+            auditLogDirector.log(this, AuditLogType.FREEZE_VM_SUCCESS);
+        } else {
+            handleFreezeVmFailure(new EngineException(EngineError.freezeErr));
+        }
+    }
+
+    /**
+     * VM thaw is needed if the VM was frozen.
+     */
+    private void thawVm() {
+        if (!shouldFreezeOrThawVm()) {
+            return;
+        }
+
+        VDSReturnValue returnValue;
+        try {
+            returnValue = runVdsCommand(VDSCommandType.Thaw, new VdsAndVmIDVDSParametersBase(
+                    getVds().getId(), getVmId()));
+        } catch (EngineException e) {
+            handleThawVmFailure(e);
+            return;
+        }
+        if (!returnValue.getSucceeded()) {
+            handleThawVmFailure(new EngineException(EngineError.thawErr));
+        }
+    }
+
+    private boolean shouldFreezeOrThawVm() {
+        return isLiveSnapshotApplicable() && isCinderDisksExist();
+    }
+
+    private boolean isCinderDisksExist() {
+        return !ImagesHandler.filterDisksBasedOnCinder(getDisksList()).isEmpty();
+    }
+
+    private void handleVmFailure(EngineException e, AuditLogType auditLogType, String warnMessage) {
+        log.warn(warnMessage, e.getMessage());
         log.debug("Exception", e);
         addCustomValue("SnapshotName", getSnapshotName());
         addCustomValue("VmName", getVmName());
         updateCallStackFromThrowable(e);
-        auditLogDirector.log(this, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_FINISHED_FAILURE);
+        auditLogDirector.log(this, auditLogType);
+    }
+
+    private void handleVdsLiveSnapshotFailure(EngineException e) {
+        handleVmFailure(e, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_FINISHED_FAILURE,
+                "Could not perform live snapshot due to error, VM will still be configured to the new created"
+                        + " snapshot: {}");
+    }
+
+    private void handleFreezeVmFailure(EngineException e) {
+        handleVmFailure(e, AuditLogType.FAILED_TO_FREEZE_VM,
+                "Could not freeze VM guest filesystems due to an error: {}");
+    }
+
+    private void handleThawVmFailure(EngineException e) {
+        handleVmFailure(e, AuditLogType.FAILED_TO_THAW_VM,
+                "Could not thaw VM guest filesystems due to an error: {}");
     }
 
     /**
