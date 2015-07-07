@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -8,8 +10,6 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.List;
 
 /**
  * Null object for instance types

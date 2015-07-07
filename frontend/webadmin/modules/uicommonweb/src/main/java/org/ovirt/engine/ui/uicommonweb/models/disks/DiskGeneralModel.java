@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.disks;
 
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
-
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class DiskGeneralModel extends EntityModel<Disk>

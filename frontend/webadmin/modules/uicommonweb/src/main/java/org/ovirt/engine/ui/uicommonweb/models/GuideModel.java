@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.user.client.Timer;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -28,6 +27,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import com.google.gwt.user.client.Timer;
 
 @SuppressWarnings("unused")
 public class GuideModel extends EntityModel

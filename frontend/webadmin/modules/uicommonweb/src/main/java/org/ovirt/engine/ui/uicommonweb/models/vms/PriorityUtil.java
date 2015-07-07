@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PriorityUtil {
 

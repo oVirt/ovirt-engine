@@ -65,7 +65,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Task;
 import org.ovirt.engine.ui.uicompat.TaskContext;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
 import com.google.inject.Inject;
 
 public class StorageListModel extends ListWithDetailsAndReportsModel<Void, StorageDomain> implements ITaskTarget, ISupportSystemTreeContext {

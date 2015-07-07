@@ -1,16 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
+import java.util.Arrays;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.builders.Builder;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderList;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconWithOsDefault;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
-
-import java.util.Arrays;
-import java.util.Map;
 
 public class IconVmBaseToUnitBuilder implements Builder<VmBase, UnitVmModel> {
 

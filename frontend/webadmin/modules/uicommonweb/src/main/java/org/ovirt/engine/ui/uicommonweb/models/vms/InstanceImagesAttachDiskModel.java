@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.compat.Guid;
@@ -7,10 +11,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class InstanceImagesAttachDiskModel extends AttachDiskModel {
 

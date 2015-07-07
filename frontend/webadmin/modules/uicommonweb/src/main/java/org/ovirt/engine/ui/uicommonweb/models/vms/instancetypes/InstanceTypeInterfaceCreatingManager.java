@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -13,8 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.BaseInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-
-import java.util.ArrayList;
 
 public class InstanceTypeInterfaceCreatingManager extends BaseInterfaceCreatingManager {
 

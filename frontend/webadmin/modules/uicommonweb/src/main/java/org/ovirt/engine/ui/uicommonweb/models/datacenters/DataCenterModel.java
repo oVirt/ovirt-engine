@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;

@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import com.google.gwt.i18n.client.NumberFormat;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -11,6 +10,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+import com.google.gwt.i18n.client.NumberFormat;
 
 public class VmGuestInfoModel extends EntityModel<VM> {
 

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -11,8 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
 
 public class AddProviderModel extends ProviderModel {
 

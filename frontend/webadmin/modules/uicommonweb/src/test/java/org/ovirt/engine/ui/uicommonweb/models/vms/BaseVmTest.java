@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
@@ -14,10 +18,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup;
-
-import java.util.Collections;
-
-import static org.mockito.Mockito.when;
 
 public class BaseVmTest {
     protected static final Guid VM_ID = Guid.newGuid();

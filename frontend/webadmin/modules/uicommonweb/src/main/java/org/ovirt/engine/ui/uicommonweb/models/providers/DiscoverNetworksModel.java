@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.ImportNetworksModel;
-
 import com.google.inject.Inject;
 
 public class DiscoverNetworksModel extends ImportNetworksModel {

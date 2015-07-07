@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -10,11 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Class which listens to fields which if changed makes the VM detached from the instance type.

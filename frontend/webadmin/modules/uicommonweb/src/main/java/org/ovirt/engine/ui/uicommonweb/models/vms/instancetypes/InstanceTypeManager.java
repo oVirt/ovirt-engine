@@ -1,7 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -35,10 +39,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VirtioScsiUtil;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Base class which takes care about copying the proper fields from instance type/template/vm static to the VM.

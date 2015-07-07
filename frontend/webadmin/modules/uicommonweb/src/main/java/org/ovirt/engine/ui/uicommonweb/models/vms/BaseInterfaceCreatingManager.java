@@ -1,18 +1,18 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 
 public abstract class BaseInterfaceCreatingManager {
 

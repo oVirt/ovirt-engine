@@ -42,7 +42,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.HandlerRegistration;

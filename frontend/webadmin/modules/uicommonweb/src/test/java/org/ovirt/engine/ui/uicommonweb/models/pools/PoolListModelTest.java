@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,8 +10,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BaseVmListModelTest;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PoolListModelTest extends BaseVmListModelTest {

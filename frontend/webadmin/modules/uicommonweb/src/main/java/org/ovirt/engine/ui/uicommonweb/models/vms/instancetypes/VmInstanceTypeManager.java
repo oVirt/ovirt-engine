@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -16,9 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ProfileBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class VmInstanceTypeManager extends InstanceTypeManager {
 

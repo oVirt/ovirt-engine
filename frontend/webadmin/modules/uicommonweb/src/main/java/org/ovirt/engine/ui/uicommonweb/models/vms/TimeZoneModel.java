@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.core.common.TimeZoneType;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.ovirt.engine.core.common.TimeZoneType;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 
 

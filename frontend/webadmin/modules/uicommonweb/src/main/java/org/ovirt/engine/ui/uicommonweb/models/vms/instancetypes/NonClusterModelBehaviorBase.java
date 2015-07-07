@@ -1,7 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
@@ -13,9 +16,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-
-import java.util.Arrays;
-import java.util.HashSet;
 
 public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel> {
 

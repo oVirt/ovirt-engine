@@ -31,7 +31,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.IconUtils;
-import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -47,6 +46,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewVmFromTemplateModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -59,7 +59,6 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
 import com.google.inject.Inject;
 
 public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> implements ISupportSystemTreeContext

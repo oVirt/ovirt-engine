@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -14,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import com.google.inject.Inject;
 
 public class SessionListModel extends ListWithSimpleDetailsModel<UserSession, UserSession>
         implements ISupportSystemTreeContext {

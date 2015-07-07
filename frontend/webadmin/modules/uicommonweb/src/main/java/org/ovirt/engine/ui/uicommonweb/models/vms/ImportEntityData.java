@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class ImportEntityData<E> extends EntityModel<E> {
     boolean isExistsInSystem;

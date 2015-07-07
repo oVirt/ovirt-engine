@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -14,9 +17,6 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
 

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.events;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -24,8 +26,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.List;
 
 public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> implements HasDismissCommand {
     private UICommand privateRefreshCommand;

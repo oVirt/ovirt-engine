@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.List;
+
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-
-import java.util.List;
 
 public class VmNextRunConfigurationModel extends ConfirmationModel {
 

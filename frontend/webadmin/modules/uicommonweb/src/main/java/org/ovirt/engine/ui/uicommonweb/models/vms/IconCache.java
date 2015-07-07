@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.queries.GetVmIconsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -7,11 +12,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Bidirectional map Guid &lt;-> String (icon id &lt;-> dataUri icon)

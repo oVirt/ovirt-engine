@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import java.util.Arrays;
-import org.junit.Test;
-
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+
+import org.junit.Test;
 
 public class ConsoleProtocolTest {
 

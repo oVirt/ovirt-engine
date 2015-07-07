@@ -36,7 +36,6 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
 import com.google.inject.Inject;
 
 @SuppressWarnings("unused")

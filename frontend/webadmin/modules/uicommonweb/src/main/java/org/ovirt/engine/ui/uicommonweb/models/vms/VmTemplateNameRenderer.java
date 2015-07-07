@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public class VmTemplateNameRenderer {
 

@@ -31,7 +31,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 

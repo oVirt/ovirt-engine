@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
-import com.google.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -83,11 +82,11 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -99,6 +98,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import com.google.inject.Inject;
 
 public class UserPortalListModel extends AbstractUserPortalListModel {
 

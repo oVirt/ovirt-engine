@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.user.client.Timer;
-
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -41,6 +39,7 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import com.google.gwt.user.client.Timer;
 
 public class ClusterGuideModel extends GuideModel {
 

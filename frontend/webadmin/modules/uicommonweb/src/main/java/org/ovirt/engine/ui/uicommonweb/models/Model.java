@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.uicompat.IProvidePropertyChangedEvent;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;

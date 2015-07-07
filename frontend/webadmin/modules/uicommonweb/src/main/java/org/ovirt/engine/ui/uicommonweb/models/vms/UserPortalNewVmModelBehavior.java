@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -22,10 +26,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewVmInstanceTyp
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements IFrontendMultipleQueryAsyncCallback

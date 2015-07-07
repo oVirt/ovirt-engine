@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;

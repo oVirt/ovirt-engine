@@ -17,8 +17,8 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
@@ -31,7 +31,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModel;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
 import com.google.inject.Inject;
 
 public class ClusterHostListModel extends HostListModel<VDSGroup> {

@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaUserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaVmListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
 import com.google.inject.Inject;
 
 public class DataCenterQuotaListModel extends QuotaListModel<StoragePool> {

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.gwt.user.client.Timer;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
@@ -78,6 +77,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ITaskTarget;
 import org.ovirt.engine.ui.uicompat.Task;
 import org.ovirt.engine.ui.uicompat.TaskContext;
+import com.google.gwt.user.client.Timer;
 
 public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 

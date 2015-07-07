@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.hostdev;
 
+import java.util.Collection;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -9,8 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-
-import java.util.Collection;
 
 public class ModelWithPinnedHost extends Model {
 

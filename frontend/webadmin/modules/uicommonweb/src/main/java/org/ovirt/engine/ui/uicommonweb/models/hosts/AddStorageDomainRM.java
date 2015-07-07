@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEnlistmentNotification;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
-
 import com.google.gwt.user.client.Timer;
 
 @SuppressWarnings("unused")

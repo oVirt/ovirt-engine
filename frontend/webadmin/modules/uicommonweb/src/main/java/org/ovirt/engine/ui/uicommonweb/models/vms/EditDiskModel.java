@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.Arrays;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -22,8 +24,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.NonNegativeLongNumberValidatio
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-
-import java.util.Arrays;
 
 public class EditDiskModel extends AbstractDiskModel
 {

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,8 +9,6 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VM;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmListModelTest extends BaseVmListModelTest {

@@ -1,20 +1,20 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.mockito.Matchers;
-import org.ovirt.engine.core.common.validation.MaskValidator;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.anyString;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.mockito.Matchers;
+import org.ovirt.engine.core.common.validation.MaskValidator;
 
 @RunWith(Parameterized.class)
 public class SubnetMaskValidationTest {

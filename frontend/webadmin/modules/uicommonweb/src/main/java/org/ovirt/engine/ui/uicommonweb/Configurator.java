@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;

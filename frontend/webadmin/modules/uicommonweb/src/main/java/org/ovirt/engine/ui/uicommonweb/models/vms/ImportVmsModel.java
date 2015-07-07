@@ -45,7 +45,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
-
 import com.google.inject.Inject;
 
 public class ImportVmsModel extends ListWithSimpleDetailsModel {

@@ -100,7 +100,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSystemTreeContext, ICancelable {

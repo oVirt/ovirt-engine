@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.ui.Image;
+import java.util.List;
+
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.List;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.ui.Image;
 
 /**
  * It validates icons size, dimensions and file format.

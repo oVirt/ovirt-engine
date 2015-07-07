@@ -1,10 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-
-import org.ovirt.engine.core.common.utils.ObjectUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
+
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 /**
  * A {@link ListModel} that allows temporarily hide some of its items.

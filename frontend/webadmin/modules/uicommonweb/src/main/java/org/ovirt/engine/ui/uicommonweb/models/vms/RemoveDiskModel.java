@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -15,9 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class RemoveDiskModel extends ConfirmationModel {

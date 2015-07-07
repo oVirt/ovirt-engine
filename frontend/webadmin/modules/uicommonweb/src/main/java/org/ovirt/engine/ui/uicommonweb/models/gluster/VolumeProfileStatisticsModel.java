@@ -26,7 +26,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-
 import com.google.gwt.i18n.client.NumberFormat;
 
 public class VolumeProfileStatisticsModel extends Model {

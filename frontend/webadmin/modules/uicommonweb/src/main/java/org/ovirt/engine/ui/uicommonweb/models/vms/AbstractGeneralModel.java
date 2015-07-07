@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;

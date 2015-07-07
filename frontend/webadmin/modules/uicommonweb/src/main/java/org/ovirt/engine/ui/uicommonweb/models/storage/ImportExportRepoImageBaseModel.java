@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -24,9 +27,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
-import java.util.Collections;
-import java.util.List;
 
 
 public abstract class ImportExportRepoImageBaseModel extends EntityModel implements ICommandTarget {

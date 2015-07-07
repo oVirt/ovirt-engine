@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import java.util.Arrays;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkPluginType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;

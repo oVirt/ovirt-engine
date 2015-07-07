@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
+import java.util.Arrays;
+
 import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.Arrays;
 
 public class SubnetMaskValidation implements IValidation
 {

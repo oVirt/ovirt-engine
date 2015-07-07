@@ -1,11 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import static org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
-
-
-import static org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 
 /**
  * This class contains all consoles and related methods for a single VM.

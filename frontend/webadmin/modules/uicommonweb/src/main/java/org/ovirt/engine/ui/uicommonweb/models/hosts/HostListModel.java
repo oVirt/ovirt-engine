@@ -97,7 +97,6 @@ import org.ovirt.engine.ui.uicompat.ReversibleFlow;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
-
 import com.google.inject.Inject;
 
 @SuppressWarnings("unchecked")

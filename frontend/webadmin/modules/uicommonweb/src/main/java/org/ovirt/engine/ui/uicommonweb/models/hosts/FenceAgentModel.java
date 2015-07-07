@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.queries.GetFenceAgentStatusParameters;

@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.LibvirtSecretModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-
 import com.google.inject.Inject;
 
 public class ProviderSecretListModel extends SearchableListModel<Provider, LibvirtSecret> {

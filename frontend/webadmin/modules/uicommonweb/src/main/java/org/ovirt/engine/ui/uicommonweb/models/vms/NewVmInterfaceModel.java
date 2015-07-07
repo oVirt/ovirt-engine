@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;

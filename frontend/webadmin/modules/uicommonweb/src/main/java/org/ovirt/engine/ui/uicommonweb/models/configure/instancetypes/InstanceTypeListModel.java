@@ -50,7 +50,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewInstanceTypeM
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-
 import com.google.inject.Inject;
 
 public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, InstanceType> {

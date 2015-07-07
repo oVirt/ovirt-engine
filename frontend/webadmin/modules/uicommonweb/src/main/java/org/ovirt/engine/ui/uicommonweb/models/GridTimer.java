@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent.GridTimerStateChangeEventHandler;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent.HasGridTimerStateChangeEventHandlers;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;

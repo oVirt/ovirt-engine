@@ -1,6 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -22,11 +27,6 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUni
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase {
 

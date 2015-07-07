@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
 import com.google.inject.Inject;
 
 public class ProviderNetworkListModel extends SearchableListModel<Provider, NetworkView> {

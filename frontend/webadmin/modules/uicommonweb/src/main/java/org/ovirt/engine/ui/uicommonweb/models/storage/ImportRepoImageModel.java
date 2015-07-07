@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -18,10 +22,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
 

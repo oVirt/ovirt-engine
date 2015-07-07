@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -8,10 +12,6 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class ExistingInstanceTypeModelBehavior extends ExistingNonClusterModelBehavior {
 

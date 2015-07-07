@@ -27,9 +27,8 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateEventL
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalTemplateVmModelBehavior;
-
-import com.google.inject.Inject;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
+import com.google.inject.Inject;
 
 public class UserPortalTemplateListModel extends TemplateListModel {
 

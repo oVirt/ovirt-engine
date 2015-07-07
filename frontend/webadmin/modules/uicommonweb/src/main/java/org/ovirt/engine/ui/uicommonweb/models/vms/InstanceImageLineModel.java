@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -12,10 +16,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class InstanceImageLineModel extends EntityModel {
 

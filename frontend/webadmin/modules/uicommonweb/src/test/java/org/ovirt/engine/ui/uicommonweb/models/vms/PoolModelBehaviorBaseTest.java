@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolModel;
-
-import java.util.List;
 
 public class PoolModelBehaviorBaseTest extends BaseVmModelBehaviorTest {
 

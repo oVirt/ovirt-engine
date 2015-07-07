@@ -67,7 +67,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 

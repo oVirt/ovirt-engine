@@ -6,7 +6,6 @@ import java.util.Map;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.HtmlParameters;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-
 import com.google.gwt.i18n.client.LocaleInfo;
 
 public class ReportModel extends EntityModel {

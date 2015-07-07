@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.ReportParser;
 import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 import org.ovirt.engine.ui.uicompat.ReportParser.Resource;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;

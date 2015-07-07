@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel.GraphicsTypes;
-
-
-import static org.junit.Assert.assertEquals;
 
 
 public class GraphicsTypesTest {

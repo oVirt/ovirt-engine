@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.ovirt.engine.core.compat.Guid;
 
 
 public class IconCacheBaseVmModelMock extends IconCacheMockBase {

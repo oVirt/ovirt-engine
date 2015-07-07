@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;

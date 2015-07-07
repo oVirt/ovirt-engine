@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
 import org.ovirt.engine.core.common.action.VfsConfigNetworkParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.uicommonweb.action.SyncUiAction;
 import org.ovirt.engine.ui.uicommonweb.action.UiAction;
 import org.ovirt.engine.ui.uicommonweb.action.UiVdcMultipleAction;
-import org.ovirt.engine.ui.uicommonweb.action.SyncUiAction;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 public class VfsConfigAction extends SyncUiAction {

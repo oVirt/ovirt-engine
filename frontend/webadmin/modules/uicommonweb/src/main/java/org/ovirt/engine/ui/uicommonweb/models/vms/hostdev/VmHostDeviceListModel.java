@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.hostdev;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
@@ -19,10 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.google.inject.Inject;
 
 public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
 

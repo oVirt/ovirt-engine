@@ -32,7 +32,6 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.RemoveNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 

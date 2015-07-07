@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.List;
+
+import org.ovirt.engine.core.compat.Guid;
 
 
 public abstract class IconCacheMockBase extends IconCache {

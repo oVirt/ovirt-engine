@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
 
 import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;

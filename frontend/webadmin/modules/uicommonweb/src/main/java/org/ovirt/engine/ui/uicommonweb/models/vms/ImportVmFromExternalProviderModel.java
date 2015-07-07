@@ -44,7 +44,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-
 import com.google.inject.Inject;
 
 public class ImportVmFromExternalProviderModel extends ImportVmModel {

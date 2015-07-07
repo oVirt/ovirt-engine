@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
 import com.google.gwt.user.client.Timer;
 
 public class VolumeRebalanceStatusModel extends Model {

@@ -1,5 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.diskProfileUser;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.engineUser;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.everyone;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.quotaConsumer;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.userProfileEditor;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.userTemplateBasedVM;
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.vnicProfileUser;
+
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -21,14 +29,6 @@ import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-
-import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.everyone;
-import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.engineUser;
-import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.userProfileEditor;
-import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.userTemplateBasedVM;
-import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.quotaConsumer;
-import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.vnicProfileUser;
-import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.diskProfileUser;
 
 public class UserPortalLoginModel extends LoginModel
 {
