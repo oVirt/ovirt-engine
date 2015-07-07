@@ -964,4 +964,13 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Error un-registering Libvirt secret")
     String SecretUnregisterError();
+
+    @DefaultStringValue("Operation not supported")
+    String UnsupportedOperationErr();
+
+    @DefaultStringValue("Unable to freeze guest filesystems")
+    String freezeErr();
+
+    @DefaultStringValue("Unable to thaw guest filesystems")
+    String thawErr();
 }
