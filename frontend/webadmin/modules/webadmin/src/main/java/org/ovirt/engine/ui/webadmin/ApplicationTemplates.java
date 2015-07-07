@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin;
 
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
-
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeUri;
 

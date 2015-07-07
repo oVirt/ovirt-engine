@@ -18,10 +18,9 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-
+import org.ovirt.engine.ui.webadmin.plugin.jsni.JsMutableObjectWithProperties;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import org.ovirt.engine.ui.webadmin.plugin.jsni.JsMutableObjectWithProperties;
 
 /**
  * Overlay type representing a business entity passed through plugin API as native JS object.

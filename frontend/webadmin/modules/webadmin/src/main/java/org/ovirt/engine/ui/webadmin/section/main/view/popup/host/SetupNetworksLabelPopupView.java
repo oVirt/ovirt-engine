@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;

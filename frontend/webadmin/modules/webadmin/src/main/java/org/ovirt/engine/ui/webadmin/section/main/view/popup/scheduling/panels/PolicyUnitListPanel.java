@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.NewClusterPolicyModel;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.DragDropEventBase;

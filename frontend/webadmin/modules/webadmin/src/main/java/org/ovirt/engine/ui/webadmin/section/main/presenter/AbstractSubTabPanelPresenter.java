@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.user.client.ui.IsWidget;

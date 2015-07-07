@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGl
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDeviceStatusColumn;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 

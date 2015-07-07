@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVLan;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.renderer.HostVLanNameRenderer;
-
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.FontWeight;

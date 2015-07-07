@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetails
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractGeneralDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;

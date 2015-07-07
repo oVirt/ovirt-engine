@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DynamicUrlContentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.DynamicUrlContentTabView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.DynamicUrlContentPopupView;
-
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 

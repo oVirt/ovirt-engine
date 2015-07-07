@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabReportsPresenter;
 import org.ovirt.engine.ui.webadmin.widget.form.PostableFrame;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;

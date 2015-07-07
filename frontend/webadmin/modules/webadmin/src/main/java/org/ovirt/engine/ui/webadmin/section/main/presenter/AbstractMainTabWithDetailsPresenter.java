@@ -8,13 +8,12 @@ import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 /**
  * Base class for main tab presenters that work with {@link ListWithDetailsModel}.

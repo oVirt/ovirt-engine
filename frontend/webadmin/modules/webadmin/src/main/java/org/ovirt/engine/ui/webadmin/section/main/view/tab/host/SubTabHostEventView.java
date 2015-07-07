@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabEventView;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 

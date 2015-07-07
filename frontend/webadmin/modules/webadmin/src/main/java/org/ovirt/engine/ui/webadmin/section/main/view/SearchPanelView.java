@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterW
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestOracle;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestionDisplay;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;

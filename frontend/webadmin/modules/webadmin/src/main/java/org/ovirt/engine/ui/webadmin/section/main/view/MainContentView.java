@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.view.SubTabHelper;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
-
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;

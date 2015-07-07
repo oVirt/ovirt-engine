@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.Confi
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes.InstanceTypesView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.SharedMacPoolView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyView;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;

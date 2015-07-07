@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.plugin.api;
 
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsObjectWithProperties;
-
 import com.google.gwt.core.client.JsArrayString;
 
 /**

@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.widget.renderer;
 import java.util.ArrayList;
 
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabelBase;
-
 import com.google.gwt.text.shared.AbstractRenderer;
 
 public class DetailsRenderer<V> extends AbstractRenderer<ArrayList<TextBoxLabelBase<V>>> {

@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.label;
 
 import org.ovirt.engine.ui.webadmin.widget.renderer.PercentRenderer;
-
 import com.google.gwt.user.client.ui.ValueLabel;
 
 /**

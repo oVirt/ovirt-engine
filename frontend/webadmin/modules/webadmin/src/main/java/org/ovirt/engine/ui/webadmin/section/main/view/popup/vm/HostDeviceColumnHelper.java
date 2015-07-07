@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
+import java.util.List;
+
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-
-import java.util.List;
 
 public final class HostDeviceColumnHelper {
 

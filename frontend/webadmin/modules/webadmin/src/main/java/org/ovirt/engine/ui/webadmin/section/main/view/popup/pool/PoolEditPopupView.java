@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.view.popup.AbstractVmPopupView;
 import org.ovirt.engine.ui.common.view.popup.VmPopupResources;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.pool.PoolEditPopupWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;

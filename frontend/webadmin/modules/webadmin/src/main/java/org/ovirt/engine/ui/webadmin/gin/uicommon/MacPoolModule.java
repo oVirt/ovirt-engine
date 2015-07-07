@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolListModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SharedMacPoolModelProvider;
-
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;

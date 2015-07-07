@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabEventView;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;

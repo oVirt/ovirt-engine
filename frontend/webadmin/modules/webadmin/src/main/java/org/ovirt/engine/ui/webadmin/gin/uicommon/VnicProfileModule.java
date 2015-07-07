@@ -21,7 +21,6 @@ import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileTemplateListMo
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileVmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;

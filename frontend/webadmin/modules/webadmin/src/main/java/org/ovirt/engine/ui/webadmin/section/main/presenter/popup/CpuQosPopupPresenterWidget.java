@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.CpuQosParametersModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosModel;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 

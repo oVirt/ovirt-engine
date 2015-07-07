@@ -56,7 +56,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.FenceAgentModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.host.FenceAgentsEditor;
 import org.ovirt.engine.ui.webadmin.widget.host.HostProxySourceEditor;
 import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.TextDecoration;

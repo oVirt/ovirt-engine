@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.presenter.DynamicTabPresenter;
 import org.ovirt.engine.ui.common.presenter.DynamicTabProxy;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.gwtplatform.mvp.client.View;

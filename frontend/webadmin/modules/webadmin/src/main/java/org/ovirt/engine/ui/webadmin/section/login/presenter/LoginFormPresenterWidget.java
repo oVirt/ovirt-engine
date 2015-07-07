@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.presenter.AbstractLoginPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 

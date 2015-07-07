@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.widget.action;
 
 import org.ovirt.engine.ui.common.widget.action.ImageUiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
 

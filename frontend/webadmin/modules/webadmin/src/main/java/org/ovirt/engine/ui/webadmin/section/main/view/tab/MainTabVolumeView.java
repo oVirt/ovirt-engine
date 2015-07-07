@@ -34,7 +34,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColu
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeBrickStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeInfoColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeStatusColumn;
-
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.Column;

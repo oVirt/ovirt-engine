@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-
 import com.google.gwt.core.client.GWT;
 
 public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String, String>, HostListModel<Void>, HostHooksListModel>

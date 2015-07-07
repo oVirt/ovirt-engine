@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetails
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractQuotaPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaDcStatusColumn;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.inject.Inject;

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
-
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;

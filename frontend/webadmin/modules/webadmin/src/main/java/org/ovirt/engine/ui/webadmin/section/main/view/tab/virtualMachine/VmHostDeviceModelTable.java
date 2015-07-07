@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine;
 
-import com.google.gwt.dom.client.TableRowElement;
-import com.google.gwt.event.shared.EventBus;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
@@ -10,6 +8,8 @@ import org.ovirt.engine.ui.common.widget.table.AbstractActionTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostDeviceModelBaseTable;
+import com.google.gwt.dom.client.TableRowElement;
+import com.google.gwt.event.shared.EventBus;
 
 public class VmHostDeviceModelTable extends HostDeviceModelBaseTable<VmHostDeviceListModel> implements AbstractActionTable.RowVisitor<HostDeviceView> {
 

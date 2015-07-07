@@ -1,16 +1,16 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import org.ovirt.engine.core.common.businessentities.ExternalStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public class StorageDomainAdditionalStatusColumn extends EntityAdditionalStatusColumn<StorageDomain> {
 

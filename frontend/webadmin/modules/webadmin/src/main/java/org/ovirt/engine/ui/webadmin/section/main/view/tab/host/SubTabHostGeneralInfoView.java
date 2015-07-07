@@ -33,7 +33,6 @@ import org.ovirt.engine.ui.webadmin.widget.label.DetailsTextBoxLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentTextBoxLabel;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;

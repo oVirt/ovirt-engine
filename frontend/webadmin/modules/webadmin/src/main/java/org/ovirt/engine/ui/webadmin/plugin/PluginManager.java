@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.webadmin.plugin.api.ApiOptions;
 import org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;

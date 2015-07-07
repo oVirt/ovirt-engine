@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.widget.autocomplete;
 import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SuggestItemPartModel;
-
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public class SearchSuggestion implements Suggestion {

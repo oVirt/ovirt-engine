@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabEventView;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;

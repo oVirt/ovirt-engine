@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -25,7 +24,6 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterServiceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterServicePresenter;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;

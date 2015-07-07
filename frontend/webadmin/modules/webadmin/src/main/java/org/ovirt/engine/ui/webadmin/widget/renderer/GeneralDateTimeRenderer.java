@@ -5,7 +5,6 @@ import java.util.Date;
 import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-
 import com.google.gwt.text.shared.AbstractRenderer;
 
 /**

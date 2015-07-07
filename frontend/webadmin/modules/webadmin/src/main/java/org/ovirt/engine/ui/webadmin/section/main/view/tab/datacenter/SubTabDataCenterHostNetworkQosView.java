@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterHostNetworkQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-
 import com.google.gwt.core.client.GWT;
 
 public class SubTabDataCenterHostNetworkQosView extends AbstractSubTabTableView<StoragePool,

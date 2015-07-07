@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.webadmin.widget.footer.AlertsEventsFooterView;
 import org.ovirt.engine.ui.webadmin.widget.main.TabbedSplitLayoutPanel;
 import org.ovirt.engine.ui.webadmin.widget.tags.TagList;
 import org.ovirt.engine.ui.webadmin.widget.tree.SystemTree;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;

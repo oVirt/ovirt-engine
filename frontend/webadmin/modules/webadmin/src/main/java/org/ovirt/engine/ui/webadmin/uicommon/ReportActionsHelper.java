@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.uicompat.ReportParser.Resource;
 import org.ovirt.engine.ui.uicompat.ReportParser.URI;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
-
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 

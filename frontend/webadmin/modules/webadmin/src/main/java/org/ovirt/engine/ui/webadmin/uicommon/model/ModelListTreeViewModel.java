@@ -8,7 +8,6 @@ import java.util.Set;
 import org.ovirt.engine.ui.common.uicommon.model.TreeNodeModel;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.tree.TreeModelWithElementId;
-
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.CompositeCell;

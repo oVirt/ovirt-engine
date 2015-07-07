@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 

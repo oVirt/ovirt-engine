@@ -1,12 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -25,8 +20,13 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.HostInterfaceForm;
-
-import javax.inject.Inject;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostInterfaceListModel>
         implements SubTabHostInterfacePresenter.ViewDef {

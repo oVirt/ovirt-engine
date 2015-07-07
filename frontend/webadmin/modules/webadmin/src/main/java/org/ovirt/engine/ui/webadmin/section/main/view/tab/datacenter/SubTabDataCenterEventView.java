@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterEventListMod
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabEventView;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 

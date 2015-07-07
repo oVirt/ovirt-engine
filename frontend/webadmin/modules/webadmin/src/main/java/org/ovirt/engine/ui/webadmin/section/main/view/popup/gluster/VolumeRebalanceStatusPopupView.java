@@ -24,7 +24,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractHumanReadableTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractRebalanceFileSizeColumn;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;

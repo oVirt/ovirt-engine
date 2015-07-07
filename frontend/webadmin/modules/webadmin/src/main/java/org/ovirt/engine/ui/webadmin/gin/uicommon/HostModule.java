@@ -43,9 +43,9 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
@@ -68,7 +68,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePop
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceAgentModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;

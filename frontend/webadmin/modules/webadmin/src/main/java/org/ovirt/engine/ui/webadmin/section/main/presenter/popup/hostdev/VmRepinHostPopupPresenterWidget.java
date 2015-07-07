@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.inject.Inject;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.RepinHostModel;
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
 
 public class VmRepinHostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<RepinHostModel, VmRepinHostPopupPresenterWidget.ViewDef> {
 

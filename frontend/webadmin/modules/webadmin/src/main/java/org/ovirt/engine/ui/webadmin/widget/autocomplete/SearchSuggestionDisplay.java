@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox.SearchSuggestionColumn;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox.SuggestCellTable;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox.SuggestionsTableResources;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;

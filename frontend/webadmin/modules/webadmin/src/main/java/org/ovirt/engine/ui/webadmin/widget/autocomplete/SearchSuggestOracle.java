@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SuggestItemPartModel;
-
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle;
 

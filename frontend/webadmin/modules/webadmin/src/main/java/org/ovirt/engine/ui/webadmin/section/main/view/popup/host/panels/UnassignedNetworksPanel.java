@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragEnterEvent;

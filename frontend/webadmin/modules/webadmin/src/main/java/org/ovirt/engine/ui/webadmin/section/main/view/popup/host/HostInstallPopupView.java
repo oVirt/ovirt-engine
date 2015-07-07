@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;

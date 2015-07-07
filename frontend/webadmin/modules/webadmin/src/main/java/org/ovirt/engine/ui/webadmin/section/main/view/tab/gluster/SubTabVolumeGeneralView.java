@@ -27,7 +27,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.widget.label.DetailsTextBoxLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.VolumeCapacityLabel;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;

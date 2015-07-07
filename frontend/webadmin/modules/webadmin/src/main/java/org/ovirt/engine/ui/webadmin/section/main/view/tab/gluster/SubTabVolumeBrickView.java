@@ -26,7 +26,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.BrickCapacityCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
-
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.Column;

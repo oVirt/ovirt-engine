@@ -30,8 +30,8 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.NewHostNetworkQosM
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkExternalSubnetListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
@@ -54,7 +54,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.Extern
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;

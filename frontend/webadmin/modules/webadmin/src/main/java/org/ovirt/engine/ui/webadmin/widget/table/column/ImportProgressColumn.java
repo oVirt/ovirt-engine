@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public class ImportProgressColumn extends AbstractOneColorPercentColumn<VM> {

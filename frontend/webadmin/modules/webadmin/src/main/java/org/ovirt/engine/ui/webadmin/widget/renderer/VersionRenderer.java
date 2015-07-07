@@ -4,7 +4,6 @@ import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-
 import com.google.gwt.text.shared.AbstractRenderer;
 
 public class VersionRenderer extends AbstractRenderer<RpmVersion> {

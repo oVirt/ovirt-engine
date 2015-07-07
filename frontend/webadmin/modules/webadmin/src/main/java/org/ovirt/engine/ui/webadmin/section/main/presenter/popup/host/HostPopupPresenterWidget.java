@@ -5,13 +5,12 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 
 public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPresenterWidget<HostModel, HostPopupPresenterWidget.ViewDef> {
 

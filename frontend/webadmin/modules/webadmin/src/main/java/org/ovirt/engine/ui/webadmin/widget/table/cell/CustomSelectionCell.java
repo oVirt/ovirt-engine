@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractInputCell;
-
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;

@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabGlu
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GlusterVolumeSnapshotStatusColumn;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.inject.Inject;

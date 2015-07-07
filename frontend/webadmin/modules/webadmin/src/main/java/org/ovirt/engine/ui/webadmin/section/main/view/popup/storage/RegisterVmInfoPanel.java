@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmGeneralSubTabView;
-
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {

@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.widget.tab.SimpleTabPanel;
-
 import com.google.gwt.core.client.GWT;
 
 public class DataCenterSubTabPanelView extends AbstractSubTabPanelView implements DataCenterSubTabPanelPresenter.ViewDef {

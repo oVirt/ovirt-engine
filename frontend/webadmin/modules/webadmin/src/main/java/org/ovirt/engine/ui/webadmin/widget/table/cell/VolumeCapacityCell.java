@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GlusterCapacityCell;
-
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 public class VolumeCapacityCell<P extends GlusterVolumeEntity> extends GlusterCapacityCell<P> {

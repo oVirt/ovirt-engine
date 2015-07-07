@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.plugin.jsni;
 
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ResultHandler;
-
 import com.google.gwt.core.client.JsArray;
 
 /**

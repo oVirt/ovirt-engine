@@ -33,7 +33,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider.TaskHandler;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TaskStatusColumn;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;

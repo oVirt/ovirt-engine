@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-
 import com.google.gwt.resources.client.ImageResource;
 
 public class InternalNetworkPanel extends NetworkPanel {

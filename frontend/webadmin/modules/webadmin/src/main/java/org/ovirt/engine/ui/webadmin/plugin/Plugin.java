@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.ovirt.engine.ui.webadmin.plugin.api.ApiOptions;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.IFrameElement;
 

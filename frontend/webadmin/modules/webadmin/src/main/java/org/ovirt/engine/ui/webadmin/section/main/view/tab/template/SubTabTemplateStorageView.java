@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
 import org.ovirt.engine.ui.webadmin.widget.template.StoragesTree;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 

@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_grou
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineAffinityGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabAffinityGroupsView;
-
 import com.google.gwt.core.client.GWT;
 
 public class SubTabVirtualMachineAffinityGroupView extends AbstractSubTabAffinityGroupsView<VM, VmListModel<Void>, VmAffinityGroupListModel>

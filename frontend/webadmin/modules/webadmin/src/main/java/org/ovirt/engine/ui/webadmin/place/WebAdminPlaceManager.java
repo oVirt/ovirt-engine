@@ -8,12 +8,11 @@ import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
-
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
-import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 
 public class WebAdminPlaceManager extends ApplicationPlaceManager {
 

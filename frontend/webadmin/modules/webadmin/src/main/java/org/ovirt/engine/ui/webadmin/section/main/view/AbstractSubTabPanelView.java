@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.widget.tab.SimpleTabPanel;
-
 import com.google.gwt.user.client.ui.IsWidget;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 

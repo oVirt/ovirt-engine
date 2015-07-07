@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosParametersModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;

@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceMode
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragEnterEvent;

@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickHandler;

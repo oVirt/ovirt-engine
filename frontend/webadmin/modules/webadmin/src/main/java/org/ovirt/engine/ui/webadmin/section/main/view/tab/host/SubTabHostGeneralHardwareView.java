@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
-
 import java.util.EnumMap;
 
 import javax.inject.Inject;
@@ -19,7 +18,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralHardwarePresenter;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Float;

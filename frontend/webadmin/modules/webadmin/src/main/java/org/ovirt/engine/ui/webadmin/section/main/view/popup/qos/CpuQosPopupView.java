@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.CpuQosParametersModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPresenterWidget;
-
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;

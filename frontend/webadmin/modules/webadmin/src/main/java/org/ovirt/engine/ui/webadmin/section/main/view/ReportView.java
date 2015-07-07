@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.form.PostableFrame;
-
 import com.google.gwt.dom.client.Style.Position;
 
 public class ReportView extends AbstractView implements ReportPresenterWidget.ViewDef {

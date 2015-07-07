@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 import org.ovirt.engine.ui.common.widget.table.cell.CompositeCell;
-
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.dom.client.Element;

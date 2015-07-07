@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.widget.editor;
 import org.ovirt.engine.ui.common.uicommon.model.TreeNodeModel;
 import org.ovirt.engine.ui.common.widget.tree.ElementIdCellTree;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTree;
 

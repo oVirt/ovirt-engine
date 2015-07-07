@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.plugin.entity;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsMutableObjectWithProperties;
+import com.google.gwt.core.client.JavaScriptObject;
 
 /**
  * Overlay type representing a system tree item passed through plugin API as native JS object.

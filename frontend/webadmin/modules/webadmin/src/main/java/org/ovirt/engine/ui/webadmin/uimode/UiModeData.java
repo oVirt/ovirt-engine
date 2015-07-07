@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.uimode;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**
