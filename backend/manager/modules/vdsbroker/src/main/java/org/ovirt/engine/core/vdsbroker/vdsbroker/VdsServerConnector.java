@@ -430,4 +430,6 @@ public interface VdsServerConnector {
     public Map<String, Object> registerSecrets(Map<String, String>[] libvirtSecrets, boolean clearUnusedSecrets);
 
     public Map<String, Object> unregisterSecrets(String[] libvirtSecretsUuids);
+
+    public Map<String, Object> freeze(String vmId);
 }
