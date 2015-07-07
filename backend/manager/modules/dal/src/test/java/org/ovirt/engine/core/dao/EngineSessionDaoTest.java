@@ -1,16 +1,16 @@
 package org.ovirt.engine.core.dao;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.EngineSession;
-import org.ovirt.engine.core.compat.Guid;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import org.junit.Before;
+import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.EngineSession;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * <code>EngineSessionDaoTest</code> performs tests against the {@link org.ovirt.engine.core.dao.EngineSessionDao} type.

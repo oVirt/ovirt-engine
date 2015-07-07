@@ -3,8 +3,8 @@ package org.ovirt.engine.core.dal;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.Logged;
+import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -11,7 +11,6 @@ import java.util.Set;
 import org.apache.commons.collections.KeyValue;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.compat.Guid;
 

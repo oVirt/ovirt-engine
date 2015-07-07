@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.apache.commons.collections.KeyValue;
-
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.compat.Guid;
 

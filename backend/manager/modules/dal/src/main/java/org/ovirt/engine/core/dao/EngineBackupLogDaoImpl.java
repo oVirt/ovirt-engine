@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.dao;
 
-import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
-import org.ovirt.engine.core.common.businessentities.EngineBackupLogId;
-import org.ovirt.engine.core.dao.jpa.AbstractJpaDao;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
+
+import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
+import org.ovirt.engine.core.common.businessentities.EngineBackupLogId;
+import org.ovirt.engine.core.dao.jpa.AbstractJpaDao;
 
 @Named
 @Singleton

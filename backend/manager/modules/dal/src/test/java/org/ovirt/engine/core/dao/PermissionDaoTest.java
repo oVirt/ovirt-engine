@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.compat.Guid;
 
 public class PermissionDaoTest extends BaseDaoTestCase {
     private static final Guid STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");

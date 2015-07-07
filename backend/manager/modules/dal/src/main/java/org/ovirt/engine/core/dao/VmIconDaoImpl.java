@@ -1,17 +1,18 @@
 package org.ovirt.engine.core.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 
 @Named
 @Singleton

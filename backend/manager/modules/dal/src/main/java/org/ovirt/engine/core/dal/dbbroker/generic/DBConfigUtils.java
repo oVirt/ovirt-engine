@@ -19,9 +19,9 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdcOptionDao;
 import org.ovirt.engine.core.utils.ConfigUtilsBase;
+import org.ovirt.engine.core.utils.collections.DomainsPasswordMap;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
-import org.ovirt.engine.core.utils.collections.DomainsPasswordMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

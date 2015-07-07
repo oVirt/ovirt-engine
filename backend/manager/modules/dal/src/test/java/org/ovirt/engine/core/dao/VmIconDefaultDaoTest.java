@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.dao;
 
-import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VmIconDefault;
-import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
+import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.VmIconDefault;
+import org.ovirt.engine.core.compat.Guid;
 
 public class VmIconDefaultDaoTest extends BaseGenericDaoTestCase<Guid, VmIconDefault, VmIconDefaultDao> {
 

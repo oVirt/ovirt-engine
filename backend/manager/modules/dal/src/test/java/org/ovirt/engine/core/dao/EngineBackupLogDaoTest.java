@@ -1,19 +1,19 @@
 package org.ovirt.engine.core.dao;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
-import org.ovirt.engine.core.common.businessentities.EngineBackupLogId;
-import org.ovirt.engine.core.utils.RandomUtils;
-
-import java.util.Calendar;
-import java.util.Date;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Calendar;
+import java.util.Date;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
+import org.ovirt.engine.core.common.businessentities.EngineBackupLogId;
+import org.ovirt.engine.core.utils.RandomUtils;
 
 public class EngineBackupLogDaoTest extends BaseHibernateDaoTestCase<EngineBackupLogDao, EngineBackupLog, EngineBackupLogId> {
 

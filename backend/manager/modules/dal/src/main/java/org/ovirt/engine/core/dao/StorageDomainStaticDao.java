@@ -2,8 +2,8 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface StorageDomainStaticDao extends GenericDao<StorageDomainStatic, Guid> {

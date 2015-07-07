@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
-import org.ovirt.engine.core.dal.utils.CacheManager;
-
 import java.util.concurrent.TimeUnit;
+
+import org.ovirt.engine.core.dal.utils.CacheManager;
 
 public abstract class TimeoutBase {
     private boolean mUseTimeout;

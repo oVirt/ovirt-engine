@@ -7,7 +7,6 @@ import java.sql.Types;
 
 import org.dbunit.dataset.datatype.AbstractDataType;
 import org.dbunit.dataset.datatype.TypeCastException;
-
 import org.ovirt.engine.core.compat.Guid;
 
 public class UniqueIdentifierType extends AbstractDataType {

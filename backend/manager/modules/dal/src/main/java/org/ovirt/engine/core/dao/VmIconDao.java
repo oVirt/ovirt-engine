@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 public interface VmIconDao extends GenericDao<VmIcon, Guid> {
 

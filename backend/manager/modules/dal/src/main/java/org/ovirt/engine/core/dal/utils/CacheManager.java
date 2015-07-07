@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.dal.utils;
 
-import org.infinispan.Cache;
-import org.infinispan.manager.CacheContainer;
-import org.ovirt.engine.core.common.BackendService;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
+
+import org.infinispan.Cache;
+import org.infinispan.manager.CacheContainer;
+import org.ovirt.engine.core.common.BackendService;
 
 @Singleton
 public class CacheManager implements BackendService {

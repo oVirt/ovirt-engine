@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 public interface UserProfileDao extends Dao {
     /**

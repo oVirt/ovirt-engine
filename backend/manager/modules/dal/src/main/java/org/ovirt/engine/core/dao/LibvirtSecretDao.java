@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 /**
  * <code>LibvirtSecretDao</code> defines a type which performs CRUD operations on instances of {@link LibvirtSecret}.
