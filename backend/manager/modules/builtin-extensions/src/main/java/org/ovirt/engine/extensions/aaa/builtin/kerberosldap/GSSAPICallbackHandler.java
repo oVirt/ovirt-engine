@@ -4,6 +4,7 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.io.IOException;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;

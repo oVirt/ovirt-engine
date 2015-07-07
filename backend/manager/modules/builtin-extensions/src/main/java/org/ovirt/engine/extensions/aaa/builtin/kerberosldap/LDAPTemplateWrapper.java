@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import javax.naming.directory.SearchControls;
 
-import com.sun.jndi.ldap.LdapCtxFactory;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.control.PagedResultsCookie;
@@ -15,8 +15,7 @@ import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.core.support.SingleContextSource;
-
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
+import com.sun.jndi.ldap.LdapCtxFactory;
 
 public abstract class LDAPTemplateWrapper {
 

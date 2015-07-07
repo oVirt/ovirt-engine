@@ -2,7 +2,6 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ipa;
 
 import static org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.InstallerConstants.ERROR_PREFIX;
 
-
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 

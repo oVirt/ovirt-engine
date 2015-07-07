@@ -6,13 +6,12 @@ import javax.naming.OperationNotSupportedException;
 import javax.security.sasl.SaslException;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering.OrderingAlgorithmType;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.CommunicationException;
-
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering.OrderingAlgorithmType;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 
 public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchExceptionHandlingResponse, LdapCredentials> {
 

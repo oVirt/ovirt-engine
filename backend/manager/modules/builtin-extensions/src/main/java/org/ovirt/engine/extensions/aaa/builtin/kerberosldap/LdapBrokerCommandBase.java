@@ -7,12 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.ovirt.engine.api.extensions.aaa.Authn;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 
 public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 

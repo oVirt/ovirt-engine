@@ -12,10 +12,9 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 
 /**
  * Anonymous query an LDAP server to get the rootDSE object. rootDSE provides data on the directory server. This query

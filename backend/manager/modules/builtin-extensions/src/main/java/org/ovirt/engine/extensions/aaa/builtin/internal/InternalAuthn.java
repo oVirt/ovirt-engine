@@ -2,6 +2,7 @@ package org.ovirt.engine.extensions.aaa.builtin.internal;
 
 import java.util.Collection;
 import java.util.Properties;
+
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.Extension;

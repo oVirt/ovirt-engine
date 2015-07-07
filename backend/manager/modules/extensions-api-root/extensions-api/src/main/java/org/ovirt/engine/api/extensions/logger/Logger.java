@@ -1,9 +1,9 @@
 package org.ovirt.engine.api.extensions.logger;
 
+import java.util.logging.LogRecord;
+
 import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtUUID;
-
-import java.util.logging.LogRecord;
 
 /**
  * Log extension interface. Permitted to process logging records of application.

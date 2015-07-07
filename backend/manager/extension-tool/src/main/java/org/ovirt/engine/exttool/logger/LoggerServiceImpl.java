@@ -1,5 +1,12 @@
 package org.ovirt.engine.exttool.logger;
 
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
@@ -9,13 +16,6 @@ import org.ovirt.engine.core.uutils.cli.parser.ArgumentsParser;
 import org.ovirt.engine.exttool.core.ExitException;
 import org.ovirt.engine.exttool.core.ModuleService;
 import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 public class LoggerServiceImpl implements ModuleService {
 

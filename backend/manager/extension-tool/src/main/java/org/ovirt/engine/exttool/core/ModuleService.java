@@ -1,11 +1,11 @@
 package org.ovirt.engine.exttool.core;
 
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
-
-import java.util.List;
-import java.util.Map;
 
 public interface ModuleService {
 

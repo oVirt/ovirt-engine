@@ -3,12 +3,11 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.support.LdapContextSource;
-
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 
 public class PrepareLdapConnectionTask implements Callable<LDAPTemplateWrapper> {
 

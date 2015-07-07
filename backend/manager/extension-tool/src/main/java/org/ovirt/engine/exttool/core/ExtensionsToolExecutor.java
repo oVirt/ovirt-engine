@@ -1,11 +1,5 @@
 package org.ovirt.engine.exttool.core;
 
-import org.ovirt.engine.api.extensions.ExtMap;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
-import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
-import org.ovirt.engine.core.uutils.cli.parser.ArgumentsParser;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +13,12 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+
+import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
+import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
+import org.ovirt.engine.core.uutils.cli.parser.ArgumentsParser;
+import org.slf4j.LoggerFactory;
 
 public class ExtensionsToolExecutor {
 

@@ -3,8 +3,6 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.NoOpLdapFilterSearchEnginePreProcessor;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.UpnSplitterLdapFilterSearchEnginePreProcessor;
 
 public class LdapFilterSearchEnginePreProcessorTest {
 

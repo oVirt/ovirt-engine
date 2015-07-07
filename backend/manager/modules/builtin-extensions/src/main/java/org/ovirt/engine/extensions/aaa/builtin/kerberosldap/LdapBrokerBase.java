@@ -2,10 +2,9 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.lang.reflect.Constructor;
 
+import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.ovirt.engine.core.utils.ReflectionUtils;
 
 public abstract class LdapBrokerBase implements LdapBroker {
     private static final String CommandsContainerAssemblyName = LdapBrokerBase.class.getPackage().getName();

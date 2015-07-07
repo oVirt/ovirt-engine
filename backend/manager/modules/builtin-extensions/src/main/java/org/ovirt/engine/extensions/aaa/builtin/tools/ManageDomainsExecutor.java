@@ -1,16 +1,16 @@
 package org.ovirt.engine.extensions.aaa.builtin.tools;
 
-import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.utils.log.JavaLoggingUtils;
-import org.ovirt.engine.core.uutils.cli.parser.ArgumentsParser;
-import org.slf4j.LoggerFactory;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.utils.log.JavaLoggingUtils;
+import org.ovirt.engine.core.uutils.cli.parser.ArgumentsParser;
+import org.slf4j.LoggerFactory;
 
 /**
  * Parses command line arguments, setups logging and executes engine-manage-domains

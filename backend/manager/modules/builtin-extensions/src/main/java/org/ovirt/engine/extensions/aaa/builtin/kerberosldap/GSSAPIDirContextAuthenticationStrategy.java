@@ -16,12 +16,11 @@ import javax.security.auth.kerberos.KerberosTicket;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.KerberosReturnCodeParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
-
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.KerberosReturnCodeParser;
 
 /**
  *
