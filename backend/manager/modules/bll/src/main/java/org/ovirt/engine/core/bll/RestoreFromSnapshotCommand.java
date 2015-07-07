@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -120,7 +120,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         // Don't throw an exception when cannot destroy image in the VDSM.
         catch (EngineException e) {
             // Set fault for parent command RestoreAllSnapshotCommand to use, if decided to fail the command.
-            getReturnValue().setFault(new VdcFault(e, e.getVdsError().getCode()));
+            getReturnValue().setFault(new EngineFault(e, e.getVdsError().getCode()));
             log.info("Image '{}' not exist in Irs", getDiskImage().getImageId());
         }
         return vdsReturnValue;

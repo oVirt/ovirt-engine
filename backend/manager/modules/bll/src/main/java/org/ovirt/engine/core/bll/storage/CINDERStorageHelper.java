@@ -22,8 +22,8 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RegisterLibvirtSecretsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.UnregisterLibvirtSecretsVDSParameters;
@@ -57,7 +57,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
+    protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
         Provider provider = getProviderDao().get(Guid.createGuidFromString(storageDomain.getStorage()));
         List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
         VDS vds = getVdsDao().get(vdsId);
@@ -82,7 +82,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return unregisterLibvirtSecrets(storageDomain, vds, libvirtSecrets);
     }
 
-    public static Pair<Boolean, VdcFault> registerLibvirtSecrets(StorageDomain storageDomain, VDS vds,
+    public static Pair<Boolean, EngineFault> registerLibvirtSecrets(StorageDomain storageDomain, VDS vds,
                                                            List<LibvirtSecret> libvirtSecrets) {
         VDSReturnValue returnValue;
         if (!libvirtSecrets.isEmpty()) {
@@ -101,9 +101,9 @@ public class CINDERStorageHelper extends StorageHelperBase {
                         storageDomain.getName(), vds.getName());
                 log.error("Failed to register libvirt secret for storage domain {} on vds {}.",
                         storageDomain.getName(), vds.getName());
-                VdcFault vdcFault = new VdcFault();
-                vdcFault.setError(returnValue.getVdsError().getCode());
-                return new Pair<>(false, vdcFault);
+                EngineFault engineFault = new EngineFault();
+                engineFault.setError(returnValue.getVdsError().getCode());
+                return new Pair<>(false, engineFault);
             }
         }
         return new Pair<>(true, null);

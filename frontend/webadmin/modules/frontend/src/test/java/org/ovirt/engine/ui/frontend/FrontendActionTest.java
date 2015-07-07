@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
@@ -465,7 +465,7 @@ public class FrontendActionTest {
         returnValue.setCanDoAction(true);
         returnValue.setIsSyncronious(true);
         returnValue.setSucceeded(false); // Yes this is the default, but to make sure.
-        VdcFault testFault = new VdcFault();
+        EngineFault testFault = new EngineFault();
         returnValue.setFault(testFault);
         frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, true);
@@ -491,7 +491,7 @@ public class FrontendActionTest {
      */
     @Test
     public void testHandleActionResult_isRaiseErrorModalPanel_actionMessageSize_1_or_less() {
-        VdcFault testFault = new VdcFault();
+        EngineFault testFault = new EngineFault();
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -528,7 +528,7 @@ public class FrontendActionTest {
      */
     @Test
     public void testHandleActionResult_isRaiseErrorModalPanel_withActionMessageSize1() {
-        VdcFault testFault = new VdcFault();
+        EngineFault testFault = new EngineFault();
         ArrayList<String> translatedErrors = new ArrayList<String>(Arrays.asList("Translated Message 1")); //$NON-NLS-1$
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
         when(mockCanDoActionErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
@@ -568,7 +568,7 @@ public class FrontendActionTest {
      */
     @Test
     public void testHandleActionResult_isRaiseErrorModalPanel_withActionMessageSizeGreaterThan1() {
-        VdcFault testFault = new VdcFault();
+        EngineFault testFault = new EngineFault();
         ArrayList<String> translatedErrors = new ArrayList<String>(Arrays.asList(
                 "Translated Message 1", "Translated Message 2")); //$NON-NLS-1$ //$NON-NLS-2$
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);

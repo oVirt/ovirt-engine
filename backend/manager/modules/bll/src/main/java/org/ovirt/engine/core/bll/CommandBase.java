@@ -67,8 +67,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -1218,16 +1218,16 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     getClass().getName(),
                     e.getMessage());
             log.debug("Exception", e);
-            processExceptionToClient(new VdcFault(e, e.getVdsError().getCode()));
+            processExceptionToClient(new EngineFault(e, e.getVdsError().getCode()));
         } catch (OpenStackResponseException e) {
             // Adding a message to executeFailedMessages is needed only when the list is empty
             if (_returnValue.getExecuteFailedMessages().isEmpty()) {
-                processExceptionToClient(new VdcFault(e, EngineError.ENGINE));
+                processExceptionToClient(new EngineFault(e, EngineError.ENGINE));
             }
             log.error("Command '{}' failed: {}", getClass().getName(), e.getMessage());
             log.error("Exception", e);
         } catch (RuntimeException e) {
-            processExceptionToClient(new VdcFault(e, EngineError.ENGINE));
+            processExceptionToClient(new EngineFault(e, EngineError.ENGINE));
             log.error("Command '{}' failed: {}", getClass().getName(), e.getMessage());
             log.error("Exception", e);
         } finally {
@@ -1496,7 +1496,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         _description = value;
     }
 
-    private void processExceptionToClient(VdcFault fault) {
+    private void processExceptionToClient(EngineFault fault) {
         fault.setSessionID(getParameters().getSessionId());
         _returnValue.getExecuteFailedMessages().add(fault.getError().name());
         _returnValue.setFault(fault);

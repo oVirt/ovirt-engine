@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -989,9 +989,9 @@ public class Frontend implements HasHandlers {
         if (failedOnCanDoAction) {
             result.setCanDoActionMessages((ArrayList<String>) translateError(result));
         } else if (!result.getSucceeded()) {
-            VdcFault fault = result.getFault();
+            EngineFault fault = result.getFault();
             String message = result.getExecuteFailedMessages().size() > 1 ?
-                    translateExecuteFailedMessages(result.getExecuteFailedMessages()) : translateVdcFault(fault);
+                    translateExecuteFailedMessages(result.getExecuteFailedMessages()) : translateEngineFault(fault);
             fault.setMessage(message);
             if (showErrorDialog && result.getIsSyncronious() && getEventsHandler() != null) {
                 getEventsHandler().runActionExecutionFailed(actionType, fault);
@@ -1039,7 +1039,7 @@ public class Frontend implements HasHandlers {
      * @param fault The fault to translate.
      * @return A translated string defining the reason for the failure.
      */
-    public String translateVdcFault(final VdcFault fault) {
+    public String translateEngineFault(final EngineFault fault) {
         return getVdsmErrorsTranslator().translateErrorTextSingle(fault.getError() == null
                 ? fault.getMessage() : fault.getError().toString());
     }
@@ -1135,8 +1135,8 @@ public class Frontend implements HasHandlers {
             if (!retVal.getCanDoAction()) {
                 retVal.setCanDoActionMessages((ArrayList<String>) translateError(retVal));
             } else if (!retVal.getSucceeded()) {
-                VdcFault fault = retVal.getFault();
-                fault.setMessage(translateVdcFault(fault));
+                EngineFault fault = retVal.getFault();
+                fault.setMessage(translateEngineFault(fault));
             }
         }
     }

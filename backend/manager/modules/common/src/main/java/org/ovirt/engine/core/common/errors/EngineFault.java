@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
-public class VdcFault implements IVdcQueryable {
+public class EngineFault implements IVdcQueryable {
     private static final long serialVersionUID = -8004317251171749327L;
     private String privateSessionID;
 
@@ -44,13 +44,13 @@ public class VdcFault implements IVdcQueryable {
         _Error = EngineError.forValue(value);
     }
 
-    public VdcFault(RuntimeException ex, EngineError error) {
+    public EngineFault(RuntimeException ex, EngineError error) {
         this(ex);
         setMessage(error.toString());
         setError(error);
     }
 
-    public VdcFault(RuntimeException ex) {
+    public EngineFault(RuntimeException ex) {
         _Error = EngineError.unexpected;
         setMessage(ex.getMessage());
 
@@ -58,7 +58,7 @@ public class VdcFault implements IVdcQueryable {
         setDetails(getInnerException(ex));
     }
 
-    public VdcFault() {
+    public EngineFault() {
         _Error = EngineError.unexpected;
     }
 

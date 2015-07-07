@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -26,9 +26,9 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.slf4j.Logger;
 
 public abstract class StorageHelperBase implements IStorageHelper {
-    protected abstract Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type);
+    protected abstract Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type);
 
-    protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain,
+    protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain,
             Guid vdsId,
             int type,
             LUNs lun,
@@ -42,7 +42,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public Pair<Boolean, VdcFault> connectStorageToDomainByVdsIdDetails(StorageDomain storageDomain, Guid vdsId) {
+    public Pair<Boolean, EngineFault> connectStorageToDomainByVdsIdDetails(StorageDomain storageDomain, Guid vdsId) {
         return runConnectionStorageToDomain(storageDomain, vdsId, VdcActionType.ConnectStorageToVds.getValue());
     }
 

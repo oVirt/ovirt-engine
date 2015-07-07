@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.vdsbroker.SetNumberOfCpusVDSCommand;
@@ -93,7 +93,7 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> ex
         if (vdsReturnValue.getSucceeded()) {
             setSucceeded(true);
         } else {
-            VdcFault fault = new VdcFault();
+            EngineFault fault = new EngineFault();
             fault.setError(vdsReturnValue.getVdsError().getCode());
             fault.setMessage(vdsReturnValue.getVdsError().getMessage());
             getReturnValue().setFault(fault);

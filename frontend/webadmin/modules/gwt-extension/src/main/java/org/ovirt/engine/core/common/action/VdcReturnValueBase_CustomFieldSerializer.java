@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
 
 import com.google.gwt.user.client.rpc.SerializationException;
@@ -25,7 +25,7 @@ public class VdcReturnValueBase_CustomFieldSerializer {
         java.util.ArrayList<Guid> taskIdList = (java.util.ArrayList<Guid>) streamReader.readObject();
         instance.setVdsmTaskIdList(taskIdList);
         instance.setEndActionTryAgain(streamReader.readBoolean());
-        instance.setFault((VdcFault) streamReader.readObject());
+        instance.setFault((EngineFault) streamReader.readObject());
     }
 
     public static VdcReturnValueBase instantiate(

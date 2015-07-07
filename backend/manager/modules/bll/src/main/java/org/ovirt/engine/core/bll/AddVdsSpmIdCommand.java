@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -89,7 +89,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
     }
 
     private void buildFaultResult() {
-        VdcFault fault = new VdcFault();
+        EngineFault fault = new EngineFault();
         fault.setError(EngineError.ReachedMaxNumberOfHostsInDC);
         fault.setMessage(Backend.getInstance()
                 .getVdsErrorsTranslator()

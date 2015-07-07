@@ -35,7 +35,7 @@ import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.di.Injector;
@@ -219,7 +219,7 @@ public class CommandExecutor {
         RejectedExecutionFuture() {
             retValue = new VdcReturnValueBase();
             retValue.setSucceeded(false);
-            VdcFault fault = new VdcFault();
+            EngineFault fault = new EngineFault();
             fault.setError(EngineError.ResourceException);
             fault.setMessage(Backend.getInstance()
                     .getVdsErrorsTranslator()

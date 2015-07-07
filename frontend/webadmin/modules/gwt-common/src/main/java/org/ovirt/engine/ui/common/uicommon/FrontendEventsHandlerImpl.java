@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.errors.EngineError;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -32,7 +32,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public Boolean isRaiseErrorModalPanel(VdcActionType actionType, VdcFault fault) {
+    public Boolean isRaiseErrorModalPanel(VdcActionType actionType, EngineFault fault) {
         return (actionType != VdcActionType.LoginUser) &&
                 !(actionType == VdcActionType.VmLogon && fault.getError() == EngineError.nonresp);
     }
@@ -43,7 +43,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public void runActionExecutionFailed(VdcActionType action, VdcFault fault) {
+    public void runActionExecutionFailed(VdcActionType action, EngineFault fault) {
         if (isRaiseErrorModalPanel(action, fault)) {
             errorPopupManager.show(messages.uiCommonRunActionExecutionFailed(
                     EnumTranslator.getInstance().translate(action), fault.getMessage()));

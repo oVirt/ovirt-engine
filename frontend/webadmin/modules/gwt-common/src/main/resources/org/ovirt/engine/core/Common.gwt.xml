@@ -301,7 +301,7 @@
         <include name="common/businessentities/pm/FenceActionType.java" />
         <include name="common/businessentities/ConfigurationType.java" />
         <include name="common/businessentities/VdcOption.java" />
-        <include name="common/errors/VdcFault.java" />
+        <include name="common/errors/EngineFault.java" />
         <include name="common/errors/EngineError.java" />
         <include name="common/errors/SqlInjectionException.java" />
         <include name="common/errors/SearchEngineIllegalCharacterException.java" />

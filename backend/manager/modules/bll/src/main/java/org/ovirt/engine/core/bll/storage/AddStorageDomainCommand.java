@@ -27,8 +27,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -133,7 +133,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         // check connection to storage
         Pair<Boolean, Integer> connectReturnValue = connectStorage();
         if (!connectReturnValue.getFirst()) {
-            VdcFault fault = new VdcFault();
+            EngineFault fault = new EngineFault();
             fault.setError(EngineError.forValue(connectReturnValue.getSecond()));
             getReturnValue().setFault(fault);
             setSucceeded(false);

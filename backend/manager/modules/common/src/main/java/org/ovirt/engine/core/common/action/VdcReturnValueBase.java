@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.errors.EngineError;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdcReturnValueBase implements Serializable {
@@ -31,7 +31,7 @@ public class VdcReturnValueBase implements Serializable {
     private ArrayList<Guid> internalVdsmTaskIdList;
     private boolean endActionTryAgain;
     private ArrayList<String> executeFailedMessages;
-    private VdcFault fault;
+    private EngineFault fault;
     private String correlationId;
     private Guid jobId;
 
@@ -45,16 +45,16 @@ public class VdcReturnValueBase implements Serializable {
         executeFailedMessages = new ArrayList<String>();
     }
 
-    public VdcFault getFault() {
+    public EngineFault getFault() {
         if (fault == null) {
-            fault = new VdcFault();
+            fault = new EngineFault();
             fault.setError(EngineError.ENGINE);
             fault.setMessage(EngineError.ENGINE.name());
         }
         return fault;
     }
 
-    public void setFault(VdcFault value) {
+    public void setFault(EngineFault value) {
         fault = value;
     }
 

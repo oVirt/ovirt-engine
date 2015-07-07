@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -61,7 +61,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         }
 
         if (format) {
-            Pair<Boolean, VdcFault> connectResult = connectStorage();
+            Pair<Boolean, EngineFault> connectResult = connectStorage();
             if (!connectResult.getFirst()) {
                 getReturnValue().setFault(connectResult.getSecond());
                 return;
@@ -161,7 +161,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         return new StorageDomainToPoolRelationValidator(dom.getStorageStaticData(), null);
     }
 
-    private Pair<Boolean, VdcFault> connectStorage() {
+    private Pair<Boolean, EngineFault> connectStorage() {
         return getStorageHelper(getStorageDomain()).connectStorageToDomainByVdsIdDetails(getStorageDomain(),
                 getVds().getId());
     }

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.SerializationExeption;
 import org.ovirt.engine.core.utils.Serializer;
@@ -45,7 +45,7 @@ public class JsonObjectSerializer implements Serializer {
         formattedMapper.getSerializationConfig().addMixInAnnotations(VmStatic.class, JsonVmStaticMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(VmPayload.class, JsonVmPayloadMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(RunVmParams.class, JsonRunVmParamsMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(VdcFault.class, JsonVdcFaultMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(EngineFault.class, JsonEngineFaultMixIn.class);
 
         formattedMapper.configure(Feature.INDENT_OUTPUT, true);
         formattedMapper.enableDefaultTyping();

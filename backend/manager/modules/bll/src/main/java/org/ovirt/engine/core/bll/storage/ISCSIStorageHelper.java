@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
@@ -33,13 +33,13 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     private static final Logger log = LoggerFactory.getLogger(ISCSIStorageHelper.class);
 
     @Override
-    protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
+    protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
         return runConnectionStorageToDomain(storageDomain, vdsId, type, null, Guid.Empty);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain,
+    protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain,
             Guid vdsId,
             int type,
             LUNs lun,
@@ -74,12 +74,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 isSuccess = isConnectSucceeded((Map<String, String>) returnValue.getReturnValue(), list);
             }
         }
-        VdcFault vdcFault = null;
+        EngineFault engineFault = null;
         if (!isSuccess && returnValue != null && returnValue.getVdsError() != null) {
-            vdcFault = new VdcFault();
-            vdcFault.setError(returnValue.getVdsError().getCode());
+            engineFault = new EngineFault();
+            engineFault.setError(returnValue.getVdsError().getCode());
         }
-        return new Pair<>(isSuccess, vdcFault);
+        return new Pair<>(isSuccess, engineFault);
     }
 
     public static List<StorageServerConnections> updateIfaces(List<StorageServerConnections> conns, Guid vdsId) {
@@ -264,7 +264,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public Pair<Boolean, VdcFault> connectStorageToDomainByVdsIdDetails(StorageDomain storageDomain, Guid vdsId) {
+    public Pair<Boolean, EngineFault> connectStorageToDomainByVdsIdDetails(StorageDomain storageDomain, Guid vdsId) {
         return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue());
     }
 

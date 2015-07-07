@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -24,8 +24,8 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
     private static final Logger log = LoggerFactory.getLogger(BaseFsStorageHelper.class);
 
     @Override
-    protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
-        Pair<Boolean, VdcFault> result;
+    protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
+        Pair<Boolean, EngineFault> result;
         StorageServerConnections connection = DbFacade.getInstance().getStorageServerConnectionDao().get(
                 storageDomain.getStorage());
         if (connection != null) {

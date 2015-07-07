@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -142,7 +142,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             editNetworkDone = true;
         } catch (RuntimeException e) {
             if (e instanceof EngineException) {
-                getReturnValue().setFault(new VdcFault(e, ((EngineException) e).getVdsError().getCode()));
+                getReturnValue().setFault(new EngineFault(e, ((EngineException) e).getVdsError().getCode()));
             }
         } catch (Exception e) {
         } finally {

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -15,7 +15,7 @@ public interface IStorageHelper {
 
     boolean connectStorageToDomainByVdsId(StorageDomain storageDomain, Guid vdsId);
 
-    Pair<Boolean, VdcFault> connectStorageToDomainByVdsIdDetails(StorageDomain storageDomain, Guid vdsId);
+    Pair<Boolean, EngineFault> connectStorageToDomainByVdsIdDetails(StorageDomain storageDomain, Guid vdsId);
 
     boolean disconnectStorageFromDomainByVdsId(StorageDomain storageDomain, Guid vdsId);
 

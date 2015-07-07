@@ -474,7 +474,7 @@ public class ProviderModel extends Model {
         String errorMessage = EMPTY_ERROR_MESSAGE;
         if (result == null || !result.getSucceeded()) {
             if (result != null) {
-                errorMessage = Frontend.getInstance().translateVdcFault(result.getFault());
+                errorMessage = Frontend.getInstance().translateEngineFault(result.getFault());
             } else {
                 errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
             }

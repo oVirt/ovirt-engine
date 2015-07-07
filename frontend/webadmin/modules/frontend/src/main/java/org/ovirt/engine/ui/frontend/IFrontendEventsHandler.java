@@ -5,16 +5,16 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public interface IFrontendEventsHandler {
-    Boolean isRaiseErrorModalPanel(VdcActionType action, VdcFault fault);
+    Boolean isRaiseErrorModalPanel(VdcActionType action, EngineFault fault);
 
     Boolean isRaiseErrorModalPanel(VdcQueryType queryType);
 
-    void runActionExecutionFailed(VdcActionType action, VdcFault fault);
+    void runActionExecutionFailed(VdcActionType action, EngineFault fault);
 
     void runMultipleActionFailed(VdcActionType action, List<VdcReturnValueBase> returnValues);
 

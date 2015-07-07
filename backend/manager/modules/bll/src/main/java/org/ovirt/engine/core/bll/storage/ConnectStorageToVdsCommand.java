@@ -16,8 +16,8 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
@@ -46,7 +46,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     }
 
     private void setErrorMessageAtReturn(Pair<Boolean, Integer> result) {
-        VdcFault fault = new VdcFault();
+        EngineFault fault = new EngineFault();
         fault.setError(result.getSecond());
         if (fault.getError() != null) {
             fault.setMessage(

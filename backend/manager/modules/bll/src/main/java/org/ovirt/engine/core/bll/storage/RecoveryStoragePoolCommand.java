@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
@@ -141,7 +141,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
                         }
                     });
         } else {
-            getReturnValue().setFault(new VdcFault(new EngineException(EngineError.StorageServerConnectionError,
+            getReturnValue().setFault(new EngineFault(new EngineException(EngineError.StorageServerConnectionError,
                     "Failed to connect storage"),
                     EngineError.StorageServerConnectionError));
         }
