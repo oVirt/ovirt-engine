@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.util.HashMap;
+
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DayOfWeek;

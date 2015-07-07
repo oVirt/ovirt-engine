@@ -2,6 +2,7 @@ package org.ovirt.engine.core.searchbackend;
 
 import java.util.Date;
 import java.util.UUID;
+
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;

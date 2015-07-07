@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.util.HashMap;
+
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 
 public enum Jedi implements Identifiable {
