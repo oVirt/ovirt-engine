@@ -18,15 +18,15 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
-import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
-import org.ovirt.engine.core.notifier.filter.AuditLogEventType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.notifier.NotificationServiceException;
+import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
+import org.ovirt.engine.core.notifier.filter.AuditLogEventType;
 import org.ovirt.engine.core.notifier.filter.FirstMatchSimpleFilter;
 import org.ovirt.engine.core.notifier.transport.Observable;
 import org.ovirt.engine.core.notifier.transport.Observer;
-import org.ovirt.engine.core.utils.db.StandaloneDataSource;
 import org.ovirt.engine.core.utils.db.DbUtils;
+import org.ovirt.engine.core.utils.db.StandaloneDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

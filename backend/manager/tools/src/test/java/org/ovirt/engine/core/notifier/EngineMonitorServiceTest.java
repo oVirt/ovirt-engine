@@ -3,6 +3,7 @@ package org.ovirt.engine.core.notifier;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+
 import org.junit.Test;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 

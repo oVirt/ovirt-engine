@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.notifier.filter;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,10 +12,6 @@ import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.notifier.dao.DispatchResult;
 import org.ovirt.engine.core.notifier.transport.Observer;
 import org.ovirt.engine.core.notifier.transport.Transport;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class FirstMatchSimpleFilterTest {
 

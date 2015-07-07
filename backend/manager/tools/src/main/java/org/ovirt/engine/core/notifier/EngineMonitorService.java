@@ -30,10 +30,10 @@ import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.ShutdownHook;
-import org.ovirt.engine.core.utils.db.StandaloneDataSource;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.db.DbUtils;
+import org.ovirt.engine.core.utils.db.StandaloneDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

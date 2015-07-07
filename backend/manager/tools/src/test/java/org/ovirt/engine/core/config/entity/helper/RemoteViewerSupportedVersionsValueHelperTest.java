@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.config.entity.helper;
 
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 public class RemoteViewerSupportedVersionsValueHelperTest {
 

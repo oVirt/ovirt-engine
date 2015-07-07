@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.notifier.transport.smtp;
 
-import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
-
 import java.util.Date;
+
+import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 
 /**
  * Creates a simple message subject and body using helper class {@linkplain MessageHelper} to determine <br>

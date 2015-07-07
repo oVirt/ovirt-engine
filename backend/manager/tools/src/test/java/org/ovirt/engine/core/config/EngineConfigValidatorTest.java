@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.config;
 
-import org.junit.Test;
-import org.ovirt.engine.core.config.validation.ConfigActionType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.Test;
+import org.ovirt.engine.core.config.validation.ConfigActionType;
 
 public class EngineConfigValidatorTest {
 

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.config.entity.helper;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 

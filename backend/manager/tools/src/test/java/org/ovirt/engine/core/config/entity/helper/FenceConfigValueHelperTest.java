@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.config.entity.helper;
 
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,8 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class FenceConfigValueHelperTest {

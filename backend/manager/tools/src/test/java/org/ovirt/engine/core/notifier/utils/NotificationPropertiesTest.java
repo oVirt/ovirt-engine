@@ -3,11 +3,11 @@ package org.ovirt.engine.core.notifier.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class NotificationPropertiesTest {
 

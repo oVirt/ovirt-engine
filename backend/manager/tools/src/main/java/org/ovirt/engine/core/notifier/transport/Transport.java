@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.notifier.transport;
 
-import org.ovirt.engine.core.notifier.dao.DispatchResult;
-import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import org.ovirt.engine.core.notifier.dao.DispatchResult;
+import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 
 public abstract class Transport implements Observable {
 
