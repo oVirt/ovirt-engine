@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public final class FileStatsReturnForXmlRpc extends StatusReturnForXmlRpc {
 

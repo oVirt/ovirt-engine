@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Send variables that fine tune MoM policy to VDSM

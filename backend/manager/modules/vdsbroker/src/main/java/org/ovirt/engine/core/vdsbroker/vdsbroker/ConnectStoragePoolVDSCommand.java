@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
-
-import java.util.Map;
 
 public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommandParameters>
         extends VdsBrokerCommand<P> {

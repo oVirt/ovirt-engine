@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
-
-import java.util.Map;
 
 
 public interface IIrsServer {

@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
-
 import java.util.Map;
+
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 
 public class ResizeStorageDomainPVMapReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String SIZE = "size";

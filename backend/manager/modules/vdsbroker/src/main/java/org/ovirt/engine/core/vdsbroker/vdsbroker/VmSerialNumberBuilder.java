@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-
-import java.util.Map;
 
 public class VmSerialNumberBuilder {
 

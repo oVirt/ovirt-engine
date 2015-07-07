@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.attestation;
 
 import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 
 public class AttestationValue {

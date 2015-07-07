@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
@@ -12,9 +15,6 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public enum VmTestPairs {
     EXTERNAL_VM("0") {

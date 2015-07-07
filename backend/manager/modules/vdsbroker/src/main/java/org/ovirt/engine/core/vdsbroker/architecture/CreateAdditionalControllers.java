@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.utils.archstrategy.ArchCommand;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.utils.archstrategy.ArchCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class CreateAdditionalControllers implements ArchCommand {

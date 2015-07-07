@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -7,8 +9,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
-
-import java.util.Map;
 
 public class VmsStatisticsFetcher extends VmsListFetcher {
 
