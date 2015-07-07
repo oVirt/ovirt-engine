@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
-
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public abstract class QuotaProgressBar extends DoublePercentageProgressBar {

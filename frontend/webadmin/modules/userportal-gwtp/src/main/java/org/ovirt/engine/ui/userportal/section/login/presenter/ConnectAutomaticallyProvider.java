@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.login.presenter;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
-
 import com.google.inject.Inject;
 
 /**

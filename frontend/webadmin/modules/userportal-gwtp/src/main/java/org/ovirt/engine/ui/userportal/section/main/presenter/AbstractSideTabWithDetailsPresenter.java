@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableTableModelProvider;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.SelectionChangeEvent;

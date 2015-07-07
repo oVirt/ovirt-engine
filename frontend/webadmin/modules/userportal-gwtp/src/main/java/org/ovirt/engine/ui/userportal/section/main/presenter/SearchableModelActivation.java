@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter;
 
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-
 import com.gwtplatform.dispatch.annotation.GenEvent;
 
 /**

@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmMonitorPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorModelProvider;
 import org.ovirt.engine.ui.userportal.widget.PercentageProgressBar;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;

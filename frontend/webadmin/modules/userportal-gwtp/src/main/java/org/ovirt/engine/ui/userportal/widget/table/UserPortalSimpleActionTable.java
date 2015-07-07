@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.SideTabWithDetailsViewStyle;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 

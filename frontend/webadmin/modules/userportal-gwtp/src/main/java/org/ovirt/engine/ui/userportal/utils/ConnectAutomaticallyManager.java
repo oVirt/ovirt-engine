@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.userportal.section.login.presenter.ConnectAutomaticallyProvider;
-
 import com.google.inject.Inject;
 
 /**

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.userportal.widget.basic;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionButton;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;

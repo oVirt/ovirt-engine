@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionList
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;

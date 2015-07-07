@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AbstractUserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Provider;
 

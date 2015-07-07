@@ -1,16 +1,15 @@
 package org.ovirt.engine.ui.userportal.widget.table.column;
 
-
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDataurlImageColumn;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
+import com.google.gwt.cell.client.Cell;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public abstract class AbstractUserportalMaskedDataurlImageColumn extends AbstractDataurlImageColumn<UserPortalItemModel> {
 

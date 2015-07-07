@@ -28,9 +28,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.userportal.uicommon.UserPortalConfigurator;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
@@ -45,7 +45,6 @@ import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmInterfaceListModelProv
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmPermissionListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSnapshotListModelProvider;
-
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 

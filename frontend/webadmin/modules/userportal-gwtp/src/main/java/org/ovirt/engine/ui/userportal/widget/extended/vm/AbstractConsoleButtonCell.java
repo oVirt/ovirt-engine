@@ -1,12 +1,10 @@
 package org.ovirt.engine.ui.userportal.widget.extended.vm;
 
-
 import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;

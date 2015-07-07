@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.userportal.widget;
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
-
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public class QuotaMemoryProgressBar extends QuotaProgressBar {

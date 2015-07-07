@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;

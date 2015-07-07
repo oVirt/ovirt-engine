@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
-
 import com.google.gwt.event.shared.EventBus;
 
 public class UserPortalRefreshManager extends SimpleRefreshManager {

@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab.basic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.common.view.AbstractView;
+import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
 import org.ovirt.engine.ui.userportal.widget.basic.DisksImageWidget;
 import org.ovirt.engine.ui.userportal.widget.basic.IconImage;
 import org.ovirt.engine.ui.userportal.widget.basic.VmTypeImage;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.HasClickHandlers;

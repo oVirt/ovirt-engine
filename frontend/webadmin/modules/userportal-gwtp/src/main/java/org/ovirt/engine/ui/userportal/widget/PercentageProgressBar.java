@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.userportal.widget;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;

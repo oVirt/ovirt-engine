@@ -6,8 +6,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
-import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;

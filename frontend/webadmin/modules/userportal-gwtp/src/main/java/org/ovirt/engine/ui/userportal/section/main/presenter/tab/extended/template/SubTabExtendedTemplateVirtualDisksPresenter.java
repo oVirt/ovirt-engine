@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template;
 
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;

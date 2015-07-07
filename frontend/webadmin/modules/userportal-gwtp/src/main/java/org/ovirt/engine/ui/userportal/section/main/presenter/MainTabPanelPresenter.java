@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter;
 
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;

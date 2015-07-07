@@ -35,7 +35,6 @@ import org.ovirt.engine.ui.userportal.widget.table.UserPortalSimpleActionTable;
 import org.ovirt.engine.ui.userportal.widget.table.cell.VmButtonsImageButtonCell;
 import org.ovirt.engine.ui.userportal.widget.table.column.AbstractUserportalMaskedDataurlImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
-
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;

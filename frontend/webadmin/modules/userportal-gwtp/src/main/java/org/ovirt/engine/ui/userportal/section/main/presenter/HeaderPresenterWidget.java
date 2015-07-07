@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;

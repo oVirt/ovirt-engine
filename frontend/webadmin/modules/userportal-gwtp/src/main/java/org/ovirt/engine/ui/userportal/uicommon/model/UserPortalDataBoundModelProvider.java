@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresen
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;

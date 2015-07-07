@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.view.popup.AbstractDiskRemoveConfirmationPopup
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 

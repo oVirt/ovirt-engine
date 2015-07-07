@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.view.popup.VmPopupResources;
 import org.ovirt.engine.ui.userportal.section.login.presenter.ConnectAutomaticallyProvider;
 import org.ovirt.engine.ui.userportal.utils.ConnectAutomaticallyManager;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
-
 import com.google.inject.Singleton;
 
 public class UtilsModule extends BaseUtilsModule {

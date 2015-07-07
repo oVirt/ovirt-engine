@@ -16,8 +16,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceToGuestWithNonRespAgentMo
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.PublicKeyPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
@@ -26,7 +26,6 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmPopupPre
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.AbstractUserPortalListProvider;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;

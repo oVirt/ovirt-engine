@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.utils.ConnectAutomaticallyManager;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;

@@ -21,7 +21,6 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTa
 import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetailsView;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;

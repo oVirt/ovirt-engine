@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundWidgetPopupView;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VncInfoPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 

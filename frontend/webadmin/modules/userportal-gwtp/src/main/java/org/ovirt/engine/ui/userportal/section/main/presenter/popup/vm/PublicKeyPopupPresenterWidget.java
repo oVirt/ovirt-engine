@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.inject.Inject;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.PublicKeyModel;
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
 
 
 public class PublicKeyPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<PublicKeyModel, PublicKeyPopupPresenterWidget.ViewDef> {

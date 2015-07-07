@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPre
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 import org.ovirt.engine.ui.userportal.widget.basic.BasicViewSplitLayoutPanel;
 import org.ovirt.engine.ui.userportal.widget.refresh.UserPortalRefreshManager;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;

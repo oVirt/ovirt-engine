@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.userportal.widget.basic;
 
 import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
-
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;
 import com.google.gwt.resources.client.ImageResource;

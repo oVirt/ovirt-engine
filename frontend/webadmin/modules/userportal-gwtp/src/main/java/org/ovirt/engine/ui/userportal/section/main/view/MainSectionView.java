@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.userportal.section.main.view;
 
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresenter;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;

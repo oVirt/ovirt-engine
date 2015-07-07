@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmDiskListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmInterfaceListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSnapshotListModelProvider;
-
 import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 
 /**

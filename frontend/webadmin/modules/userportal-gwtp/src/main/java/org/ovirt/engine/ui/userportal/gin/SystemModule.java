@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.userportal.auth.LoggedInExtendedPlaceGatekeeper;
 import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
 import org.ovirt.engine.ui.userportal.place.UserPortalPlaceManager;
 import org.ovirt.engine.ui.userportal.section.DefaultMainSectionExtendedPlace;
-
 import com.google.inject.Singleton;
 
 /**

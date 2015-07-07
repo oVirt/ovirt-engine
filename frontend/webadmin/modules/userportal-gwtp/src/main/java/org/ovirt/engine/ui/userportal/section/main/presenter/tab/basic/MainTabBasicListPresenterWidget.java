@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListMode
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider.DataChangeListener;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;

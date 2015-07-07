@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.view.popup.VmPopupResources;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.template.TemplateEditPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateEditPopupPresenterWidget;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;

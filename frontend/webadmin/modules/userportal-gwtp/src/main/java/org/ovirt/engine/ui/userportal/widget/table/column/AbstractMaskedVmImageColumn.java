@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColum
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
-
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ResourcePrototype;
