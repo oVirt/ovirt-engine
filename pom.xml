@@ -448,6 +448,11 @@
           <version>2.9.1</version>
           <dependencies>
             <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>6.5</version>
+            </dependency>
+            <dependency>
               <groupId>org.ovirt.engine</groupId>
               <artifactId>checkstyles</artifactId>
               <version>${engine.version}</version>
