@@ -36,9 +36,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.net.SocketFactory;

@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.utils.ovf.xml;
 
-import org.w3c.dom.NodeList;
-
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
+
+import org.w3c.dom.NodeList;
 
 public class XmlNodeList implements Iterable<XmlNode> {
 

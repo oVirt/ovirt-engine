@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.utils;
 
-import org.ovirt.engine.core.common.action.ShouldNotBeLogged;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.ovirt.engine.core.common.action.ShouldNotBeLogged;
 
 
 /**

@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.ClassRule;
 import org.junit.Test;
-
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
 
 public class EngineEncryptionUtilsTest {

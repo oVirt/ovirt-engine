@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;
 import org.ovirt.engine.core.common.action.VdcActionType;
-
-import java.io.IOException;
-import java.util.HashMap;
 
 public class VdcActionTypeDeserializer extends JsonDeserializer<VdcActionType> {
     private static HashMap<String, VdcActionType> mappings = new HashMap<>();
