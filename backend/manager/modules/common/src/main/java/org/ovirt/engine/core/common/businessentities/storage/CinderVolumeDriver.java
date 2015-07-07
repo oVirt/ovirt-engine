@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
-import org.ovirt.engine.core.common.businessentities.Nameable;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.ovirt.engine.core.common.businessentities.Nameable;
 
 public enum CinderVolumeDriver implements Nameable {
     RBD("rbd");

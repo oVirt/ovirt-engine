@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 
 public class GraphicsDevice extends VmDevice implements Serializable {

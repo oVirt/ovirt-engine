@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.action;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;

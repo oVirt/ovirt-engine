@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class VmStatisticsTest {
 

@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.Objects;
 
 public class SubjectEntity {
     private Guid entityId;

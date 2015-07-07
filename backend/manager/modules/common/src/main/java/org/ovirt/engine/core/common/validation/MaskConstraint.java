@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.validation;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.ValidatorConstraint.ValidatorConstraintArgsFormatValue;
 import org.ovirt.engine.core.common.validation.annotation.Mask;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 public class MaskConstraint implements ConstraintValidator<Mask, String> {
 

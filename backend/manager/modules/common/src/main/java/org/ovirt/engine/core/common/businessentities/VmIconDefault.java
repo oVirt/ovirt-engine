@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.Objects;
+
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Entity corresponding to <strong>vm_icon_defaults</strong> database table.

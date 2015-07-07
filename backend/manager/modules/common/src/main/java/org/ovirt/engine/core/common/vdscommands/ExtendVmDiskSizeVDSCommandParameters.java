@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class ExtendVmDiskSizeVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 

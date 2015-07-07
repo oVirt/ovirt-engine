@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.io.Serializable;
+
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.io.Serializable;
 
 public class TagsTemplateMap implements Serializable {
     private static final long serialVersionUID = 4061390921955269261L;

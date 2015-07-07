@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.asynctasks;
 
 import java.io.Serializable;
+
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 
 public class EndedTaskInfo implements Serializable {

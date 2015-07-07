@@ -2,12 +2,13 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.group.StartEntity;
-import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RunVmOnceParams extends RunVmParams {

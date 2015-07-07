@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.action;
 
+import javax.validation.constraints.NotNull;
+
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.validation.constraints.NotNull;
 
 public class WatchdogParameters extends VdcActionParametersBase {
     private static final long serialVersionUID = 8564973734004518462L;

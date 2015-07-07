@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.common.utils.VmDeviceType;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

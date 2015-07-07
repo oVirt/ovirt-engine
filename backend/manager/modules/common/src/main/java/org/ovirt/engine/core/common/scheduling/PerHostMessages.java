@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.common.scheduling;
 
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class PerHostMessages {
     Map<Guid, List<String>> messages;

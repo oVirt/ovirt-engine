@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
 import java.util.ArrayList;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllFromExportDomainQueryParameters extends VdcQueryParametersBase {

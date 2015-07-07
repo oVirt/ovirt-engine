@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.common;
 
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 import java.util.BitSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class AuditLogTypeTest {
 

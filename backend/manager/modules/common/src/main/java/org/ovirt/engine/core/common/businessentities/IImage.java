@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Date;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public interface IImage extends BusinessEntity<Guid>{

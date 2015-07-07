@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class VmHostDevicesParameters extends VmOperationParameterBase {
 

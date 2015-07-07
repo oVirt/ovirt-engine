@@ -3,11 +3,11 @@ package org.ovirt.engine.core.common.action;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
-
-import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.compat.Guid;
 

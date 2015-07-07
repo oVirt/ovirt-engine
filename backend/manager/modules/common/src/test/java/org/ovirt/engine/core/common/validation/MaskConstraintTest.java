@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.common.validation;
 
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
+import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderDefinedContext;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,10 +13,6 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
-import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderDefinedContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MaskConstraintTest {

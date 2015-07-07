@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
+
 import org.junit.Test;
 
 public class VdsStaticTest {

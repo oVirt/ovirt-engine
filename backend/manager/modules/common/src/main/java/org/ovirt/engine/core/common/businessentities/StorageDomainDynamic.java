@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.Objects;
 
 public class StorageDomainDynamic implements BusinessEntity<Guid> {
     private static final long serialVersionUID = -5305319985243261293L;

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import javax.validation.constraints.NotNull;
+
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 
 public class RngDeviceParameters extends VdcActionParametersBase {

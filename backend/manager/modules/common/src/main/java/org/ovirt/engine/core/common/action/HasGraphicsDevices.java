@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 

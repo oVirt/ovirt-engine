@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
-
-import org.ovirt.engine.core.common.utils.ToStringBuilder;
+import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,8 +11,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import java.util.Date;
-import java.util.Objects;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 @Entity
 @Table(name = "engine_backup_log")

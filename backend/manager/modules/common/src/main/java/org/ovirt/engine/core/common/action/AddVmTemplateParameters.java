@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.HashMap;
+
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 

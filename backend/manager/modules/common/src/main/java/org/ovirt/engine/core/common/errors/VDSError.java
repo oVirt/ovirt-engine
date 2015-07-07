@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.errors;
 
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.ArrayList;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class VDSError {
 

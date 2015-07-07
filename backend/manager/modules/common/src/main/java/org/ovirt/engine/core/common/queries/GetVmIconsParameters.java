@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.common.queries;
 
+import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 public class GetVmIconsParameters extends VdcQueryParametersBase {
 

@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 public class HostDeviceView extends HostDevice {
 

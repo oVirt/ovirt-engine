@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 
 public enum ActionGroup {

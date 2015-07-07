@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Entity corresponding to <strong>vm_icons</strong> database table.

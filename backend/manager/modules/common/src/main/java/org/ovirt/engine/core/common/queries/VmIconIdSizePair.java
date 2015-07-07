@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.Guid;
-
 import java.io.Serializable;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class VmIconIdSizePair implements Serializable {
 

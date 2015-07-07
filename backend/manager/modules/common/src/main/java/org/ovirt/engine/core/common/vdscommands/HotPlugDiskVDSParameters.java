@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.Map;
 
 public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
 

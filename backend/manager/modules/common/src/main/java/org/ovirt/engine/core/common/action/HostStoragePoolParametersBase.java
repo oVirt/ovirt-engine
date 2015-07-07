@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
 
 public class HostStoragePoolParametersBase extends StoragePoolParametersBase {
 

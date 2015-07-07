@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-
 import java.util.ArrayList;
+
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 
 public class AddSANStorageDomainParameters extends StorageDomainManagementParameter {
     private static final long serialVersionUID = 6386931158747982426L;

@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 /**
  * This interface describe InstanceType

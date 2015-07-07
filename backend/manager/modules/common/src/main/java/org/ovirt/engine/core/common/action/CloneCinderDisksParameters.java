@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.compat.Guid;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
 
 public class CloneCinderDisksParameters extends VdcActionParametersBase implements Serializable {
     private static final long serialVersionUID = 1528721415797299722L;

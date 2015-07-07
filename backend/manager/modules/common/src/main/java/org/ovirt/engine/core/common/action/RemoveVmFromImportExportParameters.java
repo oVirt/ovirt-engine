@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveVmFromImportExportParameters extends RemoveVmParameters implements Serializable {
