@@ -3,14 +3,13 @@ package org.ovirt.engine.core.aaa;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AuthzUtils {
 
