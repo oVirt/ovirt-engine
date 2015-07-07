@@ -40,5 +40,12 @@
     <module name="checks.NoArgConstructorCheck">
       <property name="run" value="${checkNoArgConstructor}" default="false"/>
     </module>
+    <module name="ImportOrder">
+      <property name="groups" value="java,javax,org,com"/>
+      <property name="ordered" value="true"/>
+      <property name="caseSensitive" value="true"/>
+      <property name="option" value="top"/>
+      <property name="sortStaticImportsAlphabetically" value="true"/>
+    </module>
   </module>
 </module>
