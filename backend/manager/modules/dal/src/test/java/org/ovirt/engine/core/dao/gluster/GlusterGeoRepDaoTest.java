@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepCrawlStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
@@ -80,6 +81,7 @@ public class GlusterGeoRepDaoTest extends BaseDaoTestCase {
         assertEquals(newSession, session);
     }
 
+    @Ignore
     @Test
     public void testSaveDetails() {
         GlusterGeoRepSessionDetails sessionDetails = getGlusterGeoRepSessionDetails();
