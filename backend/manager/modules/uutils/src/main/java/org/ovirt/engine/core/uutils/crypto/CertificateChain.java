@@ -186,6 +186,16 @@ public class CertificateChain {
 
         if ("https".equals(url.getProtocol())) {
             SSLContext ctx = SSLContext.getInstance("TLS");
+
+            //
+            // handshake may fail due to various of reasons
+            // we need peer certificate, we do not care about any
+            // other information.
+            // so we collect the peer certificate out of the server
+            // hello message which triggers the trust manager early
+            // during handshake.
+            //
+            final List<Certificate> tmcerts = new ArrayList<>();
             ctx.init(
                 null,
                 new TrustManager[]{
@@ -202,6 +212,7 @@ public class CertificateChain {
                             X509Certificate[] certs,
                             String authType
                         ) {
+                            tmcerts.addAll(Arrays.asList(certs));
                         }
                     }
                 },
@@ -215,8 +226,14 @@ public class CertificateChain {
                 )
             ) {
                 sock.setSoTimeout(60*1000);
-                sock.startHandshake();
-                ret = Arrays.asList(sock.getSession().getPeerCertificates());
+                try {
+                    sock.startHandshake();
+                } catch (Exception e) {
+                    // ignore get whatever we can from trust manager
+                }
+                if (!tmcerts.isEmpty()) {
+                    ret = tmcerts;
+                }
             }
         }
 
