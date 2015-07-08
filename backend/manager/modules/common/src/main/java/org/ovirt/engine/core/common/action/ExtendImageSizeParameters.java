@@ -5,6 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class ExtendImageSizeParameters extends ImagesActionsParametersBase {
 
     private long newSize;
+    private boolean parentNotifiesCallback;
 
     public ExtendImageSizeParameters() {
         super();
@@ -13,6 +14,11 @@ public class ExtendImageSizeParameters extends ImagesActionsParametersBase {
     public ExtendImageSizeParameters(Guid imageId, long newSize) {
         super(imageId);
         this.newSize = newSize;
+    }
+
+    public ExtendImageSizeParameters(Guid imageId, long newSize, boolean parentNotifiesCallback) {
+        this(imageId, newSize);
+        this.parentNotifiesCallback = parentNotifiesCallback;
     }
 
     public long getNewSize() {
@@ -25,5 +31,9 @@ public class ExtendImageSizeParameters extends ImagesActionsParametersBase {
 
     public long getNewSizeInGB() {
         return this.newSize / (1024 * 1024 * 1024);
+    }
+
+    public boolean getParentNotifiesCallback() {
+        return parentNotifiesCallback;
     }
 }

@@ -81,7 +81,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
             case SUCCEEDED:
                 CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(currentChildId);
-                if (!cmdEntity.isCallbackNotified()) {
+                if (cmdEntity.isCallbackEnabled() && !cmdEntity.isCallbackNotified()) {
                     log.info("Waiting on Live Merge command step '{}' to finalize",
                             getParameters().getCommandStep());
                     return;
@@ -123,6 +123,10 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
         Pair<VdcActionType, ? extends VdcActionParametersBase> nextCommand = null;
         switch (getParameters().getCommandStep()) {
+        case EXTEND:
+            nextCommand = new Pair<>(VdcActionType.MergeExtend, buildMergeParameters());
+            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.MERGE);
+            break;
         case MERGE:
             nextCommand = new Pair<>(VdcActionType.Merge, buildMergeParameters());
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.MERGE_STATUS);
@@ -189,7 +193,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 return RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE;
             }
         }
-        return RemoveSnapshotSingleDiskLiveStep.MERGE;
+        return RemoveSnapshotSingleDiskLiveStep.EXTEND;
     }
 
     private boolean completedMerge() {
@@ -322,6 +326,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                     VolumeClassification.getVolumeClassificationByActiveFlag(oldTopIsActive);
             topImage.getImage().setVolumeClassification(oldTopVolumeClassification);
 
+            topImage.setSize(baseImage.getSize());
             topImage.setImageStatus(ImageStatus.OK);
             getBaseDiskDao().update(topImage);
             getImageDao().update(topImage.getImage());
