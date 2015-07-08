@@ -99,7 +99,7 @@ public class GlusterSyncJobTest {
             mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, "3.1", false),
             mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, "3.2", false),
             mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, "3.3", false),
-            mockConfig(ConfigValues.GlusterMetaVolumeName, "3.3", "gluster_shared_storage"));
+            mockConfig(ConfigValues.GlusterMetaVolumeName, "gluster_shared_storage"));
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();

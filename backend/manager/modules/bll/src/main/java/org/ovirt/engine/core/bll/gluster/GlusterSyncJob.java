@@ -518,6 +518,13 @@ public class GlusterSyncJob extends GlusterJob {
                 log.debugFormat("Volume {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
                         volume.getName());
                 logUtil.logVolumeMessage(volume, AuditLogType.GLUSTER_VOLUME_DELETED_FROM_CLI);
+
+                // Set the gluster cli schedule enabled flag back to true
+                if (Config.<String> getValue(ConfigValues.GlusterMetaVolumeName).equalsIgnoreCase(volume.getName())) {
+                    VDSGroup cluster = getClusterDao().get(clusterId);
+                    cluster.setGlusterCliBasedSchedulingOn(true);
+                    getClusterDao().update(cluster);
+                }
             }
         }
 
@@ -545,23 +552,8 @@ public class GlusterSyncJob extends GlusterJob {
                     log.errorFormat("Could not save volume {0} in database!", volume.getName(), e);
                 }
 
-                // If meta volume then set the CLI based snapshot scheduling flag accordingly
-                if (getGlusterUtil().isGlusterSnapshotSupported(cluster.getcompatibility_version(), clusterId)
-                        && cluster.isGlusterCliBasedSchedulingOn()
-                        && (Config.<String> getValue(ConfigValues.GlusterMetaVolumeName)).equalsIgnoreCase(volume.getName())) {
-
-                    VdcReturnValueBase returnValue =
-                            getBackend().runInternalAction(VdcActionType.DisableGlusterCliSnapshotScheduleInternal,
-                                    new GlusterVolumeActionParameters(volume.getId(), false),
-                                    ExecutionHandler.createInternalJobContext());
-
-                    if (!returnValue.getSucceeded()) {
-                        log.warnFormat("Unbale to set volume snapshot scheduling flag to gluster CLI scheduler on cluster {0}",
-                                cluster.getName());
-                    } else {
-                        logUtil.logVolumeMessage(volume, AuditLogType.GLUSTER_CLI_SNAPSHOT_SCHEDULE_DISABLED);
-                    }
-                }
+                // Set the CLI based snapshot scheduling flag accordingly
+                disableCliSnapshotSchedulingFlag(cluster, volume);
             } else {
                 try {
                     log.debugFormat("Volume {0} exists in engine. Checking if it needs to be updated.",
@@ -576,6 +568,25 @@ public class GlusterSyncJob extends GlusterJob {
 
     public BackendInternal getBackend() {
         return Backend.getInstance();
+    }
+
+    private void disableCliSnapshotSchedulingFlag(VDSGroup cluster, GlusterVolumeEntity volume) {
+        if (getGlusterUtil().isGlusterSnapshotSupported(cluster.getcompatibility_version(), cluster.getId())
+                && cluster.isGlusterCliBasedSchedulingOn()
+                && (Config.<String> getValue(ConfigValues.GlusterMetaVolumeName)).equalsIgnoreCase(volume.getName())) {
+
+            VdcReturnValueBase returnValue =
+                    getBackend().runInternalAction(VdcActionType.DisableGlusterCliSnapshotScheduleInternal,
+                            new GlusterVolumeActionParameters(volume.getId(), false),
+                            ExecutionHandler.createInternalJobContext());
+
+            if (!returnValue.getSucceeded()) {
+                log.warnFormat("Unbale to set volume snapshot scheduling flag to gluster CLI scheduler on cluster {}",
+                        cluster.getName());
+            } else {
+                logUtil.logVolumeMessage(volume, AuditLogType.GLUSTER_CLI_SNAPSHOT_SCHEDULE_DISABLED);
+            }
+        }
     }
 
     /**
