@@ -701,6 +701,8 @@ public abstract class HostModel extends Model
         setPmOptionsMapInternal(value, getPmPort(), getPmSlot(), getPmSecure(), getPmOptions());
     }
 
+    private VdsProtocol vdsProtocol;
+
     public String getPmProxyPreferences() {
         // Return null if power management is not enabled.
         if (!getIsPm().getEntity()) {
@@ -1396,7 +1398,12 @@ public abstract class HostModel extends Model
             Boolean jsonSupported =
                     (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
                             cluster.getcompatibility_version().toString());
-            getProtocol().setEntity(jsonSupported);
+            if (!jsonSupported) {
+                getProtocol().setEntity(jsonSupported);
+            } else {
+                getProtocol().setEntity(vdsProtocol == null ? jsonSupported : VdsProtocol.STOMP == vdsProtocol);
+            }
+
             getProtocol().setIsChangable(jsonSupported);
         }
     }
@@ -1779,6 +1786,7 @@ public abstract class HostModel extends Model
     {
         setHostId(vds.getId());
         getOverrideIpTables().setIsAvailable(showInstallationProperties());
+        vdsProtocol = vds.getProtocol();
         getProtocol().setEntity(VdsProtocol.STOMP == vds.getProtocol());
         getProtocol().setIsChangable(editTransportProperties(vds));
         setSpmPriorityValue(vds.getVdsSpmPriority());
