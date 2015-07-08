@@ -9,4 +9,9 @@ public class UserPortalVmSnapshotListModel extends VmSnapshotListModel {
         super.setupAddVmFromSnapshotParameters(parameters);
         parameters.setMakeCreatorExplicitOwner(true);
     }
+
+    @Override
+    protected NewTemplateVmModelBehavior createNewTemplateBehavior() {
+        return new UserPortalNewTemplateVmModelBehavior();
+    }
 }

@@ -34,6 +34,9 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
         super(vm);
     }
 
+    public UserPortalNewTemplateVmModelBehavior() {
+    }
+
     @Override
     protected void updateTemplate() {
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
