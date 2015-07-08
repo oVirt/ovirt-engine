@@ -107,9 +107,10 @@ public class RestApiSessionMgmtFilter implements Filter {
                     }
                 }
             }
-        } catch (Exception ex) {
-            log.error("Error in REST-API session management. ", ex);
-            throw new ServletException(ex);
+        } catch (NamingException e) {
+            log.error("REST-API session failed: {}", e.getMessage());
+            log.debug("Exception", e);
+            throw new ServletException(e);
         }
     }
 
@@ -125,9 +126,8 @@ public class RestApiSessionMgmtFilter implements Filter {
 
     private void setEngineSessionSoftLimit(String engineSessionId, int ttlValue) throws IOException, NamingException {
 
-        InitialContext context = null;
+        InitialContext context = new InitialContext();
         try {
-            context = new InitialContext();
             FiltersHelper.getBackend(context).runAction(VdcActionType.SetSesssionSoftLimit,
                     new SetSesssionSoftLimitCommandParameters(engineSessionId, ttlValue));
         } finally {
