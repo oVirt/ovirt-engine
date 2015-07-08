@@ -19,6 +19,10 @@
 """ASYNC TASKS MAP Constant."""
 
 ASYNC_TASKS_MAP = {
+    '0': [
+        'Unknown',
+        'Unknown Task',
+    ],
     '1': [
         'AddVmCommand',
         'Adding a virtual machine',
