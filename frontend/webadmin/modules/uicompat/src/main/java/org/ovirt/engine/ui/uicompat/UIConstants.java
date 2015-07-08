@@ -1269,13 +1269,13 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Copy Role")
     String copyRoleTitle();
 
-    @DefaultStringValue("This field must contain integer number")
+    @DefaultStringValue("This field must contain an integer number")
     String thisFieldMustContainIntegerNumberInvalidReason();
 
     @DefaultStringValue("This field must contain a number")
     String thisFieldMustContainNumberInvalidReason();
 
-    @DefaultStringValue("This field must contain positive integer number")
+    @DefaultStringValue("This field must contain a positive integer number")
     String thisFieldMustContainNonNegativeIntegerNumberInvalidReason();
 
     @DefaultStringValue("A bond name must begin with the prefix 'bond' followed by a number.")
