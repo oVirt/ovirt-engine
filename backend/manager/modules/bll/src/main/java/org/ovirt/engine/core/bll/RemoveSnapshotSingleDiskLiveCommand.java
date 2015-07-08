@@ -81,7 +81,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
             case SUCCEEDED:
                 CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(currentChildId);
-                if (!cmdEntity.isCallBackNotified()) {
+                if (cmdEntity.isCallBackEnabled() && !cmdEntity.isCallBackNotified()) {
                     log.infoFormat("Waiting on Live Merge command step {0} to finalize",
                             getParameters().getCommandStep());
                     return;
@@ -123,6 +123,10 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
         Pair<VdcActionType, ? extends VdcActionParametersBase> nextCommand = null;
         switch (getParameters().getCommandStep()) {
+        case EXTEND:
+            nextCommand = new Pair<>(VdcActionType.MergeExtend, buildMergeParameters());
+            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.MERGE);
+            break;
         case MERGE:
             nextCommand = new Pair<>(VdcActionType.Merge, buildMergeParameters());
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.MERGE_STATUS);
@@ -189,7 +193,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 return RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE;
             }
         }
-        return RemoveSnapshotSingleDiskLiveStep.MERGE;
+        return RemoveSnapshotSingleDiskLiveStep.EXTEND;
     }
 
     private boolean completedMerge() {
@@ -316,6 +320,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             topImage.getImage().setActive(baseImage.getImage().isActive());
             baseImage.getImage().setActive(oldTopIsActive);
 
+            topImage.setSize(baseImage.getSize());
             topImage.setImageStatus(ImageStatus.OK);
             getBaseDiskDao().update(topImage);
             getImageDao().update(topImage.getImage());

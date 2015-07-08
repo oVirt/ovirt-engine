@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.bll.context.CommandContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,6 +52,12 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
             Guid taskId = createTask(getAsyncTaskId(),
                     vdsReturnValue.getCreationInfo(), getParameters().getParentCommand());
             getReturnValue().getInternalVdsmTaskIdList().add(taskId);
+
+            if (getParameters().getParentNotifiesCallback()) {
+                getParameters().setVdsmTaskIds(new ArrayList<Guid>(Collections.singletonList(taskId)));
+                getReturnValue().getVdsmTaskIdList().add(taskId);
+                persistCommand(getParameters().getParentCommand(), true);
+            }
         } else {
             updateAuditLog(AuditLogType.USER_EXTEND_DISK_SIZE_FAILURE, getParameters().getNewSizeInGB());
         }
@@ -70,7 +77,9 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
 
     @Override
     protected void endSuccessfully() {
-        updateRelevantVms();
+        if (getImage().getActive()) {
+            updateRelevantVms();
+        }
 
         DiskImage diskImage = getImageInfo();
         if (diskImage != null && getImage().getSize() != diskImage.getSize()) {
