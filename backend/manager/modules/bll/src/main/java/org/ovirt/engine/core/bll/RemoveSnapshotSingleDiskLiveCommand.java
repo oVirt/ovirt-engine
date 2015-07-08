@@ -403,22 +403,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     @Override
     protected void endSuccessfully() {
-        // SPM tasks report their final status to the spawning command's parent (in this case, us)
-        // rather than the spawning command (ie DestroyImageCommand); therefore, we must redirect
-        // endAction so that upon SPM task completion the status is propagated to the proper command.
-        if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
-            syncChildCommandList();
-            Guid currentChildId = getCurrentChildId();
-            if (!Guid.isNullOrEmpty(currentChildId)) {
-                CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(currentChildId);
-                if (command != null) {
-                    Backend.getInstance().endAction(VdcActionType.DestroyImage,
-                            command.getParameters(),
-                            cloneContextAndDetachFromParent());
-                    CommandCoordinatorUtil.getCommandEntity(currentChildId).setCallbackNotified(true);
-                }
-            }
-        }
+        handleAnyChildSPMTaskCompletion(true);
         setSucceeded(true);
     }
 
@@ -460,21 +445,35 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     @Override
     protected void endWithFailure() {
-        // See comment in endSuccessfully() for an explanation of this redirection
-        if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
-            syncChildCommandList();
-            Guid currentChildId = getCurrentChildId();
-            if (!Guid.isNullOrEmpty(currentChildId)) {
-                CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(currentChildId);
-                if (command != null) {
+        handleAnyChildSPMTaskCompletion(false);
+        setSucceeded(true);
+    }
+
+    // SPM tasks report their final status to the spawning command's parent (in this case, us)
+    // rather than the spawning command (ie DestroyImageCommand); therefore, we must redirect
+    // endAction so that upon SPM task completion the status is propagated to the child command.
+    private void handleAnyChildSPMTaskCompletion(boolean succeeded) {
+        if (getParameters().getCommandStep() != RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
+            return;
+        }
+
+        syncChildCommandList();
+        Guid currentChildId = getCurrentChildId();
+        if (!Guid.isNullOrEmpty(currentChildId)) {
+            CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(currentChildId);
+            CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(currentChildId);
+            if (command != null && cmdEntity != null && !cmdEntity.isCallbackNotified()) {
+                if (!succeeded) {
                     command.getParameters().setTaskGroupSuccess(false);
-                    Backend.getInstance().endAction(VdcActionType.DestroyImage,
-                            command.getParameters(),
-                            cloneContextAndDetachFromParent());
+                }
+                Backend.getInstance().endAction(VdcActionType.DestroyImage,
+                        command.getParameters(),
+                        cloneContextAndDetachFromParent());
+                if (succeeded) {
+                    CommandCoordinatorUtil.getCommandEntity(currentChildId).setCallbackNotified(true);
                 }
             }
         }
-        setSucceeded(true);
     }
 
     @Override
