@@ -901,3 +901,14 @@ CASE
 END CASE;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+-- Return csv list of dedicated hosts guids
+Create or replace FUNCTION fn_get_dedicated_hosts_ids_by_vm_id(v_vm_id UUID)
+RETURNS text STABLE
+AS $function$
+BEGIN
+    RETURN
+       array_to_string(array_agg(vds_id), ',') FROM vm_host_pinning_map WHERE vm_id = v_vm_id;
+END; $function$
+LANGUAGE plpgsql;

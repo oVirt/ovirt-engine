@@ -3264,7 +3264,7 @@
             <value></value>
             <value></value>
             <value></value>
-            <value>0</value>
+            <value>2</value>
             <null />
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
@@ -9103,6 +9103,22 @@
             <value>983fcfe8-ca56-4a11-8d0e-840c988d67af</value>
             <value>2015-02-10 14:49:55.806609+05:30 </value>
             <value>2015-02-10 16:35:15.362494+05:30</value>
+        </row>
+    </table>
+    <table name="vm_host_pinning_map">
+        <column>vm_id</column>
+        <column>vds_id</column>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+        </row>
+        <row>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
         </row>
     </table>
 </dataset>

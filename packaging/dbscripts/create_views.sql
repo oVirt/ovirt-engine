@@ -656,7 +656,7 @@ SELECT
     quota.quota_name AS quota_name,
     vm_templates.db_generation AS db_generation,
     vm_templates.migration_support,
-    vm_templates.dedicated_vm_for_vds,
+    fn_get_dedicated_hosts_ids_by_vm_id(vm_templates.vm_guid) AS dedicated_vm_for_vds,
     vm_templates.is_disabled,
     vm_templates.tunnel_migration,
     vm_templates.vnc_keyboard_layout AS vnc_keyboard_layout,
@@ -985,7 +985,7 @@ SELECT
     vm_static.is_smartcard_enabled AS is_smartcard_enabled,
     vm_static.is_delete_protected AS is_delete_protected,
     vm_static.sso_method AS sso_method,
-    vm_static.dedicated_vm_for_vds AS dedicated_vm_for_vds,
+    fn_get_dedicated_hosts_ids_by_vm_id(vm_static.vm_guid) AS dedicated_vm_for_vds,
     vm_static.fail_back AS fail_back,
     vm_static.default_boot_sequence AS default_boot_sequence,
     vm_static.vm_type AS vm_type,
@@ -1170,7 +1170,7 @@ SELECT
     vms.is_smartcard_enabled,
     vms.is_delete_protected,
     vms.sso_method,
-    vms.dedicated_vm_for_vds,
+    fn_get_dedicated_hosts_ids_by_vm_id(vms.vm_guid) AS dedicated_vm_for_vds,
     vms.fail_back,
     vms.default_boot_sequence,
     vms.vm_type,
@@ -3289,14 +3289,21 @@ FROM
 LEFT
 OUTER JOIN vm_static ON vm_numa_node.vm_id = vm_static.vm_guid;
 
+CREATE OR REPLACE VIEW vm_host_pinning_view AS
+SELECT host.vds_name, vm.vm_name, vm_vds.*
+FROM vm_host_pinning_map AS vm_vds
+INNER JOIN vm_static  AS vm   ON vm_vds.vm_id  = vm.vm_guid
+INNER JOIN vds_static AS host ON vm_vds.vds_id = host.vds_id;
+
 CREATE OR REPLACE VIEW host_device_view AS
 SELECT host_device.*,
     NULL::UUID AS configured_vm_id,
     NULL::VARCHAR AS spec_params,
-    (SELECT array_to_string(array_agg(vm_name), ',')
-     FROM   vm_device INNER JOIN vm_static ON vm_device.vm_id = vm_static.vm_guid
+    (SELECT array_to_string(array_agg(vm_host_pinning_view.vm_name), ',')
+     FROM   vm_device
+     INNER JOIN vm_host_pinning_view ON vm_device.vm_id = vm_host_pinning_view.vm_id
      WHERE  vm_device.device = host_device.device_name
-     AND    vm_static.dedicated_vm_for_vds::text LIKE '%'||host_device.host_id::text||'%' ) AS attached_vm_names,
+     AND    vm_host_pinning_view.vds_id = host_device.host_id) AS attached_vm_names,
     (SELECT vm_name FROM vm_static WHERE vm_static.vm_guid = host_device.vm_id) AS running_vm_name
 FROM   host_device;
 
@@ -3304,13 +3311,12 @@ CREATE OR REPLACE VIEW vm_host_device_view AS
 SELECT host_device.*,
     vm_device.vm_id AS configured_vm_id,
     vm_device.spec_params AS spec_params,
-    array_to_string(array_agg(vm_name) OVER (PARTITION BY host_id, device_name), ',') AS attached_vm_names,
+    array_to_string(array_agg(vm_host_pinning_view.vm_name) OVER (PARTITION BY host_id, device_name), ',') AS attached_vm_names,
     (SELECT vm_name FROM vm_static WHERE vm_static.vm_guid = host_device.vm_id) AS running_vm_name
 FROM vm_device
-INNER JOIN vm_static ON vm_device.vm_id = vm_static.vm_guid
-INNER JOIN host_device
-    ON host_device.device_name = vm_device.device
-    AND vm_static.dedicated_vm_for_vds::text LIKE '%'||host_device.host_id::text||'%'
+INNER JOIN vm_host_pinning_view ON vm_device.vm_id = vm_host_pinning_view.vm_id
+INNER JOIN host_device ON host_device.device_name = vm_device.device
+    AND vm_host_pinning_view.vds_id = host_device.host_id
 WHERE vm_device.type = 'hostdev';
 
 CREATE OR REPLACE VIEW user_profiles_view AS

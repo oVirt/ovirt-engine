@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,9 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_IMAGE_TYPE_ID = new Guid("5849b030-626e-47cb-ad90-3ce782d831b3");
     private static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
     private static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
+    protected static final Guid[] HOST_GUIDS = {new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6"),
+        new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7"),
+        new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3")};
 
     private VmTemplateDao dao;
 
@@ -268,11 +272,14 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testSave() {
+        newVmTemplate.setDedicatedVmForVdsList(Arrays.asList(HOST_GUIDS));
         dao.save(newVmTemplate);
 
         VmTemplate result = dbFacade.getVmTemplateDao().get(newVmTemplate.getId());
 
         assertNotNull(result);
+        assertTrue(CollectionUtils.isEqualCollection(result.getDedicatedVmForVdsList(),
+                newVmTemplate.getDedicatedVmForVdsList()));
         assertEquals(newVmTemplate, result);
     }
 
@@ -283,11 +290,17 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     public void testUpdate() {
         existingTemplate.setDescription("This is an updated description");
 
+        List<Guid> hostGuidsList = Arrays.asList(HOST_GUIDS);
+        hostGuidsList = new LinkedList<Guid>();
+        hostGuidsList.add(HOST_GUIDS[0]);
+        existingTemplate.setDedicatedVmForVdsList(hostGuidsList);
         dao.update(existingTemplate);
 
         VmTemplate result = dbFacade.getVmTemplateDao().get(existingTemplate.getId());
 
         assertNotNull(result);
+        assertTrue(CollectionUtils.isEqualCollection(result.getDedicatedVmForVdsList(),
+                existingTemplate.getDedicatedVmForVdsList()));
         assertEquals(existingTemplate, result);
     }
 

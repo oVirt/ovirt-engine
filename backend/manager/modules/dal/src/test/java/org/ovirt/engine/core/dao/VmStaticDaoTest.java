@@ -9,8 +9,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
@@ -34,6 +36,9 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     private static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
     private static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
     private static final Guid EXISTING_PROVIDER_ID = new Guid("1115c1c6-cb15-4832-b2a4-023770607111");
+    protected static final Guid[] HOST_GUIDS = {new Guid("afce7a39-8e8c-4819-ba9c-796d316592e8"),
+        new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7"),
+        new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3")};
     private static final String STATIC_VM_NAME = "rhel5-pool-50";
     private static final int NUM_OF_VM_STATIC_IN_FIXTURES = 3;
 
@@ -160,12 +165,14 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         dao.getAll();
     }
 
-
     @Test
     public void testSave() {
+        newVmStatic.setDedicatedVmForVdsList(Arrays.asList(HOST_GUIDS));
         dao.save(newVmStatic);
         VmStatic result = dao.get(newVmStatic.getId());
         assertNotNull(result);
+        assertTrue("Add 3 dedicated hosts", CollectionUtils.isEqualCollection(result.getDedicatedVmForVdsList(),
+                newVmStatic.getDedicatedVmForVdsList()));
         assertEquals(newVmStatic, result);
     }
 
@@ -175,11 +182,25 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         existingVmStatic.setDescription("updated");
         existingVmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
         existingVmStatic.setProviderId(null);
+        List<Guid> hostGuidsList = Arrays.asList(HOST_GUIDS);
+        existingVmStatic.setDedicatedVmForVdsList(hostGuidsList);
         dao.update(existingVmStatic);
         VmStatic result = dao.get(EXISTING_VM_ID);
         assertNotNull(result);
+        assertTrue("Update dedicated hosts", CollectionUtils.isEqualCollection(result.getDedicatedVmForVdsList(),
+                existingVmStatic.getDedicatedVmForVdsList()));
         assertEquals(existingVmStatic, result);
         assertNull(result.getProviderId());
+
+        hostGuidsList = new LinkedList<Guid>();
+        hostGuidsList.add(HOST_GUIDS[0]);
+        hostGuidsList.add(HOST_GUIDS[1]);
+        existingVmStatic.setDedicatedVmForVdsList(hostGuidsList);
+        dao.update(existingVmStatic);
+        result = dao.get(EXISTING_VM_ID);
+        // assert 1 dedicated hosts
+        assertTrue("Reduce dedicated hosts", CollectionUtils.isEqualCollection(result.getDedicatedVmForVdsList(),
+                existingVmStatic.getDedicatedVmForVdsList()));
     }
 
     @Test

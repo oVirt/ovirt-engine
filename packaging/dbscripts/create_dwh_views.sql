@@ -289,7 +289,7 @@ SELECT
     CAST ( a.num_of_sockets AS SMALLINT ) AS number_of_sockets,
     a.mem_size_mb AS memory_size_mb,
     CAST ( a.os AS SMALLINT ) AS operating_system,
-    a.dedicated_vm_for_vds AS default_host,
+    fn_get_dedicated_hosts_ids_by_vm_id(a.vm_guid) AS default_host,
     a.auto_startup AS high_availability,
     a.is_initialized AS initialized,
     a.is_stateless AS stateless,

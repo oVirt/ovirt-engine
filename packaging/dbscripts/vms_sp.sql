@@ -595,7 +595,7 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000),
   RETURNS VOID
    AS $procedure$
 DECLARE
-  v_val  UUID;
+  v_val UUID;
 BEGIN
 -- lock template for child count update
 select vm_guid into v_val FROM vm_static WHERE vm_guid = v_vmt_guid for update;
@@ -668,7 +668,7 @@ INSERT INTO vm_static(description,
                       small_icon_id,
                       large_icon_id,
                       console_disconnect_action)
-	VALUES(v_description,
+    VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
            v_num_of_io_threads,
@@ -737,12 +737,15 @@ INSERT INTO vm_static(description,
            v_large_icon_id,
            v_console_disconnect_action);
 
--- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
-DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vm_guid;
-INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id) VALUES (v_vm_guid, (SELECT storage_pool_id FROM vds_groups vg WHERE vg.vds_group_id = v_vds_group_id));
+    -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
+    DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vm_guid;
+    INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id) VALUES (v_vm_guid, (SELECT storage_pool_id FROM vds_groups vg WHERE vg.vds_group_id = v_vds_group_id));
 
--- set child_count for the template
-UPDATE vm_static SET child_count = child_count+1 where vm_guid = v_vmt_guid;
+    -- add connections to dedicated hosts
+    PERFORM InsertDedicatedHostsToVm(v_val, v_dedicated_vm_for_vds);
+
+    -- set child_count for the template
+    UPDATE vm_static SET child_count = child_count+1 where vm_guid = v_vmt_guid;
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -944,6 +947,10 @@ BEGIN
       console_disconnect_action = v_console_disconnect_action
       WHERE vm_guid = v_vm_guid
       AND   entity_type = 'VM';
+
+      -- Update connections to dedicated hosts
+      PERFORM UpdateDedicatedHostsToVm(v_vm_guid, v_dedicated_vm_for_vds);
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -1681,5 +1688,25 @@ BEGIN
 UPDATE vm_static
    SET cpu_profile_id = v_cpu_profile_id
    WHERE vds_group_id = v_cluster_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION InsertDedicatedHostsToVm(v_vm_guid UUID, v_dedicated_vm_for_vds text)
+RETURNS VOID
+AS $procedure$
+    INSERT INTO vm_host_pinning_map(vm_id, vds_id)
+    SELECT v_vm_guid, vds_id
+    FROM fnSplitterUuid(v_dedicated_vm_for_vds) as vds_id;
+$procedure$
+LANGUAGE sql;
+
+
+Create or replace FUNCTION UpdateDedicatedHostsToVm(v_vm_guid UUID, v_dedicated_vm_for_vds text)
+RETURNS VOID
+AS $procedure$
+BEGIN
+    DELETE FROM vm_host_pinning_map WHERE vm_id = v_vm_guid;
+    PERFORM InsertDedicatedHostsToVm(v_vm_guid, v_dedicated_vm_for_vds);
 END; $procedure$
 LANGUAGE plpgsql;
