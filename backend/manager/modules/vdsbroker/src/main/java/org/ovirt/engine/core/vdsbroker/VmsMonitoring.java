@@ -291,12 +291,15 @@ public class VmsMonitoring {
             if (!vmsWithChangedDevices.isEmpty()) {
                 ArrayList<String> vmsToUpdate = new ArrayList<>(vmsWithChangedDevices.size());
                 for (Pair<VM, VmInternalData> pair : vmsWithChangedDevices) {
-                    if (vmDynamicToSave.containsKey(pair.getFirst().getId())) {
-                        vmDynamicToSave.get(pair.getFirst().getId()).setHash(pair.getSecond().getVmDynamic().getHash());
+                    Guid vmId = pair.getFirst().getId();
+                    // update only if the vm marked to change, otherwise it might have skipped because data invalidated
+                    // this ensure the vmManager lock is taken
+                    if (vmDynamicToSave.containsKey(vmId)) {
+                        vmDynamicToSave.get(vmId).setHash(pair.getSecond().getVmDynamic().getHash());
+                        vmsToUpdate.add(vmId.toString());
                     } else {
-                        addVmDynamicToList(pair.getSecond().getVmDynamic());
+                        log.warn("VM '{}' not in changed list, skipping devices update.", vmId);
                     }
-                    vmsToUpdate.add(pair.getSecond().getVmDynamic().getId().toString());
                 }
                 updateVmDevices(vmsToUpdate);
             }
@@ -442,6 +445,9 @@ public class VmsMonitoring {
      * @param vmsToUpdate
      */
     protected void updateVmDevices(List<String> vmsToUpdate) {
+        if (vmsToUpdate.isEmpty()) {
+            return;
+        }
         Map[] vms = getVmInfo(vmsToUpdate);
         if (vms != null) {
             for (Map vm : vms) {
