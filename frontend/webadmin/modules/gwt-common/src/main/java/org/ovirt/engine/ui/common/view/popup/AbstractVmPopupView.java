@@ -22,13 +22,17 @@ import com.google.inject.Inject;
 public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupView<UnitVmModel> implements
     AbstractVmBasedPopupPresenterWidget.ViewDef {
 
+    private VmPopupStyle style;
+
     @Inject
-    public AbstractVmPopupView(EventBus eventBus, AbstractVmPopupWidget popupWidget) {
-        this(eventBus, popupWidget, "760px", "580px"); //$NON-NLS-1$ //$NON-NLS-2$
+    public AbstractVmPopupView(EventBus eventBus, AbstractVmPopupWidget popupWidget, VmPopupResources resources) {
+        this(eventBus, popupWidget, "760px", "580px", resources); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public AbstractVmPopupView(EventBus eventBus, AbstractVmPopupWidget popupWidget, String width, String height) {
+    public AbstractVmPopupView(EventBus eventBus, AbstractVmPopupWidget popupWidget, String width, String height, VmPopupResources resources) {
         super(eventBus, popupWidget, width, height);
+        style = resources.createStyle();
+        style.ensureInjected();
     }
 
     @Override
@@ -63,7 +67,9 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     @Override
     protected AbstractUiCommandButton createCommandButton(String label, String uniqueId) {
         if (VmBasedWidgetSwitchModeCommand.NAME.equals(uniqueId)) {
-            return new LeftAlignedUiCommandButton(label);
+            LeftAlignedUiCommandButton leftAlignedUiCommandButton = new LeftAlignedUiCommandButton(label);
+            leftAlignedUiCommandButton.setCustomContentStyle(style.showAdvancedOptionsButton());
+            return leftAlignedUiCommandButton;
         }
 
         return super.createCommandButton(label, uniqueId);

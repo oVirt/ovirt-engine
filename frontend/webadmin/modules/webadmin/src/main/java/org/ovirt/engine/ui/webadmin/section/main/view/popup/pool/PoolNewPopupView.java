@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.pool;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractVmPopupView;
+import org.ovirt.engine.ui.common.view.popup.VmPopupResources;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.pool.PoolNewPopupWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 
@@ -16,8 +17,8 @@ public class PoolNewPopupView extends AbstractVmPopupView implements PoolNewPopu
     }
 
     @Inject
-    public PoolNewPopupView(EventBus eventBus) {
-        super(eventBus, new PoolNewPopupWidget(eventBus), "760px", "580px"); //$NON-NLS-1$ //$NON-NLS-2$
+    public PoolNewPopupView(EventBus eventBus, VmPopupResources resources) {
+        super(eventBus, new PoolNewPopupWidget(eventBus), "760px", "580px", resources); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

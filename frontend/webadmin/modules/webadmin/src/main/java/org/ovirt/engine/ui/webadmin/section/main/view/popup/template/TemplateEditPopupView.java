@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.template;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractVmPopupView;
+import org.ovirt.engine.ui.common.view.popup.VmPopupResources;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.template.TemplateEditPopupWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateEditPresenterWidget;
 
@@ -16,8 +17,8 @@ public class TemplateEditPopupView extends AbstractVmPopupView implements Templa
     }
 
     @Inject
-    public TemplateEditPopupView(EventBus eventBus) {
-        super(eventBus, new TemplateEditPopupWidget(eventBus));
+    public TemplateEditPopupView(EventBus eventBus, VmPopupResources resources) {
+        super(eventBus, new TemplateEditPopupWidget(eventBus), resources);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

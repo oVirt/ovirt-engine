@@ -4,6 +4,7 @@ import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetCon
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractVmPopupView;
+import org.ovirt.engine.ui.common.view.popup.VmPopupResources;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmPopupWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmPopupPresenterWidget;
@@ -19,13 +20,13 @@ public class VmPopupView extends AbstractVmPopupView implements VmPopupPresenter
     }
 
     @Inject
-    public VmPopupView(EventBus eventBus) {
+    public VmPopupView(EventBus eventBus, VmPopupResources resources) {
         super(eventBus, new VmPopupWidget(eventBus) {
             @Override
             protected PopupWidgetConfigMap createWidgetConfiguration() {
                 return super.createWidgetConfiguration().update(hostTab, hiddenField());
             }
-        });
+        }, resources);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

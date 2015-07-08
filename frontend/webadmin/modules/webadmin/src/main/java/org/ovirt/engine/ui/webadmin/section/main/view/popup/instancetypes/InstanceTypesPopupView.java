@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractVmPopupView;
+import org.ovirt.engine.ui.common.view.popup.VmPopupResources;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.instancetypes.InstanceTypesPopupWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.InstanceTypesPopupPresenterWidget;
 
@@ -16,8 +17,8 @@ public class InstanceTypesPopupView extends AbstractVmPopupView implements Insta
     }
 
     @Inject
-    public InstanceTypesPopupView(EventBus eventBus) {
-        super(eventBus, new InstanceTypesPopupWidget(eventBus), "710px", "570px"); //$NON-NLS-1$ //$NON-NLS-2$
+    public InstanceTypesPopupView(EventBus eventBus, VmPopupResources resources) {
+        super(eventBus, new InstanceTypesPopupWidget(eventBus), "710px", "570px", resources); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 }

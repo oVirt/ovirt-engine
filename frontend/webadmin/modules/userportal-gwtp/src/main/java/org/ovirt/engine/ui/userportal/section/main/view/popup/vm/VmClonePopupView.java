@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.view.popup.vm;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractVmPopupView;
+import org.ovirt.engine.ui.common.view.popup.VmPopupResources;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmClonePopupWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 
@@ -16,8 +17,8 @@ public class VmClonePopupView extends AbstractVmPopupView implements VmClonePopu
     }
 
     @Inject
-    public VmClonePopupView(EventBus eventBus) {
-        super(eventBus, new VmClonePopupWidget(eventBus));
+    public VmClonePopupView(EventBus eventBus, VmPopupResources resources) {
+        super(eventBus, new VmClonePopupWidget(eventBus), resources);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
