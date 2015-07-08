@@ -90,7 +90,9 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
             });
 
     protected void executeDiskModifications(Guid vmId, UnitVmModel model) {
-
+        // this is done on the background - the window is not visible anymore
+        getcurrentVm().setId(vmId);
+        model.getInstanceImages().executeDiskModifications(getcurrentVm());
     }
 
     protected void export()

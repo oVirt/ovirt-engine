@@ -2528,10 +2528,4 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         return entity.getStoragePoolId();
     }
 
-    @Override
-    protected void executeDiskModifications(Guid vmId, UnitVmModel model) {
-        // this is done on the background - the window is not visible anymore
-        getcurrentVm().setId(vmId);
-        model.getInstanceImages().executeDiskModifications(getcurrentVm());
-    }
 }
