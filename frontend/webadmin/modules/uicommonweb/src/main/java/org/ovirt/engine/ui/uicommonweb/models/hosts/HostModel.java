@@ -372,6 +372,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         }
     }
 
+    private VdsProtocol vdsProtocol;
+
     public String getPmProxyPreferences() {
         // Return null if power management is not enabled.
         if (!getIsPm().getEntity()) {
@@ -940,7 +942,12 @@ public abstract class HostModel extends Model implements HasValidatedTabs
             Boolean jsonSupported =
                     (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
                             cluster.getCompatibilityVersion().toString());
-            getProtocol().setEntity(jsonSupported);
+            if (!jsonSupported) {
+                getProtocol().setEntity(jsonSupported);
+            } else {
+                getProtocol().setEntity(vdsProtocol == null ? jsonSupported : VdsProtocol.STOMP == vdsProtocol);
+            }
+
             getProtocol().setIsChangeable(jsonSupported);
             //Match the appropriate selected data center to the selected cluster, don't fire update events.
             if (getDataCenter() != null && getDataCenter().getItems() != null) {
@@ -1026,6 +1033,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
     {
         setHostId(vds.getId());
         getOverrideIpTables().setIsAvailable(showInstallationProperties());
+        vdsProtocol = vds.getProtocol();
         getProtocol().setEntity(VdsProtocol.STOMP == vds.getProtocol());
         getProtocol().setIsChangeable(editTransportProperties(vds));
         setSpmPriorityValue(vds.getVdsSpmPriority());
