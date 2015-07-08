@@ -54,7 +54,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         after=(
-            osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
+            oenginecons.Stages.REMOVE_CUSTOMIZATION_ENGINE,
         ),
         condition=lambda self: (
             self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE]

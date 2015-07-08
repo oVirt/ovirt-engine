@@ -367,6 +367,8 @@ class Stages(object):
     KDUMP_ALLOW = 'osetup.engine.kdump.allow'
     CONNECTION_ALLOW = 'osetup.engine.db.connection.allow'
 
+    REMOVE_CUSTOMIZATION_ENGINE = 'osetup.remove.customization.engine'
+
 
 @util.export
 @util.codegen
