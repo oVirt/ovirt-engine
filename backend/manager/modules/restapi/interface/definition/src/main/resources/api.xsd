@@ -4130,6 +4130,7 @@
           <xs:element name="iommu_group" type="xs:int" minOccurs="0" maxOccurs="1" />
           <xs:element name="physical_function" type="HostDevice" minOccurs="0" maxOccurs="1" />
           <xs:element name="virtual_functions" type="xs:int" minOccurs="0" maxOccurs="1" />
+          <xs:element name="placeholder" type="xs:boolean" minOccurs="0" maxOccurs="1" />
           <xs:element ref="vm" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>

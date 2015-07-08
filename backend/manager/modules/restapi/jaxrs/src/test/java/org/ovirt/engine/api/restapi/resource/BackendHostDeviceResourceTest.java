@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.queries.HostDeviceParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendHostDeviceResourceTest
-        extends AbstractBackendHostDevicesResourceTest<BackendHostDeviceResource> {
+        extends AbstractBackendHostDevicesResourceTest<BackendHostDeviceResource, org.ovirt.engine.core.common.businessentities.HostDevice> {
 
     public BackendHostDeviceResourceTest() {
         super(new BackendHostDeviceResource(HexUtils.string2hex(DEVICE_NAME), new BackendHostDevicesResource(HOST_ID)));
@@ -26,5 +26,10 @@ public class BackendHostDeviceResourceTest
 
         HostDevice device = resource.get();
         verifyHostDevice(device);
+    }
+
+    @Override
+    protected org.ovirt.engine.core.common.businessentities.HostDevice createDevice() {
+        return new org.ovirt.engine.core.common.businessentities.HostDevice();
     }
 }

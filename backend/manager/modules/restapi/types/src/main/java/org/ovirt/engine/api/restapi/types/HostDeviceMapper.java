@@ -6,6 +6,7 @@ import org.ovirt.engine.api.model.Product;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.Vendor;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HostDeviceMapper {
@@ -51,6 +52,17 @@ public class HostDeviceMapper {
             model.setVm(new VM());
             model.getVm().setId(entity.getVmId().toString());
         }
+        return model;
+    }
+
+    @Mapping(from = HostDeviceView.class, to = HostDevice.class)
+    public static HostDevice map(HostDeviceView entity, HostDevice model) {
+        model = map((org.ovirt.engine.core.common.businessentities.HostDevice) entity, model);
+
+        if (entity.isIommuPlaceholder()) {
+            model.setPlaceholder(true);
+        }
+
         return model;
     }
 

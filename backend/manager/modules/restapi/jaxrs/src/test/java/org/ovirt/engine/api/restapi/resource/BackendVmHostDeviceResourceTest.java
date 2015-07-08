@@ -5,11 +5,12 @@ import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 
 import java.util.Arrays;
 
 public class BackendVmHostDeviceResourceTest
-        extends AbstractBackendHostDevicesResourceTest<BackendVmHostDeviceResource> {
+        extends AbstractBackendHostDevicesResourceTest<BackendVmHostDeviceResource, HostDeviceView> {
 
     public BackendVmHostDeviceResourceTest() {
         super(new BackendVmHostDeviceResource(HexUtils.string2hex(DEVICE_NAME), new BackendVmHostDevicesResource(VM_ID)));
@@ -43,5 +44,10 @@ public class BackendVmHostDeviceResourceTest
                 true, true);
 
         verifyRemove(resource.remove());
+    }
+
+    @Override
+    protected HostDeviceView createDevice() {
+        return new HostDeviceView();
     }
 }

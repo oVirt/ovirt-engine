@@ -8,6 +8,7 @@ import org.ovirt.engine.api.resource.VmHostDevicesResource;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,13 +17,13 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class BackendVmHostDevicesResource
-        extends AbstractBackendCollectionResource<HostDevice, org.ovirt.engine.core.common.businessentities.HostDevice>
+        extends AbstractBackendCollectionResource<HostDevice, HostDeviceView>
         implements VmHostDevicesResource {
 
     private Guid vmId;
 
     public BackendVmHostDevicesResource(Guid parentId) {
-        super(HostDevice.class, org.ovirt.engine.core.common.businessentities.HostDevice.class);
+        super(HostDevice.class, HostDeviceView.class);
         vmId = parentId;
     }
 
@@ -36,7 +37,7 @@ public class BackendVmHostDevicesResource
     @Override
     public HostDevices list() {
         HostDevices model = new HostDevices();
-        for (org.ovirt.engine.core.common.businessentities.HostDevice hostDevice : getCollection()) {
+        for (HostDeviceView hostDevice : getCollection()) {
             model.getHostDevices().add(addLinks(map(hostDevice, new HostDevice())));
         }
 
@@ -63,7 +64,7 @@ public class BackendVmHostDevicesResource
         return inject(new BackendVmHostDeviceResource(deviceId, this));
     }
 
-    protected List<org.ovirt.engine.core.common.businessentities.HostDevice> getCollection() {
+    protected List<HostDeviceView> getCollection() {
         return getBackendCollection(VdcQueryType.GetExtendedVmHostDevicesByVmId, new IdQueryParameters(vmId));
     }
 
@@ -80,8 +81,8 @@ public class BackendVmHostDevicesResource
         }
 
         @Override
-        public org.ovirt.engine.core.common.businessentities.HostDevice lookupEntity(Void ignored) throws BackendFailureException {
-            for (org.ovirt.engine.core.common.businessentities.HostDevice device : getCollection()) {
+        public HostDeviceView lookupEntity(Void ignored) throws BackendFailureException {
+            for (HostDeviceView device : getCollection()) {
                 if (device.getDeviceName().equals(deviceName)) {
                     return device;
                 }

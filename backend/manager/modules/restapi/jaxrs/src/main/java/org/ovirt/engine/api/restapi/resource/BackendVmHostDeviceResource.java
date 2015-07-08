@@ -6,19 +6,20 @@ import org.ovirt.engine.api.resource.VmHostDeviceResource;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.compat.Guid;
 
 import javax.ws.rs.core.Response;
 
 public class BackendVmHostDeviceResource
-    extends AbstractBackendSubResource<HostDevice, org.ovirt.engine.core.common.businessentities.HostDevice>
+    extends AbstractBackendSubResource<HostDevice, HostDeviceView>
     implements VmHostDeviceResource {
 
     private final BackendVmHostDevicesResource parent;
     private final String deviceName;
 
     protected BackendVmHostDeviceResource(String deviceId, BackendVmHostDevicesResource parent) {
-        super(deviceId, HostDevice.class, org.ovirt.engine.core.common.businessentities.HostDevice.class);
+        super(deviceId, HostDevice.class, HostDeviceView.class);
         this.parent = parent;
         this.deviceName = HexUtils.hex2string(deviceId);
     }

@@ -10,17 +10,17 @@ import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractBackendHostDevicesResourceTest<C extends AbstractBackendResource<HostDevice, org.ovirt.engine.core.common.businessentities.HostDevice>>
-        extends AbstractBackendResourceTest<HostDevice, org.ovirt.engine.core.common.businessentities.HostDevice> {
+public abstract class AbstractBackendHostDevicesResourceTest<R extends AbstractBackendResource<HostDevice, D>, D extends org.ovirt.engine.core.common.businessentities.HostDevice>
+        extends AbstractBackendResourceTest<HostDevice, D> {
 
     protected static final Guid VM_ID = GUIDS[0];
     protected static final Guid HOST_ID = GUIDS[1];
     protected static final String DEVICE_NAME = "pci_0000_00_09_0";
     protected static final String PARENT_NAME = "computer";
 
-    protected final C resource;
+    protected final R resource;
 
-    protected AbstractBackendHostDevicesResourceTest(C resource) {
+    protected AbstractBackendHostDevicesResourceTest(R resource) {
         this.resource = resource;
     }
 
@@ -34,8 +34,8 @@ public abstract class AbstractBackendHostDevicesResourceTest<C extends AbstractB
     }
 
     @Override
-    protected org.ovirt.engine.core.common.businessentities.HostDevice getEntity(int index) {
-        org.ovirt.engine.core.common.businessentities.HostDevice hostDevice = new org.ovirt.engine.core.common.businessentities.HostDevice();
+    protected D getEntity(int index) {
+        D hostDevice = createDevice();
         hostDevice.setHostId(HOST_ID);
         hostDevice.setDeviceName(DEVICE_NAME);
         hostDevice.setParentDeviceName(PARENT_NAME);
@@ -46,6 +46,8 @@ public abstract class AbstractBackendHostDevicesResourceTest<C extends AbstractB
         return hostDevice;
     }
 
+    protected abstract D createDevice();
+
     protected void setUpGetVmHostDevicesExpectations() {
         setUpEntityQueryExpectations(
                 VdcQueryType.GetExtendedVmHostDevicesByVmId,
@@ -55,7 +57,7 @@ public abstract class AbstractBackendHostDevicesResourceTest<C extends AbstractB
                 getHostDeviceCollection());
     }
 
-    protected List<org.ovirt.engine.core.common.businessentities.HostDevice> getHostDeviceCollection() {
+    protected List<D> getHostDeviceCollection() {
         return Collections.singletonList(getEntity(0));
     }
 

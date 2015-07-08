@@ -4,11 +4,12 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 
 import java.util.Arrays;
 
 public class BackendVmHostDevicesResourceTest
-        extends AbstractBackendHostDevicesResourceTest<BackendVmHostDevicesResource> {
+        extends AbstractBackendHostDevicesResourceTest<BackendVmHostDevicesResource, HostDeviceView> {
 
     public BackendVmHostDevicesResourceTest() {
         super(new BackendVmHostDevicesResource(VM_ID));
@@ -40,5 +41,10 @@ public class BackendVmHostDevicesResourceTest
         HostDevice device = new HostDevice();
         device.setName(DEVICE_NAME);
         resource.add(device);
+    }
+
+    @Override
+    protected HostDeviceView createDevice() {
+        return new HostDeviceView();
     }
 }
