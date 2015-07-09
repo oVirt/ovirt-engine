@@ -27,10 +27,10 @@ public class ImportStorageModelBehavior extends StorageModelBehavior {
     }
 
     private void initializeItems() {
-        List<IStorageModel> items = AsyncDataProvider.getInstance().getIsoStorageModels();
-        items.addAll(AsyncDataProvider.getInstance().getExportStorageModels());
-        items.addAll(AsyncDataProvider.getInstance().getFileDataStorageModels());
+        List<IStorageModel> items = AsyncDataProvider.getInstance().getFileDataStorageModels();
         items.addAll(AsyncDataProvider.getInstance().getImportBlockDataStorageModels());
+        items.addAll(AsyncDataProvider.getInstance().getIsoStorageModels());
+        items.addAll(AsyncDataProvider.getInstance().getExportStorageModels());
 
         getModel().setItems(items);
     }
