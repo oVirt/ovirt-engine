@@ -585,7 +585,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             Element trElem = tableCell.getParentElement();
             TableRowElement tr = TableRowElement.as(trElem);
             int row = tr.getSectionRowIndex();
-            return table.getVisibleItem(row);
+            return table.getVisibleItemCount() > 0 ? table.getVisibleItem(row) : null;
         } else {
             return null;
         }
