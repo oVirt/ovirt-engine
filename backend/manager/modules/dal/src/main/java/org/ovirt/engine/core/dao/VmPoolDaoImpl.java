@@ -129,7 +129,7 @@ public class VmPoolDaoImpl extends BaseDaoDbFacade implements VmPoolDao {
                 .addValue("vm_pool_id", vmPoolId)
                 .addValue("is_being_destroyed", beingDestroyed);
 
-        getCallsHandler().executeModification("SetVm_poolBeingDestroyed", parameterSource);
+        getCallsHandler().executeModification("SetVmPoolBeingDestroyed", parameterSource);
     }
 
     @Override

@@ -72,7 +72,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION SetVm_poolBeingDestroyed(v_vm_pool_id UUID, v_is_being_destroyed BOOLEAN)
+Create or replace FUNCTION SetVmPoolBeingDestroyed(v_vm_pool_id UUID, v_is_being_destroyed BOOLEAN)
   RETURNS VOID
 AS $procedure$
 BEGIN
