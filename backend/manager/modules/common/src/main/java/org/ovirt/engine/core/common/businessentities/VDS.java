@@ -505,6 +505,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
 
     public void setPhysicalMemMb(Integer value) {
         vdsDynamic.setPhysicalMemMb(value);
+        calculateFreeSchedulingMemoryCache();
     }
 
     public String getSupportedClusterLevels() {
@@ -697,6 +698,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     }
     public void setReservedMem(Integer value) {
         vdsDynamic.setReservedMem(value);
+        calculateFreeSchedulingMemoryCache();
     }
 
     public Long getBootTime() {
@@ -901,6 +903,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
 
     public void setMaxVdsMemoryOverCommit(int value) {
         maxVdsMemoryOverCommit = value;
+        calculateFreeSchedulingMemoryCache();
     }
 
     /**
@@ -1225,7 +1228,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         this.fenceAgents = fenceAgents;
     }
 
-    public void calculateFreeSchedulingMemoryCache() {
+    private void calculateFreeSchedulingMemoryCache() {
         if (getMemCommited() != null && getPhysicalMemMb() != null && getReservedMem() != null) {
             maxSchedulingMemory = getFreeVirtualMemory() - getPendingVmemSize();
             // avoid negative values

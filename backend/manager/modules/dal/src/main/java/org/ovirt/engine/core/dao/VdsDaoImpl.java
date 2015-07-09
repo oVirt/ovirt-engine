@@ -389,7 +389,6 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
             entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
             entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
             entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
-            entity.calculateFreeSchedulingMemoryCache();
             entity.setBootTime((Long) rs.getObject("boot_time"));
             entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
             entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
