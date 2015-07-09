@@ -32,7 +32,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior {
         items.addAll(AsyncDataProvider.getInstance().getIsoStorageModels());
         items.addAll(AsyncDataProvider.getInstance().getExportStorageModels());
 
-        getModel().setItems(items);
+        getModel().setStorageModels(items);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior {
 
         updateAvailabilityByDatacenter(dataCenter);
 
-        for (final IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems())) {
+        for (final IStorageModel item : Linq.<IStorageModel> cast(getModel().getStorageModels())) {
             if (item.getRole() == StorageDomainType.ISO) {
                 AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery(getModel(),
                         new INewAsyncCallback() {

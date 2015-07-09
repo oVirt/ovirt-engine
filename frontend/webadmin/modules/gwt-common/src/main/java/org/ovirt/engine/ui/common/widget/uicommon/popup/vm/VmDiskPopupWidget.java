@@ -394,17 +394,17 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             ArrayList<IStorageModel> items = new ArrayList<>();
             items.add(iscsiStorageModel);
             items.add(fcpStorageModel);
-            storageModel.setItems(items);
+            storageModel.setStorageModels(items);
             storageModel.setHost(disk.getHost());
 
             disk.setStorageModel(storageModel);
         } else {
             storageModel = disk.getStorageModel();
 
-            iscsiStorageModel = Linq.findByType(storageModel.getItems(), IscsiStorageModel.class);
+            iscsiStorageModel = Linq.findByType(storageModel.getStorageModels(), IscsiStorageModel.class);
             iscsiStorageModel.getPropertyChangedEvent().clearListeners();
 
-            fcpStorageModel = Linq.findByType(storageModel.getItems(), FcpStorageModel.class);
+            fcpStorageModel = Linq.findByType(storageModel.getStorageModels(), FcpStorageModel.class);
             fcpStorageModel.getPropertyChangedEvent().clearListeners();
         }
 

@@ -47,7 +47,7 @@ public abstract class StorageModelBehavior extends Model {
 
     public ArrayList<IStorageModel> getSelectableModels() {
         // Filter un-selectable models
-        ArrayList<IStorageModel> items = Linq.<IStorageModel> cast(getModel().getItems());
+        ArrayList<IStorageModel> items = Linq.<IStorageModel> cast(getModel().getStorageModels());
         ArrayList<IStorageModel> filterredItems = new ArrayList<IStorageModel>();
         for (IStorageModel model : items) {
             if (((Model) model).getIsSelectable()) {
@@ -62,7 +62,7 @@ public abstract class StorageModelBehavior extends Model {
         getModel().updatedStorageModels.add(model);
 
         // Filter UnSelectable model from AvailableStorageItems list
-        if (getModel().updatedStorageModels.size() == Linq.<IStorageModel> cast(getModel().getItems()).size()) {
+        if (getModel().updatedStorageModels.size() == Linq.<IStorageModel> cast(getModel().getStorageModels()).size()) {
             getModel().updatedStorageModels.clear();
 
             getModel().getHost().setItems(new ArrayList<VDS>());

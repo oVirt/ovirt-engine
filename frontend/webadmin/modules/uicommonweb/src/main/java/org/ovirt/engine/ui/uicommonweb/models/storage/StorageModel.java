@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -44,7 +45,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-public class StorageModel extends ListModel<IStorageModel> implements ISupportSystemTreeContext {
+public class StorageModel extends Model implements ISupportSystemTreeContext {
     public static final Guid UnassignedDataCenterId = Guid.Empty;
 
     private StorageModelBehavior behavior;
@@ -75,6 +76,17 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     }
 
     public ArrayList<IStorageModel> updatedStorageModels = new ArrayList<IStorageModel>();
+
+    public List<IStorageModel> storageModels = new ArrayList<IStorageModel>();
+
+    public List<IStorageModel> getStorageModels() {
+        return storageModels;
+    }
+
+    public void setStorageModels(List<IStorageModel> storageModels) {
+        this.storageModels = storageModels;
+    }
+
     private String privateOriginalName;
 
     public String getOriginalName() {
@@ -269,7 +281,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(selectedItemChangedEventDefinition)) {
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
             if (sender == getDataCenter()) {
                 dataCenter_SelectedItemChanged();
             }
@@ -283,7 +295,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                 updateCurrentStorageItem();
             }
         }
-        else if (ev.matchesDefinition(itemsChangedEventDefinition)) {
+        else if (ev.matchesDefinition(ListModel.itemsChangedEventDefinition)) {
             storageItemsChanged();
         }
         else if (ev.matchesDefinition(NfsStorageModel.pathChangedEventDefinition)) {
@@ -294,7 +306,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     private void nfsStorageModel_PathChanged(Object sender, EventArgs args) {
         NfsStorageModel senderModel = (NfsStorageModel) sender;
 
-        for (Object item : getItems()) {
+        for (Object item : getStorageModels()) {
             if (item instanceof NfsStorageModel && item != sender) {
                 NfsStorageModel model = (NfsStorageModel) item;
                 model.getPath().setEntity(senderModel.getPath().getEntity());
@@ -312,8 +324,8 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     }
 
     protected void storageItemsChanged() {
-        if (getItems() != null) {
-            for (Object item : getItems()) {
+        if (getStorageModels() != null) {
+            for (Object item : getStorageModels()) {
                 IStorageModel model = (IStorageModel) item;
                 model.setContainer(this);
 
@@ -346,7 +358,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
                 String prefix = host.isOvirtNode() ? localFSPath : ""; //$NON-NLS-1$
                 if (!StringHelper.isNullOrEmpty(prefix)) {
-                    for (Object item : getItems()) {
+                    for (Object item : getStorageModels()) {
                         if (item instanceof LocalStorageModel) {
                             LocalStorageModel model = (LocalStorageModel) item;
                             model.getPath().setEntity(prefix);
@@ -611,7 +623,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     }
 
     private void updateItemsAvailability() {
-        if (getItems() == null) {
+        if (getStorageModels() == null) {
             return;
         }
 
@@ -716,7 +728,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     public void updateCurrentStorageItem() {
         StorageDomainType storageDomainType = getAvailableStorageDomainTypeItems().getSelectedItem();
         StorageType storageType = getAvailableStorageTypeItems().getSelectedItem();
-        for (IStorageModel model : getItems()) {
+        for (IStorageModel model : getStorageModels()) {
             if (model.getType() == storageType && model.getRole() == storageDomainType) {
                 setCurrentStorageItem(model);
                 break;
@@ -727,7 +739,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     public void updateStorageTypesByDomainType() {
         StorageDomainType storageDomainType = getAvailableStorageDomainTypeItems().getSelectedItem();
         Set<StorageType> filteredStorageTypes = new LinkedHashSet<>();
-        for (IStorageModel currModel : getItems()) {
+        for (IStorageModel currModel : getStorageModels()) {
             if (currModel.getRole() == storageDomainType) {
                 filteredStorageTypes.add(currModel.getType());
             }

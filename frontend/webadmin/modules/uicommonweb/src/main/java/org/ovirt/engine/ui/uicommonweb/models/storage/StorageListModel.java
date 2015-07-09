@@ -280,7 +280,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         items.addAll(AsyncDataProvider.getInstance().getExportStorageModels());
 
-        model.setItems(items);
+        model.setStorageModels(items);
 
         model.initialize();
 
@@ -337,7 +337,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         IStorageModel item = prepareStorageForEdit(storage, model);
 
-        model.setItems(new ArrayList<IStorageModel>(Arrays.asList(new IStorageModel[] {item})));
+        model.setStorageModels(new ArrayList<IStorageModel>(Arrays.asList(new IStorageModel[] { item })));
         model.setCurrentStorageItem(item);
 
         model.initialize();

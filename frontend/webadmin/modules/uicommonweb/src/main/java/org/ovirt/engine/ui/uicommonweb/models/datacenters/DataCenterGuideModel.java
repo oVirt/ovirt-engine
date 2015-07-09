@@ -551,7 +551,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
         ArrayList<IStorageModel> list = new ArrayList<IStorageModel>();
         list.add(localStorageModel);
-        model.setItems(list);
+        model.setStorageModels(list);
         model.setCurrentStorageItem(list.get(0));
 
         AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery(new Object[] { this, model },
@@ -604,7 +604,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             items = AsyncDataProvider.getInstance().getIsoStorageModels();
         }
 
-        model.setItems(items);
+        model.setStorageModels(items);
 
         model.initialize();
 

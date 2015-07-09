@@ -26,7 +26,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
         }
 
         // Allow Data storage type corresponding to the selected data-center type + ISO and Export that are NFS only:
-        for (final IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems())) {
+        for (final IStorageModel item : Linq.<IStorageModel> cast(getModel().getStorageModels())) {
             if (item.getRole() == StorageDomainType.ISO) {
                 AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery(getModel(),
                         new INewAsyncCallback() {
