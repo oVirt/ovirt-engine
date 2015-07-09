@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.host;
 
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -12,6 +14,9 @@ public class AvailableUpdatesFinder {
 
     private static Logger log = LoggerFactory.getLogger(AvailableUpdatesFinder.class);
 
+    @Inject
+    private Instance<UpdateAvailable> hostUpdaters;
+
     private AvailableUpdatesFinder() {
     }
 
@@ -20,14 +25,13 @@ public class AvailableUpdatesFinder {
     }
 
     private UpdateAvailable create(VDSType hostType) {
-        switch (hostType) {
-        case VDS:
-            return new HostUpgradeManager();
-        case oVirtNode:
-            return new OvirtNodeUpgradeManager();
-        default:
-            log.error("Cannot instantiate host available strategy for unknown host type '{}'", hostType);
-            throw new RuntimeException("Cannot instantiate host available strategy for unknown host type");
+        for (UpdateAvailable hostUpdater : hostUpdaters) {
+            if (hostType == hostUpdater.getHostType()) {
+                return hostUpdater;
+            }
         }
+
+        log.error("Cannot instantiate host available strategy for unknown host type '{}'", hostType);
+        throw new RuntimeException("Cannot instantiate host available strategy for unknown host type");
     }
 }

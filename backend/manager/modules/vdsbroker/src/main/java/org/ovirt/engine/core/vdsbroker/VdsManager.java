@@ -297,12 +297,6 @@ public class VdsManager {
                 dbFacade.getVdsDynamicDao().updateUpdateAvailable(cachedVds.getId(), updateAvailable);
             }
         }
-
-        if (updateAvailable) {
-            AuditLogableBase auditLog = new AuditLogableBase();
-            auditLog.setVds(cachedVds);
-            auditLogDirector.log(auditLog, AuditLogType.HOST_UPDATES_ARE_AVAILABLE);
-        }
     }
 
     /**
