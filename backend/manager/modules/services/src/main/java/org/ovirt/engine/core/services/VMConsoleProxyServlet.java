@@ -2,7 +2,6 @@ package org.ovirt.engine.core.services;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -187,10 +186,8 @@ public class VMConsoleProxyServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        try (OutputStream outputStream = response.getOutputStream();
-             BufferedReader requestReader = request.getReader()) {
-
-            String stringParameters = validateTicket(readBody(requestReader));
+        try {
+            String stringParameters = validateTicket(readBody(request.getReader()));
 
             ObjectMapper mapper = new ObjectMapper();
 
@@ -203,7 +200,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
 
             if (result != null) {
                 response.setContentType("application/json");
-                mapper.writeValue(outputStream, result);
+                mapper.writeValue(response.getOutputStream(), result);
             } else {
                 response.setStatus(HttpURLConnection.HTTP_INTERNAL_ERROR);
             }
