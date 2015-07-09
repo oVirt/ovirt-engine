@@ -1798,7 +1798,7 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     }
 
     public boolean isManagedVm() {
-        return !isHostedEngine() && !isExternalVm();
+        return !(OriginType.HOSTED_ENGINE == getOrigin()) && !isExternalVm();
     }
 
     public Guid getInstanceTypeId() {
