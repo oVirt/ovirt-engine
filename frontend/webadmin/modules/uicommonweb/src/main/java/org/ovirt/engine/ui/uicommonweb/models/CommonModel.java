@@ -95,6 +95,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
     private final TemplateListModel templateListModel;
     private final UserListModel userListModel;
     private final EventListModel<Void> eventListModel;
+    private final EventListModel<Void> mainTabEventListModel;
     private final QuotaListModel quotaListModel;
     private final ReportsListModel reportsListModel;
     private final VolumeListModel volumeListModel;
@@ -125,6 +126,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
             final TemplateListModel templateListModel,
             final UserListModel userListModel,
             @Named("footer") final EventListModel<Void> eventListModel,
+            @Named("main") final EventListModel<Void> mainTabEventListModel,
             final QuotaListModel quotaListModel,
             final ReportsListModel reportsListModel,
             final VolumeListModel volumeListModel,
@@ -155,6 +157,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         this.templateListModel = templateListModel;
         this.userListModel = userListModel;
         this.eventListModel = eventListModel;
+        this.mainTabEventListModel = mainTabEventListModel;
         this.quotaListModel = quotaListModel;
         this.reportsListModel = reportsListModel;
         this.volumeListModel = volumeListModel;
@@ -229,7 +232,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         modelList.add(this.vmListModel);
         modelList.add(this.poolListModel);
         modelList.add(this.templateListModel);
-        modelList.add(this.eventListModel);
+        modelList.add(this.mainTabEventListModel);
         modelList.add(this.quotaListModel);
         modelList.add(this.volumeListModel);
         modelList.add(this.diskListModel);
@@ -473,7 +476,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         }
 
         getUserList().setIsAvailable(type == SystemTreeItemType.System);
-        getEventList().setIsAvailable(type == SystemTreeItemType.DataCenter
+        getMainTabEventList().setIsAvailable(type == SystemTreeItemType.DataCenter
                 || type == SystemTreeItemType.Cluster
                 || type == SystemTreeItemType.Cluster_Gluster || type == SystemTreeItemType.Host
                 || type == SystemTreeItemType.Storage || type == SystemTreeItemType.System
@@ -773,7 +776,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     prefix.argvalue = "Vms: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getTemplateList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Template: datacenter = " + model.getTitle(); //$NON-NLS-1$
-                } else if (getEventList().isSearchStringMatch(source)) {
+                } else if (getMainTabEventList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Events: event_datacenter = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getDiskList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Disk: datacenter.name = " + model.getTitle() + " and disk_type = image"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -810,7 +813,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     prefix.argvalue = "Vms: cluster = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getTemplateList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Template: cluster = " + model.getTitle(); //$NON-NLS-1$
-                } else if (getEventList().isSearchStringMatch(source)) {
+                } else if (getMainTabEventList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Events: cluster = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getNetworkList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Network: Cluster_network.cluster_name = " + model.getTitle(); //$NON-NLS-1$
@@ -838,7 +841,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     prefix.argvalue = "Vms: Host = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getTemplateList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Template: Hosts.name = " + model.getTitle(); //$NON-NLS-1$
-                } else if (getEventList().isSearchStringMatch(source)) {
+                } else if (getMainTabEventList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Events: host.name = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getNetworkList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Network: Host_network.host_name = " + model.getTitle(); //$NON-NLS-1$
@@ -863,7 +866,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
                             "Volume: name = " + model.getTitle() + " cluster = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster_Gluster, model).getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 } else if (getClusterList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Cluster: volume.name = " + model.getTitle(); //$NON-NLS-1$
-                } else if (getEventList().isSearchStringMatch(source)) {
+                } else if (getMainTabEventList().isSearchStringMatch(source)) {
                     prefix.argvalue =
                             "Events: volume.name = " + model.getTitle() + " cluster = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster_Gluster, model).getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
@@ -889,7 +892,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     prefix.argvalue = "Vms: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getTemplateList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Templates: storage.name = " + model.getTitle(); //$NON-NLS-1$
-                } else if (getEventList().isSearchStringMatch(source)) {
+                } else if (getMainTabEventList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Events: event_storage = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getDiskList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Disk: storages.name = " + model.getTitle(); //$NON-NLS-1$
@@ -1059,6 +1062,10 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
     public EventListModel getEventList() {
         return eventListModel;
+    }
+
+    public EventListModel getMainTabEventList() {
+        return mainTabEventListModel;
     }
 
     public DiskListModel getDiskList() {
