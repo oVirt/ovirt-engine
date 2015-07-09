@@ -115,7 +115,6 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setMemCommited(1000);
         vds.setMaxVdsMemoryOverCommit(150);
         vds.setReservedMem(65);
-        vds.calculateFreeSchedulingMemoryCache();
         Host host = HostMapper.map(vds, (Host) null);
         long vdsValue = (long) vds.getMaxSchedulingMemory();
         Long hostValue = host.getMaxSchedulingMemory() / HostMapper.BYTES_IN_MEGABYTE;
