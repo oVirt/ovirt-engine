@@ -78,6 +78,7 @@ public class VdsDeploy extends VdsDeployBase {
     private static final String COND_NEUTRON_SETUP = "NEUTRON_SETUP";
     private static final String COND_NEUTRON_LINUX_BRIDGE_SETUP = "NEUTRON_LINUX_BRIDGE_SETUP";
     private static final String COND_NEUTRON_OPEN_VSWITCH_SETUP = "NEUTRON_OPEN_VSWITCH_SETUP";
+    private static final String COND_VMCONSOLE_SETUP = "VMCONSOLE_SETUP";
 
     private static final Logger log = LoggerFactory.getLogger(VdsDeploy.class);
 
@@ -580,17 +581,17 @@ public class VdsDeploy extends VdsDeployBase {
             );
             return true;
         }},
-        new Callable<Boolean>() {@CallWhen("VMCONSOLE_ENABLE")
+        new Callable<Boolean>() {@CallWhen(COND_VMCONSOLE_SETUP)
         public Boolean call() throws Exception {
             Integer support = (Integer)_parser.cliEnvironmentGet(
                 VMConsoleEnv.SUPPORT
             );
             if (support == null || support != Const.VMCONSOLE_SUPPORT_V1) {
-                removeCustomizationCondition("VMCONSOLE_ENABLE");
+                removeCustomizationCondition(COND_VMCONSOLE_SETUP);
             }
             return true;
         }},
-        new Callable<Boolean>() {@CallWhen("VMCONSOLE_ENABLE")
+        new Callable<Boolean>() {@CallWhen(COND_VMCONSOLE_SETUP)
         public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 VMConsoleEnv.ENABLE,
@@ -598,7 +599,7 @@ public class VdsDeploy extends VdsDeployBase {
             );
             return true;
         }},
-        new Callable<Boolean>() {@CallWhen("VMCONSOLE_ENABLE")
+        new Callable<Boolean>() {@CallWhen(COND_VMCONSOLE_SETUP)
         public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 VMConsoleEnv.CERTIFICATE_ENROLLMENT,
@@ -606,7 +607,7 @@ public class VdsDeploy extends VdsDeployBase {
             );
             return true;
         }},
-        new Callable<Boolean>() {@CallWhen("VMCONSOLE_ENABLE")
+        new Callable<Boolean>() {@CallWhen(COND_VMCONSOLE_SETUP)
         public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 VMConsoleEnv.CAKEY,
@@ -808,7 +809,7 @@ public class VdsDeploy extends VdsDeployBase {
      */
     public void setVMConsole(boolean doVMConsole) {
         if (doVMConsole) {
-            addCustomizationCondition("VMCONSOLE_ENABLE");
+            addCustomizationCondition(COND_VMCONSOLE_SETUP);
         }
     }
 
