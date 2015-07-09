@@ -603,8 +603,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     }
 
     public void setWidth(String width, boolean isFixedLayout) {
-        table.setWidth("100%", isFixedLayout); //$NON-NLS-1$
-        tableHeader.setWidth("100%", isFixedLayout); //$NON-NLS-1$
+        table.setWidth(width, isFixedLayout);
+        tableHeader.setWidth(width, isFixedLayout);
     }
 
     @UiHandler("prevPageButton")
