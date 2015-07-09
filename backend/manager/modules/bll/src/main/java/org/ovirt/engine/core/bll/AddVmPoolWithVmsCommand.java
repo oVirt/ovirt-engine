@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,9 +16,12 @@ import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -56,6 +60,25 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
         }
 
         return true;
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Execution);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getVmPool().getName(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_POOL_NAME, getVmPoolIsBeingCreatedMessage()));
+    }
+
+    private String getVmPoolIsBeingCreatedMessage() {
+        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_POOL_IS_BEING_CREATED.name());
+        if (getVmPoolName() != null) {
+            builder.append(String.format("$VmPoolName %1$s", getVmPoolName()));
+        }
+        return builder.toString();
     }
 
     @Override

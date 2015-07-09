@@ -3662,6 +3662,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM pool ${VmPoolName} is being removed with VM ${VmName}.")
     String ACTION_TYPE_FAILED_VM_POOL_IS_BEING_REMOVED_WITH_VM();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VM pool ${VmPoolName} is being created.")
+    String ACTION_TYPE_FAILED_VM_POOL_IS_BEING_CREATED();
+
     @DefaultStringValue("Cannot ${action} ${type}. A VM is being created and attached to pool ${VmPoolName}.")
     String ACTION_TYPE_FAILED_VM_IS_BEING_CREATED_AND_ATTACHED_TO_POOL();
 
