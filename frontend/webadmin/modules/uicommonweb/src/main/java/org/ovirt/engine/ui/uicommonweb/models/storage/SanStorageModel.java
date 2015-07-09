@@ -268,8 +268,12 @@ public abstract class SanStorageModel extends SanStorageModelBase
     }
 
     private int getAdditionalAvailableSize(LUNs lun) {
+        int pvSize = lun.getPvSize();
+        if (pvSize == 0) {
+            return 0;
+        }
         // The PV size is always smaller by 1 GB from the device due to LVM metadata
-        int additionalAvailableSize = lun.getDeviceSize() - lun.getPvSize() - 1;
+        int additionalAvailableSize = lun.getDeviceSize() - pvSize - 1;
         if (additionalAvailableSize < 0) {
             additionalAvailableSize = 0;
         }
