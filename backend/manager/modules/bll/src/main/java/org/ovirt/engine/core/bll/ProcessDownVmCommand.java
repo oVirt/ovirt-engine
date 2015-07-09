@@ -37,6 +37,8 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
 
     private static final Log log = LogFactory.getLog(ProcessDownVmCommand.class);
 
+    private VmPool vmPoolCached;
+
     protected ProcessDownVmCommand(Guid commandId) {
         super(commandId);
     }
@@ -48,6 +50,18 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
     public ProcessDownVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVmId(getParameters().getId());
+    }
+
+    private VmPool getVmPoolCached() {
+        if (vmPoolCached == null && getVm().getVmPoolId() != null) {
+            vmPoolCached = getVmPoolDAO().get(getVm().getVmPoolId());
+        }
+        return vmPoolCached;
+    }
+
+    private VmPoolType getVmPoolType() {
+        VmPool pool = getVmPoolCached();
+        return (pool != null) ? pool.getVmPoolType() : null;
     }
 
     @Override
@@ -89,8 +103,7 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
                     getLock());
             return true;
         }
-        VmPool pool = getVmPoolDAO().get(getVm().getVmPoolId());
-        if (pool != null && pool.getVmPoolType() == VmPoolType.Automatic) {
+        if (getVmPoolType() == VmPoolType.Automatic) {
             // should be only one user in the collection
             for (DbUser dbUser : users) {
                 runInternalActionWithTasksContext(VdcActionType.DetachUserFromVmFromPool,
@@ -222,11 +235,13 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
     }
 
     private void removeVmStatelessImages() {
-        if (getSnapshotDAO().exists(getVmId(), SnapshotType.STATELESS)) {
+        if (getSnapshotDAO().exists(getVmId(), SnapshotType.STATELESS)
+                && getVmPoolType() != VmPoolType.Manual) {
             log.infoFormat("Deleting snapshot for stateless vm {0}", getVmId());
             runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(getVmId()),
                     ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
         }
     }
+
 }
