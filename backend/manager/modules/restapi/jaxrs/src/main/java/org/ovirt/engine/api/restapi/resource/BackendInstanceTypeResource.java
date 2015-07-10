@@ -78,7 +78,7 @@ public class BackendInstanceTypeResource
 
     @Override
     public DevicesResource<NIC, Nics> getNicsResource() {
-        return inject(new BackendTemplateNicsResource(guid));
+        return inject(new BackendInstanceTypeNicsResource(guid));
     }
 
     @Override
