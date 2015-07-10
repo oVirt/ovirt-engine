@@ -113,6 +113,16 @@ public class CommandExecutor {
                 if (CommandStatus.FAILED.equals(status) || (CommandStatus.SUCCEEDED.equals(status) && !errorInCallback)) {
                     coco.updateCallbackNotified(cmdId);
                     iterator.remove();
+
+                    // When a child finishes, its parent's callback should execute shortly thereafter
+                    Guid rootCommandId = coco.getCommandEntity(entry.getKey()).getRootCommandId();
+                    if (!Guid.isNullOrEmpty(rootCommandId) && cmdCallbackMap.containsKey(rootCommandId)) {
+                        cmdCallbackMap.get(rootCommandId).initialDelay = pollingRate;
+                        cmdCallbackMap.get(rootCommandId).remainingDelay = pollingRate;
+                    }
+                } else if (status != coco.getCommandStatus(cmdId)) {
+                    entry.getValue().initialDelay = pollingRate;
+                    entry.getValue().remainingDelay = pollingRate;
                 } else {
                     int maxDelay = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingRateInSeconds);
                     entry.getValue().initialDelay = Math.min(maxDelay, entry.getValue().initialDelay * 2);
