@@ -670,10 +670,10 @@
                                     <g:Label text="{constants.priorForRunMigrationQueueVmPopup}" />
                                 </ge:decorated>
                             </ge:DetachableLabel>
-                            <e:EntityModelCellTable ui:field="priorityEditor" addStyleNames="{style.floatLeft}, {style.fullWidth}"/>
+                            <e:ListModelListBoxEditor ui:field="priorityEditor"/>
 
                         </g:FlowPanel>
-                        <g:FlowPanel addStyleNames="{style.sectionPanel}, {style.floatLeft}" ui:field="watchdogPanel">
+                        <g:FlowPanel addStyleNames="{style.sectionPanel}" ui:field="watchdogPanel">
                             <g:Label text="{constants.watchdog}" addStyleNames="{style.sectionLabel}"/>
                             <e:ListModelListBoxEditor ui:field="watchdogModelEditor" />
                             <e:ListModelListBoxEditor ui:field="watchdogActionEditor" />

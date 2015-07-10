@@ -20,7 +20,7 @@ public class PriorityUtil {
         this.model = model;
     }
 
-    public void initPriority(final int priority)
+    public void initPriority(final int priority, final PriorityUpdatingCallbacks callbacks)
     {
         AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(model,
                                                                         new INewAsyncCallback() {
@@ -33,14 +33,16 @@ public class PriorityUtil {
                                                                                 int value = AsyncDataProvider.getInstance().getRoundedPriority(priority, cachedMaxPriority);
                                                                                 EntityModel tempVar = new EntityModel();
                                                                                 tempVar.setEntity(value);
+                                                                                before(callbacks);
                                                                                 model.getPriority().setSelectedItem(tempVar);
-                                                                                updatePriority();
+                                                                                after(callbacks);
+                                                                                updatePriority(callbacks);
 
                                                                             }
                                                                         }));
     }
 
-    private void updatePriority()
+    private void updatePriority(final PriorityUpdatingCallbacks callbacks)
     {
         if (cachedMaxPriority == null)
         {
@@ -49,19 +51,20 @@ public class PriorityUtil {
                                                                                 @Override
                                                                                 public void onSuccess(Object target, Object returnValue) {
                                                                                     cachedMaxPriority = (Integer) returnValue;
-                                                                                    postUpdatePriority();
+                                                                                    postUpdatePriority(callbacks);
 
                                                                                 }
                                                                             }));
         }
         else
         {
-            postUpdatePriority();
+            postUpdatePriority(callbacks);
         }
     }
 
-    private void postUpdatePriority()
+    private void postUpdatePriority(PriorityUpdatingCallbacks callbacks)
     {
+        before(callbacks);
         List<EntityModel<Integer>> items = new ArrayList<EntityModel<Integer>>();
         EntityModel tempVar = new EntityModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().lowTitle());
@@ -98,5 +101,25 @@ public class PriorityUtil {
         {
             model.getPriority().setSelectedItem(Linq.firstOrDefault(items));
         }
+
+        after(callbacks);
+    }
+
+    private void before(PriorityUpdatingCallbacks callbacks) {
+        if (callbacks != null) {
+            callbacks.beforeUpdates();
+        }
+    }
+
+    private void after(PriorityUpdatingCallbacks callbacks) {
+        if (callbacks != null) {
+            callbacks.afterUpdates();
+        }
+    }
+
+    public interface PriorityUpdatingCallbacks {
+        void beforeUpdates();
+
+        void afterUpdates();
     }
 }

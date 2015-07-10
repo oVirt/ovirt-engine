@@ -426,7 +426,21 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void initPriority(int priority) {
-        priorityUtil.initPriority(priority);
+        priorityUtil.initPriority(priority, new PriorityUtil.PriorityUpdatingCallbacks() {
+            @Override
+            public void beforeUpdates() {
+                if (getInstanceTypeManager() != null) {
+                    getInstanceTypeManager().deactivate();
+                }
+            }
+
+            @Override
+            public void afterUpdates() {
+                if (getInstanceTypeManager() != null) {
+                    getInstanceTypeManager().activate();
+                }
+            }
+        });
     }
 
     public TimeZoneType getTimeZoneType() {

@@ -277,7 +277,17 @@ public abstract class InstanceTypeManager {
         maybeSetSelectedItem(model.getCustomCpu(), vmBase.getCustomCpuName());
 
         model.setSelectedMigrationDowntime(vmBase.getMigrationDowntime());
-        priorityUtil.initPriority(vmBase.getPriority());
+        priorityUtil.initPriority(vmBase.getPriority(), new PriorityUtil.PriorityUpdatingCallbacks() {
+            @Override
+            public void beforeUpdates() {
+                deactivate();
+            }
+
+            @Override
+            public void afterUpdates() {
+                activate();
+            }
+        });
 
         updateDefaultDisplayRelatedFields(vmBase);
 

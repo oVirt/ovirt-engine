@@ -52,7 +52,6 @@ import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.IconEditorWidget;
@@ -83,7 +82,6 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
 import org.ovirt.engine.ui.common.widget.uicommon.instanceimages.InstanceImagesEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig;
@@ -93,7 +91,6 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmPopupVmInitWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
@@ -123,7 +120,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -725,11 +721,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Ignore
     public EntityModelDetachableWidget isHighlyAvailableEditorWithDetachable;
 
-    // TODO: Priority is a ListModel which is rendered as RadioBox
     @UiField(provided = true)
-    @Ignore
+    @Path("priority.selectedItem")
     @WithElementId("priority")
-    public EntityModelCellTable<ListModel<EntityModel<Integer>>> priorityEditor;
+    public ListModelListBoxEditor<EntityModel<Integer>> priorityEditor;
 
     @UiField
     @Ignore
@@ -995,8 +990,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMaximumMigrationDowntime);
         migrationDowntimeInfoIcon = new InfoIcon(templates.italicText(messages.migrationDowntimeInfo(defaultMaximumMigrationDowntime)));
         migrationSelectInfoIcon = new InfoIcon(templates.italicText(messages.migrationSelectInfo()));
-        priorityEditor = new EntityModelCellTable<ListModel<EntityModel<Integer>>>(
-                (Resources) GWT.create(ButtonCellTableResources.class));
+        priorityEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<EntityModel<Integer>>() {
+            @Override
+            protected String renderNullSafe(EntityModel<Integer> model) {
+                return model.getTitle();
+            }
+        }, new ModeSwitchingVisibilityRenderer());
         disksAllocationView = new DisksAllocationView();
         spiceFileTransferEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         spiceCopyPasteEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -1019,13 +1018,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         localize();
 
         generateIds();
-
-        priorityEditor.addColumn(new AbstractTextColumn<EntityModel>() {
-            @Override
-            public String getValue(EntityModel model) {
-                return model.getTitle();
-            }
-        }, ""); //$NON-NLS-1$
 
         driver.initialize(this);
 
@@ -1566,6 +1558,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         watchdogActionEditor.setLabel(constants.watchdogAction());
         watchdogModelEditor.setLabel(constants.watchdogModel());
 
+        // priority
+        priorityEditor.setLabel(constants.priorityVm());
+
         // Resource Allocation Tab
         cpuProfilesEditor.setLabel(constants.cpuProfileLabel());
         provisioningEditor.setLabel(constants.templateProvisVmPopup());
@@ -1616,8 +1611,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         super.initializeModeSwitching(generalTab);
 
-        priorityEditor.setRowData(new ArrayList<EntityModel>());
-        priorityEditor.asEditor().edit(model.getPriority());
         driver.edit(model);
         profilesInstanceTypeEditor.edit(model.getNicsWithLogicalNetworks());
         instanceImagesEditor.edit(model.getInstanceImages());
@@ -1983,7 +1976,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @Override
     public UnitVmModel flush() {
-        priorityEditor.flush();
         profilesInstanceTypeEditor.flush();
         vmInitEditor.flush();
         serialNumberPolicyEditor.flush();
