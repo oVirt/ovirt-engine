@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.widget.form;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.gwtbootstrap3.client.ui.Column;
@@ -28,6 +30,12 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
     //There can be a max of 12 columns
     private static final int BOOTSTRAP_GRID_SIZE = 12;
     private static final String COL_PREFIX = "md_"; //$NON-NLS-1$
+
+    /**
+     * Stores the label width and item width so we can look them up based on the {@code FormItem}.
+     * Index 0 is the label, index 1 is the item width.
+     */
+    private Map<FormItem, List<Integer>> formSizeMap = new HashMap<>();
 
     protected String elementId = DOM.createUniqueId();
 
@@ -90,6 +98,7 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
      * Adds new item to the form panel.
      */
     public void addFormItem(FormItem item, int labelWidth, int valueWidth) {
+        updateItemSizes(item, labelWidth, valueWidth);
         // Create item label
         Label itemLabel = new Label(item.getName());
         itemLabel.getElement().setId(ElementIdUtils.createFormGridElementId(elementId, item.getColumn(),
@@ -112,6 +121,17 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
         incNextAvailableRow(item.getColumn());
     }
 
+    private void updateItemSizes(FormItem item, int labelWidth, int valueWidth) {
+        List<Integer> sizesList = formSizeMap.get(item);
+        if (sizesList == null) {
+            sizesList = new ArrayList<>();
+            formSizeMap.put(item, sizesList);
+        }
+        sizesList.clear();
+        sizesList.add(labelWidth);
+        sizesList.add(valueWidth);
+    }
+
     private Column findColumn(int row, int column) {
         Column result = null;
         IsWidget rowWidget = container.getWidget(row);
@@ -125,12 +145,13 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
     }
 
     public void updateFormItem(FormItem item) {
-        updateFormItem(item, 6);
+        updateFormItem(item, null);
     }
+
     /**
      * Updates the value and visibility of the given item.
      */
-    public void updateFormItem(FormItem item, int valueWidth) {
+    public void updateFormItem(FormItem item, Integer labelWidth) {
         Widget valueWidget = item.resolveValueWidget();
         valueWidget.getElement().setId(
                 ElementIdUtils.createFormGridElementId(elementId, item.getColumn(), item.getRow(), "_value")); //$NON-NLS-1$
@@ -147,11 +168,25 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
                 if(itemCellRow.getWidgetCount() > 1) {
                     itemCellRow.remove(1); //Clear out old value.
                 }
-                Column valueColumn = new Column(COL_PREFIX + valueWidth);
+                Column valueColumn = new Column(COL_PREFIX + determineRealLabelWidth(item, labelWidth));
                 valueColumn.add(valueWidget);
                 itemCellRow.add(valueColumn);
             }
         }
+    }
+
+    /**
+     * Determine the real width the label should be.
+     * @param item The item to determine the width for.
+     * @param labelWidth If not null store the label width and return the value. If null look up the value.
+     * @return The actual width the label should be, even if not supplied.
+     */
+    int determineRealLabelWidth(FormItem item, Integer labelWidth) {
+        List<Integer> sizesList = formSizeMap.get(item);
+        if (labelWidth != null) {
+            sizesList.set(1, labelWidth);
+        }
+        return sizesList.get(1);
     }
 
     @Override
