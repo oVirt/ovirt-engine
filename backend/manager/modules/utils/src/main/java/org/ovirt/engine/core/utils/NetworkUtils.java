@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -20,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,14 +119,14 @@ public final class NetworkUtils {
      */
     public static VdsNetworkInterface.NetworkImplementationDetails calculateNetworkImplementationDetails(
             Network network,
-            HostNetworkQos qos,
+        HostNetworkQos hostNetworkQos,
             VdsNetworkInterface iface) {
         if (StringUtils.isEmpty(iface.getNetworkName())) {
             return null;
         }
 
         if (network != null) {
-            if (isNetworkInSync(iface, network, qos)) {
+            if (new NetworkInSyncWithVdsNetworkInterface(iface, network, hostNetworkQos).isNetworkInSync()) {
                 return new VdsNetworkInterface.NetworkImplementationDetails(true, true);
             } else {
                 return new VdsNetworkInterface.NetworkImplementationDetails(false, true);
@@ -155,28 +153,8 @@ public final class NetworkUtils {
         }
     }
 
-    public static boolean isNetworkInSync(VdsNetworkInterface iface, Network network, HostNetworkQos qos) {
-        return ((network.getMtu() == 0 && iface.getMtu() == getDefaultMtu()) || iface.getMtu() == network.getMtu())
-                && Objects.equals(iface.getVlanId(), network.getVlanId())
-                && iface.isBridged() == network.isVmNetwork()
-                && (isQosInSync(iface, qos) || iface.isQosOverridden());
-    }
-
-    private static boolean isQosInSync(VdsNetworkInterface iface, HostNetworkQos networkQos) {
-        HostNetworkQos ifaceQos = iface.getQos();
-        return qosParametersEqual(ifaceQos, networkQos);
-    }
-
-    public static boolean qosParametersEqual(HostNetworkQos qos, HostNetworkQos otherQos) {
-        if (qos == otherQos) {
-            return true;
-        } else if (qos == null || otherQos == null) {
-            return false;
-        } else {
-            return ObjectUtils.objectsEqual(qos.getOutAverageLinkshare(), otherQos.getOutAverageLinkshare())
-                    && ObjectUtils.objectsEqual(qos.getOutAverageUpperlimit(), otherQos.getOutAverageUpperlimit())
-                    && ObjectUtils.objectsEqual(qos.getOutAverageRealtime(), otherQos.getOutAverageRealtime());
-        }
+    public static boolean isNetworkInSync(VdsNetworkInterface iface, Network network, HostNetworkQos hostNetworkQos) {
+        return new NetworkInSyncWithVdsNetworkInterface(iface, network, hostNetworkQos).isNetworkInSync();
     }
 
     /**

@@ -40,7 +40,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.NetworkInSyncWithVdsNetworkInterface;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -190,7 +190,7 @@ public class SetupNetworksVDSCommandTest {
         verifyMethodPassedToHost();
         Map<String, Object> networkStruct = assertNeworkWasSent(network);
         HostNetworkQos result = new HostNetworkQosMapper(networkStruct).deserialize();
-        assertTrue(NetworkUtils.qosParametersEqual(expectedQos, result));
+        assertTrue(new NetworkInSyncWithVdsNetworkInterface(iface, network, result, expectedQos).qosParametersEqual());
     }
 
     private void qos(Network network, VdsNetworkInterface iface, HostNetworkQos expectedQos) {
