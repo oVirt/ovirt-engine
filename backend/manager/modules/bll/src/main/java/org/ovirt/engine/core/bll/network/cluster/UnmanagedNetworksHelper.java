@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
