@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -39,6 +40,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -882,6 +885,52 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
                 Collections.<String, String> emptyMap(),
                 Collections.<String, String> emptyMap()),
             isValid());
+    }
+
+    //TODO MM: same test for vlan.
+    @Test
+    public void testAddNetworkToNicAlongWithAddingItIntoBond() {
+        Network networkA = createNetworkWithName("networkA");
+
+        VdsNetworkInterface nicA = createNic("nicA");
+        VdsNetworkInterface nicB = createNic("nicB");
+
+        NetworkAttachment networkAttachment = createNetworkAttachment(networkA, null);
+        networkAttachment.setNicId(nicA.getId());
+        networkAttachment.setNicName(nicA.getName());
+        networkAttachment.setNetworkId(networkA.getId());
+        networkAttachment.setNetworkName(networkA.getName());
+
+        Bond bond = new Bond();
+        bond.setName("bond1");
+        bond.setSlaves(Arrays.asList(nicA.getName(), nicB.getName()));
+
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
+        params.setNetworkAttachments(Collections.singletonList(networkAttachment));
+        params.setBonds(Collections.singletonList(bond));
+
+        when(networkDaoMock.get(eq(networkA.getId()))).thenReturn(networkA);
+        when(networkClusterDaoMock.get(new NetworkClusterId(host.getVdsGroupId(), networkA.getId())))
+            .thenReturn(mock(NetworkCluster.class));
+
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setExistingAttachments(Collections.<NetworkAttachment> emptyList())
+            .setParams(params)
+            .setExistingInterfaces(Arrays.asList(nicA, nicB))
+            .setNetworkBusinessEntityMap(new BusinessEntityMap<>(Collections.singletonList(networkA)))
+            .setHost(host)
+            .build();
+
+        ValidationResult validate = validator.validate();
+
+        assertThat(validate, CoreMatchers.not(isValid()));
+
+        assertThat(validate,
+            failsWith(EngineMessage.NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME,
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY,
+                    nicA.getName()),
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME,
+                    networkA.getName())));
     }
 
     private VdsNetworkInterface createBondSlave(Bond bond, String slaveName) {

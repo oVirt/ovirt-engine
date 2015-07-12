@@ -50,6 +50,8 @@ public class HostSetupNetworksValidator {
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksValidator.class);
 
     static final String ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY = "ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY";
+    public static final String NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY = "NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY";
+    public static final String VAR_NETWORK_NAME = "networkName";
 
     private HostSetupNetworksParameters params;
     private VDS host;
@@ -332,11 +334,36 @@ public class HostSetupNetworksValidator {
                 return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE);
             }
 
+            ValidationResult networkCannotBeAttachedToSlaveValidationResult =
+                networkBeingAttachedToInterfaceBecomingSlave(potentialSlave);
+            if (!networkCannotBeAttachedToSlaveValidationResult.isValid()) {
+                return networkCannotBeAttachedToSlaveValidationResult;
+            }
+
             if (slaveUsedMultipleTimesInDifferentBonds(slaveName)) {
                 return new ValidationResult(EngineMessage.NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES,
                     ReplacementUtils.createSetVariableString(
                         "NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES_ENTITY",
                         slaveName));
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    private ValidationResult networkBeingAttachedToInterfaceBecomingSlave(VdsNetworkInterface potentialSlave) {
+        for (NetworkAttachment networkAttachment : this.params.getNetworkAttachments()) {
+            Guid networkAttachmentsNicId = networkAttachment.getNicId();
+            String networkAttachmentsNicName = networkAttachment.getNicName();
+
+            if (networkAttachmentsNicId != null && networkAttachmentsNicId.equals(potentialSlave.getId())
+                || networkAttachmentsNicName != null && networkAttachmentsNicName.equals(potentialSlave.getName())) {
+                return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME,
+                    ReplacementUtils.createSetVariableString(
+                        NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY,
+                        potentialSlave.getName()),
+                    ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, networkAttachment.getNetworkName()));
+
             }
         }
 

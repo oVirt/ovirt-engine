@@ -1501,6 +1501,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The given network interface does not exist on specified host.")
     String NIC_NOT_EXISTS_ON_HOST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Network Interface '${NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY}' cannot become slave, because you're also attaching network '${networkName}' to it.")
+    String NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME();
+
     @DefaultStringValue("Neither bond nor vlan can be slave.")
     String NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE();
 
