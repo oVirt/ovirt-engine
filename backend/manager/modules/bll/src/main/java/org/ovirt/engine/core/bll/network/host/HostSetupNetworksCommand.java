@@ -70,6 +70,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private Set<String> removedNetworks;
     private Set<String> removedBondNames;
     private List<VdsNetworkInterface> removedBonds;
+    private Set<String> removedUnmanagedNetworks;
     private List<VdsNetworkInterface> existingNics;
     private List<NetworkAttachment> existingAttachments;
     private List<HostNetwork> networksToConfigure;
@@ -241,7 +242,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         final HostSetupNetworksVdsCommandParameters hostCmdParams = new HostSetupNetworksVdsCommandParameters(
             getVds(),
             getNetworksToConfigure(),
-            getRemovedNetworks(),
+            getAllNetworksToRemove(),
             getParameters().getBonds(),
             getRemovedBondNames());
         hostCmdParams.setRollbackOnFailure(getParameters().rollbackOnFailure());
@@ -249,6 +250,13 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(getVds().getVdsGroupCompatibilityVersion());
         hostCmdParams.setHostNetworkQosSupported(hostNetworkQosSupported);
         return hostCmdParams;
+    }
+
+    private Set<String> getAllNetworksToRemove() {
+        Set<String> result = new HashSet<>(getRemovedNetworks().size() + getRemovedUnmanagedNetworks().size());
+        result.addAll(getRemovedNetworks());
+        result.addAll(getRemovedUnmanagedNetworks());
+        return result;
     }
 
     protected Integer getSetupNetworksTimeout() {
@@ -268,7 +276,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         return getNetworksToConfigure().isEmpty()
             && getRemovedNetworks().isEmpty()
             && getParameters().getBonds().isEmpty()
-            && getRemovedBondNames().isEmpty();
+            && getRemovedBondNames().isEmpty()
+            && getRemovedUnmanagedNetworks().isEmpty();
     }
 
     private List<VdsNetworkInterface> getRemovedBonds() {
@@ -332,6 +341,14 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
 
         return removedNetworks;
+    }
+
+    private Set<String> getRemovedUnmanagedNetworks() {
+        if (removedUnmanagedNetworks == null) {
+            this.removedUnmanagedNetworks = new HashSet<>(getParameters().getRemovedUnmanagedNetworks());
+        }
+
+        return removedUnmanagedNetworks;
     }
 
     private List<HostNetwork> getNetworksToConfigure() {

@@ -28,6 +28,8 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
 
     private Set<Guid> removedBonds;
 
+    private Set<String> removedUnmanagedNetworks;
+
     private boolean rollbackOnFailure = true;
 
     @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.NetworkConnectivityCheckTimeoutInSeconds,
@@ -43,6 +45,7 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
         setRemovedNetworkAttachments(new HashSet<Guid>());
         setBonds(new ArrayList<Bond>());
         setRemovedBonds(new HashSet<Guid>());
+        setRemovedUnmanagedNetworks(new HashSet<String>());
     }
 
     public boolean rollbackOnFailure() {
@@ -91,6 +94,14 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
 
     public void setRemovedBonds(Set<Guid> removedBonds) {
         this.removedBonds = removedBonds;
+    }
+
+    public Set<String> getRemovedUnmanagedNetworks() {
+        return removedUnmanagedNetworks;
+    }
+
+    public void setRemovedUnmanagedNetworks(Set<String> removedUnmanagedNetworks) {
+        this.removedUnmanagedNetworks = removedUnmanagedNetworks;
     }
 }
 
