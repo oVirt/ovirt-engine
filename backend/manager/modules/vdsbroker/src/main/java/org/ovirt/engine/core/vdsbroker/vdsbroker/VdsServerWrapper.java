@@ -911,6 +911,17 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.snapshot(vmId, disks, memory, frozen);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public AlignmentScanReturnForXmlRpc getDiskAlignment(String vmId, Map<String, String> driveSpecs) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getDiskAlignment(vmId, driveSpecs);

@@ -10,6 +10,8 @@ public class SnapshotVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private List<DiskImage> images;
     /** String representation of the volume in which the memory will be dump to */
     private String memoryVolume;
+    /** A flag to indicate whether the VM has been frozen **/
+    private boolean vmFrozen;
 
     public SnapshotVDSCommandParameters(Guid vdsId, Guid vmId, List<DiskImage> images) {
         super(vdsId, vmId);
@@ -32,7 +34,19 @@ public class SnapshotVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         return memoryVolume;
     }
 
+    public void setMemoryVolume(String memoryVolume) {
+        this.memoryVolume = memoryVolume;
+    }
+
     public boolean isMemoryVolumeExists() {
         return memoryVolume != null;
+    }
+
+    public boolean isVmFrozen() {
+        return vmFrozen;
+    }
+
+    public void setVmFrozen(boolean vmFrozen) {
+        this.vmFrozen = vmFrozen;
     }
 }

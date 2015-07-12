@@ -211,6 +211,8 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks, String memory);
 
+    StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen);
+
     AlignmentScanReturnForXmlRpc getDiskAlignment(String vmId, Map<String, String> driveSpecs);
 
     ImageSizeReturnForXmlRpc diskSizeExtend(String vmId, Map<String, String> diskParams, String newSize);

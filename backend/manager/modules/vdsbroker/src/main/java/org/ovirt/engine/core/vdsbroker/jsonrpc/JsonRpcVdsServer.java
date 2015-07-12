@@ -1011,15 +1011,21 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @Override
     public StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks) {
-        return snapshot(vmId, disks, null);
+        return snapshot(vmId, disks, null, false);
     }
 
     @Override
     public StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks, String memory) {
+        return snapshot(vmId, disks, memory, false);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.snapshot").withParameter("vmID", vmId)
                         .withParameter("snapDrives", new ArrayList<Map<String, String>>(Arrays.asList(disks)))
                         .withOptionalParameter("snapMemory", memory)
+                        .withParameter("frozen", frozen)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);

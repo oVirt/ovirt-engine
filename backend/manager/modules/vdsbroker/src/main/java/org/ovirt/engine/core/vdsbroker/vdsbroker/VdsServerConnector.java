@@ -177,6 +177,8 @@ public interface VdsServerConnector {
 
     Map<String, Object> snapshot(String vmId, Map<String, String>[] disks, String memory);
 
+    Map<String, Object> snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen);
+
     public Map<String, Object> getDiskAlignment(String vmId, Map<String, String> driveSpecs);
 
     public Map<String, Object> diskSizeExtend(String vmId, Map<String, String> diskParams, String newSize);

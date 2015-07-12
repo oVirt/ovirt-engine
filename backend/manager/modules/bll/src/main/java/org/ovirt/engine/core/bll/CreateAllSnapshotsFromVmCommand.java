@@ -491,17 +491,15 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         // 'filteredPluggedDisks' should contain only disks from 'getDisksList()' that are plugged to the VM.
         List<DiskImage> filteredPluggedDisks = ImagesHandler.imagesIntersection(filteredPluggedDisksForVm, getDisksList());
 
+        SnapshotVDSCommandParameters parameters = new SnapshotVDSCommandParameters(
+                getVm().getRunOnVds(), getVm().getId(), filteredPluggedDisks);
+
         if (isMemorySnapshotSupported()) {
-            return new SnapshotVDSCommandParameters(getVm().getRunOnVds(),
-                    getVm().getId(),
-                    filteredPluggedDisks,
-                    snapshot.getMemoryVolume());
+            parameters.setMemoryVolume(snapshot.getMemoryVolume());
         }
-        else {
-            return new SnapshotVDSCommandParameters(getVm().getRunOnVds(),
-                    getVm().getId(),
-                    filteredPluggedDisks);
-        }
+        parameters.setVmFrozen(shouldFreezeOrThawVm());
+
+        return parameters;
     }
 
     /**

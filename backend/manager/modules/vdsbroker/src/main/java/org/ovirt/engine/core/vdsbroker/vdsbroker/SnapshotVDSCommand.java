@@ -27,9 +27,14 @@ public class SnapshotVDSCommand<P extends SnapshotVDSCommandParameters> extends 
 
     private StatusOnlyReturnForXmlRpc executeSnapshotVerb() {
         String vmId = getParameters().getVmId().toString();
-        return getParameters().isMemoryVolumeExists() ?
-                getBroker().snapshot(vmId, createDisksMap(), getParameters().getMemoryVolume()) :
-                getBroker().snapshot(vmId, createDisksMap());
+        String memoryVolume = getParameters().isMemoryVolumeExists() ? getParameters().getMemoryVolume() : "";
+        if (getParameters().isVmFrozen()) {
+            return getBroker().snapshot(vmId, createDisksMap(), memoryVolume, getParameters().isVmFrozen());
+        } else if (getParameters().isMemoryVolumeExists()) {
+            return getBroker().snapshot(vmId, createDisksMap(), memoryVolume);
+        } else {
+            return getBroker().snapshot(vmId, createDisksMap());
+        }
     }
 
     private Map<String, String>[] createDisksMap() {
