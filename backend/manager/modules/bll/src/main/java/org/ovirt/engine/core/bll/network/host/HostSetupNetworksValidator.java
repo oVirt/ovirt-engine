@@ -21,8 +21,10 @@ import org.ovirt.engine.core.bll.validator.NetworkAttachmentsValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -477,75 +479,59 @@ public class HostSetupNetworksValidator {
     private ValidationResult validateCoherentNetworkIdentification(NetworkAttachment attachment) {
         Guid networkId = attachment.getNetworkId();
         String networkName = attachment.getNetworkName();
+        Guid violatingEntityId = attachment.getId();
 
-        boolean bothIdentificationSet = networkId != null && networkName != null;
-        String[] replacements = createIncoherentNetworkIdentificationErrorReplacements(attachment.getId(),
+        return validateCoherentIdentification(violatingEntityId,
             networkId,
-            networkName);
-        return ValidationResult
-            .failWith(EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NETWORK_INCOHERENTLY,
-                replacements)
-            .when(bothIdentificationSet && networkNameAndNetworkIdIsIncoherent(networkId, networkName));
+            networkName,
+            EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NETWORK_INCOHERENTLY,
+            networkBusinessEntityMap);
     }
 
     private ValidationResult validateCoherentNicIdentification(NetworkAttachment attachment) {
-        return validateCoherentNicIdentification(attachment.getId(),
+        return validateCoherentIdentification(attachment.getId(),
             attachment.getNicId(),
             attachment.getNicName(),
-            EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY);
+            EngineMessage.NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY, existingInterfacesMap);
     }
 
     private ValidationResult validateCoherentNicIdentification(Bond bond) {
         Guid nicId = bond.getId();
         String nicName = bond.getName();
         EngineMessage message = EngineMessage.BOND_REFERENCES_NICS_INCOHERENTLY;
-        return validateCoherentNicIdentification(bond.getId(), nicId, nicName, message);
+        return validateCoherentIdentification(bond.getId(), nicId, nicName, message, existingInterfacesMap);
 
     }
 
-    private ValidationResult validateCoherentNicIdentification(Guid violatingEntityId,
-        Guid nicId,
-        String nicName,
-        EngineMessage message) {
+    private <T extends BusinessEntity<Guid> & Nameable> ValidationResult validateCoherentIdentification(Guid violatingEntityId,
+        Guid referringId,
+        String referringName,
+        EngineMessage message,
+        BusinessEntityMap<T> map) {
 
-        boolean bothIdentificationSet = nicId != null && nicName != null;
-        String[] replacements = createIncoherentNicIdentificationErrorReplacements(violatingEntityId, nicId, nicName);
+        boolean bothIdentificationSet = referringId != null && referringName != null;
+        String[] replacements = createIncoherentIdentificationErrorReplacements(violatingEntityId, referringId, referringName);
         return ValidationResult
-            .failWith(message,
-                replacements)
-            .when(bothIdentificationSet && isNicNameAndNicIdIncoherent(nicId, nicName));
+            .failWith(message, replacements)
+            .when(bothIdentificationSet && isNameAndIdIncoherent(referringId, referringName, map));
     }
 
-    private String[] createIncoherentNicIdentificationErrorReplacements(Guid violatingEntityId,
-        Guid nicId,
-        String nicName) {
+    private String[] createIncoherentIdentificationErrorReplacements(Guid violatingEntityId,
+        Guid referringId,
+        String referringName) {
         return new String[] {
             String.format("$ENTITY_ID %s", violatingEntityId),
-            String.format("$nicId %s", nicId),
-            String.format("$nicName %s", nicName)
+            String.format("$referringId %s", referringId),
+            String.format("$referringName %s", referringName)
         };
     }
 
-    private String[] createIncoherentNetworkIdentificationErrorReplacements(Guid violatingEntityId,
-        Guid networkId,
-        String networkName) {
-        return new String[] {
-            String.format("$ENTITY_ID %s", violatingEntityId),
-            String.format("$networkId %s", networkId),
-            String.format("$networkName %s", networkName)
-        };
-    }
-
-    private boolean isNicNameAndNicIdIncoherent(Guid nicId, String nicName) {
-        VdsNetworkInterface interfaceById = existingInterfacesMap.get(nicId);
-        VdsNetworkInterface interfaceByName = existingInterfacesMap.get(nicName);
-        return !Objects.equals(interfaceById, interfaceByName);
-    }
-
-    private boolean networkNameAndNetworkIdIsIncoherent(Guid nicId, String nicName) {
-        Network networkById = networkBusinessEntityMap.get(nicId);
-        Network networkByName = networkBusinessEntityMap.get(nicName);
-        return !Objects.equals(networkById, networkByName);
+    private <T extends BusinessEntity<Guid> & Nameable> boolean isNameAndIdIncoherent(Guid id,
+        String name,
+        BusinessEntityMap<T> map) {
+        T entityById = map.get(id);
+        T entityByName = map.get(name);
+        return !Objects.equals(entityById, entityByName);
     }
 
     private ValidationResult modifiedAttachmentExists(Guid networkAttachmentId) {
