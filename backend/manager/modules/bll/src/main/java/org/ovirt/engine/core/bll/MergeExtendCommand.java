@@ -127,8 +127,8 @@ public class MergeExtendCommand<T extends MergeParameters>
                 Backend.getInstance().endAction(VdcActionType.ExtendImageSize,
                         command.getParameters(),
                         cloneContextAndDetachFromParent());
-                if (succeeded) {
-                    CommandCoordinatorUtil.getCommandEntity(currentChildId).setCallbackNotified(true);
+                if (succeeded && cmdEntity != null) {
+                    cmdEntity.setCallbackNotified(true);
                 }
             }
         }
