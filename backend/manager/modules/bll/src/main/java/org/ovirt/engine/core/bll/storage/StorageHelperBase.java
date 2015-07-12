@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
@@ -87,12 +86,6 @@ public abstract class StorageHelperBase implements IStorageHelper {
     protected List<StorageServerConnections> filterConnectionsUsedByOthers(
             List<StorageServerConnections> connections, String vgId, final String lunId) {
         return Collections.emptyList();
-    }
-
-    @Override
-    public List<StorageServerConnections> getStorageServerConnectionsByDomain(
-            StorageDomainStatic storageDomain) {
-        return new ArrayList<>();
     }
 
     @Override

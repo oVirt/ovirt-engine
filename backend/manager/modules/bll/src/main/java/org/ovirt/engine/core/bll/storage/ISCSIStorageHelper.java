@@ -289,12 +289,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public List<StorageServerConnections> getStorageServerConnectionsByDomain(
-            StorageDomainStatic storageDomain) {
-        return DbFacade.getInstance().getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage());
-    }
-
-    @Override
     public boolean syncDomainInfo(StorageDomain storageDomain, Guid vdsId) {
         // Synchronize LUN details comprising the storage domain with the DB
         StorageDomainParametersBase parameters = new StorageDomainParametersBase(storageDomain.getId());

@@ -27,9 +27,6 @@ public interface IStorageHelper {
 
     void removeLun(LUNs lun);
 
-    List<StorageServerConnections> getStorageServerConnectionsByDomain(
-            StorageDomainStatic storageDomain);
-
     boolean isConnectSucceeded(Map<String, String> returnValue,
             List<StorageServerConnections> connections);
 

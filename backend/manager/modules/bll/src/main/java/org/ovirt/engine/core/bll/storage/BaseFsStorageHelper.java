@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -57,14 +55,6 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
         }
 
         return result;
-    }
-
-    @Override
-    public List<StorageServerConnections> getStorageServerConnectionsByDomain(
-            StorageDomainStatic storageDomain) {
-        return new ArrayList<>(
-                Arrays.asList(new StorageServerConnections[] { DbFacade.getInstance()
-                        .getStorageServerConnectionDao().get(storageDomain.getStorage()) }));
     }
 
     @Override
