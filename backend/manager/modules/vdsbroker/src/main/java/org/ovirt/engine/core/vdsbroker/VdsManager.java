@@ -166,8 +166,12 @@ public class VdsManager {
                 rateInMinutes,
                 TimeUnit.MINUTES));
 
-        vmsRefresher = RefresherFactory.create(this, auditLogDirector, getSchedulUtil());
+        vmsRefresher = getRefresherFactory().create(this, auditLogDirector, getSchedulUtil());
         vmsRefresher.startMonitoring();
+    }
+
+    private RefresherFactory getRefresherFactory() {
+        return Injector.get(RefresherFactory.class);
     }
 
     private SchedulerUtil getSchedulUtil() {
