@@ -25,6 +25,8 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
@@ -105,7 +107,10 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
             loadService(HostDeviceManager.class);
             loadService(DwhHeartBeat.class);
-            loadService(AffinityRulesEnforcementManager.class);
+
+            if(Config.<Boolean> getValue(ConfigValues.AffinityRulesEnforcementManagerEnabled)) {
+                loadService(AffinityRulesEnforcementManager.class);
+            }
         } catch (Exception ex) {
             log.error("Failed to initialize backend", ex);
             throw ex;

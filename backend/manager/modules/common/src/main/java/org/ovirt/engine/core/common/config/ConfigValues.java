@@ -480,6 +480,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     AffinityRulesEnforcementManagerMaximumMigrationTries,
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    AffinityRulesEnforcementManagerEnabled,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
