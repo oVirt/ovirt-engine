@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -120,7 +121,7 @@ public class DeactivateStorageDomainCommandTest {
 
         cmd.setCompensationContext(mock(CompensationContext.class));
         cmd.executeCommand();
-        assertTrue(map.getStatus() == StorageDomainStatus.Maintenance);
+        assertEquals(StorageDomainStatus.Maintenance, map.getStatus());
     }
 
     @Test
