@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
 import javax.naming.AuthenticationException;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
@@ -66,6 +68,9 @@ import org.ovirt.engine.core.uutils.ssh.SSHClient;
 public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<T> {
 
     private final AuditLogType errorType = AuditLogType.USER_FAILED_ADD_VDS;
+
+    @Inject
+    private HostedEngineHelper hostedEngineHelper;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -182,6 +187,12 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setNetworkProviderId(getParameters().getVdsStaticData().getOpenstackNetworkProviderId());
             installVdsParameters.setNetworkMappings(getParameters().getNetworkMappings());
             installVdsParameters.setEnableSerialConsole(getParameters().getEnableSerialConsole());
+            if (getParameters().getHostedEngineDeployConfiguration() != null) {
+                Map<String, String> vdsDeployParams = hostedEngineHelper.createVdsDeployParams(
+                        getVdsId(),
+                        getParameters().getHostedEngineDeployConfiguration().getDeployAction());
+                installVdsParameters.setHostedEngineConfiguration(vdsDeployParams);
+            }
             Map<String, String> values = new HashMap<>();
             values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getName());
             Step installStep = ExecutionHandler.addSubStep(getExecutionContext(),
@@ -321,7 +332,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     && validate(validator.passwordNotEmpty(params.isPending(),
                             params.getAuthMethod(),
                             params.getPassword()))
-                    && validate(validator.protocolIsNotXmlrpc());
+                    && validate(validator.protocolIsNotXmlrpc())
+                    && validate(validator.supportsDeployingHostedEngine(params.getHostedEngineDeployConfiguration()));
         }
 
         if (!(returnValue
@@ -351,7 +363,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     protected HostValidator getHostValidator() {
-        return new HostValidator(getDbFacade(), getParameters().getvds());
+        return new HostValidator(getDbFacade(), getParameters().getvds(), hostedEngineHelper);
     }
 
     private boolean clusterHasServers() {

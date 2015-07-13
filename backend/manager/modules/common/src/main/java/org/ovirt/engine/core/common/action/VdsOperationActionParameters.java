@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 
@@ -19,6 +20,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     private boolean enableSerialConsole;
     private AuthenticationMethod authMethod;
     private String networkMappings;
+    private HostedEngineDeployConfiguration hostedEngineDeployConfiguration;
 
     public enum AuthenticationMethod {
         Password(0),
@@ -137,4 +139,11 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         return enableSerialConsole;
     }
 
+    public HostedEngineDeployConfiguration getHostedEngineDeployConfiguration() {
+        return hostedEngineDeployConfiguration;
+    }
+
+    public void setHostedEngineDeployConfiguration(HostedEngineDeployConfiguration hostedEngineDeployConfiguration) {
+        this.hostedEngineDeployConfiguration = hostedEngineDeployConfiguration;
+    }
 }

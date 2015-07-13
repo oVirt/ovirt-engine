@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
@@ -139,6 +140,7 @@ public class AddVdsCommandTest {
         doReturn(ValidationResult.VALID).when(validator).provisioningHostGroupValid(any(Boolean.class),
                 any(ExternalHostGroup.class));
         doReturn(ValidationResult.VALID).when(validator).protocolIsNotXmlrpc();
+        doReturn(ValidationResult.VALID).when(validator).supportsDeployingHostedEngine(any(HostedEngineDeployConfiguration.class));
         when(validator.passwordNotEmpty(any(Boolean.class),
                 any(AuthenticationMethod.class),
                 any(String.class))).thenReturn(ValidationResult.VALID);

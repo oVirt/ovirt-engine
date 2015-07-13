@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -147,6 +148,10 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
             if (parameters.getEnableSerialConsole()) {
                 deploy.addUnit(new VdsDeployVmconsoleUnit());
+            }
+
+            if (MapUtils.isNotEmpty(parameters.getHostedEngineConfiguration())) {
+                deploy.addUnit(new VdsDeployHostedEngineUnit(parameters.getHostedEngineConfiguration()));
             }
 
             switch (getParameters().getAuthMethod()) {
