@@ -349,6 +349,7 @@ class Plugin(plugin.PluginBase):
             '-s', self.environment[oenginecons.EngineDBEnv.HOST],
             '-p', str(self.environment[oenginecons.EngineDBEnv.PORT]),
             '-d', self.environment[oenginecons.EngineDBEnv.DATABASE],
+            '-i',
         )
         envPwd = {
             'DBFUNC_DB_PGPASSFILE': self.environment[

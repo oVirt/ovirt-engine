@@ -61,22 +61,25 @@ entity_unlock() {
 	if [ -n "${CMD}" ]; then
 		echo "${CMD}"
 		if dbfunc_psql --command="${CMD}"; then
-			dbfunc_psql_die --command="
-				insert into audit_log(
-					log_time,
-					log_type_name,
-					log_type,
-					severity,
-					message
-				)
-				values(
-					now(),
-					'USER_RUN_UNLOCK_ENTITY_SCRIPT',
-					2024,
-					10,
-					'${0} :  System user ${user} run manually unlock_entity script on entity [type,id] [${object_type},${id}] with db user ${DBFUNC_DB_USER}'
-				)
-			"
+                	# Generate audit log entry only if not called implicitly from other program(engine-setup for example)
+                	if [ ! -n "${IMPLICIT}" ]; then
+				dbfunc_psql_die --command="
+					insert into audit_log(
+						log_time,
+						log_type_name,
+						log_type,
+						severity,
+						message
+					)
+					values(
+						now(),
+						'USER_RUN_UNLOCK_ENTITY_SCRIPT',
+						2024,
+						10,
+						'${0} :  System user ${user} run manually unlock_entity script on entity [type,id] [${object_type},${id}] with db user ${DBFUNC_DB_USER}'
+					)
+				"
+                        fi
 			echo "unlock ${object_type} ${id} completed successfully."
 		else
 			echo "unlock ${object_type} ${id} completed with errors."
@@ -186,8 +189,9 @@ entity_query() {
 TYPE=
 RECURSIVE=
 QUERY=
+IMPLICIT=
 
-while getopts hvl:s:p:u:d:t:rq option; do
+while getopts hvl:s:p:u:d:t:rqi option; do
 	case $option in
 		\?) usage; exit 1;;
 		h) usage; exit 0;;
@@ -200,6 +204,7 @@ while getopts hvl:s:p:u:d:t:rq option; do
 		t) TYPE="${OPTARG}";;
 		r) RECURSIVE=1;;
 		q) QUERY=1;;
+		i) IMPLICIT=1;;
 	esac
 done
 
