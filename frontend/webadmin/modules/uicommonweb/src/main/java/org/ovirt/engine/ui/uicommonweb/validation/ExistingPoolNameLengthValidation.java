@@ -2,6 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+/**
+ * It validates pair of existing pool name (org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel#getName()) and
+ * number of VMs added to the pool (org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel#getNumOfDesktop())
+ */
 public class ExistingPoolNameLengthValidation extends PoolNameLengthValidation {
 
     public ExistingPoolNameLengthValidation(String poolName, int numOfVmsInPool, int osType) {
@@ -10,27 +14,39 @@ public class ExistingPoolNameLengthValidation extends PoolNameLengthValidation {
 
     @Override
     protected String getReason() {
-        return ConstantsManager.getInstance()
+        return getQuestionMarksCount() == 0
+            ? ConstantsManager.getInstance()
                 .getMessages()
-                .numOfVmsInPoolInvalod(generateMaxLength(), getPoolName().length());
+                .numOfVmsInPoolInvalid(generateMaxNumOfVms(), getPoolName().length())
+            : ConstantsManager.getInstance()
+                .getMessages()
+                .numOfVmsInPoolInvalidWithQuestionMarks(generateMaxNumOfVmsWithQuestionMark(),
+                        getPoolName().length(), getQuestionMarksCount());
     }
 
-    private int generateMaxLength() {
-        return doGenerateMaxLength(getMaxNameLength(), getPoolName().length());
+    private int generateMaxNumOfVmsWithQuestionMark() {
+        return doGenerateMaxNumOfVmsWithQuestionMark(
+                getMaxNameLength(), getPoolName().length(), getQuestionMarksCount());
     }
 
-    int doGenerateMaxLength(int maxNameLengt, int poolNameLength) {
-        int allowedLength = maxNameLengt - poolNameLength - 1;
-        StringBuilder sb = new StringBuilder("");
+    int doGenerateMaxNumOfVmsWithQuestionMark(int maxNameLength, int poolNameLength, int questionMarkCount) {
+        final int numberOfDigits = maxNameLength - (poolNameLength - questionMarkCount);
+        return getMaxNumberInNDigits(numberOfDigits);
+    }
 
-        if (allowedLength == 0) {
+    private int generateMaxNumOfVms() {
+        return doGenerateMaxNumOfVms(getMaxNameLength(), getPoolName().length());
+    }
+
+    int doGenerateMaxNumOfVms(int maxNameLength, int poolNameLength) {
+        int numberOfDigits = maxNameLength - poolNameLength - 1;
+        if (numberOfDigits == 0) {
             return 0;
         }
+        return getMaxNumberInNDigits(numberOfDigits);
+    }
 
-        for (int i = 0; i < allowedLength; i++) {
-            sb.append("9"); //$NON-NLS-1$
-        }
-
-        return Integer.parseInt(sb.toString());
+    private int getMaxNumberInNDigits(int numberOfDigits) {
+        return (int) (Math.pow(10, numberOfDigits) - 1);
     }
 }

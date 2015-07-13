@@ -225,8 +225,14 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("The max allowed name length is {0} for {1} VMs in pool")
     String poolNameLengthInvalid(int maxLength, int vmsInPool);
 
+    @DefaultMessage("The max allowed name length is {0} for {1} VMs in pool and {2} question marks in name")
+    String poolNameWithQuestionMarksLengthInvalid(int maxLength, int vmsInPool, int numberOfQuestionMarks);
+
     @DefaultMessage("The max allowed num of VMs is {0} when the length of the pool name is {1}")
-    String numOfVmsInPoolInvalod(int maxLength, int vmsInPool);
+    String numOfVmsInPoolInvalid(int maxNumOfVms, int poolNameLength);
+
+    @DefaultMessage("The max allowed num of VMs is {0} when the length of the pool name is {1} and contains {2} question mark(s)")
+    String numOfVmsInPoolInvalidWithQuestionMarks(int maxNumOfVms, int poolNameLength, int numberOfQuestionMarks);
 
     @DefaultMessage("Refresh Interval: {0} sec")
     String refreshInterval(int intervalSec);

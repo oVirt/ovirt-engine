@@ -67,7 +67,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeMana
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.GuidValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IconWithOsDefaultValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
@@ -76,7 +75,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidatio
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotNullIntegerValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.PoolNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -88,7 +86,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class UnitVmModel extends Model implements HasValidatedTabs {
 
-    public static final int VM_TEMPLATE_NAME_MAX_LIMIT = 40;
+    public static final int VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT = 40;
     public static final int DESCRIPTION_MAX_LIMIT = 255;
 
     private boolean privateIsNew;
@@ -2705,8 +2703,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public boolean validate(boolean templateWithVersionRequired) {
-
-        boolean hwPartValid = validateHwPart();
+        resetTabsValidity();
 
         getInstanceTypes().setIsValid(true);
         getInstanceTypes().validateSelectedItem(new IValidation[]{new NotEmptyValidation()});
@@ -2724,34 +2721,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         if (getOSType().getIsValid()) {
-            Integer osType = getOSType().getSelectedItem();
-            getName().validateEntity(
-                    new IValidation[] {
-                            new NotEmptyValidation(),
-                            new LengthValidation(
-                                    (getBehavior().isExistingTemplateBehavior() || getBehavior().isNewTemplateBehavior())
-                                            ? VM_TEMPLATE_NAME_MAX_LIMIT
-                                            : AsyncDataProvider.getInstance().isWindowsOsType(osType) ? AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
-                                            : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin()),
-                                            isValidTab(TabName.POOL_TAB) ? new PoolNameValidation() : new I18NNameValidation()
-                    });
+            validateNaming();
 
             if (getVmId().getIsAvailable() && !StringHelper.isNullOrEmpty(getVmId().getEntity())) {
                 getVmId().validateEntity(new IValidation[] { new GuidValidation() });
             }
 
-            getDescription().validateEntity(
-                    new IValidation[] {
-                            new LengthValidation(DESCRIPTION_MAX_LIMIT),
-                            new SpecialAsciiI18NOrNoneValidation()
-                    });
-
             getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
             setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB)
-                    && getName().getIsValid()
                     && getVmId().getIsValid()
-                    && getDescription().getIsValid()
                     && getComment().getIsValid());
         }
 
@@ -2812,16 +2791,45 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getIcon().validateEntity(new IValidation[]{new IconWithOsDefaultValidation()});
         setValidTab(TabName.ICON_TAB, getIcon().getIsValid());
 
+        boolean hwPartValid = validateHwPart();
+
         boolean isValid = hwPartValid && vmInitIsValid && allTabsValid();
         getValid().setEntity(isValid);
         ValidationCompleteEvent.fire(getEventBus(), this);
         return isValid;
     }
 
-    public boolean validateHwPart() {
+    private boolean validateNaming() {
+        getName().validateEntity(
+                new IValidation[] {
+                        new NotEmptyValidation(),
+                        new LengthValidation(getBehavior().getMaxNameLength()),
+                        getBehavior().getNameAllowedCharactersIValidation()
+                });
+
+        getDescription().validateEntity(
+                new IValidation[] {
+                        new LengthValidation(DESCRIPTION_MAX_LIMIT),
+                        new SpecialAsciiI18NOrNoneValidation()
+                });
+
+        final boolean isValid = getName().getIsValid() && getDescription().getIsValid();
+        setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB) && isValid);
+        return isValid;
+    }
+
+    public boolean validateInstanceTypePart() {
         resetTabsValidity();
 
-        getName().validateEntity(new IValidation[] {new NotEmptyValidation(), new I18NNameValidation()});
+        final boolean isNamingValid = validateNaming();
+        boolean isValid = validateHwPart() && isNamingValid;
+
+        getValid().setEntity(isValid);
+        ValidationCompleteEvent.fire(getEventBus(), this);
+        return isValid;
+    }
+
+    public boolean validateHwPart() {
         getMigrationDowntime().validateEntity(new IValidation[] { new NotNullIntegerValidation(0, Integer.MAX_VALUE) });
 
         getTotalCPUCores().validateEntity(new IValidation[] {
@@ -2853,10 +2861,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 BusinessEntitiesDefinitions.VM_EMULATED_MACHINE_SIZE)});
         getCustomCpu().validateSelectedItem(new IValidation[] { new I18NExtraNameOrNoneValidation() , new LengthValidation(BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE)});
 
-        boolean behaviorValid = behavior.validate();
-        setValidTab(TabName.GENERAL_TAB, getName().getIsValid() && getDescription().getIsValid()
-                && getComment().getIsValid());
-
         setValidTab(TabName.INITIAL_RUN_TAB, getTimeZone().getIsValid());
 
         setValidTab(TabName.CONSOLE_TAB, getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid()
@@ -2886,11 +2890,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 getEmulatedMachine().getIsValid() &&
                 getCustomCpu().getIsValid());
 
+        /*
+         * This should be run at very end of the validation process otherwise general validation can override more
+         * strict checks in behaviors
+         */
+        boolean behaviorValid = behavior.validate();
 
         boolean isValid = behaviorValid && allTabsValid();
-
-        getValid().setEntity(isValid);
-        ValidationCompleteEvent.fire(getEventBus(), this);
         return isValid;
     }
 

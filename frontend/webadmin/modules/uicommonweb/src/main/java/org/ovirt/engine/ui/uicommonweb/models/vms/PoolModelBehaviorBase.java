@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.PoolNameValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -295,4 +296,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 && getModel().getSpiceProxy().getIsValid();
     }
 
+    @Override
+    public IValidation getNameAllowedCharactersIValidation() {
+        return new PoolNameValidation();
+    }
 }

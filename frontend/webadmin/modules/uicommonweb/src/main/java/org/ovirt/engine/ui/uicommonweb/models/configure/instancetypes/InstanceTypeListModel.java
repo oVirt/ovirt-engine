@@ -177,7 +177,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
     }
 
     private void onNewInstanceType() {
-        if (!((UnitVmModel) getWindow()).validateHwPart()) {
+        if (!((UnitVmModel) getWindow()).validateInstanceTypePart()) {
             return;
         }
 
@@ -251,7 +251,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
 
     private void onEditInstanceType() {
         UnitVmModel model = (UnitVmModel) getWindow();
-        if (!model.validateHwPart()) {
+        if (!model.validateInstanceTypePart()) {
             return;
         }
 

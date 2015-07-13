@@ -240,7 +240,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     protected int getMaxClonedNameLength(Object object) {
-        return UnitVmModel.VM_TEMPLATE_NAME_MAX_LIMIT;
+        return UnitVmModel.VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT;
     }
 
     protected String getAlreadyAssignedClonedNameMessage() {

@@ -4,6 +4,9 @@ import java.util.Arrays;
 
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
+
 public class PoolNameLengthValidation implements IValidation {
 
     private String poolName;
@@ -20,10 +23,12 @@ public class PoolNameLengthValidation implements IValidation {
 
     @Override
     public ValidationResult validate(Object value) {
+        final int questionMarksCount = getQuestionMarksCount();
         int numOfVmsInPoolLengt = getNumOfVmsInPoolLength();
 
-        // the +1 is the '-' sign between the name of pool and the ID of the VM
-        boolean isOk = poolName.length() + numOfVmsInPoolLengt + 1 <= getMaxNameLength();
+        // if there are no questionmarks placeholders for vm numbers, vms in pool are named like <pool_name>-<numer>
+        int dashLenght = questionMarksCount == 0 ? 1 : 0;
+        boolean isOk = poolName.length() - questionMarksCount + numOfVmsInPoolLengt + dashLenght <= getMaxNameLength();
 
         ValidationResult res = new ValidationResult();
         res.setSuccess(isOk);
@@ -32,6 +37,14 @@ public class PoolNameLengthValidation implements IValidation {
         }
 
         return res;
+    }
+
+    protected int getQuestionMarksCount() {
+        final MatchResult matchResult = RegExp.compile("\\?+").exec(poolName); //$NON-NLS-1$
+        if (matchResult == null) {
+            return 0;
+        }
+        return matchResult.getGroup(0).length();
     }
 
     protected int getNumOfVmsInPoolLength() {

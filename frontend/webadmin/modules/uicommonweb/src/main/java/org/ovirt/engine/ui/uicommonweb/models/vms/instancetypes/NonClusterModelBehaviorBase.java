@@ -91,4 +91,8 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
     public void updateMinAllocatedMemory() {
     }
 
+    @Override public int getMaxNameLength() {
+        return UnitVmModel.VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT;
+    }
+
 }

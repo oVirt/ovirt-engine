@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewPoolInstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -102,6 +103,8 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
                     getModel().getOSType().getSelectedItem()
                     ) });
 
+            final boolean isNameValid = getModel().getName().getIsValid();
+            getModel().setValidTab(TabName.GENERAL_TAB, getModel().isValidTab(TabName.GENERAL_TAB) && isNameValid);
             return getModel().getName().getIsValid() && parentValidation;
         }
 

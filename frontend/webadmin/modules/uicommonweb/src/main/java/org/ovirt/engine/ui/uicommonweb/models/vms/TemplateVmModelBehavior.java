@@ -258,4 +258,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             getModel().getIsSingleQxlEnabled().setEntity(false);
         }
     }
+
+    @Override public int getMaxNameLength() {
+        return UnitVmModel.VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT;
+    }
 }

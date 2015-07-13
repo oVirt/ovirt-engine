@@ -10,13 +10,23 @@ public class NewPoolNameLengthValidation extends PoolNameLengthValidation {
 
     @Override
     protected String getReason() {
-        return ConstantsManager.getInstance()
-                .getMessages()
-                .poolNameLengthInvalid(generateMaxLength(), getNumOfVmsInPool());
+        return getQuestionMarksCount() == 0
+                ? ConstantsManager.getInstance()
+                    .getMessages()
+                    .poolNameLengthInvalid(generateMaxLengthNoQuestionMarks(), getNumOfVmsInPool())
+                : ConstantsManager.getInstance()
+                    .getMessages()
+                    .poolNameWithQuestionMarksLengthInvalid(generateMaxLengthQuestionMarksPresent(),
+                            getNumOfVmsInPool(),
+                            getQuestionMarksCount());
     }
 
-    private int generateMaxLength() {
+    private int generateMaxLengthNoQuestionMarks() {
         return getMaxNameLength() - getNumOfVmsInPoolLength() - 1;
+    }
+
+    private int generateMaxLengthQuestionMarksPresent() {
+        return getMaxNameLength() - Math.max(getNumOfVmsInPoolLength() - getQuestionMarksCount(), 0);
     }
 
 }

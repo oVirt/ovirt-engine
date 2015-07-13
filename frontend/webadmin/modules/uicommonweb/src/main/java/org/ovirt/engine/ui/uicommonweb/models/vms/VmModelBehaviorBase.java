@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -59,6 +60,8 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.ExistingBlankTemplateMod
 import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
@@ -1505,6 +1508,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public boolean isAnyTemplateBehavior() {
         return this instanceof TemplateVmModelBehavior || this instanceof ExistingBlankTemplateModelBehavior;
+    }
+
+    public int getMaxNameLength() {
+        final Integer selectedOsId = getModel().getOSType().getSelectedItem();
+        return AsyncDataProvider.getInstance().isWindowsOsType(selectedOsId)
+                ? AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
+                : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
+    }
+
+    public IValidation getNameAllowedCharactersIValidation() {
+        return new I18NNameValidation();
     }
 
 }
